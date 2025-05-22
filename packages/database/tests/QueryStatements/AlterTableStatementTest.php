@@ -22,15 +22,12 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_for_only_indexes(DatabaseDialect $dialect): void
     {
-        $expected = 'CREATE INDEX `table_foo` ON `table` (`foo`); CREATE UNIQUE INDEX `table_bar` ON `table` (`bar`);';
-        $statement = new AlterTableStatement('table')
+        $alterStatement = new AlterTableStatement('table')
             ->index('foo')
-            ->unique('bar')
-            ->compile($dialect);
+            ->unique('bar');
 
-        $normalized = self::removeDuplicateWhitespace($statement);
-
-        $this->assertEqualsIgnoringCase($expected, $normalized);
+        $this->assertEqualsIgnoringCase('CREATE INDEX `table_foo` ON `table` (`foo`)', $alterStatement->trailingStatements[0]->compile($dialect));
+        $this->assertEqualsIgnoringCase('CREATE UNIQUE INDEX `table_bar` ON `table` (`bar`)', $alterStatement->trailingStatements[1]->compile($dialect));
     }
 
     #[TestWith([DatabaseDialect::MYSQL])]

@@ -7,9 +7,11 @@ namespace Tests\Tempest\Integration\Database;
 use Exception;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -49,5 +51,20 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         });
 
         $this->assertSame(0, query(Author::class)->count()->execute());
+    }
+
+    public function test_query_with_semicolons(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class);
+
+        $db = $this->container->get(Database::class);
+        $db->execute(
+            new Query(<<<SQL
+                INSERT INTO publishers (`name`, `description`)
+                VALUES ('Foo', 'Bar; Baz;')
+            SQL),
+        );
+
+        $this->assertSame(1, query(Publisher::class)->count()->execute());
     }
 }
