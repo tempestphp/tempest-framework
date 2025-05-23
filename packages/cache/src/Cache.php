@@ -79,7 +79,7 @@ interface Cache
     /**
      * If the specified key already exists in the cache, the value is returned and the `$callback` is not executed. Otherwise, the result of the callback is stored, then returned.
      *
-     * @var null|Duration $stale Allow the value to be stale for the specified amount of time in addition to the time-to-live specified by `$duration`. When a value is stale, it will still be returned, but it will be refreshed in the background.
+     * @var null|Duration $stale Allow the value to be stale for the specified amount of time in addition to the time-to-live specified by `$expiration`. When a value is stale, it will still be returned as-is, but it will be refreshed in the background.
      */
     public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed;
 
