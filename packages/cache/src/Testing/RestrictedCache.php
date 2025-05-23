@@ -58,7 +58,7 @@ final class RestrictedCache implements Cache
         throw new ForbiddenCacheUsageException($this->tag);
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
     {
         throw new ForbiddenCacheUsageException($this->tag);
     }

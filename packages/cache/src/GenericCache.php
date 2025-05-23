@@ -7,6 +7,7 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Stringable;
 use Tempest\Cache\Config\CacheConfig;
+use Tempest\Core\DeferredTasks;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
@@ -19,6 +20,7 @@ final class GenericCache implements Cache
         private(set) CacheConfig $cacheConfig,
         public bool $enabled = true,
         private ?CacheItemPoolInterface $adapter = null,
+        private ?DeferredTasks $deferredTasks = null,
     ) {
         $this->adapter ??= $this->cacheConfig->createAdapter();
     }
@@ -136,10 +138,18 @@ final class GenericCache implements Cache
         );
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
     {
         if (! $this->enabled) {
             return $callback();
+        }
+
+        if ($stale) {
+            if ($expiration instanceof Duration) {
+                $expiration = DateTime::now()->plus($expiration);
+            }
+
+            return $this->resolveAllowingStale($key, $callback, $expiration, $stale);
         }
 
         $item = $this->adapter->getItem((string) $key);
@@ -149,6 +159,48 @@ final class GenericCache implements Cache
         }
 
         return $item->get();
+    }
+
+    private function resolveAllowingStale(Stringable|string $key, Closure $callback, DateTimeInterface $expiration, Duration $stale): mixed
+    {
+        if (! $this->deferredTasks) {
+            return $this->resolve($key, $callback, $expiration);
+        }
+
+        $key = (string) $key;
+        $staleAtCacheKey = "tempest.stale-cache.stale-at.{$key}";
+        $cachedValue = $this->get($key);
+        $cachedStaleAt = $this->get($staleAtCacheKey);
+
+        // Not in the cache, save it
+        if (! $cachedValue || ! $cachedStaleAt) {
+            $value = $callback();
+
+            $this->put($key, $value, $expiration->plus($stale));
+            $this->put($staleAtCacheKey, $expiration->getTimestamp()->getSeconds(), $expiration->plus($stale));
+
+            return $value;
+        }
+
+        // Not stale, return the value
+        if ($cachedStaleAt > DateTime::now()->getTimestamp()->getSeconds()) {
+            return $cachedValue;
+        }
+
+        // Stale, trigger refresh and return the value
+        $this->deferredTasks->add(
+            task: fn () => $this->lock("tempest.stale-cache.lock.{$key}")->execute(function () use ($callback, $key, $cachedStaleAt, $staleAtCacheKey, $stale, $expiration) {
+                if ($cachedStaleAt !== $this->get($staleAtCacheKey)) {
+                    return;
+                }
+
+                $this->put($key, $callback(), $expiration->plus($stale));
+                $this->put($staleAtCacheKey, $expiration->getTimestamp()->getSeconds(), $expiration->plus($stale));
+            }),
+            name: "tempest.stale-cache.task.{$key}",
+        );
+
+        return $cachedValue;
     }
 
     public function remove(Stringable|string $key): void
