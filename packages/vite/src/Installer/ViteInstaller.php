@@ -77,21 +77,25 @@ final class ViteInstaller implements Installer
         });
 
         // Updates the .gitignore
-        $this->update(root_path('.gitignore'), function (ImmutableString $gitignore) {
-            if (! $gitignore->contains($this->viteConfig->bridgeFileName)) {
-                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->bridgeFileName);
-            }
+        $this->update(
+            path: root_path('.gitignore'),
+            callback: function (ImmutableString $gitignore) {
+                if (! $gitignore->contains($this->viteConfig->bridgeFileName)) {
+                    $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->bridgeFileName);
+                }
 
-            if (! $gitignore->contains('node_modules')) {
-                $gitignore = $gitignore->append(PHP_EOL, 'node_modules/');
-            }
+                if (! $gitignore->contains('node_modules')) {
+                    $gitignore = $gitignore->append(PHP_EOL, 'node_modules/');
+                }
 
-            if (! $gitignore->contains('public/build')) {
-                return $gitignore->append(PHP_EOL, 'public/build/');
-            }
+                if (! $gitignore->contains('public/build')) {
+                    return $gitignore->append(PHP_EOL, 'public/build/');
+                }
 
-            return $gitignore;
-        });
+                return $gitignore;
+            },
+            ignoreNonExisting: true,
+        );
 
         $packageManager = PackageManager::detect(root_path());
 
