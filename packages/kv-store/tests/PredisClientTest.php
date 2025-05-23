@@ -15,6 +15,10 @@ final class PredisClientTest extends TestCase
     {
         parent::setUp();
 
+        if (! class_exists(Predis\Client::class)) {
+            $this->markTestSkipped('The `predis/predis` package is not installed.');
+        }
+
         $this->redis = new PredisClient(
             client: new Predis\Client(
                 parameters: array_filter([

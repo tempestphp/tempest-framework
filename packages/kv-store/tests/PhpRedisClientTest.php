@@ -14,6 +14,10 @@ final class PhpRedisClientTest extends TestCase
     {
         parent::setUp();
 
+        if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
+            $this->markTestSkipped('The `redis` extension is not loaded.');
+        }
+
         $this->redis = new PhpRedisClient(
             client: new \Redis(),
             config: new RedisConfig(

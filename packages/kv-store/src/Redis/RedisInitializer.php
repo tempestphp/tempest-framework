@@ -34,7 +34,7 @@ final class RedisInitializer implements DynamicInitializer
     private function buildPhpRedisClient(): \Redis
     {
         if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
-            throw new MissingRedisException(Redis::class);
+            throw new MissingRedisException(\Redis::class);
         }
 
         return new \Redis();
