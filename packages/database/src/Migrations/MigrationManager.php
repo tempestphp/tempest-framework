@@ -7,6 +7,7 @@ namespace Tempest\Database\Migrations;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\ShouldMigrate;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -188,6 +189,10 @@ final class MigrationManager
 
     public function executeUp(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->up();
 
         if ($statement === null) {
@@ -237,6 +242,10 @@ final class MigrationManager
 
     public function executeDown(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->down();
 
         if ($statement === null) {
