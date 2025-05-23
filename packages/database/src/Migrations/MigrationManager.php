@@ -109,11 +109,11 @@ final class MigrationManager
             $tables = $this->getTableDefinitions();
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect, $this->onDatabase);
 
             // Drop each table
             foreach ($tables as $table) {
-                new DropTableStatement($table->name)->execute($this->dialect);
+                new DropTableStatement($table->name)->execute($this->dialect, $this->onDatabase);
 
                 event(new TableDropped($table->name));
             }
@@ -121,7 +121,7 @@ final class MigrationManager
             event(new FreshMigrationFailed($throwable));
         } finally {
             // Enable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
         }
     }
 
@@ -249,15 +249,15 @@ final class MigrationManager
             // TODO: don't just disable FK checking when executing down
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect, $this->onDatabase);
 
             $this->database->execute($query);
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
         } catch (PDOException $pdoException) {
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
 
             event(new MigrationFailed($migration->name, $pdoException));
 
