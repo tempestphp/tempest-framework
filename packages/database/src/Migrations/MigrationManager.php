@@ -35,7 +35,7 @@ final class MigrationManager
     }
 
     private DatabaseDialect $dialect {
-        get => $this->container->get(DatabaseDialect::class, $this->onDatabase);
+        get => $this->database->dialect;
     }
 
     public function __construct(

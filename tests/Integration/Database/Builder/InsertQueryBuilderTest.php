@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Database;
 use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
@@ -228,7 +229,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     private function buildExpectedInsert(string $query): string
     {
-        if ($this->container->get(DatabaseDialect::class) === DatabaseDialect::POSTGRESQL) {
+        if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
             $query .= ' RETURNING *';
         }
 

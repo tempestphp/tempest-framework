@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\ORM\Mappers;
 
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Database;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -25,7 +26,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = query(Author::class)->insert($author)->build();
 
-        $dialect = $this->container->get(DatabaseDialect::class);
+        $dialect = $this->container->get(Database::class)->dialect;
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
@@ -48,7 +49,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = query($author)->update(name: 'other')->build();
 
-        $dialect = $this->container->get(DatabaseDialect::class);
+        $dialect = $this->container->get(Database::class)->dialect;
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'

@@ -7,6 +7,7 @@ use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
+use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -125,7 +126,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
     public function test_with_different_dialects(): void
     {
-        if ($this->container->get(DatabaseDialect::class) !== DatabaseDialect::MYSQL) {
+        if ($this->container->get(Database::class)->dialect !== DatabaseDialect::MYSQL) {
             $this->markTestSkipped('We only test this in the MySQL test action');
         }
 

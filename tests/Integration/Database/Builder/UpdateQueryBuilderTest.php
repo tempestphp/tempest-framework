@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Database;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
@@ -175,7 +176,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?)
         SQL;
 
-        if ($this->container->get(DatabaseDialect::class) === DatabaseDialect::POSTGRESQL) {
+        if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
             $expected .= ' RETURNING *';
         }
 

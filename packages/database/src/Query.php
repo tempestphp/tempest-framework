@@ -17,7 +17,7 @@ final class Query
     }
 
     private DatabaseDialect $dialect {
-        get => get(DatabaseDialect::class, $this->onDatabase);
+        get => $this->database->dialect;
     }
 
     public function __construct(
