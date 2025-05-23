@@ -19,6 +19,10 @@ final readonly class PredisClient implements Redis
 
     public function connect(): void
     {
+        if ($this->client->isConnected()) {
+            return;
+        }
+
         $this->client->connect();
     }
 

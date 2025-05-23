@@ -22,6 +22,10 @@ final readonly class PhpRedisClient implements Redis
 
     public function connect(): void
     {
+        if ($this->client->isConnected()) {
+            return;
+        }
+
         if ($this->config->persistent) {
             $this->client->pconnect(
                 host: $this->config->unixSocketPath ?? $this->config->host ?? '127.0.0.1',

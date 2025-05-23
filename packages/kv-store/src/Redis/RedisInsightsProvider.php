@@ -18,15 +18,22 @@ final class RedisInsightsProvider implements InsightsProvider
     public function getInsights(): array
     {
         $client = $this->redis->getClient();
-        $version = Regex\get_match($this->redis->command('info', 'server'), '/redis_version:(?<version>[0-9.]+)/', match: 'version');
 
-        return [
-            'Engine' => match (get_class($client)) {
-                \Redis::class => 'Redis extension',
-                Predis\Client::class => 'Predis',
-                default => new Insight('None', Insight::WARNING),
-            },
-            'Version' => $version ?: new Insight('Unknown', Insight::WARNING),
-        ];
+        try {
+            $version = Regex\get_match($this->redis->command('info', 'server'), '/redis_version:(?<version>[0-9.]+)/', match: 'version');
+
+            return [
+                'Engine' => match (get_class($client)) {
+                    \Redis::class => 'Redis extension',
+                    Predis\Client::class => 'Predis',
+                    default => new Insight('None', Insight::WARNING),
+                },
+                'Version' => $version ?: new Insight('Unknown', Insight::WARNING),
+            ];
+        } catch (\Throwable) {
+            return [
+                'Engine' => new Insight('Disconnected', Insight::ERROR),
+            ];
+        }
     }
 }
