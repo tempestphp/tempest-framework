@@ -30,7 +30,7 @@ final class RedisInsightsProvider implements InsightsProvider
                 },
                 'Version' => $version ?: new Insight('Unknown', Insight::WARNING),
             ];
-        } catch (\Throwable) {
+        } catch (Predis\Connection\ConnectionException) {
             return [
                 'Engine' => new Insight('Disconnected', Insight::ERROR),
             ];
