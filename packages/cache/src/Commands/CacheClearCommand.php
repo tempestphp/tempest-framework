@@ -10,6 +10,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Console\Middleware\CautionMiddleware;
+use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\ConfigCache;
@@ -32,7 +33,7 @@ final readonly class CacheClearCommand
         private Container $container,
     ) {}
 
-    #[ConsoleCommand(name: 'cache:clear', description: 'Clears all or specified caches', middleware: [CautionMiddleware::class])]
+    #[ConsoleCommand(name: 'cache:clear', description: 'Clears all or specified caches', middleware: [ForceMiddleware::class, CautionMiddleware::class])]
     public function __invoke(
         #[ConsoleArgument(description: 'Name of the tagged cache to clear')]
         ?string $tag = null,
