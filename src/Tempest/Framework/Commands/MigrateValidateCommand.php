@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Commands;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Container\Singleton;
@@ -28,10 +29,13 @@ final class MigrateValidateCommand
         name: 'migrate:validate',
         description: 'Validates the integrity of existing migration files by checking if they have been tampered with.',
     )]
-    public function __invoke(): ExitCode
+    public function __invoke(
+        #[ConsoleArgument(description: 'Use a specific database.')]
+        ?string $database = null
+    ): ExitCode
     {
         $this->console->header('Validating migration files');
-        $this->migrationManager->validate();
+        $this->migrationManager->onDatabase($database)->validate();
 
         if (! $this->validationPassed) {
             $this->console->writeln();

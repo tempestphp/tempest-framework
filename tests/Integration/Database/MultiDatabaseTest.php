@@ -233,4 +233,11 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
         );
     }
+
+    public function test_migrate_validate_command(): void
+    {
+        $this->console
+            ->call('migrate:validate --database=main')
+            ->assertSuccess();
+    }
 }
