@@ -46,7 +46,7 @@ final class MigrateFreshCommand
         }
 
         $this->console->header('Dropping tables');
-        $this->migrationManager->useDatabase($database)->dropAll();
+        $this->migrationManager->onDatabase($database)->dropAll();
 
         if ($this->count === 0) {
             $this->console->info('There is no migration to drop.');

@@ -55,7 +55,7 @@ final class MigrateUpCommand
         }
 
         $this->console->header('Migrating');
-        $this->migrationManager->useDatabase($database)->up();
+        $this->migrationManager->onDatabase($database)->up();
 
         if ($this->count === 0) {
             $this->console->info('There is no new migration to run.');

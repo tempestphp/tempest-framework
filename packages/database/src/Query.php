@@ -10,14 +10,14 @@ use function Tempest\get;
 
 final class Query
 {
-    use UsesDatabase;
+    use OnDatabase;
 
     private Database $database {
-        get => get(Database::class, $this->useDatabase);
+        get => get(Database::class, $this->onDatabase);
     }
 
     private DatabaseDialect $dialect {
-        get => get(DatabaseDialect::class, $this->useDatabase);
+        get => get(DatabaseDialect::class, $this->onDatabase);
     }
 
     public function __construct(

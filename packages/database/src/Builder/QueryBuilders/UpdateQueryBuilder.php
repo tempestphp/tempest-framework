@@ -5,10 +5,10 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
-use Tempest\Database\UsesDatabase;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -19,7 +19,7 @@ use function Tempest\Support\arr;
 
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions, UsesDatabase;
+    use HasConditions, OnDatabase;
 
     private UpdateStatement $update;
 
@@ -88,7 +88,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             $bindings[] = $binding;
         }
 
-        return new Query($this->update, $bindings)->useDatabase($this->useDatabase);
+        return new Query($this->update, $bindings)->onDatabase($this->onDatabase);
     }
 
     private function resolveValues(): ImmutableArray

@@ -58,10 +58,10 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        $migrationManager->useDatabase('main')->executeUp(new CreateMigrationsTable());
-        $migrationManager->useDatabase('main')->executeUp(new CreatePublishersTable());
-        $migrationManager->useDatabase('backup')->executeUp(new CreateMigrationsTable());
-        $migrationManager->useDatabase('backup')->executeUp(new CreatePublishersTable());
+        $migrationManager->onDatabase('main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('main')->executeUp(new CreatePublishersTable());
+        $migrationManager->onDatabase('backup')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('backup')->executeUp(new CreatePublishersTable());
 
         query(Publisher::class)
             ->insert(
@@ -69,7 +69,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Main 1',
                 description: 'Description Main 1',
             )
-            ->useDatabase('main')
+            ->onDatabase('main')
             ->execute();
 
         query(Publisher::class)
@@ -78,7 +78,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Main 2',
                 description: 'Description Main 2',
             )
-            ->useDatabase('main')
+            ->onDatabase('main')
             ->execute();
 
         query(Publisher::class)
@@ -87,7 +87,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Backup 1',
                 description: 'Description Backup 1',
             )
-            ->useDatabase('backup')
+            ->onDatabase('backup')
             ->execute();
 
         query(Publisher::class)
@@ -96,11 +96,11 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Backup 2',
                 description: 'Description Backup 2',
             )
-            ->useDatabase('backup')
+            ->onDatabase('backup')
             ->execute();
 
-        $publishersMain = query(Publisher::class)->select()->useDatabase('main')->all();
-        $publishersBackup = query(Publisher::class)->select()->useDatabase('backup')->all();
+        $publishersMain = query(Publisher::class)->select()->onDatabase('main')->all();
+        $publishersBackup = query(Publisher::class)->select()->onDatabase('backup')->all();
 
         $this->assertCount(2, $publishersMain);
         $this->assertSame('Main 1', $publishersMain[0]->name);
@@ -110,16 +110,16 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame('Backup 1', $publishersBackup[0]->name);
         $this->assertSame('Backup 2', $publishersBackup[1]->name);
 
-        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->useDatabase('main')->execute();
-        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->useDatabase('backup')->execute();
+        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->onDatabase('main')->execute();
+        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->onDatabase('backup')->execute();
 
-        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->useDatabase('main')->first()->name);
-        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->useDatabase('backup')->first()->name);
+        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('main')->first()->name);
+        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('backup')->first()->name);
 
-        query(Publisher::class)->delete()->where('id = ?', 1)->useDatabase('main')->execute();
+        query(Publisher::class)->delete()->where('id = ?', 1)->onDatabase('main')->execute();
 
-        $this->assertSame(1, query(Publisher::class)->count()->useDatabase('main')->execute());
-        $this->assertSame(2, query(Publisher::class)->count()->useDatabase('backup')->execute());
+        $this->assertSame(1, query(Publisher::class)->count()->onDatabase('main')->execute());
+        $this->assertSame(2, query(Publisher::class)->count()->onDatabase('backup')->execute());
     }
 
     public function test_with_different_dialects(): void
@@ -139,8 +139,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        $migrationManager->useDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
-        $migrationManager->useDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
 
         $this->expectNotToPerformAssertions();
     }
@@ -150,7 +150,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager = $this->container->get(MigrationManager::class);
 
         try {
-            $migrationManager->useDatabase('unknown')->executeUp(new CreateMigrationsTable());
+            $migrationManager->onDatabase('unknown')->executeUp(new CreateMigrationsTable());
         } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
             $this->assertStringContainsString('Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown', $cannotResolveTaggedDependency->getMessage());
         }
@@ -162,18 +162,18 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:up --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
 
         $this->assertException(
             PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
         );
 
         $this->console
             ->call('migrate:up --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
     }
 
     public function test_migrate_fresh_command(): void
@@ -182,18 +182,18 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:fresh --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
 
         $this->assertException(
             PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
         );
 
         $this->console
             ->call('migrate:fresh --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
     }
 
     public function test_migrate_up_fresh_command(): void
@@ -202,18 +202,18 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:up --fresh --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
 
         $this->assertException(
             PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
         );
 
         $this->console
             ->call('migrate:up --fresh --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
     }
 
     public function test_migrate_down_command(): void
@@ -230,11 +230,11 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:down --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
 
         $this->assertException(
             PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
         );
     }
 }

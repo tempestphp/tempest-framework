@@ -33,7 +33,7 @@ final class MigrateDownCommand
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
     ): void {
-        $this->migrationManager->useDatabase($database)->down();
+        $this->migrationManager->onDatabase($database)->down();
 
         $this->console->success(sprintf('Rolled back %s migrations', $this->count));
     }
