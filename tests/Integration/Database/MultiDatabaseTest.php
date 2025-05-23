@@ -31,6 +31,10 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Multiple databases are not properly supported on Windows yet');
+        }
+
         $files = [
             __DIR__ . '/Fixtures/main.sqlite',
             __DIR__ . '/Fixtures/backup.sqlite',
