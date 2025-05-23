@@ -12,6 +12,7 @@ use Tempest\Cache\Cache;
 use Tempest\Cache\Config\CustomCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\GenericLock;
+use Tempest\Core\DeferredTasks;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\Support\Random;
@@ -82,9 +83,9 @@ final class TestingCache implements Cache
         return $this->cache->getMany($key);
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
     {
-        return $this->cache->resolve($key, $callback, $expiration);
+        return $this->cache->resolve($key, $callback, $expiration, $stale);
     }
 
     public function remove(Stringable|string $key): void

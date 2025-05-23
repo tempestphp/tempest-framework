@@ -8,6 +8,7 @@ use Tempest\Cache\Config\CacheConfig;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\DeferredTasks;
 use Tempest\Reflection\ClassReflector;
 
 use function Tempest\env;
@@ -25,6 +26,7 @@ final readonly class CacheInitializer implements DynamicInitializer
     {
         return new GenericCache(
             cacheConfig: $container->get(CacheConfig::class, $tag),
+            deferredTasks: $container->get(DeferredTasks::class),
             enabled: $this->shouldCacheBeEnabled($tag),
         );
     }
