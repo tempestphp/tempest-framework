@@ -7,6 +7,7 @@
         "php": "^8.4",
         "doctrine/inflector": "^2.0",
         "tempest/container": "dev-main",
+        "tempest/datetime": "dev-main",
         "voku/portable-ascii": "^2.0.3",
         "symfony/uid": "^7.1"
     },
