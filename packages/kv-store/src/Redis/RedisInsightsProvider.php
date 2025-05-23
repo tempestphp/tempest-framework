@@ -2,6 +2,7 @@
 
 namespace Tempest\KeyValue\Redis;
 
+use Exception;
 use Predis;
 use Tempest\Container\Container;
 use Tempest\Core\Insight;
@@ -20,6 +21,8 @@ final class RedisInsightsProvider implements InsightsProvider
     {
         try {
             $redis = $this->container->get(Redis::class);
+            $redis->connect();
+
             $version = Regex\get_match($redis->command('info', 'server'), '/redis_version:(?<version>[0-9.]+)/', match: 'version');
 
             return [
