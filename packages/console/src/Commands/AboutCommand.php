@@ -49,8 +49,12 @@ final readonly class AboutCommand
 
             $this->console->header($provider->name);
 
-            foreach ($provider->getInsights() as $key => $value) {
-                $this->console->keyValue($key, $this->formatInsight($value));
+            try {
+                foreach ($provider->getInsights() as $key => $value) {
+                    $this->console->keyValue($key, $this->formatInsight($value));
+                }
+            } catch (\Throwable $th) {
+                $this->console->error('Failed to get insights: ' . $th->getMessage());
             }
         }
     }
@@ -63,10 +67,13 @@ final readonly class AboutCommand
             /** @var InsightsProvider $provider */
             $provider = $this->container->get($class);
 
-            $json[Str\to_snake_case($provider->name)] = Arr\map_with_keys(
-                array: $provider->getInsights(),
-                map: fn (mixed $value, string $key) => yield Str\to_snake_case($key) => $this->rawInsight($value),
-            );
+            try {
+                $json[Str\to_snake_case($provider->name)] = Arr\map_with_keys(
+                    array: $provider->getInsights(),
+                    map: fn (mixed $value, string $key) => yield Str\to_snake_case($key) => $this->rawInsight($value),
+                );
+            } catch (\Throwable) {
+            }
         }
 
         $this->console->writeRaw(Json\encode($json));
