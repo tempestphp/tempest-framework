@@ -2,16 +2,15 @@
 
 namespace Tempest\Cache\Config;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Tempest\Container\Container;
+use Tempest\KeyValue\Redis\Redis;
 use UnitEnum;
 
-use function Tempest\internal_storage_path;
-
 /**
- * Use the filesystem for caching.
+ * Use a Redis connection for caching.
  */
-final class FilesystemCacheConfig implements CacheConfig
+final class RedisCacheConfig implements CacheConfig
 {
     public function __construct(
         /**
@@ -30,11 +29,11 @@ final class FilesystemCacheConfig implements CacheConfig
         public null|string|UnitEnum $tag = null,
     ) {}
 
-    public function createAdapter(Container $container): FilesystemAdapter
+    public function createAdapter(Container $container): RedisAdapter
     {
-        return new FilesystemAdapter(
+        return new RedisAdapter(
+            redis: $container->get(Redis::class)->getClient(),
             namespace: $this->namespace ?? '',
-            directory: $this->directory ?? internal_storage_path('cache/project'),
         );
     }
 }

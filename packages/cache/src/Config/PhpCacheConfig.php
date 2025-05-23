@@ -2,8 +2,8 @@
 
 namespace Tempest\Cache\Config;
 
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+use Tempest\Container\Container;
 use UnitEnum;
 
 use function Tempest\internal_storage_path;
@@ -30,7 +30,7 @@ final class PhpCacheConfig implements CacheConfig
         public null|string|UnitEnum $tag = null,
     ) {}
 
-    public function createAdapter(): PhpFilesAdapter
+    public function createAdapter(Container $container): PhpFilesAdapter
     {
         return new PhpFilesAdapter(
             namespace: $this->namespace ?? '',

@@ -7,6 +7,7 @@
         "symfony/cache": "^7.2",
         "tempest/core": "dev-main",
         "tempest/clock": "dev-main",
+        "tempest/kv-store": "dev-main",
         "tempest/container": "dev-main"
     },
     "require-dev": {

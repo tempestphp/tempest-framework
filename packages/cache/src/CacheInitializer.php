@@ -25,10 +25,13 @@ final readonly class CacheInitializer implements DynamicInitializer
     #[Singleton]
     public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Cache
     {
+        $config = $container->get(CacheConfig::class, $tag);
+
         return new GenericCache(
-            cacheConfig: $container->get(CacheConfig::class, $tag),
-            deferredTasks: $container->get(DeferredTasks::class),
+            adapter: $config->createAdapter($container),
             enabled: $this->shouldCacheBeEnabled($tag),
+            deferredTasks: $container->get(DeferredTasks::class),
+            tag: $tag,
         );
     }
 

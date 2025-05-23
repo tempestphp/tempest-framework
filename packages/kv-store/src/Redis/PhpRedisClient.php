@@ -140,6 +140,10 @@ final readonly class PhpRedisClient implements Redis
 
     public function getClient(): \Redis
     {
+        if (! $this->client->isConnected()) {
+            $this->connect();
+        }
+
         return $this->client;
     }
 }
