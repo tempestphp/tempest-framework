@@ -1,7 +1,6 @@
 <?php
 
 namespace Tempest\Database {
-    use ReflectionException;
     use Tempest\Database\Builder\ModelInspector;
     use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 

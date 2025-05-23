@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 
 use function Tempest\get;
 
 final class Query
 {
+    use OnDatabase;
+
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseDialect $dialect {
+        get => $this->database->dialect;
+    }
+
     public function __construct(
         public string|QueryStatement $sql,
         public array $bindings = [],
@@ -22,7 +31,7 @@ final class Query
     {
         $this->bindings = [...$this->bindings, ...$bindings];
 
-        $database = $this->getDatabase();
+        $database = $this->database;
 
         $query = $this->withBindings($bindings);
 
@@ -37,19 +46,19 @@ final class Query
 
     public function fetch(mixed ...$bindings): array
     {
-        return $this->getDatabase()->fetch($this->withBindings($bindings));
+        return $this->database->fetch($this->withBindings($bindings));
     }
 
     public function fetchFirst(mixed ...$bindings): ?array
     {
-        return $this->getDatabase()->fetchFirst($this->withBindings($bindings));
+        return $this->database->fetchFirst($this->withBindings($bindings));
     }
 
     public function toSql(): string
     {
         $sql = $this->sql;
 
-        $dialect = $this->getDatabaseConfig()->dialect;
+        $dialect = $this->dialect;
 
         if ($sql instanceof QueryStatement) {
             $sql = $sql->compile($dialect);
@@ -76,15 +85,5 @@ final class Query
         $clone->bindings = [...$clone->bindings, ...$bindings];
 
         return $clone;
-    }
-
-    private function getDatabase(): Database
-    {
-        return get(Database::class);
-    }
-
-    private function getDatabaseConfig(): DatabaseConfig
-    {
-        return get(DatabaseConfig::class);
     }
 }

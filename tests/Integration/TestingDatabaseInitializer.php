@@ -8,44 +8,53 @@ use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
-use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 final class TestingDatabaseInitializer implements DynamicInitializer
 {
-    private static ?PDOConnection $connection = null;
+    /** @var Connection[] */
+    private static array $connections = [];
 
-    public function canInitialize(ClassReflector $class, ?string $tag): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return $class->getType()->matches(Database::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, ?string $tag, Container $container): Database
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
     {
-        if (self::$connection === null) {
+        $tag = match (true) {
+            $tag instanceof UnitEnum => $tag->name,
+            is_string($tag) => $tag,
+            default => '',
+        };
+
+        /** @var PDOConnection|null $connection */
+        $connection = self::$connections[$tag] ?? null;
+
+        if ($connection === null) {
             $config = $container->get(DatabaseConfig::class, $tag);
             $connection = new PDOConnection($config);
             $connection->connect();
 
-            self::$connection = $connection;
+            self::$connections[$tag] = $connection;
         }
 
-        if (self::$connection->ping() === false) {
-            self::$connection->reconnect();
+        if ($connection->ping() === false) {
+            $connection->reconnect();
         }
 
-        $container->singleton(Connection::class, self::$connection);
+        $container->singleton(Connection::class, $connection, $tag);
 
         return new GenericDatabase(
-            self::$connection,
-            new GenericTransactionManager(self::$connection),
-            $container->get(DatabaseDialect::class),
+            $connection,
+            new GenericTransactionManager($connection),
         );
     }
 }

@@ -8,16 +8,20 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
+    use HasConditions, OnDatabase;
+
     private InsertStatement $insert;
 
     private array $after = [];
@@ -70,10 +74,7 @@ final class InsertQueryBuilder implements BuildsQuery
             $this->insert->addEntry($data);
         }
 
-        return new Query(
-            $this->insert,
-            $bindings,
-        );
+        return new Query($this->insert, $bindings)->onDatabase($this->onDatabase);
     }
 
     public function then(Closure ...$callbacks): self

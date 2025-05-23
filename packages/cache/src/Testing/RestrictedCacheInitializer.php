@@ -8,17 +8,18 @@ use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 #[SkipDiscovery]
 final class RestrictedCacheInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, ?string $tag): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return $class->getType()->matches(Cache::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, ?string $tag, Container $container): Cache
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Cache
     {
         return new RestrictedCache($tag);
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use BackedEnum;
-use Exception;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
@@ -18,7 +17,6 @@ use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Responses\ServerError;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
@@ -166,6 +164,10 @@ final readonly class GenericRouter implements Router
         $currentUri = $this->toUri([$matchedRoute->route->handler->getDeclaringClass(), $matchedRoute->route->handler->getName()]);
 
         foreach ($matchedRoute->params as $key => $value) {
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+
             $currentUri = replace($currentUri, '/({' . preg_quote($key, '/') . '(?::.*?)?})/', $value);
         }
 

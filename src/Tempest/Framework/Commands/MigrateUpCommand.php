@@ -39,6 +39,8 @@ final class MigrateUpCommand
         bool $validate = true,
         #[ConsoleArgument(description: 'Drops all tables and rerun migrations from scratch.')]
         bool $fresh = false,
+        #[ConsoleArgument(description: 'Use a specific database.')]
+        ?string $database = null,
     ): ExitCode {
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
@@ -49,11 +51,11 @@ final class MigrateUpCommand
         }
 
         if ($fresh) {
-            return $this->console->call(MigrateFreshCommand::class, ['validate' => false, 'fresh' => false]);
+            return $this->console->call(MigrateFreshCommand::class, ['validate' => false, 'database' => $database]);
         }
 
         $this->console->header('Migrating');
-        $this->migrationManager->up();
+        $this->migrationManager->onDatabase($database)->up();
 
         if ($this->count === 0) {
             $this->console->info('There is no new migration to run.');

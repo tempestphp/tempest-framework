@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database\QueryStatements;
 use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\Exceptions\InvalidValue;
@@ -120,7 +121,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class);
 
-        if ($this->container->get(DatabaseDialect::class) === DatabaseDialect::POSTGRESQL) {
+        if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
             $enumTypeMigration = new class() implements DatabaseMigration {
                 public string $name = '0';
 

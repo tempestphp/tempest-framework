@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
+use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
