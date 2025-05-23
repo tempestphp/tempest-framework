@@ -19,6 +19,8 @@ trait CanExecuteStatement
             return null;
         }
 
-        return new Query($sql)->onDatabase($onDatabase)->execute();
+        return new Query($sql)
+            ->onDatabase($onDatabase)
+            ->execute();
     }
 }
