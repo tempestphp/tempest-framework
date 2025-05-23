@@ -7,7 +7,7 @@ use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
-use Tempest\KeyValue\Redis\Config\PhpRedisConfig;
+use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\Support\Arr\ArrayInterface;
 
 use function Tempest\Support\Arr\is_associative;
@@ -16,7 +16,7 @@ final readonly class PhpRedisClient implements Redis
 {
     public function __construct(
         private \Redis $client,
-        private PhpRedisConfig $config,
+        private RedisConfig $config,
         private ?EventBus $eventBus = null,
     ) {}
 

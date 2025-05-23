@@ -2,6 +2,9 @@
 
 namespace Tempest\KeyValue\Redis\Config;
 
+/**
+ * Represents the connection scheme used to connect to Redis (predis only).
+ */
 enum Scheme: string
 {
     /**

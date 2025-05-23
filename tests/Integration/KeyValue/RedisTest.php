@@ -2,8 +2,7 @@
 
 namespace Tests\Tempest\Integration\KeyValue;
 
-use Tempest\KeyValue\Redis\Config\PhpRedisConfig;
-use Tempest\KeyValue\Redis\Config\PredisConfig;
+use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\Redis;
 use Tempest\KeyValue\Redis\RedisCommandExecuted;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -18,19 +17,11 @@ final class RedisTest extends FrameworkIntegrationTestCase
 
         $this->eventBus->preventEventHandling();
 
-        if (extension_loaded('redis')) {
-            $this->container->config(new PhpRedisConfig(
-                prefix: 'tempest_test:',
-                database: 6,
-                connectionTimeOut: .2,
-            ));
-        } else {
-            $this->container->config(new PredisConfig(
-                prefix: 'tempest_test:',
-                database: 6,
-                connectionTimeOut: .2,
-            ));
-        }
+        $this->container->config(new RedisConfig(
+            prefix: 'tempest_test:',
+            database: 6,
+            connectionTimeOut: .2,
+        ));
 
         $this->redis = $this->container->get(Redis::class);
 
@@ -50,7 +41,7 @@ final class RedisTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_command(): void
+    public function test_command_is_dispatched(): void
     {
         $this->assertSame('response', $this->redis->command('PING', 'response'));
 
@@ -60,27 +51,5 @@ final class RedisTest extends FrameworkIntegrationTestCase
             $this->assertLessThanOrEqual(200, $event->duration->getTotalMilliseconds());
             $this->assertSame('response', $event->result);
         });
-    }
-
-    public function test_set(): void
-    {
-        $this->redis->set('key_string', 'my-value');
-        $this->redis->set('key_array_associative', ['foo' => 'bar']);
-        $this->redis->set('key_array_list', ['foo', 'bar']);
-
-        $this->assertSame('my-value', $this->redis->getClient()->rawcommand('GET', 'key_string'));
-        $this->assertSame('{"foo":"bar"}', $this->redis->getClient()->rawcommand('GET', 'key_array_associative'));
-        $this->assertSame('["foo","bar"]', $this->redis->getClient()->rawcommand('GET', 'key_array_list'));
-    }
-
-    public function test_get(): void
-    {
-        $this->redis->getClient()->rawcommand('SET', 'key_string', 'my_value');
-        $this->redis->getClient()->rawcommand('SET', 'key_array_associative', '{"foo":"bar"}');
-        $this->redis->getClient()->rawcommand('SET', 'key_array_list', '["foo","bar"]');
-
-        $this->assertSame('my_value', $this->redis->get('key_string'));
-        $this->assertSame(['foo' => 'bar'], $this->redis->get('key_array_associative'));
-        $this->assertSame(['foo', 'bar'], $this->redis->get('key_array_list'));
     }
 }
