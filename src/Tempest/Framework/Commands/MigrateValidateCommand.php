@@ -31,9 +31,8 @@ final class MigrateValidateCommand
     )]
     public function __invoke(
         #[ConsoleArgument(description: 'Use a specific database.')]
-        ?string $database = null
-    ): ExitCode
-    {
+        ?string $database = null,
+    ): ExitCode {
         $this->console->header('Validating migration files');
         $this->migrationManager->onDatabase($database)->validate();
 
