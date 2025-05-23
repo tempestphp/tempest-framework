@@ -18,12 +18,12 @@ final class MigrationForBackup implements DatabaseMigration, ShouldMigrate
         return $database->tag === 'backup';
     }
 
-    public function up(): ?QueryStatement
+    public function up(): QueryStatement
     {
         return new CreateTableStatement('backup_table')->primary();
     }
 
-    public function down(): ?QueryStatement
+    public function down(): QueryStatement
     {
         return new DropTableStatement('backup_table');
     }

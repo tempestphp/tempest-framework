@@ -18,12 +18,12 @@ final class MigrationForMain implements DatabaseMigration, ShouldMigrate
         return $database->tag === 'main';
     }
 
-    public function up(): ?QueryStatement
+    public function up(): QueryStatement
     {
         return new CreateTableStatement('main_table')->primary();
     }
 
-    public function down(): ?QueryStatement
+    public function down(): QueryStatement
     {
         return new DropTableStatement('main_table');
     }

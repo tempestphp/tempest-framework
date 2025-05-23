@@ -7,7 +7,6 @@ namespace Tempest\Database\Migrations;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\ShouldMigrate;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -22,6 +21,7 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
+use Tempest\Database\ShouldMigrate;
 use Throwable;
 
 use function Tempest\Database\query;
