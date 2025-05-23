@@ -18,8 +18,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
 use function Tempest\Database\query;
-use function Tempest\Support\Filesystem\create_file;
-use function Tempest\Support\Filesystem\delete;
 
 /**
  * @property \Tempest\Console\Testing\ConsoleTester $console
@@ -30,11 +28,18 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        delete(__DIR__ . '/Fixtures/main.sqlite');
-        create_file(__DIR__ . '/Fixtures/main.sqlite');
+        $files = [
+            __DIR__ . '/Fixtures/main.sqlite',
+            __DIR__ . '/Fixtures/backup.sqlite',
+        ];
 
-        delete(__DIR__ . '/Fixtures/backup.sqlite');
-        create_file(__DIR__ . '/Fixtures/backup.sqlite');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+
+            touch($file);
+        }
 
         $this->container->removeInitializer(TestingDatabaseInitializer::class);
         $this->container->addInitializer(DatabaseInitializer::class);
