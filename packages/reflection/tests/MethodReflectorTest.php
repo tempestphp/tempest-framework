@@ -13,11 +13,15 @@ final class MethodReflectorTest extends TestCase
     {
         $this->assertInstanceOf(
             ParameterReflector::class,
-            new ClassReflector(TestClassA::class)->getMethod('method')->getParameter('enum'),
+            new ClassReflector(TestClassA::class)
+                ->getMethod('method')
+                ->getParameter('enum'),
         );
 
         $this->assertNull(
-            new ClassReflector(TestClassA::class)->getMethod('method')->getParameter('unknown'),
+            new ClassReflector(TestClassA::class)
+                ->getMethod('method')
+                ->getParameter('unknown'),
         );
     }
 }
