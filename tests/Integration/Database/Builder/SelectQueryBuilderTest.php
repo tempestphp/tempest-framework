@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Database;
+use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Query;
-use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -34,18 +37,18 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT `title`, `index`
-        FROM `chapters`
-        WHERE `title` = ?
-        AND `index` <> ?
-        OR `createdAt` > ?
-        ORDER BY `index` ASC
+        SELECT title, index
+        FROM chapters
+        WHERE title = ?
+        AND index <> ?
+        OR createdAt > ?
+        ORDER BY index ASC
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
@@ -53,34 +56,35 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')->select()->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT *
         FROM `chapters`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_select_from_model(): void
     {
         $query = query(Author::class)->select()->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT `authors`.`name` AS `authors.name`, `authors`.`type` AS `authors.type`, `authors`.`id` AS `authors.id`
+        SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id`
         FROM `authors`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_where_statement(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -95,10 +99,34 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('B', $book->title);
     }
 
+    public function test_join(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::new(name: 'Brent')->save();
+        Book::new(title: 'A', author: $author)->save();
+
+        $query = query('books')->select('books.title AS book_title', 'authors.name')->join('authors on authors.id = books.author_id');
+
+        $this->assertSame(
+            [
+                'book_title' => 'A',
+                'name' => 'Brent',
+            ],
+            $query->first(),
+        );
+    }
+
     public function test_order_by(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -117,6 +145,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -137,6 +166,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -160,6 +190,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -176,7 +207,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::select()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->where("title <> 'A'")->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);
@@ -186,6 +217,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -220,7 +252,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT `title`, `index`
+        SELECT title, index
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?
@@ -228,16 +260,16 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         ORDER BY `index` ASC
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
     public function test_select_first_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent'],
@@ -249,12 +281,12 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereField('id', 2)
             ->first();
 
-        $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null], $author);
+        $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], $author);
     }
 
     public function test_select_all_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent', 'type' => AuthorType::B],
@@ -268,8 +300,119 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->all();
 
         $this->assertSame(
-            [['id' => 2, 'name' => 'Other', 'type' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a']],
+            [['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a', 'publisher_id' => null]],
             $authors,
         );
+    }
+
+    public function test_select_includes_belongs_to(): void
+    {
+        $query = query(Book::class)->select();
+
+        $this->assertSameWithoutBackticks(<<<SQL
+        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`
+        FROM `books`
+        SQL, $query->build()->toSql());
+    }
+
+    public function test_with_belongs_to_relation(): void
+    {
+        $query = query(Book::class)
+            ->select()
+            ->with('author', 'chapters', 'isbn')
+            ->build();
+
+        $this->assertSameWithoutBackticks(<<<SQL
+        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, authors.id AS `author.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id`, isbns.id AS `isbn.id`
+        FROM `books`
+        LEFT JOIN authors ON authors.id = books.author_id
+        LEFT JOIN chapters ON chapters.book_id = books.id
+        LEFT JOIN isbns ON isbns.book_id = books.id
+        SQL, $query->toSql());
+    }
+
+    public function test_select_query_execute_with_relations(): void
+    {
+        $this->seed();
+
+        $books = query(Book::class)
+            ->select()
+            ->with('author', 'chapters', 'isbn')
+            ->all();
+
+        $this->assertCount(4, $books);
+        $this->assertSame('LOTR 1', $books[0]->title);
+        $this->assertSame('LOTR 2', $books[1]->title);
+        $this->assertSame('LOTR 3', $books[2]->title);
+        $this->assertSame('Timeline Taxi', $books[3]->title);
+
+        $book = $books[0];
+        $this->assertSame('Tolkien', $book->author->name);
+        $this->assertCount(3, $book->chapters);
+
+        $this->assertSame('LOTR 1.1', $book->chapters[0]->title);
+        $this->assertSame('LOTR 1.2', $book->chapters[1]->title);
+        $this->assertSame('LOTR 1.3', $book->chapters[2]->title);
+
+        $this->assertSame('lotr-1', $book->isbn->value);
+    }
+
+    public function test_eager_loads_combined_with_manual_loads(): void
+    {
+        $query = AWithEager::select()->with('b.c')->toSql();
+
+        $this->assertSameWithoutBackticks(<<<SQL
+        SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id`
+        FROM `a`
+        LEFT JOIN b ON b.id = a.b_id
+        LEFT JOIN c ON c.id = b.c_id
+        SQL, $query);
+    }
+
+    private function seed(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+            CreateIsbnTable::class,
+        );
+
+        query('authors')->insert(
+            ['name' => 'Brent'],
+            ['name' => 'Tolkien'],
+        )->execute();
+
+        query('books')->insert(
+            ['title' => 'LOTR 1', 'author_id' => 2],
+            ['title' => 'LOTR 2', 'author_id' => 2],
+            ['title' => 'LOTR 3', 'author_id' => 2],
+            ['title' => 'Timeline Taxi', 'author_id' => 1],
+        )->execute();
+
+        query('isbns')->insert(
+            ['value' => 'lotr-1', 'book_id' => 1],
+            ['value' => 'lotr-2', 'book_id' => 2],
+            ['value' => 'lotr-3', 'book_id' => 3],
+            ['value' => 'tt', 'book_id' => 4],
+        )->execute();
+
+        query('chapters')->insert(
+            ['title' => 'LOTR 1.1', 'book_id' => 1],
+            ['title' => 'LOTR 1.2', 'book_id' => 1],
+            ['title' => 'LOTR 1.3', 'book_id' => 1],
+            ['title' => 'LOTR 2.1', 'book_id' => 2],
+            ['title' => 'LOTR 2.2', 'book_id' => 2],
+            ['title' => 'LOTR 2.3', 'book_id' => 2],
+            ['title' => 'LOTR 3.1', 'book_id' => 3],
+            ['title' => 'LOTR 3.2', 'book_id' => 3],
+            ['title' => 'LOTR 3.3', 'book_id' => 3],
+            ['title' => 'Timeline Taxi Chapter 1', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 2', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 3', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 4', 'book_id' => 4],
+        )->execute();
     }
 }

@@ -6,35 +6,38 @@ use Tempest\Core\AppConfig;
 use Tempest\Http\HttpException;
 use Tempest\Http\Response;
 use Tempest\Router\ResponseProcessor;
+use Tempest\Router\RouteConfig;
 
 final readonly class HttpErrorResponseProcessor implements ResponseProcessor
 {
     public function __construct(
         private AppConfig $appConfig,
+        private RouteConfig $routeConfig,
     ) {}
 
     public function process(Response $response): Response
     {
-        // Throwing an HttpException during tests would make testing more
-        // complex, and is not strictly needed. During development, we
-        // don't need exceptions either, since the exception handler
-        // is different. For this reason, we skip processing here.
-        if (! $this->appConfig->environment->isProduction()) {
+        // If the response is not a server or client error, we don't need to
+        // handle it. In this case, we simply return back the response.
+        if (! $response->status->isServerError() && ! $response->status->isClientError()) {
             return $response;
         }
 
-        // Don't handle responses that already have a body. This is to avoid
-        // interferring with error responses voluntarily thrown in userland.
+        // If the response already has a body, it means it is most likely
+        // meant to be returned as-is, so we don't have to throw an exception.
         if ($response->body) {
             return $response;
         }
 
-        // We throw an exception on server and client errors,
-        // which is handled in the HTTP exception handler.
-        if ($response->status->isServerError() || $response->status->isClientError()) {
-            throw new HttpException(status: $response->status, response: $response);
+        // During tests, the router is generally configured to not throw HTTP exceptions in order
+        // to perform assertions on the responses. In this case, we return the response as is.
+        if (! $this->routeConfig->throwHttpExceptions) {
+            return $response;
         }
 
-        return $response;
+        throw new HttpException(
+            status: $response->status,
+            cause: $response,
+        );
     }
 }

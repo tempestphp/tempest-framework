@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -17,7 +18,7 @@ final class QueryTest extends FrameworkIntegrationTestCase
 {
     public function test_with_bindings(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         new Author(name: 'A')->save();
         new Author(name: 'B')->save();

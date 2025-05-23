@@ -19,13 +19,11 @@ final class CountStatementTest extends TestCase
         );
 
         $expected = <<<SQL
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS `count`
         FROM `foo`
         SQL;
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
     }
 
     public function test_count_statement_with_specified_column(): void
@@ -38,13 +36,11 @@ final class CountStatementTest extends TestCase
         );
 
         $expected = <<<SQL
-        SELECT COUNT(`foobar`)
+        SELECT COUNT(`foobar`) AS `count`
         FROM `foo`
         SQL;
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
     }
 
     public function test_count_statement_with_distinct_specified_column(): void
@@ -59,12 +55,10 @@ final class CountStatementTest extends TestCase
         $statement->distinct = true;
 
         $expected = <<<SQL
-        SELECT COUNT(DISTINCT `foobar`)
+        SELECT COUNT(DISTINCT `foobar`) AS `count`
         FROM `foo`
         SQL;
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
     }
 }

@@ -9,10 +9,13 @@ use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\Permission;
 use Tempest\Auth\Install\User;
+use Tempest\Auth\Install\UserPermission;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal

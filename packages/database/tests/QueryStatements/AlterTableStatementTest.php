@@ -22,15 +22,12 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_for_only_indexes(DatabaseDialect $dialect): void
     {
-        $expected = 'CREATE INDEX `table_foo` ON `table` (`foo`); CREATE UNIQUE INDEX `table_bar` ON `table` (`bar`);';
-        $statement = new AlterTableStatement('table')
+        $alterStatement = new AlterTableStatement('table')
             ->index('foo')
-            ->unique('bar')
-            ->compile($dialect);
+            ->unique('bar');
 
-        $normalized = self::removeDuplicateWhitespace($statement);
-
-        $this->assertEqualsIgnoringCase($expected, $normalized);
+        $this->assertEqualsIgnoringCase('CREATE INDEX `table_foo` ON `table` (`foo`)', $alterStatement->trailingStatements[0]->compile($dialect));
+        $this->assertEqualsIgnoringCase('CREATE UNIQUE INDEX `table_bar` ON `table` (`bar`)', $alterStatement->trailingStatements[1]->compile($dialect));
     }
 
     #[TestWith([DatabaseDialect::MYSQL])]
@@ -38,7 +35,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_add_column(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` ADD `bar` VARCHAR(42) DEFAULT "xx" ;';
+        $expected = 'ALTER TABLE `table` ADD `bar` VARCHAR(42) DEFAULT \'xx\' ;';
         $statement = new AlterTableStatement('table')
             ->add(new VarcharStatement('bar', 42, true, 'xx'))
             ->compile($dialect);
@@ -49,10 +46,22 @@ final class AlterTableStatementTest extends TestCase
     }
 
     #[TestWith([DatabaseDialect::MYSQL])]
-    #[TestWith([DatabaseDialect::POSTGRESQL])]
-    public function test_alter_add_belongs_to(DatabaseDialect $dialect): void
+    public function test_alter_add_belongs_to_mysql(DatabaseDialect $dialect): void
     {
         $expected = 'ALTER TABLE `table` ADD CONSTRAINT `fk_parent_table_foo` FOREIGN KEY table(foo) REFERENCES parent(bar) ON DELETE RESTRICT ON UPDATE NO ACTION ;';
+        $statement = new AlterTableStatement('table')
+            ->add(new BelongsToStatement('table.foo', 'parent.bar'))
+            ->compile($dialect);
+
+        $normalized = self::removeDuplicateWhitespace($statement);
+
+        $this->assertEqualsIgnoringCase($expected, $normalized);
+    }
+
+    #[TestWith([DatabaseDialect::POSTGRESQL])]
+    public function test_alter_add_belongs_to_postgresql(DatabaseDialect $dialect): void
+    {
+        $expected = 'ALTER TABLE `table` ADD CONSTRAINT `fk_parent_table_foo` FOREIGN KEY(foo) REFERENCES parent(bar) ON DELETE RESTRICT ON UPDATE NO ACTION ;';
         $statement = new AlterTableStatement('table')
             ->add(new BelongsToStatement('table.foo', 'parent.bar'))
             ->compile($dialect);
@@ -109,12 +118,12 @@ final class AlterTableStatementTest extends TestCase
             ->compile($dialect);
     }
 
-    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
     #[TestWith([
         DatabaseDialect::POSTGRESQL,
-        'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;',
+        'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;',
     ])]
-    #[TestWith([DatabaseDialect::SQLITE, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::SQLITE, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
     public function test_alter_table_add_column(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
@@ -141,8 +150,8 @@ final class AlterTableStatementTest extends TestCase
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
 
-    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
-    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
     public function test_alter_table_modify_column(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')

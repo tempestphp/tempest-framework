@@ -5,6 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
@@ -18,7 +19,7 @@ use function Tempest\Support\arr;
 
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions;
+    use HasConditions, OnDatabase;
 
     private UpdateStatement $update;
 
@@ -34,7 +35,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         );
     }
 
-    public function execute(mixed ...$bindings): Id
+    public function execute(mixed ...$bindings): ?Id
     {
         return $this->build()->execute(...$bindings);
     }
@@ -62,6 +63,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();
@@ -82,7 +88,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             $bindings[] = $binding;
         }
 
-        return new Query($this->update, $bindings);
+        return new Query($this->update, $bindings)->onDatabase($this->onDatabase);
     }
 
     private function resolveValues(): ImmutableArray
@@ -100,11 +106,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
-            if ($modelDefinition->isHasManyRelation($property->getName())) {
+            if ($modelDefinition->getHasMany($property->getName())) {
                 throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
             }
 
-            if ($modelDefinition->isHasOneRelation($property->getName())) {
+            if ($modelDefinition->getHasOne($property->getName())) {
                 throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
             }
 

@@ -13,7 +13,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 
 final class CreateChapterTable implements DatabaseMigration
 {
-    private(set) string $name = '0000-00-00_create_chapters_table';
+    private(set) string $name = '0000-00-03_create_chapters_table';
 
     public function up(): QueryStatement
     {

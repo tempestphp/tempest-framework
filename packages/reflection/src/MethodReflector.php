@@ -33,6 +33,17 @@ final readonly class MethodReflector implements Reflector
         }
     }
 
+    public function getParameter(string $name): ?ParameterReflector
+    {
+        foreach ($this->getParameters() as $parameter) {
+            if ($parameter->getName() === $name) {
+                return $parameter;
+            }
+        }
+
+        return null;
+    }
+
     public function invokeArgs(?object $object, array $args = []): mixed
     {
         return $this->reflectionMethod->invokeArgs($object, $args);

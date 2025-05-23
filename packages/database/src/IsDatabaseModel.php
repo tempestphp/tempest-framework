@@ -72,10 +72,14 @@ trait IsDatabaseModel
 
         $model = self::new(...$params);
 
-        $model->id = query(self::class)
+        $id = query(self::class)
             ->insert($model)
             ->build()
             ->execute();
+
+        if ($id !== null) {
+            $model->id = new Id($id);
+        }
 
         return $model;
     }
@@ -120,7 +124,7 @@ trait IsDatabaseModel
 
         $type = $property->getType();
 
-        if ($type->isIterable()) {
+        if ($type->isRelation()) {
             throw new MissingRelation($this, $name);
         }
 

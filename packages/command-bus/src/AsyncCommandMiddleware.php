@@ -7,6 +7,7 @@ namespace Tempest\CommandBus;
 use Symfony\Component\Uid\Uuid;
 use Tempest\Core\Priority;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Random;
 
 #[Priority(Priority::FRAMEWORK)]
 final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
@@ -20,7 +21,7 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
         $reflector = new ClassReflector($command);
 
         if ($reflector->hasAttribute(AsyncCommand::class)) {
-            $this->repository->store(Uuid::v7()->toString(), $command);
+            $this->repository->store(Random\uuid(), $command);
 
             return;
         }

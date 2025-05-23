@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest {
     use Closure;
-    use ReflectionException;
-    use RuntimeException;
     use Stringable;
-    use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
-    use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
-    use Tempest\Container\Exceptions\CircularDependencyException;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
+    use Tempest\Core\ExceptionReporter;
     use Tempest\Core\Kernel;
     use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
-    use Tempest\Support\Regex\InvalidPatternException;
+    use Throwable;
 
     use function Tempest\Support\Namespace\to_psr4_namespace;
     use function Tempest\Support\Path\to_absolute_path;
@@ -40,7 +36,7 @@ namespace Tempest {
      */
     function internal_storage_path(Stringable|string ...$parts): string
     {
-        return root_path(get(Kernel::class)->internalStorage, ...$parts);
+        return to_absolute_path(get(Kernel::class)->internalStorage, ...$parts);
     }
 
     /**
@@ -88,5 +84,13 @@ namespace Tempest {
     function defer(Closure $closure): void
     {
         get(DeferredTasks::class)->add($closure);
+    }
+
+    /**
+     * Passes the given exception through registered exception processors.
+     */
+    function report(Throwable $throwable): void
+    {
+        get(ExceptionReporter::class)->report($throwable);
     }
 }

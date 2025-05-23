@@ -8,16 +8,20 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
+    use HasConditions, OnDatabase;
+
     private InsertStatement $insert;
 
     private array $after = [];
@@ -45,17 +49,22 @@ final class InsertQueryBuilder implements BuildsQuery
         return $id;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $definition = model($this->model);
 
         foreach ($this->resolveData() as $data) {
             foreach ($data as $key => $value) {
-                if ($definition->isHasManyRelation($key)) {
+                if ($definition->getHasMany($key)) {
                     throw new CannotInsertHasManyRelation($definition->getName(), $key);
                 }
 
-                if ($definition->isHasOneRelation($key)) {
+                if ($definition->getHasOne($key)) {
                     throw new CannotInsertHasOneRelation($definition->getName(), $key);
                 }
 
@@ -65,10 +74,7 @@ final class InsertQueryBuilder implements BuildsQuery
             $this->insert->addEntry($data);
         }
 
-        return new Query(
-            $this->insert,
-            $bindings,
-        );
+        return new Query($this->insert, $bindings)->onDatabase($this->onDatabase);
     }
 
     public function then(Closure ...$callbacks): self
@@ -104,7 +110,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 }
 
                 // HasMany and HasOne relations are skipped
-                if ($definition->isHasManyRelation($property->getName()) || $definition->isHasOneRelation($property->getName())) {
+                if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
                     continue;
                 }
 

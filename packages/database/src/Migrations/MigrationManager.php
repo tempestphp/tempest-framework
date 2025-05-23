@@ -5,39 +5,53 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDOException;
+use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
+use Tempest\Database\HasLeadingStatements;
+use Tempest\Database\HasTrailingStatements;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
+use Tempest\Database\ShouldMigrate;
 use Throwable;
-use UnhandledMatchError;
 
+use function Tempest\Database\query;
 use function Tempest\event;
 
-final readonly class MigrationManager
+final class MigrationManager
 {
+    use OnDatabase;
+
+    private Database $database {
+        get => $this->container->get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseDialect $dialect {
+        get => $this->database->dialect;
+    }
+
     public function __construct(
-        private DatabaseConfig $databaseConfig,
-        private Database $database,
-        private RunnableMigrations $migrations,
+        private readonly RunnableMigrations $migrations,
+        private readonly Container $container,
     ) {}
 
     public function up(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
         } catch (PDOException $pdoException) {
-            if ($pdoException->getCode() === $this->databaseConfig->dialect->tableNotFoundCode() && str_contains($pdoException->getMessage(), 'table')) {
+            if ($this->dialect->isTableNotFoundError($pdoException)) {
                 $this->executeUp(new CreateMigrationsTable());
-                $existingMigrations = Migration::all();
+                $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
             } else {
                 throw $pdoException;
             }
@@ -60,15 +74,16 @@ final readonly class MigrationManager
     public function down(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
         } catch (PDOException $pdoException) {
-            /** @throw UnhandledMatchError */
-            match ((string) $pdoException->getCode()) {
-                $this->databaseConfig->dialect->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableDefinition()->name, exception: new TableNotFoundException()),
-                ),
-                default => throw new UnhandledMatchError($pdoException->getMessage()),
-            };
+            if (! $this->dialect->isTableNotFoundError($pdoException)) {
+                throw $pdoException;
+            }
+
+            event(new MigrationFailed(
+                name: new ModelDefinition(Migration::class)->getTableDefinition()->name,
+                exception: new TableNotFoundException(),
+            ));
 
             return;
         }
@@ -90,18 +105,16 @@ final readonly class MigrationManager
 
     public function dropAll(): void
     {
-        $dialect = $this->databaseConfig->dialect;
-
         try {
             // Get all tables
-            $tables = $this->getTableDefinitions($dialect);
+            $tables = $this->getTableDefinitions();
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: false)->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect, $this->onDatabase);
 
             // Drop each table
             foreach ($tables as $table) {
-                new DropTableStatement($table->name)->execute($dialect);
+                new DropTableStatement($table->name)->execute($this->dialect, $this->onDatabase);
 
                 event(new TableDropped($table->name));
             }
@@ -109,14 +122,16 @@ final readonly class MigrationManager
             event(new FreshMigrationFailed($throwable));
         } finally {
             // Enable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
         }
     }
 
     public function rehashAll(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()
+                ->onDatabase($this->onDatabase)
+                ->all();
         } catch (PDOException) {
             return;
         }
@@ -147,7 +162,7 @@ final readonly class MigrationManager
     public function validate(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
         } catch (PDOException) {
             return;
         }
@@ -174,22 +189,47 @@ final readonly class MigrationManager
 
     public function executeUp(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->up();
 
         if ($statement === null) {
             return;
         }
 
-        $dialect = $this->databaseConfig->dialect;
+        if ($statement instanceof CompoundStatement) {
+            $statements = $statement->statements;
+        } else {
+            $statements = [$statement];
+        }
 
-        $query = new Query($statement->compile($dialect));
+        if ($statement instanceof HasLeadingStatements) {
+            $statements = [...$statement->leadingStatements, ...$statements];
+        }
+
+        if ($statement instanceof HasTrailingStatements) {
+            $statements = [...$statements, ...$statement->trailingStatements];
+        }
 
         try {
-            $this->database->execute($query);
+            foreach ($statements as $statement) {
+                $sql = $statement->compile($this->dialect);
 
-            Migration::create(
-                name: $migration->name,
-                hash: $this->getMigrationHash($migration),
+                if (! trim($sql)) {
+                    continue;
+                }
+
+                $query = new Query($sql);
+                $this->database->execute($query);
+            }
+
+            $this->database->execute(
+                query(Migration::class)->insert(
+                    name: $migration->name,
+                    hash: $this->getMigrationHash($migration),
+                ),
             );
         } catch (PDOException $pdoException) {
             event(new MigrationFailed($migration->name, $pdoException));
@@ -202,29 +242,31 @@ final readonly class MigrationManager
 
     public function executeDown(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->down();
 
         if ($statement === null) {
             return;
         }
 
-        $dialect = $this->databaseConfig->dialect;
-
-        $query = new Query($statement->compile($dialect));
+        $query = new Query($statement->compile($this->dialect));
 
         try {
             // TODO: don't just disable FK checking when executing down
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: false)->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($this->dialect, $this->onDatabase);
 
             $this->database->execute($query);
 
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
         } catch (PDOException $pdoException) {
             // Disable foreign key checks
-            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
 
             event(new MigrationFailed($migration->name, $pdoException));
 
@@ -253,14 +295,15 @@ final readonly class MigrationManager
     /**
      * @return \Tempest\Database\Migrations\TableMigrationDefinition[]
      */
-    private function getTableDefinitions(DatabaseDialect $dialect): array
+    private function getTableDefinitions(): array
     {
         return array_map(
-            fn (array $item) => match ($dialect) {
+            fn (array $item) => match ($this->dialect) {
                 DatabaseDialect::SQLITE => new TableMigrationDefinition($item['name']),
-                default => new TableMigrationDefinition(array_values($item)[0]),
+                DatabaseDialect::POSTGRESQL => new TableMigrationDefinition($item['table_name']),
+                DatabaseDialect::MYSQL => new TableMigrationDefinition(array_values($item)[0]),
             },
-            new ShowTablesStatement()->fetch($dialect),
+            new ShowTablesStatement()->fetch($this->dialect),
         );
     }
 
@@ -278,10 +321,10 @@ final readonly class MigrationManager
             return '';
         }
 
-        $query = new Query($statement->compile($this->databaseConfig->dialect));
+        $query = new Query($statement->compile($this->dialect));
 
         // Remove comments
-        $sql = preg_replace('/--.*$/m', '', $query->getSql()); // Remove SQL single-line comments
+        $sql = preg_replace('/--.*$/m', '', $query->toSql()); // Remove SQL single-line comments
         $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
 
         // Remove blank lines and excessive spaces

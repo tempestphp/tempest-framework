@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use Exception;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use ReflectionException;
 use Tempest\Core\AppConfig;
-use Tempest\Core\Environment;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\HttpException;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Status;
-use Tempest\Reflection\MethodReflector;
 use Tempest\Router\GenericRouter;
-use Tempest\Router\Get;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
-use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
@@ -28,6 +24,7 @@ use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -132,6 +129,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -283,37 +281,47 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_error_response_processor_throws_http_exceptions_in_production(): void
+    public function test_error_response_processor_throws_http_exceptions_when_instructed(): void
     {
         $this->expectException(HttpException::class);
+        $this->expectExceptionCode(404);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
-        $this->http->get('/non-existent');
+        $this->http
+            ->throwExceptions()
+            ->get('/non-existent');
     }
 
     public function test_error_response_processor_throws_http_exceptions_if_there_is_a_body(): void
     {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('oops');
+
+        $this->registerRoute([Http500Controller::class, 'throwsException']);
+
+        $this->http
+            ->throwExceptions()
+            ->get('/throws-exception');
+    }
+
+    public function test_throws_http_exception_when_returning_server_error(): void
+    {
         $this->expectException(HttpException::class);
+        $this->expectExceptionCode(500);
 
-        $this->container->get(RouteConfig::class)->staticRoutes['GET']['/returns-basic-500'] = DiscoveredRoute::fromRoute(
-            new Get('/returns-basic-500'),
-            MethodReflector::fromParts(Http500Controller::class, 'basic500'),
-        );
+        $this->registerRoute([Http500Controller::class, 'serverError']);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
-        $this->http->get('/returns-custom-500');
+        $this->http
+            ->throwExceptions()
+            ->get('/returns-server-error');
     }
 
     public function test_error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
     {
-        $this->container->get(RouteConfig::class)->staticRoutes['GET']['/returns-custom-500'] = DiscoveredRoute::fromRoute(
-            new Get('/returns-custom-500'),
-            MethodReflector::fromParts(Http500Controller::class, 'custom500'),
-        );
+        $this->registerRoute([Http500Controller::class, 'serverErrorWithBody']);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
         $this->http
-            ->get('/returns-custom-500')
-            ->assertStatus(Status::INTERNAL_SERVER_ERROR);
+            ->get('/returns-server-error-with-body')
+            ->assertStatus(Status::INTERNAL_SERVER_ERROR)
+            ->assertSee('custom error');
     }
 }

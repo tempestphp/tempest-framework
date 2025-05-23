@@ -20,6 +20,7 @@ namespace Tempest\Support\Math {
     use function cos as php_cos;
     use function count;
     use function exp as php_exp;
+    use function floor as php_floor;
     use function intdiv;
     use function log as php_log;
     use function round as php_round;
@@ -215,8 +216,6 @@ namespace Tempest\Support\Math {
     {
         return php_exp($number);
     }
-
-    use function floor as php_floor;
 
     /**
      * Return the largest integer value less then or equal to the given number.

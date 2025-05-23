@@ -41,7 +41,7 @@
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
-        "carthage-software/mago": "0.22.2",
+        "carthage-software/mago": "0.24.1",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "league/flysystem-aws-s3-v3": "^3.0",
@@ -152,6 +152,7 @@
             "packages/support/src/Math/constants.php",
             "packages/support/src/Math/functions.php",
             "packages/support/src/Namespace/functions.php",
+            "packages/support/src/Number/functions.php",
             "packages/support/src/Path/functions.php",
             "packages/support/src/Random/functions.php",
             "packages/support/src/Regex/functions.php",

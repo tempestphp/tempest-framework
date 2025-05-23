@@ -7,6 +7,7 @@ namespace Tempest\Clock;
 use Psr\Clock\ClockInterface;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
+use Tempest\DateTime\Timestamp;
 
 interface Clock
 {
@@ -21,14 +22,19 @@ interface Clock
     public function toPsrClock(): ClockInterface;
 
     /**
-     * Returns the current timestamp in seconds.
+     * Returns the current timestamp.
      */
-    public function timestamp(): int;
+    public function timestamp(): Timestamp;
+
+    /**
+     * Returns the current UNIX timestamp in seconds.
+     */
+    public function seconds(): int;
 
     /**
      * Returns the current timestamp in milliseconds.
      */
-    public function timestampMs(): int;
+    public function milliseconds(): int;
 
     /**
      * Sleeps for the given number of milliseconds.

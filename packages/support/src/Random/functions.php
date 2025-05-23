@@ -2,67 +2,112 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Random {
-    use InvalidArgumentException;
+namespace Tempest\Support\Random;
 
-    use function log;
+use DateTimeInterface as NativeDateTimeInterface;
+use InvalidArgumentException;
+use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
 
-    /**
-     * Returns a securely generated random string of the given length. The string is
-     * composed of characters from the given alphabet string.
-     *
-     * If the alphabet argument is not specified, the returned string will be composed of
-     * the alphanumeric characters.
-     *
-     * @param int<0, max> $length The length of the string to generate.
-     *
-     * @throws InvalidArgumentException If $alphabet length is outside the [2^1, 2^56] range.
-     */
-    function secure_string(int $length, ?string $alphabet = null): string
-    {
-        if ($length === 0) {
-            return '';
-        }
+use function log;
 
-        $alphabet ??= '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $alphabet_size = mb_strlen($alphabet);
-        $bits = (int) \ceil(log($alphabet_size, 2.0));
+/**
+ * Returns a securely generated random string of the given length. The string is
+ * composed of characters from the given alphabet string.
+ *
+ * If the alphabet argument is not specified, the returned string will be composed of
+ * the alphanumeric characters.
+ *
+ * @param int<0, max> $length The length of the string to generate.
+ *
+ * @throws InvalidArgumentException If $alphabet length is outside the [2^1, 2^56] range.
+ */
+function secure_string(int $length, ?string $alphabet = null): string
+{
+    if ($length === 0) {
+        return '';
+    }
 
-        if ($bits < 1 || $bits > 56) {
-            throw new InvalidArgumentException('$alphabet\'s length must be in [2^1, 2^56]');
-        }
+    $alphabet ??= '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $alphabet_size = mb_strlen($alphabet);
+    $bits = (int) \ceil(log($alphabet_size, 2.0));
 
-        $ret = '';
-        while ($length > 0) {
-            /** @var int<0, max> $urandom_length */
-            $urandom_length = (int) ceil(((float) (2 * $length * $bits)) / 8.0);
-            $data = random_bytes($urandom_length);
+    if ($bits < 1 || $bits > 56) {
+        throw new InvalidArgumentException('$alphabet\'s length must be in [2^1, 2^56]');
+    }
 
-            $unpacked_data = 0;
-            $unpacked_bits = 0;
-            for ($i = 0; $i < $urandom_length && $length > 0; ++$i) {
-                // Unpack 8 bits
-                /** @var array<int, int> $v */
-                $v = unpack('C', $data[$i]);
-                $unpacked_data = ($unpacked_data << 8) | $v[1];
-                $unpacked_bits += 8;
+    $ret = '';
+    while ($length > 0) {
+        /** @var int<0, max> $urandom_length */
+        $urandom_length = (int) ceil(((float) (2 * $length * $bits)) / 8.0);
+        $data = random_bytes($urandom_length);
 
-                // While we have enough bits to select a character from the alphabet, keep
-                // consuming the random data
-                for (; $unpacked_bits >= $bits && $length > 0; $unpacked_bits -= $bits) {
-                    $index = $unpacked_data & ((1 << $bits) - 1);
-                    $unpacked_data >>= $bits;
-                    // Unfortunately, the alphabet size is not necessarily a power of two.
-                    // Worst case, it is 2^k + 1, which means we need (k+1) bits and we
-                    // have around a 50% chance of missing as k gets larger
-                    if ($index < $alphabet_size) {
-                        $ret .= $alphabet[$index];
-                        --$length;
-                    }
+        $unpacked_data = 0;
+        $unpacked_bits = 0;
+        for ($i = 0; $i < $urandom_length && $length > 0; ++$i) {
+            // Unpack 8 bits
+            /** @var array<int, int> $v */
+            $v = unpack('C', $data[$i]);
+            $unpacked_data = ($unpacked_data << 8) | $v[1];
+            $unpacked_bits += 8;
+
+            // While we have enough bits to select a character from the alphabet, keep
+            // consuming the random data
+            for (; $unpacked_bits >= $bits && $length > 0; $unpacked_bits -= $bits) {
+                $index = $unpacked_data & ((1 << $bits) - 1);
+                $unpacked_data >>= $bits;
+                // Unfortunately, the alphabet size is not necessarily a power of two.
+                // Worst case, it is 2^k + 1, which means we need (k+1) bits and we
+                // have around a 50% chance of missing as k gets larger
+                if ($index < $alphabet_size) {
+                    $ret .= $alphabet[$index];
+                    --$length;
                 }
             }
         }
-
-        return $ret;
     }
+
+    return $ret;
+}
+
+/**
+ * Generates a UUID v7 (time-based) identifier.
+ */
+function uuid(): string
+{
+    return Uuid::v7()->toString();
+}
+
+/**
+ * Generates a 128-bit universally unique lexicographically sortable identifier.
+ */
+function ulid(null|DateTimeInterface|NativeDateTimeInterface $time = null): string
+{
+    return Ulid::generate($time ? DateTime::parse($time)->toNativeDateTime() : null);
+}
+
+/**
+ * Determines whether the specified string is a valid UUID.
+ */
+function is_uuid(?string $uuid): bool
+{
+    if ($uuid === null) {
+        return false;
+    }
+
+    return Uuid::isValid($uuid);
+}
+
+/**
+ * Determines whether the specified string is a valid ULID.
+ */
+function is_ulid(?string $ulid): bool
+{
+    if ($ulid === null) {
+        return false;
+    }
+
+    return Ulid::isValid($ulid);
 }

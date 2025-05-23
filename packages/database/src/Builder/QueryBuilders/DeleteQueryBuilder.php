@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
@@ -16,7 +17,7 @@ use function Tempest\Database\model;
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
-    use HasConditions;
+    use HasConditions, OnDatabase;
 
     private DeleteStatement $delete;
 
@@ -61,8 +62,13 @@ final class DeleteQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
-        return new Query($this->delete, [...$this->bindings, ...$bindings]);
+        return new Query($this->delete, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 }

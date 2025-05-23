@@ -26,6 +26,7 @@ final readonly class EnumStatement implements QueryStatement
     {
         $cases = arr($this->enumClass::cases())
             ->map(fn (UnitEnum|BackedEnum $case) => ($case instanceof BackedEnum) ? $case->value : $case->name)
+            ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
             ->map(fn (string $value) => "'{$value}'");
 
         if ($this->default !== null) {
@@ -49,10 +50,10 @@ final readonly class EnumStatement implements QueryStatement
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::POSTGRESQL => sprintf(
-                '`%s` %s %s %s',
+                '"%s" "%s" %s %s',
                 $this->name,
                 str($this->enumClass)->replace('\\\\', '_'),
-                $defaultValue !== null ? "DEFAULT (\"{$defaultValue}\")" : '',
+                $defaultValue !== null ? "DEFAULT ('{$defaultValue}')" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
         };

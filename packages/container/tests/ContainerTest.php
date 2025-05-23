@@ -33,6 +33,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\EnumTag;
 use Tempest\Container\Tests\Fixtures\HasTagObject;
 use Tempest\Container\Tests\Fixtures\ImplementsInterfaceA;
 use Tempest\Container\Tests\Fixtures\InjectA;
@@ -256,6 +257,26 @@ final class ContainerTest extends TestCase
 
         $this->assertSame('web', $container->get(TaggedDependency::class, 'web')->name);
         $this->assertSame('cli', $container->get(TaggedDependency::class, 'cli')->name);
+    }
+
+    public function test_tagged_singleton_with_enum(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('web'),
+            tag: EnumTag::FOO,
+        );
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('cli'),
+            tag: EnumTag::BAR,
+        );
+
+        $this->assertSame('web', $container->get(TaggedDependency::class, EnumTag::FOO)->name);
+        $this->assertSame('cli', $container->get(TaggedDependency::class, EnumTag::BAR)->name);
     }
 
     public function test_tagged_singleton_with_initializer(): void

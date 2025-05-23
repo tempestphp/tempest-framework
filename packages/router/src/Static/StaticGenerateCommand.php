@@ -18,6 +18,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Router\DataProvider;
+use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
@@ -44,6 +45,7 @@ final class StaticGenerateCommand
 
     public function __construct(
         private readonly AppConfig $appConfig,
+        private readonly RouteConfig $routeConfig,
         private readonly Console $console,
         private readonly Kernel $kernel,
         private readonly Container $container,
@@ -95,6 +97,8 @@ final class StaticGenerateCommand
                 default => $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-red'>FAILED</style>"),
             };
         });
+
+        $this->routeConfig->throwHttpExceptions = false;
 
         foreach ($this->staticPageConfig->staticPages as $staticPage) {
             /** @var DataProvider $dataProvider */

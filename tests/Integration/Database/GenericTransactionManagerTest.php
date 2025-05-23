@@ -8,8 +8,11 @@ use PDOException;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Transactions\TransactionManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal
@@ -18,7 +21,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 
@@ -34,7 +37,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_commit(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 
@@ -50,7 +53,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_commit_rollback(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 

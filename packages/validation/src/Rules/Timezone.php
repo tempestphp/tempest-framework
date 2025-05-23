@@ -20,7 +20,7 @@ final readonly class Timezone implements Rule
     {
         $timezones = timezone_identifiers_list($this->timezoneGroup, $this->countryCode);
 
-        return in_array($value, $timezones, true);
+        return in_array($value, $timezones, strict: true);
     }
 
     public function message(): string

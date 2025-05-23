@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Container\Container;
+use Tempest\Core\DeferredTasks;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tests\Tempest\Fixtures\Controllers\DeferController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -28,6 +29,7 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
         $this->container->invoke(FinishDeferredTasks::class);
 
         $this->assertTrue(DeferController::$executed);
+        $this->assertEmpty($this->container->get(DeferredTasks::class)->getTasks());
     }
 
     public function test_deferred_tasks_are_executed_with_container_parameters(): void
@@ -43,5 +45,6 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
         $this->container->invoke(FinishDeferredTasks::class);
 
         $this->assertTrue($executed);
+        $this->assertEmpty($this->container->get(DeferredTasks::class)->getTasks());
     }
 }

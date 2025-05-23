@@ -5,27 +5,37 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use DateTimeImmutable;
-use DateTimeInterface;
+use DateTimeInterface as NativeDateTimeInterface;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\Validation\Rule;
+use Throwable;
 
 #[Attribute]
 final readonly class BeforeDate implements Rule
 {
-    private DateTimeImmutable $date;
+    private DateTimeInterface $date;
 
     public function __construct(
-        DateTimeInterface|string $date = 'now',
+        DateTimeInterface|NativeDateTimeInterface|string $date = 'now',
         private bool $inclusive = false,
     ) {
-        $this->date = ($date instanceof DateTimeInterface)
-            ? DateTimeImmutable::createFromInterface($date)
-            : new DateTimeImmutable($date);
+        $this->date = DateTime::parse($date);
     }
 
     public function isValid(mixed $value): bool
     {
-        return ! new AfterDate($this->date, $this->inclusive)->isValid($value);
+        try {
+            $value = DateTime::parse($value);
+        } catch (Throwable) {
+            return false;
+        }
+
+        if ($this->inclusive) {
+            return $value->beforeOrAtTheSameTime($this->date);
+        }
+
+        return $value->before($this->date);
     }
 
     public function message(): string
@@ -36,7 +46,7 @@ final readonly class BeforeDate implements Rule
             $message[] = 'or equal to';
         }
 
-        $message[] = $this->date->format('Y-m-d H:i:s');
+        $message[] = $this->date->format();
 
         return implode(' ', $message);
     }

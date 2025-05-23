@@ -5,9 +5,11 @@ namespace Tempest\Router\Exceptions;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
+use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpException;
+use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
 use Tempest\View\GenericView;
@@ -20,15 +22,13 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         private Kernel $kernel,
         private ResponseSender $responseSender,
         private Container $container,
+        private ExceptionReporter $exceptionReporter,
     ) {}
 
     public function handle(Throwable $throwable): void
     {
         try {
-            foreach ($this->appConfig->exceptionProcessors as $processor) {
-                $handler = $this->container->get($processor);
-                $throwable = $handler->process($throwable);
-            }
+            $this->exceptionReporter->report($throwable);
 
             $response = match (true) {
                 $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
@@ -43,8 +43,12 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         }
     }
 
-    private function renderErrorResponse(Status $status, ?HttpException $exception = null): GenericResponse
+    private function renderErrorResponse(Status $status, ?HttpException $exception = null): Response
     {
+        if ($exception?->response) {
+            return $exception->response;
+        }
+
         return new GenericResponse(
             status: $status,
             body: new GenericView(__DIR__ . '/HttpErrorResponse/error.view.php', [
