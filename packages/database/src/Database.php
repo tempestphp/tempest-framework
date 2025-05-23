@@ -6,10 +6,15 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\BuildsQuery;
 use Tempest\Database\Config\DatabaseDialect;
+use UnitEnum;
 
 interface Database
 {
     public DatabaseDialect $dialect {
+        get;
+    }
+
+    public null|string|UnitEnum $tag {
         get;
     }
 

@@ -16,8 +16,6 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\EventBus\EventHandler;
 
-use function Tempest\get;
-
 #[Singleton]
 final class MigrateUpCommand
 {

@@ -21,6 +21,7 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
+use Tempest\Database\ShouldMigrate;
 use Throwable;
 
 use function Tempest\Database\query;
@@ -188,6 +189,10 @@ final class MigrationManager
 
     public function executeUp(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->up();
 
         if ($statement === null) {
@@ -237,6 +242,10 @@ final class MigrationManager
 
     public function executeDown(MigrationInterface $migration): void
     {
+        if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
+            return;
+        }
+
         $statement = $migration->down();
 
         if ($statement === null) {

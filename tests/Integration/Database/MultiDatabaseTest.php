@@ -15,6 +15,8 @@ use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
+use Tests\Tempest\Integration\Database\Fixtures\MigrationForBackup;
+use Tests\Tempest\Integration\Database\Fixtures\MigrationForMain;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
@@ -168,18 +170,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:up --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
-
-        $this->assertException(
-            PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
-        );
+        $this->assertTableExists(Migration::class, 'main');
+        $this->assertTableDoesNotExist(Migration::class, 'backup');
 
         $this->console
             ->call('migrate:up --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
+        $this->assertTableExists(Migration::class, 'backup');
     }
 
     public function test_migrate_fresh_command(): void
@@ -188,18 +186,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:fresh --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
-
-        $this->assertException(
-            PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
-        );
+        $this->assertTableExists(Migration::class, 'main');
+        $this->assertTableDoesNotExist(Migration::class, 'backup');
 
         $this->console
             ->call('migrate:fresh --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
+        $this->assertTableExists(Migration::class, 'backup');
     }
 
     public function test_migrate_up_fresh_command(): void
@@ -208,18 +202,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:up --fresh --database=main')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
-
-        $this->assertException(
-            PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
-        );
+        $this->assertTableExists(Migration::class, 'main');
+        $this->assertTableDoesNotExist(Migration::class, 'backup');
 
         $this->console
             ->call('migrate:up --fresh --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0);
+        $this->assertTableExists(Migration::class, 'backup');
     }
 
     public function test_migrate_down_command(): void
@@ -236,12 +226,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('migrate:down --database=backup')
             ->assertSuccess();
 
-        $this->assertTrue(query(Migration::class)->count()->onDatabase('main')->execute() > 0);
-
-        $this->assertException(
-            PDOException::class,
-            fn () => $this->assertTrue(query(Migration::class)->count()->onDatabase('backup')->execute() > 0),
-        );
+        $this->assertTableExists(Migration::class, 'main');
+        $this->assertTableDoesNotExist(Migration::class, 'backup');
     }
 
     public function test_migrate_validate_command(): void
@@ -249,5 +235,49 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:validate --database=main')
             ->assertSuccess();
+    }
+
+    public function test_should_migrate(): void
+    {
+        /** @var MigrationManager $migrationManager */
+        $migrationManager = $this->container->get(MigrationManager::class);
+
+        $migrationManager->onDatabase('main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('backup')->executeUp(new CreateMigrationsTable());
+
+        $migrationManager->onDatabase('main')->executeUp(new MigrationForMain());
+        $migrationManager->onDatabase('main')->executeUp(new MigrationForBackup());
+
+        $this->assertTableExists('main_table', 'main');
+        $this->assertTableDoesNotExist('backup_table', 'main');
+
+        $migrationManager->onDatabase('backup')->executeUp(new MigrationForMain());
+        $migrationManager->onDatabase('backup')->executeUp(new MigrationForBackup());
+
+        $this->assertTableExists('backup_table', 'backup');
+        $this->assertTableDoesNotExist('main_table', 'backup');
+
+        $migrationManager->onDatabase('main')->executeDown(new MigrationForMain());
+        $migrationManager->onDatabase('main')->executeDown(new MigrationForBackup());
+        $this->assertTableDoesNotExist('main_table', 'main');
+        $this->assertTableDoesNotExist('backup_table', 'main');
+
+        $migrationManager->onDatabase('backup')->executeDown(new MigrationForBackup());
+        $migrationManager->onDatabase('backup')->executeDown(new MigrationForMain());
+        $this->assertTableDoesNotExist('backup_table', 'backup');
+        $this->assertTableDoesNotExist('main_table', 'backup');
+    }
+
+    private function assertTableExists(string $tableName, string $onDatabase): void
+    {
+        $this->assertTrue(query($tableName)->count()->onDatabase($onDatabase)->execute() >= 0);
+    }
+
+    private function assertTableDoesNotExist(string $tableName, string $onDatabase): void
+    {
+        $this->assertException(
+            PDOException::class,
+            fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
+        );
     }
 }

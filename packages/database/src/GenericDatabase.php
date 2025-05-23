@@ -15,6 +15,7 @@ use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
+use UnitEnum;
 
 final class GenericDatabase implements Database
 {
@@ -23,6 +24,10 @@ final class GenericDatabase implements Database
 
     public DatabaseDialect $dialect {
         get => $this->connection->config->dialect;
+    }
+
+    public null|string|UnitEnum $tag {
+        get => $this->connection->config->tag;
     }
 
     public function __construct(
