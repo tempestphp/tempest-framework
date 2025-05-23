@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Random;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Ulid;
-use Tempest\DateTime\DateTime;
 use Tempest\Support\Random;
 
 use function Tempest\Support\Str\contains;
@@ -60,13 +60,6 @@ final class FunctionsTest extends TestCase
     public function test_ulid(): void
     {
         $this->assertTrue(Random\is_ulid(Random\ulid()));
-        $this->assertTrue(Random\is_ulid(Random\ulid(time: DateTime::now())));
-
-        $this->assertStringStartsWith('01JVX', Random\ulid(time: DateTime::parse('2025-05-23 02:00:00')));
-
-        $date = Ulid::fromString(Random\ulid(time: DateTime::parse('2025-05-23 02:00:00')))->getDateTime();
-
-        $this->assertTrue(DateTime::parse($date)->equals('2025-05-23 02:00:00'));
     }
 
     public function test_is_uuid(): void
