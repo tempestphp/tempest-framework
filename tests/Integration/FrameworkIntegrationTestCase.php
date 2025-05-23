@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
+use Closure;
 use InvalidArgumentException;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -32,6 +33,7 @@ use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
+use Throwable;
 
 use function Tempest\Support\Path\normalize;
 
@@ -187,5 +189,26 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             $clean($expected),
             $clean($actual),
         );
+    }
+
+    protected function assertException(
+        string $expectedExceptionClass,
+        Closure $handler,
+        ?Closure $assertException = null,
+    ): void {
+        try {
+            $handler();
+        } catch (Throwable $throwable) {
+            $this->assertInstanceOf($expectedExceptionClass, $throwable);
+
+            if ($assertException !== null) {
+                $assertException($throwable);
+            }
+
+            return;
+        }
+
+        /* @phpstan-ignore-next-line */
+        $this->assertTrue(false, "Expected exception {$expectedExceptionClass} was not thrown");
     }
 }

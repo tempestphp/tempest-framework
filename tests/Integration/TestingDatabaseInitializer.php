@@ -36,6 +36,7 @@ final class TestingDatabaseInitializer implements DynamicInitializer
             default => '',
         };
 
+        /** @var PDOConnection|null $connection */
         $connection = self::$connections[$tag] ?? null;
 
         if ($connection === null) {
@@ -55,7 +56,6 @@ final class TestingDatabaseInitializer implements DynamicInitializer
         return new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            $container->get(DatabaseDialect::class),
         );
     }
 }

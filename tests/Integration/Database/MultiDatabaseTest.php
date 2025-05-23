@@ -2,6 +2,7 @@
 
 namespace Integration\Database;
 
+use PDOException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
@@ -9,6 +10,7 @@ use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
@@ -17,6 +19,9 @@ use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
 use function Tempest\Database\query;
 
+/**
+ * @property \Tempest\Console\Testing\ConsoleTester $console
+ */
 final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -151,7 +156,85 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_with_migration_command(): void
+    public function test_migrate_up_command(): void
     {
+        $this->console
+            ->call('migrate:up --database=main')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+
+        $this->assertException(
+            PDOException::class,
+            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+        );
+
+        $this->console
+            ->call('migrate:up --database=backup')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+    }
+
+    public function test_migrate_fresh_command(): void
+    {
+        $this->console
+            ->call('migrate:fresh --database=main')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+
+        $this->assertException(
+            PDOException::class,
+            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+        );
+
+        $this->console
+            ->call('migrate:fresh --database=backup')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+    }
+
+    public function test_migrate_up_fresh_command(): void
+    {
+        $this->console
+            ->call('migrate:up --fresh --database=main')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+
+        $this->assertException(
+            PDOException::class,
+            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+        );
+
+        $this->console
+            ->call('migrate:up --fresh --database=backup')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0);
+    }
+
+    public function test_migrate_down_command(): void
+    {
+        $this->console
+            ->call('migrate:up --database=main')
+            ->assertSuccess();
+
+        $this->console
+            ->call('migrate:up --database=backup')
+            ->assertSuccess();
+
+        $this->console
+            ->call('migrate:down --database=backup')
+            ->assertSuccess();
+
+        $this->assertTrue(query(Migration::class)->count()->useDatabase('main')->execute() > 0);
+
+        $this->assertException(
+            PDOException::class,
+            fn () => $this->assertTrue(query(Migration::class)->count()->useDatabase('backup')->execute() > 0),
+        );
     }
 }
