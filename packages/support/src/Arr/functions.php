@@ -1116,12 +1116,8 @@ namespace Tempest\Support\Arr {
      * @template TValue
      *
      * @param iterable<TKey,TValue> $array
-     * @param callable $callback The function to use for comparing values. It should accept two parameters
-     *                           and return an integer less than, equal to, or greater than zero if the
-     *                           first argument is considered to be respectively less than, equal to, or
-     *                           greater than the second.
-     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
-     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
+     * @param \Closure(TValue $a, TValue $b) $callback The function to use for comparing values. It should accept two parameters and return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`. Defaults to `null`, which auto-detects preservation based on array type (associative or list).
      * @return array<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
     function sort_by_callback(iterable $array, callable $callback, ?bool $preserveKeys = null): array
