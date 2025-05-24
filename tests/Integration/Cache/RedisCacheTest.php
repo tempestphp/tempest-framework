@@ -13,6 +13,15 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class RedisCacheTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Redis is not configured on Windows CI.');
+        }
+    }
+
     public function test_php_redis_cache(): void
     {
         if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
