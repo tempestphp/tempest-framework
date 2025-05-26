@@ -8,6 +8,8 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\NotNumberException;
+use Tempest\Core\DeferredTasks;
+use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -225,5 +227,55 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $this->assertNull($cache->get('a'));
         $this->assertNull($cache->get('b'));
+    }
+
+    public function test_stale_while_revalidate(): void
+    {
+        $clock = $this->clock();
+        $cache = new GenericCache(
+            cacheConfig: new InMemoryCacheConfig(),
+            adapter: $pool = new ArrayAdapter(clock: $clock->toPsrClock()),
+            deferredTasks: $tasks = $this->container->get(DeferredTasks::class),
+        );
+
+        // Cache value can be stale for 1min, but will be refreshed in the background
+        $retrieve = fn (string $value) => $cache->resolve('test', fn () => $value, expiration: Duration::minute(), stale: Duration::minute());
+
+        // We fetch the value within the allowed duration, there is no deferring
+        $this->assertSame('update1', $retrieve('update1'));
+        $this->assertSame('update1', $pool->getItem('test')->get());
+        $this->assertSame($clock->now()->plus(Duration::minute())->getTimestamp()->getSeconds(), $pool->getItem('tempest.stale-cache.stale-at.test')->get());
+        $this->assertEmpty($tasks->getTasks());
+
+        // After 30 seconds, we should still get the same value, with no plan for refreshing it
+        $this->container->invoke(FinishDeferredTasks::class);
+        $clock->plus(Duration::seconds(30));
+        $this->assertSame('update1', $retrieve('update2'));
+        $this->assertSame($clock->now()->plus(Duration::seconds(30))->getTimestamp()->getSeconds(), $pool->getItem('tempest.stale-cache.stale-at.test')->get());
+        $this->assertEmpty($tasks->getTasks());
+
+        // We fetch it again after one minute, within stale window, so under the hood it gets deferred for refresh
+        $this->container->invoke(FinishDeferredTasks::class);
+        $clock->plus(Duration::seconds(30));
+        $this->assertSame('update1', $retrieve('update3'));
+        $this->assertSame($clock->now()->getTimestamp()->getSeconds(), $pool->getItem('tempest.stale-cache.stale-at.test')->get());
+        $this->assertCount(1, $tasks->getTasks());
+
+        // After 1min30 total, within stale window again, we should get the previous value,
+        // since it has been refreshed by the deferred task. However, we start the countdown
+        // again, so we are within the fresh window. So, no update task will be deferred.
+        $this->container->invoke(FinishDeferredTasks::class);
+        $clock->plus(Duration::seconds(30));
+        $this->assertSame('update3', $retrieve('update4'));
+        $this->assertSame($clock->now()->plus(Duration::seconds(30))->getTimestamp()->getSeconds(), $pool->getItem('tempest.stale-cache.stale-at.test')->get());
+        $this->assertEmpty($tasks->getTasks());
+
+        // We now try it again 2 minutes after last refresh, the value is
+        // totally invalidated, with no plan on refreshing it yet since we just did.
+        $this->container->invoke(FinishDeferredTasks::class);
+        $clock->plus(Duration::minutes(2));
+        $this->assertSame('update5', $retrieve('update5'));
+        $this->assertSame($clock->now()->plus(Duration::seconds(60))->getTimestamp()->getSeconds(), $pool->getItem('tempest.stale-cache.stale-at.test')->get());
+        $this->assertEmpty($tasks->getTasks());
     }
 }

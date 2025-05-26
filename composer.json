@@ -149,6 +149,7 @@
             "packages/support/src/Math/constants.php",
             "packages/support/src/Math/functions.php",
             "packages/support/src/Namespace/functions.php",
+            "packages/support/src/Number/functions.php",
             "packages/support/src/Path/functions.php",
             "packages/support/src/Random/functions.php",
             "packages/support/src/Regex/functions.php",

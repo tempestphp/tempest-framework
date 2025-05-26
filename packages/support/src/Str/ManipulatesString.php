@@ -9,10 +9,10 @@ use Closure;
 use Countable;
 use Stringable;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Random;
 use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\Random\secure_string;
 use function Tempest\Support\tap;
 
 /**
@@ -142,7 +142,39 @@ trait ManipulatesString
      */
     public function random(int $length = 16): self
     {
-        return $this->createOrModify(secure_string($length));
+        return $this->createOrModify(Random\secure_string($length));
+    }
+
+    /**
+     * Generates a UUID v7 (time-based) identifier.
+     */
+    public function uuid(): self
+    {
+        return $this->createOrModify(Random\uuid());
+    }
+
+    /**
+     * Generates a 128-bit universally unique lexicographically sortable identifier.
+     */
+    public function ulid(): self
+    {
+        return $this->createOrModify(Random\ulid());
+    }
+
+    /**
+     * Determines whether the specified string is a valid UUID.
+     */
+    public function isUuid(): bool
+    {
+        return Random\is_uuid($this->value);
+    }
+
+    /**
+     * Determines whether the instance is a valid ULID.
+     */
+    public function isUlid(): bool
+    {
+        return Random\is_ulid($this->value);
     }
 
     /**
