@@ -709,4 +709,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<div :escaped="foo"></div>', $html);
     }
+
+    public function test_unclosed_php_tag(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <?php echo 'hi';
+        HTML);
+
+        $this->assertSame('hi', $html);
+    }
 }

@@ -220,6 +220,15 @@ final class TempestViewLexerTest extends TestCase
         ], $tokens);
     }
 
+    public function test_eof(): void
+    {
+        $tokens = new TempestViewLexer('<?php echo "hi";')->lex();
+
+        $this->assertTokens([
+            new Token('<?php echo "hi";', TokenType::PHP),
+        ], $tokens);
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);
