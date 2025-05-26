@@ -220,12 +220,21 @@ final class TempestViewLexerTest extends TestCase
         ], $tokens);
     }
 
-    public function test_eof(): void
+    public function test_unclosed_php_tag(): void
     {
         $tokens = new TempestViewLexer('<?php echo "hi";')->lex();
 
         $this->assertTokens([
             new Token('<?php echo "hi";', TokenType::PHP),
+        ], $tokens);
+    }
+
+    public function test_unclosed_comment_tag(): void
+    {
+        $tokens = new TempestViewLexer('<!-- comment')->lex();
+
+        $this->assertTokens([
+            new Token('<!-- comment', TokenType::COMMENT),
         ], $tokens);
     }
 
