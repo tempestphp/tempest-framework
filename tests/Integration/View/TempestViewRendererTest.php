@@ -243,6 +243,31 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_override_default_slot(): void
+    {
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+            <div>Default Value</div>
+            HTML,
+            $this->render(
+                <<<'HTML'
+                <x-default-slot/>
+                HTML,
+            ),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+            <div>Custom Value</div>
+            HTML,
+            $this->render(
+                <<<'HTML'
+                <x-default-slot>Custom Value</x-default-slot>
+                HTML,
+            ),
+        );
+    }
+
     public function test_multiple_slots(): void
     {
         $this->assertSnippetsMatch(
