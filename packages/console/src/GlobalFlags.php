@@ -10,6 +10,8 @@ enum GlobalFlags: string
 
     case FORCE = 'force';
     case FORCE_SHORTHAND = '-f';
+    case VERBOSE = 'verbose';
+    case VERBOSE_SHORTHAND = '-v';
     case HELP = 'help';
     case HELP_SHORTHAND = '-h';
     case INTERACTION = 'interaction';

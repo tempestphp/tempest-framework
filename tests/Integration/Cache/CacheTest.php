@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\NotNumberException;
 use Tempest\Core\DeferredTasks;
@@ -25,7 +24,6 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $interval = Duration::days(1);
         $clock = $this->clock();
         $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
             adapter: $pool = new ArrayAdapter(clock: $clock->toPsrClock()),
         );
 
@@ -48,10 +46,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_put_many(): void
     {
-        $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
-            adapter: $pool = new ArrayAdapter(),
-        );
+        $cache = new GenericCache($pool = new ArrayAdapter());
 
         $cache->putMany(['foo1' => 'bar1', 'foo2' => 'bar2']);
 
@@ -68,7 +63,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_increment(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->increment('a', by: 1);
         $this->assertSame(1, $cache->get('a'));
@@ -90,7 +85,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(NotNumberException::class);
 
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', 'value');
         $cache->increment('a', by: 1);
@@ -98,7 +93,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_increment_non_int_numeric_key(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', '1');
 
@@ -110,7 +105,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(NotNumberException::class);
 
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', 'value');
         $cache->decrement('a', by: 1);
@@ -118,7 +113,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_decrement_non_int_numeric_key(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', '1');
 
@@ -128,7 +123,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_decrement(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->decrement('a', by: 1);
         $this->assertSame(-1, $cache->get('a'));
@@ -147,10 +142,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
     {
         $interval = Duration::days(1);
         $clock = $this->clock();
-        $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
-            adapter: new ArrayAdapter(clock: $clock->toPsrClock()),
-        );
+        $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
         $cache->put('a', 'a', $clock->now()->plus($interval));
         $cache->put('b', 'b');
@@ -166,7 +158,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_get_many(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('foo1', 'bar1');
         $cache->put('foo2', 'bar2');
@@ -186,10 +178,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
     {
         $interval = Duration::days(1);
         $clock = $this->clock();
-        $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
-            adapter: new ArrayAdapter(clock: $clock->toPsrClock()),
-        );
+        $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
         $a = $cache->resolve('a', fn () => 'a', $clock->now()->plus($interval));
         $this->assertSame('a', $a);
@@ -208,7 +197,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_remove(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', 'a');
         $cache->remove('a');
@@ -218,7 +207,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_clear(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $cache->put('a', 'a');
         $cache->put('b', 'b');
@@ -233,7 +222,6 @@ final class CacheTest extends FrameworkIntegrationTestCase
     {
         $clock = $this->clock();
         $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
             adapter: $pool = new ArrayAdapter(clock: $clock->toPsrClock()),
             deferredTasks: $tasks = $this->container->get(DeferredTasks::class),
         );

@@ -13,7 +13,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 {
     public function test_lock(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $lock = $cache->lock('processing');
 
@@ -23,7 +23,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
     public function test_same_lock_can_be_acquired_by_same_owner(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $lock1 = $cache->lock('processing', owner: 'owner1');
         $lock2 = $cache->lock('processing', owner: 'owner1');
@@ -40,7 +40,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
     public function test_same_lock_cannot_be_acquired_by_different_owners(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $lock1 = $cache->lock('processing', owner: 'owner1');
         $lock2 = $cache->lock('processing', owner: 'owner2');
@@ -60,10 +60,7 @@ final class LockTest extends FrameworkIntegrationTestCase
     public function test_lock_with_ttl(): void
     {
         $clock = $this->clock();
-        $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
-            adapter: new ArrayAdapter(clock: $clock->toPsrClock()),
-        );
+        $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
         $lock = $cache->lock('processing', expiration: Duration::hours(1));
 
@@ -82,7 +79,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
     public function test_lock_execution_without_timeout(): void
     {
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         $lock = $cache->lock('processing');
 
@@ -94,7 +91,7 @@ final class LockTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(LockAcquisitionTimedOutException::class);
 
-        $cache = new GenericCache(new InMemoryCacheConfig());
+        $cache = new GenericCache(new ArrayAdapter());
 
         // Lock externally
         $externalLock = $cache->lock('processing');
@@ -107,10 +104,7 @@ final class LockTest extends FrameworkIntegrationTestCase
     public function test_lock_execution_when_already_locked_by_another_owner_with_timeout(): void
     {
         $clock = $this->clock();
-        $cache = new GenericCache(
-            cacheConfig: new InMemoryCacheConfig(),
-            adapter: new ArrayAdapter(clock: $clock->toPsrClock()),
-        );
+        $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
         // Lock externally for a set duration
         $externalLock = $cache->lock('processing', expiration: Duration::hours(1));
