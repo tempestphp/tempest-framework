@@ -1,0 +1,25 @@
+{
+    "name": "tempest/http-api",
+    "description": "Standard API HTTP request/response objects.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/core": "dev-main",
+        "tempest/clock": "dev-main",
+        "tempest/console": "dev-main",
+        "tempest/http": "dev-main",
+        "tempest/mapper": "dev-main",
+        "tempest/container": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\HttpApi\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\HttpApi\\Tests\\": "tests"
+        }
+    }
+}
