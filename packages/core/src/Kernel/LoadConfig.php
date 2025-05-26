@@ -8,9 +8,12 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Kernel;
-use Tempest\Support\Arr;
+use Tempest\Support\Str;
+
+use function Tempest\Support\arr;
 
 /** @internal */
 final readonly class LoadConfig
@@ -18,6 +21,7 @@ final readonly class LoadConfig
     public function __construct(
         private Kernel $kernel,
         private ConfigCache $cache,
+        private AppConfig $appConfig,
     ) {}
 
     public function __invoke(): void
@@ -53,29 +57,41 @@ final readonly class LoadConfig
             }
         }
 
-        return Arr\sort_by_callback($configPaths, function (string $path1, string $path2) {
-            $getPriority = fn (string $path): int => match (true) {
-                str_contains($path, '/vendor/') => 0,
-                str_contains($path, '.local.config.php') => 5,
-                str_contains($path, '.dev.config.php') => 5,
-                str_contains($path, '.production.config.php') => 4,
-                str_contains($path, '.prod.config.php') => 4,
-                str_contains($path, '.prd.config.php') => 4,
-                str_contains($path, '.staging.config.php') => 3,
-                str_contains($path, '.stg.config.php') => 3,
-                str_contains($path, '.test.config.php') => 3,
-                str_contains($path, '.config.php') => 2,
-                default => 1,
-            };
+        $suffixes = [
+            'production' => ['.production.config.php', '.prod.config.php', '.prd.config.php'],
+            'staging' => ['.staging.config.php', '.stg.config.php'],
+            'testing' => ['.test.config.php'],
+            'development' => ['.dev.config.php', '.local.config.php'],
+        ];
 
-            $priorityA = $getPriority($path1);
-            $priorityB = $getPriority($path2);
+        return arr($configPaths)
+            ->filter(fn (string $path) => match (true) {
+                $this->appConfig->environment->isLocal() => ! Str\contains($path, [...$suffixes['production'], ...$suffixes['staging'], ...$suffixes['testing']]),
+                $this->appConfig->environment->isProduction() => ! Str\contains($path, [...$suffixes['staging'], ...$suffixes['testing'], ...$suffixes['development']]),
+                $this->appConfig->environment->isStaging() => ! Str\contains($path, [...$suffixes['testing'], ...$suffixes['development'], ...$suffixes['production']]),
+                default => true,
+            })
+            ->sortByCallback(function (string $path1, string $path2) use ($suffixes): int {
+                $getPriority = fn (string $path): int => match (true) {
+                    Str\contains($path, '/vendor/') => 0,
+                    Str\contains($path, $suffixes['testing']) => 6,
+                    Str\contains($path, $suffixes['development']) => 5,
+                    Str\contains($path, $suffixes['production']) => 4,
+                    Str\contains($path, $suffixes['staging']) => 3,
+                    Str\contains($path, '.config.php') => 2,
+                    default => 1,
+                };
 
-            if ($priorityA !== $priorityB) {
-                return $priorityA <=> $priorityB;
-            }
+                $priorityA = $getPriority($path1);
+                $priorityB = $getPriority($path2);
 
-            return strcmp($path1, $path2);
-        });
+                if ($priorityA !== $priorityB) {
+                    return $priorityA <=> $priorityB;
+                }
+
+                return strcmp($path1, $path2);
+            })
+            ->values()
+            ->toArray();
     }
 }
