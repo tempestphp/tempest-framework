@@ -166,7 +166,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerInternalStorage(): self
     {
-        $path = $this->root . '/vendor/.tempest';
+        $path = $this->root . '/.tempest';
 
         if (! is_dir($path)) {
             mkdir($path, recursive: true);
