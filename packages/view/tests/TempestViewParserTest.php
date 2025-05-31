@@ -76,6 +76,24 @@ final class TempestViewParserTest extends TestCase
         new TempestViewParser($tokens)->parse();
     }
 
+    public function test_invalid_closing_tag_ignores_commented_out_code(): void
+    {
+        $tokens = new TempestViewLexer(<<<HTML
+        <h1>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg">
+            </svg> -->
+        </h1>
+        HTML)->lex();
+
+        $compiled = new TempestViewParser($tokens)->parse()->compile();
+        $this->assertSame(<<<HTML
+        <h1>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg">
+            </svg> -->
+        </h1>
+        HTML, $compiled);
+    }
+
     public function test_doctype(): void
     {
         $tokens = new TokenCollection([
