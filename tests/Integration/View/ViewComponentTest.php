@@ -897,4 +897,38 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<div class="foo" :escaped="foo"></div>', $html);
     }
+
+    public function test_default_slot_value(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <x-slot>Default</x-slot>
+        <x-slot name="a">Default A</x-slot>
+        <x-slot name="b">Default B</x-slot>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        Overwritten
+        Overwritten A
+        Overwritten B
+        HTML, $this->render('<x-test>
+        Overwritten
+        <x-slot name="a">Overwritten A</x-slot>
+        <x-slot name="b">Overwritten B</x-slot>
+        </x-test>'));
+
+//        $this->assertSnippetsMatch(<<<'HTML'
+//        Overwritten
+//        Default A
+//        Overwritten B
+//        HTML, $this->render('<x-test>
+//        Overwritten
+//        <x-slot name="b">Overwritten B</x-slot>
+//        </x-test>'));
+//
+//        $this->assertSnippetsMatch(<<<'HTML'
+//        Default
+//        Default A
+//        Default B
+//        HTML, $this->render('<x-test></x-test>'));
+    }
 }

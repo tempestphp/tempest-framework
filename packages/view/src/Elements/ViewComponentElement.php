@@ -27,7 +27,8 @@ final class ViewComponentElement implements Element
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
-    ) {
+    )
+    {
         $this->attributes = $attributes;
         $this->dataAttributes = arr($attributes)
             ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
@@ -78,6 +79,10 @@ final class ViewComponentElement implements Element
                 }
 
                 $elements[] = $child;
+            }
+
+            if ($elements === []) {
+                return null;
             }
 
             return new CollectionElement($elements);
@@ -156,18 +161,25 @@ final class ViewComponentElement implements Element
                 '<?php $attributes = $_previousAttributes ?? null; ?>',
                 '<?php unset($_previousAttributes); ?>',
             )
+
             // Compile slots
             ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|><\/x-slot>)/',
+                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?/',
                 replace: function ($matches) {
-                    $name = $matches['name'] ?: 'slot';
+                    $name = $matches['name'] ?? 'slot';
 
                     $slot = $this->getSlot($name);
 
-                    if ($slot === null) {
+                    if ($slot === null && $this->environment->isProduction()) {
                         // A slot doesn't have any content, so we'll comment it out.
                         // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
+                        return ('<!--' . $matches[0] . '-->');
+                    } elseif($slot === null) {
+                        $default = $slotElement->match('/<x-slot.*?>((.|\n)*?)<\/x-slot>/') ?? '';
+
+                        if ($default) {
+                            $slot = new RawElement(tag: null, content: $default);
+                        }
                     }
 
                     return $slot->compile();
