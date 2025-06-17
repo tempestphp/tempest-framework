@@ -23,9 +23,9 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->container->singleton(
             Container::class,
-            new class(clone $this->container) implements Container {
+            new readonly class(clone $this->container) implements Container {
                 public function __construct(
-                    private readonly Container $container,
+                    private Container $container,
                 ) {}
 
                 public function register(string $className, callable $definition): self
