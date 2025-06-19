@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
@@ -23,7 +24,7 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $clock = $this->clock('2024-01-01 00:00:00');
 
-        $this->container->config(new SessionConfig(
+        $this->container->config(new FileSessionConfig(
             path: 'tests/sessions',
             expirationInSeconds: 10,
         ));

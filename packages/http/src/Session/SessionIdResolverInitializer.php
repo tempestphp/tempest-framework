@@ -6,6 +6,7 @@ namespace Tempest\Http\Session;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Http\Session\SessionConfig;
 
 final readonly class SessionIdResolverInitializer implements Initializer
 {

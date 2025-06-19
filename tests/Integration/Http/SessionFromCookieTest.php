@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
@@ -17,7 +18,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
 {
     public function test_resolving_session_from_cookie(): void
     {
-        $this->container->config(new SessionConfig(
+        $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
             idResolverClass: CookieSessionIdResolver::class,
         ));
@@ -37,7 +38,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 
-        $this->container->config(new SessionConfig(
+        $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
             expirationInSeconds: 1,
         ));
@@ -46,7 +47,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $this->container->get(Session::class);
 
         $cookieManager = $this->container->get(CookieManager::class);
-        $cookie = $cookieManager->get(Session::ID);
+        $cookie = $cookieManager->get('tempest_session_id');
 
         $this->assertEquals(1, $cookie->maxAge);
         $this->assertEquals($clock->seconds() + 1, $cookie->getExpiresAtTime());
