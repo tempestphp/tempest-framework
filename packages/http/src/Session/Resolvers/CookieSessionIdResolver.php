@@ -7,7 +7,9 @@ namespace Tempest\Http\Session\Resolvers;
 use Symfony\Component\Uid\Uuid;
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
+use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Cookie\SameSite;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionIdResolver;
@@ -38,7 +40,11 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
             $this->cookies->add(new Cookie(
                 key: $sessionId,
                 value: $id,
+                path: '/',
+                secure: true,
+                httpOnly: true,
                 expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
+                sameSite: SameSite::LAX,
             ));
         }
 
