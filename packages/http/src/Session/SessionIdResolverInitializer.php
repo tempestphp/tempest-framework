@@ -14,6 +14,6 @@ final readonly class SessionIdResolverInitializer implements Initializer
     {
         $config = $container->get(SessionConfig::class);
 
-        return $container->get($config->idResolverClass);
+        return $container->get($config->sessionIdResolver);
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
+use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
@@ -33,7 +34,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->path = realpath($this->path);
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
-        $this->container->config(new FileSessionConfig(path: 'sessions'));
+        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
         $this->container->singleton(
             SessionManager::class,
             fn () => new FileSessionManager(
@@ -102,7 +103,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
-            expirationInSeconds: 1,
+            expiration: Duration::second(),
         ));
 
         $sessionManager = $this->container->get(SessionManager::class);

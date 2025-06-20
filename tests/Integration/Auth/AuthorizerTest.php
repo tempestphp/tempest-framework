@@ -12,6 +12,7 @@ use Tempest\Auth\Install\User;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\SessionConfig;
@@ -47,7 +48,7 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
-        $this->container->config(new FileSessionConfig(path: 'sessions'));
+        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
         $this->container->singleton(
             SessionManager::class,
             fn () => new FileSessionManager(

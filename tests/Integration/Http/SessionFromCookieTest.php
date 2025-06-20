@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\DateTime\Duration;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
@@ -20,7 +21,8 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
     {
         $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
-            idResolverClass: CookieSessionIdResolver::class,
+            expiration: Duration::hours(2),
+            sessionIdResolver: CookieSessionIdResolver::class,
         ));
 
         $cookieManager = $this->container->get(CookieManager::class);
@@ -40,7 +42,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
-            expirationInSeconds: 1,
+            expiration: Duration::second(),
         ));
 
         // Resolve the session so that the ID is set

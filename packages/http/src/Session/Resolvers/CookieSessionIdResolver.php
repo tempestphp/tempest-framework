@@ -35,11 +35,11 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
         if (! $id) {
             $id = (string) Uuid::v4();
 
-            $this->cookies->set(
+            $this->cookies->add(new Cookie(
                 key: $sessionId,
                 value: $id,
-                expiresAt: $this->clock->now()->plusSeconds($this->sessionConfig->expirationInSeconds),
-            );
+                expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
+            ));
         }
 
         return new SessionId($id);

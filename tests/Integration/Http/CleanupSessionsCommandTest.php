@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
@@ -26,7 +27,7 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new FileSessionConfig(
             path: 'tests/sessions',
-            expirationInSeconds: 10,
+            expiration: Duration::seconds(10),
         ));
 
         $sessionManager = $this->container->get(SessionManager::class);

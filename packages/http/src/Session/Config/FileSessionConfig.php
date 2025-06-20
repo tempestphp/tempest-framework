@@ -3,6 +3,7 @@
 namespace Tempest\Http\Session\Config;
 
 use Tempest\Container\Container;
+use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
 use Tempest\Http\Session\SessionConfig;
@@ -15,9 +16,9 @@ final class FileSessionConfig implements SessionConfig
          */
         public string $path,
 
-        public int $expirationInSeconds = 60 * 60 * 24 * 30,
+        public Duration $expiration,
 
-        public string $idResolverClass = CookieSessionIdResolver::class,
+        public string $sessionIdResolver = CookieSessionIdResolver::class,
     ) {}
 
     public function createManager(Container $container): FileSessionManager

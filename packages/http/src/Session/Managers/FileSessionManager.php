@@ -62,7 +62,7 @@ final readonly class FileSessionManager implements SessionManager
         }
 
         return $this->clock->now()->before(
-            other: $session->createdAt->plusSeconds($this->sessionConfig->expirationInSeconds),
+            other: $session->createdAt->plus($this->sessionConfig->expiration),
         );
     }
 
