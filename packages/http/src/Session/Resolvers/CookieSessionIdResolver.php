@@ -27,18 +27,18 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $sessionId = str($this->appConfig->name ?? 'tempest')
+        $sessionKey = str($this->appConfig->name ?? 'tempest')
             ->snake()
             ->append('_session_id')
             ->toString();
 
-        $id = $this->cookies->get($sessionId)->value ?? null;
+        $id = $this->cookies->get($sessionKey)->value ?? null;
 
         if (! $id) {
             $id = (string) Uuid::v4();
 
             $this->cookies->add(new Cookie(
-                key: $sessionId,
+                key: $sessionKey,
                 value: $id,
                 path: '/',
                 secure: true,

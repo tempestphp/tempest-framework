@@ -19,13 +19,13 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $sessionId = str($this->appConfig->name ?? 'tempest')
+        $sessionKey = str($this->appConfig->name ?? 'tempest')
             ->snake()
             ->append('_session_id')
             ->toString();
 
         return new SessionId(
-            id: $this->request->headers[$sessionId] ?? Uuid::v4()->toString(),
+            id: $this->request->headers[$sessionKey] ?? Uuid::v4()->toString(),
         );
     }
 }
