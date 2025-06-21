@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Currency;
 use Tempest\Support\Language\Locale;
+use Tempest\Support\Math;
 use Tempest\Support\Number;
 
 final class FunctionsTest extends TestCase
@@ -246,5 +247,39 @@ final class FunctionsTest extends TestCase
         $this->assertSame('-1.1T', Number\to_human_readable(-1100000000000, maxPrecision: 1));
         $this->assertSame('-1Q', Number\to_human_readable(-1000000000000000));
         $this->assertSame('-1KQ', Number\to_human_readable(-1000000000000000000));
+    }
+
+    public function test_parse_int(): void
+    {
+        $this->assertSame(1, Number\parseInt(1));
+        $this->assertSame(1, Number\parseInt(1, default: 0));
+        $this->assertSame(1, Number\parseInt('1'));
+        $this->assertSame(0, Number\parseInt('1.1'));
+        $this->assertSame(0, Number\parseInt(1.1));
+        $this->assertSame(10, Number\parseInt(1.1, default: 10));
+        $this->assertSame(Math\INT64_MAX, Number\parseInt(Math\INT64_MAX));
+    }
+
+    public function test_parse_float(): void
+    {
+        $this->assertSame(1.0, Number\parseFloat(1));
+        $this->assertSame(1.0, Number\parseFloat(1, default: 0.0));
+        $this->assertSame(1.0, Number\parseFloat('1'));
+        $this->assertSame(1.1, Number\parseFloat('1.1'));
+        $this->assertSame(1.1, Number\parseFloat(1.1));
+        $this->assertSame(10.0, Number\parseFloat('abc', default: 10.0));
+        $this->assertSame(Math\FLOAT32_MAX, Number\parseFloat(Math\FLOAT32_MAX));
+    }
+
+    public function test_parse_number(): void
+    {
+        $this->assertSame(1, Number\parse(1));
+        $this->assertSame(1, Number\parse(1, default: 0));
+        $this->assertSame(1, Number\parse('1'));
+        $this->assertSame(1.1, Number\parse('1.1'));
+        $this->assertSame(1.1, Number\parse(1.1));
+        $this->assertSame(10, Number\parse('abc', default: 10));
+        $this->assertSame(Math\INT64_MAX, Number\parse(Math\INT64_MAX));
+        $this->assertSame(Math\FLOAT32_MAX, Number\parse(Math\FLOAT32_MAX));
     }
 }

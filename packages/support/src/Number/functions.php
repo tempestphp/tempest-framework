@@ -8,6 +8,30 @@ use Tempest\Support\Language\Locale;
 use Tempest\Support\Math;
 
 /**
+ * Returns the numeric value of the given `$number`, defaulting to `$default` if the input is not a valid number.
+ */
+function parse(mixed $number, int|float $default = 0): int|float
+{
+    return filter_var($number, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? filter_var($number, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? $default;
+}
+
+/**
+ * Returns the int value of the given `$number`, defaulting to `$default` if the input is not a valid integer.
+ */
+function parseInt(mixed $number, int $default = 0): int
+{
+    return filter_var($number, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? $default;
+}
+
+/**
+ * Returns the float value of the given `$number`, defaulting to `$default` if the input is not a valid float.
+ */
+function parseFloat(mixed $number, float $default = 0.0): float
+{
+    return filter_var($number, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? $default;
+}
+
+/**
  * Formats the given number.
  *
  * @see https://www.php.net/manual/en/class.numberformatter.php

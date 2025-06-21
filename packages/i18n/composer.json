@@ -1,0 +1,23 @@
+{
+    "name": "tempest/i18n",
+    "description": "A component for working with internationalization.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/container": "dev-main"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5.17"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Internationalization\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Internationalization\\Tests\\": "tests"
+        }
+    }
+}

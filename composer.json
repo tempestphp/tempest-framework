@@ -83,6 +83,7 @@
         "tempest/generation": "self.version",
         "tempest/http": "self.version",
         "tempest/http-client": "self.version",
+        "tempest/i18n": "self.version",
         "tempest/log": "self.version",
         "tempest/mapper": "self.version",
         "tempest/reflection": "self.version",
@@ -117,6 +118,7 @@
             "Tempest\\Generation\\": "packages/generation/src",
             "Tempest\\HttpClient\\": "packages/http-client/src",
             "Tempest\\Http\\": "packages/http/src",
+            "Tempest\\Internationalization\\": "packages/i18n/src",
             "Tempest\\Log\\": "packages/log/src",
             "Tempest\\Mapper\\": "packages/mapper/src",
             "Tempest\\Reflection\\": "packages/reflection/src",
@@ -174,6 +176,7 @@
             "Tempest\\Generation\\Tests\\": "packages/generation/tests",
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",
             "Tempest\\Http\\Tests\\": "packages/http/tests",
+            "Tempest\\Internationalization\\Tests\\": "packages/i18n/tests",
             "Tempest\\Log\\Tests\\": "packages/log/tests",
             "Tempest\\Mapper\\Tests\\": "packages/mapper/tests",
             "Tempest\\Reflection\\Tests\\": "packages/reflection/tests",
@@ -202,6 +205,7 @@
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
+				"i18n:plural": "./packages/i18n/bin/plural-rules.php",
         "release": [
             "composer qa",
             "./bin/release"

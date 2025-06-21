@@ -915,6 +915,30 @@ namespace Tempest\Support\Str {
     }
 
     /**
+     * Parses the given value to a string, returning the default value if it is not a string or `Stringable`.
+     */
+    function parse(mixed $string, ?string $default = null): ?string
+    {
+        if (is_string($string)) {
+            return $string;
+        }
+
+        if (is_int($string) || is_float($string)) {
+            return (string) $string;
+        }
+
+        if ($string instanceof Stringable) {
+            return (string) $string;
+        }
+
+        if (is_object($string) && method_exists($string, '__toString')) {
+            return (string) $string;
+        }
+
+        return $default;
+    }
+
+    /**
      * Normalizes `Stringable` to string, while keeping other values the same.
      *
      * @internal
