@@ -12,7 +12,7 @@ final readonly class GenericTranslator implements Translator
 {
     public function __construct(
         private IntlConfig $config,
-        private Catalog $catalog,
+        private(set) Catalog $catalog,
         private MessageFormatter $formatter,
         private ?EventBus $eventBus = null,
     ) {}
