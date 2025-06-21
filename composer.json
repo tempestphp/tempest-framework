@@ -139,6 +139,7 @@
             "packages/datetime/src/functions.php",
             "packages/debug/src/functions.php",
             "packages/event-bus/src/functions.php",
+            "packages/i18n/src/functions.php",
             "packages/mapper/src/functions.php",
             "packages/reflection/src/functions.php",
             "packages/router/src/functions.php",
@@ -205,7 +206,7 @@
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
-				"i18n:plural": "./packages/i18n/bin/plural-rules.php",
+        "i18n:plural": "./packages/i18n/bin/plural-rules.php",
         "release": [
             "composer qa",
             "./bin/release"

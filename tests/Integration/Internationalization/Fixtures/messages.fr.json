@@ -1,0 +1,13 @@
+{
+  "hello": "Bonjour, {$name}!",
+  "ui": {
+    "sidebar": {
+      "project": "Projet",
+      "title": "Nom du projet"
+    },
+    "statusbar": {
+      "statusbar_empty": "Aucun item.",
+      "statusbar_ok": "Ok."
+    }
+  }
+}
