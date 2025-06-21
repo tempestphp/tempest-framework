@@ -17,6 +17,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
+use Tempest\Intl;
 use Tempest\Router\DataProvider;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
@@ -32,7 +33,6 @@ use Tempest\View\ViewRenderer;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Throwable;
 
-use function Tempest\Support\Language\pluralize;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
 use function Tempest\uri;
@@ -83,7 +83,7 @@ final class StaticGenerateCommand
             match (true) {
                 $event->exception instanceof DeadLinksDetectedException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
-                    sprintf("<style='fg-red'>%s DEAD %s</style>", count($event->exception->links), pluralize('LINK', count($event->exception->links))),
+                    sprintf("<style='fg-red'>%s DEAD %s</style>", count($event->exception->links), Intl\pluralize('LINK', count($event->exception->links))),
                 ),
                 $event->exception instanceof InvalidStatusCodeException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",

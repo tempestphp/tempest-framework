@@ -6,7 +6,7 @@ namespace Tempest\DateTime;
 
 use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
-use Tempest\Support\Language\Locale;
+use Tempest\Intl\Locale;
 
 /**
  * Represents a date and time in a specific timezone.

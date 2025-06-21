@@ -3,10 +3,8 @@
 declare(strict_types=1);
 
 namespace Tempest\Support\Str {
-    use Countable;
     use Stringable;
     use Tempest\Support\Arr;
-    use Tempest\Support\Language;
     use voku\helper\ASCII;
 
     use function levenshtein as php_levenshtein;
@@ -151,14 +149,6 @@ namespace Tempest\Support\Str {
     }
 
     /**
-     * Converts the given string to its English plural form.
-     */
-    function pluralize(Stringable|string $string, int|array|Countable $count = 2): string
-    {
-        return Language\pluralize((string) $string, $count);
-    }
-
-    /**
      * Changes the case of the first letter to uppercase.
      */
     function upper_first(Stringable|string $string): string
@@ -186,30 +176,6 @@ namespace Tempest\Support\Str {
         }
 
         return $string;
-    }
-
-    /**
-     * Converts the last word of the given string to its English plural form.
-     */
-    function pluralize_last_word(Stringable|string $string, int|array|Countable $count = 2): string
-    {
-        $string = (string) $string;
-        $parts = preg_split('/(.)(?=[A-Z])/u', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $lastWord = array_pop($parts);
-
-        return implode('', $parts) . pluralize($lastWord, $count);
-    }
-
-    /**
-     * Converts the last word of the given string to its English plural form.
-     */
-    function singularize_last_word(Stringable|string $string): string
-    {
-        $string = (string) $string;
-        $parts = preg_split('/(.)(?=[A-Z])/u', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $lastWord = array_pop($parts);
-
-        return implode('', $parts) . Language\singularize($lastWord);
     }
 
     /**
@@ -847,7 +813,7 @@ namespace Tempest\Support\Str {
      *      => 'Yeet'
      *
      *      pad_right('مرحبا', 8, 'ا')
-     *      => 'مرحباااا'
+     *      => 'مرح��اااا'
      *
      * @param non-empty-string $padString
      * @param int<0, max> $totalLength

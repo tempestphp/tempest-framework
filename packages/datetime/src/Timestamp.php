@@ -6,7 +6,7 @@ namespace Tempest\DateTime;
 
 use Tempest\Clock\Clock;
 use Tempest\Container\GenericContainer;
-use Tempest\Support\Language\Locale;
+use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 use Tempest\Support\Math\Exception\ArithmeticException;
 use Tempest\Support\Math\Exception\DivisionByZeroException;

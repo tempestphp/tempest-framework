@@ -6,9 +6,9 @@ namespace Tempest\DateTime;
 
 use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface as NativeDateTimeInterface;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 
 /**
  * @require-implements TemporalInterface

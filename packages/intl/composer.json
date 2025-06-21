@@ -1,0 +1,31 @@
+{
+	"name": "tempest/intl",
+	"description": "A component for working with internationalization.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+    "doctrine/inflector": "^2.0",
+		"tempest/core": "dev-main",
+		"tempest/container": "dev-main",
+		"tempest/datetime": "dev-main",
+		"tempest/support": "dev-main"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^11.5.17"
+	},
+	"autoload": {
+		"files": [
+			"src/functions.php",
+			"src/Number/functions.php"
+		],
+		"psr-4": {
+			"Tempest\\Intl\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Intl\\Tests\\": "tests"
+		}
+	}
+}
