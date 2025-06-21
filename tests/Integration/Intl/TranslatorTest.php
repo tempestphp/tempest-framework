@@ -21,7 +21,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         parent::setUp();
 
         $config = $this->container->get(IntlConfig::class);
-        $config->addTranslationMessageFile(Locale::FRENCH, __DIR__ . '/Fixtures/messages.fr.json');
+        $config->addTranslationMessageFile(Locale::FRENCH, __DIR__ . '/Fixtures/messages.fr.yaml');
         $config->addTranslationMessageFile(Locale::ENGLISH, __DIR__ . '/Fixtures/messages.en_US.json');
     }
 
@@ -30,15 +30,17 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $translator = $this->container->get(Translator::class);
 
         $this->assertSame('Hello, Jon Doe!', $translator->translate('hello', name: 'Jon Doe'));
-        $this->assertSame('Project', $translator->translate('ui.sidebar.project'));
-        $this->assertSame('Projet', $translator->translateForLocale(Locale::FRENCH, 'ui.sidebar.project'));
+        $this->assertSame('Checkout', $translator->translate('cart.checkout'));
+        $this->assertSame('Passer à la caisse', $translator->translateForLocale(Locale::FRENCH, 'cart.checkout'));
+
+        $this->assertSame('Il y a 3 articles dans votre panier.', $translator->translateForLocale(Locale::FRENCH, 'cart.items', count: 3));
     }
 
     public function test_function(): void
     {
         $this->assertSame('Hello, Jon Doe!', translate('hello', name: 'Jon Doe'));
-        $this->assertSame('Project', translate('ui.sidebar.project'));
-        $this->assertSame('Projet', translate_locale(Locale::FRENCH, 'ui.sidebar.project'));
+        $this->assertSame('Checkout', translate('cart.checkout'));
+        $this->assertSame('Passer à la caisse', translate_locale(Locale::FRENCH, 'cart.checkout'));
     }
 
     public function test_default_locale(): void

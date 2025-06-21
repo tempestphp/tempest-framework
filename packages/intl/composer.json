@@ -5,7 +5,8 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": "^8.4",
-    "doctrine/inflector": "^2.0",
+		"doctrine/inflector": "^2.0",
+		"symfony/yaml": "^7.3",
 		"tempest/core": "dev-main",
 		"tempest/container": "dev-main",
 		"tempest/datetime": "dev-main",

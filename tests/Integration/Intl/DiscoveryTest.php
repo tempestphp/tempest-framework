@@ -23,14 +23,14 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->setItems(new DiscoveryItems([]));
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.json');
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.abcde.json');
-        $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.fr.json');
+        $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.fr.yaml');
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.en_US.json');
         $discovery->apply();
 
         $config = $this->container->get(IntlConfig::class);
 
         $this->assertSame([
-            'fr' => [__DIR__ . '/Fixtures/messages.fr.json'],
+            'fr' => [__DIR__ . '/Fixtures/messages.fr.yaml'],
             'en_US' => [__DIR__ . '/Fixtures/messages.en_US.json'],
         ], $config->translationMessagePaths);
     }

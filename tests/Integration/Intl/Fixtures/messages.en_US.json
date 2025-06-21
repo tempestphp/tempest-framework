@@ -1,13 +1,7 @@
 {
   "hello": "Hello, {$name}!",
-  "ui": {
-    "sidebar": {
-      "project": "Project",
-      "title": "Name of the project."
-    },
-    "statusbar": {
-      "statusbar_empty": "No entries added yet.",
-      "statusbar_ok": "Ok."
-    }
+  "cart": {
+    "checkout": "Checkout",
+    "items": "<\n  .input {$count :number}\n  .match $count\n  one {{There is one item in your cart.}}\n  *   {{There is {$count} items in your cart.}}\n>"
   }
 }
