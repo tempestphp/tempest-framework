@@ -2,11 +2,11 @@
 
 namespace Tempest\Internationalization\MessageFormat\Parser\Node;
 
-final class Identifier implements Node
+final readonly class Identifier implements Node
 {
     public function __construct(
-        public readonly string $name,
-        public readonly ?string $namespace = null,
+        public string $name,
+        public ?string $namespace = null,
     ) {}
 
     public function __toString(): string

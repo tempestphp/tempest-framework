@@ -42,13 +42,13 @@ final class Parser
      * Regex for a valid name-start character, as per ABNF.
      * `\p{L}`: any Unicode letter.
      */
-    private const NAME_START_REGEX = '/[a-zA-Z_+]|\p{L}/u';
+    private const string NAME_START_REGEX = '/[a-zA-Z_+]|\p{L}/u';
 
     /**
      * Regex for valid subsequent name characters.
      * `\p{N}`: any Unicode number.
      */
-    private const NAME_CHAR_REGEX = '/[a-zA-Z0-9_.-]|\p{L}|\p{N}/u';
+    private const string NAME_CHAR_REGEX = '/[a-zA-Z0-9_.-]|\p{L}|\p{N}/u';
 
     public function __construct(string $input)
     {
@@ -474,7 +474,7 @@ final class Parser
         $char = $this->peek();
 
         if ($char === '' || ! preg_match(self::NAME_CHAR_REGEX, $char)) {
-            $this->throw("Invalid unquoted literal start character: '$char'");
+            $this->throw("Invalid unquoted literal start character: '{$char}'");
         }
 
         $buffer .= $this->readChar();
@@ -512,7 +512,7 @@ final class Parser
         $start = $this->peek();
 
         if (! preg_match(self::NAME_START_REGEX, $start)) {
-            $this->throw("Invalid identifier start character: '$start'");
+            $this->throw("Invalid identifier start character: '{$start}'");
         }
 
         $buffer = $this->readChar();
@@ -545,7 +545,7 @@ final class Parser
     private function consumeKeyword(string $keyword): void
     {
         if ($this->peek(strlen($keyword)) !== $keyword) {
-            $this->throw("Expected keyword '$keyword'");
+            $this->throw("Expected keyword '{$keyword}'");
         }
 
         $this->pos += strlen($keyword);

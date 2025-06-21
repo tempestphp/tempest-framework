@@ -5,13 +5,13 @@ namespace Tempest\Internationalization\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Internationalization\Catalog\Catalog;
 use Tempest\Internationalization\Catalog\GenericCatalog;
+use Tempest\Internationalization\GenericTranslator;
 use Tempest\Internationalization\InternationalizationConfig;
 use Tempest\Internationalization\MessageFormat\Formatter\MessageFormatter;
 use Tempest\Internationalization\MessageFormat\Functions\DateTimeFunction;
 use Tempest\Internationalization\MessageFormat\Functions\NumberFunction;
 use Tempest\Internationalization\MessageFormat\Functions\StringFunction;
-use Tempest\Internationalization\Translator\GenericTranslator;
-use Tempest\Internationalization\Translator\Translator;
+use Tempest\Internationalization\Translator;
 use Tempest\Support\Language\Locale;
 
 final class GenericTranslatorTest extends TestCase

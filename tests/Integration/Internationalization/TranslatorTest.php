@@ -9,7 +9,7 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Internationalization\Catalog\Catalog;
 use Tempest\Internationalization\InternationalizationConfig;
-use Tempest\Internationalization\Translator\Translator;
+use Tempest\Internationalization\Translator;
 use Tempest\Support\Language\Locale;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -42,5 +42,12 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame('Hello, Jon Doe!', translate('hello', name: 'Jon Doe'));
         $this->assertSame('Project', translate('ui.sidebar.project'));
         $this->assertSame('Projet', translate_locale(Locale::FRENCH, 'ui.sidebar.project'));
+    }
+
+    public function test_default_locale(): void
+    {
+        $config = $this->container->get(InternationalizationConfig::class);
+
+        $this->assertSame(Locale::default(), $config->currentLocale);
     }
 }

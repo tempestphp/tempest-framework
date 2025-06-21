@@ -1,21 +1,20 @@
 <?php
 
-namespace Tempest\Internationalization\Translator;
+namespace Tempest\Internationalization;
 
-use Tempest\Core\ExceptionReporter;
 use Tempest\EventBus\EventBus;
 use Tempest\Internationalization\Catalog\Catalog;
 use Tempest\Internationalization\InternationalizationConfig;
 use Tempest\Internationalization\MessageFormat\Formatter\MessageFormatter;
 use Tempest\Support\Language\Locale;
 
-final class GenericTranslator implements Translator
+final readonly class GenericTranslator implements Translator
 {
     public function __construct(
-        private readonly InternationalizationConfig $config,
-        private readonly Catalog $catalog,
-        private readonly MessageFormatter $formatter,
-        private readonly ?EventBus $eventBus = null,
+        private InternationalizationConfig $config,
+        private Catalog $catalog,
+        private MessageFormatter $formatter,
+        private ?EventBus $eventBus = null,
     ) {}
 
     public function translateForLocale(Locale $locale, string $key, mixed ...$arguments): string

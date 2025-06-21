@@ -8,6 +8,6 @@ final class ParsingException extends \Exception
         string $message,
         public readonly int $position,
     ) {
-        parent::__construct("$message at position $position");
+        parent::__construct("{$message} at position {$position}");
     }
 }

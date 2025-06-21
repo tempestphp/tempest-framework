@@ -18,7 +18,7 @@ function parse(mixed $number, int|float $default = 0): int|float
 /**
  * Returns the int value of the given `$number`, defaulting to `$default` if the input is not a valid integer.
  */
-function parseInt(mixed $number, int $default = 0): int
+function parse_int(mixed $number, int $default = 0): int
 {
     return filter_var($number, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE) ?? $default;
 }
@@ -26,7 +26,7 @@ function parseInt(mixed $number, int $default = 0): int
 /**
  * Returns the float value of the given `$number`, defaulting to `$default` if the input is not a valid float.
  */
-function parseFloat(mixed $number, float $default = 0.0): float
+function parse_float(mixed $number, float $default = 0.0): float
 {
     return filter_var($number, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE) ?? $default;
 }

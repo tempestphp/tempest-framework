@@ -1,14 +1,13 @@
 <?php
 
-namespace Tempest\Internationalization\Translator;
+namespace Tempest\Internationalization;
 
 use Tempest\Support\Language\Locale;
 
-final readonly class TranslationFailure
+final readonly class TranslationMiss
 {
     public function __construct(
         public Locale $locale,
         public string $key,
-        public \Throwable $exception,
     ) {}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Internationalization\Translator;
+namespace Tempest\Internationalization;
 
 use Tempest\Support\Language\Locale;
 

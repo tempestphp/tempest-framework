@@ -251,24 +251,24 @@ final class FunctionsTest extends TestCase
 
     public function test_parse_int(): void
     {
-        $this->assertSame(1, Number\parseInt(1));
-        $this->assertSame(1, Number\parseInt(1, default: 0));
-        $this->assertSame(1, Number\parseInt('1'));
-        $this->assertSame(0, Number\parseInt('1.1'));
-        $this->assertSame(0, Number\parseInt(1.1));
-        $this->assertSame(10, Number\parseInt(1.1, default: 10));
-        $this->assertSame(Math\INT64_MAX, Number\parseInt(Math\INT64_MAX));
+        $this->assertSame(1, Number\parse_int(1));
+        $this->assertSame(1, Number\parse_int(1, default: 0));
+        $this->assertSame(1, Number\parse_int('1'));
+        $this->assertSame(0, Number\parse_int('1.1'));
+        $this->assertSame(0, Number\parse_int(1.1));
+        $this->assertSame(10, Number\parse_int(1.1, default: 10));
+        $this->assertSame(Math\INT64_MAX, Number\parse_int(Math\INT64_MAX));
     }
 
     public function test_parse_float(): void
     {
-        $this->assertSame(1.0, Number\parseFloat(1));
-        $this->assertSame(1.0, Number\parseFloat(1, default: 0.0));
-        $this->assertSame(1.0, Number\parseFloat('1'));
-        $this->assertSame(1.1, Number\parseFloat('1.1'));
-        $this->assertSame(1.1, Number\parseFloat(1.1));
-        $this->assertSame(10.0, Number\parseFloat('abc', default: 10.0));
-        $this->assertSame(Math\FLOAT32_MAX, Number\parseFloat(Math\FLOAT32_MAX));
+        $this->assertSame(1.0, Number\parse_float(1));
+        $this->assertSame(1.0, Number\parse_float(1, default: 0.0));
+        $this->assertSame(1.0, Number\parse_float('1'));
+        $this->assertSame(1.1, Number\parse_float('1.1'));
+        $this->assertSame(1.1, Number\parse_float(1.1));
+        $this->assertSame(10.0, Number\parse_float('abc', default: 10.0));
+        $this->assertSame(Math\FLOAT32_MAX, Number\parse_float(Math\FLOAT32_MAX));
     }
 
     public function test_parse_number(): void

@@ -7,10 +7,10 @@ use Tempest\Internationalization\MessageFormat\Parser\Node\Literal\Literal;
 use Tempest\Internationalization\MessageFormat\Parser\Node\Node;
 use Tempest\Internationalization\MessageFormat\Parser\Node\Variable;
 
-final class Option implements Node
+final readonly class Option implements Node
 {
     public function __construct(
-        public readonly Identifier $identifier,
-        public readonly Literal|Variable $value,
+        public Identifier $identifier,
+        public Literal|Variable $value,
     ) {}
 }

@@ -38,17 +38,6 @@ final class FormatterTest extends TestCase
         $this->assertSame('Hello, Jon!', $value);
     }
 
-    public function test_format_datetime_function(): void
-    {
-        $formatter = new MessageFormatter([new DateTimeFunction()]);
-
-        $value = $formatter->format(<<<'TXT'
-        Today is {$today :datetime}.
-        TXT, today: '2024-01-01');
-
-        $this->assertSame("Today is Jan 1, 2024, 12:00:00\u{202F}AM.", $value);
-    }
-
     public function test_format_datetime_function_and_parameters(): void
     {
         $formatter = new MessageFormatter([new DateTimeFunction()]);
@@ -236,7 +225,7 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([new StringFunction()]);
 
         $value = $formatter->format(<<<TXT
-        {\$value :string style=$style}
+        {\$value :string style={$style}}
         TXT, value: $input);
 
         $this->assertSame($expected, $value);

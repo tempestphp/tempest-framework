@@ -185,8 +185,7 @@ final class PluralRulesMatcherGenerator
                 break;
             }
 
-            $condition = $this->parseRule($rule);
-            if ($condition) {
+            if ($condition = $this->parseRule($rule)) {
                 $output .= "        if ({$condition}) {\n";
                 $output .= "            return '{$category}';\n";
                 $output .= "        }\n\n";
@@ -200,10 +199,9 @@ final class PluralRulesMatcherGenerator
 
     private function parseRule(string $rule): string
     {
-        // Extract the rule condition (before @integer/@decimal examples)
         $rulePart = trim(explode('@', $rule)[0]);
 
-        if (empty($rulePart)) {
+        if (! $rulePart) {
             return '';
         }
 
@@ -233,7 +231,6 @@ final class PluralRulesMatcherGenerator
     {
         $condition = trim($condition);
 
-        // Modulo operations "n % 100 = 3..10" or "n % 10 = 3..4,9"
         if (preg_match('/^([nifvet])\s*%\s*(\d+)\s*(=|!=)\s*(.+)$/', $condition, $matches)) {
             $var = $this->getVariable($matches[1]);
             $mod = $matches[2];
@@ -243,7 +240,6 @@ final class PluralRulesMatcherGenerator
             return $this->parseValueCondition("({$var} % {$mod})", $op, $values);
         }
 
-        // Direct comparisons "n = 1" or "n = 0..1"
         if (preg_match('/^([nifvet])\s*(=|!=)\s*(.+)$/', $condition, $matches)) {
             $var = $this->getVariable($matches[1]);
             $op = $matches[2] === '=' ? '===' : '!==';
@@ -260,12 +256,10 @@ final class PluralRulesMatcherGenerator
         $values = trim($values);
         $isNegative = $operator === '!==';
 
-        // Handle single number
         if (preg_match('/^\d+(?:\.\d+)?$/', $values)) {
             return "{$varExpression} {$operator} {$values}";
         }
 
-        // Handle single range like "3..10"
         if (preg_match('/^(\d+(?:\.\d+)?)\.\.(\d+(?:\.\d+)?)$/', $values, $matches)) {
             $start = $matches[1];
             $end = $matches[2];
@@ -273,33 +267,29 @@ final class PluralRulesMatcherGenerator
             return $isNegative ? "!{$condition}" : $condition;
         }
 
-        // Handle complex values with commas and ranges like "3..4,9" or "2,22,42,62,82"
         if (str_contains($values, ',')) {
             $parts = array_map('trim', explode(',', $values));
             $conditions = [];
 
             foreach ($parts as $part) {
                 if (str_contains($part, '..')) {
-                    // Range like "3..4"
                     if (preg_match('/^(\d+(?:\.\d+)?)\.\.(\d+(?:\.\d+)?)$/', $part, $matches)) {
                         $start = $matches[1];
                         $end = $matches[2];
                         $conditions[] = "self::inRange({$varExpression}, {$start}, {$end})";
                     }
                 } elseif (str_contains($part, '~')) {
-                    // Range like "3~10"
                     if (preg_match('/^(\d+(?:\.\d+)?)~(\d+(?:\.\d+)?)$/', $part, $matches)) {
                         $start = $matches[1];
                         $end = $matches[2];
                         $conditions[] = "self::inRange({$varExpression}, {$start}, {$end})";
                     }
                 } else {
-                    // Single value
                     $conditions[] = "{$varExpression} === {$part}";
                 }
             }
 
-            if (empty($conditions)) {
+            if (! $conditions) {
                 return 'false';
             }
 
@@ -307,7 +297,6 @@ final class PluralRulesMatcherGenerator
             return $isNegative ? "!{$combined}" : $combined;
         }
 
-        // Handle tilde ranges like "3~10"
         if (str_contains($values, '~')) {
             if (preg_match('/^(\d+(?:\.\d+)?)~(\d+(?:\.\d+)?)$/', $values, $matches)) {
                 $start = $matches[1];
@@ -317,8 +306,8 @@ final class PluralRulesMatcherGenerator
             }
         }
 
-        // Fallback: use matchesValues for complex patterns
         $condition = "self::matchesValues({$varExpression}, '{$values}')";
+
         return $isNegative ? "!{$condition}" : $condition;
     }
 

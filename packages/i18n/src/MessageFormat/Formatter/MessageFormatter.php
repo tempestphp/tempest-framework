@@ -3,7 +3,6 @@
 namespace Tempest\Internationalization\MessageFormat\Formatter;
 
 use Exception;
-use Tempest\Internationalization\InternationalizationConfig;
 use Tempest\Internationalization\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
 use Tempest\Internationalization\MessageFormat\Parser\Node\ComplexBody\Matcher;
 use Tempest\Internationalization\MessageFormat\Parser\Node\ComplexBody\SimplePatternBody;
@@ -242,7 +241,7 @@ final class MessageFormatter
             $variableName = $expression->variable->name->name;
 
             if (! array_key_exists($variableName, $this->variables)) {
-                throw new FormattingException("Variable `$variableName` not found");
+                throw new FormattingException("Variable `{$variableName}` not found");
             }
 
             $value = $this->variables[$variableName];
@@ -304,9 +303,9 @@ final class MessageFormatter
         $tag = (string) $markup->identifier;
 
         return match ($markup->type) {
-            MarkupType::OPEN => "<$tag>",
-            MarkupType::CLOSE => "</$tag>",
-            MarkupType::STANDALONE => "<$tag/>",
+            MarkupType::OPEN => "<{$tag}>",
+            MarkupType::CLOSE => "</{$tag}>",
+            MarkupType::STANDALONE => "<{$tag}/>",
             default => '',
         };
     }

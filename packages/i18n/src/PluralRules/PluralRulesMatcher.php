@@ -25,7 +25,7 @@ final class PluralRulesMatcher
     {
         $str = (string) $n;
 
-        if (!str_contains($str, '.')) {
+        if (! str_contains($str, '.')) {
             return 0;
         }
 
@@ -39,11 +39,11 @@ final class PluralRulesMatcher
     {
         $str = (string) $n;
 
-        if (!str_contains($str, '.')) {
+        if (! str_contains($str, '.')) {
             return 0;
         }
 
-        return (int) rtrim(explode('.', $str)[1], '0') ?: 0;
+        return ((int) rtrim(explode('.', $str)[1], '0')) ?: 0;
     }
 
     /**
@@ -51,7 +51,7 @@ final class PluralRulesMatcher
      */
     private static function getCompactExponent(float|int $n): int
     {
-        if ($n == 0) {
+        if ($n === 0 || $n === 0.0) {
             return 0;
         }
 
@@ -73,7 +73,7 @@ final class PluralRulesMatcher
      */
     private static function getExponent(float|int $n): int
     {
-        if ($n == 0) {
+        if ($n === 0 || $n === 0.0) {
             return 0;
         }
 
@@ -110,12 +110,13 @@ final class PluralRulesMatcher
                 if (self::inRange($value, (float) trim($start), (float) trim($end))) {
                     return true;
                 }
-            } elseif ((float) $part === (float) $value) {
+            } elseif (((float) $part) === ((float) $value)) {
                 return true;
             }
         }
         return false;
     }
+
     /**
      * Gets the plural category for the af locale.
      */
@@ -163,7 +164,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -211,11 +212,11 @@ final class PluralRulesMatcher
             return 'two';
         }
 
-        if (self::inRange(($n % 100), 3, 10)) {
+        if (self::inRange($n % 100, 3, 10)) {
             return 'few';
         }
 
-        if (self::inRange(($n % 100), 11, 99)) {
+        if (self::inRange($n % 100, 11, 99)) {
             return 'many';
         }
 
@@ -245,11 +246,11 @@ final class PluralRulesMatcher
             return 'two';
         }
 
-        if (self::inRange(($n % 100), 3, 10)) {
+        if (self::inRange($n % 100, 3, 10)) {
             return 'few';
         }
 
-        if (self::inRange(($n % 100), 11, 99)) {
+        if (self::inRange($n % 100, 11, 99)) {
             return 'many';
         }
 
@@ -267,7 +268,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -303,7 +304,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -357,15 +358,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n % 10) === 1) && (($n % 100) !== 11)) {
+        if (($n % 10) === 1 && ($n % 100) !== 11) {
             return 'one';
         }
 
-        if ((self::inRange(($n % 10), 2, 4)) && (!self::inRange(($n % 100), 12, 14))) {
+        if (self::inRange($n % 10, 2, 4) && ! self::inRange($n % 100, 12, 14)) {
             return 'few';
         }
 
-        if ((($n % 10) === 0) || (self::inRange(($n % 10), 5, 9)) || (self::inRange(($n % 100), 11, 14))) {
+        if (($n % 10) === 0 || self::inRange($n % 10, 5, 9) || self::inRange($n % 100, 11, 14)) {
             return 'many';
         }
 
@@ -491,7 +492,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -523,19 +524,19 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n % 10) === 1) && (!(($n % 100) === 11 || ($n % 100) === 71 || ($n % 100) === 91))) {
+        if (($n % 10) === 1 && ! (($n % 100) === 11 || ($n % 100) === 71 || ($n % 100) === 91)) {
             return 'one';
         }
 
-        if ((($n % 10) === 2) && (!(($n % 100) === 12 || ($n % 100) === 72 || ($n % 100) === 92))) {
+        if (($n % 10) === 2 && ! (($n % 100) === 12 || ($n % 100) === 72 || ($n % 100) === 92)) {
             return 'two';
         }
 
-        if (((self::inRange(($n % 10), 3, 4) || ($n % 10) === 9)) && (!(self::inRange(($n % 100), 10, 19) || self::inRange(($n % 100), 70, 79) || self::inRange(($n % 100), 90, 99)))) {
+        if ((self::inRange($n % 10, 3, 4) || ($n % 10) === 9) && ! (self::inRange($n % 100, 10, 19) || self::inRange($n % 100, 70, 79) || self::inRange($n % 100, 90, 99))) {
             return 'few';
         }
 
-        if (($n !== 0) && (($n % 1000000) === 0)) {
+        if ($n !== 0 && ($n % 1000000) === 0) {
             return 'many';
         }
 
@@ -571,11 +572,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($f % 10) === 1) && (($f % 100) !== 11))) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($f % 10) === 1 && ($f % 100) !== 11) {
             return 'one';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) || ((self::inRange(($f % 10), 2, 4)) && (!self::inRange(($f % 100), 12, 14)))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14) || self::inRange($f % 10, 2, 4) && ! self::inRange($f % 100, 12, 14)) {
             return 'few';
         }
 
@@ -593,11 +594,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -633,7 +634,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i === 1 || $i === 2 || $i === 3))) || (($v === 0) && (!(($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9))) || (($v !== 0) && (!(($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)))) {
+        if (
+            $v === 0 && ($i === 1 || $i === 2 || $i === 3) ||
+                $v === 0 && ! (($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9) ||
+                $v !== 0 && ! (($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)
+        ) {
             return 'one';
         }
 
@@ -705,11 +710,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((self::inRange($i, 2, 4)) && ($v === 0)) {
+        if (self::inRange($i, 2, 4) && $v === 0) {
             return 'few';
         }
 
@@ -783,7 +788,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($n === 1) || (($t !== 0) && (($i === 0 || $i === 1)))) {
+        if ($n === 1 || $t !== 0 && ($i === 0 || $i === 1)) {
             return 'one';
         }
 
@@ -801,7 +806,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -819,7 +824,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -837,15 +842,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 100) === 1)) || (($f % 100) === 1)) {
+        if ($v === 0 && ($i % 100) === 1 || ($f % 100) === 1) {
             return 'one';
         }
 
-        if ((($v === 0) && (($i % 100) === 2)) || (($f % 100) === 2)) {
+        if ($v === 0 && ($i % 100) === 2 || ($f % 100) === 2) {
             return 'two';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 100), 3, 4))) || (self::inRange(($f % 100), 3, 4))) {
+        if ($v === 0 && self::inRange($i % 100, 3, 4) || self::inRange($f % 100, 3, 4)) {
             return 'few';
         }
 
@@ -931,7 +936,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -971,7 +976,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -989,7 +994,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1025,7 +1030,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -1043,7 +1048,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0 || $i === 1)) {
+        if ($i === 0 || $i === 1) {
             return 'one';
         }
 
@@ -1061,7 +1066,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1079,7 +1084,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i === 1 || $i === 2 || $i === 3))) || (($v === 0) && (!(($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9))) || (($v !== 0) && (!(($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)))) {
+        if (
+            $v === 0 && ($i === 1 || $i === 2 || $i === 3) ||
+                $v === 0 && ! (($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9) ||
+                $v !== 0 && ! (($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)
+        ) {
             return 'one';
         }
 
@@ -1115,11 +1124,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0 || $i === 1)) {
+        if ($i === 0 || $i === 1) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -1155,7 +1164,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1203,15 +1212,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($n === 1 || $n === 11)) {
+        if ($n === 1 || $n === 11) {
             return 'one';
         }
 
-        if (($n === 2 || $n === 12)) {
+        if ($n === 2 || $n === 12) {
             return 'two';
         }
 
-        if ((self::inRange($n, 3, 10) || self::inRange($n, 13, 19))) {
+        if (self::inRange($n, 3, 10) || self::inRange($n, 13, 19)) {
             return 'few';
         }
 
@@ -1229,7 +1238,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1265,7 +1274,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -1301,15 +1310,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($v === 0) && (($i % 10) === 1)) {
+        if ($v === 0 && ($i % 10) === 1) {
             return 'one';
         }
 
-        if (($v === 0) && (($i % 10) === 2)) {
+        if ($v === 0 && ($i % 10) === 2) {
             return 'two';
         }
 
-        if (($v === 0) && ((($i % 100) === 0 || ($i % 100) === 20 || ($i % 100) === 40 || ($i % 100) === 60 || ($i % 100) === 80))) {
+        if ($v === 0 && (($i % 100) === 0 || ($i % 100) === 20 || ($i % 100) === 40 || ($i % 100) === 60 || ($i % 100) === 80)) {
             return 'few';
         }
 
@@ -1367,11 +1376,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($i === 1) && ($v === 0)) || (($i === 0) && ($v !== 0))) {
+        if ($i === 1 && $v === 0 || $i === 0 && $v !== 0) {
             return 'one';
         }
 
-        if (($i === 2) && ($v === 0)) {
+        if ($i === 2 && $v === 0) {
             return 'two';
         }
 
@@ -1389,7 +1398,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -1421,11 +1430,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($f % 10) === 1) && (($f % 100) !== 11))) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($f % 10) === 1 && ($f % 100) !== 11) {
             return 'one';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) || ((self::inRange(($f % 10), 2, 4)) && (!self::inRange(($f % 100), 12, 14)))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14) || self::inRange($f % 10, 2, 4) && ! self::inRange($f % 100, 12, 14)) {
             return 'few';
         }
 
@@ -1443,15 +1452,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 100) === 1)) || (($f % 100) === 1)) {
+        if ($v === 0 && ($i % 100) === 1 || ($f % 100) === 1) {
             return 'one';
         }
 
-        if ((($v === 0) && (($i % 100) === 2)) || (($f % 100) === 2)) {
+        if ($v === 0 && ($i % 100) === 2 || ($f % 100) === 2) {
             return 'two';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 100), 3, 4))) || (self::inRange(($f % 100), 3, 4))) {
+        if ($v === 0 && self::inRange($i % 100, 3, 4) || self::inRange($f % 100, 3, 4)) {
             return 'few';
         }
 
@@ -1487,7 +1496,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0 || $i === 1)) {
+        if ($i === 0 || $i === 1) {
             return 'one';
         }
 
@@ -1505,7 +1514,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1565,7 +1574,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -1583,7 +1592,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($t === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($t % 10) === 1) && (($t % 100) !== 11))) {
+        if ($t === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($t % 10) === 1 && ($t % 100) !== 11) {
             return 'one';
         }
 
@@ -1601,11 +1610,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -1755,7 +1764,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0 || $i === 1)) {
+        if ($i === 0 || $i === 1) {
             return 'one';
         }
 
@@ -1905,7 +1914,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -2021,15 +2030,23 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (((($n % 100) === 2 || ($n % 100) === 22 || ($n % 100) === 42 || ($n % 100) === 62 || ($n % 100) === 82)) || ((($n % 1000) === 0) && ((self::inRange(($n % 100000), 1000, 20000) || ($n % 100000) === 40000 || ($n % 100000) === 60000 || ($n % 100000) === 80000))) || (($n !== 0) && (($n % 1000000) === 100000))) {
+        if (
+            ($n % 100) === 2 ||
+                ($n % 100) === 22 ||
+                ($n % 100) === 42 ||
+                ($n % 100) === 62 ||
+                ($n % 100) === 82 ||
+                ($n % 1000) === 0 && (self::inRange($n % 100000, 1000, 20000) || ($n % 100000) === 40000 || ($n % 100000) === 60000 || ($n % 100000) === 80000) ||
+                $n !== 0 && ($n % 1000000) === 100000
+        ) {
             return 'two';
         }
 
-        if ((($n % 100) === 3 || ($n % 100) === 23 || ($n % 100) === 43 || ($n % 100) === 63 || ($n % 100) === 83)) {
+        if (($n % 100) === 3 || ($n % 100) === 23 || ($n % 100) === 43 || ($n % 100) === 63 || ($n % 100) === 83) {
             return 'few';
         }
 
-        if (($n !== 1) && ((($n % 100) === 1 || ($n % 100) === 21 || ($n % 100) === 41 || ($n % 100) === 61 || ($n % 100) === 81))) {
+        if ($n !== 1 && (($n % 100) === 1 || ($n % 100) === 21 || ($n % 100) === 41 || ($n % 100) === 61 || ($n % 100) === 81)) {
             return 'many';
         }
 
@@ -2069,7 +2086,7 @@ final class PluralRulesMatcher
             return 'zero';
         }
 
-        if ((($i === 0 || $i === 1)) && ($n !== 0)) {
+        if (($i === 0 || $i === 1) && $n !== 0) {
             return 'one';
         }
 
@@ -2123,7 +2140,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -2155,11 +2172,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -2209,11 +2226,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n % 10) === 1) && (!self::inRange(($n % 100), 11, 19))) {
+        if (($n % 10) === 1 && ! self::inRange($n % 100, 11, 19)) {
             return 'one';
         }
 
-        if ((self::inRange(($n % 10), 2, 9)) && (!self::inRange(($n % 100), 11, 19))) {
+        if (self::inRange($n % 10, 2, 9) && ! self::inRange($n % 100, 11, 19)) {
             return 'few';
         }
 
@@ -2235,11 +2252,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n % 10) === 0) || (self::inRange(($n % 100), 11, 19)) || (($v === 2) && (self::inRange(($f % 100), 11, 19)))) {
+        if (($n % 10) === 0 || self::inRange($n % 100, 11, 19) || $v === 2 && self::inRange($f % 100, 11, 19)) {
             return 'zero';
         }
 
-        if (((($n % 10) === 1) && (($n % 100) !== 11)) || (($v === 2) && (($f % 10) === 1) && (($f % 100) !== 11)) || (($v !== 2) && (($f % 10) === 1))) {
+        if (($n % 10) === 1 && ($n % 100) !== 11 || $v === 2 && ($f % 10) === 1 && ($f % 100) !== 11 || $v !== 2 && ($f % 10) === 1) {
             return 'one';
         }
 
@@ -2311,7 +2328,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($f % 10) === 1) && (($f % 100) !== 11))) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($f % 10) === 1 && ($f % 100) !== 11) {
             return 'one';
         }
 
@@ -2365,11 +2382,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if (($v !== 0) || ($n === 0) || (($n !== 1) && (self::inRange(($n % 100), 1, 19)))) {
+        if ($v !== 0 || $n === 0 || $n !== 1 && self::inRange($n % 100, 1, 19)) {
             return 'few';
         }
 
@@ -2427,11 +2444,11 @@ final class PluralRulesMatcher
             return 'two';
         }
 
-        if (($n === 0) || (self::inRange(($n % 100), 3, 10))) {
+        if ($n === 0 || self::inRange($n % 100, 3, 10)) {
             return 'few';
         }
 
-        if (self::inRange(($n % 100), 11, 19)) {
+        if (self::inRange($n % 100, 11, 19)) {
             return 'many';
         }
 
@@ -2557,7 +2574,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -2819,7 +2836,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -2837,15 +2854,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if (($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14)) {
             return 'few';
         }
 
-        if ((($v === 0) && ($i !== 1) && (self::inRange(($i % 10), 0, 1))) || (($v === 0) && (self::inRange(($i % 10), 5, 9))) || (($v === 0) && (self::inRange(($i % 100), 12, 14)))) {
+        if ($v === 0 && $i !== 1 && self::inRange($i % 10, 0, 1) || $v === 0 && self::inRange($i % 10, 5, 9) || $v === 0 && self::inRange($i % 100, 12, 14)) {
             return 'many';
         }
 
@@ -2863,11 +2880,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n % 10) === 0) || (self::inRange(($n % 100), 11, 19)) || (($v === 2) && (self::inRange(($f % 100), 11, 19)))) {
+        if (($n % 10) === 0 || self::inRange($n % 100, 11, 19) || $v === 2 && self::inRange($f % 100, 11, 19)) {
             return 'zero';
         }
 
-        if (((($n % 10) === 1) && (($n % 100) !== 11)) || (($v === 2) && (($f % 10) === 1) && (($f % 100) !== 11)) || (($v !== 2) && (($f % 10) === 1))) {
+        if (($n % 10) === 1 && ($n % 100) !== 11 || $v === 2 && ($f % 10) === 1 && ($f % 100) !== 11 || $v !== 2 && ($f % 10) === 1) {
             return 'one';
         }
 
@@ -2907,7 +2924,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -2925,11 +2942,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -2965,11 +2982,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if (($v !== 0) || ($n === 0) || (($n !== 1) && (self::inRange(($n % 100), 1, 19)))) {
+        if ($v !== 0 || $n === 0 || $n !== 1 && self::inRange($n % 100, 1, 19)) {
             return 'few';
         }
 
@@ -3005,15 +3022,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11) {
             return 'one';
         }
 
-        if (($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14)) {
             return 'few';
         }
 
-        if ((($v === 0) && (($i % 10) === 0)) || (($v === 0) && (self::inRange(($i % 10), 5, 9))) || (($v === 0) && (self::inRange(($i % 100), 11, 14)))) {
+        if ($v === 0 && ($i % 10) === 0 || $v === 0 && self::inRange($i % 10, 5, 9) || $v === 0 && self::inRange($i % 100, 11, 14)) {
             return 'many';
         }
 
@@ -3103,7 +3120,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -3121,11 +3138,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -3247,11 +3264,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($f % 10) === 1) && (($f % 100) !== 11))) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($f % 10) === 1 && ($f % 100) !== 11) {
             return 'one';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) || ((self::inRange(($f % 10), 2, 4)) && (!self::inRange(($f % 100), 12, 14)))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14) || self::inRange($f % 10, 2, 4) && ! self::inRange($f % 100, 12, 14)) {
             return 'few';
         }
 
@@ -3269,7 +3286,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -3291,7 +3308,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($n === 0 || $n === 1)) || (($i === 0) && ($f === 1))) {
+        if ($n === 0 || $n === 1 || $i === 0 && $f === 1) {
             return 'one';
         }
 
@@ -3309,11 +3326,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((self::inRange($i, 2, 4)) && ($v === 0)) {
+        if (self::inRange($i, 2, 4) && $v === 0) {
             return 'few';
         }
 
@@ -3335,15 +3352,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($v === 0) && (($i % 100) === 1)) {
+        if ($v === 0 && ($i % 100) === 1) {
             return 'one';
         }
 
-        if (($v === 0) && (($i % 100) === 2)) {
+        if ($v === 0 && ($i % 100) === 2) {
             return 'two';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 100), 3, 4))) || ($v !== 0)) {
+        if ($v === 0 && self::inRange($i % 100, 3, 4) || $v !== 0) {
             return 'few';
         }
 
@@ -3525,11 +3542,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) || ((($f % 10) === 1) && (($f % 100) !== 11))) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11 || ($f % 10) === 1 && ($f % 100) !== 11) {
             return 'one';
         }
 
-        if ((($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) || ((self::inRange(($f % 10), 2, 4)) && (!self::inRange(($f % 100), 12, 14)))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14) || self::inRange($f % 10, 2, 4) && ! self::inRange($f % 100, 12, 14)) {
             return 'few';
         }
 
@@ -3615,7 +3632,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -3633,7 +3650,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -3791,7 +3808,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((($v === 0) && (($i === 1 || $i === 2 || $i === 3))) || (($v === 0) && (!(($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9))) || (($v !== 0) && (!(($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)))) {
+        if (
+            $v === 0 && ($i === 1 || $i === 2 || $i === 3) ||
+                $v === 0 && ! (($i % 10) === 4 || ($i % 10) === 6 || ($i % 10) === 9) ||
+                $v !== 0 && ! (($f % 10) === 4 || ($f % 10) === 6 || ($f % 10) === 9)
+        ) {
             return 'one';
         }
 
@@ -3891,7 +3912,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if ((self::inRange($n, 0, 1)) || (self::inRange($n, 11, 99))) {
+        if (self::inRange($n, 0, 1) || self::inRange($n, 11, 99)) {
             return 'one';
         }
 
@@ -3927,15 +3948,15 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($v === 0) && (($i % 10) === 1) && (($i % 100) !== 11)) {
+        if ($v === 0 && ($i % 10) === 1 && ($i % 100) !== 11) {
             return 'one';
         }
 
-        if (($v === 0) && (self::inRange(($i % 10), 2, 4)) && (!self::inRange(($i % 100), 12, 14))) {
+        if ($v === 0 && self::inRange($i % 10, 2, 4) && ! self::inRange($i % 100, 12, 14)) {
             return 'few';
         }
 
-        if ((($v === 0) && (($i % 10) === 0)) || (($v === 0) && (self::inRange(($i % 10), 5, 9))) || (($v === 0) && (self::inRange(($i % 100), 11, 14)))) {
+        if ($v === 0 && ($i % 10) === 0 || $v === 0 && self::inRange($i % 10, 5, 9) || $v === 0 && self::inRange($i % 100, 11, 14)) {
             return 'many';
         }
 
@@ -3967,7 +3988,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -4021,11 +4042,11 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
-        if ((($e === 0) && ($i !== 0) && (($i % 1000000) === 0) && ($v === 0)) || (!self::inRange($e, 0, 5))) {
+        if ($e === 0 && $i !== 0 && ($i % 1000000) === 0 && $v === 0 || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -4179,7 +4200,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 1) && ($v === 0)) {
+        if ($i === 1 && $v === 0) {
             return 'one';
         }
 
@@ -4239,7 +4260,7 @@ final class PluralRulesMatcher
         $t = self::getCompactExponent($n);
         $e = self::getExponent($n);
 
-        if (($i === 0) || ($n === 1)) {
+        if ($i === 0 || $n === 1) {
             return 'one';
         }
 
@@ -4251,7 +4272,7 @@ final class PluralRulesMatcher
      */
     public static function getPluralCategory(Locale $locale, float|int $number): string
     {
-        return match($locale->getLanguage()) {
+        return match ($locale->getLanguage()) {
             'af' => self::getPluralCategoryAf($number),
             'ak' => self::getPluralCategoryAk($number),
             'am' => self::getPluralCategoryAm($number),
@@ -4471,7 +4492,7 @@ final class PluralRulesMatcher
             'yue' => self::getPluralCategoryYue($number),
             'zh' => self::getPluralCategoryZh($number),
             'zu' => self::getPluralCategoryZu($number),
-            default => 'other'
+            default => 'other',
         };
     }
 
@@ -4480,7 +4501,226 @@ final class PluralRulesMatcher
      */
     public static function getSupportedLocales(): array
     {
-        return ['af', 'ak', 'am', 'an', 'ar', 'ars', 'as', 'asa', 'ast', 'az', 'bal', 'be', 'bem', 'bez', 'bg', 'bho', 'blo', 'bm', 'bn', 'bo', 'br', 'brx', 'bs', 'ca', 'ce', 'ceb', 'cgg', 'chr', 'ckb', 'cs', 'csw', 'cy', 'da', 'de', 'doi', 'dsb', 'dv', 'dz', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'ff', 'fi', 'fil', 'fo', 'fr', 'fur', 'fy', 'ga', 'gd', 'gl', 'gsw', 'gu', 'guw', 'gv', 'ha', 'haw', 'he', 'hi', 'hnj', 'hr', 'hsb', 'hu', 'hy', 'ia', 'id', 'ig', 'ii', 'io', 'is', 'it', 'iu', 'ja', 'jbo', 'jgo', 'jmc', 'jv', 'jw', 'ka', 'kab', 'kaj', 'kcg', 'kde', 'kea', 'kk', 'kkj', 'kl', 'km', 'kn', 'ko', 'ks', 'ksb', 'ksh', 'ku', 'kw', 'ky', 'lag', 'lb', 'lg', 'lij', 'lkt', 'lld', 'ln', 'lo', 'lt', 'lv', 'mas', 'mg', 'mgo', 'mk', 'ml', 'mn', 'mo', 'mr', 'ms', 'mt', 'my', 'nah', 'naq', 'nb', 'nd', 'ne', 'nl', 'nn', 'nnh', 'no', 'nqo', 'nr', 'nso', 'ny', 'nyn', 'om', 'or', 'os', 'osa', 'pa', 'pap', 'pcm', 'pl', 'prg', 'ps', 'pt', 'pt-PT', 'rm', 'ro', 'rof', 'ru', 'rwk', 'sah', 'saq', 'sat', 'sc', 'scn', 'sd', 'sdh', 'se', 'seh', 'ses', 'sg', 'sh', 'shi', 'si', 'sk', 'sl', 'sma', 'smi', 'smj', 'smn', 'sms', 'sn', 'so', 'sq', 'sr', 'ss', 'ssy', 'st', 'su', 'sv', 'sw', 'syr', 'ta', 'te', 'teo', 'th', 'ti', 'tig', 'tk', 'tl', 'tn', 'to', 'tpi', 'tr', 'ts', 'tzm', 'ug', 'uk', 'und', 'ur', 'uz', 've', 'vec', 'vi', 'vo', 'vun', 'wa', 'wae', 'wo', 'xh', 'xog', 'yi', 'yo', 'yue', 'zh', 'zu'];
+        return [
+            'af',
+            'ak',
+            'am',
+            'an',
+            'ar',
+            'ars',
+            'as',
+            'asa',
+            'ast',
+            'az',
+            'bal',
+            'be',
+            'bem',
+            'bez',
+            'bg',
+            'bho',
+            'blo',
+            'bm',
+            'bn',
+            'bo',
+            'br',
+            'brx',
+            'bs',
+            'ca',
+            'ce',
+            'ceb',
+            'cgg',
+            'chr',
+            'ckb',
+            'cs',
+            'csw',
+            'cy',
+            'da',
+            'de',
+            'doi',
+            'dsb',
+            'dv',
+            'dz',
+            'ee',
+            'el',
+            'en',
+            'eo',
+            'es',
+            'et',
+            'eu',
+            'fa',
+            'ff',
+            'fi',
+            'fil',
+            'fo',
+            'fr',
+            'fur',
+            'fy',
+            'ga',
+            'gd',
+            'gl',
+            'gsw',
+            'gu',
+            'guw',
+            'gv',
+            'ha',
+            'haw',
+            'he',
+            'hi',
+            'hnj',
+            'hr',
+            'hsb',
+            'hu',
+            'hy',
+            'ia',
+            'id',
+            'ig',
+            'ii',
+            'io',
+            'is',
+            'it',
+            'iu',
+            'ja',
+            'jbo',
+            'jgo',
+            'jmc',
+            'jv',
+            'jw',
+            'ka',
+            'kab',
+            'kaj',
+            'kcg',
+            'kde',
+            'kea',
+            'kk',
+            'kkj',
+            'kl',
+            'km',
+            'kn',
+            'ko',
+            'ks',
+            'ksb',
+            'ksh',
+            'ku',
+            'kw',
+            'ky',
+            'lag',
+            'lb',
+            'lg',
+            'lij',
+            'lkt',
+            'lld',
+            'ln',
+            'lo',
+            'lt',
+            'lv',
+            'mas',
+            'mg',
+            'mgo',
+            'mk',
+            'ml',
+            'mn',
+            'mo',
+            'mr',
+            'ms',
+            'mt',
+            'my',
+            'nah',
+            'naq',
+            'nb',
+            'nd',
+            'ne',
+            'nl',
+            'nn',
+            'nnh',
+            'no',
+            'nqo',
+            'nr',
+            'nso',
+            'ny',
+            'nyn',
+            'om',
+            'or',
+            'os',
+            'osa',
+            'pa',
+            'pap',
+            'pcm',
+            'pl',
+            'prg',
+            'ps',
+            'pt',
+            'pt-PT',
+            'rm',
+            'ro',
+            'rof',
+            'ru',
+            'rwk',
+            'sah',
+            'saq',
+            'sat',
+            'sc',
+            'scn',
+            'sd',
+            'sdh',
+            'se',
+            'seh',
+            'ses',
+            'sg',
+            'sh',
+            'shi',
+            'si',
+            'sk',
+            'sl',
+            'sma',
+            'smi',
+            'smj',
+            'smn',
+            'sms',
+            'sn',
+            'so',
+            'sq',
+            'sr',
+            'ss',
+            'ssy',
+            'st',
+            'su',
+            'sv',
+            'sw',
+            'syr',
+            'ta',
+            'te',
+            'teo',
+            'th',
+            'ti',
+            'tig',
+            'tk',
+            'tl',
+            'tn',
+            'to',
+            'tpi',
+            'tr',
+            'ts',
+            'tzm',
+            'ug',
+            'uk',
+            'und',
+            'ur',
+            'uz',
+            've',
+            'vec',
+            'vi',
+            'vo',
+            'vun',
+            'wa',
+            'wae',
+            'wo',
+            'xh',
+            'xog',
+            'yi',
+            'yo',
+            'yue',
+            'zh',
+            'zu',
+        ];
     }
-
 }

@@ -2,10 +2,10 @@
 
 namespace Tempest\Internationalization\MessageFormat\Formatter;
 
-final class FormattedValue
+final readonly class FormattedValue
 {
     public function __construct(
-        public readonly mixed $value,
-        public readonly string $formatted,
+        public mixed $value,
+        public string $formatted,
     ) {}
 }

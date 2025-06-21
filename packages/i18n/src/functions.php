@@ -2,7 +2,7 @@
 
 namespace Tempest\Internationalization;
 
-use Tempest\Internationalization\Translator\Translator;
+use Tempest\Internationalization\Translator;
 use Tempest\Support\Language\Locale;
 
 use function Tempest\get;
