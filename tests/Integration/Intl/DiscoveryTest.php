@@ -4,7 +4,7 @@ namespace Tests\Tempest\Integration\Intl;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\TranslationMessageDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +12,7 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
 {
     public function test_functions_are_discovered(): void
     {
-        $config = $this->container->get(InternationalizationConfig::class);
+        $config = $this->container->get(IntlConfig::class);
 
         $this->assertCount(3, $config->functions);
     }
@@ -27,7 +27,7 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.en_US.json');
         $discovery->apply();
 
-        $config = $this->container->get(InternationalizationConfig::class);
+        $config = $this->container->get(IntlConfig::class);
 
         $this->assertSame([
             'fr' => [__DIR__ . '/Fixtures/messages.fr.json'],

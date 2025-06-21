@@ -20,7 +20,7 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
     use IsDiscovery;
 
     public function __construct(
-        private readonly InternationalizationConfig $config,
+        private readonly IntlConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

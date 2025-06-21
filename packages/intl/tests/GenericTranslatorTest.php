@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Catalog\GenericCatalog;
 use Tempest\Intl\GenericTranslator;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
 use Tempest\Intl\MessageFormat\Functions\DateTimeFunction;
@@ -18,7 +18,7 @@ final class GenericTranslatorTest extends TestCase
 {
     private Catalog $catalog;
     private Translator $translator;
-    private InternationalizationConfig $config;
+    private IntlConfig $config;
 
     protected function setUp(): void
     {
@@ -26,7 +26,7 @@ final class GenericTranslatorTest extends TestCase
         $this->catalog->add(Locale::FRENCH, 'hello', 'Bonjour!');
         $this->catalog->add(Locale::ENGLISH, 'hello', 'Hello!');
 
-        $this->config = new InternationalizationConfig(
+        $this->config = new IntlConfig(
             currentLocale: Locale::FRENCH,
             fallbackLocale: Locale::ENGLISH,
         );

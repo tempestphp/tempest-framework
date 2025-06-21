@@ -4,7 +4,7 @@ namespace Tempest\Intl\Catalog;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Support\Arr;
 use Tempest\Support\Filesystem;
@@ -14,7 +14,7 @@ final class CatalogInitializer implements Initializer
 {
     public function initialize(Container $container): Catalog
     {
-        $config = $container->get(InternationalizationConfig::class);
+        $config = $container->get(IntlConfig::class);
         $catalog = [];
 
         foreach ($config->translationMessagePaths as $locale => $paths) {

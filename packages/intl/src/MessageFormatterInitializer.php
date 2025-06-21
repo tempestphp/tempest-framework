@@ -11,7 +11,7 @@ final class MessageFormatterInitializer implements Initializer
 {
     public function initialize(Container $container): mixed
     {
-        $config = $container->get(InternationalizationConfig::class);
+        $config = $container->get(IntlConfig::class);
 
         return new MessageFormatter(
             functions: $config->functions,

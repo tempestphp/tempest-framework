@@ -4,14 +4,14 @@ namespace Tempest\Intl;
 
 use Tempest\EventBus\EventBus;
 use Tempest\Intl\Catalog\Catalog;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
 
 final readonly class GenericTranslator implements Translator
 {
     public function __construct(
-        private InternationalizationConfig $config,
+        private IntlConfig $config,
         private Catalog $catalog,
         private MessageFormatter $formatter,
         private ?EventBus $eventBus = null,

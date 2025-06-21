@@ -2,7 +2,7 @@
 
 namespace Tempest\Intl\Catalog;
 
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Support\Arr;
 

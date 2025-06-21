@@ -8,7 +8,7 @@ use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Intl\Catalog\Catalog;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\Translator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -23,7 +23,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $config = $this->container->get(InternationalizationConfig::class);
+        $config = $this->container->get(IntlConfig::class);
         $config->addTranslationMessageFile(Locale::FRENCH, __DIR__ . '/Fixtures/messages.fr.json');
         $config->addTranslationMessageFile(Locale::ENGLISH, __DIR__ . '/Fixtures/messages.en_US.json');
     }
@@ -46,7 +46,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
 
     public function test_default_locale(): void
     {
-        $config = $this->container->get(InternationalizationConfig::class);
+        $config = $this->container->get(IntlConfig::class);
 
         $this->assertSame(Locale::default(), $config->currentLocale);
     }

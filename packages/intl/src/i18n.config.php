@@ -1,9 +1,9 @@
 <?php
 
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 
-return new InternationalizationConfig(
+return new IntlConfig(
     currentLocale: Locale::default(),
     fallbackLocale: Locale::default(),
 );

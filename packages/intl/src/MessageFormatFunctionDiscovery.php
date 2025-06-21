@@ -17,7 +17,7 @@ final class MessageFormatFunctionDiscovery implements Discovery
 
     public function __construct(
         private readonly Container $container,
-        private readonly InternationalizationConfig $config,
+        private readonly IntlConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

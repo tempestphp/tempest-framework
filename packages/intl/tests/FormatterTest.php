@@ -4,7 +4,7 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Intl\InternationalizationConfig;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;

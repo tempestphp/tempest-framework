@@ -5,7 +5,7 @@ namespace Tempest\Intl;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;
 
-final class InternationalizationConfig
+final class IntlConfig
 {
     /** @var MessageFormatFunction[] */
     public array $functions = [];
