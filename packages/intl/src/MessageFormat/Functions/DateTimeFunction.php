@@ -4,14 +4,14 @@ namespace Tempest\Intl\MessageFormat\Functions;
 
 use Tempest\DateTime\DateTime;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
-use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;
+use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Support\Arr;
 
-final class DateTimeFunction implements MessageFormatFunction
+final class DateTimeFunction implements FormattingFunction
 {
     public string $name = 'datetime';
 
-    public function evaluate(mixed $value, array $parameters): FormattedValue
+    public function format(mixed $value, array $parameters): FormattedValue
     {
         $datetime = DateTime::parse($value);
         $formatted = $datetime->format(Arr\get_by_key($parameters, 'pattern'));

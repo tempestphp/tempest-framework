@@ -3,15 +3,15 @@
 namespace Tempest\Intl\MessageFormat\Functions;
 
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
-use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;
+use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Support\Arr;
 use Tempest\Support\Str;
 
-final class StringFunction implements MessageFormatFunction
+final class StringFunction implements FormattingFunction
 {
     public string $name = 'string';
 
-    public function evaluate(mixed $value, array $parameters): FormattedValue
+    public function format(mixed $value, array $parameters): FormattedValue
     {
         $string = Str\parse($value, default: '');
         $formatted = match (Arr\get_by_key($parameters, 'style')) {

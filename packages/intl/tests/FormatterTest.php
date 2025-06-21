@@ -7,8 +7,8 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
-use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
+use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\Functions\DateTimeFunction;
 use Tempest\Intl\MessageFormat\Functions\NumberFunction;
 use Tempest\Intl\MessageFormat\Functions\StringFunction;
@@ -305,10 +305,10 @@ final class FormatterTest extends TestCase
     public function test_custom_function(): void
     {
         $formatter = new MessageFormatter([
-            new class implements MessageFormatFunction {
+            new class implements FormattingFunction {
                 public string $name = 'uppercase';
 
-                public function evaluate(mixed $value, array $parameters): FormattedValue
+                public function format(mixed $value, array $parameters): FormattedValue
                 {
                     return new FormattedValue($value, mb_strtoupper($value));
                 }

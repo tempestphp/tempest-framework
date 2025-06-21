@@ -4,6 +4,7 @@ namespace Tempest\Intl\MessageFormat\Formatter;
 
 use Exception;
 use Tempest\Intl\Locale;
+use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\SimplePatternBody;
@@ -35,7 +36,7 @@ final class MessageFormatter
     private array $variables = [];
 
     public function __construct(
-        /** @var MessageFormatFunction[] */
+        /** @var FormattingFunction[] */
         private readonly array $functions = [],
         private readonly PluralRulesMatcher $pluralRules = new PluralRulesMatcher(),
     ) {}
@@ -254,7 +255,7 @@ final class MessageFormatter
             $options = $this->evaluateOptions($expression->function->options);
 
             if ($function = $this->getFunction($functionName)) {
-                return $function->evaluate($value, $options);
+                return $function->format($value, $options);
             } else {
                 throw new FormattingException("Unknown function `{$functionName}`.");
             }
@@ -265,11 +266,11 @@ final class MessageFormatter
         return new FormattedValue($value, $formatted);
     }
 
-    private function getFunction(string $name): ?MessageFormatFunction
+    private function getFunction(string $name): ?FormattingFunction
     {
         return array_find(
             array: $this->functions,
-            callback: fn (MessageFormatFunction $fn) => $fn->name === $name,
+            callback: fn (FormattingFunction $fn) => $fn->name === $name,
         );
     }
 

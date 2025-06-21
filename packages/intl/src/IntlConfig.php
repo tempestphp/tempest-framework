@@ -3,11 +3,11 @@
 namespace Tempest\Intl;
 
 use Tempest\Intl\Locale;
-use Tempest\Intl\MessageFormat\Formatter\MessageFormatFunction;
+use Tempest\Intl\MessageFormat\FormattingFunction;
 
 final class IntlConfig
 {
-    /** @var MessageFormatFunction[] */
+    /** @var FormattingFunction[] */
     public array $functions = [];
 
     /** @var array<string,string[]> */
@@ -25,7 +25,7 @@ final class IntlConfig
         public Locale $fallbackLocale,
     ) {}
 
-    public function addMessageFormatFunction(MessageFormatFunction $fn): void
+    public function addFormattingFunction(FormattingFunction $fn): void
     {
         $this->functions[] = $fn;
     }
