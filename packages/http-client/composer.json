@@ -15,8 +15,7 @@
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
-        "guzzlehttp/psr7": "^2.6.1",
-        "phpunit/phpunit": "^11.5.17"
+        "guzzlehttp/psr7": "^2.6.1"
     },
     "autoload": {
         "psr-4": {

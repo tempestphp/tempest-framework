@@ -11,9 +11,6 @@
 		"tempest/datetime": "dev-main",
 		"tempest/support": "dev-main"
 	},
-	"require-dev": {
-		"phpunit/phpunit": "^11.5.17"
-	},
 	"autoload": {
 		"files": [
 			"src/functions.php",
