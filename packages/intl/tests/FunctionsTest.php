@@ -4,7 +4,6 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
-use Tempest\Intl;
 use Tempest\Intl\Locale;
 use Tempest\Intl\Number;
 use Tempest\Support\Currency;

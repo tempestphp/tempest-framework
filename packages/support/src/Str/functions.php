@@ -813,7 +813,7 @@ namespace Tempest\Support\Str {
      *      => 'Yeet'
      *
      *      pad_right('مرحبا', 8, 'ا')
-     *      => 'مرح��اااا'
+     *      => 'مرحباااا'
      *
      * @param non-empty-string $padString
      * @param int<0, max> $totalLength

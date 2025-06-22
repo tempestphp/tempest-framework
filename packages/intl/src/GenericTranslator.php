@@ -19,18 +19,16 @@ final readonly class GenericTranslator implements Translator
 
     public function translateForLocale(Locale $locale, string $key, mixed ...$arguments): string
     {
-        $message = $this->catalog->get($locale, $key);
-
-        if (! $message) {
-            $message = $this->catalog->get($this->config->fallbackLocale, $key);
-        }
-
-        if (! $message) {
+        if (! $this->catalog->has($locale, $key)) {
             $this->eventBus?->dispatch(new TranslationMiss(
                 locale: $locale,
                 key: $key,
             ));
+        }
 
+        $message = $this->catalog->get($locale, $key) ?? $this->catalog->get($this->config->fallbackLocale, $key);
+
+        if ($message === null) {
             return $key;
         }
 
