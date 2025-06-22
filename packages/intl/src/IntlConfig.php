@@ -4,12 +4,17 @@ namespace Tempest\Intl;
 
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\FormattingFunction;
+use Tempest\Intl\MessageFormat\MarkupFormatter;
 use Tempest\Intl\MessageFormat\SelectorFunction;
+use Tempest\Intl\MessageFormat\StandaloneMarkupFormatter;
 
 final class IntlConfig
 {
     /** @var FormattingFunction[] */
     public array $functions = [];
+
+    /** @var array<MarkupFormatter|StandaloneMarkupFormatter> */
+    public array $markupFormatters = [];
 
     /** @var array<string,string[]> */
     public array $translationMessagePaths = [];
@@ -29,6 +34,11 @@ final class IntlConfig
     public function addFunction(FormattingFunction|SelectorFunction $fn): void
     {
         $this->functions[] = $fn;
+    }
+
+    public function addMarkupFormatter(MarkupFormatter|StandaloneMarkupFormatter $formatter): void
+    {
+        $this->markupFormatters[] = $formatter;
     }
 
     public function addTranslationMessageFile(Locale $locale, string $path): void

@@ -12,20 +12,31 @@ use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\Functions\DateTimeFunction;
 use Tempest\Intl\MessageFormat\Functions\NumberFunction;
 use Tempest\Intl\MessageFormat\Functions\StringFunction;
+use Tempest\Intl\MessageFormat\Markup\HtmlTagFormatter;
+use Tempest\Intl\MessageFormat\Markup\VoidHtmlTagFormatter;
 use Tempest\Support\Currency;
 
 final class FormatterTest extends TestCase
 {
-    public function test_format_markup(): void
+    #[TestWith(['Click {#a href=|https://tempestphp.com|}here{/a}.', 'Click <a href="https://tempestphp.com">here</a>.'])]
+    #[TestWith(['This is {#strong}bold{/strong}.', 'This is <strong>bold</strong>.'])]
+    public function test_html_tag_markup(string $input, string $expected): void
     {
-        $formatter = new MessageFormatter();
-        $value = $formatter->format(<<<'TXT'
-        This is {#bold}bold{/bold}.
-        TXT);
+        $formatter = new MessageFormatter(
+            markupFormatters: [new HtmlTagFormatter()],
+        );
 
-        // TODO: offer custom markup
+        $this->assertSame($expected, $formatter->format($input));
+    }
 
-        $this->assertSame('This is <bold>bold</bold>.', $value);
+    #[TestWith(['Hello{#br/}World', 'Hello<br />World'])]
+    public function test_void_html_tag_markup(string $input, string $expected): void
+    {
+        $formatter = new MessageFormatter(
+            markupFormatters: [new VoidHtmlTagFormatter()],
+        );
+
+        $this->assertSame($expected, $formatter->format($input));
     }
 
     public function test_placeholder_variable(): void

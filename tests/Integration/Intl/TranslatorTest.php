@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Intl;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\EventBus\EventBus;
 use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\IntlConfig;
@@ -88,5 +89,26 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(Locale::ENGLISH_UNITED_STATES, $received->locale);
         $this->assertSame('failure', $received->key);
         $this->assertSame('Failed to parse message.', $received->exception->getMessage());
+    }
+
+    public function test_icon_markup(): void
+    {
+        $translator = $this->container->get(Translator::class);
+        $catalog = $this->container->get(Catalog::class);
+        $catalog->add(Locale::ENGLISH, 'has_icon', '{#icon-tabler-tornado/}');
+
+        $this->assertStringContainsStringIgnoringCase('<svg', $translator->translate('has_icon'));
+    }
+
+    #[TestWith(['Click {#a href=|https://tempestphp.com|}here{/a}.', 'Click <a href="https://tempestphp.com">here</a>.'])]
+    #[TestWith(['This is {#strong}bold{/strong}.', 'This is <strong>bold</strong>.'])]
+    #[TestWith(['Hello{#br/}World', 'Hello<br />World'])]
+    public function test_html_markup(string $input, string $expected): void
+    {
+        $translator = $this->container->get(Translator::class);
+        $catalog = $this->container->get(Catalog::class);
+        $catalog->add(Locale::ENGLISH, 'test', $input);
+
+        $this->assertSame($expected, $translator->translate('test'));
     }
 }

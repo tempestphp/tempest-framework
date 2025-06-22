@@ -3,6 +3,7 @@
 namespace Tempest\Intl\MessageFormat\Formatter;
 
 use Tempest\Intl\MessageFormat\FormattingFunction;
+use Tempest\Intl\MessageFormat\MarkupFormatter;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\SimplePatternBody;
@@ -13,6 +14,7 @@ use Tempest\Intl\MessageFormat\Parser\Node\Expression\Expression;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\FunctionCall;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\FunctionExpression;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\LiteralExpression;
+use Tempest\Intl\MessageFormat\Parser\Node\Expression\Option;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\VariableExpression;
 use Tempest\Intl\MessageFormat\Parser\Node\Key\WildcardKey;
 use Tempest\Intl\MessageFormat\Parser\Node\Literal\Literal;
@@ -28,6 +30,8 @@ use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 use Tempest\Intl\MessageFormat\Parser\Parser;
 use Tempest\Intl\MessageFormat\SelectorFunction;
+use Tempest\Intl\MessageFormat\StandaloneMarkupFormatter;
+use Tempest\Support\Arr;
 
 use function Tempest\Support\arr;
 
@@ -37,8 +41,10 @@ final class MessageFormatter
     private array $variables = [];
 
     public function __construct(
-        /** @var FormattingFunction[] */
+        /** @var array<FormattingFunction|SelectorFunction> */
         private readonly array $functions = [],
+        /** @var array<MarkupFormatter|StandaloneMarkupFormatter> */
+        private readonly array $markupFormatters = [],
     ) {}
 
     /**
@@ -273,28 +279,6 @@ final class MessageFormatter
         return new FormattedValue($value, $formatted);
     }
 
-    private function getSelectorFunction(?string $name): ?SelectorFunction
-    {
-        if (! $name) {
-            return null;
-        }
-
-        return arr($this->functions)
-            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof SelectorFunction)
-            ->first(fn (SelectorFunction $fn) => $fn->name === $name);
-    }
-
-    private function getFormattingFunction(?string $name): ?FormattingFunction
-    {
-        if (! $name) {
-            return null;
-        }
-
-        return arr($this->functions)
-            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof FormattingFunction)
-            ->first(fn (FormattingFunction $fn) => $fn->name === $name);
-    }
-
     private function evaluateOptions(array $options): array
     {
         $result = [];
@@ -338,15 +322,69 @@ final class MessageFormatter
 
     private function formatMarkup(Markup $markup): string
     {
-        // TODO: more advanced with options
-        // built-in HtmlMarkup
         $tag = (string) $markup->identifier;
+        $options = Arr\map_with_keys($markup->options, fn (Option $option) => yield $option->identifier->name => $option->value->value);
+
+        if ($markup->type === MarkupType::STANDALONE) {
+            if (is_null($formatter = $this->getStandaloneMarkupFormatter($tag))) {
+                return '';
+            }
+
+            return $formatter->format($tag, $options);
+        }
+
+        if (is_null($formatter = $this->getMarkupFormatter($tag))) {
+            return '';
+        }
 
         return match ($markup->type) {
-            MarkupType::OPEN => "<{$tag}>",
-            MarkupType::CLOSE => "</{$tag}>",
-            MarkupType::STANDALONE => "<{$tag}/>",
+            MarkupType::OPEN => $formatter->formatOpenTag($tag, $options),
+            MarkupType::CLOSE => $formatter->formatCloseTag($tag),
             default => '',
         };
+    }
+
+    private function getMarkupFormatter(?string $tag): ?MarkupFormatter
+    {
+        if (! $tag) {
+            return null;
+        }
+
+        return arr($this->markupFormatters)
+            ->filter(fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof MarkupFormatter)
+            ->first(fn (MarkupFormatter $fn) => $fn->supportsTag($tag));
+    }
+
+    private function getStandaloneMarkupFormatter(?string $tag): ?StandaloneMarkupFormatter
+    {
+        if (! $tag) {
+            return null;
+        }
+
+        return arr($this->markupFormatters)
+            ->filter(fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof StandaloneMarkupFormatter)
+            ->first(fn (StandaloneMarkupFormatter $fn) => $fn->supportsTag($tag));
+    }
+
+    private function getSelectorFunction(?string $name): ?SelectorFunction
+    {
+        if (! $name) {
+            return null;
+        }
+
+        return arr($this->functions)
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof SelectorFunction)
+            ->first(fn (SelectorFunction $fn) => $fn->name === $name);
+    }
+
+    private function getFormattingFunction(?string $name): ?FormattingFunction
+    {
+        if (! $name) {
+            return null;
+        }
+
+        return arr($this->functions)
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof FormattingFunction)
+            ->first(fn (FormattingFunction $fn) => $fn->name === $name);
     }
 }

@@ -17,6 +17,13 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
         $this->assertCount(3, $config->functions);
     }
 
+    public function test_markup_formatters_are_discovered(): void
+    {
+        $config = $this->container->get(IntlConfig::class);
+
+        $this->assertCount(3, $config->markupFormatters);
+    }
+
     public function test_discovery_adds_paths_to_config(): void
     {
         $discovery = $this->container->get(TranslationMessageDiscovery::class);

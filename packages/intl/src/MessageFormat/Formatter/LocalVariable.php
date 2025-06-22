@@ -4,12 +4,12 @@ namespace Tempest\Intl\MessageFormat\Formatter;
 
 use Tempest\Intl\MessageFormat\SelectorFunction;
 
-final class LocalVariable
+final readonly class LocalVariable
 {
     public function __construct(
-        public readonly string $identifier,
-        public readonly mixed $value,
-        public readonly ?SelectorFunction $function = null,
-        public readonly array $parameters = [],
+        public string $identifier,
+        public mixed $value,
+        public ?SelectorFunction $function = null,
+        public array $parameters = [],
     ) {}
 }

@@ -60,7 +60,7 @@
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.5.17",
+        "phpunit/phpunit": "^11.5.24",
         "rector/rector": "^2.0-rc2",
         "spatie/phpunit-snapshot-assertions": "^5.1.8",
         "spaze/phpstan-disallowed-calls": "^4.0",
