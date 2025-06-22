@@ -36,7 +36,7 @@ final class GenericTranslatorTest extends TestCase
             catalog: $this->catalog,
             formatter: new MessageFormatter([
                 new StringFunction(),
-                new NumberFunction(),
+                new NumberFunction($this->config),
                 new DateTimeFunction(),
             ]),
         );

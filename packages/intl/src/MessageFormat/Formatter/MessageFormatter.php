@@ -2,8 +2,6 @@
 
 namespace Tempest\Intl\MessageFormat\Formatter;
 
-use Exception;
-use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
@@ -12,6 +10,7 @@ use Tempest\Intl\MessageFormat\Parser\Node\ComplexMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Declaration\InputDeclaration;
 use Tempest\Intl\MessageFormat\Parser\Node\Declaration\LocalDeclaration;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\Expression;
+use Tempest\Intl\MessageFormat\Parser\Node\Expression\FunctionCall;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\FunctionExpression;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\LiteralExpression;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\VariableExpression;
@@ -28,17 +27,18 @@ use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Text;
 use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 use Tempest\Intl\MessageFormat\Parser\Parser;
-use Tempest\Intl\PluralRules\PluralRulesMatcher;
+use Tempest\Intl\MessageFormat\SelectorFunction;
+
+use function Tempest\Support\arr;
 
 final class MessageFormatter
 {
-    /** @var array<string,mixed> $variables */
+    /** @var array<string,LocalVariable> $variables */
     private array $variables = [];
 
     public function __construct(
         /** @var FormattingFunction[] */
         private readonly array $functions = [],
-        private readonly PluralRulesMatcher $pluralRules = new PluralRulesMatcher(),
     ) {}
 
     /**
@@ -49,7 +49,7 @@ final class MessageFormatter
         try {
             $ast = new Parser($message)->parse();
 
-            $this->variables = $variables;
+            $this->variables = $this->parseLocalVariables($variables);
 
             return $this->formatMessage($ast, $variables);
         } catch (ParsingException $e) {
@@ -72,15 +72,30 @@ final class MessageFormatter
 
             foreach ($message->declarations as $declaration) {
                 if ($declaration instanceof InputDeclaration) {
-                    $variableName = $declaration->expression->variable->name->name;
+                    $expression = $declaration->expression;
+                    $variableName = $expression->variable->name->name;
 
                     if (! array_key_exists($variableName, $this->variables)) {
-                        throw new FormattingException("Required input variable '{$variableName}' not provided.");
+                        throw new FormattingException("Required input variable `{$variableName}` not provided.");
+                    }
+
+                    if ($expression->function instanceof FunctionCall) {
+                        $this->variables[$variableName] = new LocalVariable(
+                            identifier: $variableName,
+                            value: $this->variables[$variableName]->value,
+                            function: $this->getSelectorFunction((string) $expression->function->identifier),
+                            parameters: $this->evaluateOptions($expression->function->options),
+                        );
                     }
                 } elseif ($declaration instanceof LocalDeclaration) {
                     $variableName = $declaration->variable->name->name;
-                    $value = $this->evaluateExpression($declaration->expression);
-                    $localVariables[$variableName] = $value->value;
+
+                    $localVariables[$variableName] = new LocalVariable(
+                        identifier: $variableName,
+                        value: $this->evaluateExpression($declaration->expression)->value,
+                        function: $this->getSelectorFunction($declaration->expression->function?->identifier),
+                        parameters: $declaration->expression->attributes,
+                    );
                 }
             }
 
@@ -88,14 +103,9 @@ final class MessageFormatter
             $this->variables = [...$this->variables, ...$localVariables];
 
             try {
-                $result = $this->formatComplexBody($message->body);
+                return $this->formatComplexBody($message->body);
+            } finally {
                 $this->variables = $originalVariables;
-
-                return $result;
-            } catch (Exception $e) {
-                $this->variables = $originalVariables;
-
-                throw $e;
             }
         }
 
@@ -121,44 +131,55 @@ final class MessageFormatter
 
     private function formatMatcher(Matcher $matcher): string
     {
-        $selectorValues = [];
+        $selectorVariables = [];
 
         foreach ($matcher->selectors as $selector) {
             $variableName = $selector->name->name;
 
             if (! array_key_exists($variableName, $this->variables)) {
-                throw new FormattingException("Selector variable '{$variableName}' not found.");
+                throw new FormattingException("Selector variable `{$variableName}` not found.");
             }
 
-            $selectorValues[] = $this->variables[$variableName];
+            $selectorVariables[] = $this->variables[$variableName];
         }
 
-        // Find the best matching variant
         $bestVariant = null;
         $wildcardVariant = null;
 
         foreach ($matcher->variants as $variant) {
-            if (count($variant->keys) !== count($selectorValues)) {
-                continue; // Key count mismatch
+            if (count($variant->keys) !== count($selectorVariables)) {
+                continue;
             }
 
             $matches = true;
             $hasWildcard = false;
 
             for ($i = 0; $i < count($variant->keys); $i++) {
-                $key = $variant->keys[$i];
-                $selectorValue = $selectorValues[$i];
+                $keyNode = $variant->keys[$i];
+                $variable = $selectorVariables[$i];
 
-                if ($key instanceof WildcardKey) {
+                if ($keyNode instanceof WildcardKey) {
                     $hasWildcard = true;
                     continue;
                 }
 
-                if ($key instanceof Literal) {
-                    if (! $this->matchesKey($selectorValue, $key->value)) {
-                        $matches = false;
-                        break;
-                    }
+                if (! ($keyNode instanceof Literal)) {
+                    $matches = false;
+                    break;
+                }
+
+                $variantKey = $keyNode->value;
+                $isMatch = false;
+
+                if ($variable->function) {
+                    $isMatch = $variable->function->match($variantKey, $variable->value, $variable->parameters);
+                } else {
+                    $isMatch = $variable->value === $variantKey;
+                }
+
+                if (! $isMatch) {
+                    $matches = false;
+                    break;
                 }
             }
 
@@ -175,27 +196,13 @@ final class MessageFormatter
         $selectedVariant = $bestVariant ?? $wildcardVariant;
 
         if ($selectedVariant === null) {
+            $selectorValues = array_column($selectorVariables, 'value');
+
+            // TODO: test this
             throw new FormattingException('No matching variant found for selector values: ' . json_encode($selectorValues));
         }
 
         return $this->formatPattern($selectedVariant->pattern->pattern);
-    }
-
-    private function matchesKey(mixed $value, string $keyValue): bool
-    {
-        if (is_numeric($value)) {
-            $number = (float) $value;
-
-            if ($keyValue === ((string) $number) || $keyValue === ((string) ((int) $number))) {
-                return true;
-            }
-
-            if ($keyValue === $this->pluralRules->getPluralCategory(Locale::default(), $number)) {
-                return true;
-            }
-        }
-
-        return ((string) $value) === $keyValue;
     }
 
     private function formatPattern(Pattern $pattern): string
@@ -245,7 +252,7 @@ final class MessageFormatter
                 throw new FormattingException("Variable `{$variableName}` not found");
             }
 
-            $value = $this->variables[$variableName];
+            $value = $this->variables[$variableName]->value;
         } elseif ($expression instanceof FunctionExpression) {
             $value = null; // Function-only expressions start with null
         }
@@ -254,7 +261,7 @@ final class MessageFormatter
             $functionName = (string) $expression->function->identifier;
             $options = $this->evaluateOptions($expression->function->options);
 
-            if ($function = $this->getFunction($functionName)) {
+            if ($function = $this->getFormattingFunction($functionName)) {
                 return $function->format($value, $options);
             } else {
                 throw new FormattingException("Unknown function `{$functionName}`.");
@@ -266,12 +273,26 @@ final class MessageFormatter
         return new FormattedValue($value, $formatted);
     }
 
-    private function getFunction(string $name): ?FormattingFunction
+    private function getSelectorFunction(?string $name): ?SelectorFunction
     {
-        return array_find(
-            array: $this->functions,
-            callback: fn (FormattingFunction $fn) => $fn->name === $name,
-        );
+        if (! $name) {
+            return null;
+        }
+
+        return arr($this->functions)
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof SelectorFunction)
+            ->first(fn (SelectorFunction $fn) => $fn->name === $name);
+    }
+
+    private function getFormattingFunction(?string $name): ?FormattingFunction
+    {
+        if (! $name) {
+            return null;
+        }
+
+        return arr($this->functions)
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof FormattingFunction)
+            ->first(fn (FormattingFunction $fn) => $fn->name === $name);
     }
 
     private function evaluateOptions(array $options): array
@@ -288,9 +309,27 @@ final class MessageFormatter
                     throw new FormattingException("Option variable `{$variableName}` not found.");
                 }
 
-                $result[$name] = $this->variables[$variableName];
+                $result[$name] = $this->variables[$variableName]->value;
             } elseif ($option->value instanceof Literal) {
                 $result[$name] = $option->value->value;
+            }
+        }
+
+        return $result;
+    }
+
+    private function parseLocalVariables(array $variables): array
+    {
+        $result = [];
+
+        foreach ($variables as $key => $value) {
+            if ($value instanceof LocalVariable) {
+                $result[$key] = $value;
+            } else {
+                $result[$key] = new LocalVariable(
+                    identifier: $key,
+                    value: $value,
+                );
             }
         }
 

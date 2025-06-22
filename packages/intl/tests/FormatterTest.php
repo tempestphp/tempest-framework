@@ -51,7 +51,7 @@ final class FormatterTest extends TestCase
 
     public function test_format_number_function(): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         The total was {31 :number style=percent}.
@@ -65,7 +65,7 @@ final class FormatterTest extends TestCase
     #[TestWith([5, '5 avions'])]
     public function test_match_number(int $count, string $expected): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         .input {$aircraft :number}
@@ -98,9 +98,9 @@ final class FormatterTest extends TestCase
         $this->assertSame('My name is John Doe.', $value);
     }
 
-    public function test_matchers(): void
+    public function test_number_matcher(): void
     {
-        $formatter = new MessageFormatter();
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
         $value = $formatter->format(<<<'TXT'
         .input {$count :number}
         .match $count
@@ -109,6 +109,59 @@ final class FormatterTest extends TestCase
         TXT, count: 1);
 
         $this->assertSame('You have 1 notification.', $value);
+    }
+
+    public function test_number_matcher_exact(): void
+    {
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
+        $value = $formatter->format(<<<'TXT'
+        .input {$count :number select=exact}
+        .match $count
+        one {{You have {$count} notification.}}
+        *   {{You have {$count} notifications.}}
+        TXT, count: 1);
+
+        $this->assertSame('You have 1 notifications.', $value);
+    }
+
+    public function test_local_declaration(): void
+    {
+        $formatter = new MessageFormatter([new StringFunction()]);
+        $value = $formatter->format(<<<'TXT'
+        .local $val = {foo2 :string}
+        .match $val
+        foo {{Foo}}
+        bar {{Bar}}
+        *   {{No match}}
+        TXT);
+
+        $this->assertSame('No match', $value);
+    }
+
+    public function test_local_declarations_unquoted_literals(): void
+    {
+        $formatter = new MessageFormatter();
+        $value = $formatter->format(<<<'TXT'
+        .local $x = {42}
+        .local $y = {number42}
+        .local $z = {_number}
+        {{{$x} {$y} {$z}}}
+        TXT);
+
+        $this->assertSame('42 number42 _number', $value);
+    }
+
+    public function test_local_declarations_quoted_literals(): void
+    {
+        $formatter = new MessageFormatter();
+        $value = $formatter->format(<<<'TXT'
+        .local $x = {|@literal|}
+        .local $y = {|white space|}
+        .local $z = {|{{curly braces}}|}
+        {{{$x} {$y} {$z} {|and \\, a backslash|}}}
+        TXT);
+
+        $this->assertSame('@literal white space {{curly braces}} and \, a backslash', $value);
     }
 
     public function test_whitespace(): void
@@ -148,7 +201,7 @@ final class FormatterTest extends TestCase
 
     public function test_matchers_number_exact_match(): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         .input {$numDays :number select=exact}
@@ -169,7 +222,7 @@ final class FormatterTest extends TestCase
     {
         locale_set_default(Locale::CZECH->value);
 
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         .input {$days :number}
@@ -185,7 +238,10 @@ final class FormatterTest extends TestCase
 
     public function test_string_function(): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([
+            new StringFunction(),
+            $this->createNumberFunction(),
+        ]);
 
         $value = $formatter->format(<<<'TXT'
         .input {$operand :string}
@@ -233,7 +289,7 @@ final class FormatterTest extends TestCase
 
     public function test_number_currency(): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         You have {42 :number style=currency currency=$currency}.
@@ -244,7 +300,7 @@ final class FormatterTest extends TestCase
 
     public function test_shadowing(): void
     {
-        $formatter = new MessageFormatter([new NumberFunction()]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         .local $count = {42}
@@ -259,9 +315,7 @@ final class FormatterTest extends TestCase
     #[TestWith([5, '5 items.'])]
     public function test_pluralization(int $count, string $expected): void
     {
-        $formatter = new MessageFormatter([
-            new NumberFunction(),
-        ]);
+        $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         .input {$count :number}
@@ -277,7 +331,7 @@ final class FormatterTest extends TestCase
     public function test_multiple_selectors(): void
     {
         $formatter = new MessageFormatter([
-            new NumberFunction(),
+            $this->createNumberFunction(),
             new DateTimeFunction(),
         ]);
 
@@ -320,5 +374,12 @@ final class FormatterTest extends TestCase
         TXT);
 
         $this->assertSame('Check out MESSAGEFORMAT.', $value);
+    }
+
+    private function createNumberFunction(): NumberFunction
+    {
+        return new NumberFunction(
+            new IntlConfig(Locale::default(), Locale::default()),
+        );
     }
 }

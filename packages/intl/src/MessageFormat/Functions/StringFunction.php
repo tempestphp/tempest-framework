@@ -4,12 +4,18 @@ namespace Tempest\Intl\MessageFormat\Functions;
 
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
 use Tempest\Intl\MessageFormat\FormattingFunction;
+use Tempest\Intl\MessageFormat\SelectorFunction;
 use Tempest\Support\Arr;
 use Tempest\Support\Str;
 
-final class StringFunction implements FormattingFunction
+final class StringFunction implements FormattingFunction, SelectorFunction
 {
     public string $name = 'string';
+
+    public function match(string $key, mixed $value, array $parameters): bool
+    {
+        return Str\parse($value, default: '') === $key;
+    }
 
     public function format(mixed $value, array $parameters): FormattedValue
     {

@@ -4,6 +4,7 @@ namespace Tempest\Intl;
 
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\FormattingFunction;
+use Tempest\Intl\MessageFormat\SelectorFunction;
 
 final class IntlConfig
 {
@@ -25,7 +26,7 @@ final class IntlConfig
         public Locale $fallbackLocale,
     ) {}
 
-    public function addFormattingFunction(FormattingFunction $fn): void
+    public function addFunction(FormattingFunction|SelectorFunction $fn): void
     {
         $this->functions[] = $fn;
     }
