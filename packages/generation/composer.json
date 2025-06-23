@@ -1,26 +1,26 @@
 {
-    "name": "tempest/generation",
-    "description": "A component for generating PHP.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "nette/php-generator": "^4.1.6",
-        "nikic/php-parser": "^5.3",
-        "tempest/support": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Generation\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Generation\\Tests\\": "tests"
-        }
-    },
-    "require-dev": {
-        "spatie/phpunit-snapshot-assertions": "^5.1.8",
-        "phpunit/phpunit": "^11.5.17"
-    }
+	"name": "tempest/generation",
+	"description": "A component for generating PHP.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"nette/php-generator": "^4.1.6",
+		"nikic/php-parser": "^5.3",
+		"tempest/support": "dev-main"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Generation\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Generation\\Tests\\": "tests"
+		}
+	},
+	"require-dev": {
+		"spatie/phpunit-snapshot-assertions": "^5.1.8",
+		"phpunit/phpunit": "^12.2.3"
+	}
 }
