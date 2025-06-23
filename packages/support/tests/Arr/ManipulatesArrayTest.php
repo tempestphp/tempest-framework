@@ -92,7 +92,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertSame('b', arr($array)->get('a'));
     }
 
-    public function test_arr_has(): void
+    public function test_arr_has_key(): void
     {
         $array = [
             'a' => [
@@ -100,9 +100,9 @@ final class ManipulatesArrayTest extends TestCase
             ],
         ];
 
-        $this->assertTrue(arr($array)->has('a.b'));
-        $this->assertTrue(arr($array)->has('a'));
-        $this->assertFalse(arr($array)->has('a.x'));
+        $this->assertTrue(arr($array)->hasKey('a.b'));
+        $this->assertTrue(arr($array)->hasKey('a'));
+        $this->assertFalse(arr($array)->hasKey('a.x'));
     }
 
     public function test_arr_set(): void
@@ -330,6 +330,21 @@ final class ManipulatesArrayTest extends TestCase
     {
         $this->assertTrue(arr(['a', 'b', 'c'])->contains('b'));
         $this->assertFalse(arr(['a', 'b', 'c'])->contains('d'));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->includes('b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->includes('d'));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->hasValue('b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->hasValue('d'));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->contains(fn (string $v) => $v === 'b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->contains(fn (string $v) => $v === 'd'));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->hasValue(fn (string $v) => $v === 'b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->hasValue(fn (string $v) => $v === 'd'));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->includes(fn (string $v) => $v === 'b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->includes(fn (string $v) => $v === 'd'));
     }
 
     public function test_explode(): void

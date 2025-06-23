@@ -807,9 +807,9 @@ namespace Tempest\Support\Arr {
     }
 
     /**
-     * Asserts whether a value identified by the specified `$key` exists.
+     * Asserts whether a value identified by the specified `$key` exists. Dot notation is supported.
      */
-    function has(iterable $array, int|string $key): bool
+    function has_key(iterable $array, int|string $key): bool
     {
         $array = to_array($array);
 
@@ -833,11 +833,21 @@ namespace Tempest\Support\Arr {
     }
 
     /**
-     * Asserts whether the given array contains an item that can be identified by `$search`.
+     * Asserts whether the given array contains a value that can be identified by `$search`.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param iterable<TKey,TValue> $array
+     * @param TValue|Closure(TValue, TKey): bool $search
      */
     function contains(iterable $array, mixed $search): bool
     {
-        return namespace\first(to_array($array), fn (mixed $value) => $value === $search) !== null;
+        $search = ($search instanceof Closure)
+            ? $search
+            : static fn (mixed $value) => $value === $search;
+
+        return namespace\first(to_array($array), $search) !== null;
     }
 
     /**
