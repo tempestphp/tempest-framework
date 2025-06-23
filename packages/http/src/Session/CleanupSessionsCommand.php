@@ -17,6 +17,7 @@ final readonly class CleanupSessionsCommand
     public function __construct(
         private Console $console,
         private SessionManager $sessionManager,
+        private EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand(
@@ -26,7 +27,7 @@ final readonly class CleanupSessionsCommand
     #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
-        listen(SessionDestroyed::class, function (SessionDestroyed $event): void {
+        $this->eventBus->listen(function (SessionDestroyed $event): void {
             $this->console->keyValue((string) $event->id, "<style='bold fg-green'>DESTROYED</style>");
         });
 

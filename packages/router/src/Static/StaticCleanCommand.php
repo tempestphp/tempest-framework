@@ -38,7 +38,7 @@ final readonly class StaticCleanCommand
 
         $removed = 0;
 
-        $this->eventBus->listen(StaticPageRemoved::class, function (StaticPageRemoved $event) use (&$removed): void {
+        $this->eventBus->listen(function (StaticPageRemoved $event) use (&$removed): void {
             $removed++;
             $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-green'>REMOVED</style>");
         });
