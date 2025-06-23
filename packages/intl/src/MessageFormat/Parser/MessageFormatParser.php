@@ -32,7 +32,7 @@ use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Text;
 use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 
-final class Parser
+final class MessageFormatParser
 {
     private string $input;
     private int $pos = 0;

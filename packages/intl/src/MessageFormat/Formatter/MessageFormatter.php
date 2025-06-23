@@ -4,6 +4,7 @@ namespace Tempest\Intl\MessageFormat\Formatter;
 
 use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\MarkupFormatter;
+use Tempest\Intl\MessageFormat\Parser\MessageFormatParser;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\SimplePatternBody;
@@ -28,7 +29,6 @@ use Tempest\Intl\MessageFormat\Parser\Node\Pattern\QuotedPattern;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Text;
 use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Variable;
-use Tempest\Intl\MessageFormat\Parser\Parser;
 use Tempest\Intl\MessageFormat\SelectorFunction;
 use Tempest\Intl\MessageFormat\StandaloneMarkupFormatter;
 use Tempest\Support\Arr;
@@ -53,7 +53,7 @@ final class MessageFormatter
     public function format(string $message, mixed ...$variables): string
     {
         try {
-            $ast = new Parser($message)->parse();
+            $ast = new MessageFormatParser($message)->parse();
 
             $this->variables = $this->parseLocalVariables($variables);
 

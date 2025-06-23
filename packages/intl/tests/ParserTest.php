@@ -3,19 +3,19 @@
 namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Intl\MessageFormat\Parser\MessageFormatParser;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Declaration\LocalDeclaration;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\VariableExpression;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Pattern;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Text;
 use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
-use Tempest\Intl\MessageFormat\Parser\Parser;
 
 final class ParserTest extends TestCase
 {
     public function test_simple(): void
     {
-        $ast = new Parser('Hello, world!')->parse();
+        $ast = new MessageFormatParser('Hello, world!')->parse();
 
         $this->assertInstanceOf(SimpleMessage::class, $ast);
         $this->assertInstanceOf(Pattern::class, $ast->pattern);
@@ -26,7 +26,7 @@ final class ParserTest extends TestCase
     public function test_local_declaration(): void
     {
         /** @var ComplexMessage $ast */
-        $ast = new Parser(<<<'MF2'
+        $ast = new MessageFormatParser(<<<'MF2'
         .local $time = {$launch_date :datetime style=|medium|}
         Launch time: {$time}
         MF2)->parse();
@@ -45,7 +45,7 @@ final class ParserTest extends TestCase
     public function test_input_declaration(): void
     {
         /** @var ComplexMessage $ast */
-        $ast = new Parser(<<<'MF2'
+        $ast = new MessageFormatParser(<<<'MF2'
         .input {$numDays :number select=exact}
         .match $numDays
         1  {{{$numDays} one}}
@@ -65,7 +65,7 @@ final class ParserTest extends TestCase
     public function test_function_with_option_quoted_literal(): void
     {
         /** @var ComplexMessage $ast */
-        $ast = new Parser(<<<'MF2'
+        $ast = new MessageFormatParser(<<<'MF2'
         Today is {$today :datetime pattern=|yyyy/MM/dd|}.
         MF2)->parse();
 
