@@ -1,6 +1,11 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * This files generates the `src/PluralRules/PluralRulesMatcher.php` class.
+ * This class holds the compiled logic for determining plural categories based on the CLDR dataset.
+ */
+
 require_once getcwd() . '/vendor/autoload.php';
 
 use Tempest\Console\Console;
