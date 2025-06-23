@@ -121,7 +121,7 @@ final class InstallerTester
     public function assertCommandExecuted(string $command): self
     {
         Assert::assertTrue(
-            condition: arr($this->executor->executedCommands)->contains($command),
+            condition: arr($this->executor->executedCommands)->hasValue($command),
             message: sprintf('The command `%s` was not executed', $command),
         );
 

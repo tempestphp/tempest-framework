@@ -28,7 +28,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         $data = (array) $from->getParsedBody();
         $raw = $from->getBody()->getContents();
 
-        if (arr($from->getHeader('content-type'))->contains('application/json') && json_validate($raw)) {
+        if (arr($from->getHeader('content-type'))->hasValue('application/json') && json_validate($raw)) {
             $data = [...$data, ...json_decode($raw, associative: true)];
         }
 
