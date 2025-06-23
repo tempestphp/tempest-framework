@@ -13,8 +13,8 @@ final readonly class SessionManagerInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): SessionManager
     {
-        $config = $container->get(SessionConfig::class);
-
-        return $container->get($config->managerClass);
+        return $container
+            ->get(SessionConfig::class)
+            ->createManager($container);
     }
 }

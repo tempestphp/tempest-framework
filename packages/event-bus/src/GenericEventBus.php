@@ -16,9 +16,9 @@ final readonly class GenericEventBus implements EventBus
         private EventBusConfig $eventBusConfig,
     ) {}
 
-    public function listen(string|object $event, Closure $handler): void
+    public function listen(Closure $handler, ?string $event = null): void
     {
-        $this->eventBusConfig->addClosureHandler($event, $handler);
+        $this->eventBusConfig->addClosureHandler($handler, $event);
     }
 
     public function dispatch(string|object $event): void

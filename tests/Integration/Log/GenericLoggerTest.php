@@ -138,7 +138,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     {
         $eventBus = $this->container->get(EventBus::class);
 
-        $eventBus->listen(MessageLogged::class, function (MessageLogged $event) use ($level): void {
+        $eventBus->listen(function (MessageLogged $event) use ($level): void {
             $this->assertSame($level, $event->level);
             $this->assertSame('This is a log message of level: ' . $level->value, $event->message);
             $this->assertSame(['foo' => 'bar'], $event->context);
