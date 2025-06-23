@@ -1,31 +1,30 @@
 {
-    "name": "tempest/http-client",
-    "description": "A component for handle Http client requests.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "psr/http-client": "^1.0.0",
-        "psr/http-message": "^1.0|^2.0",
-        "tempest/container": "dev-main",
-        "tempest/http": "dev-main",
-        "tempest/router": "dev-main",
-        "psr-discovery/http-factory-implementations": "^1.4",
-        "psr-discovery/http-client-implementations": "^1.2"
-    },
-    "require-dev": {
-        "aidan-casey/mock-client": "dev-master",
-        "guzzlehttp/psr7": "^2.6.1",
-        "phpunit/phpunit": "^11.5.17"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\HttpClient\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\HttpClient\\Tests\\": "tests"
-        }
-    }
+	"name": "tempest/http-client",
+	"description": "A component for handle Http client requests.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"psr/http-client": "^1.0.0",
+		"psr/http-message": "^1.0|^2.0",
+		"tempest/container": "dev-main",
+		"tempest/http": "dev-main",
+		"tempest/router": "dev-main",
+		"psr-discovery/http-factory-implementations": "^1.4",
+		"psr-discovery/http-client-implementations": "^1.2"
+	},
+	"require-dev": {
+		"guzzlehttp/psr7": "^2.6.1",
+		"phpunit/phpunit": "^12.2.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\HttpClient\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\HttpClient\\Tests\\": "tests"
+		}
+	}
 }

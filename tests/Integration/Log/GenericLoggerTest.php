@@ -134,7 +134,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     }
 
     #[DataProvider('tempestLevelProvider')]
-    public function test_message_logged_emitted(LogLevel $level): void
+    public function test_message_logged_emitted(LogLevel $level, string $_expected): void
     {
         $eventBus = $this->container->get(EventBus::class);
 
