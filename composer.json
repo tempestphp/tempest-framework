@@ -40,7 +40,6 @@
         "voku/portable-ascii": "^2.0.3"
     },
     "require-dev": {
-        "aidan-casey/mock-client": "dev-master",
         "carthage-software/mago": "0.24.1",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
