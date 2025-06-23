@@ -7,6 +7,8 @@ namespace Tempest\Reflection;
 use Closure;
 use Generator;
 use ReflectionFunction as PHPReflectionFunction;
+use ReflectionParameter;
+use Tempest\Support\Arr;
 
 final readonly class FunctionReflector implements Reflector
 {
@@ -30,6 +32,20 @@ final readonly class FunctionReflector implements Reflector
         foreach ($this->reflectionFunction->getParameters() as $parameter) {
             yield new ParameterReflector($parameter);
         }
+    }
+
+    public function getParameter(int|string $key): ?ParameterReflector
+    {
+        $parameter = array_find(
+            array: $this->reflectionFunction->getParameters(),
+            callback: fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
+        );
+
+        if ($parameter === null) {
+            return null;
+        }
+
+        return new ParameterReflector($parameter);
     }
 
     public function getName(): string

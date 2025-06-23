@@ -72,12 +72,12 @@ final class StaticGenerateCommand
 
         $this->console->header('Generating static pages');
 
-        $this->eventBus->listen(StaticPageGenerated::class, function (StaticPageGenerated $event) use (&$generated): void {
+        $this->eventBus->listen(function (StaticPageGenerated $event) use (&$generated): void {
             $generated++;
             $this->keyValue("<style='fg-gray'>{$event->uri}</style>", "<style='fg-green'>{$event->path}</style>");
         });
 
-        $this->eventBus->listen(StaticPageGenerationFailed::class, function (StaticPageGenerationFailed $event) use (&$failures, $verbose): void {
+        $this->eventBus->listen(function (StaticPageGenerationFailed $event) use (&$failures, $verbose): void {
             $failures++;
 
             match (true) {
