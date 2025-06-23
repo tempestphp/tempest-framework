@@ -27,8 +27,7 @@ final class ViewComponentElement implements Element
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
-    )
-    {
+    ) {
         $this->attributes = $attributes;
         $this->dataAttributes = arr($attributes)
             ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
@@ -79,10 +78,6 @@ final class ViewComponentElement implements Element
                 }
 
                 $elements[] = $child;
-            }
-
-            if ($elements === []) {
-                return null;
             }
 
             return new CollectionElement($elements);
@@ -142,7 +137,7 @@ final class ViewComponentElement implements Element
 
         $compiled = $compiled
             ->prepend(
-                // Add attributes to the current scope
+            // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',
                 sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->dataAttributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
 
@@ -151,7 +146,7 @@ final class ViewComponentElement implements Element
                 sprintf('<?php $slots = \Tempest\Support\arr(%s); ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
             ->append(
-                // Restore previous slots
+            // Restore previous slots
                 '<?php unset($slots); ?>',
                 '<?php $slots = $_previousSlots ?? null; ?>',
                 '<?php unset($_previousSlots); ?>',
@@ -161,25 +156,30 @@ final class ViewComponentElement implements Element
                 '<?php $attributes = $_previousAttributes ?? null; ?>',
                 '<?php unset($_previousAttributes); ?>',
             )
-
             // Compile slots
             ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?/',
+                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
                 replace: function ($matches) {
-                    $name = $matches['name'] ?? 'slot';
+                    $name = $matches['name'] ?: 'slot';
 
                     $slot = $this->getSlot($name);
 
-                    if ($slot === null && $this->environment->isProduction()) {
+                    $default = $matches['default'];
+
+                    if ($slot === null) {
+                        if ($default) {
+                            return $default;
+                        }
+
                         // A slot doesn't have any content, so we'll comment it out.
                         // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return ('<!--' . $matches[0] . '-->');
-                    } elseif($slot === null) {
-                        $default = $slotElement->match('/<x-slot.*?>((.|\n)*?)<\/x-slot>/') ?? '';
+                        return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
+                    }
 
-                        if ($default) {
-                            $slot = new RawElement(tag: null, content: $default);
-                        }
+                    $compiled = $slot->compile();
+
+                    if (trim($compiled) === '') {
+                        return $default;
                     }
 
                     return $slot->compile();
