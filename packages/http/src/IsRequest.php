@@ -11,7 +11,7 @@ use Tempest\Validation\SkipValidation;
 
 use function Tempest\get;
 use function Tempest\Support\Arr\get_by_key;
-use function Tempest\Support\Arr\has;
+use function Tempest\Support\Arr\has_key;
 
 /** @phpstan-require-implements \Tempest\Http\Request */
 trait IsRequest
@@ -125,7 +125,7 @@ trait IsRequest
     public function hasBody(?string $key = null): bool
     {
         if ($key) {
-            return has($this->body, $key);
+            return has_key($this->body, $key);
         }
 
         return count($this->body) || ((bool) $this->raw);
@@ -133,6 +133,6 @@ trait IsRequest
 
     public function hasQuery(string $key): bool
     {
-        return has($this->query, $key);
+        return has_key($this->query, $key);
     }
 }

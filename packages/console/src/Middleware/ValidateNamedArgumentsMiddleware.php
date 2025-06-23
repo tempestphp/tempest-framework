@@ -29,7 +29,7 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
 
         $invalidInput = arr($invocation->argumentBag->arguments)
             ->filter(fn (ConsoleInputArgument $argument) => $argument->name !== null)
-            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->contains(ltrim($argument->name, '-')))
+            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->hasValue(ltrim($argument->name, '-')))
             ->filter(fn (ConsoleInputArgument $argument) => ! in_array($argument->name, GlobalFlags::values(), strict: true));
 
         if ($invalidInput->isNotEmpty()) {
