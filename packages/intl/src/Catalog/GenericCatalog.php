@@ -17,7 +17,7 @@ final class GenericCatalog implements Catalog
 
     public function has(Locale $locale, string $key): bool
     {
-        return Arr\has($this->catalog, "{$locale->value}.{$key}");
+        return Arr\has_key($this->catalog, "{$locale->value}.{$key}");
     }
 
     public function get(Locale $locale, string $key): ?string
