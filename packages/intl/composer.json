@@ -11,6 +11,12 @@
 		"tempest/container": "dev-main",
 		"tempest/support": "dev-main"
 	},
+	"replace": {
+		"tempest/intl": "self.version"
+	},
+	"require-dev": {
+		"tempest/datetime": "dev-main"
+	},
 	"autoload": {
 		"files": [
 			"src/functions.php",
