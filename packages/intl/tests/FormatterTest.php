@@ -54,10 +54,10 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([new DateTimeFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-        Today's year is {$today :datetime pattern=|Y|}.
+        Today is {$today :datetime pattern=|yyyy/MM/dd|}.
         TXT, today: '2024-01-01');
 
-        $this->assertSame('Today\'s year is 2024.', $value);
+        $this->assertSame('Today is 2024/01/01.', $value);
     }
 
     public function test_format_number_function(): void
