@@ -164,7 +164,7 @@ final class ViewComponentElement implements Element
 
                     $slot = $this->getSlot($name);
 
-                    $default = $matches['default'];
+                    $default = $matches['default'] ?? null;
 
                     if ($slot === null) {
                         if ($default) {
