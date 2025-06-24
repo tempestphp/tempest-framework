@@ -4,6 +4,7 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\DateTime\DateTime;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
@@ -51,6 +52,10 @@ final class FormatterTest extends TestCase
 
     public function test_format_datetime_function_and_parameters(): void
     {
+        if (! class_exists(DateTime::class)) {
+            $this->markTestSkipped('`tempest/datetime` is needed for this test.');
+        }
+
         $formatter = new MessageFormatter([new DateTimeFunction()]);
 
         $value = $formatter->format(<<<'TXT'
@@ -66,7 +71,8 @@ final class FormatterTest extends TestCase
 
         $value = $formatter->format(<<<'TXT'
         The total was {31 :number style=percent}.
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('The total was 31%.', $value);
     }
@@ -94,7 +100,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
         Hello, {world}!
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('Hello, world!', $value);
     }
@@ -104,7 +111,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
         My name is {|John Doe|}.
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('My name is John Doe.', $value);
     }
@@ -144,7 +152,8 @@ final class FormatterTest extends TestCase
         foo {{Foo}}
         bar {{Bar}}
         *   {{No match}}
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('No match', $value);
     }
@@ -157,7 +166,8 @@ final class FormatterTest extends TestCase
         .local $y = {number42}
         .local $z = {_number}
         {{{$x} {$y} {$z}}}
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('42 number42 _number', $value);
     }
@@ -170,7 +180,8 @@ final class FormatterTest extends TestCase
         .local $y = {|white space|}
         .local $z = {|{{curly braces}}|}
         {{{$x} {$y} {$z} {|and \\, a backslash|}}}
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('@literal white space {{curly braces}} and \, a backslash', $value);
     }
@@ -191,7 +202,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
         Backslash: \\, left curly brace \{, right curly brace \}
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('Backslash: \, left curly brace {, right curly brace }', $value);
     }
@@ -382,7 +394,8 @@ final class FormatterTest extends TestCase
 
         $value = $formatter->format(<<<'TXT'
         Check out {MessageFormat :uppercase}.
-        TXT);
+        TXT,
+        );
 
         $this->assertSame('Check out MESSAGEFORMAT.', $value);
     }
