@@ -4,6 +4,7 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\DateTime\DateTime;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
@@ -51,13 +52,17 @@ final class FormatterTest extends TestCase
 
     public function test_format_datetime_function_and_parameters(): void
     {
+        if (! class_exists(DateTime::class)) {
+            $this->markTestSkipped('`tempest/datetime` is needed for this test.');
+        }
+
         $formatter = new MessageFormatter([new DateTimeFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-        Today's year is {$today :datetime pattern=|Y|}.
+        Today is {$today :datetime pattern=|yyyy/MM/dd|}.
         TXT, today: '2024-01-01');
 
-        $this->assertSame('Today\'s year is 2024.', $value);
+        $this->assertSame('Today is 2024/01/01.', $value);
     }
 
     public function test_format_number_function(): void
