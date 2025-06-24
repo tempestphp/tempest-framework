@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
-use Tempest\Support\Pluralizer\PluralizerInitializer;
+use Tempest\Intl\Pluralizer\PluralizerInitializer;
 
 /**
  * @internal

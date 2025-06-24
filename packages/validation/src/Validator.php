@@ -63,7 +63,7 @@ final readonly class Validator
 
             $key = $prefix . $property->getName();
 
-            if (! $values->has($key) && $property->hasDefaultValue()) {
+            if (! $values->hasKey($key) && $property->hasDefaultValue()) {
                 continue;
             }
 

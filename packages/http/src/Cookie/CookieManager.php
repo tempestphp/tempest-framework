@@ -29,7 +29,12 @@ final class CookieManager
 
     public function set(string $key, string $value, DateTimeInterface|int|null $expiresAt = null): Cookie
     {
-        $cookie = $this->get($key) ?? new Cookie(key: $key);
+        $cookie = $this->get($key) ?? new Cookie(
+            key: $key,
+            secure: true,
+            httpOnly: true,
+            sameSite: SameSite::LAX,
+        );
 
         $cookie->value = $value;
         $cookie->expiresAt = $expiresAt ?? $cookie->expiresAt;

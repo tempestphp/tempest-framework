@@ -157,7 +157,7 @@ final class TempestViewLexer
     {
         $buffer = '';
 
-        while ($this->seek(2) !== '?>' && $this->current) {
+        while ($this->seek(2) !== '?>' && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
@@ -177,7 +177,7 @@ final class TempestViewLexer
     {
         $buffer = '';
 
-        while ($this->seek(3) !== '-->' && $this->current) {
+        while ($this->seek(3) !== '-->' && $this->current !== null) {
             $buffer .= $this->consume();
         }
 

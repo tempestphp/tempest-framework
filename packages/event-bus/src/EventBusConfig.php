@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Closure;
+use InvalidArgumentException;
 use Tempest\Core\Middleware;
+use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 
 final class EventBusConfig
@@ -18,8 +20,17 @@ final class EventBusConfig
         public Middleware $middleware = new Middleware(),
     ) {}
 
-    public function addClosureHandler(string $event, Closure $handler): self
+    public function addClosureHandler(Closure $handler, ?string $event = null): self
     {
+        $event ??= new FunctionReflector($handler)
+            ->getParameter(key: 0)
+            ?->getType()
+            ->getName();
+
+        if (! $event) {
+            throw new InvalidArgumentException('The first parameter of the closure must be the event name or type.');
+        }
+
         $handlerKey = spl_object_hash($handler);
 
         $this->handlers[$event][$handlerKey] = new CallableEventHandler(
