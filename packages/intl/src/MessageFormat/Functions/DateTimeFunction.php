@@ -13,6 +13,10 @@ final class DateTimeFunction implements FormattingFunction
 
     public function format(mixed $value, array $parameters): FormattedValue
     {
+        if (! class_exists(DateTime::class)) {
+            throw new \RuntimeException('`tempest/datetime` is required to use the `datetime` function.');
+        }
+
         $datetime = DateTime::parse($value);
         $formatted = $datetime->format(Arr\get_by_key($parameters, 'pattern'));
 
