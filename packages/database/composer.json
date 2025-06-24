@@ -9,6 +9,7 @@
         "tempest/container": "dev-main",
         "tempest/event-bus": "dev-main",
         "tempest/mapper": "dev-main",
+        "tempest/intl": "dev-main",
         "tempest/support": "dev-main"
     },
     "autoload": {

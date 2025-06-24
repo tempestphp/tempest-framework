@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
-use Tempest\Support\Language\Locale;
+use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 
 /**

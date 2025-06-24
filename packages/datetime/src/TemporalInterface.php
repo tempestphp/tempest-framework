@@ -7,10 +7,10 @@ namespace Tempest\DateTime;
 use DateTimeInterface as NativeDateTimeInterface;
 use JsonSerializable;
 use Stringable;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Comparable;
 use Tempest\Support\Comparison\Equable;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 
 /**
  * Represents a temporal object that can be manipulated and compared.

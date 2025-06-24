@@ -8,6 +8,7 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Stringable;
+use Tempest\Intl;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Random;
 use Tempest\Support\Regex;
@@ -118,7 +119,19 @@ trait ManipulatesString
      */
     public function pluralize(int|array|Countable $count = 2): self
     {
-        return $this->createOrModify(pluralize($this->value, $count));
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\pluralize($this->value, $count));
+    }
+
+    /**
+     * Converts the string to its English singular form.
+     */
+    public function singularize(int|array|Countable $count = 2): self
+    {
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\singularize($this->value, $count));
     }
 
     /**
@@ -126,7 +139,9 @@ trait ManipulatesString
      */
     public function pluralizeLastWord(int|array|Countable $count = 2): self
     {
-        return $this->createOrModify(pluralize_last_word($this->value, $count));
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\pluralize_last_word($this->value, $count));
     }
 
     /**
@@ -134,7 +149,9 @@ trait ManipulatesString
      */
     public function singularizeLastWord(): self
     {
-        return $this->createOrModify(singularize_last_word($this->value));
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\singularize_last_word($this->value));
     }
 
     /**
@@ -809,6 +826,13 @@ trait ManipulatesString
     public function length(): int
     {
         return mb_strlen($this->value);
+    }
+
+    private function ensurePluralizerInstalled(string $function): void
+    {
+        if (! interface_exists(Intl\Pluralizer\Pluralizer::class)) {
+            throw new \RuntimeException("The `tempest/intl` package is required to use `{$function}`.");
+        }
     }
 
     /**

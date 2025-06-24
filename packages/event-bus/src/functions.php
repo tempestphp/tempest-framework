@@ -20,10 +20,10 @@ namespace Tempest {
     /**
      * Registers a closure-based event listener for the given `$event`.
      */
-    function listen(string|object $event, Closure $handler): void
+    function listen(Closure $handler, ?string $event = null): void
     {
         $config = get(EventBusConfig::class);
 
-        $config->addClosureHandler($event, $handler);
+        $config->addClosureHandler($handler, $event);
     }
 }

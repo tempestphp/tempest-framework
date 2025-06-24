@@ -18,7 +18,7 @@ use Tempest\DateTime\Month;
 use Tempest\DateTime\TimeStyle;
 use Tempest\DateTime\Timezone;
 use Tempest\DateTime\Weekday;
-use Tempest\Support\Language\Locale;
+use Tempest\Intl\Locale;
 
 use function Tempest\DateTime\create_intl_date_formatter;
 use function time;

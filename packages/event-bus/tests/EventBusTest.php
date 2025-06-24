@@ -126,11 +126,28 @@ final class EventBusTest extends TestCase
         $hasHappened = false;
 
         // @mago-expect best-practices/no-unused-parameter
-        $eventBus->listen('my-event', function (string $event) use (&$hasHappened): void {
+        $eventBus->listen(function (string $event) use (&$hasHappened): void {
+            $hasHappened = true;
+        }, event: 'my-event');
+
+        $eventBus->dispatch('my-event');
+
+        $this->assertTrue($hasHappened);
+    }
+
+    public function test_closure_based_handlers_using_listen_method_and_first_parameter(): void
+    {
+        $container = new GenericContainer();
+        $config = new EventBusConfig();
+        $eventBus = new GenericEventBus($container, $config);
+        $hasHappened = false;
+
+        // @mago-expect best-practices/no-unused-parameter
+        $eventBus->listen(function (ItHappened $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
-        $eventBus->dispatch('my-event');
+        $eventBus->dispatch(new ItHappened());
 
         $this->assertTrue($hasHappened);
     }
@@ -145,9 +162,9 @@ final class EventBusTest extends TestCase
         $hasHappened = false;
 
         // @mago-expect best-practices/no-unused-parameter
-        listen('my-event', function (string $event) use (&$hasHappened): void {
+        listen(function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
-        });
+        }, event: 'my-event');
 
         get(EventBus::class)->dispatch('my-event');
 
