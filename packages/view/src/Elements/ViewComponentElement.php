@@ -182,7 +182,7 @@ final class ViewComponentElement implements Element
                         return $default;
                     }
 
-                    return $slot->compile();
+                    return $compiled;
                 },
             );
 
