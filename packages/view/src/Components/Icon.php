@@ -10,6 +10,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Html\HtmlString;
+use Tempest\Support\Str;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\IconCache;
 use Tempest\View\IconConfig;
@@ -74,7 +75,11 @@ final readonly class Icon
     private function svg(string $name): ?string
     {
         try {
-            $parts = explode(':', $name, 2);
+            if (! Str\contains($name, ':')) {
+                $name = Str\replace_first($name, '-', ':');
+            }
+
+            $parts = explode(':', $name, limit: 2);
 
             if (count($parts) !== 2) {
                 return null;

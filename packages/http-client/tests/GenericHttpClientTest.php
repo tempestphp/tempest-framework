@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient\Tests;
 
-use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericRequest;
@@ -12,6 +11,7 @@ use Tempest\Http\Method;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
+use Tempest\HttpClient\Testing\MockClient;
 
 /**
  * @internal
@@ -20,7 +20,7 @@ final class GenericHttpClientTest extends TestCase
 {
     private HttpClient $client;
 
-    private Client $mock;
+    private MockClient $mock;
 
     private HttpFactory $factory;
 
@@ -127,7 +127,7 @@ final class GenericHttpClientTest extends TestCase
 
         $this->factory = new HttpFactory();
 
-        $this->mock = new Client(
+        $this->mock = new MockClient(
             responseFactory: $this->factory,
             streamFactory: $this->factory,
         );

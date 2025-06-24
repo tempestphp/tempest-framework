@@ -84,7 +84,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             $currentName = str($consoleCommand->getName());
 
             // Already added to suggestions
-            if ($suggestions->contains($currentName->toString())) {
+            if ($suggestions->hasValue($currentName->toString())) {
                 continue;
             }
 

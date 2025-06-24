@@ -97,7 +97,7 @@ final class ViteInstaller implements Installer
             ignoreNonExisting: true,
         );
 
-        $packageManager = PackageManager::detect(root_path());
+        $packageManager = PackageManager::detect(root_path()) ?? PackageManager::NPM;
 
         $this->console->instructions([
             $shouldInstallTailwind

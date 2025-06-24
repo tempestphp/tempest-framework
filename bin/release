@@ -18,6 +18,7 @@ use Composer\Semver\VersionParser;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Exceptions\InterruptException;
+
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -282,10 +283,10 @@ function ensureTagDoesNotExist(string $version): void
 }
 
 /*
-|--------------------------------------------------------------------------
-| Script starts here.
-|--------------------------------------------------------------------------
-*/
+ * |--------------------------------------------------------------------------
+ * | Script starts here.
+ * |--------------------------------------------------------------------------
+ */
 
 try {
     ConsoleApplication::boot();
@@ -313,7 +314,7 @@ try {
 
     if (! $console->confirm("The next tag will be <em>{$tag}</em>. Release?")) {
         $console->error('Cancelled.');
-        exit;
+        exit();
     }
 
     // Bump PHP packages
@@ -364,6 +365,6 @@ try {
         $tag,
     ));
 
-    exit;
+    exit();
 } catch (InterruptException) {
 }

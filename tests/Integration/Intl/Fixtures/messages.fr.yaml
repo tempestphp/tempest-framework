@@ -1,0 +1,8 @@
+hello: 'Bonjour, {$name}!'
+cart:
+  checkout: Passer à la caisse
+  items:
+    .input {$count :number}
+    .match $count
+    one {{Il y a un article dans votre panier.}}
+    *   {{Il y a {$count} articles dans votre panier.}}

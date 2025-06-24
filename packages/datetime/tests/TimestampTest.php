@@ -16,8 +16,8 @@ use Tempest\DateTime\FormatPattern;
 use Tempest\DateTime\SecondsStyle;
 use Tempest\DateTime\Timestamp;
 use Tempest\DateTime\Timezone;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 use Tempest\Support\Math;
 
 use function Tempest\DateTime\create_intl_date_formatter;
