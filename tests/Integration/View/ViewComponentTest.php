@@ -906,24 +906,30 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-slot name="b">Default B</x-slot>
         HTML);
 
-        $this->assertSnippetsMatch(<<<'HTML'
-        Overwritten
-        Overwritten A
-        Overwritten B
-        HTML, $this->render('<x-test>
+        $this->assertSnippetsMatch(
+            <<<'HTML'
+            Overwritten
+            Overwritten A
+            Overwritten B
+            HTML,
+            $this->render('<x-test>
         Overwritten
         <x-slot name="a">Overwritten A</x-slot>
         <x-slot name="b">Overwritten B</x-slot>
-        </x-test>'));
+        </x-test>'),
+        );
 
-        $this->assertSnippetsMatch(<<<'HTML'
-        Overwritten
-        Default A
-        Overwritten B
-        HTML, $this->render('<x-test>
+        $this->assertSnippetsMatch(
+            <<<'HTML'
+            Overwritten
+            Default A
+            Overwritten B
+            HTML,
+            $this->render('<x-test>
         Overwritten
         <x-slot name="b">Overwritten B</x-slot>
-        </x-test>'));
+        </x-test>'),
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         Default

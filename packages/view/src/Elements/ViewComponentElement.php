@@ -137,7 +137,7 @@ final class ViewComponentElement implements Element
 
         $compiled = $compiled
             ->prepend(
-            // Add attributes to the current scope
+                // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',
                 sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->dataAttributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
 
@@ -146,7 +146,7 @@ final class ViewComponentElement implements Element
                 sprintf('<?php $slots = \Tempest\Support\arr(%s); ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
             ->append(
-            // Restore previous slots
+                // Restore previous slots
                 '<?php unset($slots); ?>',
                 '<?php $slots = $_previousSlots ?? null; ?>',
                 '<?php unset($_previousSlots); ?>',
