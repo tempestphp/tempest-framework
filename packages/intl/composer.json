@@ -9,8 +9,10 @@
 		"symfony/yaml": "^7.3",
 		"tempest/core": "dev-main",
 		"tempest/container": "dev-main",
-		"tempest/datetime": "dev-main",
 		"tempest/support": "dev-main"
+	},
+	"require-dev": {
+		"tempest/datetime": "dev-main"
 	},
 	"autoload": {
 		"files": [
