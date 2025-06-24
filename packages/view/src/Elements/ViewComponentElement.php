@@ -168,6 +168,7 @@ final class ViewComponentElement implements Element
 
                     if ($slot === null) {
                         if ($default) {
+                            // There's no slot, but there's a default value in the view component
                             return $default;
                         }
 
@@ -178,6 +179,7 @@ final class ViewComponentElement implements Element
 
                     $compiled = $slot->compile();
 
+                    // There's no default slot content, but there's a default value in the view component
                     if (trim($compiled) === '') {
                         return $default;
                     }
