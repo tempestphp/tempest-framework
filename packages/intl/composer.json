@@ -11,6 +11,9 @@
 		"tempest/container": "dev-main",
 		"tempest/support": "dev-main"
 	},
+	"require-dev": {
+		"tempest/datetime": "dev-main"
+	},
 	"autoload": {
 		"files": [
 			"src/functions.php",
