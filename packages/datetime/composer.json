@@ -5,7 +5,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/intl": "dev-main",
         "tempest/support": "dev-main"
     },
     "autoload": {
