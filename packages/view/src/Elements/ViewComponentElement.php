@@ -158,19 +158,33 @@ final class ViewComponentElement implements Element
             )
             // Compile slots
             ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|><\/x-slot>)/',
+                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
                 replace: function ($matches) {
                     $name = $matches['name'] ?: 'slot';
 
                     $slot = $this->getSlot($name);
 
+                    $default = $matches['default'] ?? null;
+
                     if ($slot === null) {
+                        if ($default) {
+                            // There's no slot, but there's a default value in the view component
+                            return $default;
+                        }
+
                         // A slot doesn't have any content, so we'll comment it out.
                         // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
                         return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
                     }
 
-                    return $slot->compile();
+                    $compiled = $slot->compile();
+
+                    // There's no default slot content, but there's a default value in the view component
+                    if (trim($compiled) === '') {
+                        return $default;
+                    }
+
+                    return $compiled;
                 },
             );
 
