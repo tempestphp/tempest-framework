@@ -11,6 +11,8 @@ use Tempest\Database\HasOne;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
+use Tempest\Mapper\CastWith;
+use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -130,7 +132,15 @@ final class ModelInspector
             return $belongsTo;
         }
 
+        if ($property->hasAttribute(Virtual::class)) {
+            return null;
+        }
+
         if (! $property->getType()->isRelation()) {
+            return null;
+        }
+
+        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->haSAttribute(SerializeWith::class)) {
             return null;
         }
 
@@ -189,6 +199,10 @@ final class ModelInspector
             return $hasMany;
         }
 
+        if ($property->hasAttribute(Virtual::class)) {
+            return null;
+        }
+
         if (! $property->getIterableType()?->isRelation()) {
             return null;
         }
@@ -197,6 +211,20 @@ final class ModelInspector
         $hasMany->property = $property;
 
         return $hasMany;
+    }
+
+    public function isRelation(string|PropertyReflector $name): bool
+    {
+        $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
+
+        return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
+    }
+
+    public function getRelation(string|PropertyReflector $name): ?Relation
+    {
+        $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
+
+        return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
     }
 
     public function getSelectFields(): ImmutableArray
@@ -226,13 +254,6 @@ final class ModelInspector
         }
 
         return $selectFields;
-    }
-
-    public function getRelation(string|PropertyReflector $name): ?Relation
-    {
-        $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
-
-        return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
     }
 
     public function resolveRelations(string $relationString, string $parent = ''): array
