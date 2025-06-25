@@ -11,8 +11,8 @@
 		"tempest/container": "dev-main",
 		"tempest/support": "dev-main"
 	},
-	"require-dev": {
-		"tempest/datetime": "dev-main"
+	"suggest": {
+		"tempest/datetime": "In order to use the `datetime` function"
 	},
 	"autoload": {
 		"files": [
