@@ -25,7 +25,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
         $migration = new class implements DatabaseMigration {
             public string $name = '000_model_with_dto';
 
-            public function up(): ?QueryStatement
+            public function up(): QueryStatement
             {
                 return CreateTableStatement::forModel(ModelWithSerializedDto::class)
                     ->primary()
