@@ -18,6 +18,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(MyObject::class, $dto);
         $this->assertSame('test', $dto->name);
     }
+
     public function test_cannot_cast_with_invalid_json(): void
     {
         $json = '';
