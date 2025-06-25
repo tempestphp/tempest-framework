@@ -75,7 +75,11 @@ final readonly class Icon
     private function svg(string $name): ?string
     {
         try {
-            $parts = explode(':', Str\replace($name, '-', ':'), 2);
+            if (! Str\contains($name, ':')) {
+                $name = Str\replace_first($name, '-', ':');
+            }
+
+            $parts = explode(':', $name, limit: 2);
 
             if (count($parts) !== 2) {
                 return null;
