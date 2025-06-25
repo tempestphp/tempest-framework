@@ -192,6 +192,31 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_dto_field(): void
+    {
+        $migration = new class() implements DatabaseMigration {
+            private(set) string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('test_table')
+                    ->dto('dto');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(
+            CreateMigrationsTable::class,
+            $migration,
+        );
+
+        $this->expectNotToPerformAssertions();
+    }
+
     public function test_invalid_set_values(): void
     {
         $migration = new class() implements DatabaseMigration {

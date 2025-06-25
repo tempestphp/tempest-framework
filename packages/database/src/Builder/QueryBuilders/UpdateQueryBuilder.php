@@ -114,7 +114,7 @@ final class UpdateQueryBuilder implements BuildsQuery
                 throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
             }
 
-            if ($property->getType()->isRelation()) {
+            if ($modelDefinition->isRelation($property)) {
                 $column .= '_id';
 
                 $value = match (true) {

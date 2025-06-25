@@ -119,7 +119,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 $value = $property->getValue($model);
 
                 // BelongsTo and reverse HasMany relations are included
-                if ($property->getType()->isRelation()) {
+                if ($definition->isRelation($property)) {
                     $column .= '_id';
 
                     $value = match (true) {

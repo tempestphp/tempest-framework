@@ -89,6 +89,22 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
+    public function test_get_with_non_id_object(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        Foo::create(
+            bar: 'baz',
+        );
+
+        $foo = Foo::get(1);
+
+        $this->assertSame(1, $foo->id->id);
+    }
+
     public function test_creating_many_and_saving_preserves_model_id(): void
     {
         $this->migrate(

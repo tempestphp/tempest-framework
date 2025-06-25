@@ -45,8 +45,12 @@ trait IsDatabaseModel
             ->all();
     }
 
-    public static function get(Id $id, array $relations = []): ?self
+    public static function get(string|int|Id $id, array $relations = []): ?self
     {
+        if (! ($id instanceof Id)) {
+            $id = new Id($id);
+        }
+
         return self::select()
             ->with(...$relations)
             ->get($id);
