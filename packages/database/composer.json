@@ -1,28 +1,28 @@
 {
-    "name": "tempest/database",
-    "description": "The component responsible for database interaction in the Tempest framework.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "ext-pdo": "*",
-        "tempest/container": "dev-main",
-        "tempest/event-bus": "dev-main",
-        "tempest/mapper": "dev-main",
-        "tempest/intl": "dev-main",
-        "tempest/support": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Database\\": "src"
-        },
-        "files": [
-            "src/functions.php"
-        ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Database\\Tests\\": "tests"
-        }
-    }
+	"name": "tempest/database",
+	"description": "The component responsible for database interaction in the Tempest framework.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"ext-pdo": "*",
+		"tempest/container": "dev-main",
+		"tempest/event-bus": "dev-main",
+		"tempest/mapper": "dev-main",
+		"tempest/intl": "dev-main",
+		"tempest/support": "dev-main"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Database\\": "src"
+		},
+		"files": [
+			"src/functions.php"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Database\\Tests\\": "tests"
+		}
+	}
 }

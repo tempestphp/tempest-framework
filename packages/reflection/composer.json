@@ -1,22 +1,22 @@
 {
-    "name": "tempest/reflection",
-    "description": "A component for reflection.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Reflection\\": "src"
-        },
-        "files": [
-            "src/functions.php"
-        ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Reflection\\Tests\\": "tests"
-        }
-    }
+	"name": "tempest/reflection",
+	"description": "A component for reflection.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Reflection\\": "src"
+		},
+		"files": [
+			"src/functions.php"
+		]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Reflection\\Tests\\": "tests"
+		}
+	}
 }

@@ -11,10 +11,10 @@ jobs:
     steps:
       - name: Trigger tempest/app QA workflow
         run: |
-          repo_owner="tempestphp" 
-          repo_name="tempest-app"  
-          event_type="trigger-workflow" 
-          
+          repo_owner="tempestphp"
+          repo_name="tempest-app"
+          event_type="trigger-workflow"
+
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \

@@ -2,7 +2,9 @@ import { type MockInstance, vi } from 'vitest'
 import * as config from './config'
 import type { TempestViteConfiguration } from './types'
 
-export function mockTempestConfiguration(mock: Partial<TempestViteConfiguration> = {}): MockInstance<() => Promise<TempestViteConfiguration>> {
+export function mockTempestConfiguration(
+	mock: Partial<TempestViteConfiguration> = {},
+): MockInstance<() => Promise<TempestViteConfiguration>> {
 	const spy = vi.spyOn(config, 'loadTempestConfiguration')
 
 	spy.mockResolvedValue({

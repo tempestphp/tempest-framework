@@ -1,22 +1,22 @@
 {
-    "name": "tempest/log",
-    "description": "A component for logging handling.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "monolog/monolog": "^3.7.0",
-        "psr/log": "^3.0.0",
-        "tempest/container": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Log\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Log\\Tests\\": "tests"
-        }
-    }
+	"name": "tempest/log",
+	"description": "A component for logging handling.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"monolog/monolog": "^3.7.0",
+		"psr/log": "^3.0.0",
+		"tempest/container": "dev-main"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Log\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Log\\Tests\\": "tests"
+		}
+	}
 }

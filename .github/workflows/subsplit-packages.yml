@@ -1,9 +1,9 @@
-name: 'Sub-split packages'
+name: "Sub-split packages"
 
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    tags: ["v*"]
   workflow_dispatch:
 
 env:
@@ -40,36 +40,34 @@ jobs:
       matrix:
         package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
     steps:
-      -   uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       # no tag
-      -
-        if: "!startsWith(github.ref, 'refs/tags/')"
+      - if: "!startsWith(github.ref, 'refs/tags/')"
         uses: "symplify/monorepo-split-github-action@v2.3.0"
         with:
           # ↓ split "packages/console" directory
-          package_directory: '${{ matrix.package.directory }}'
+          package_directory: "${{ matrix.package.directory }}"
 
           # ↓ into https://github.com/tempestphp/tempest-console repository
-          repository_organization: '${{ matrix.package.organization }}'
-          repository_name: '${{ matrix.package.repository }}'
+          repository_organization: "${{ matrix.package.organization }}"
+          repository_name: "${{ matrix.package.repository }}"
 
           # ↓ the user signed under the split commit
           user_name: "aidan-casey"
           user_email: "aidan@caseyhouse.net"
 
       # with tag
-      -
-        if: "startsWith(github.ref, 'refs/tags/')"
+      - if: "startsWith(github.ref, 'refs/tags/')"
         uses: "symplify/monorepo-split-github-action@v2.3.0"
         with:
           tag: ${GITHUB_REF#refs/tags/}
 
           # ↓ split "packages/console" directory
-          package_directory: '${{ matrix.package.directory }}'
+          package_directory: "${{ matrix.package.directory }}"
 
           # ↓ into https://github.com/tempestphp/tempest-console repository
-          repository_organization: '${{ matrix.package.organization }}'
-          repository_name: '${{ matrix.package.repository }}'
+          repository_organization: "${{ matrix.package.organization }}"
+          repository_name: "${{ matrix.package.repository }}"
 
           # ↓ the user signed under the split commit
           user_name: "aidan-casey"

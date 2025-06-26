@@ -1,24 +1,24 @@
 {
-    "name": "tempest/validation",
-    "description": "A component for data validation handling.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "egulias/email-validator": "^4.0.2",
-        "giggsey/libphonenumber-for-php-lite": "^9.0",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/datetime": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Validation\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Validation\\Tests\\": "tests"
-        }
-    }
+	"name": "tempest/validation",
+	"description": "A component for data validation handling.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"egulias/email-validator": "^4.0.2",
+		"giggsey/libphonenumber-for-php-lite": "^9.0",
+		"tempest/reflection": "dev-main",
+		"tempest/support": "dev-main",
+		"tempest/datetime": "dev-main"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Validation\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Validation\\Tests\\": "tests"
+		}
+	}
 }

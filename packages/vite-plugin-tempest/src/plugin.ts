@@ -1,14 +1,14 @@
 import fs from 'node:fs'
 import type { AddressInfo } from 'node:net'
 import os from 'node:os'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import colors from 'picocolors'
+import type { InputOption } from 'rollup'
 import type { Plugin, ResolvedConfig, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
-import type { InputOption } from 'rollup'
-import type { DevelopmentServerUrl, TempestViteConfiguration } from './types'
 import { loadTempestConfiguration } from './config'
+import type { DevelopmentServerUrl, TempestViteConfiguration } from './types'
 import { isIpv6 } from './utils'
 
 const TEMPEST_ORIGIN_PLACEHOLDER = 'http://__tempest_placeholder__.test'
@@ -64,30 +64,30 @@ export default function tempest(): Plugin {
 					},
 					...(serverConfig
 						? {
-								host: userConfig.server?.host ?? serverConfig.host,
-								hmr: userConfig.server?.hmr === false
-									? false
-									: {
-											...serverConfig.hmr,
-											...(userConfig.server?.hmr === true ? {} : userConfig.server?.hmr),
-										},
-								https: userConfig.server?.https ?? serverConfig.https,
-							}
+							host: userConfig.server?.host ?? serverConfig.host,
+							hmr: userConfig.server?.hmr === false
+								? false
+								: {
+									...serverConfig.hmr,
+									...(userConfig.server?.hmr === true ? {} : userConfig.server?.hmr),
+								},
+							https: userConfig.server?.https ?? serverConfig.https,
+						}
 						: undefined),
 				},
 				resolve: {
 					alias: Array.isArray(userConfig.resolve?.alias)
 						? [
-								...userConfig.resolve?.alias ?? [],
-								...Object.keys(defaultAliases).map((alias) => ({
-									find: alias,
-									replacement: defaultAliases[alias],
-								})),
-							]
+							...userConfig.resolve?.alias ?? [],
+							...Object.keys(defaultAliases).map((alias) => ({
+								find: alias,
+								replacement: defaultAliases[alias],
+							})),
+						]
 						: {
-								...defaultAliases,
-								...userConfig.resolve?.alias,
-							},
+							...defaultAliases,
+							...userConfig.resolve?.alias,
+						},
 				},
 			}
 		},
@@ -113,26 +113,49 @@ export default function tempest(): Plugin {
 						? userConfig.server.origin as DevelopmentServerUrl
 						: resolveDevServerUrl(address, server.config)
 
-					fs.writeFileSync(bridgeFilePath, JSON.stringify({
-						url: `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`,
-					}))
+					fs.writeFileSync(
+						bridgeFilePath,
+						JSON.stringify({
+							url: `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`,
+						}),
+					)
 
 					setTimeout(() => {
-						server.config.logger.info(`\n  ${colors.magenta(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
+						server.config.logger.info(
+							`\n  ${colors.magenta(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${
+								colors.bold(`v${pluginVersion()}`)
+							}`,
+						)
 						server.config.logger.info('')
 
 						if (appUrl) {
-							server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+							server.config.logger.info(
+								`  ${colors.green('➜')}  ${colors.bold('URL')}: ${
+									colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))
+								}`,
+							)
 						} else {
-							server.config.logger.info(`  ${colors.magenta('➜')}  ${colors.yellow(`No ${colors.bold('BASE_URI')} specified in ${colors.bold('.env')}`)}.`)
+							server.config.logger.info(
+								`  ${colors.magenta('➜')}  ${
+									colors.yellow(`No ${colors.bold('BASE_URI')} specified in ${colors.bold('.env')}`)
+								}.`,
+							)
 						}
 
-						if (typeof resolvedConfig.server.https === 'object' && typeof resolvedConfig.server.https.key === 'string') {
-							if (resolvedConfig.server.https.key.startsWith(herdMacConfigPath()) || resolvedConfig.server.https.key.startsWith(herdWindowsConfigPath())) {
+						if (
+							typeof resolvedConfig.server.https === 'object' && typeof resolvedConfig.server.https.key === 'string'
+						) {
+							if (
+								resolvedConfig.server.https.key.startsWith(herdMacConfigPath())
+								|| resolvedConfig.server.https.key.startsWith(herdWindowsConfigPath())
+							) {
 								server.config.logger.info(`  ${colors.green('➜')}  Using Herd certificate to secure Vite.`)
 							}
 
-							if (resolvedConfig.server.https.key.startsWith(valetMacConfigPath()) || resolvedConfig.server.https.key.startsWith(valetLinuxConfigPath())) {
+							if (
+								resolvedConfig.server.https.key.startsWith(valetMacConfigPath())
+								|| resolvedConfig.server.https.key.startsWith(valetLinuxConfigPath())
+							) {
 								server.config.logger.info(`  ${colors.green('➜')}  Using Valet certificate to secure Vite.`)
 							}
 						}
@@ -155,14 +178,15 @@ export default function tempest(): Plugin {
 				exitHandlersBound = true
 			}
 
-			return () => server.middlewares.use((req, res, next) => {
-				if (req.url === '/index.html') {
-					res.writeHead(302, { Location: appUrl })
-					res.end()
-				}
+			return () =>
+				server.middlewares.use((req, res, next) => {
+					if (req.url === '/index.html') {
+						res.writeHead(302, { Location: appUrl })
+						res.end()
+					}
 
-				next()
-			})
+					next()
+				})
 		},
 	}
 }
@@ -176,11 +200,15 @@ function ensureCommandShouldRunInEnvironment(command: 'build' | 'serve', env: Re
 	}
 
 	if (typeof env.CI !== 'undefined') {
-		throw new TypeError('You should not run the Vite HMR server in CI environments. You should build your assets for production instead. To disable this ENV check you may set TEMPEST_BYPASS_ENV_CHECK=true')
+		throw new TypeError(
+			'You should not run the Vite HMR server in CI environments. You should build your assets for production instead. To disable this ENV check you may set TEMPEST_BYPASS_ENV_CHECK=true',
+		)
 	}
 
 	if (typeof env.LARAVEL_FORGE !== 'undefined') {
-		throw new TypeError('You should not run the Vite HMR server in your Forge deployment script. You should build your assets for production instead. To disable this ENV check you may set TEMPEST_BYPASS_ENV_CHECK=true')
+		throw new TypeError(
+			'You should not run the Vite HMR server in your Forge deployment script. You should build your assets for production instead. To disable this ENV check you may set TEMPEST_BYPASS_ENV_CHECK=true',
+		)
 	}
 }
 
@@ -190,7 +218,8 @@ function ensureCommandShouldRunInEnvironment(command: 'build' | 'serve', env: Re
 function tempestVersion(): string {
 	try {
 		const composer = JSON.parse(fs.readFileSync('composer.lock').toString())
-		return composer.packages?.find((composerPackage: { name: string }) => composerPackage.name === 'tempest/framework')?.version ?? ''
+		return composer.packages?.find((composerPackage: { name: string }) => composerPackage.name === 'tempest/framework')
+			?.version ?? ''
 	} catch {
 		return ''
 	}
@@ -254,14 +283,16 @@ function resolveDevServerUrl(address: AddressInfo, config: ResolvedConfig): Deve
 function resolveEnvironmentServerConfig(env: Record<string, string>): {
 	hmr?: { host: string }
 	host?: string
-	https?: { cert: Buffer, key: Buffer }
+	https?: { cert: Buffer; key: Buffer }
 } | undefined {
 	if (!env.VITE_DEV_SERVER_KEY && !env.VITE_DEV_SERVER_CERT) {
 		return
 	}
 
 	if (!fs.existsSync(env.VITE_DEV_SERVER_KEY) || !fs.existsSync(env.VITE_DEV_SERVER_CERT)) {
-		throw new Error(`Unable to find the certificate files specified in your environment. Ensure you have correctly configured VITE_DEV_SERVER_KEY: [${env.VITE_DEV_SERVER_KEY}] and VITE_DEV_SERVER_CERT: [${env.VITE_DEV_SERVER_CERT}].`)
+		throw new Error(
+			`Unable to find the certificate files specified in your environment. Ensure you have correctly configured VITE_DEV_SERVER_KEY: [${env.VITE_DEV_SERVER_KEY}] and VITE_DEV_SERVER_CERT: [${env.VITE_DEV_SERVER_CERT}].`,
+		)
 	}
 
 	const host = resolveHostFromEnv(env)
@@ -300,7 +331,7 @@ function resolveHostFromEnv(env: Record<string, string>): string | undefined {
 function resolveDevelopmentEnvironmentServerConfig(): {
 	hmr?: { host: string }
 	host?: string
-	https?: { cert: string, key: string }
+	https?: { cert: string; key: string }
 } | undefined {
 	const configPath = determineDevelopmentEnvironmentConfigPath()
 
@@ -319,11 +350,13 @@ function resolveDevelopmentEnvironmentServerConfig(): {
 
 	if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
 		const tip = configPath === herdMacConfigPath() || configPath === herdWindowsConfigPath()
-		 ? 'Ensure you have secured the site via the Herd UI.'
-		 : `Ensure you have secured the site by running \`valet secure ${host}\`.`
+			? 'Ensure you have secured the site via the Herd UI.'
+			: `Ensure you have secured the site by running \`valet secure ${host}\`.`
 
-		 console.warn(`Unable to find certificate files for your host [${host}] in the [${configPath}/Certificates] directory. ${tip}`)
-		 return
+		console.warn(
+			`Unable to find certificate files for your host [${host}] in the [${configPath}/Certificates] directory. ${tip}`,
+		)
+		return
 	}
 
 	return {
