@@ -22,7 +22,7 @@ final readonly class IconMarkupFormatter implements StandaloneMarkupFormatter
     public function format(string $tag, array $options): string
     {
         if (! class_exists(Icon::class)) {
-            throw new \RuntimeException('The Icon component is not available. Please ensure the `tempest\view` package is installed.');
+            throw new \RuntimeException('The `tempest\view` package is required to use the `icon` tag inside a translation string.');
         }
 
         return $this->container->get(Icon::class)->render(
