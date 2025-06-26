@@ -8,6 +8,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
+use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
 
@@ -35,6 +36,8 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
         try {
             return $next($request);
+        } catch (ConvertsToResponse $exception) {
+            return $exception->toResponse();
         } catch (RouteBindingFailed) {
             return new NotFound();
         } catch (ValidationFailed $validationException) {
