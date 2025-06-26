@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Routing\Matching;
 
-use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use Tempest\Http\Request;
 use Tempest\Router\Exceptions\InvalidEnumParameterException;
-use Tempest\Router\Exceptions\NotFoundException;
 use Tempest\Router\MatchedRoute;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
@@ -17,7 +16,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         private RouteConfig $routeConfig,
     ) {}
 
-    public function match(PsrRequest $request): ?MatchedRoute
+    public function match(Request $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
         if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
@@ -28,9 +27,9 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         return $this->matchDynamicRoute($request);
     }
 
-    private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
+    private function matchStaticRoute(Request $request): ?MatchedRoute
     {
-        $staticRoute = $this->routeConfig->staticRoutes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
+        $staticRoute = $this->routeConfig->staticRoutes[$request->method->value][$request->path] ?? null;
 
         if ($staticRoute === null) {
             return null;
@@ -39,19 +38,19 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         return new MatchedRoute($staticRoute, []);
     }
 
-    private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
+    private function matchDynamicRoute(Request $request): ?MatchedRoute
     {
         // If there are no routes for the given request method, we immediately stop
-        $routesForMethod = $this->routeConfig->dynamicRoutes[$request->getMethod()] ?? null;
+        $routesForMethod = $this->routeConfig->dynamicRoutes[$request->method->value] ?? null;
         if ($routesForMethod === null) {
             return null;
         }
 
         // Get matching regex for route
-        $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
+        $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->method->value];
 
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = $matchingRegexForMethod->match($request->getUri()->getPath());
+        $matchResult = $matchingRegexForMethod->match($request->path);
 
         if ($matchResult === null) {
             return null;

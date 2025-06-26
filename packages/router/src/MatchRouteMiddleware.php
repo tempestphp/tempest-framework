@@ -16,7 +16,7 @@ use Tempest\Router\Routing\Matching\RouteMatcher;
 use function Tempest\map;
 
 #[Priority(Priority::FRAMEWORK - 10)]
-final class MatchRouteMiddleware  implements HttpMiddleware
+final readonly class MatchRouteMiddleware  implements HttpMiddleware
 {
     public function __construct(
         private RouteMatcher $routeMatcher,
@@ -25,22 +25,28 @@ final class MatchRouteMiddleware  implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $psrRequest = map($request)->with(RequestToPsrRequestMapper::class)->do();
-
-        $matchedRoute = $this->routeMatcher->match($psrRequest);
+        $matchedRoute = $this->routeMatcher->match($request);
 
         if ($matchedRoute === null) {
             return new NotFound();
         }
 
+        // We register the matched route in the container, some internal framework components will need it
         $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
 
-        $request = $this->resolveRequest($psrRequest, $matchedRoute);
+        // Convert the request to a specific request implementation, if needed
+        $request = $this->resolveRequest($request, $matchedRoute);
+
+        // We register this newly created request object in the container
+        // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
+        // Making it so that we don't need to set any $_SERVER variables and stuff like that
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton($request::class, fn () => $request);
 
         return $next($request);
     }
 
-    private function resolveRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
+    private function resolveRequest(Request $request, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
         $requestClass = GenericRequest::class;
@@ -56,19 +62,9 @@ final class MatchRouteMiddleware  implements HttpMiddleware
             }
         }
 
-        // We map the original request we got into this method to the right request class
-        /** @var \Tempest\Http\GenericRequest $request */
-        $request = map($psrRequest)->with(PsrRequestToGenericRequestMapper::class)->do();
-
         if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {
             $request = map($request)->with(RequestToObjectMapper::class)->to($requestClass);
         }
-
-        // Next, we register this newly created request object in the container
-        // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
-        // Making it so that we don't need to set any $_SERVER variables and stuff like that
-        $this->container->singleton(Request::class, fn () => $request);
-        $this->container->singleton($request::class, fn () => $request);
 
         return $request;
     }
