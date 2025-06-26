@@ -1,7 +1,7 @@
+import { memoize } from '@innocenzi/utils'
 import { exec as sync } from 'node:child_process'
 import type { AddressInfo } from 'node:net'
 import { promisify } from 'node:util'
-import { memoize } from '@innocenzi/utils'
 import { loadEnv } from 'vite'
 
 export const exec = promisify(sync)
