@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\MessageFormat\Functions;
 
+use Tempest\Intl\Currency;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
@@ -10,7 +11,6 @@ use Tempest\Intl\MessageFormat\SelectorFunction;
 use Tempest\Intl\Number;
 use Tempest\Intl\PluralRules\PluralRulesMatcher;
 use Tempest\Support\Arr;
-use Tempest\Support\Currency;
 use Tempest\Support\Str;
 
 final class NumberFunction implements FormattingFunction, SelectorFunction
