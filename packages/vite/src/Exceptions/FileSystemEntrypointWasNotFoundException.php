@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Exceptions;
 
-final class FileSystemEntrypointWasWasNotFound extends EntrypointWasNotFound
+use Exception;
+
+final class FileSystemEntrypointWasNotFoundException extends Exception implements EntrypointNotFoundException
 {
     public function __construct(string $entrypoint)
     {
