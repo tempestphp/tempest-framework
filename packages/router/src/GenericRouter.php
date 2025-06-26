@@ -35,20 +35,13 @@ final readonly class GenericRouter implements Router
 
     public function dispatch(Request|PsrRequest $request): Response
     {
-        return $this->processResponse(
-            $this->processRequest($request),
-        );
-    }
-
-    private function processRequest(Request|PsrRequest $request): Response
-    {
         if (! ($request instanceof Request)) {
             $request = map($request)->with(PsrRequestToGenericRequestMapper::class)->do();
         }
 
         $callable = $this->getCallable();
 
-        return $callable($request);
+        return $this->processResponse($callable($request));
     }
 
     private function getCallable(): HttpMiddlewareCallable

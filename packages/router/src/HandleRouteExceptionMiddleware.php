@@ -3,6 +3,7 @@
 namespace Tempest\Router;
 
 use Tempest\Core\Priority;
+use Tempest\Http\HttpException;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
@@ -20,7 +21,16 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
         if ($this->routeConfig->throwHttpExceptions === true) {
-            return $next($request);
+            $response = $next($request);
+
+            if ($response->status->isServerError() || $response->status->isClientError()) {
+                throw new HttpException(
+                    status: $response->status,
+                    cause: $response,
+                );
+            }
+
+            return $response;
         }
 
         try {
