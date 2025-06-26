@@ -1,6 +1,12 @@
 <?php
 
-namespace Tempest\Support;
+namespace Tempest\Intl;
+
+use Stringable;
+use TypeError;
+use ValueError;
+
+use function Tempest\Support\str;
 
 /**
  * Represents an ISO-4217 currency.
@@ -165,12 +171,15 @@ enum Currency: string
     case ZMW = 'ZMW';
     case ZWG = 'ZWG';
 
+    /**
+     * Parses the given value into a `Currency` instance.
+     */
     public static function parse(mixed $currency): self
     {
         if ($currency instanceof self) {
             return $currency;
         }
 
-        return self::from($currency);
+        return self::from(str($currency)->trim()->upper()->toString());
     }
 }

@@ -4,9 +4,9 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
+use Tempest\Intl\Currency;
 use Tempest\Intl\Locale;
 use Tempest\Intl\Number;
-use Tempest\Support\Currency;
 use Tempest\Support\Math;
 
 final class FunctionsTest extends TestCase

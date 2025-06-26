@@ -5,6 +5,7 @@ namespace Tempest\Intl\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
+use Tempest\Intl\Currency;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
@@ -15,7 +16,6 @@ use Tempest\Intl\MessageFormat\Functions\NumberFunction;
 use Tempest\Intl\MessageFormat\Functions\StringFunction;
 use Tempest\Intl\MessageFormat\Markup\HtmlTagFormatter;
 use Tempest\Intl\MessageFormat\Markup\VoidHtmlTagFormatter;
-use Tempest\Support\Currency;
 
 final class FormatterTest extends TestCase
 {

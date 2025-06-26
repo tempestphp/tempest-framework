@@ -3,8 +3,8 @@
 namespace Tempest\Intl\Number;
 
 use NumberFormatter;
+use Tempest\Intl\Currency;
 use Tempest\Intl\Locale;
-use Tempest\Support\Currency;
 use Tempest\Support\Math;
 
 /**
