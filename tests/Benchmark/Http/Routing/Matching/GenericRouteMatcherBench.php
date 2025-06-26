@@ -9,6 +9,8 @@ use Laminas\Diactoros\ServerRequest;
 use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
@@ -31,7 +33,7 @@ final class GenericRouteMatcherBench
     public function benchMatch(array $params): void
     {
         $this->matcher->match(
-            new ServerRequest(uri: $params['uri'], method: 'GET'),
+            new GenericRequest(Method::GET, $params['uri']),
         );
     }
 
