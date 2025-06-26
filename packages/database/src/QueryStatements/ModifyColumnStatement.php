@@ -6,7 +6,7 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
+use Tempest\Database\DialectWasNotSupported;
 
 final readonly class ModifyColumnStatement implements QueryStatement
 {
@@ -19,7 +19,7 @@ final readonly class ModifyColumnStatement implements QueryStatement
         return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf('MODIFY COLUMN %s', $this->column->compile($dialect)),
             DatabaseDialect::POSTGRESQL => sprintf('ALTER COLUMN %s', $this->column->compile($dialect)),
-            DatabaseDialect::SQLITE => throw new UnsupportedDialect(),
+            DatabaseDialect::SQLITE => throw new DialectWasNotSupported(),
         };
     }
 }

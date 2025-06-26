@@ -11,7 +11,7 @@ use Laminas\Diactoros\Uri;
 use ReflectionException;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\HttpException;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
@@ -283,7 +283,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_error_response_processor_throws_http_exceptions_when_instructed(): void
     {
-        $this->expectException(HttpException::class);
+        $this->expectException(HttpRequestFailed::class);
         $this->expectExceptionCode(404);
 
         $this->http
@@ -305,7 +305,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_throws_http_exception_when_returning_server_error(): void
     {
-        $this->expectException(HttpException::class);
+        $this->expectException(HttpRequestFailed::class);
         $this->expectExceptionCode(500);
 
         $this->registerRoute([Http500Controller::class, 'serverError']);

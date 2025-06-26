@@ -9,9 +9,9 @@ use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Responses\ServerError;
 use Tempest\Router\Get;
 use Tempest\Router\StaticPage;
-use Tempest\View\Exceptions\ViewCompilationError;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\View;
-use Tempest\Vite\Exceptions\ManifestNotFoundException;
+use Tempest\Vite\Exceptions\ManifestWasNotFound;
 
 use function Tempest\uri;
 use function Tempest\view;
@@ -47,7 +47,7 @@ final readonly class StaticPageController
         string $foo, // @mago-expect best-practices/no-unused-parameter
         string $bar, // @mago-expect best-practices/no-unused-parameter
     ): void {
-        throw new ViewCompilationError('view.php', '', new ManifestNotFoundException('fake-manifest.json'));
+        throw new ViewCompilationFailed('view.php', '', new ManifestWasNotFound('fake-manifest.json'));
     }
 
     #[Get('/static/dead-link')]

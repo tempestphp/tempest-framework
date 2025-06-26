@@ -7,7 +7,7 @@ namespace Tempest\Router;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Router\Exceptions\NotFoundException;
+use Tempest\Router\Exceptions\RouteBindingFailed;
 use UnitEnum;
 
 final class RouteBindingInitializer implements DynamicInitializer
@@ -34,7 +34,7 @@ final class RouteBindingInitializer implements DynamicInitializer
         $object = $class->callStatic('resolve', $matchedRoute->params[$parameter->getName()]);
 
         if ($object === null) {
-            throw new NotFoundException();
+            throw new RouteBindingFailed();
         }
 
         return $object;

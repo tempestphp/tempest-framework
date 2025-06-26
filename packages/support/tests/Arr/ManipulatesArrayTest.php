@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
-use Tempest\Support\Arr\InvalidMapWithKeysUsage;
+use Tempest\Support\Arr\MapWithKeysDidNotUseAGenerator;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -256,7 +256,7 @@ final class ManipulatesArrayTest extends TestCase
 
     public function test_map_with_keys_without_generator(): void
     {
-        $this->expectException(InvalidMapWithKeysUsage::class);
+        $this->expectException(MapWithKeysDidNotUseAGenerator::class);
 
         arr(['a', 'b'])
             ->mapWithKeys(fn (mixed $value, mixed $_) => $value);

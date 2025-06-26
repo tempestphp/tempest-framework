@@ -9,12 +9,12 @@ use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Http\HttpException;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
-use Tempest\Router\Exceptions\NotFoundException;
+use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Router\ResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
@@ -119,7 +119,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new NotFoundException());
+            $handler->handle(new RouteBindingFailed());
         });
 
         $this->assertSame(Status::NOT_FOUND, $this->response->status);
@@ -135,7 +135,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new HttpException($status));
+            $handler->handle(new HttpRequestFailed($status));
         });
 
         $this->assertSame($status, $this->response->status);

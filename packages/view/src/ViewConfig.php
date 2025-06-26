@@ -6,7 +6,7 @@ namespace Tempest\View;
 
 use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
-use Tempest\View\Exceptions\DuplicateViewComponent;
+use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
 use Tempest\View\Renderers\TempestViewRenderer;
 
 final class ViewConfig
@@ -34,7 +34,7 @@ final class ViewConfig
         }
 
         if ($existing = $this->viewComponents[$name] ?? null) {
-            throw new DuplicateViewComponent(
+            throw new ViewComponentWasAlreadyRegistered(
                 name: $name,
                 pending: $viewComponent,
                 existing: $existing,

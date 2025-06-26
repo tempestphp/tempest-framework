@@ -764,7 +764,7 @@ namespace Tempest\Support\Arr {
 
             // @phpstan-ignore instanceof.alwaysTrue
             if (! ($generator instanceof Generator)) {
-                throw new InvalidMapWithKeysUsage();
+                throw new MapWithKeysDidNotUseAGenerator();
             }
 
             $result[$generator->key()] = $generator->current();

@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\View;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\View\Components\Input;
-use Tempest\View\Exceptions\DuplicateViewComponent;
+use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
 use Tempest\View\ViewComponentDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -24,7 +24,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         try {
             $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/duplicateComponent.view.php');
             $discovery->apply();
-        } catch (DuplicateViewComponent $duplicateViewComponent) {
+        } catch (ViewComponentWasAlreadyRegistered $duplicateViewComponent) {
             $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $duplicateViewComponent->getMessage());
             $this->assertStringContainsString(Input::class, $duplicateViewComponent->getMessage());
             $this->assertStringContainsString('x-input', $duplicateViewComponent->getMessage());

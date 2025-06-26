@@ -8,8 +8,8 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Tempest\Storage\Config\InMemoryStorageConfig;
 use Tempest\Storage\Config\StorageConfig;
-use Tempest\Storage\ForbiddenStorageUsageException;
-use Tempest\Storage\MissingAdapterException;
+use Tempest\Storage\StorageUsageWasForbidden;
+use Tempest\Storage\AdapterWasMissing;
 use Tempest\Storage\Storage;
 use Tempest\Storage\Testing\TestingStorage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -154,7 +154,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
 
     public function test_prevent_usage_without_fake(): void
     {
-        $this->expectException(ForbiddenStorageUsageException::class);
+        $this->expectException(StorageUsageWasForbidden::class);
 
         $this->storage->preventUsageWithoutFake();
 
@@ -164,7 +164,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
 
     public function test_prevent_usage_without_fake_with_tagged_storage(): void
     {
-        $this->expectException(ForbiddenStorageUsageException::class);
+        $this->expectException(StorageUsageWasForbidden::class);
 
         $this->container->config(new InMemoryStorageConfig(tag: 'tagged'));
         $this->storage->preventUsageWithoutFake();
@@ -194,7 +194,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
 
     public function test_no_adapter(): void
     {
-        $this->expectException(MissingAdapterException::class);
+        $this->expectException(AdapterWasMissing::class);
         $this->expectExceptionMessage('The `UnknownClass` adapter is missing');
 
         $this->container->config(new class implements StorageConfig {

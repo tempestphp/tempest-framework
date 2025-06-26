@@ -7,7 +7,7 @@ namespace Tempest\View\Attributes;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpForeachElement;
-use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\Exceptions\ElementWasInvalid;
 
 final readonly class ForelseAttribute implements Attribute
 {
@@ -16,7 +16,7 @@ final readonly class ForelseAttribute implements Attribute
         $previous = $element->getPrevious()?->unwrap(PhpForeachElement::class);
 
         if (! ($previous instanceof PhpForeachElement)) {
-            throw new InvalidElement('There needs to be a foreach element before an forelse element.');
+            throw new ElementWasInvalid('There needs to be a foreach element before an forelse element.');
         }
 
         $previous->setElse($element);

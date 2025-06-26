@@ -5,7 +5,7 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\InsertColumnMismatch;
+use Tempest\Database\Exceptions\InsertColumnsMismatched;
 use Tempest\Database\QueryStatements\InsertStatement;
 
 use function Tempest\Support\arr;
@@ -46,7 +46,7 @@ final class InsertStatementTest extends TestCase
             arr(['baz' => 3, 'bar' => 4]),
         ]));
 
-        $this->expectException(InsertColumnMismatch::class);
+        $this->expectException(InsertColumnsMismatched::class);
         $this->expectExceptionMessage('Expected columns `foo`, `bar` and `boo`; but got `baz` and `bar`');
 
         $statement->compile(DatabaseDialect::MYSQL);

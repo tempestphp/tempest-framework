@@ -13,7 +13,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Validation\Exceptions\InvalidValueException;
+use Tempest\Validation\Exceptions\ValueWasInvalid;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 

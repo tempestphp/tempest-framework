@@ -5,7 +5,7 @@ namespace Tests\Tempest\Integration\Cache;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Cache\Cache;
 use Tempest\Cache\Config\InMemoryCacheConfig;
-use Tempest\Cache\ForbiddenCacheUsageException;
+use Tempest\Cache\CacheUsageWasForbidden;
 use Tempest\Cache\Testing\TestingCache;
 use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -63,7 +63,7 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
 
     public function test_prevent_usage_without_fake(): void
     {
-        $this->expectException(ForbiddenCacheUsageException::class);
+        $this->expectException(CacheUsageWasForbidden::class);
 
         $this->cache->preventUsageWithoutFake();
 
@@ -73,7 +73,7 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
 
     public function test_prevent_usage_without_fake_with_tagged_cache(): void
     {
-        $this->expectException(ForbiddenCacheUsageException::class);
+        $this->expectException(CacheUsageWasForbidden::class);
 
         $this->container->config(new InMemoryCacheConfig(tag: 'tagged'));
         $this->cache->preventUsageWithoutFake();

@@ -172,7 +172,7 @@ final class GenericStorage implements Storage
     private function assertAdapterInstalled(string $adapter): void
     {
         if (! class_exists($adapter)) {
-            throw new MissingAdapterException($adapter);
+            throw new AdapterWasMissing($adapter);
         }
     }
 }

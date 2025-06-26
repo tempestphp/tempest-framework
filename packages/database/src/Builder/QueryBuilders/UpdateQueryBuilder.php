@@ -2,8 +2,8 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
-use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
@@ -107,11 +107,11 @@ final class UpdateQueryBuilder implements BuildsQuery
             $property = $modelClass->getProperty($column);
 
             if ($modelDefinition->getHasMany($property->getName())) {
-                throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
+                throw new HasManyRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
             }
 
             if ($modelDefinition->getHasOne($property->getName())) {
-                throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
+                throw new HasOneRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
             }
 
             if ($modelDefinition->isRelation($property)) {

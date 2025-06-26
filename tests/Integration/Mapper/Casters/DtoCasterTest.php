@@ -3,7 +3,7 @@
 namespace Tests\Tempest\Integration\Mapper\Casters;
 
 use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\Exceptions\CannotCastValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\MyObject;
 
@@ -23,7 +23,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
     {
         $json = '';
 
-        $this->expectException(CannotCastValue::class);
+        $this->expectException(ValueCouldNotBeCast::class);
 
         new DtoCaster()->cast($json);
     }

@@ -21,7 +21,7 @@ final class GenericCommandBus implements CommandBus
         $commandHandler = $this->getCommandHandler($command);
 
         if ($commandHandler === null) {
-            throw new CommandHandlerNotFound($command);
+            throw new CommandHandlerWasNotFound($command);
         }
 
         $callable = $this->getCallable($commandHandler);

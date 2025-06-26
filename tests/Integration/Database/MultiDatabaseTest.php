@@ -3,7 +3,7 @@
 namespace Integration\Database;
 
 use PDOException;
-use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
+use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
@@ -159,7 +159,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         try {
             $migrationManager->onDatabase('unknown')->executeUp(new CreateMigrationsTable());
-        } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
+        } catch (TaggedDependencyCouldNotBeResolved $cannotResolveTaggedDependency) {
             $this->assertStringContainsString('Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown', $cannotResolveTaggedDependency->getMessage());
         }
     }

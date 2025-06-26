@@ -3,7 +3,7 @@
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\JsonSerializableObject;
@@ -26,7 +26,7 @@ final class SerializableSerializerTest extends TestCase
 
     public function test_only_arrays_allowed(): void
     {
-        $this->expectException(CannotSerializeValue::class);
+        $this->expectException(ValueCouldNotBeSerialized::class);
 
         new SerializableSerializer()->serialize('foo');
     }

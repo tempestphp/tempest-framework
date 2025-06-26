@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container\Tests\Exceptions;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Container\Exceptions\CircularDependencyException;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Tests\Fixtures\CircularA;
 use Tempest\Container\Tests\Fixtures\CircularZ;
@@ -17,13 +17,13 @@ final class CircularDependencyExceptionTest extends TestCase
 {
     public function test_circular_dependency_test(): void
     {
-        $this->expectException(CircularDependencyException::class);
+        $this->expectException(CircularDependencyEncountered::class);
 
         try {
             $container = new GenericContainer();
 
             $container->get(CircularA::class);
-        } catch (CircularDependencyException $circularDependencyException) {
+        } catch (CircularDependencyEncountered $circularDependencyException) {
             $this->assertStringContainsString(
                 'Cannot autowire ' . CircularA::class . '::__construct because it has a circular dependency on ' . CircularA::class . '::__construct',
                 $circularDependencyException->getMessage(),
@@ -46,13 +46,13 @@ final class CircularDependencyExceptionTest extends TestCase
 
     public function test_circular_dependency_as_a_child_test(): void
     {
-        $this->expectException(CircularDependencyException::class);
+        $this->expectException(CircularDependencyEncountered::class);
 
         try {
             $container = new GenericContainer();
 
             $container->get(CircularZ::class);
-        } catch (CircularDependencyException $circularDependencyException) {
+        } catch (CircularDependencyEncountered $circularDependencyException) {
             $this->assertStringContainsString(
                 'Cannot autowire ' . CircularZ::class . '::__construct because it has a circular dependency on ' . CircularA::class . '::__construct:',
                 $circularDependencyException->getMessage(),

@@ -9,7 +9,7 @@ use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
-use Tempest\Database\Exceptions\QueryException;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration as MigrationModel;
@@ -44,7 +44,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 name: 'Test',
                 email: 'test@example.com',
             );
-        } catch (QueryException $queryException) {
+        } catch (QueryWasInvalid $queryException) {
             $message = match ($this->container->get(DatabaseConfig::class)?->dialect) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',

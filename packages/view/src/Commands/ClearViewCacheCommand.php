@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Commands;
 
-use Tempest\Cache\CouldNotClearCache;
+use Tempest\Cache\CacheCouldNotBeCleared;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
@@ -26,7 +26,7 @@ final readonly class ClearViewCacheCommand
         try {
             $this->container->get(ViewCache::class)->clear();
             $value = "<style='bold fg-green'>CLEARED</style>";
-        } catch (CouldNotClearCache) {
+        } catch (CacheCouldNotBeCleared) {
             $value = "<style='bold fg-red'>FAILEd</style>";
         }
 

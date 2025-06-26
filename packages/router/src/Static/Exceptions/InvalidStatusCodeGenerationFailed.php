@@ -1,0 +1,15 @@
+<?php
+
+namespace Tempest\Router\Static\Exceptions;
+
+use Tempest\Http\Status;
+
+final class InvalidStatusCodeGenerationFailed extends StaticPageGenerationFailed
+{
+    public function __construct(
+        string $uri,
+        public readonly Status $status,
+    ) {
+        parent::__construct("HTTP {$status->value}", $uri);
+    }
+}

@@ -7,7 +7,7 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
+use Tempest\Database\DialectWasNotSupported;
 
 final readonly class ShowTablesStatement implements QueryStatement
 {

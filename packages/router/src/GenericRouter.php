@@ -13,9 +13,9 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
-use Tempest\Router\Exceptions\InvalidRouteException;
-use Tempest\Router\Exceptions\NoMatchedRoute;
+use Tempest\Router\Exceptions\ControllerActionHadNoReturn;
+use Tempest\Router\Exceptions\ControllerMethodHadNoRouteAttribute;
+use Tempest\Router\Exceptions\MatchedRouteCouldNotBeResolved;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\View\View;
@@ -52,7 +52,7 @@ final readonly class GenericRouter implements Router
             if ($matchedRoute === null) {
                 // At this point, the `MatchRouteMiddleware` should have run.
                 // If that's not the case, then someone messed up by clearing all HTTP middleware
-                throw new NoMatchedRoute();
+                throw new MatchedRouteCouldNotBeResolved();
             }
 
             $route = $matchedRoute->route;
@@ -63,7 +63,7 @@ final readonly class GenericRouter implements Router
             );
 
             if ($response === null) {
-                throw new ControllerActionHasNoReturn($route);
+                throw new ControllerActionHadNoReturn($route);
             }
 
             return $response;
@@ -97,7 +97,7 @@ final readonly class GenericRouter implements Router
                 ->getAttribute(Route::class);
 
             if ($routeAttribute === null) {
-                throw new InvalidRouteException($controllerClass, $controllerMethod);
+                throw new ControllerMethodHadNoRouteAttribute($controllerClass, $controllerMethod);
             }
 
             $uri = $routeAttribute->uri;

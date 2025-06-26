@@ -21,16 +21,16 @@ use Tempest\Intl;
 use Tempest\Router\DataProvider;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
-use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
-use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
-use Tempest\Router\Static\Exceptions\NoTextualBodyException;
+use Tempest\Router\Static\Exceptions\DeadLinksDetectedGenerationFailed;
+use Tempest\Router\Static\Exceptions\InvalidStatusCodeGenerationFailed;
+use Tempest\Router\Static\Exceptions\NoTextualBodyGenerationFailed;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
-use Tempest\View\Exceptions\ViewCompilationError;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
-use Tempest\Vite\Exceptions\ManifestNotFoundException;
+use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Throwable;
 
 use function Tempest\Support\path;
@@ -81,15 +81,15 @@ final class StaticGenerateCommand
             $failures++;
 
             match (true) {
-                $event->exception instanceof DeadLinksDetectedException => $this->keyValue(
+                $event->exception instanceof DeadLinksDetectedGenerationFailed => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     sprintf("<style='fg-red'>%s DEAD %s</style>", count($event->exception->links), Intl\pluralize('LINK', count($event->exception->links))),
                 ),
-                $event->exception instanceof InvalidStatusCodeException => $this->keyValue(
+                $event->exception instanceof InvalidStatusCodeGenerationFailed => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>HTTP {$event->exception->status->value}</style>",
                 ),
-                $event->exception instanceof NoTextualBodyException => $this->keyValue(
+                $event->exception instanceof NoTextualBodyGenerationFailed => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>NO CONTENT</style>",
                 ),
@@ -130,7 +130,7 @@ final class StaticGenerateCommand
                     );
 
                     if ($response->status !== Status::OK) {
-                        throw new InvalidStatusCodeException($uri, $response->status);
+                        throw new InvalidStatusCodeGenerationFailed($uri, $response->status);
                     }
 
                     $body = $response->body;
@@ -140,7 +140,7 @@ final class StaticGenerateCommand
                         : $body;
 
                     if (! is_string($content)) {
-                        throw new NoTextualBodyException($uri);
+                        throw new NoTextualBodyGenerationFailed($uri);
                     }
 
                     $directory = $file->dirname();
@@ -151,7 +151,7 @@ final class StaticGenerateCommand
 
                     if (! $allowDeadLinks && count($links = $this->detectDeadLinks($uri, $content, checkExternal: ! $allowExternalDeadLinks)) > 0) {
                         $deadlinks[$uri] = $links;
-                        throw new DeadLinksDetectedException($uri, $links);
+                        throw new DeadLinksDetectedGenerationFailed($uri, $links);
                     }
 
                     file_put_contents($file->toString(), $content);
@@ -162,7 +162,7 @@ final class StaticGenerateCommand
                         ob_clean();
                     }
 
-                    if ($exception instanceof ViewCompilationError && $exception->getPrevious() instanceof ManifestNotFoundException) {
+                    if ($exception instanceof ViewCompilationFailed && $exception->getPrevious() instanceof ManifestWasNotFound) {
                         $this->error("A Vite build is needed for [{$uri}]. Run <code>vite build</code> first.");
                         return ExitCode::ERROR;
                     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Exceptions;
 
-final class CouldNotRollbackTransaction extends DatabaseException
+final class CouldNotRollbackTransaction extends DatabaseOperationFailed
 {
     public function __construct()
     {

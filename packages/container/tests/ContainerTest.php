@@ -6,11 +6,11 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Tempest\Container\Exceptions\CannotAutowireException;
-use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
-use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
-use Tempest\Container\Exceptions\CircularDependencyException;
-use Tempest\Container\Exceptions\InvalidCallableException;
+use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
+use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
+use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
+use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Tests\Fixtures\BuiltinArrayClass;
 use Tempest\Container\Tests\Fixtures\BuiltinDependencyArrayInitializer;
@@ -230,7 +230,7 @@ final class ContainerTest extends TestCase
 
         try {
             $container->get(CircularWithInitializerA::class);
-        } catch (CircularDependencyException $circularDependencyException) {
+        } catch (CircularDependencyEncountered $circularDependencyException) {
             $this->assertStringContainsString('CircularWithInitializerA', $circularDependencyException->getMessage());
             $this->assertStringContainsString('CircularWithInitializerB', $circularDependencyException->getMessage());
             $this->assertStringContainsString('CircularWithInitializerBInitializer', $circularDependencyException->getMessage());
@@ -293,7 +293,7 @@ final class ContainerTest extends TestCase
     {
         $container = new GenericContainer();
 
-        $this->expectException(CannotResolveTaggedDependency::class);
+        $this->expectException(TaggedDependencyCouldNotBeResolved::class);
 
         $container->get(TaggedDependency::class, 'web');
     }
@@ -313,7 +313,7 @@ final class ContainerTest extends TestCase
 
         try {
             $container->get(DependencyWithTaggedDependency::class);
-        } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
+        } catch (TaggedDependencyCouldNotBeResolved $cannotResolveTaggedDependency) {
             $this->assertStringContainsStringIgnoringLineEndings(
                 <<<'TXT'
                 	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
@@ -382,7 +382,7 @@ final class ContainerTest extends TestCase
 
     public function test_call_function_with_unresolvable_parameters(): void
     {
-        $this->expectException(CannotAutowireException::class);
+        $this->expectException(DependencyCouldNotBeAutowired::class);
         $this->expectExceptionMessageMatches('/because string cannot be resolved/');
 
         $container = new GenericContainer();
@@ -391,7 +391,7 @@ final class ContainerTest extends TestCase
 
     public function test_call_invalid_closure(): void
     {
-        $this->expectException(InvalidCallableException::class);
+        $this->expectException(InvokedCallableWasInvalid::class);
         $this->expectExceptionMessage('[array_map] cannot be invoked through the container.');
 
         $container = new GenericContainer();
@@ -443,7 +443,7 @@ final class ContainerTest extends TestCase
 
         $container->unregister(InterfaceA::class);
 
-        $this->expectException(CannotInstantiateDependencyException::class);
+        $this->expectException(DependencyCouldNotBeInstantiated::class);
 
         $container->get(InterfaceA::class);
     }
@@ -459,7 +459,7 @@ final class ContainerTest extends TestCase
 
         $container->unregister(InterfaceA::class);
 
-        $this->expectException(CannotInstantiateDependencyException::class);
+        $this->expectException(DependencyCouldNotBeInstantiated::class);
 
         $container->get(InterfaceA::class);
     }
@@ -478,7 +478,7 @@ final class ContainerTest extends TestCase
 
         $container->unregister(TaggedDependency::class, tagged: true);
 
-        $this->expectException(CannotResolveTaggedDependency::class);
+        $this->expectException(TaggedDependencyCouldNotBeResolved::class);
 
         $container->get(TaggedDependency::class, 'web');
     }

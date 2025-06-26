@@ -9,7 +9,7 @@ namespace Tempest {
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\ExceptionReporter;
     use Tempest\Core\Kernel;
-    use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
+    use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
     use Throwable;
 
     use function Tempest\Support\Namespace\to_psr4_namespace;
@@ -42,7 +42,7 @@ namespace Tempest {
     /**
      * Converts the given path to a registered namespace. The path is expected to be absolute, or relative to the root of the project.
      *
-     * @throws PathCouldNotBeMappedToNamespaceException If the path cannot be mapped to registered namespace
+     * @throws PathCouldNotBeMappedToNamespace If the path cannot be mapped to registered namespace
      */
     function registered_namespace(Stringable|string ...$parts): string
     {
@@ -52,7 +52,7 @@ namespace Tempest {
     /**
      * Converts the given path to the main namespace. The path is expected to be absolute, or relative to the root of the project.
      *
-     * @throws PathCouldNotBeMappedToNamespaceException If the path cannot be mapped to the main namespace
+     * @throws PathCouldNotBeMappedToNamespace If the path cannot be mapped to the main namespace
      */
     function src_namespace(Stringable|string ...$parts): string
     {

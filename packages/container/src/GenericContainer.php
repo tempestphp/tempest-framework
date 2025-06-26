@@ -7,10 +7,10 @@ namespace Tempest\Container;
 use ArrayIterator;
 use Closure;
 use ReflectionFunction;
-use Tempest\Container\Exceptions\CannotAutowireException;
-use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
-use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
-use Tempest\Container\Exceptions\InvalidCallableException;
+use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
+use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
+use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
+use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
@@ -201,7 +201,7 @@ final class GenericContainer implements Container
             );
         }
 
-        throw new InvalidCallableException(new Dependency($method));
+        throw new InvokedCallableWasInvalid(new Dependency($method));
     }
 
     private function invokeClosure(Closure $closure, mixed ...$params): mixed
@@ -346,7 +346,7 @@ final class GenericContainer implements Container
 
         // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
         if ($tag) {
-            throw new CannotResolveTaggedDependency($this->chain, new Dependency($className), $tag);
+            throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
         }
 
         // Finally, autowire the class.
@@ -397,7 +397,7 @@ final class GenericContainer implements Container
         $constructor = $classReflector->getConstructor();
 
         if (! $classReflector->isInstantiable()) {
-            throw new CannotInstantiateDependencyException($classReflector, $this->chain);
+            throw new DependencyCouldNotBeInstantiated($classReflector, $this->chain);
         }
 
         $instance = $constructor === null
@@ -492,7 +492,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
+        throw $lastThrowable ?? new DependencyCouldNotBeAutowired($this->chain, new Dependency($parameter));
     }
 
     private function autowireObjectDependency(TypeReflector $type, null|string|UnitEnum $tag, mixed $providedValue, bool $lazy): mixed
@@ -563,7 +563,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain, new Dependency($parameter));
+        throw new DependencyCouldNotBeAutowired($this->chain, new Dependency($parameter));
     }
 
     private function clone(): self

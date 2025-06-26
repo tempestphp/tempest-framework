@@ -90,7 +90,7 @@ final class GenericCache implements Cache
         if (! $item->isHit()) {
             $item->set($by);
         } elseif (! is_numeric($item->get())) {
-            throw new NotNumberException((string) $key);
+            throw new CacheKeyCouldNotBeIncremented((string) $key);
         } else {
             $item->set(((int) $item->get()) + $by);
         }
@@ -111,7 +111,7 @@ final class GenericCache implements Cache
         if (! $item->isHit()) {
             $item->set(-$by);
         } elseif (! is_numeric($item->get())) {
-            throw new NotNumberException((string) $key);
+            throw new CacheKeyCouldNotBeIncremented((string) $key);
         } else {
             $item->set(((int) $item->get()) - $by);
         }
@@ -215,7 +215,7 @@ final class GenericCache implements Cache
     public function clear(): void
     {
         if (! $this->adapter->clear()) {
-            throw new CouldNotClearCache();
+            throw new CacheCouldNotBeCleared();
         }
     }
 }

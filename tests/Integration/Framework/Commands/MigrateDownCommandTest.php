@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
-use Tempest\Database\Migrations\TableNotFoundException;
+use Tempest\Database\Migrations\TableWasNotFound;
 use Tempest\Framework\Commands\MigrateDownCommand;
 use Tempest\Framework\Commands\MigrateUpCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -30,6 +30,6 @@ final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(MigrateDownCommand::class)
-            ->assertContains(new TableNotFoundException()->getMessage());
+            ->assertContains(new TableWasNotFound()->getMessage());
     }
 }

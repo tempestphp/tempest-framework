@@ -6,7 +6,7 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
+use Tempest\Database\DialectWasNotSupported;
 
 final readonly class BelongsToStatement implements QueryStatement
 {
@@ -55,7 +55,7 @@ final readonly class BelongsToStatement implements QueryStatement
                     'ON UPDATE ' . $this->onUpdate->value,
                 )),
             ),
-            DatabaseDialect::SQLITE => throw new UnsupportedDialect(),
+            DatabaseDialect::SQLITE => throw new DialectWasNotSupported(),
         };
 
         return $statement->compile($dialect);

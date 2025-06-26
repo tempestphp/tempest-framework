@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
+use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -74,7 +74,7 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
     #[TestWith(['src/Foo.php'])]
     public function test_exception_src_namespace(string $path): void
     {
-        $this->expectException(PathCouldNotBeMappedToNamespaceException::class);
+        $this->expectException(PathCouldNotBeMappedToNamespace::class);
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
 
         src_namespace($path);

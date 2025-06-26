@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Serializers;
 
 use DateTimeInterface;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
@@ -26,7 +26,7 @@ final readonly class NativeDateTimeSerializer implements Serializer
     public function serialize(mixed $input): string
     {
         if (! ($input instanceof DateTimeInterface)) {
-            throw new CannotSerializeValue(DateTimeInterface::class);
+            throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 
         return $input->format($this->format);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Serializers;
 
 use BackedEnum;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use UnitEnum;
 
@@ -21,6 +21,6 @@ final class EnumSerializer implements Serializer
             return $input->name;
         }
 
-        throw new CannotSerializeValue('enum');
+        throw new ValueCouldNotBeSerialized('enum');
     }
 }

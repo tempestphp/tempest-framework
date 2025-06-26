@@ -6,7 +6,7 @@ namespace Tempest\Mapper\Serializers;
 
 use JsonSerializable;
 use Serializable;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
 final class SerializableSerializer implements Serializer
@@ -21,6 +21,6 @@ final class SerializableSerializer implements Serializer
             return serialize($input);
         }
 
-        throw new CannotSerializeValue('JsonSerializable or Serializable');
+        throw new ValueCouldNotBeSerialized('JsonSerializable or Serializable');
     }
 }

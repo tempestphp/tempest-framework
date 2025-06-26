@@ -3,13 +3,13 @@
 namespace Tempest\Router;
 
 use Tempest\Core\Priority;
-use Tempest\Http\HttpException;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Router\Exceptions\NotFoundException;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Router\Exceptions\RouteBindingFailed;
+use Tempest\Validation\Exceptions\ValidationFailed;
 
 #[Priority(Priority::FRAMEWORK - 10)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
@@ -24,7 +24,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
             $response = $next($request);
 
             if ($response->status->isServerError() || $response->status->isClientError()) {
-                throw new HttpException(
+                throw new HttpRequestFailed(
                     status: $response->status,
                     cause: $response,
                 );
@@ -35,9 +35,9 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
         try {
             return $next($request);
-        } catch (NotFoundException) {
+        } catch (RouteBindingFailed) {
             return new NotFound();
-        } catch (ValidationException $validationException) {
+        } catch (ValidationFailed $validationException) {
             return new Invalid($validationException->subject, $validationException->failingRules);
         }
     }
