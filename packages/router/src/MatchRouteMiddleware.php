@@ -2,7 +2,6 @@
 
 namespace Tempest\Router;
 
-use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Core\Priority;
 use Tempest\Http\GenericRequest;
