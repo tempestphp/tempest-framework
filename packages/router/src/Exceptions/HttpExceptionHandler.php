@@ -45,10 +45,6 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     private function renderErrorResponse(Status $status, ?HttpException $exception = null): Response
     {
-        if ($exception?->response) {
-            return $exception->response;
-        }
-
         return new GenericResponse(
             status: $status,
             body: new GenericView(__DIR__ . '/HttpErrorResponse/error.view.php', [
