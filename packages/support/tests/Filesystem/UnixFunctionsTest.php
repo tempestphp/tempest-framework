@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotADirectory;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotAFile;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotFound;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotReadable;
-use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
 final class UnixFunctionsTest extends TestCase

@@ -7,8 +7,8 @@ namespace Tempest\Generation;
 use Closure;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
 

@@ -6,11 +6,11 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
-use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
-use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
+use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Tests\Fixtures\BuiltinArrayClass;
 use Tempest\Container\Tests\Fixtures\BuiltinDependencyArrayInitializer;

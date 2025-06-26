@@ -14,6 +14,7 @@ use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\View;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 use function Tempest\Support\str;

@@ -9,10 +9,10 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Container\Singleton;
+use Tempest\Database\Migrations\MigrationFileWasMissing;
 use Tempest\Database\Migrations\MigrationHashMismatched;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationValidationFailed;
-use Tempest\Database\Migrations\MigrationFileWasMissing;
 use Tempest\EventBus\EventHandler;
 
 #[Singleton]

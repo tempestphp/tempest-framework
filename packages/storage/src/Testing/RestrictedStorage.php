@@ -4,8 +4,8 @@ namespace Tempest\Storage\Testing;
 
 use DateTimeInterface;
 use Tempest\Storage\DirectoryListing;
-use Tempest\Storage\StorageUsageWasForbidden;
 use Tempest\Storage\Storage;
+use Tempest\Storage\StorageUsageWasForbidden;
 
 final readonly class RestrictedStorage implements Storage
 {

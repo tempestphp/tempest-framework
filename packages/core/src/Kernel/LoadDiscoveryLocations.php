@@ -6,8 +6,8 @@ namespace Tempest\Core\Kernel;
 
 use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
-use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
 
 use function Tempest\Support\Path\normalize;
 

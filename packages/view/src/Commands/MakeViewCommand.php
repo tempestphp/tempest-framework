@@ -10,8 +10,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\View\Enums\ViewType;
 use Tempest\View\Stubs\ViewStub;
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Tempest\Cache\CacheKeyCouldNotBeIncremented;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
-use Tempest\Cache\CacheKeyCouldNotBeIncremented;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\DateTime\Duration;

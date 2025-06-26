@@ -4,8 +4,8 @@ namespace Tests\Tempest\Integration\Cache;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Cache\Cache;
-use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\CacheUsageWasForbidden;
+use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\Testing\TestingCache;
 use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

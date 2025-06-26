@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Auth\Authenticator;
 use Tempest\Auth\AuthenticatedUserWasMissing;
+use Tempest\Auth\Authenticator;
 use Tempest\Auth\Install\CreatePermissionsTable;
 use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Auth\Install\CreateUsersTable;

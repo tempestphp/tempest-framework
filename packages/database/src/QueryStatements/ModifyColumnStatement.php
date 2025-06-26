@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\QueryStatement;
 use Tempest\Database\DialectWasNotSupported;
+use Tempest\Database\QueryStatement;
 
 final readonly class ModifyColumnStatement implements QueryStatement
 {

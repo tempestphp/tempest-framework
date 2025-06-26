@@ -10,8 +10,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 
 use function Tempest\Support\str;
 

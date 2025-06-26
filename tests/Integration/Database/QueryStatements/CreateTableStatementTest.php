@@ -9,6 +9,7 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration;
+use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\Exceptions\DefaultValueWasInvalid;
 use Tempest\Database\Exceptions\ValueWasInvalid;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -17,7 +18,6 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropEnumTypeStatement;
-use Tempest\Database\DialectWasNotSupported;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

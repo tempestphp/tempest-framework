@@ -7,10 +7,10 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Database\QueryStatements\BelongsToStatement;
 use Tempest\Database\QueryStatements\VarcharStatement;
-use Tempest\Database\DialectWasNotSupported;
 
 /**
  * @internal
