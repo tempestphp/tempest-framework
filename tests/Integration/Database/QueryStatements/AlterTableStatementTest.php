@@ -44,7 +44,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 name: 'Test',
                 email: 'test@example.com',
             );
-        } catch (QueryWasInvalid $queryException) {
+        } catch (QueryWasInvalid $queryWasInvalid) {
             $message = match ($this->container->get(DatabaseConfig::class)?->dialect) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
@@ -52,7 +52,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 null => throw new RuntimeException('No database dialect available'),
             };
 
-            $this->assertStringContainsString($message, $queryException->getMessage());
+            $this->assertStringContainsString($message, $queryWasInvalid->getMessage());
         }
 
         $this->migrate($migration::class);

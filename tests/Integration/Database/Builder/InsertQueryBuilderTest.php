@@ -169,8 +169,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
                     chapters: ['title' => 'Chapter 01'],
                 )
                 ->build();
-        } catch (HasManyRelationCouldNotBeInsterted $cannotInsertHasManyRelation) {
-            $this->assertStringContainsString(Book::class . '::$chapters', $cannotInsertHasManyRelation->getMessage());
+        } catch (HasManyRelationCouldNotBeInsterted $hasManyRelationCouldNotBeInsterted) {
+            $this->assertStringContainsString(Book::class . '::$chapters', $hasManyRelationCouldNotBeInsterted->getMessage());
         }
     }
 
@@ -183,8 +183,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
                     isbn: ['value' => '979-8344313764'],
                 )
                 ->build();
-        } catch (HasOneRelationCouldNotBeInserted $cannotInsertHasOneRelation) {
-            $this->assertStringContainsString(Book::class . '::$isbn', $cannotInsertHasOneRelation->getMessage());
+        } catch (HasOneRelationCouldNotBeInserted $hasOneRelationCouldNotBeInserted) {
+            $this->assertStringContainsString(Book::class . '::$isbn', $hasOneRelationCouldNotBeInserted->getMessage());
         }
     }
 

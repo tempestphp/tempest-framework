@@ -155,9 +155,9 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             make(ObjectWithStrictProperty::class)->from([]);
-        } catch (MappingValuesWereMissing $missingValuesException) {
-            $this->assertStringContainsString(': a', $missingValuesException->getMessage());
-            $this->assertStringNotContainsString(': a, b', $missingValuesException->getMessage());
+        } catch (MappingValuesWereMissing $mappingValuesWereMissing) {
+            $this->assertStringContainsString(': a', $mappingValuesWereMissing->getMessage());
+            $this->assertStringNotContainsString(': a, b', $mappingValuesWereMissing->getMessage());
         }
     }
 
@@ -165,8 +165,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             make(ObjectWithStrictOnClass::class)->from([]);
-        } catch (MappingValuesWereMissing $missingValuesException) {
-            $this->assertStringContainsString(': a, b', $missingValuesException->getMessage());
+        } catch (MappingValuesWereMissing $mappingValuesWereMissing) {
+            $this->assertStringContainsString(': a, b', $mappingValuesWereMissing->getMessage());
         }
     }
 

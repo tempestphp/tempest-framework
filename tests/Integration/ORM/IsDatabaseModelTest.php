@@ -607,10 +607,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
                 index: -1,
                 skip: -1,
             );
-        } catch (ValidationFailed $validationException) {
-            $this->assertStringContainsString('index', $validationException->getMessage());
-            $this->assertStringContainsString(ModelWithValidation::class, $validationException->getMessage());
-            $this->assertStringNotContainsString('skip', $validationException->getMessage());
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertStringContainsString('index', $validationFailed->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
+            $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
         }
     }
 }

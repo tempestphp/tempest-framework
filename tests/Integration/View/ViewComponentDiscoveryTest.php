@@ -24,10 +24,10 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         try {
             $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/duplicateComponent.view.php');
             $discovery->apply();
-        } catch (ViewComponentWasAlreadyRegistered $duplicateViewComponent) {
-            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $duplicateViewComponent->getMessage());
-            $this->assertStringContainsString(Input::class, $duplicateViewComponent->getMessage());
-            $this->assertStringContainsString('x-input', $duplicateViewComponent->getMessage());
+        } catch (ViewComponentWasAlreadyRegistered $viewComponentWasAlreadyRegistered) {
+            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $viewComponentWasAlreadyRegistered->getMessage());
+            $this->assertStringContainsString(Input::class, $viewComponentWasAlreadyRegistered->getMessage());
+            $this->assertStringContainsString('x-input', $viewComponentWasAlreadyRegistered->getMessage());
         }
     }
 
