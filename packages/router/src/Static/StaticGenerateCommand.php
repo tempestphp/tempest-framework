@@ -21,9 +21,9 @@ use Tempest\Intl;
 use Tempest\Router\DataProvider;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
-use Tempest\Router\Static\Exceptions\DeadLinksDetectedGenerationFailed;
-use Tempest\Router\Static\Exceptions\InvalidStatusCodeGenerationFailed;
-use Tempest\Router\Static\Exceptions\NoTextualBodyGenerationFailed;
+use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
+use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
+use Tempest\Router\Static\Exceptions\NoTextualBodyException;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
@@ -81,15 +81,15 @@ final class StaticGenerateCommand
             $failures++;
 
             match (true) {
-                $event->exception instanceof DeadLinksDetectedGenerationFailed => $this->keyValue(
+                $event->exception instanceof DeadLinksDetectedException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     sprintf("<style='fg-red'>%s DEAD %s</style>", count($event->exception->links), Intl\pluralize('LINK', count($event->exception->links))),
                 ),
-                $event->exception instanceof InvalidStatusCodeGenerationFailed => $this->keyValue(
+                $event->exception instanceof InvalidStatusCodeException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>HTTP {$event->exception->status->value}</style>",
                 ),
-                $event->exception instanceof NoTextualBodyGenerationFailed => $this->keyValue(
+                $event->exception instanceof NoTextualBodyException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>NO CONTENT</style>",
                 ),
@@ -130,7 +130,7 @@ final class StaticGenerateCommand
                     );
 
                     if ($response->status !== Status::OK) {
-                        throw new InvalidStatusCodeGenerationFailed($uri, $response->status);
+                        throw new InvalidStatusCodeException($uri, $response->status);
                     }
 
                     $body = $response->body;
@@ -140,7 +140,7 @@ final class StaticGenerateCommand
                         : $body;
 
                     if (! is_string($content)) {
-                        throw new NoTextualBodyGenerationFailed($uri);
+                        throw new NoTextualBodyException($uri);
                     }
 
                     $directory = $file->dirname();
@@ -151,7 +151,7 @@ final class StaticGenerateCommand
 
                     if (! $allowDeadLinks && count($links = $this->detectDeadLinks($uri, $content, checkExternal: ! $allowExternalDeadLinks)) > 0) {
                         $deadlinks[$uri] = $links;
-                        throw new DeadLinksDetectedGenerationFailed($uri, $links);
+                        throw new DeadLinksDetectedException($uri, $links);
                     }
 
                     file_put_contents($file->toString(), $content);
