@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Exceptions;
 
-final class CouldNotCommitTransaction extends DatabaseOperationFailed
+use Exception;
+
+final class CouldNotCommitTransaction extends Exception implements DatabaseException
 {
     public function __construct()
     {

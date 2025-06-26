@@ -6,6 +6,6 @@ namespace Tempest\Database\Exceptions;
 
 use Exception;
 
-abstract class DatabaseOperationFailed extends Exception
+interface DatabaseException extends Exception
 {
 }
