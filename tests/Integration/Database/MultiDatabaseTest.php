@@ -160,7 +160,10 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         try {
             $migrationManager->onDatabase('unknown')->executeUp(new CreateMigrationsTable());
         } catch (TaggedDependencyCouldNotBeResolved $taggedDependencyCouldNotBeResolved) {
-            $this->assertStringContainsString('Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown', $taggedDependencyCouldNotBeResolved->getMessage());
+            $this->assertStringContainsString(
+                'Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown',
+                $taggedDependencyCouldNotBeResolved->getMessage(),
+            );
         }
     }
 
