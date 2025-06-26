@@ -21,17 +21,18 @@
 	"exec": {
 		"cwd": "${configDir}",
 		"commands": [{
-			"command": "rustfmt",
-			"exts": ["rs"]
-		}, {
 			"command": "./vendor/bin/mago fmt --stdin-input",
 			"exts": ["php"]
 		}]
 	},
 	"excludes": [
+		"**/.tempest",
+		"**/composer.json",
 		"**/node_modules",
 		"**/*-lock.json",
-		"**/vendor"
+		"**/vendor",
+		"tests/**/*.{html,twig,json,yml,yaml}",
+		"CHANGELOG.md"
 	],
 	"plugins": [
 		"https://plugins.dprint.dev/typescript-0.95.7.wasm",
