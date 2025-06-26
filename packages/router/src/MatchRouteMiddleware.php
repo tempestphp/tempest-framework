@@ -6,17 +6,16 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Core\Priority;
 use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToObjectMapper;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Routing\Matching\RouteMatcher;
+
 use function Tempest\map;
 
-#[Priority(Priority::FRAMEWORK - 10)]
-final readonly class MatchRouteMiddleware  implements HttpMiddleware
+#[Priority(Priority::FRAMEWORK - 9)]
+final readonly class MatchRouteMiddleware implements HttpMiddleware
 {
     public function __construct(
         private RouteMatcher $routeMatcher,
