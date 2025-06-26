@@ -31,6 +31,6 @@ jobs:
             cd "$dir" && composer validate
             cd -
           done
-          
+
       - name: Validate package files
         run: bin/validate-packages

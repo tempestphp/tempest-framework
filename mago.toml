@@ -4,13 +4,13 @@ php_version = "8.4.0"
 paths = ["src", "packages", "tests"]
 includes = ["vendor"]
 excludes = [
-  "./vendor/symfony/cache/Traits/ValueWrapper.php",
-  "./vendor/google/common-protos/metadata",
-  "./vendor/google/gax/metadata",
-  "./vendor/google/longrunning/metadata",
-  "./vendor/composer",
-  "**/.cache",
-  "**/*.stub.php",
+	"./vendor/symfony/cache/Traits/ValueWrapper.php",
+	"./vendor/google/common-protos/metadata",
+	"./vendor/google/gax/metadata",
+	"./vendor/google/longrunning/metadata",
+	"./vendor/composer",
+	"**/.cache",
+	"**/*.stub.php",
 ]
 
 [format]

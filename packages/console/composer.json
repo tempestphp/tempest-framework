@@ -1,37 +1,37 @@
 {
-    "name": "tempest/console",
-    "description": "The console component provides a way to build commands within the framework or standalone command-line applications.",
-    "license": "MIT",
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^8.4",
-        "tempest/cache": "dev-main",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/debug": "dev-main",
-        "tempest/generation": "dev-main",
-        "tempest/highlight": "^2.11.4",
-        "tempest/log": "dev-main",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/validation": "dev-main",
-        "ext-readline": "*"
-    },
-    "suggest": {
-        "ext-pcntl": "Required to use some interactive console components.",
-        "ext-posix": "Required to use some interactive console components."
-    },
-    "autoload": {
-        "psr-4": {
-            "Tempest\\Console\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tempest\\Console\\Tests\\": "tests"
-        }
-    },
-    "bin": [
-        "bin/tempest"
-    ]
+	"name": "tempest/console",
+	"description": "The console component provides a way to build commands within the framework or standalone command-line applications.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"tempest/cache": "dev-main",
+		"tempest/core": "dev-main",
+		"tempest/container": "dev-main",
+		"tempest/debug": "dev-main",
+		"tempest/generation": "dev-main",
+		"tempest/highlight": "^2.11.4",
+		"tempest/log": "dev-main",
+		"tempest/reflection": "dev-main",
+		"tempest/support": "dev-main",
+		"tempest/validation": "dev-main",
+		"ext-readline": "*"
+	},
+	"suggest": {
+		"ext-pcntl": "Required to use some interactive console components.",
+		"ext-posix": "Required to use some interactive console components."
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Console\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Console\\Tests\\": "tests"
+		}
+	},
+	"bin": [
+		"bin/tempest"
+	]
 }
