@@ -6,6 +6,7 @@
 	"scripts": {
 		"qa": "bun fmt && bun run test run && bun run build",
 		"fmt": "dprint fmt ./packages/vite-plugin-tempest/**/*.{ts,vue,json}",
+		"fmt:check": "dprint check ./packages/vite-plugin-tempest/**/*.{ts,vue,json}",
 		"build": "bun --filter '*' build",
 		"dev": "bun --filter '*' build:stub",
 		"test": "vitest"
