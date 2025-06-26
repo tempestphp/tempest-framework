@@ -8,23 +8,16 @@ use BackedEnum;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
-use Tempest\Http\Mappers\RequestToObjectMapper;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Invalid;
-use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
-use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Router\Exceptions\InvalidRouteException;
-use Tempest\Router\Exceptions\NotFoundException;
+use Tempest\Router\Exceptions\NoMatchedRoute;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
-use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
 use function Tempest\map;
@@ -42,43 +35,28 @@ final readonly class GenericRouter implements Router
 
     public function dispatch(Request|PsrRequest $request): Response
     {
-        return $this->processResponse(
-            $this->processRequest($request),
-        );
+        if (! ($request instanceof Request)) {
+            $request = map($request)->with(PsrRequestToGenericRequestMapper::class)->do();
+        }
+
+        $callable = $this->getCallable();
+
+        return $this->processResponse($callable($request));
     }
 
-    private function processRequest(Request|PsrRequest $request): Response
+    private function getCallable(): HttpMiddlewareCallable
     {
-        if (! ($request instanceof PsrRequest)) {
-            $request = map($request)->with(RequestToPsrRequestMapper::class)->do();
-        }
+        $callControllerAction = function (Request $_) {
+            $matchedRoute = $this->container->get(MatchedRoute::class);
 
-        $matchedRoute = $this->routeMatcher->match($request);
+            if ($matchedRoute === null) {
+                // At this point, the `MatchRouteMiddleware` should have run.
+                // If that's not the case, then someone messed up by clearing all HTTP middleware
+                throw new NoMatchedRoute();
+            }
 
-        if ($matchedRoute === null) {
-            return new NotFound();
-        }
+            $route = $matchedRoute->route;
 
-        $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
-
-        try {
-            $callable = $this->getCallable($matchedRoute);
-            $request = $this->resolveRequest($request, $matchedRoute);
-            $response = $callable($request);
-        } catch (NotFoundException) {
-            return new NotFound();
-        } catch (ValidationException $validationException) {
-            return new Invalid($validationException->subject, $validationException->failingRules);
-        }
-
-        return $response;
-    }
-
-    private function getCallable(MatchedRoute $matchedRoute): HttpMiddlewareCallable
-    {
-        $route = $matchedRoute->route;
-
-        $callControllerAction = function (Request $_) use ($route, $matchedRoute) {
             $response = $this->container->invoke(
                 $route->handler,
                 ...$matchedRoute->params,
@@ -93,10 +71,7 @@ final readonly class GenericRouter implements Router
 
         $callable = new HttpMiddlewareCallable(fn (Request $request) => $this->createResponse($callControllerAction($request)));
 
-        $middlewareStack = $this->routeConfig
-            ->middleware
-            ->clone()
-            ->add(...$route->middleware);
+        $middlewareStack = $this->routeConfig->middleware;
 
         foreach ($middlewareStack->unwrap() as $middlewareClass) {
             $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
@@ -193,39 +168,5 @@ final readonly class GenericRouter implements Router
         }
 
         return $response;
-    }
-
-    // TODO: could in theory be moved to a dynamic initializer
-    private function resolveRequest(PsrRequest|ObjectFactory $psrRequest, MatchedRoute $matchedRoute): Request
-    {
-        // Let's find out if our input request data matches what the route's action needs
-        $requestClass = GenericRequest::class;
-
-        // We'll loop over all the handler's parameters
-        foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
-            // If the parameter's type is an instance of Request…
-            if ($parameter->getType()->matches(Request::class)) {
-                // We'll use that specific request class
-                $requestClass = $parameter->getType()->getName();
-
-                break;
-            }
-        }
-
-        // We map the original request we got into this method to the right request class
-        /** @var \Tempest\Http\GenericRequest $request */
-        $request = map($psrRequest)->with(PsrRequestToGenericRequestMapper::class)->do();
-
-        if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {
-            $request = map($request)->with(RequestToObjectMapper::class)->to($requestClass);
-        }
-
-        // Next, we register this newly created request object in the container
-        // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
-        // Making it so that we don't need to set any $_SERVER variables and stuff like that
-        $this->container->singleton(Request::class, fn () => $request);
-        $this->container->singleton($request::class, fn () => $request);
-
-        return $request;
     }
 }
