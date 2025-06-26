@@ -176,7 +176,7 @@ trait ManipulatesPhpClasses
     public function print(): string
     {
         if (! $this->namespace) {
-            throw GenerationException::needsNamespace();
+            throw new GeneratedClassWasMissingANamespace();
         }
 
         $printer = new PsrPrinter();

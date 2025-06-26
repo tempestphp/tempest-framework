@@ -6,13 +6,13 @@ namespace Tempest\View\Parser;
 
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\ViewComponentElement;
+use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;

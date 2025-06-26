@@ -6,8 +6,8 @@ namespace Tempest\Core\Kernel;
 
 use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
-use Tempest\Discovery\DiscoveryException;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
 
 use function Tempest\Support\Path\normalize;
 
@@ -116,7 +116,7 @@ final readonly class LoadDiscoveryLocations
     private function loadJsonFile(string $path): array
     {
         if (! file_exists($path)) {
-            throw new DiscoveryException(sprintf('Could not locate %s, try running "composer install"', $path));
+            throw new DiscoveryLocationCouldNotBeLoaded($path);
         }
 
         return json_decode(file_get_contents($path), true);

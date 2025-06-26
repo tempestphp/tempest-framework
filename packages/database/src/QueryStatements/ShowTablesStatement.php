@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
 
 final readonly class ShowTablesStatement implements QueryStatement
 {

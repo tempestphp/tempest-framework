@@ -7,8 +7,8 @@ namespace Tempest\Generation;
 use Closure;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
 
@@ -47,7 +47,7 @@ final class StubFileGenerator
             }
 
             if (file_exists($targetPath) && ! $shouldOverride) {
-                throw new FileGenerationAbortedException(sprintf('The file <em>%s</em> already exists and the operation has been aborted.', $targetPath));
+                throw new FileGenerationWasAborted(sprintf('The file <em>%s</em> already exists and the operation has been aborted.', $targetPath));
             }
 
             $this->prepareFilesystem($targetPath);
@@ -110,7 +110,7 @@ final class StubFileGenerator
             }
 
             if (file_exists($targetPath) && ! $shouldOverride) {
-                throw new FileGenerationAbortedException(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
+                throw new FileGenerationWasAborted(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
             }
 
             $this->prepareFilesystem($targetPath);

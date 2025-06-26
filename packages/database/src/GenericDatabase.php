@@ -12,7 +12,7 @@ use PDOStatement;
 use Tempest\Database\Builder\QueryBuilders\BuildsQuery;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
-use Tempest\Database\Exceptions\QueryException;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 use UnitEnum;
@@ -51,7 +51,7 @@ final class GenericDatabase implements Database
             $this->lastStatement = $statement;
             $this->lastQuery = $query;
         } catch (PDOException $pdoException) {
-            throw new QueryException($query, $bindings, $pdoException);
+            throw new QueryWasInvalid($query, $bindings, $pdoException);
         }
     }
 

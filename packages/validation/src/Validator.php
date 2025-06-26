@@ -7,7 +7,7 @@ namespace Tempest\Validation;
 use Closure;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsFloat;
@@ -39,7 +39,7 @@ final readonly class Validator
         }
 
         if ($failingRules !== []) {
-            throw new ValidationException($object, $failingRules);
+            throw new ValidationFailed($object, $failingRules);
         }
     }
 

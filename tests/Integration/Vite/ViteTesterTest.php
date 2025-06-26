@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Vite;
 
 use InvalidArgumentException;
-use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
-use Tempest\Vite\Exceptions\ManifestNotFoundException;
+use Tempest\Vite\Exceptions\DevelopmentServerWasNotRunning;
+use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Tempest\Vite\TagsResolver\NullTagsResolver;
 use Tempest\Vite\TagsResolver\TagsResolver;
 use Tempest\Vite\Vite;
@@ -28,7 +28,7 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
 
     public function test_throws_if_dev_server_not_running_with_tags_resolution(): void
     {
-        $this->expectException(DevelopmentServerNotRunningException::class);
+        $this->expectException(DevelopmentServerWasNotRunning::class);
 
         $this->vite->allowTagResolution();
         $this->vite->preventUsingManifest();
@@ -38,7 +38,7 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
 
     public function test_throws_if_manifest_not_found_with_tags_resolution(): void
     {
-        $this->expectException(ManifestNotFoundException::class);
+        $this->expectException(ManifestWasNotFound::class);
 
         $this->vite->allowTagResolution();
         $this->vite->allowUsingManifest();

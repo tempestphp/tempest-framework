@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandHandler;
-use Tempest\CommandBus\CommandHandlerAlreadyExists;
-use Tempest\CommandBus\CommandHandlerNotFound;
+use Tempest\CommandBus\CommandHandlerWasAlreadyRegistered;
+use Tempest\CommandBus\CommandHandlerWasNotFound;
 use Tempest\CommandBus\GenericCommandBus;
 use Tempest\CommandBus\Tests\Fixtures\CreateUserCommand;
 use Tempest\CommandBus\Tests\Fixtures\CreateUserCommandHandler;
@@ -41,7 +41,7 @@ final class GenericCommandBusTest extends TestCase
         $command = new DeleteUserCommand(12);
 
         $this->expectExceptionObject(
-            new CommandHandlerNotFound($command),
+            new CommandHandlerWasNotFound($command),
         );
 
         $this->commandBus->dispatch($command);
@@ -53,7 +53,7 @@ final class GenericCommandBusTest extends TestCase
         $createUserCommandHandlerMethod = $createUserCommandHandlerClass->getMethod('__invoke');
         $createUserCommandHandler = $createUserCommandHandlerMethod->getAttribute(CommandHandler::class);
 
-        $this->expectException(CommandHandlerAlreadyExists::class);
+        $this->expectException(CommandHandlerWasAlreadyRegistered::class);
 
         $this->config->addHandler(
             commandHandler: $createUserCommandHandler,

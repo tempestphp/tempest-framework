@@ -13,8 +13,8 @@ use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Support\Str\ImmutableString;
@@ -65,11 +65,11 @@ trait PublishesFiles
                 question: sprintf('Do you want to create <file="%s" />?', $this->friendlyFileName($destination)),
                 default: true,
             )) {
-                throw new FileGenerationAbortedException('Skipped.');
+                throw new FileGenerationWasAborted('Skipped.');
             }
 
             if (! $this->askForOverride($destination)) {
-                throw new FileGenerationAbortedException('Skipped.');
+                throw new FileGenerationWasAborted('Skipped.');
             }
 
             $stubFile = StubFile::from($source);
@@ -108,7 +108,7 @@ trait PublishesFiles
             }
 
             return $destination;
-        } catch (FileGenerationAbortedException) {
+        } catch (FileGenerationWasAborted) {
             return false;
         } catch (Throwable $throwable) {
             if ($throwable instanceof ConsoleException) {

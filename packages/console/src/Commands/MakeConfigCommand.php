@@ -10,8 +10,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 
 use function Tempest\Support\str;
 
@@ -46,7 +46,7 @@ final class MakeConfigCommand
             );
 
             $this->success(sprintf('Config file successfully created at "%s".', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException|InvalidArgumentException $e) {
+        } catch (FileGenerationWasAborted|FileGenerationFailedException|InvalidArgumentException $e) {
             $this->error($e->getMessage());
         }
     }

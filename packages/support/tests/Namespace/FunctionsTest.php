@@ -5,7 +5,7 @@ namespace Tempest\Support\Tests\Namespace;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
+use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
 
 use function Tempest\Support\Namespace\to_base_class_name;
@@ -53,7 +53,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['/foo/baz/Foo/Bar.php', 'Tempest\\Auth\\Foo', '/foo/bar'])]
     public function test_to_composer_namespace_exceptions(string $path, string $expected, ?string $root = null): void
     {
-        $this->expectException(PathCouldNotBeMappedToNamespaceException::class);
+        $this->expectException(PathCouldNotBeMappedToNamespace::class);
 
         $namespace = new Psr4Namespace('Tempest\\Auth\\', 'src/Tempest/Auth/src');
 

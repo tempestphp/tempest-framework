@@ -4,8 +4,8 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
-use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
@@ -169,8 +169,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
                     chapters: ['title' => 'Chapter 01'],
                 )
                 ->build();
-        } catch (CannotInsertHasManyRelation $cannotInsertHasManyRelation) {
-            $this->assertStringContainsString(Book::class . '::$chapters', $cannotInsertHasManyRelation->getMessage());
+        } catch (HasManyRelationCouldNotBeInsterted $hasManyRelationCouldNotBeInsterted) {
+            $this->assertStringContainsString(Book::class . '::$chapters', $hasManyRelationCouldNotBeInsterted->getMessage());
         }
     }
 
@@ -183,8 +183,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
                     isbn: ['value' => '979-8344313764'],
                 )
                 ->build();
-        } catch (CannotInsertHasOneRelation $cannotInsertHasOneRelation) {
-            $this->assertStringContainsString(Book::class . '::$isbn', $cannotInsertHasOneRelation->getMessage());
+        } catch (HasOneRelationCouldNotBeInserted $hasOneRelationCouldNotBeInserted) {
+            $this->assertStringContainsString(Book::class . '::$isbn', $hasOneRelationCouldNotBeInserted->getMessage());
         }
     }
 

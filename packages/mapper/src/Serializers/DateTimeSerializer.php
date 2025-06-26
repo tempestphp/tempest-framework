@@ -8,7 +8,7 @@ use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
@@ -33,7 +33,7 @@ final readonly class DateTimeSerializer implements Serializer
         }
 
         if (! ($input instanceof DateTimeInterface)) {
-            throw new CannotSerializeValue(DateTimeInterface::class);
+            throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 
         return $input->format($this->format);

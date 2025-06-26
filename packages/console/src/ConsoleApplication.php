@@ -42,7 +42,7 @@ final readonly class ConsoleApplication implements Application
         $exitCode = is_int($exitCode) ? $exitCode : $exitCode->value;
 
         if ($exitCode < 0 || $exitCode > 255) {
-            throw new InvalidExitCode($exitCode);
+            throw new ExitCodeWasInvalid($exitCode);
         }
 
         $this->container->get(Kernel::class)->shutdown($exitCode);

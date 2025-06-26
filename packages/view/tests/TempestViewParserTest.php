@@ -5,7 +5,7 @@ namespace Tempest\View\Tests;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Tempest\View\Exceptions\InvalidClosingTag;
+use Tempest\View\Exceptions\ClosingTagWasInvalid;
 use Tempest\View\Parser\TempestViewLexer;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
@@ -71,7 +71,7 @@ final class TempestViewParserTest extends TestCase
     {
         $tokens = new TempestViewLexer('<a></span></a>')->lex();
 
-        $this->expectException(InvalidClosingTag::class);
+        $this->expectException(ClosingTagWasInvalid::class);
 
         new TempestViewParser($tokens)->parse();
     }

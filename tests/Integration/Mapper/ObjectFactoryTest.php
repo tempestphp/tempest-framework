@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use Tempest\Mapper\Exceptions\CannotMapDataException;
-use Tempest\Mapper\Exceptions\MissingMapperException;
+use Tempest\Mapper\Exceptions\DataCouldNotBeMapped;
+use Tempest\Mapper\Exceptions\MapperWasMissing;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
@@ -70,7 +70,7 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
 
     public function test_cannot_map_exception(): void
     {
-        $this->expectException(CannotMapDataException::class);
+        $this->expectException(DataCouldNotBeMapped::class);
 
         map(['a' => 'a', 'b' => 'b'])->to('unknown');
     }
@@ -88,7 +88,7 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
 
     public function test_map_do_without_with_throws(): void
     {
-        $this->expectException(MissingMapperException::class);
+        $this->expectException(MapperWasMissing::class);
 
         map([])->do();
     }

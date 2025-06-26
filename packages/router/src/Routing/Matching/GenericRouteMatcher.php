@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router\Routing\Matching;
 
 use Tempest\Http\Request;
-use Tempest\Router\Exceptions\InvalidEnumParameterException;
+use Tempest\Router\Exceptions\EnumRouteValueWasInvalid;
 use Tempest\Router\MatchedRoute;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
@@ -62,7 +62,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         // Extract the parameters based on the route and matches
         try {
             $routeParams = $this->extractParams($route, $matchResult->matches);
-        } catch (InvalidEnumParameterException) {
+        } catch (EnumRouteValueWasInvalid) {
             return null;
         }
 
@@ -88,7 +88,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
                 $value = $parameterReflector->getType()->asClass()->callStatic('tryFrom', $value);
 
                 if ($value === null) {
-                    throw new InvalidEnumParameterException($route->handler, $parameterReflector);
+                    throw new EnumRouteValueWasInvalid($route->handler, $parameterReflector);
                 }
             }
 

@@ -11,8 +11,8 @@ use Tempest\Core\Environment;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
-use Tempest\View\Exceptions\InvalidDataAttribute;
-use Tempest\View\Exceptions\ViewVariableIsReserved;
+use Tempest\View\Exceptions\DataAttributeWasInvalid;
+use Tempest\View\Exceptions\ViewVariableWasReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
@@ -145,7 +145,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_slots_is_a_reserved_variable(): void
     {
-        $this->expectException(ViewVariableIsReserved::class);
+        $this->expectException(ViewVariableWasReserved::class);
         $this->expectExceptionMessage('Cannot use reserved variable name `slots`');
 
         $this->render('', slots: []);
@@ -402,7 +402,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_php_code_in_attribute(): void
     {
-        $this->expectException(InvalidDataAttribute::class);
+        $this->expectException(DataAttributeWasInvalid::class);
 
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
     }

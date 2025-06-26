@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Vite;
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
+use Tempest\Vite\Exceptions\FileSystemEntrypointWasNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\DevelopmentTagsResolver;
 use Tempest\Vite\ViteBridgeFile;
@@ -56,7 +56,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
 
     public function test_throw_if_entrypoint_not_found(): void
     {
-        $this->expectException(FileSystemEntrypointNotFoundException::class);
+        $this->expectException(FileSystemEntrypointWasNotFoundException::class);
 
         $this->vite->call(
             files: [

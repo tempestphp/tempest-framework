@@ -11,7 +11,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
 use Tempest\Database\DatabaseMigration;
-use Tempest\Database\Exceptions\QueryException;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\HasLeadingStatements;
 use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\OnDatabase;
@@ -82,7 +82,7 @@ final class MigrationManager
 
             event(new MigrationFailed(
                 name: new ModelDefinition(Migration::class)->getTableDefinition()->name,
-                exception: new TableNotFoundException(),
+                exception: new TableWasNotFound(),
             ));
 
             return;
@@ -174,13 +174,13 @@ final class MigrationManager
             );
 
             if ($databaseMigration === null) {
-                event(new MigrationValidationFailed($existingMigration->name, new MissingMigrationFileException()));
+                event(new MigrationValidationFailed($existingMigration->name, new MigrationFileWasMissing()));
 
                 continue;
             }
 
             if ($this->getMigrationHash($databaseMigration) !== $existingMigration->hash) {
-                event(new MigrationValidationFailed($existingMigration->name, new MigrationHashMismatchException()));
+                event(new MigrationValidationFailed($existingMigration->name, new MigrationHashMismatched()));
 
                 continue;
             }
@@ -280,7 +280,7 @@ final class MigrationManager
                     ['name' => $migration->name],
                 ),
             );
-        } catch (QueryException) { // @mago-expect best-practices/no-empty-catch-clause
+        } catch (QueryWasInvalid) { // @mago-expect best-practices/no-empty-catch-clause
             /**
              * If the migration was executed successfully but the entry in the migrations table could not be deleted,
              * we should not throw an exception as the migration was successfully rolled back.

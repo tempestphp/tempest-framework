@@ -8,7 +8,7 @@ use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToObjectMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Upload;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -28,8 +28,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
 
         try {
             map($request)->to(RequestObjectA::class);
-        } catch (ValidationException $validationException) {
-            $this->assertInstanceOf(NotNull::class, $validationException->failingRules['b'][0]);
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertInstanceOf(NotNull::class, $validationFailed->failingRules['b'][0]);
         }
     }
 
@@ -105,8 +105,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
             ))->with(
                 RequestToObjectMapper::class,
             )->to(RequestWithEnum::class);
-        } catch (ValidationException $validationException) {
-            $this->assertArrayHasKey('enumParam', $validationException->failingRules);
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertArrayHasKey('enumParam', $validationFailed->failingRules);
         }
     }
 }

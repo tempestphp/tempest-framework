@@ -42,15 +42,15 @@ namespace Tempest\Support\Filesystem {
         }
 
         if (namespace\is_directory($source)) {
-            throw Exceptions\NotFileException::for($source);
+            throw new Exceptions\PathWasNotAFile($source);
         }
 
         if (! namespace\is_file($source)) {
-            throw Exceptions\NotFoundException::forFile($source);
+            throw Exceptions\PathWasNotFound::forFile($source);
         }
 
         if (! namespace\is_readable($source)) {
-            throw Exceptions\NotReadableException::forFile($source);
+            throw Exceptions\PathWasNotReadable::forFile($source);
         }
 
         namespace\create_directory_for_file($destination);
@@ -88,11 +88,11 @@ namespace Tempest\Support\Filesystem {
     function read_file(string $filename): string
     {
         if (! namespace\exists($filename)) {
-            throw Exceptions\NotFoundException::forFile($filename);
+            throw Exceptions\PathWasNotFound::forFile($filename);
         }
 
         if (! namespace\is_readable($filename)) {
-            throw Exceptions\NotReadableException::forFile($filename);
+            throw Exceptions\PathWasNotReadable::forFile($filename);
         }
 
         [$result, $message] = box(static fn (): false|string => file_get_contents($filename));
@@ -229,11 +229,11 @@ namespace Tempest\Support\Filesystem {
         }
 
         if (! namespace\exists($file)) {
-            throw Exceptions\NotFoundException::forFile($file);
+            throw Exceptions\PathWasNotFound::forFile($file);
         }
 
         if (! namespace\is_file($file)) {
-            throw Exceptions\NotFileException::for($file);
+            throw new Exceptions\PathWasNotAFile($file);
         }
 
         [$result, $errorMessage] = box(static fn (): bool => unlink($file));
@@ -255,7 +255,7 @@ namespace Tempest\Support\Filesystem {
     function get_permissions(string $path): int
     {
         if (! namespace\exists($path)) {
-            throw Exceptions\NotFoundException::forPath($path);
+            throw Exceptions\PathWasNotFound::forPath($path);
         }
 
         [$result, $message] = box(static fn (): int|false => fileperms($path));
@@ -277,7 +277,7 @@ namespace Tempest\Support\Filesystem {
     function ensure_directory_empty(string $directory): void
     {
         if (namespace\exists($directory) && ! namespace\is_directory($directory)) {
-            throw Exceptions\NotDirectoryException::for($directory);
+            throw new Exceptions\PathWasNotADirectory($directory);
         }
 
         if (! namespace\is_directory($directory)) {
@@ -320,11 +320,11 @@ namespace Tempest\Support\Filesystem {
             }
         } else {
             if (! namespace\exists($directory)) {
-                throw Exceptions\NotFoundException::forDirectory($directory);
+                throw Exceptions\PathWasNotFound::forDirectory($directory);
             }
 
             if (! namespace\is_directory($directory)) {
-                throw Exceptions\NotDirectoryException::for($directory);
+                throw new Exceptions\PathWasNotADirectory($directory);
             }
         }
 
@@ -396,15 +396,15 @@ namespace Tempest\Support\Filesystem {
     function list_directory(string $directory): array
     {
         if (! namespace\exists($directory)) {
-            throw Exceptions\NotFoundException::forDirectory($directory);
+            throw Exceptions\PathWasNotFound::forDirectory($directory);
         }
 
         if (! namespace\is_directory($directory)) {
-            throw Exceptions\NotDirectoryException::for($directory);
+            throw new Exceptions\PathWasNotADirectory($directory);
         }
 
         if (! namespace\is_readable($directory)) {
-            throw Exceptions\NotReadableException::forDirectory($directory);
+            throw Exceptions\PathWasNotReadable::forDirectory($directory);
         }
 
         /** @var array<non-empty-string> */
@@ -422,11 +422,11 @@ namespace Tempest\Support\Filesystem {
     function read_symbolic_link(string $path): string
     {
         if (! namespace\exists($path)) {
-            throw Exceptions\NotFoundException::forSymbolicLink($path);
+            throw Exceptions\PathWasNotFound::forSymbolicLink($path);
         }
 
         if (! namespace\is_symbolic_link($path)) {
-            throw Exceptions\NotSymbolicLinkException::for($path);
+            throw new Exceptions\PathWasNotASymbolicLink($path);
         }
 
         [$result, $message] = box(static fn (): false|string => readlink($path));

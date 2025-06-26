@@ -16,7 +16,7 @@ use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
@@ -351,7 +351,7 @@ final class ModelInspector
         }
 
         if ($failingRules !== []) {
-            throw new ValidationException($this->modelClass->getName(), $failingRules);
+            throw new ValidationFailed($this->modelClass->getName(), $failingRules);
         }
     }
 

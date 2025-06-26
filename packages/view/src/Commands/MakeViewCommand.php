@@ -10,8 +10,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\View\Enums\ViewType;
 use Tempest\View\Stubs\ViewStub;
 
@@ -67,7 +67,7 @@ final class MakeViewCommand
             }
 
             $this->success(sprintf('View successfully created at "%s".', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException|InvalidArgumentException $e) {
+        } catch (FileGenerationWasAborted|FileGenerationFailedException|InvalidArgumentException $e) {
             $this->error($e->getMessage());
         }
     }

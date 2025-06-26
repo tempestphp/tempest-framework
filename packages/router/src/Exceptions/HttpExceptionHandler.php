@@ -8,7 +8,7 @@ use Tempest\Core\ExceptionHandler;
 use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
-use Tempest\Http\HttpException;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
@@ -32,8 +32,8 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
             $response = match (true) {
                 $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
-                $throwable instanceof NotFoundException => $this->renderErrorResponse(Status::NOT_FOUND),
-                $throwable instanceof HttpException => $this->renderErrorResponse($throwable->status, $throwable),
+                $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
+                $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
                 default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),
             };
 
@@ -43,7 +43,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         }
     }
 
-    private function renderErrorResponse(Status $status, ?HttpException $exception = null): Response
+    private function renderErrorResponse(Status $status, ?HttpRequestFailed $exception = null): Response
     {
         return new GenericResponse(
             status: $status,

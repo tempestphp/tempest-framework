@@ -6,8 +6,8 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tempest\Database\Exceptions\MissingValue;
+use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\SkipValidation;
@@ -129,14 +129,14 @@ trait IsDatabaseModel
         $type = $property->getType();
 
         if ($type->isRelation()) {
-            throw new MissingRelation($this, $name);
+            throw new RelationWasMissing($this, $name);
         }
 
         if ($type->isBuiltIn()) {
-            throw new MissingValue($this, $name);
+            throw new ValueWasMissing($this, $name);
         }
 
-        throw new MissingRelation($this, $name);
+        throw new RelationWasMissing($this, $name);
     }
 
     public function load(string ...$relations): self

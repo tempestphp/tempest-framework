@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
-use Tempest\Core\KernelException;
+use Tempest\Core\ComposerJsonCouldNotBeLocated;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -136,7 +136,7 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     #[Test]
     public function errors_without_composer_file(): void
     {
-        $this->expectException(KernelException::class);
+        $this->expectException(ComposerJsonCouldNotBeLocated::class);
 
         new Composer(root: __DIR__, executor: new NullShellExecutor())->load();
     }

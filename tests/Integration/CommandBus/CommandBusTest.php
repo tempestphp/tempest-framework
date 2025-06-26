@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\CommandBus;
 
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
-use Tempest\CommandBus\CommandHandlerNotFound;
+use Tempest\CommandBus\CommandHandlerWasNotFound;
 use Tests\Tempest\Fixtures\Commands\MyBrokenCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommandBusMiddleware;
@@ -41,7 +41,7 @@ final class CommandBusTest extends FrameworkIntegrationTestCase
 
     public function test_unknown_handler_throws_exception(): void
     {
-        $this->expectException(CommandHandlerNotFound::class);
+        $this->expectException(CommandHandlerWasNotFound::class);
 
         command(new class() {});
     }

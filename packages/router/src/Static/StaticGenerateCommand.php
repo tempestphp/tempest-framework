@@ -27,10 +27,10 @@ use Tempest\Router\Static\Exceptions\NoTextualBodyException;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
-use Tempest\View\Exceptions\ViewCompilationError;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
-use Tempest\Vite\Exceptions\ManifestNotFoundException;
+use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Throwable;
 
 use function Tempest\Support\path;
@@ -162,7 +162,7 @@ final class StaticGenerateCommand
                         ob_clean();
                     }
 
-                    if ($exception instanceof ViewCompilationError && $exception->getPrevious() instanceof ManifestNotFoundException) {
+                    if ($exception instanceof ViewCompilationFailed && $exception->getPrevious() instanceof ManifestWasNotFound) {
                         $this->error("A Vite build is needed for [{$uri}]. Run <code>vite build</code> first.");
                         return ExitCode::ERROR;
                     }

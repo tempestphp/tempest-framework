@@ -109,7 +109,7 @@ final class Composer
     private function loadComposerFile(string $path): array
     {
         if (! file_exists($path)) {
-            throw new KernelException('Could not locate composer.json.');
+            throw new ComposerJsonCouldNotBeLocated('Could not locate composer.json.');
         }
 
         return json_decode(file_get_contents($path), associative: true);
