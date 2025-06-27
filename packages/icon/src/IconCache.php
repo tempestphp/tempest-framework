@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\View;
+namespace Tempest\Icon;
 
 use Closure;
 use Psr\Cache\CacheItemInterface;
@@ -15,12 +15,21 @@ use function Tempest\internal_storage_path;
 final class IconCache
 {
     public function __construct(
-        public bool $enabled = false,
+        public bool $enabled = true,
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool ??= new FilesystemAdapter(
             directory: internal_storage_path('cache/icons'),
         );
+    }
+
+    public function delete(string $key): void
+    {
+        if (! $this->enabled) {
+            return;
+        }
+
+        $this->pool->deleteItem($key);
     }
 
     public function get(string $key): mixed

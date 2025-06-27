@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\View;
+namespace Tempest\Icon;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;

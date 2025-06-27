@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use InvalidArgumentException;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
+use Tempest\DateTime\Duration;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
-use Tempest\View\IconCache;
-use Tempest\View\IconConfig;
+use Tempest\Icon\IconCache;
+use Tempest\Icon\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
@@ -42,9 +44,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '<svg></svg>',
-            $this->render(
-                '<x-icon name="ph:eye" />',
-            ),
+            $this->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -61,15 +61,21 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             IconConfig::class,
-            fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test'),
+            fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test', retryAfter: Duration::hours(12)),
         );
 
         $this->assertSame(
             '<svg></svg>',
-            $this->render(
-                '<x-icon name="ph:eye" />',
-            ),
+            $this->render('<x-icon name="ph:eye" />'),
         );
+    }
+
+    public function test_name_is_required(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `name` attribute is required for the `x-icon` component.');
+
+        $this->render('<x-icon />');
     }
 
     public function test_it_caches_icons_on_the_first_render(): void
@@ -86,7 +92,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $this->render('<x-icon name="ph:eye" />');
 
         $iconCache = $this->container->get(IconCache::class);
-        $cachedIcon = $iconCache?->get('iconify-ph-eye');
+        $cachedIcon = $iconCache?->get('icon-ph-eye');
 
         $this->assertNotNull($cachedIcon);
         $this->assertSame('<svg></svg>', $cachedIcon);

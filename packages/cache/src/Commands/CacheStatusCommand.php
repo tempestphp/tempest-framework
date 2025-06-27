@@ -16,8 +16,8 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
-use Tempest\View\IconCache;
 use Tempest\View\ViewCache;
 use UnitEnum;
 

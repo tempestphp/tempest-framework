@@ -6,7 +6,7 @@ use Tempest\Cache\Cache;
 use Tempest\Cache\Commands\CacheStatusCommand;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Core\DiscoveryCache;
-use Tempest\View\IconCache;
+use Tempest\Icon\IconCache;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
