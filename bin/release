@@ -203,7 +203,7 @@ function suggestNextVersions(string $current): array
     return array_filter([
         'next_alpha' => ! $isBeta ? sprintf('%d.%d.%d-alpha.%d', $major, $minor, $patch, $preRelease + 1) : null,
         'next_beta' => sprintf('%d.%d.%d-beta.%d', $major, $minor, $patch, $isBeta ? ($preRelease + 1) : 1),
-        'next_major' => sprintf('%d.0.0', $major + 1),
+        'next_major' => $isBeta ? sprintf('%d.0.0', $major) : sprintf('%d.0.0', $major + 1),
     ]);
 }
 
