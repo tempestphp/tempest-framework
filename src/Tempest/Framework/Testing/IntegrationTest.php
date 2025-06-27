@@ -22,11 +22,10 @@ use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Mail\MailerConfig;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\Process\Testing\ProcessTester;
 use Tempest\Storage\Testing\StorageTester;
-use Tempest\View\ViewRenderer;
 
 use function Tempest\Support\Path\normalize;
 
@@ -62,6 +61,8 @@ abstract class IntegrationTest extends TestCase
 
     protected ExceptionTester $exceptions;
 
+    protected ProcessTester $process;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -87,6 +88,9 @@ abstract class IntegrationTest extends TestCase
         $this->mailer = new MailTester(new TestingMailer(
             eventBus: $this->container->get(EventBus::class),
         ));
+
+        $this->process = $this->container->get(ProcessTester::class);
+        $this->process->disableProcessExecution();
 
         $this->exceptions = $this->container->get(ExceptionTester::class);
         $this->exceptions->preventReporting();
