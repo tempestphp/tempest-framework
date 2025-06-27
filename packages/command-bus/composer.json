@@ -3,8 +3,8 @@
     "description": "A command bus component designed to dispatch commands to their respective handlers.",
     "require": {
         "php": "^8.4",
-        "tempest/core": "1.0.0",
-        "tempest/container": "1.0.0"
+        "tempest/core": "dev-main",
+        "tempest/container": "dev-main"
     },
     "autoload": {
         "files": [
