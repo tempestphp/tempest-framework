@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-beta.1..1.0.0)  —  2025-06-27
+## [1.0.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0..1.0.1)  —  2025-06-27
+
+### 🚀 Features
+
+- **console**: allow dynamic arguments for specific console commands (#1322) ([facdc25](https://github.com/tempestphp/tempest-framework/commit/facdc25c15df87afc844b623683f46aabc87dc55))
+- **router**: handle `ConvertsToResponse` outside of exception handler (#1320) ([d4a219d](https://github.com/tempestphp/tempest-framework/commit/d4a219d24b628f8913cb588b6936fbe8d29101e7))
+- **router**: allow specifying port using `host:port` syntax (#1321) ([dba57d8](https://github.com/tempestphp/tempest-framework/commit/dba57d8e5df1bfb66c3c4d8a8138cb2dd0508832))
+
+
+## [1.0.0](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-beta.1..v1.0.0)  —  2025-06-27
 
 ### 🚀 Features
 

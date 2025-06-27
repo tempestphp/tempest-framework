@@ -5,9 +5,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/container": "dev-main",
-        "tempest/http-client": "dev-main",
-        "tempest/support": "dev-main",
+        "tempest/container": "1.0.1",
+        "tempest/http-client": "1.0.1",
+        "tempest/support": "1.0.1",
         "symfony/cache": "^7.2"
     },
     "suggest": {
