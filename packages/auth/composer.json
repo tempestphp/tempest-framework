@@ -1,17 +1,17 @@
 {
-	"name": "tempest/auth",
-	"description": "A flexible authentication package for Tempest, providing user authentication and authorization.",
-	"require": {
-		"php": "^8.4",
-		"tempest/core": "dev-main",
-		"tempest/router": "dev-main",
-		"tempest/database": "dev-main"
-	},
-	"autoload": {
-		"psr-4": {
-			"Tempest\\Auth\\": "src"
-		}
-	},
-	"license": "MIT",
-	"minimum-stability": "dev"
+    "name": "tempest/auth",
+    "description": "A flexible authentication package for Tempest, providing user authentication and authorization.",
+    "require": {
+        "php": "^8.4",
+        "tempest/core": "1.0.0",
+        "tempest/router": "1.0.0",
+        "tempest/database": "1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Auth\\": "src"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
 }

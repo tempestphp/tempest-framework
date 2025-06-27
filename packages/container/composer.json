@@ -1,23 +1,23 @@
 {
-	"name": "tempest/container",
-	"description": "The container component is where the initialization of services and their dependencies are managed.",
-	"license": "MIT",
-	"minimum-stability": "dev",
-	"require": {
-		"php": "^8.4",
-		"tempest/reflection": "dev-main"
-	},
-	"autoload": {
-		"files": [
-			"src/functions.php"
-		],
-		"psr-4": {
-			"Tempest\\Container\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"Tempest\\Container\\Tests\\": "tests"
-		}
-	}
+    "name": "tempest/container",
+    "description": "The container component is where the initialization of services and their dependencies are managed.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/reflection": "1.0.0"
+    },
+    "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
+        "psr-4": {
+            "Tempest\\Container\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Container\\Tests\\": "tests"
+        }
+    }
 }

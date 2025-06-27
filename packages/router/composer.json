@@ -1,26 +1,26 @@
 {
-	"name": "tempest/router",
-	"description": "A package for routing HTTP requests and responses.",
-	"license": "MIT",
-	"minimum-stability": "dev",
-	"require": {
-		"php": "^8.4",
-		"tempest/http": "dev-main",
-		"tempest/view": "dev-main",
-		"tempest/highlight": "^2.11.4",
-		"symfony/var-exporter": "^7.1"
-	},
-	"autoload": {
-		"files": [
-			"src/functions.php"
-		],
-		"psr-4": {
-			"Tempest\\Router\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"Tempest\\Router\\Tests\\": "tests"
-		}
-	}
+    "name": "tempest/router",
+    "description": "A package for routing HTTP requests and responses.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/http": "1.0.0",
+        "tempest/view": "1.0.0",
+        "tempest/highlight": "^2.11.4",
+        "symfony/var-exporter": "^7.1"
+    },
+    "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
+        "psr-4": {
+            "Tempest\\Router\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Router\\Tests\\": "tests"
+        }
+    }
 }

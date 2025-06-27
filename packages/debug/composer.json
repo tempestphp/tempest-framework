@@ -1,19 +1,19 @@
 {
-	"name": "tempest/debug",
-	"description": "Debug functions for Tempest",
-	"license": "MIT",
-	"minimum-stability": "dev",
-	"require": {
-		"php": "^8.4",
-		"tempest/highlight": "^2.11.4",
-		"symfony/var-dumper": "^7.1"
-	},
-	"autoload": {
-		"psr-4": {
-			"Tempest\\Debug\\": "src"
-		},
-		"files": [
-			"src/functions.php"
-		]
-	}
+    "name": "tempest/debug",
+    "description": "Debug functions for Tempest",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/highlight": "^2.11.4",
+        "symfony/var-dumper": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Debug\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    }
 }

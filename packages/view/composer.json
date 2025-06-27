@@ -1,27 +1,27 @@
 {
-	"name": "tempest/view",
-	"description": "A component for view handling.",
-	"license": "MIT",
-	"minimum-stability": "dev",
-	"require": {
-		"php": "^8.4",
-		"tempest/core": "dev-main",
-		"tempest/container": "dev-main",
-		"tempest/validation": "dev-main",
-		"tempest/clock": "dev-main",
-		"symfony/cache": "^7.2"
-	},
-	"autoload": {
-		"files": [
-			"src/functions.php"
-		],
-		"psr-4": {
-			"Tempest\\View\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"Tempest\\View\\Tests\\": "tests"
-		}
-	}
+    "name": "tempest/view",
+    "description": "A component for view handling.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/core": "1.0.0",
+        "tempest/container": "1.0.0",
+        "tempest/validation": "1.0.0",
+        "tempest/clock": "1.0.0",
+        "symfony/cache": "^7.2"
+    },
+    "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
+        "psr-4": {
+            "Tempest\\View\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\View\\Tests\\": "tests"
+        }
+    }
 }
