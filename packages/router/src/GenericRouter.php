@@ -39,6 +39,8 @@ final readonly class GenericRouter implements Router
             $request = map($request)->with(PsrRequestToGenericRequestMapper::class)->do();
         }
 
+        $this->container->singleton(Request::class, $request);
+
         $callable = $this->getCallable();
 
         return $this->processResponse($callable($request));

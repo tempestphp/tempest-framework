@@ -7,6 +7,8 @@ namespace Tempest\Router;
 use Generator;
 use Tempest\Http\ContentType;
 use Tempest\Http\Header;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
@@ -19,6 +21,7 @@ use Tempest\View\ViewRenderer;
 final readonly class GenericResponseSender implements ResponseSender
 {
     public function __construct(
+        private Request $request,
         private ViewRenderer $viewRenderer,
     ) {}
 
@@ -27,7 +30,11 @@ final readonly class GenericResponseSender implements ResponseSender
         ob_start();
         $this->sendHeaders($response);
         ob_flush();
-        $this->sendContent($response);
+
+        if (! $this->shouldSendContent()) {
+            $this->sendContent($response);
+        }
+
         ob_end_flush();
 
         if (function_exists('fastcgi_finish_request')) {
@@ -35,6 +42,15 @@ final readonly class GenericResponseSender implements ResponseSender
         }
 
         return $response;
+    }
+
+    private function shouldSendContent(): bool
+    {
+        if ($this->request->method === Method::HEAD) {
+            return false;
+        }
+
+        return true;
     }
 
     private function sendHeaders(Response $response): void

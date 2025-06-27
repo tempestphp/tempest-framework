@@ -52,12 +52,10 @@ final readonly class HttpApplication implements Application
         $router = $this->container->get(Router::class);
 
         $psrRequest = $this->container->get(RequestFactory::class)->make();
+        $response = $router->dispatch($psrRequest);
 
         $responseSender = $this->container->get(ResponseSender::class);
-
-        $responseSender->send(
-            $router->dispatch($psrRequest),
-        );
+        $responseSender->send($response);
 
         $this->container->get(Session::class)->cleanup();
 
