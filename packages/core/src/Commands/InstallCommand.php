@@ -30,7 +30,7 @@ final readonly class InstallCommand
         middleware: [ForceMiddleware::class],
         allowDynamicArguments: true,
     )]
-    public function __invoke(?string $installer = null, bool $tailwind = false): void
+    public function __invoke(?string $installer = null, bool $_tailwind = false): void
     {
         $installer = $this->resolveInstaller($installer);
 
