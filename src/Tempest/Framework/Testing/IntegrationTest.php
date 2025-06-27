@@ -32,6 +32,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\Process\Testing\ProcessTester;
 use Tempest\Storage\Testing\StorageTester;
 use Throwable;
 
@@ -69,6 +70,8 @@ abstract class IntegrationTest extends TestCase
     protected CacheTester $cache;
 
     protected ExceptionTester $exceptions;
+
+    protected ProcessTester $process;
 
     protected function setUp(): void
     {
@@ -139,6 +142,9 @@ abstract class IntegrationTest extends TestCase
         $this->mailer = new MailTester(new TestingMailer(
             eventBus: $this->container->get(EventBus::class),
         ));
+
+        $this->process = $this->container->get(ProcessTester::class);
+        $this->process->disableProcessExecution();
 
         $this->exceptions = $this->container->get(ExceptionTester::class);
         $this->exceptions->preventReporting();
