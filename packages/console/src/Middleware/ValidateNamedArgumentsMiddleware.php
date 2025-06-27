@@ -19,6 +19,10 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
 {
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
+        if ($invocation->consoleCommand->allowDynamicArguments) {
+            return $next($invocation);
+        }
+
         $allowedParameterNames = arr($invocation->consoleCommand->getArgumentDefinitions())
             ->flatMap(function (ConsoleArgumentDefinition $definition) {
                 return [$definition->name, ...$definition->aliases];
