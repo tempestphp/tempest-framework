@@ -7,7 +7,6 @@
 <h1 align="center">Tempest</h1>
 <div align="center">
   Tempest is a community-driven, modern PHP framework that gets out of your way and dares to think outside the box. Read the <a href="https://tempestphp.com">documentation</a> to get started.
-
 </div>
 
 <br />
