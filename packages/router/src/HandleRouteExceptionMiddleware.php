@@ -8,6 +8,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
+use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
 
@@ -21,7 +22,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
         if ($this->routeConfig->throwHttpExceptions === true) {
-            $response = $next($request);
+            $response = $this->forward($request, $next);
 
             if ($response->status->isServerError() || $response->status->isClientError()) {
                 throw new HttpRequestFailed(
@@ -33,8 +34,15 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
             return $response;
         }
 
+        return $this->forward($request, $next);
+    }
+
+    private function forward(Request $request, HttpMiddlewareCallable $next): Response
+    {
         try {
             return $next($request);
+        } catch (ConvertsToResponse $convertsToResponse) {
+            return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
             return new NotFound();
         } catch (ValidationFailed $validationException) {
