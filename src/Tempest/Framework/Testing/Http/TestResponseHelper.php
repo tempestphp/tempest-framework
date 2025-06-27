@@ -218,4 +218,9 @@ final class TestResponseHelper
 
         return $this;
     }
+
+    public function dd(): void
+    {
+        dd($this->response); // @mago-expect best-practices/no-debug-symbols
+    }
 }

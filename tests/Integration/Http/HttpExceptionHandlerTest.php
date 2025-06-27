@@ -115,17 +115,6 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('An unexpected server error occurred', $this->render($this->response->body));
     }
 
-    public function test_exception_handler_returns_404_for_router_not_found_execption(): void
-    {
-        $this->callExceptionHandler(function (): void {
-            $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new RouteBindingFailed());
-        });
-
-        $this->assertSame(Status::NOT_FOUND, $this->response->status);
-        $this->assertStringContainsString('This page could not be found on the server', $this->render($this->response->body));
-    }
-
     #[TestWith([Status::BAD_REQUEST])]
     #[TestWith([Status::INTERNAL_SERVER_ERROR])]
     #[TestWith([Status::NOT_FOUND])]

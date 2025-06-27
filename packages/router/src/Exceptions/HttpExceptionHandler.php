@@ -32,7 +32,6 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
             $response = match (true) {
                 $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
-                $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
                 $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
                 default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),
             };

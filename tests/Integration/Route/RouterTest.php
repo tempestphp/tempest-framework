@@ -324,4 +324,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertStatus(Status::INTERNAL_SERVER_ERROR)
             ->assertSee('custom error');
     }
+
+    public function test_converts_to_response(): void
+    {
+        $this->registerRoute([Http500Controller::class, 'convertsToResponse']);
+
+        $this->http
+            ->get('/returns-converts-to-response')
+            ->assertStatus(Status::FOUND)
+            ->assertHeaderContains('Location', 'https://tempestphp.com');
+    }
 }
