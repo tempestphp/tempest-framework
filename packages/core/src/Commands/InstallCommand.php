@@ -24,8 +24,13 @@ final readonly class InstallCommand
         private Container $container,
     ) {}
 
-    #[ConsoleCommand(name: 'install', description: 'Applies the specified installer', middleware: [ForceMiddleware::class])]
-    public function __invoke(?string $installer = null): void
+    #[ConsoleCommand(
+        name: 'install',
+        description: 'Applies the specified installer',
+        middleware: [ForceMiddleware::class],
+        allowDynamicArguments: true,
+    )]
+    public function __invoke(?string $installer = null, bool $_tailwind = false): void
     {
         $installer = $this->resolveInstaller($installer);
 
