@@ -221,6 +221,7 @@ final class TestResponseHelper
 
     public function dd(): void
     {
+        // @phpstan-ignore disallowed.function
         dd($this->response); // @mago-expect best-practices/no-debug-symbols
     }
 }
