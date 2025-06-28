@@ -12,7 +12,7 @@ use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\SchedulerConfig;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Process\ProcessExecutor;
 use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -21,6 +21,10 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 {
+    private ProcessExecutor $executor {
+        get => $this->container->get(ProcessExecutor::class);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +37,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
     public function test_scheduler_executes_handlers(): void
     {
+        $this->process->registerProcessResult('*', '');
+
         $config = new SchedulerConfig();
 
         $config->addMethodInvocation(
@@ -40,20 +46,20 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
             new Schedule(Every::MINUTE),
         );
 
-        $executor = new NullShellExecutor();
         $argumentBag = new ConsoleArgumentBag(['tempest']);
-        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
+        $scheduler = new GenericScheduler($config, $argumentBag, $this->executor);
 
         $scheduler->run();
 
-        $this->assertSame(
+        $this->process->assertCommandRan(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommands[0],
         );
     }
 
     public function test_scheduler_executes_commands(): void
     {
+        $this->process->registerProcessResult('*', '');
+
         $config = new SchedulerConfig();
 
         $config->addCommandInvocation(
@@ -62,19 +68,18 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
             new Schedule(Every::MINUTE),
         );
 
-        $executor = new NullShellExecutor();
         $argumentBag = new ConsoleArgumentBag(['tempest']);
-        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
+        $scheduler = new GenericScheduler($config, $argumentBag, $this->executor);
         $scheduler->run();
 
-        $this->assertSame(
+        $this->process->assertCommandRan(
             '(' . PHP_BINARY . ' tempest command) >> /dev/null &',
-            $executor->executedCommands[0],
         );
     }
 
     public function test_scheduler_only_dispatches_the_command_in_desired_times(): void
     {
+        $this->process->registerProcessResult('*', '');
         $at = new DateTime('2024-05-01 00:00:00');
 
         $config = new SchedulerConfig();
@@ -83,14 +88,12 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
             new Schedule(Every::MINUTE),
         );
 
-        $executor = new NullShellExecutor();
         $argumentBag = new ConsoleArgumentBag(['tempest']);
-        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
+        $scheduler = new GenericScheduler($config, $argumentBag, $this->executor);
         $scheduler->run($at);
 
-        $this->assertSame(
+        $this->process->assertCommandRan(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommands[0],
         );
 
         // command won't run twice in a row
@@ -99,15 +102,17 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         // nor when it's called before the next minute
         $scheduler->run($at->modify('+30 seconds'));
 
-        $executor = new NullShellExecutor();
-
-        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
+        $scheduler = new GenericScheduler($config, $argumentBag, $this->executor);
 
         $scheduler->run($at->modify('+1 minute'));
 
-        $this->assertSame(
+        $this->process->assertCommandRan(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommands[0],
+        );
+
+        $this->process->assertRanTimes(
+            command: '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
+            times: 2,
         );
     }
 
