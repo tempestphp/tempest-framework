@@ -16,8 +16,8 @@ use Tempest\DateTime\FormatPattern;
 use Tempest\DateTime\SecondsStyle;
 use Tempest\DateTime\Timestamp;
 use Tempest\DateTime\Timezone;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 use Tempest\Support\Math;
 
 use function Tempest\DateTime\create_intl_date_formatter;
@@ -261,6 +261,14 @@ final class TimestampTest extends TestCase
         $this->assertTrue($a->betweenTimeInclusive($a, $b));
         $this->assertTrue($a->betweenTimeInclusive($b, $a));
         $this->assertSame($expected === Order::EQUAL, $a->betweenTimeInclusive($b, $b));
+    }
+
+    public function test_future_past(): void
+    {
+        $now = Timestamp::monotonic();
+
+        $this->assertFalse($now->minusSecond()->isFuture());
+        $this->assertFalse($now->plusSecond()->isPast());
     }
 
     public function test_nanoseconds_modifications(): void

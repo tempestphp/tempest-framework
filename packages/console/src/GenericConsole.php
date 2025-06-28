@@ -310,7 +310,7 @@ final class GenericConsole implements Console
             return false;
         }
 
-        if ($this->argumentBag->get('interaction')?->value === false) {
+        if ($this->argumentBag->get(GlobalFlags::INTERACTION->value)?->value === false) {
             return false;
         }
 

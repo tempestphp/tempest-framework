@@ -39,7 +39,7 @@ trait IsIterable
 
     public function offsetGet(mixed $offset): mixed
     {
-        return $this->value[$offset] ?? throw new OffsetDoesNotExist();
+        return $this->value[$offset] ?? throw new OffsetDidNotExist();
     }
 
     public function offsetSet(mixed $offset, mixed $value): void

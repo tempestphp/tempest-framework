@@ -517,7 +517,7 @@ trait ManipulatesArray
      */
     public function get(int|string $key, mixed $default = null): mixed
     {
-        return get_by_key($this->value, $key, $default);
+        return namespace\get_by_key($this->value, $key, $default);
     }
 
     /**
@@ -537,19 +537,43 @@ trait ManipulatesArray
     }
 
     /**
-     * Asserts whether a value identified by the specified `$key` exists.
-     */
-    public function has(int|string $key): bool
-    {
-        return namespace\has($this->value, $key);
-    }
-
-    /**
-     * Asserts whether the instance contains an item that can be identified by `$search`.
+     * Asserts whether the instance has the given item. A callback may be used instead of a value.
+     *
+     * @see `hasValue`
+     * @param TValue|Closure(TValue, TKey): bool $search
      */
     public function contains(mixed $search): bool
     {
         return namespace\contains($this->value, $search);
+    }
+
+    /**
+     * Asserts whether a value identified by the specified `$key` exists. Dot notation is supported.
+     */
+    public function hasKey(int|string $key): bool
+    {
+        return namespace\has_key($this->value, $key);
+    }
+
+    /**
+     * Asserts whether the instance contains the specified value.
+     *
+     * @param TValue: bool $search
+     */
+    public function hasValue(mixed $search): bool
+    {
+        return namespace\contains($this->value, $search);
+    }
+
+    /**
+     * Asserts whether the instance contains the specified value.
+     *
+     * @see `hasValue`
+     * @param TValue|Closure(TValue, TKey): bool $search
+     */
+    public function includes(mixed $search): bool
+    {
+        return $this->hasValue($search);
     }
 
     /**

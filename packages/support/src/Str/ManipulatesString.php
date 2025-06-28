@@ -8,11 +8,12 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Stringable;
+use Tempest\Intl;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Random;
 use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\Random\secure_string;
 use function Tempest\Support\tap;
 
 /**
@@ -118,7 +119,19 @@ trait ManipulatesString
      */
     public function pluralize(int|array|Countable $count = 2): self
     {
-        return $this->createOrModify(pluralize($this->value, $count));
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\pluralize($this->value, $count));
+    }
+
+    /**
+     * Converts the string to its English singular form.
+     */
+    public function singularize(int|array|Countable $count = 2): self
+    {
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\singularize($this->value, $count));
     }
 
     /**
@@ -126,7 +139,19 @@ trait ManipulatesString
      */
     public function pluralizeLastWord(int|array|Countable $count = 2): self
     {
-        return $this->createOrModify(pluralize_last_word($this->value, $count));
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\pluralize_last_word($this->value, $count));
+    }
+
+    /**
+     * Converts the last word to its English plural form.
+     */
+    public function singularizeLastWord(): self
+    {
+        $this->ensurePluralizerInstalled(__METHOD__);
+
+        return $this->createOrModify(Intl\singularize_last_word($this->value));
     }
 
     /**
@@ -134,7 +159,39 @@ trait ManipulatesString
      */
     public function random(int $length = 16): self
     {
-        return $this->createOrModify(secure_string($length));
+        return $this->createOrModify(Random\secure_string($length));
+    }
+
+    /**
+     * Generates a UUID v7 (time-based) identifier.
+     */
+    public function uuid(): self
+    {
+        return $this->createOrModify(Random\uuid());
+    }
+
+    /**
+     * Generates a 128-bit universally unique lexicographically sortable identifier.
+     */
+    public function ulid(): self
+    {
+        return $this->createOrModify(Random\ulid());
+    }
+
+    /**
+     * Determines whether the specified string is a valid UUID.
+     */
+    public function isUuid(): bool
+    {
+        return Random\is_uuid($this->value);
+    }
+
+    /**
+     * Determines whether the instance is a valid ULID.
+     */
+    public function isUlid(): bool
+    {
+        return Random\is_ulid($this->value);
     }
 
     /**
@@ -769,6 +826,13 @@ trait ManipulatesString
     public function length(): int
     {
         return mb_strlen($this->value);
+    }
+
+    private function ensurePluralizerInstalled(string $function): void
+    {
+        if (! interface_exists(Intl\Pluralizer\Pluralizer::class)) {
+            throw new \RuntimeException("The `tempest/intl` package is required to use `{$function}`.");
+        }
     }
 
     /**

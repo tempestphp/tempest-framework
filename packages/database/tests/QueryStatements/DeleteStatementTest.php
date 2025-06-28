@@ -5,7 +5,7 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\InvalidDeleteStatement;
+use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 
@@ -36,7 +36,7 @@ final class DeleteStatementTest extends TestCase
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
-        $this->expectException(InvalidDeleteStatement::class);
+        $this->expectException(DeleteStatementWasInvalid::class);
 
         new DeleteStatement(table: $tableDefinition)
             ->compile(DatabaseDialect::MYSQL);

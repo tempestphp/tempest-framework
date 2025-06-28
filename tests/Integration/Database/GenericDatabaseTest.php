@@ -7,10 +7,14 @@ namespace Tests\Tempest\Integration\Database;
 use Exception;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Migrations\Migration;
+use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal
@@ -19,28 +23,48 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager_execute(): void
     {
-        $manager = $this->container->get(Database::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
-        $manager->withinTransaction(function (): void {
-            $this->console
-                ->call('migrate:up');
+        $db = $this->container->get(Database::class);
+
+        $db->withinTransaction(function (): void {
+            query(Author::class)->insert(
+                name: 'Brent',
+            )->execute();
         });
 
-        $this->assertNotEmpty(Migration::all());
+        $this->assertSame(1, query(Author::class)->count()->execute());
     }
 
-    public function test_execute_with_fail_works_correctly(): void
+    public function test_transaction_manager_fails(): void
     {
-        $database = $this->container->get(Database::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $db = $this->container->get(Database::class);
 
-        $database->withinTransaction(function (): never {
-            new Author(name: 'test')->save();
+        $db->withinTransaction(function (): never {
+            query(Author::class)->insert(
+                name: 'Brent',
+            )->execute();
 
-            throw new Exception('Dummy exception to force rollback');
+            throw new Exception('Test');
         });
 
-        $this->assertCount(0, Author::all());
+        $this->assertSame(0, query(Author::class)->count()->execute());
+    }
+
+    public function test_query_with_semicolons(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class);
+
+        $db = $this->container->get(Database::class);
+        $db->execute(
+            new Query(<<<SQL
+                INSERT INTO publishers (`name`, `description`)
+                VALUES ('Foo', 'Bar; Baz;')
+            SQL),
+        );
+
+        $this->assertSame(1, query(Publisher::class)->count()->execute());
     }
 }

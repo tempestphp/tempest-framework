@@ -4,7 +4,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   get_packages:
@@ -59,7 +59,7 @@ jobs:
           coverage: pcov
 
       - name: Install PHPUnit
-        run: composer global require phpunit/phpunit:^11.5.17
+        run: composer global require phpunit/phpunit:^12.2.3
 
       - name: Setup problem matchers
         run: |

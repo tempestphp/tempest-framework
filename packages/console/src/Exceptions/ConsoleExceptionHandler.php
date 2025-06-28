@@ -12,6 +12,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Tag;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
+use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
@@ -29,15 +30,13 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         private Highlighter $highlighter,
         private Console $console,
         private ConsoleArgumentBag $argumentBag,
+        private ExceptionReporter $exceptionReporter,
     ) {}
 
     public function handle(Throwable $throwable): void
     {
         try {
-            foreach ($this->appConfig->exceptionProcessors as $processor) {
-                $handler = $this->container->get($processor);
-                $throwable = $handler->process($throwable);
-            }
+            $this->exceptionReporter->report($throwable);
 
             $this->console
                 ->writeln()

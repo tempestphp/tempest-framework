@@ -12,7 +12,7 @@ final class Chapter
 
     public string $title;
 
-    public string $contents;
+    public ?string $contents;
 
     public Book $book;
 }

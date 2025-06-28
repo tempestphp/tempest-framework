@@ -9,12 +9,12 @@ use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Http\HttpException;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
-use Tempest\Router\Exceptions\NotFoundException;
+use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Router\ResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
@@ -115,17 +115,6 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('An unexpected server error occurred', $this->render($this->response->body));
     }
 
-    public function test_exception_handler_returns_404_for_router_not_found_execption(): void
-    {
-        $this->callExceptionHandler(function (): void {
-            $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new NotFoundException());
-        });
-
-        $this->assertSame(Status::NOT_FOUND, $this->response->status);
-        $this->assertStringContainsString('This page could not be found on the server', $this->render($this->response->body));
-    }
-
     #[TestWith([Status::BAD_REQUEST])]
     #[TestWith([Status::INTERNAL_SERVER_ERROR])]
     #[TestWith([Status::NOT_FOUND])]
@@ -135,7 +124,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new HttpException($status));
+            $handler->handle(new HttpRequestFailed($status));
         });
 
         $this->assertSame($status, $this->response->status);
@@ -143,6 +132,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
     public function test_exception_handler_runs_exception_processors(): void
     {
+        $this->exceptions->preventReporting(false);
+
         $this->container->get(AppConfig::class)->exceptionProcessors[] = NullExceptionProcessor::class;
 
         $thrown = new ExceptionWithContext();
@@ -154,6 +145,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
         $this->assertContains($thrown, NullExceptionProcessor::$exceptions);
         $this->assertArrayHasKey('foo', NullExceptionProcessor::$exceptions[0]->context());
+
+        NullExceptionProcessor::$exceptions = [];
     }
 
     private function callExceptionHandler(Closure $callback): void

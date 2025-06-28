@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
+use ReflectionAttribute;
 use ReflectionAttribute as PHPReflectionAttribute;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
@@ -31,7 +32,7 @@ trait HasAttributes
     {
         $attribute = $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
 
-        $attributeInstance = $attribute?->newInstance();
+        $attributeInstance = $this->instantiate($attribute);
 
         if ($attributeInstance || ! $recursive) {
             return $attributeInstance;
@@ -62,8 +63,23 @@ trait HasAttributes
     public function getAttributes(string $attributeClass): array
     {
         return array_map(
-            fn (PHPReflectionAttribute $attribute) => $attribute->newInstance(),
+            fn (PHPReflectionAttribute $attribute) => $this->instantiate($attribute),
             $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF),
         );
+    }
+
+    private function instantiate(?ReflectionAttribute $attribute): ?object
+    {
+        $object = $attribute?->newInstance();
+
+        if (! $object) {
+            return null;
+        }
+
+        if ($object instanceof PropertyAttribute && $this instanceof PropertyReflector) {
+            $object->property = $this;
+        }
+
+        return $object;
     }
 }

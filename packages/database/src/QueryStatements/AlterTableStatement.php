@@ -7,18 +7,20 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class AlterTableStatement implements QueryStatement
+final class AlterTableStatement implements QueryStatement, HasTrailingStatements
 {
+    private(set) array $trailingStatements = [];
+
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
-        private array $createIndexStatements = [],
     ) {}
 
     /** @param class-string $modelClass */
@@ -36,7 +38,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function unique(string ...$columns): self
     {
-        $this->createIndexStatements[] = new UniqueStatement(
+        $this->trailingStatements[] = new UniqueStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -46,7 +48,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function index(string ...$columns): self
     {
-        $this->createIndexStatements[] = new IndexStatement(
+        $this->trailingStatements[] = new IndexStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -102,15 +104,6 @@ final class AlterTableStatement implements QueryStatement
             $alterTable = '';
         }
 
-        if ($this->createIndexStatements !== []) {
-            $createIndices = PHP_EOL . arr($this->createIndexStatements)
-                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->implode(';' . PHP_EOL)
-                ->append(';');
-        } else {
-            $createIndices = '';
-        }
-
-        return $alterTable . $createIndices;
+        return $alterTable;
     }
 }

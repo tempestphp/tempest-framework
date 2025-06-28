@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
 use UnitEnum;
@@ -16,12 +16,13 @@ use UnitEnum;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class CreateTableStatement implements QueryStatement
+final class CreateTableStatement implements QueryStatement, HasTrailingStatements
 {
+    private(set) array $trailingStatements = [];
+
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
-        private array $indexStatements = [],
     ) {}
 
     /** @param class-string $modelClass */
@@ -188,6 +189,20 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function dto(
+        string $name,
+        bool $nullable = false,
+        ?string $default = null,
+    ): self {
+        $this->statements[] = new JsonStatement(
+            name: $name,
+            nullable: $nullable,
+            default: $default,
+        );
+
+        return $this;
+    }
+
     public function array(
         string $name,
         bool $nullable = false,
@@ -208,8 +223,6 @@ final class CreateTableStatement implements QueryStatement
         bool $nullable = false,
         null|UnitEnum|BackedEnum $default = null,
     ): self {
-        $this->statements[] = new CreateEnumTypeStatement($enumClass);
-
         $this->statements[] = new EnumStatement(
             name: $name,
             enumClass: $enumClass,
@@ -238,7 +251,7 @@ final class CreateTableStatement implements QueryStatement
 
     public function unique(string ...$columns): self
     {
-        $this->indexStatements[] = new UniqueStatement(
+        $this->trailingStatements[] = new UniqueStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -248,7 +261,7 @@ final class CreateTableStatement implements QueryStatement
 
     public function index(string ...$columns): self
     {
-        $this->indexStatements[] = new IndexStatement(
+        $this->trailingStatements[] = new IndexStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -278,15 +291,6 @@ final class CreateTableStatement implements QueryStatement
                 ->toString(),
         );
 
-        if ($this->indexStatements !== []) {
-            $createIndices = PHP_EOL . arr($this->indexStatements)
-                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->implode(';' . PHP_EOL)
-                ->append(';');
-        } else {
-            $createIndices = '';
-        }
-
-        return $createTable . $createIndices;
+        return $createTable;
     }
 }

@@ -12,7 +12,7 @@ namespace Tempest\DateTime {
     use Tempest\DateTime\Timestamp;
     use Tempest\DateTime\TimeStyle;
     use Tempest\DateTime\Timezone;
-    use Tempest\Support\Language\Locale;
+    use Tempest\Intl\Locale;
 
     use function hrtime;
     use function microtime;

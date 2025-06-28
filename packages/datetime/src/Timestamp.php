@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
-use Tempest\Support\Language\Locale;
+use Tempest\Clock\Clock;
+use Tempest\Container\GenericContainer;
+use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 use Tempest\Support\Math\Exception\ArithmeticException;
 use Tempest\Support\Math\Exception\DivisionByZeroException;
@@ -68,9 +70,7 @@ final readonly class Timestamp implements TemporalInterface
      */
     public static function now(): self
     {
-        [$seconds, $nanoseconds] = namespace\system_time();
-
-        return self::fromParts($seconds, $nanoseconds);
+        return self::resolveFromContainer() ?? self::fromParts(...namespace\system_time());
     }
 
     /**
@@ -252,6 +252,25 @@ final readonly class Timestamp implements TemporalInterface
 
         // No manual normalization required here due to fromRaw handling it
         return self::fromParts($newSeconds, $newNanoseconds);
+    }
+
+    private static function resolveFromContainer(): ?Timestamp
+    {
+        if (! class_exists(GenericContainer::class)) {
+            return null;
+        }
+
+        if (is_null(GenericContainer::instance())) {
+            return null;
+        }
+
+        if (! GenericContainer::instance()->has(Clock::class)) {
+            return null;
+        }
+
+        return GenericContainer::instance()
+            ->get(Clock::class)
+            ->timestamp();
     }
 
     #[\Override]

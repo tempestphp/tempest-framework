@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Tempest\Support\Html\HtmlString;
-use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\Exceptions\ElementWasInvalid;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -340,7 +340,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_no_double_else_attributes(): void
     {
-        $this->expectException(InvalidElement::class);
+        $this->expectException(ElementWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -368,7 +368,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
         );
 
-        $this->expectException(InvalidElement::class);
+        $this->expectException(ElementWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -387,7 +387,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
         );
 
-        $this->expectException(InvalidElement::class);
+        $this->expectException(ElementWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -405,7 +405,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML, foo: []),
         );
 
-        $this->expectException(InvalidElement::class);
+        $this->expectException(ElementWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -423,7 +423,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML, foo: []),
         );
 
-        $this->expectException(InvalidElement::class);
+        $this->expectException(ElementWasInvalid::class);
 
         $this->render(
             view(<<<'HTML'
@@ -701,5 +701,21 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSnippetsMatch('', $html);
+    }
+
+    public function test_escape_expression_attribute(): void
+    {
+        $html = $this->render('<div ::escaped="foo">');
+
+        $this->assertSnippetsMatch('<div :escaped="foo"></div>', $html);
+    }
+
+    public function test_unclosed_php_tag(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <?php echo 'hi';
+        HTML);
+
+        $this->assertSame('hi', $html);
     }
 }

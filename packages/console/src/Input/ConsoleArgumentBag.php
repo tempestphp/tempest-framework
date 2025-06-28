@@ -11,7 +11,7 @@ use function Tempest\Support\Arr\is_associative;
 final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
-    private array $arguments = [];
+    private(set) array $arguments = [];
 
     /** @var string[] */
     private array $path = [];
@@ -152,7 +152,7 @@ final class ConsoleArgumentBag
         }
 
         // Otherwise, $arguments is an array of flags or positional argument.
-        foreach ($arguments as $argument) {
+        foreach ($arguments as $key => $argument) {
             if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
                 $flags = str_split($argument);
                 unset($flags[0]);
@@ -160,6 +160,8 @@ final class ConsoleArgumentBag
                 foreach ($flags as $flag) {
                     $arguments[] = "-{$flag}";
                 }
+
+                unset($arguments[$key]);
             }
         }
 

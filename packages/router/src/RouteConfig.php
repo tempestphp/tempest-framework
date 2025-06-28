@@ -23,8 +23,13 @@ final class RouteConfig
 
         /** @var Middleware<\Tempest\Router\HttpMiddleware> */
         public Middleware $middleware = new Middleware(
+            HandleRouteExceptionMiddleware::class,
+            MatchRouteMiddleware::class,
             SetCookieMiddleware::class,
+            HandleRouteSpecificMiddleware::class,
         ),
+
+        public bool $throwHttpExceptions = true,
     ) {}
 
     public function apply(RouteConfig $newConfig): void

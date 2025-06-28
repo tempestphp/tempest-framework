@@ -49,6 +49,6 @@ enum Environment: string
     {
         $value = env('ENVIRONMENT', 'local');
 
-        return self::tryFrom($value) ?? throw new InvalidEnvironment($value);
+        return self::tryFrom($value) ?? throw new EnvironmentValueWasInvalid($value);
     }
 }

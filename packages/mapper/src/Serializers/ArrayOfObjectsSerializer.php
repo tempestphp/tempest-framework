@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Serializer;
 
@@ -15,7 +15,7 @@ final class ArrayOfObjectsSerializer implements Serializer
     public function serialize(mixed $input): array
     {
         if (! is_array($input)) {
-            throw new CannotSerializeValue('array');
+            throw new ValueCouldNotBeSerialized('array');
         }
 
         $values = [];

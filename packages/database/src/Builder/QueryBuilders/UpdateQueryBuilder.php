@@ -2,8 +2,10 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
@@ -15,9 +17,9 @@ use Tempest\Support\Conditions\HasConditions;
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
-final class UpdateQueryBuilder
+final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions;
+    use HasConditions, OnDatabase;
 
     private UpdateStatement $update;
 
@@ -33,7 +35,7 @@ final class UpdateQueryBuilder
         );
     }
 
-    public function execute(mixed ...$bindings): Id
+    public function execute(mixed ...$bindings): ?Id
     {
         return $this->build()->execute(...$bindings);
     }
@@ -61,7 +63,12 @@ final class UpdateQueryBuilder
         return $this;
     }
 
-    public function build(): Query
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
+    public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();
 
@@ -73,8 +80,6 @@ final class UpdateQueryBuilder
             $this->where('`id` = ?', id: $this->model->id->id);
         }
 
-        $bindings = [];
-
         foreach ($values as $value) {
             $bindings[] = $value;
         }
@@ -83,12 +88,14 @@ final class UpdateQueryBuilder
             $bindings[] = $binding;
         }
 
-        return new Query($this->update, $bindings);
+        return new Query($this->update, $bindings)->onDatabase($this->onDatabase);
     }
 
     private function resolveValues(): ImmutableArray
     {
-        if (! model($this->model)->isObjectModel()) {
+        $modelDefinition = model($this->model);
+
+        if (! $modelDefinition->isObjectModel()) {
             return arr($this->values);
         }
 
@@ -99,11 +106,15 @@ final class UpdateQueryBuilder
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
-            if ($property->getIterableType()?->isRelation()) {
-                throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
+            if ($modelDefinition->getHasMany($property->getName())) {
+                throw new HasManyRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
             }
 
-            if ($property->getType()->isRelation()) {
+            if ($modelDefinition->getHasOne($property->getName())) {
+                throw new HasOneRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
+            }
+
+            if ($modelDefinition->isRelation($property)) {
                 $column .= '_id';
 
                 $value = match (true) {

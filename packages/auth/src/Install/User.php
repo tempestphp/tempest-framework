@@ -40,7 +40,7 @@ final class User implements CanAuthenticate, CanAuthorize
     {
         $permission = $this->resolvePermission($permission);
 
-        new UserPermission(
+        UserPermission::new(
             user: $this,
             permission: $permission,
         )->save();

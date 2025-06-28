@@ -7,6 +7,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class Priority
 {
+    public const int EXCEPTION_HANDLING = -100;
+
     public const int FRAMEWORK = -1;
 
     public const int HIGHEST = 0;

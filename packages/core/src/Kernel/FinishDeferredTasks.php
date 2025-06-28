@@ -16,8 +16,9 @@ final readonly class FinishDeferredTasks
 
     public function __invoke(): void
     {
-        foreach ($this->deferredTasks->getTasks() as $task) {
+        foreach ($this->deferredTasks->getTasks() as $name => $task) {
             $this->container->invoke($task);
+            $this->deferredTasks->forget($name);
         }
     }
 }

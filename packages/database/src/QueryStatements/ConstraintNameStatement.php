@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
 
 final readonly class ConstraintNameStatement implements QueryStatement
 {
@@ -23,7 +23,7 @@ final readonly class ConstraintNameStatement implements QueryStatement
     {
         return match ($dialect) {
             DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => sprintf('CONSTRAINT %s', $this->name->compile($dialect)),
-            default => throw new UnsupportedDialect(),
+            default => throw new DialectWasNotSupported(),
         };
     }
 }

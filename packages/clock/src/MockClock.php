@@ -17,13 +17,7 @@ final class MockClock implements Clock
 
     public function __construct(DateTimeImmutable|DateTimeInterface|string $now = 'now')
     {
-        if ($now instanceof DateTimeImmutable) {
-            $this->now = DateTime::fromTimestamp(
-                Timestamp::fromParts($now->getTimestamp()),
-            );
-        } else {
-            $this->now = DateTime::parse($now);
-        }
+        $this->setNow($now);
     }
 
     public function toPsrClock(): ClockInterface
@@ -36,21 +30,25 @@ final class MockClock implements Clock
         return $this->now;
     }
 
-    public function setNow(DateTimeInterface|string $now): void
+    /**
+     * Globally sets the current time to the specified value.
+     */
+    public function setNow(DateTimeImmutable|DateTimeInterface|string $now): void
     {
-        if ($now instanceof DateTimeInterface) {
-            $this->now = $now;
-        } else {
-            $this->now = DateTime::parse($now);
-        }
+        $this->now = DateTime::parse($now);
     }
 
-    public function timestamp(): int
+    public function timestamp(): Timestamp
+    {
+        return $this->now->getTimestamp();
+    }
+
+    public function seconds(): int
     {
         return $this->now->getTimestamp()->getSeconds();
     }
 
-    public function timestampMs(): int
+    public function milliseconds(): int
     {
         return $this->now->getTimestamp()->getMilliseconds();
     }
@@ -58,31 +56,35 @@ final class MockClock implements Clock
     public function sleep(int|Duration $milliseconds): void
     {
         if ($milliseconds instanceof Duration) {
-            $this->addInterval($milliseconds);
+            $this->plus($milliseconds);
             return;
         }
 
         $this->now = $this->now->plusMilliseconds($milliseconds);
     }
 
-    public function addInterval(Duration $duration): void
+    /**
+     * Adds the given duration. Providing an integer value adds the corresponding seconds to the current time.
+     */
+    public function plus(int|Duration $duration): void
     {
+        if (is_int($duration)) {
+            $duration = Duration::seconds($duration);
+        }
+
         $this->now = $this->now->plus($duration);
     }
 
-    public function subInternal(Duration $duration): void
+    /**
+     * Removes the given duration. Providing an integer value removes the corresponding seconds to the current time.
+     */
+    public function minus(int|Duration $duration): void
     {
-        $this->now = $this->now->minus($duration);
-    }
-
-    public function changeTime(int $seconds): void
-    {
-        if ($seconds < 0) {
-            $seconds = abs($seconds);
-            $this->now = $this->now->minusSeconds($seconds);
-        } else {
-            $this->now = $this->now->plusSeconds($seconds);
+        if (is_int($duration)) {
+            $duration = Duration::seconds($duration);
         }
+
+        $this->now = $this->now->minus($duration);
     }
 
     public function dd(): void

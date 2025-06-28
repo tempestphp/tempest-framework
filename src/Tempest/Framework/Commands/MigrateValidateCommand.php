@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Framework\Commands;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Container\Singleton;
-use Tempest\Database\Migrations\MigrationHashMismatchException;
+use Tempest\Database\Migrations\MigrationFileWasMissing;
+use Tempest\Database\Migrations\MigrationHashMismatched;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationValidationFailed;
-use Tempest\Database\Migrations\MissingMigrationFileException;
 use Tempest\EventBus\EventHandler;
 
 #[Singleton]
@@ -28,10 +29,12 @@ final class MigrateValidateCommand
         name: 'migrate:validate',
         description: 'Validates the integrity of existing migration files by checking if they have been tampered with.',
     )]
-    public function __invoke(): ExitCode
-    {
+    public function __invoke(
+        #[ConsoleArgument(description: 'Use a specific database.')]
+        ?string $database = null,
+    ): ExitCode {
         $this->console->header('Validating migration files');
-        $this->migrationManager->validate();
+        $this->migrationManager->onDatabase($database)->validate();
 
         if (! $this->validationPassed) {
             $this->console->writeln();
@@ -49,8 +52,8 @@ final class MigrateValidateCommand
     public function onMigrationValidationFailed(MigrationValidationFailed $event): void
     {
         $error = match ($event->exception::class) {
-            MigrationHashMismatchException::class => 'Hash mismatch',
-            MissingMigrationFileException::class => 'Missing file',
+            MigrationHashMismatched::class => 'Hash mismatch',
+            MigrationFileWasMissing::class => 'Missing file',
             default => 'Unknown error',
         };
 

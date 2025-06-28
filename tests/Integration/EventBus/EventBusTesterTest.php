@@ -148,9 +148,11 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
     {
         $this->eventBus->preventEventHandling();
 
-        $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
-            throw new LogicException('This should not be called');
-        });
+        $this->container
+            ->get(EventBus::class)
+            ->listen(function (FakeEvent $_): never {
+                throw new LogicException('This should not be called');
+            });
 
         $this->eventBus->assertListeningTo(FakeEvent::class);
         $this->eventBus->assertListeningTo(FakeEvent::class);
@@ -160,15 +162,19 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
     {
         $this->eventBus->preventEventHandling();
 
-        $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
-            throw new LogicException('This should not be called');
-        });
+        $this->container
+            ->get(EventBus::class)
+            ->listen(function (FakeEvent $_): never {
+                throw new LogicException('This should not be called');
+            });
 
         $this->eventBus->assertListeningTo(FakeEvent::class, count: 1);
 
-        $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
-            throw new LogicException('This should not be called');
-        });
+        $this->container
+            ->get(EventBus::class)
+            ->listen(function (FakeEvent $_): never {
+                throw new LogicException('This should not be called');
+            });
 
         $this->eventBus->assertListeningTo(FakeEvent::class, count: 2);
     }
@@ -190,9 +196,11 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
         $this->eventBus->preventEventHandling();
 
-        $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
-            throw new LogicException('This should not be called');
-        });
+        $this->container
+            ->get(EventBus::class)
+            ->listen(function (FakeEvent $_): never {
+                throw new LogicException('This should not be called');
+            });
 
         $this->eventBus->assertListeningTo(FakeEvent::class, count: 2);
     }

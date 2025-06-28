@@ -6,6 +6,7 @@ use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use UnitEnum;
 
 final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
 {
@@ -22,9 +23,9 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->container->singleton(
             Container::class,
-            new class(clone $this->container) implements Container {
+            new readonly class(clone $this->container) implements Container {
                 public function __construct(
-                    private readonly Container $container,
+                    private Container $container,
                 ) {}
 
                 public function register(string $className, callable $definition): self
@@ -41,7 +42,7 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function singleton(string $className, mixed $definition, ?string $tag = null): self
+                public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self
                 {
                     $this->container->singleton($className, $definition, $tag);
 
@@ -55,12 +56,12 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function get(string $className, ?string $tag = null, mixed ...$params): mixed
+                public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): mixed
                 {
                     return $this->container->get($className, $tag, ...$params);
                 }
 
-                public function has(string $className, ?string $tag = null): bool
+                public function has(string $className, null|string|UnitEnum $tag = null): bool
                 {
                     return $this->container->has($className, $tag);
                 }

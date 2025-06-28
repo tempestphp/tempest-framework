@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
+use Closure;
 use InvalidArgumentException;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -11,12 +12,11 @@ use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tempest\Database\Connection\CachedConnectionInitializer;
-use Tempest\Database\Connection\Connection;
+use Tempest\Database\Connection\ConnectionInitializer;
+use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -33,6 +33,7 @@ use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
+use Throwable;
 
 use function Tempest\Support\Path\normalize;
 
@@ -57,7 +58,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
-        $this->container->addInitializer(CachedConnectionInitializer::class);
+        $this->container
+            ->removeInitializer(DatabaseInitializer::class)
+            ->addInitializer(TestingDatabaseInitializer::class);
+
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
@@ -67,11 +71,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->config(require $databaseConfigPath);
 
         $this->rollbackDatabase();
-    }
-
-    protected function tearDown(): void
-    {
-        $this->container->get(Connection::class)->close();
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application
@@ -175,5 +174,41 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $actual = str_replace([PHP_EOL, ' '], '', $actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    protected function assertSameWithoutBackticks(string $expected, string $actual): void
+    {
+        $clean = function (string $string): string {
+            return \Tempest\Support\str($string)
+                ->replace('`', '')
+                ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
+                ->toString();
+        };
+
+        $this->assertSame(
+            $clean($expected),
+            $clean($actual),
+        );
+    }
+
+    protected function assertException(
+        string $expectedExceptionClass,
+        Closure $handler,
+        ?Closure $assertException = null,
+    ): void {
+        try {
+            $handler();
+        } catch (Throwable $throwable) {
+            $this->assertInstanceOf($expectedExceptionClass, $throwable);
+
+            if ($assertException !== null) {
+                $assertException($throwable);
+            }
+
+            return;
+        }
+
+        /* @phpstan-ignore-next-line */
+        $this->assertTrue(false, "Expected exception {$expectedExceptionClass} was not thrown");
     }
 }

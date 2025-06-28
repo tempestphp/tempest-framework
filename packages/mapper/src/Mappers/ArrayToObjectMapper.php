@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\CasterFactory;
-use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
@@ -80,7 +80,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         if ($missingValues !== []) {
-            throw new MissingValuesException($to, $missingValues);
+            throw new MappingValuesWereMissing($to, $missingValues);
         }
 
         $this->setParentRelations($object, $class);

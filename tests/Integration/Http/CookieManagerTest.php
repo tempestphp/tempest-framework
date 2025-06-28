@@ -32,7 +32,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=value');
+            ->assertHeaderContains('set-cookie', 'new=value; Secure; HttpOnly; SameSite=Lax');
     }
 
     public function test_removing_a_cookie(): void
@@ -55,7 +55,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $cookies->add(new Cookie(
             key: 'key',
             value: 'value',
-            expiresAt: $clock->timestamp() + 1,
+            expiresAt: $clock->seconds() + 1,
             domain: 'test.com',
             path: '/test',
             secure: true,

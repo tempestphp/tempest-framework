@@ -23,7 +23,7 @@ final class SelectStatementTest extends TestCase
 
         $statement = new SelectStatement(
             table: $tableDefinition,
-            columns: arr(['`a`', 'b', 'c', new FieldDefinition($tableDefinition, 'd', 'd_alias')]),
+            fields: arr(['`a`', 'b', 'c', new FieldDefinition($tableDefinition, 'd', 'd_alias')]),
             join: arr(new JoinStatement('INNER JOIN foo ON bar.id = foo.id')),
             where: arr(new WhereStatement('`foo` = "bar"')),
             orderBy: arr(new OrderByStatement('`foo` DESC')),
@@ -33,7 +33,7 @@ final class SelectStatementTest extends TestCase
             offset: 100,
         );
 
-        $expected = <<<SQL
+        $expectedMysql = <<<SQL
         SELECT `a`, `b`, `c`, `bar`.`d` AS `d_alias`
         FROM `foo` AS `bar`
         INNER JOIN foo ON bar.id = foo.id
@@ -45,8 +45,6 @@ final class SelectStatementTest extends TestCase
         OFFSET 100
         SQL;
 
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
+        $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
     }
 }

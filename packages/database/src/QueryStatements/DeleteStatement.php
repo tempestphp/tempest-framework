@@ -4,7 +4,7 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\InvalidDeleteStatement;
+use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -21,7 +21,7 @@ final class DeleteStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         if ($this->allowAll === false && $this->where->isEmpty()) {
-            throw new InvalidDeleteStatement();
+            throw new DeleteStatementWasInvalid();
         }
 
         $query = arr([

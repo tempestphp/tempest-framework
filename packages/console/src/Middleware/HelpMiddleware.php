@@ -10,6 +10,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
+use Tempest\Console\GlobalFlags;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\Priority;
 
@@ -22,7 +23,7 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        if ($invocation->argumentBag->get('-h') || $invocation->argumentBag->get('help')) {
+        if ($invocation->argumentBag->get(GlobalFlags::HELP_SHORTHAND->value) || $invocation->argumentBag->get(GlobalFlags::HELP->value)) {
             $this->renderHelp($invocation->consoleCommand);
 
             return ExitCode::SUCCESS;

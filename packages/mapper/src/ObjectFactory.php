@@ -6,8 +6,8 @@ namespace Tempest\Mapper;
 
 use Closure;
 use Tempest\Container\Container;
-use Tempest\Mapper\Exceptions\CannotMapDataException;
-use Tempest\Mapper\Exceptions\MissingMapperException;
+use Tempest\Mapper\Exceptions\DataCouldNotBeMapped;
+use Tempest\Mapper\Exceptions\MapperWasMissing;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\JsonToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
@@ -100,7 +100,7 @@ final class ObjectFactory
     public function do(): mixed
     {
         if ($this->with === []) {
-            throw new MissingMapperException();
+            throw new MapperWasMissing();
         }
 
         $result = $this->from;
@@ -130,7 +130,7 @@ final class ObjectFactory
             return $this->with(JsonToArrayMapper::class)->do();
         }
 
-        throw new CannotMapDataException($this->from, 'array');
+        throw new DataCouldNotBeMapped($this->from, 'array');
     }
 
     public function toJson(): string
@@ -143,7 +143,7 @@ final class ObjectFactory
             return $this->with(ArrayToJsonMapper::class)->do();
         }
 
-        throw new CannotMapDataException($this->from, 'json');
+        throw new DataCouldNotBeMapped($this->from, 'json');
     }
 
     /**
@@ -204,7 +204,7 @@ final class ObjectFactory
             }
         }
 
-        throw new CannotMapDataException($from, $to);
+        throw new DataCouldNotBeMapped($from, $to);
     }
 
     /**

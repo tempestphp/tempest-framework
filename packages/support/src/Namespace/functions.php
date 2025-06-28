@@ -63,7 +63,7 @@ namespace Tempest\Support\Namespace {
             }
         }
 
-        throw new PathCouldNotBeMappedToNamespaceException($path);
+        throw new PathCouldNotBeMappedToNamespace($path);
     }
 
     /**

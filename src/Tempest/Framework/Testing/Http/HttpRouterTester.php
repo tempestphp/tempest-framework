@@ -11,13 +11,15 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Router\GenericRouter;
+use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 
 use function Tempest\map;
 
 final class HttpRouterTester
 {
+    private bool $throwHttpExceptions = false;
+
     public function __construct(
         private Container $container,
     ) {}
@@ -32,17 +34,6 @@ final class HttpRouterTester
                 headers: $headers,
             ),
         );
-    }
-
-    public function throwExceptions(): self
-    {
-        $router = $this->container->get(Router::class);
-
-        if ($router instanceof GenericRouter) {
-            $router->throwExceptions();
-        }
-
-        return $this;
     }
 
     public function head(string $uri, array $headers = []): TestResponseHelper
@@ -146,9 +137,21 @@ final class HttpRouterTester
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
+        $this->container->get(RouteConfig::class)->throwHttpExceptions = $this->throwHttpExceptions;
+
         return new TestResponseHelper(
             $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
         );
+    }
+
+    /**
+     * Instructs the router to throw {@see Tempest\Http\HttpException} errors when an error response is returned. This mimics production behavior.
+     */
+    public function throwExceptions(bool $throw = true): self
+    {
+        $this->throwHttpExceptions = $throw;
+
+        return $this;
     }
 
     public function makePsrRequest(

@@ -3,7 +3,7 @@
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -28,9 +28,10 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
                         0 => 'a',
                     ],
                     'serializableObject' => "O:60:\"Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject\":1:{i:0;s:1:\"a\";}",
-                    'dateTimeImmutableProp' => '2025-01-01 00:00:00',
-                    'dateTimeProp' => '2025-01-01 00:00:00',
-                    'dateTimeInterfaceProp' => '2025-01-01 00:00:00',
+                    'nativeDateTimeImmutableProp' => '2025-01-01 00:00:00',
+                    'nativeDateTimeProp' => '2025-01-01 00:00:00',
+                    'nativeDateTimeInterfaceProp' => '2025-01-01 00:00:00',
+                    'dateTimeProp' => '2025-01-01T00:00:00.000Z',
                 ],
             ],
             new ArrayOfObjectsSerializer()->serialize([new ObjectWithSerializerProperties()]),
@@ -39,7 +40,7 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
 
     public function test_only_arrays_allowed(): void
     {
-        $this->expectException(CannotSerializeValue::class);
+        $this->expectException(ValueCouldNotBeSerialized::class);
 
         new EnumSerializer()->serialize('foo');
     }

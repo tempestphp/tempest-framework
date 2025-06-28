@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\InvalidValue;
+use Tempest\Database\DialectWasNotSupported;
+use Tempest\Database\Exceptions\ValueWasInvalid;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
 
 final readonly class SetStatement implements QueryStatement
 {
@@ -21,7 +21,7 @@ final readonly class SetStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         if ($this->values === []) {
-            throw new InvalidValue($this->name, json_encode($this->values));
+            throw new ValueWasInvalid($this->name, json_encode($this->values));
         }
 
         return match ($dialect) {
@@ -32,7 +32,7 @@ final readonly class SetStatement implements QueryStatement
                 $this->default ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            default => throw new UnsupportedDialect(),
+            default => throw new DialectWasNotSupported(),
         };
     }
 }

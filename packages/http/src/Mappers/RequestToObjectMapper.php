@@ -7,7 +7,7 @@ namespace Tempest\Http\Mappers;
 use Tempest\Http\Request;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Validator;
 
 use function Tempest\map;
@@ -45,7 +45,7 @@ final readonly class RequestToObjectMapper implements Mapper
         $failingRules = new Validator()->validateValuesForClass($to, $data);
 
         if ($failingRules !== []) {
-            throw new ValidationException($from, $failingRules);
+            throw new ValidationFailed($from, $failingRules);
         }
 
         return map($data)->with(ArrayToObjectMapper::class)->to($to);

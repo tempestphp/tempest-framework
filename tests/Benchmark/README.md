@@ -12,6 +12,3 @@ Run in the repository root using:
 ```
 
 Iterations can be used to alter how many times all benchmarks are ran.
-
-
-

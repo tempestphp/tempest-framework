@@ -6,9 +6,9 @@ namespace Tempest\DateTime;
 
 use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface as NativeDateTimeInterface;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 
 /**
  * @require-implements TemporalInterface
@@ -116,6 +116,27 @@ trait TemporalConvenienceMethods
         return $ca !== Comparison\Order::EQUAL && $cb !== Comparison\Order::EQUAL && $ca !== $cb;
     }
 
+    public function isFuture(): bool
+    {
+        return $this->after(Timestamp::now());
+    }
+
+    public function isPast(): bool
+    {
+        return $this->before(Timestamp::now());
+    }
+
+    /**
+     * Adds an hour to this temporal object, returning a new instance with the added hour.
+     *
+     * @throws Exception\UnderflowException If adding the hours results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the hours results in an arithmetic overflow.
+     */
+    public function plusHour(): static
+    {
+        return $this->plusHours(1);
+    }
+
     /**
      * Adds the specified hours to this temporal object, returning a new instance with the added hours.
      *
@@ -125,6 +146,17 @@ trait TemporalConvenienceMethods
     public function plusHours(int $hours): static
     {
         return $this->plus(Duration::hours($hours));
+    }
+
+    /**
+     * Adds a minute to this temporal object, returning a new instance with the added minute.
+     *
+     * @throws Exception\UnderflowException If adding the minutes results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the minutes results in an arithmetic overflow.
+     */
+    public function plusMinute(): static
+    {
+        return $this->plusMinutes(1);
     }
 
     /**
@@ -139,6 +171,17 @@ trait TemporalConvenienceMethods
     }
 
     /**
+     * Adds a second to this temporal object, returning a new instance with the added second.
+     *
+     * @throws Exception\UnderflowException If adding the seconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the seconds results in an arithmetic overflow.
+     */
+    public function plusSecond(): static
+    {
+        return $this->plusSeconds(1);
+    }
+
+    /**
      * Adds the specified seconds to this temporal object, returning a new instance with the added seconds.
      *
      * @throws Exception\UnderflowException If adding the seconds results in an arithmetic underflow.
@@ -147,6 +190,17 @@ trait TemporalConvenienceMethods
     public function plusSeconds(int $seconds): static
     {
         return $this->plus(Duration::seconds($seconds));
+    }
+
+    /**
+     * Adds a millisecond to this temporal object, returning a new instance with the added millisecond.
+     *
+     * @throws Exception\UnderflowException If adding the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the milliseconds results in an arithmetic overflow.
+     */
+    public function plusMillisecond(): static
+    {
+        return $this->plusMilliseconds(1);
     }
 
     /**
@@ -161,6 +215,17 @@ trait TemporalConvenienceMethods
     }
 
     /**
+     * Adds a nanosecond to this temporal object, returning a new instance with the added nanosecond.
+     *
+     * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the nanoseconds results in an arithmetic overflow.
+     */
+    public function plusNanosecond(): static
+    {
+        return $this->plusNanoseconds(1);
+    }
+
+    /**
      * Adds the specified nanoseconds to this temporal object, returning a new instance with the added nanoseconds.
      *
      * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
@@ -169,6 +234,17 @@ trait TemporalConvenienceMethods
     public function plusNanoseconds(int $nanoseconds): static
     {
         return $this->plus(Duration::nanoseconds($nanoseconds));
+    }
+
+    /**
+     * Subtracts an hour from this temporal object, returning a new instance with the subtracted hour.
+     *
+     * @throws Exception\UnderflowException If subtracting the hours results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the hours results in an arithmetic overflow.
+     */
+    public function minusHour(): static
+    {
+        return $this->minusHours(1);
     }
 
     /**
@@ -183,6 +259,17 @@ trait TemporalConvenienceMethods
     }
 
     /**
+     * Subtracts a minute from this temporal object, returning a new instance with the subtracted minute.
+     *
+     * @throws Exception\UnderflowException If subtracting the minutes results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the minutes results in an arithmetic overflow.
+     */
+    public function minusMinute(): static
+    {
+        return $this->minusMinutes(1);
+    }
+
+    /**
      * Subtracts the specified minutes from this temporal object, returning a new instance with the subtracted minutes.
      *
      * @throws Exception\UnderflowException If subtracting the minutes results in an arithmetic underflow.
@@ -191,6 +278,17 @@ trait TemporalConvenienceMethods
     public function minusMinutes(int $minutes): static
     {
         return $this->minus(Duration::minutes($minutes));
+    }
+
+    /**
+     * Subtracts a second from this temporal object, returning a new instance with the subtracted second.
+     *
+     * @throws Exception\UnderflowException If subtracting the seconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the seconds results in an arithmetic overflow.
+     */
+    public function minusSecond(): static
+    {
+        return $this->minusSeconds(1);
     }
 
     /**
@@ -205,6 +303,17 @@ trait TemporalConvenienceMethods
     }
 
     /**
+     * Substracts a millisecond to this temporal object, returning a new instance with the subtracted millisecond.
+     *
+     * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the milliseconds results in an arithmetic overflow.
+     */
+    public function minusMillisecond(): static
+    {
+        return $this->minusMilliseconds(1);
+    }
+
+    /**
      * Subtracts the specified milliseconds from this temporal object, returning a new instance with the subtracted milliseconds.
      *
      * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
@@ -213,6 +322,17 @@ trait TemporalConvenienceMethods
     public function minusMilliseconds(int $milliseconds): static
     {
         return $this->minus(Duration::milliseconds($milliseconds));
+    }
+
+    /**
+     * Subtracts a nanosecond from this temporal object, returning a new instance with the subtracted nanosecond.
+     *
+     * @throws Exception\UnderflowException If subtracting the nanoseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the nanoseconds results in an arithmetic overflow.
+     */
+    public function minusNanosecond(): static
+    {
+        return $this->minusNanoseconds(1);
     }
 
     /**
@@ -239,6 +359,18 @@ trait TemporalConvenienceMethods
         $b = $other->getTimestamp()->toParts();
 
         return Duration::fromParts(0, 0, $a[0] - $b[0], $a[1] - $b[1]);
+    }
+
+    /**
+     * Calculates the duration between this temporal object and the given one.
+     *
+     * @param TemporalInterface $other The temporal object to calculate the duration to.
+     *
+     * @return Duration The duration between the two temporal objects.
+     */
+    public function between(TemporalInterface $other): Duration
+    {
+        return $this->since($other);
     }
 
     /**

@@ -1,0 +1,29 @@
+{
+    "name": "tempest/icon",
+    "description": "A component for working with icons.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/container": "dev-main",
+        "tempest/http-client": "dev-main",
+        "tempest/support": "dev-main",
+        "symfony/cache": "^7.2"
+    },
+    "suggest": {
+        "tempest/event-bus": "For events support"
+    },
+    "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
+        "psr-4": {
+            "Tempest\\Icon\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Icon\\Tests\\": "tests"
+        }
+    }
+}

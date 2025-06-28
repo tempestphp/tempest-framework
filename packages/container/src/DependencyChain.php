@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Closure;
-use Tempest\Container\Exceptions\CircularDependencyException;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Reflection\Reflector;
 
 final class DependencyChain
@@ -24,7 +24,7 @@ final class DependencyChain
         $dependency = new Dependency($dependency);
 
         if (isset($this->dependencies[$dependency->getName()])) {
-            throw new CircularDependencyException($this, $dependency);
+            throw new CircularDependencyEncountered($this, $dependency);
         }
 
         $this->dependencies[$dependency->getName()] = $dependency;

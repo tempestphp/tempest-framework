@@ -7,10 +7,10 @@ namespace Tempest\DateTime;
 use DateTimeInterface as NativeDateTimeInterface;
 use JsonSerializable;
 use Stringable;
+use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Comparable;
 use Tempest\Support\Comparison\Equable;
 use Tempest\Support\Comparison\Order;
-use Tempest\Support\Language\Locale;
 
 /**
  * Represents a temporal object that can be manipulated and compared.
@@ -84,6 +84,16 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function betweenTimeExclusive(TemporalInterface $a, TemporalInterface $b): bool;
 
     /**
+     * Checks if this instance is in the future.
+     */
+    public function isFuture(): bool;
+
+    /**
+     * Checks if this instance is in the past.
+     */
+    public function isPast(): bool;
+
+    /**
      * Adds the specified duration to this temporal object, returning a new instance with the added duration.
      *
      * @throws Exception\UnderflowException If adding the duration results in an arithmetic underflow.
@@ -100,12 +110,28 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function minus(Duration $duration): static;
 
     /**
+     * Adds an hour to this temporal object, returning a new instance with the added hour.
+     *
+     * @throws Exception\UnderflowException If adding the hours results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the hours results in an arithmetic overflow.
+     */
+    public function plusHour(): static;
+
+    /**
      * Adds the specified hours to this temporal object, returning a new instance with the added hours.
      *
      * @throws Exception\UnderflowException If adding the hours results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the hours results in an arithmetic overflow.
      */
     public function plusHours(int $hours): static;
+
+    /**
+     * Adds a minute to this temporal object, returning a new instance with the added minute.
+     *
+     * @throws Exception\UnderflowException If adding the minutes results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the minutes results in an arithmetic overflow.
+     */
+    public function plusMinute(): static;
 
     /**
      * Adds the specified minutes to this temporal object, returning a new instance with the added minutes.
@@ -116,12 +142,28 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function plusMinutes(int $minutes): static;
 
     /**
+     * Adds a second to this temporal object, returning a new instance with the added second.
+     *
+     * @throws Exception\UnderflowException If adding the seconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the seconds results in an arithmetic overflow.
+     */
+    public function plusSecond(): static;
+
+    /**
      * Adds the specified seconds to this temporal object, returning a new instance with the added seconds.
      *
      * @throws Exception\UnderflowException If adding the seconds results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the seconds results in an arithmetic overflow.
      */
     public function plusSeconds(int $seconds): static;
+
+    /**
+     * Adds a millisecond to this temporal object, returning a new instance with the added millisecond.
+     *
+     * @throws Exception\UnderflowException If adding the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the milliseconds results in an arithmetic overflow.
+     */
+    public function plusMillisecond(): static;
 
     /**
      * Adds the specified milliseconds to this temporal object, returning a new instance with the added milliseconds.
@@ -132,12 +174,28 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function plusMilliseconds(int $milliseconds): static;
 
     /**
+     * Adds a nanosecond to this temporal object, returning a new instance with the added nanosecond.
+     *
+     * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the nanoseconds results in an arithmetic overflow.
+     */
+    public function plusNanosecond(): static;
+
+    /**
      * Adds the specified nanoseconds to this temporal object, returning a new instance with the added nanoseconds.
      *
      * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the nanoseconds results in an arithmetic overflow.
      */
     public function plusNanoseconds(int $nanoseconds): static;
+
+    /**
+     * Subtracts an hour from this temporal object, returning a new instance with the subtracted hour.
+     *
+     * @throws Exception\UnderflowException If subtracting the hours results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the hours results in an arithmetic overflow.
+     */
+    public function minusHour(): static;
 
     /**
      * Subtracts the specified hours from this temporal object, returning a new instance with the subtracted hours.
@@ -148,12 +206,28 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function minusHours(int $hours): static;
 
     /**
+     * Subtracts a minute from this temporal object, returning a new instance with the subtracted minute.
+     *
+     * @throws Exception\UnderflowException If subtracting the minutes results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the minutes results in an arithmetic overflow.
+     */
+    public function minusMinute(): static;
+
+    /**
      * Subtracts the specified minutes from this temporal object, returning a new instance with the subtracted minutes.
      *
      * @throws Exception\UnderflowException If subtracting the minutes results in an arithmetic underflow.
      * @throws Exception\OverflowException If subtracting the minutes results in an arithmetic overflow.
      */
     public function minusMinutes(int $minutes): static;
+
+    /**
+     * Subtracts a second from this temporal object, returning a new instance with the subtracted second.
+     *
+     * @throws Exception\UnderflowException If subtracting the seconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the seconds results in an arithmetic overflow.
+     */
+    public function minusSecond(): static;
 
     /**
      * Subtracts the specified seconds from this temporal object, returning a new instance with the subtracted seconds.
@@ -164,12 +238,28 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function minusSeconds(int $seconds): static;
 
     /**
+     * Substracts a millisecond to this temporal object, returning a new instance with the subtracted millisecond.
+     *
+     * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the milliseconds results in an arithmetic overflow.
+     */
+    public function minusMillisecond(): static;
+
+    /**
      * Substracts the specified milliseconds to this temporal object, returning a new instance with the subtracted milliseconds.
      *
      * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
      * @throws Exception\OverflowException If subtracting the milliseconds results in an arithmetic overflow.
      */
     public function minusMilliseconds(int $milliseconds): static;
+
+    /**
+     * Subtracts a nanosecond from this temporal object, returning a new instance with the subtracted nanosecond.
+     *
+     * @throws Exception\UnderflowException If subtracting the nanoseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the nanoseconds results in an arithmetic overflow.
+     */
+    public function minusNanosecond(): static;
 
     /**
      * Subtracts the specified nanoseconds from this temporal object, returning a new instance with the subtracted nanoseconds.
@@ -189,7 +279,16 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function since(TemporalInterface $other): Duration;
 
     /**
-     * Formats this {@see TemporalInterface} instance based on a specific pattern, with optional customization for timezone and locale.
+     * Calculates the duration between this temporal object and the given one.
+     *
+     * @param TemporalInterface $other The temporal object to calculate the duration to.
+     *
+     * @return Duration The duration between the two temporal objects.
+     */
+    public function between(TemporalInterface $other): Duration;
+
+    /**
+     * Formats this {@see Tempest\DateTime\TemporalInterface} instance based on a specific pattern, with optional customization for timezone and locale.
      *
      * This method allows for detailed customization of the output string by specifying a format pattern. If no pattern is provided,
      * a default, implementation-specific pattern will be used. Additionally, the method supports specifying a timezone and locale
@@ -205,7 +304,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      * @param null|Timezone $timezone Optional timezone for formatting. If null, uses the system's default timezone.
      * @param null|Locale $locale Optional locale for formatting. If null, uses the system's default locale.
      *
-     * @return string The formatted {@see TemporalInterface} instance string, according to the specified pattern, timezone, and locale.
+     * @return string The formatted {@see Tempest\DateTime\TemporalInterface} instance string, according to the specified pattern, timezone, and locale.
      *
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      * @see Timezone::default()

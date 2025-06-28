@@ -5,9 +5,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "doctrine/inflector": "^2.0",
         "tempest/container": "dev-main",
-        "voku/portable-ascii": "^2.0.3"
+        "voku/portable-ascii": "^2.0.3",
+        "symfony/uid": "^7.1"
     },
     "autoload": {
         "psr-4": {
@@ -22,7 +22,6 @@
             "src/Random/functions.php",
             "src/Regex/functions.php",
             "src/Namespace/functions.php",
-            "src/Language/functions.php",
             "src/Path/functions.php",
             "src/Comparison/functions.php",
             "src/Math/constants.php",

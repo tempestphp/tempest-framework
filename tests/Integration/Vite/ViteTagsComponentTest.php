@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use Tempest\View\ViewCache;
 use Tempest\Vite\ViteConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

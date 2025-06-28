@@ -2,7 +2,89 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0-beta.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.6..1.0.0-beta.1)  —  2025-05-07
+## [1.0.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0..1.0.1)  —  2025-06-27
+
+### 🚀 Features
+
+- **console**: allow dynamic arguments for specific console commands (#1322) ([facdc25](https://github.com/tempestphp/tempest-framework/commit/facdc25c15df87afc844b623683f46aabc87dc55))
+- **router**: handle `ConvertsToResponse` outside of exception handler (#1320) ([d4a219d](https://github.com/tempestphp/tempest-framework/commit/d4a219d24b628f8913cb588b6936fbe8d29101e7))
+- **router**: allow specifying port using `host:port` syntax (#1321) ([dba57d8](https://github.com/tempestphp/tempest-framework/commit/dba57d8e5df1bfb66c3c4d8a8138cb2dd0508832))
+
+
+## [1.0.0](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-beta.1..v1.0.0)  —  2025-06-27
+
+### 🚀 Features
+
+- **cache**: separate internal and user caches (#1245) ([36edbd8](https://github.com/tempestphp/tempest-framework/commit/36edbd864b7061699719dd0c39ba862c1ccc1421))
+- **cache**: support stale while revalidate (#1269) ([dde685a](https://github.com/tempestphp/tempest-framework/commit/dde685a27666a3223bc55cc7a0d241ed54b08c00))
+- **console**: add inline documentation to console methods (#1232) ([6dd0cbb](https://github.com/tempestphp/tempest-framework/commit/6dd0cbb297675d6d4959dc55ac1231f3210105fd))
+- **core**: add `about` command (#1226) ([25c4aff](https://github.com/tempestphp/tempest-framework/commit/25c4aff25f2f757b011ae002e3e35a45144a60e1))
+- **core**: add discovery config (#1198) ([7b3cc70](https://github.com/tempestphp/tempest-framework/commit/7b3cc708f10ba722ea7479e3ad0c14358783dccc))
+- **core**: support exception reporting (#1264) ([914ed58](https://github.com/tempestphp/tempest-framework/commit/914ed58b223c93d7f5193121f592181ce856e099))
+- **core**: load `local` and `production` configurations last (#1266) ([0306cbd](https://github.com/tempestphp/tempest-framework/commit/0306cbdf10bbf05620f357e19f654aaacec20d11))
+- **database**: add `count()` helper to `IsDatabaseModel` trait (#1181) ([f2c9e47](https://github.com/tempestphp/tempest-framework/commit/f2c9e47451d628ffae9d5d3d196e49b415c82d09))
+- **database**: add insert()->then() and prevent invalid relations from being attached (#1225) ([0e78895](https://github.com/tempestphp/tempest-framework/commit/0e788958b8d61e897befab88f492b26f97a3fdad))
+- **database**: support multiple databases in migrations and query builders (#1267) ([24ba164](https://github.com/tempestphp/tempest-framework/commit/24ba16413b66c616336b9131340e161160691242))
+- **database**: add ShouldMigrate interface (#1273) ([d6d3e37](https://github.com/tempestphp/tempest-framework/commit/d6d3e3786d12a840c197b1166049883b6a052568))
+- **database**: support dto fields (#1305) ([9b802b8](https://github.com/tempestphp/tempest-framework/commit/9b802b89f1411992df549953107b4ad9daa071e6))
+- **datetime**: support tempest datetime in validator and mapper (#1257) ([5b9d8ff](https://github.com/tempestphp/tempest-framework/commit/5b9d8ffd1db15c651234db1bdab58e6a92ff2b59))
+- **http**: add testing client (#1295) ([e3743ae](https://github.com/tempestphp/tempest-framework/commit/e3743ae756f588e7ce358dd64a0f3ba94840e066))
+- **icon**: introduce icon component (#1313) ([cc5b0a6](https://github.com/tempestphp/tempest-framework/commit/cc5b0a610f3be3440815603f142132a575a0a2c3))
+- **intl**: add localization support (#1294) ([17eeebc](https://github.com/tempestphp/tempest-framework/commit/17eeebc44cb7779800faf1643bc3a5e818f7e8f4))
+- **router**: support server-sent events (#1260) ([b5420a9](https://github.com/tempestphp/tempest-framework/commit/b5420a983e237c0c53cb21f4af175ed92d17963a))
+- **support**: add number formatting utils (#1268) ([c2f4e9d](https://github.com/tempestphp/tempest-framework/commit/c2f4e9db09e1a5ecfd9ed257637fa1c2312fb7f0))
+- **support**: add uuid utilities (#1270) ([20c3559](https://github.com/tempestphp/tempest-framework/commit/20c35597885b35384f362cf0df7898091bdeaf22))
+- **validation**: add ability to validate an array of values (#1212) ([c4a9237](https://github.com/tempestphp/tempest-framework/commit/c4a9237bac733a71210e57536ec0dbf7e9ddcb07))
+- **view**: support escaped expression attributes (#1222) ([014b67f](https://github.com/tempestphp/tempest-framework/commit/014b67f019701559c82727a65c4d40996e863670))
+- **view**: default slot content (#1300) ([d1a21b0](https://github.com/tempestphp/tempest-framework/commit/d1a21b0d6c9a0197aa78e860a3bc0ef2986823ca))
+- **vite-plugin-tempest**: allow overriding configuration using `TEMPEST_PLUGIN_CONFIGURATION_OVERRIDE` (#1256) ([05d9942](https://github.com/tempestphp/tempest-framework/commit/05d9942bae6819fac6d65167a987ed3f49fd4a4c))
+
+### 🐛 Bug fixes
+
+- **cache**: allow cache clear to be forced (#1272) ([768273a](https://github.com/tempestphp/tempest-framework/commit/768273a73f17e70ed4e11bfa135e548e805b661e))
+- **console**: prevent unknown console arguments (#1238) ([975b49a](https://github.com/tempestphp/tempest-framework/commit/975b49adfb279a518242e45f8a5cdf2d2be5df06))
+- **core**: register `HttpExceptionHandler` only in production (#1220) ([f3a21a5](https://github.com/tempestphp/tempest-framework/commit/f3a21a545ce1d68af8ed908394d50c779b699d04))
+- **core**: allow discovery:generate to run even when full caching is enabled (#1223) ([1b06332](https://github.com/tempestphp/tempest-framework/commit/1b063329bb2bbfbcacc0a20f54988dd68d6e6c7f))
+- **core**: display clean version in `about` command (#1251) ([f267de2](https://github.com/tempestphp/tempest-framework/commit/f267de24c16f0e8f069bc312e9a17480fdf79c8b))
+- **core**: release script fixes for next beta (#1314) ([45fe695](https://github.com/tempestphp/tempest-framework/commit/45fe69575e3696563f647a71c0bafea2c3b40770))
+- **database**: prevent non-object model queries from trying to use the model class (#1239) ([c1561e0](https://github.com/tempestphp/tempest-framework/commit/c1561e068fa00531896ceac551797f84b08c1d91))
+- **database**: prepend backslash when creating enum columns (#1228) ([e8705a7](https://github.com/tempestphp/tempest-framework/commit/e8705a711154533950b75e6ea0679272a5a1287a))
+- **database**: properly display mysql and postgresql versions in `about` command (#1258) ([076653a](https://github.com/tempestphp/tempest-framework/commit/076653a0dc093d23734723cfd8852bea7005eb39))
+- **database**: postgres support (#1259) ([f34ad57](https://github.com/tempestphp/tempest-framework/commit/f34ad57504792c474b38377c66832b38d9373b98))
+- **database**: support semicolons in queries (#1262) ([b110123](https://github.com/tempestphp/tempest-framework/commit/b1101237395995ed373c72bd7f81a698ac7b7f83))
+- **event-bus**: reorder `listen` parameters for consistency (#1291) ([0d6e6ee](https://github.com/tempestphp/tempest-framework/commit/0d6e6ee401b2310bfbd423891055f535e9990ed6))
+- **framework**: handle reflection in config show command (#1211) ([972870f](https://github.com/tempestphp/tempest-framework/commit/972870f53d4e18b44a35454123e120a1fb6199ac))
+- **intl**: remove circular dependency on datetime component (#1299) ([957f9c8](https://github.com/tempestphp/tempest-framework/commit/957f9c852bcd4b116516066f987604c750227bfc))
+- **intl**: fix circular dependency (#1301) ([9e5eed6](https://github.com/tempestphp/tempest-framework/commit/9e5eed60d475c4512a35dd7d8ab1cdedffad9fcd))
+- **intl**: fix circular dependency (#1302) ([6c71b06](https://github.com/tempestphp/tempest-framework/commit/6c71b06ce453afe393a5a2f35394f3f7dea7da72))
+- **router**: check internal dead links without the domain (#1210) ([62f45c3](https://github.com/tempestphp/tempest-framework/commit/62f45c3423429468ed76e3d24e95b0bc6c40238b))
+- **router**: require hard-coded uris to start with a slash in `Router::toUri` (#1205) ([1f3ec14](https://github.com/tempestphp/tempest-framework/commit/1f3ec141544cb3048222b4b0eef6255b4f68aad8))
+- **support**: make `Arr\forget_values` and `Arr\forget_keys` mutable (#1215) ([286d9a0](https://github.com/tempestphp/tempest-framework/commit/286d9a020fb438f8e290931ad9a499e0903c5a4c))
+- **support**: use `Closure` instead of `callable` when calling `preg_replace_callback` (#1231) ([ce48368](https://github.com/tempestphp/tempest-framework/commit/ce4836853468aba13da362de04a23b88902d18b3))
+- **support**: support more `to_snake_case` edge cases (#1250) ([dcf926a](https://github.com/tempestphp/tempest-framework/commit/dcf926a4e44e702d0352e181eb1a83b9166ac516))
+- **view**: properly unset local view component variables (#1221) ([6bdb652](https://github.com/tempestphp/tempest-framework/commit/6bdb65213f79cfdd25f4b53628fb5dfbdf0d5eb3))
+- **view**: prevent infinite loop with unclosed PHP or comment tags (#1282) ([347513a](https://github.com/tempestphp/tempest-framework/commit/347513a36ad8436f7ba5068ede8d545c17f850b7))
+- **view**: fix falsy boolean evaluation on comments (#1289) ([8d0d780](https://github.com/tempestphp/tempest-framework/commit/8d0d780e5f0974ab64c5b9d0a07dfec08091cb7a))
+- **view**: handle icon name parsing without colon (#1298) ([e34e120](https://github.com/tempestphp/tempest-framework/commit/e34e120eecc59166e1c09ecf4a13c51c1ffc98dc))
+- **view**: `InvalidClosingTag` should ignore commented out code attributes (#1288) ([3892651](https://github.com/tempestphp/tempest-framework/commit/3892651631bd9cfaaf1335eb7fc50a3225c75fcd))
+- **vite**: ignore missing `.gitignore` during installation (#1275) ([a986846](https://github.com/tempestphp/tempest-framework/commit/a986846b80b8c9db16d31c4a4c0754d59729132a))
+- **vite**: use npm as fallback when no package manager is detected during installation (#1297) ([b8b64d0](https://github.com/tempestphp/tempest-framework/commit/b8b64d0e54ef3e81c9fa521bfb80544e94557853))
+- use correct README guideline link (#1213) ([670da14](https://github.com/tempestphp/tempest-framework/commit/670da14940accc950a3e2ea3ebdb020272ca9d58))
+
+### 🚜 Refactor
+
+- **console**: update `OutputMode` enum casing (#1233) ([a4fa4a6](https://github.com/tempestphp/tempest-framework/commit/a4fa4a63ba9c7b045d97f5a6c5e0c459f9e7d098))
+- **core**: move internal storage to project root (#1285) ([a3afdc7](https://github.com/tempestphp/tempest-framework/commit/a3afdc765c2ece5cea123d022fc0efa4aebd2962))
+- **database**: improve data mapping and add select()->join() (#1244) ([9c390ea](https://github.com/tempestphp/tempest-framework/commit/9c390eab34f2d7faace27d5f73d83f4ca63ea971))
+- **http**: improve session handling (#1293) ([f4da1bd](https://github.com/tempestphp/tempest-framework/commit/f4da1bd9b01f894b12cdf6c74d85ffab9046179e))
+- **intl**: move currency enum to `tempest/intl` (#1312) ([5755f80](https://github.com/tempestphp/tempest-framework/commit/5755f80cb6dff1eaa7c898ca42960227c40dc8e5))
+- **router**: improve exception handling (#1263) ([86a28c5](https://github.com/tempestphp/tempest-framework/commit/86a28c566fad3f4426a714d0b5d660a73ec8d10e))
+- **router**: refactor router logic to middleware (#1307) ([c17719b](https://github.com/tempestphp/tempest-framework/commit/c17719b2affa4fb20adaa80668a9f94833a20f90))
+- **support**: clarify `has` and `contains` methods (#1296) ([7597029](https://github.com/tempestphp/tempest-framework/commit/7597029b62d43b5bb6f4f3ad2c4f6181d1dce3eb))
+- consistent exception naming (#1308) ([07873ea](https://github.com/tempestphp/tempest-framework/commit/07873ea0280722d081bfa17f05c26b46f7bd398b))
+
+
+## [1.0.0-beta.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.6..v1.0.0-beta.1)  —  2025-05-07
 
 ### 🚀 Features
 
@@ -392,7 +474,7 @@ All notable changes to this project will be documented in this file.
 - add release script ([e1a1107](https://github.com/tempestphp/tempest-framework/commit/e1a110750c7329c8dcfb05bfc9cc5bfa0152ca8e))
 
 
-## 1.0.0-alpha.2  —  2024-10-04
+## [1.0.0-alpha.2](https://github.com/tempestphp/tempest-framework/compare/0.0.1..v1.0.0-alpha.2)  —  2024-10-04
 
 ### 🚀 Features
 
@@ -457,3 +539,7 @@ All notable changes to this project will be documented in this file.
 - update console readme (#444) ([7c6f1b0](https://github.com/tempestphp/tempest-framework/commit/7c6f1b083fd429d58cbde2d30b4af2143e9c58f0))
 
 
+## 0.0.1  —  2024-02-09
+
+
+<!-- generated by git-cliff -->

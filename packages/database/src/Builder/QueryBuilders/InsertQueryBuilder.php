@@ -2,51 +2,89 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Id;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Conditions\HasConditions;
 
-final readonly class InsertQueryBuilder
+use function Tempest\Database\model;
+
+final class InsertQueryBuilder implements BuildsQuery
 {
+    use HasConditions, OnDatabase;
+
     private InsertStatement $insert;
 
+    private array $after = [];
+
     public function __construct(
-        private string|object $model,
-        private array $rows,
-        private SerializerFactory $serializerFactory,
+        private readonly string|object $model,
+        private readonly array $rows,
+        private readonly SerializerFactory $serializerFactory,
     ) {
         $this->insert = new InsertStatement($this->resolveTableDefinition());
     }
 
     public function execute(mixed ...$bindings): Id
     {
-        return $this->build()->execute(...$bindings);
-    }
+        $id = $this->build()->execute(...$bindings);
 
-    public function build(): Query
-    {
-        $bindings = [];
+        foreach ($this->after as $after) {
+            $query = $after($id);
 
-        foreach ($this->resolveEntries() as $entry) {
-            $this->insert->addEntry($entry);
-
-            foreach ($entry as $value) {
-                $bindings[] = $value;
+            if ($query instanceof BuildsQuery) {
+                $query->build()->execute();
             }
         }
 
-        return new Query(
-            $this->insert,
-            $bindings,
-        );
+        return $id;
     }
 
-    private function resolveEntries(): array
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
+    public function build(mixed ...$bindings): Query
+    {
+        $definition = model($this->model);
+
+        foreach ($this->resolveData() as $data) {
+            foreach ($data as $key => $value) {
+                if ($definition->getHasMany($key)) {
+                    throw new HasManyRelationCouldNotBeInsterted($definition->getName(), $key);
+                }
+
+                if ($definition->getHasOne($key)) {
+                    throw new HasOneRelationCouldNotBeInserted($definition->getName(), $key);
+                }
+
+                $bindings[] = $value;
+            }
+
+            $this->insert->addEntry($data);
+        }
+
+        return new Query($this->insert, $bindings)->onDatabase($this->onDatabase);
+    }
+
+    public function then(Closure ...$callbacks): self
+    {
+        $this->after = [...$this->after, ...$callbacks];
+
+        return $this;
+    }
+
+    private function resolveData(): array
     {
         $entries = [];
 
@@ -59,6 +97,8 @@ final readonly class InsertQueryBuilder
             }
 
             // The rest are model objects
+            $definition = model($model);
+
             $modelClass = new ClassReflector($model);
 
             $entry = [];
@@ -69,8 +109,8 @@ final readonly class InsertQueryBuilder
                     continue;
                 }
 
-                // HasMany relations are skipped
-                if ($property->getIterableType()?->isRelation()) {
+                // HasMany and HasOne relations are skipped
+                if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
                     continue;
                 }
 
@@ -78,8 +118,8 @@ final readonly class InsertQueryBuilder
 
                 $value = $property->getValue($model);
 
-                // BelongsTo and HasMany relations are included
-                if ($property->getType()->isRelation()) {
+                // BelongsTo and reverse HasMany relations are included
+                if ($definition->isRelation($property)) {
                     $column .= '_id';
 
                     $value = match (true) {
@@ -93,7 +133,7 @@ final readonly class InsertQueryBuilder
                     };
                 }
 
-                // Check if value needs serialization
+                // Check if the value needs serialization
                 $serializer = $this->serializerFactory->forProperty($property);
 
                 if ($value !== null && $serializer !== null) {

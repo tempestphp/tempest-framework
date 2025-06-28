@@ -4,6 +4,9 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
 use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -18,15 +21,15 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->where('`bar` = ?', 'boo')
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `foo`
             WHERE `bar` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             'boo',
             $query->bindings[0],
         );
@@ -39,11 +42,11 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->allowAll()
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `authors`
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
     }
 
@@ -56,12 +59,12 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->delete()
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `authors`
             WHERE `id` = :id
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -84,17 +87,33 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             )
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `foo`
             WHERE `bar` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
             'boo',
             $query->bindings[0],
         );
+    }
+
+    public function test_delete_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        query('authors')->delete()->where('id = ?', 1)->execute();
+
+        $count = query('authors')->count()->where('id = ?', 1)->execute();
+
+        $this->assertSame(0, $count);
     }
 }

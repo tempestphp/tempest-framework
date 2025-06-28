@@ -5,8 +5,8 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\EmptyUpdateStatement;
-use Tempest\Database\Exceptions\InvalidUpdateStatement;
+use Tempest\Database\Exceptions\UpdateStatementWasEmpty;
+use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 
@@ -39,7 +39,7 @@ final class UpdateStatementTest extends TestCase
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
-        $this->expectException(EmptyUpdateStatement::class);
+        $this->expectException(UpdateStatementWasEmpty::class);
 
         new UpdateStatement(
             table: $tableDefinition,
@@ -51,7 +51,7 @@ final class UpdateStatementTest extends TestCase
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
-        $this->expectException(InvalidUpdateStatement::class);
+        $this->expectException(UpdateStatementWasInvalid::class);
 
         new UpdateStatement(
             table: $tableDefinition,

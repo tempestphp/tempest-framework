@@ -6,7 +6,7 @@ namespace Tempest\Validation\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
@@ -32,7 +32,7 @@ final class ValidatorTest extends TestCase
 {
     public function test_validate(): void
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         $validator = new Validator();
 

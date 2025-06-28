@@ -34,6 +34,8 @@ final class MigrateFreshCommand
     public function __invoke(
         #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
         bool $validate = true,
+        #[ConsoleArgument(description: 'Use a specific database.')]
+        ?string $database = null,
     ): ExitCode {
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
@@ -44,13 +46,13 @@ final class MigrateFreshCommand
         }
 
         $this->console->header('Dropping tables');
-        $this->migrationManager->dropAll();
+        $this->migrationManager->onDatabase($database)->dropAll();
 
         if ($this->count === 0) {
             $this->console->info('There is no migration to drop.');
         }
 
-        return $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false]);
+        return $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false, 'database' => $database]);
     }
 
     #[EventHandler]

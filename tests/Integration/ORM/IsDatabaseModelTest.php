@@ -6,16 +6,20 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use Integration\ORM\Migrations\CreateCasterEnumType;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tempest\Database\Exceptions\MissingValue;
+use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Models\AWithLazy;
@@ -26,6 +30,7 @@ use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
@@ -84,6 +89,22 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
+    public function test_get_with_non_id_object(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        Foo::create(
+            bar: 'baz',
+        );
+
+        $foo = Foo::get(1);
+
+        $this->assertSame(1, $foo->id->id);
+    }
+
     public function test_creating_many_and_saving_preserves_model_id(): void
     {
         $this->migrate(
@@ -107,6 +128,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -135,6 +157,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -180,7 +203,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $a = A::select()->first();
 
-        $this->expectException(MissingRelation::class);
+        $this->expectException(RelationWasMissing::class);
 
         $b = $a->b;
     }
@@ -189,7 +212,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $a = map([])->to(AWithValue::class);
 
-        $this->expectException(MissingValue::class);
+        $this->expectException(ValueWasMissing::class);
 
         $name = $a->name;
     }
@@ -243,6 +266,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -286,49 +310,44 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $parent = ParentModel::get($parent->id, ['through.child']);
 
-        $this->assertSame('A', $parent->through[1]->child->name);
-        $this->assertSame('B', $parent->through[2]->child->name);
+        $this->assertSame('A', $parent->through[0]->child->name);
+        $this->assertSame('B', $parent->through[1]->child->name);
     }
 
     public function test_empty_has_many_relation(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateHasManyParentTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
             CreateHasManyChildTable::class,
-            CreateHasManyThroughTable::class,
         );
 
-        $parent = new ParentModel(name: 'parent')->save();
-
-        $parent = ParentModel::get($parent->id, ['through.child']);
-
-        $this->assertInstanceOf(ParentModel::class, $parent);
-        $this->assertEmpty($parent->through);
+        Book::new(title: 'Timeline Taxi')->save();
+        $book = Book::select()->with('chapters')->first();
+        $this->assertEmpty($book->chapters);
     }
 
     public function test_has_one_relation(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateHasManyParentTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
             CreateHasManyChildTable::class,
-            CreateHasManyThroughTable::class,
+            CreateIsbnTable::class,
         );
 
-        $parent = new ParentModel(name: 'parent')->save();
+        $book = Book::new(title: 'Timeline Taxi')->save();
+        $isbn = Isbn::new(value: 'tt-1', book: $book)->save();
 
-        $childA = new ChildModel(name: 'A')->save();
+        $isbn = Isbn::select()->with('book')->get($isbn->id);
 
-        $childB = new ChildModel(name: 'B')->save();
-
-        new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
-
-        $child = ChildModel::get($childA->id, ['through.parent']);
-        $child2 = ChildModel::get($childB->id, ['through2.parent']);
-
-        $this->assertSame('parent', $child->through->parent->name);
-        $this->assertSame('parent', $child2->through2->parent->name);
+        $this->assertSame('Timeline Taxi', $isbn->book->title);
     }
 
     public function test_invalid_has_one_relation(): void
@@ -343,15 +362,14 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $parent = new ParentModel(name: 'parent')->save();
 
         $childA = new ChildModel(name: 'A')->save();
-
         $childB = new ChildModel(name: 'B')->save();
 
         new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
 
         $child = ChildModel::get($childA->id, ['through.parent']);
-        $child2 = ChildModel::get($childB->id, ['through2.parent']);
-
         $this->assertSame('parent', $child->through->parent->name);
+
+        $child2 = ChildModel::select()->with('through2.parent')->get($childB->id);
         $this->assertSame('parent', $child2->through2->parent->name);
     }
 
@@ -396,6 +414,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         )->save();
 
         $a = AWithEager::select()->first();
+        $this->assertTrue(isset($a->b));
         $this->assertTrue(isset($a->b->c));
     }
 
@@ -435,6 +454,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -503,15 +523,15 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         new CasterModel(
             date: new DateTimeImmutable('2025-01-01 00:00:00'),
-            array: ['a', 'b', 'c'],
-            enum: CasterEnum::BAR,
+            array_prop: ['a', 'b', 'c'],
+            enum_prop: CasterEnum::BAR,
         )->save();
 
         $model = CasterModel::select()->first();
 
         $this->assertSame(new DateTimeImmutable('2025-01-01 00:00:00')->format('c'), $model->date->format('c'));
-        $this->assertSame(['a', 'b', 'c'], $model->array);
-        $this->assertSame(CasterEnum::BAR, $model->enum);
+        $this->assertSame(['a', 'b', 'c'], $model->array_prop);
+        $this->assertSame(CasterEnum::BAR, $model->enum_prop);
     }
 
     public function test_find(): void
@@ -546,7 +566,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_validation_on_create(): void
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         ModelWithValidation::create(
             index: -1,
@@ -560,7 +580,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             index: 1,
         );
 
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         $model->update(
             index: -1,
@@ -575,7 +595,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $model->index = -1;
 
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         $model->save();
     }
@@ -587,10 +607,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
                 index: -1,
                 skip: -1,
             );
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('index', $validationException->getMessage());
-            $this->assertStringContainsString(ModelWithValidation::class, $validationException->getMessage());
-            $this->assertStringNotContainsString('skip', $validationException->getMessage());
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertStringContainsString('index', $validationFailed->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
+            $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
         }
     }
 }

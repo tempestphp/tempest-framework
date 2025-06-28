@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
+use Tempest\Auth\AuthenticatedUserWasMissing;
 use Tempest\Auth\Authenticator;
-use Tempest\Auth\CurrentUserNotLoggedIn;
 use Tempest\Auth\Install\CreatePermissionsTable;
 use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Auth\Install\CreateUsersTable;
@@ -14,6 +14,8 @@ use Tempest\Auth\SessionAuthenticator;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\DateTime\Duration;
+use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
@@ -38,7 +40,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
-        $this->container->config(new SessionConfig(path: 'sessions'));
+        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
         $this->container->singleton(
             SessionManager::class,
             fn () => new FileSessionManager(
@@ -93,7 +95,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
         $this->assertNull($session->get('tempest_session_user'));
 
         // Container user throws
-        $this->expectException(CurrentUserNotLoggedIn::class);
+        $this->expectException(AuthenticatedUserWasMissing::class);
         $this->assertNull($this->container->get(User::class));
     }
 }

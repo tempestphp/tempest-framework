@@ -6,8 +6,8 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tempest\Database\Exceptions\MissingValue;
+use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\SkipValidation;
@@ -45,8 +45,12 @@ trait IsDatabaseModel
             ->all();
     }
 
-    public static function get(Id $id, array $relations = []): ?self
+    public static function get(string|int|Id $id, array $relations = []): ?self
     {
+        if (! ($id instanceof Id)) {
+            $id = new Id($id);
+        }
+
         return self::select()
             ->with(...$relations)
             ->get($id);
@@ -72,10 +76,14 @@ trait IsDatabaseModel
 
         $model = self::new(...$params);
 
-        $model->id = query(self::class)
+        $id = query(self::class)
             ->insert($model)
             ->build()
             ->execute();
+
+        if ($id !== null) {
+            $model->id = new Id($id);
+        }
 
         return $model;
     }
@@ -120,15 +128,15 @@ trait IsDatabaseModel
 
         $type = $property->getType();
 
-        if ($type->isIterable()) {
-            throw new MissingRelation($this, $name);
+        if ($type->isRelation()) {
+            throw new RelationWasMissing($this, $name);
         }
 
         if ($type->isBuiltIn()) {
-            throw new MissingValue($this, $name);
+            throw new ValueWasMissing($this, $name);
         }
 
-        throw new MissingRelation($this, $name);
+        throw new RelationWasMissing($this, $name);
     }
 
     public function load(string ...$relations): self

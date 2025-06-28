@@ -1,0 +1,7 @@
+{
+  "hello": "Hello, {$name}!",
+  "cart": {
+    "checkout": "Checkout",
+    "items": "<\n  .input {$count :number}\n  .match $count\n  one {{There is one item in your cart.}}\n  *   {{There is {$count} items in your cart.}}\n>"
+  }
+}

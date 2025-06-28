@@ -128,7 +128,6 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     public function test_trace_requests(): void
     {
         $this->http
-            ->throwExceptions()
             ->trace('/test')
             ->assertOk();
     }
@@ -138,7 +137,6 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
         $this->expectException(Exception::class);
 
         $this->http
-            ->throwExceptions()
             ->get('/fail');
     }
 

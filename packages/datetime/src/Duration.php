@@ -10,8 +10,7 @@ use Tempest\Support\Comparison;
 use Tempest\Support\Str;
 
 /**
- * Defines a representation of a time duration with specific hours, minutes, seconds,
- * and nanoseconds.
+ * Defines a representation of a time duration with specific hours, minutes, seconds, and nanoseconds.
  *
  * All instances are normalized as follows:
  *
@@ -27,8 +26,7 @@ use Tempest\Support\Str;
 final readonly class Duration implements Comparison\Comparable, Comparison\Equable, JsonSerializable, Stringable
 {
     /**
-     * Initializes a new instance of Duration with specified hours, minutes, seconds, and
-     * nanoseconds.
+     * Initializes a new instance of Duration with specified hours, minutes, seconds, and nanoseconds.
      *
      * @param int<-59, 59> $minutes
      * @param int<-59, 59> $seconds
@@ -45,7 +43,6 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      * Returns an instance representing the specified number of hours (and
      * optionally minutes, seconds, nanoseconds). Due to normalization, the
      * actual values in the returned instance may differ from the provided ones.
-     *
      *
      * @mago-expect best-practices/no-else-clause
      */
@@ -70,10 +67,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
     }
 
     /**
-     * Returns an instance representing the specified number of weeks, in hours.
-     *
-     * For example, `Duration::weeks(1)` is equivalent to `Duration::hours(168)`.
-     *
+     * Returns an instance representing the specified number of weeks, in hours. For example, `Duration::weeks(1)` is equivalent to `Duration::hours(168)`.
      */
     public static function weeks(int $weeks): self
     {
@@ -81,10 +75,17 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
     }
 
     /**
+     * Returns an instance representing exactly one week.
+     */
+    public static function week(): self
+    {
+        return self::weeks(1);
+    }
+
+    /**
      * Returns an instance representing the specified number of days, in hours.
      *
      * For example, `Duration::days(2)` is equivalent to `Duration::hours(48)`.
-     *
      */
     public static function days(int $days): self
     {
@@ -92,12 +93,27 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
     }
 
     /**
+     * Returns an instance representing exactly one day.
+     */
+    public static function day(): self
+    {
+        return self::days(1);
+    }
+
+    /**
      * Returns an instance representing the specified number of hours.
-     *
      */
     public static function hours(int $hours): self
     {
         return self::fromParts($hours);
+    }
+
+    /**
+     * Returns an instance representing exactly one hour.
+     */
+    public static function hour(): self
+    {
+        return self::hours(1);
     }
 
     /**
@@ -106,11 +122,18 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      * the provided one, and the resulting instance may contain larger units.
      *
      * For example, `Duration::minutes(63)` normalizes to "1 hour(s), 3 minute(s)".
-     *
      */
     public static function minutes(int $minutes): self
     {
         return self::fromParts(0, $minutes);
+    }
+
+    /**
+     * Returns an instance representing exactly one minute.
+     */
+    public static function minute(): self
+    {
+        return self::minutes(1);
     }
 
     /**
@@ -119,11 +142,18 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      * the provided one, and the resulting instance may contain larger units.
      *
      * For example, `Duration::seconds(63)` normalizes to "1 minute(s), 3 second(s)".
-     *
      */
     public static function seconds(int $seconds): self
     {
         return self::fromParts(0, 0, $seconds);
+    }
+
+    /**
+     * Returns an instance representing exactly one second.
+     */
+    public static function second(): self
+    {
+        return self::seconds(1);
     }
 
     /**
@@ -133,7 +163,6 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      * resulting instance may contain larger units.
      *
      * For example, `Duration::milliseconds(8042)` normalizes to "8 second(s), 42000000 nanosecond(s)".
-     *
      */
     public static function milliseconds(int $milliseconds): self
     {

@@ -34,4 +34,14 @@ asd</comment>');
     {
         $this->console->confirm('yes or no?');
     }
+
+    #[ConsoleCommand]
+    public function flags(bool $flag = false, bool $foo = false): void
+    {
+        if ($flag && $foo) {
+            $this->console->writeln('ok');
+        }
+
+        $this->console->confirm('yes or no?');
+    }
 }

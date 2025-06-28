@@ -6,21 +6,22 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\HasLeadingStatements;
 use Tempest\Database\QueryStatement;
 
-final class DropTableStatement implements QueryStatement
+final class DropTableStatement implements QueryStatement, HasLeadingStatements
 {
     use CanExecuteStatement;
 
+    private(set) array $leadingStatements;
+
     public function __construct(
         private readonly string $tableName,
-        /** @var \Tempest\Database\QueryStatements\DropConstraintStatement[] $dropReferences */
-        private array $dropReferences = [],
     ) {}
 
     public function dropReference(string $foreign): self
     {
-        $this->dropReferences[] = new DropConstraintStatement($this->tableName, $foreign);
+        $this->leadingStatements[] = new DropConstraintStatement($this->tableName, $foreign);
 
         return $this;
     }
@@ -33,14 +34,9 @@ final class DropTableStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $statements = [];
-
-        foreach ($this->dropReferences as $dropReference) {
-            $statements[] = $dropReference->compile($dialect);
-        }
-
-        $statements[] = sprintf('DROP TABLE IF EXISTS `%s`', $this->tableName);
-
-        return implode('; ', $statements) . ';';
+        return match ($dialect) {
+            DatabaseDialect::POSTGRESQL => sprintf('DROP TABLE IF EXISTS `%s` CASCADE', $this->tableName),
+            default => sprintf('DROP TABLE IF EXISTS `%s`', $this->tableName),
+        };
     }
 }

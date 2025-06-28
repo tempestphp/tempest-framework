@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -14,6 +15,7 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
+use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 final class FrameworkKernel implements Kernel
 {
@@ -50,7 +52,7 @@ final class FrameworkKernel implements Kernel
         )
             ->validateRoot()
             ->loadEnv()
-            ->registerEmergencyErrorHandler()
+            ->registerEmergencyExceptionHandler()
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->registerKernel()
@@ -58,7 +60,7 @@ final class FrameworkKernel implements Kernel
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadDiscovery()
-            ->registerErrorHandler()
+            ->registerExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -149,6 +151,7 @@ final class FrameworkKernel implements Kernel
 
     public function loadDiscovery(): self
     {
+        $this->container->addInitializer(DiscoveryCacheInitializer::class);
         $this->container->invoke(LoadDiscoveryClasses::class);
 
         return $this;
@@ -163,7 +166,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerInternalStorage(): self
     {
-        $path = $this->root . '/vendor/.tempest';
+        $path = $this->root . '/.tempest';
 
         if (! is_dir($path)) {
             mkdir($path, recursive: true);
@@ -190,7 +193,7 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerEmergencyErrorHandler(): self
+    public function registerEmergencyExceptionHandler(): self
     {
         $environment = Environment::fromEnv();
 
@@ -202,13 +205,13 @@ final class FrameworkKernel implements Kernel
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
         if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
-            new RegisterEmergencyExceptionHandler($this->container)->register();
+            new RegisterEmergencyExceptionHandler()->register();
         }
 
         return $this;
     }
 
-    public function registerErrorHandler(): self
+    public function registerExceptionHandler(): self
     {
         $appConfig = $this->container->get(AppConfig::class);
 
@@ -218,6 +221,7 @@ final class FrameworkKernel implements Kernel
         }
 
         $handler = $this->container->get(ExceptionHandler::class);
+
         set_exception_handler($handler->handle(...));
         set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
             new \ErrorException(

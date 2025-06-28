@@ -14,7 +14,6 @@ final class HttpApplicationTest extends FrameworkIntegrationTestCase
     public function test_http_application_run(): void
     {
         $this->http
-            ->throwExceptions()
             ->get('/')
             ->assertOk();
     }

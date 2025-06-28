@@ -4,13 +4,13 @@ php_version = "8.4.0"
 paths = ["src", "packages", "tests"]
 includes = ["vendor"]
 excludes = [
-  "./vendor/symfony/cache/Traits/ValueWrapper.php",
-  "./vendor/google/common-protos/metadata",
-  "./vendor/google/gax/metadata",
-  "./vendor/google/longrunning/metadata",
-  "./vendor/composer",
-  "**/.cache",
-  "**/*.stub.php",
+	"./vendor/symfony/cache/Traits/ValueWrapper.php",
+	"./vendor/google/common-protos/metadata",
+	"./vendor/google/gax/metadata",
+	"./vendor/google/longrunning/metadata",
+	"./vendor/composer",
+	"**/.cache",
+	"**/*.stub.php",
 ]
 
 [format]
@@ -63,6 +63,11 @@ level = "off"
 name = "strictness/require-return-type"
 ignore_arrow_function = true
 ignore_closure = true
+
+# https://github.com/carthage-software/mago/issues/206
+[[linter.rules]]
+name = "best-practices/literal-named-argument"
+level = "off"
 
 # https://github.com/carthage-software/mago/issues/146
 [[linter.rules]]

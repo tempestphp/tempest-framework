@@ -10,6 +10,8 @@ final class TempestViewLexer
 
     private ?string $current;
 
+    private bool $eof = false;
+
     public function __construct(
         private readonly string $html,
     ) {
@@ -155,7 +157,7 @@ final class TempestViewLexer
     {
         $buffer = '';
 
-        while ($this->seek(2) !== '?>') {
+        while ($this->seek(2) !== '?>' && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
@@ -175,7 +177,7 @@ final class TempestViewLexer
     {
         $buffer = '';
 
-        while ($this->seek(3) !== '-->') {
+        while ($this->seek(3) !== '-->' && $this->current !== null) {
             $buffer .= $this->consume();
         }
 

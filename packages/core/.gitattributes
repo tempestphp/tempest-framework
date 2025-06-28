@@ -6,5 +6,9 @@ tests/                    export-ignore
 phpunit.xml               export-ignore
 README.md                 export-ignore
 
-# Configure diff output for .php and .phar files.
+# Configure diff output
+*.view.php diff=html
 *.php diff=php
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
