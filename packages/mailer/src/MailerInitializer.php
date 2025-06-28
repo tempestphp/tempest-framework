@@ -8,16 +8,17 @@ use Tempest\Container\Singleton;
 use Tempest\Mail\MailerConfig;
 use Tempest\Reflection\ClassReflector;
 use Tempest\View\ViewRenderer;
+use UnitEnum;
 
 final class MailerInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, ?string $tag): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return $class->getType()->matches(Mailer::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, ?string $tag, Container $container): Mailer
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Mailer
     {
         return new GenericMailer(
             mailerConfig: $container->get(MailerConfig::class, $tag),
