@@ -31,7 +31,7 @@ final readonly class GenericResponseSender implements ResponseSender
         $this->sendHeaders($response);
         ob_flush();
 
-        if (! $this->shouldSendContent()) {
+        if ($this->shouldSendContent()) {
             $this->sendContent($response);
         }
 
