@@ -2,33 +2,25 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
-use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\Exceptions\ExpeditorWasMissing;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
-use Tempest\Mail\Transports\Smtp\Scheme;
-use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class MailerTest extends FrameworkIntegrationTestCase
 {
-    public function test_default_mailer_is_resolvable(): void
-    {
-        $mailer = $this->container->get(Mailer::class);
-
-        $this->assertInstanceOf(Mailer::class, $mailer);
+    private Mailer $mailer {
+        get => $this->container->get(Mailer::class);
     }
 
     public function test_sending_mail_requires_from(): void
     {
         $this->expectException(ExpeditorWasMissing::class);
 
-        $mailer = $this->mail->fake();
-
-        $mailer->send(new GenericEmail(
+        $this->mailer->send(new GenericEmail(
             envelope: new Envelope(
                 subject: 'Hello',
                 to: 'jon@doe.co',
@@ -41,9 +33,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(RecipientWasMissing::class);
 
-        $mailer = $this->mail->fake();
-
-        $mailer->send(new GenericEmail(
+        $this->mailer->send(new GenericEmail(
             envelope: new Envelope(
                 subject: 'Hello',
                 to: '',

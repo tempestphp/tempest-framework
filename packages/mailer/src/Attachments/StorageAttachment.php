@@ -4,6 +4,7 @@ namespace Tempest\Mail\Attachments;
 
 use Closure;
 use Tempest\Container\GenericContainer;
+use Tempest\Mail\Exceptions\FileAttachmentWasNotFound;
 use Tempest\Storage\Storage;
 use Tempest\Support\Path;
 use UnitEnum;
@@ -30,7 +31,11 @@ final class StorageAttachment implements Attachment
     public static function fromPath(string $path, ?string $name = null, ?string $contentType = null, null|string|UnitEnum $tag = null): self
     {
         if (! ($storage = self::resolveStorage($tag))) {
-            throw new \RuntimeException('No storage found.');
+            throw FileAttachmentWasNotFound::storageDoesNotExist($tag);
+        }
+
+        if (! $storage->fileOrDirectoryExists($path)) {
+            throw FileAttachmentWasNotFound::forStorageFile($path, $tag);
         }
 
         $path = Path\normalize($path);

@@ -5,14 +5,14 @@ namespace Tempest\Mail\Attachments;
 use Closure;
 
 /**
- * Represents an attachment that leaves in the local filesystem.
+ * Represents an attachment that is resolved through a closure.
  */
 final readonly class DataAttachment implements Attachment
 {
     private function __construct(
-        public Closure $resolve,
-        public ?string $name,
-        public ?string $contentType,
+        public readonly Closure $resolve,
+        public readonly ?string $name,
+        public readonly ?string $contentType,
     ) {}
 
     /**

@@ -6,7 +6,6 @@ namespace Tempest\Mail;
 
 use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
-use Symfony\Component\Mime\Header\Headers;
 use Tempest\Mail\Exceptions\ExpeditorWasMissing;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mapper\Mapper;
@@ -95,13 +94,11 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
     private function convertAddresses(null|string|array|Address $addresses): array
     {
         return arr($addresses)
-            ->map(function (string|Address|SymfonyAddress $address) {
-                return match (true) {
-                    $address instanceof SymfonyAddress => $address,
-                    $address instanceof Address => new SymfonyAddress($address->email, $address->name),
-                    is_string($address) => SymfonyAddress::create($address),
-                    default => null,
-                };
+            ->map(fn (string|Address|SymfonyAddress $address) => match (true) {
+                $address instanceof SymfonyAddress => $address,
+                $address instanceof Address => new SymfonyAddress($address->email, $address->name),
+                is_string($address) => SymfonyAddress::create($address),
+                default => null,
             })
             ->filter()
             ->toArray();

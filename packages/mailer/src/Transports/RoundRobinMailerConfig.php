@@ -34,11 +34,6 @@ final class RoundRobinMailerConfig implements MailerConfig
          * @deprecated Currently ignored.
          */
         public null|string|Address $from = null,
-
-        /*
-         * Identifies the {@see \Tempest\Mail\Mailer} instance in the container, in case you need more than one configuration.
-         */
-        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createTransport(): TransportInterface

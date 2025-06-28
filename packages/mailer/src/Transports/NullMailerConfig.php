@@ -16,7 +16,6 @@ final class NullMailerConfig implements MailerConfig
     public string $transport = NullTransport::class;
 
     public function __construct(
-        public null|string|UnitEnum $tag = null,
         public null|string|Address $from = null,
     ) {}
 

@@ -55,11 +55,6 @@ final class SesSmtpMailerConfig implements MailerConfig
          * Whether to use Amazon SES's API or SMTP server.
          */
         public Scheme $scheme = Scheme::API,
-
-        /*
-         * Identifies the {@see \Tempest\Mail\Mailer} instance in the container, in case you need more than one configuration.
-         */
-        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createTransport(): TransportInterface

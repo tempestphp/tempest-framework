@@ -3,9 +3,8 @@
 namespace Tempest\Mail;
 
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Tempest\Container\HasTag;
 
-interface MailerConfig extends HasTag
+interface MailerConfig
 {
     /**
      * The transport class.

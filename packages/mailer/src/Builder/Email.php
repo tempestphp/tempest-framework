@@ -8,7 +8,7 @@ use Tempest\Mail\Attachments\Attachment;
 use Tempest\Mail\Attachments\FileAttachment;
 use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
-use Tempest\Mail\Email;
+use Tempest\Mail\Email as EmailInterface;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Priority;
@@ -17,7 +17,7 @@ use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\View;
 use UnitEnum;
 
-final class EmailBuilder
+final class Email
 {
     public function __construct(
         private(set) null|string|array|ArrayInterface|Address $to = null,
@@ -184,7 +184,7 @@ final class EmailBuilder
     /**
      * Builds the email.
      */
-    public function make(): Email
+    public function make(): EmailInterface
     {
         return new GenericEmail(
             envelope: new Envelope(

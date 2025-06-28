@@ -78,8 +78,10 @@ abstract class IntegrationTest extends TestCase
         $this->installer = $this->container->get(InstallerTester::class);
         $this->eventBus = $this->container->get(EventBusTester::class);
         $this->storage = $this->container->get(StorageTester::class);
-        $this->mail = $this->container->get(MailerTester::class);
         $this->cache = $this->container->get(CacheTester::class);
+
+        $this->mail = $this->container->get(MailerTester::class);
+        $this->mail->preventSendingEmails();
 
         $this->exceptions = $this->container->get(ExceptionTester::class);
         $this->exceptions->preventReporting();

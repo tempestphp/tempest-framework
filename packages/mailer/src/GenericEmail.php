@@ -3,7 +3,7 @@
 namespace Tempest\Mail;
 
 /**
- * Represents a generic, basic email.
+ * Represents a generic email.
  */
 final class GenericEmail implements Email
 {

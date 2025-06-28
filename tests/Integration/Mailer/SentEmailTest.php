@@ -9,9 +9,11 @@ use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
+use Tempest\Mail\Mailer;
 use Tempest\Mail\Priority;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
+use Tempest\Mail\Testing\TestingMailer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
 
@@ -19,9 +21,13 @@ use function Tempest\view;
 
 final class SentEmailTest extends FrameworkIntegrationTestCase
 {
+    private TestingMailer $mailer {
+        get => $this->container->get(Mailer::class);
+    }
+
     private function sendTestEmail(?Envelope $envelope = null, ?Content $content = null): SentTestingEmail
     {
-        return $this->mail->fake()->send(new GenericEmail(
+        return $this->mailer->send(new GenericEmail(
             envelope: $envelope ?? new Envelope(
                 subject: 'Hello',
                 to: 'jon@doe.co',
@@ -129,9 +135,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_class_based_html(): void
     {
-        $sent = $this->mail
-            ->fake()
-            ->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'));
+        $sent = $this->mailer->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'));
 
         $sent->assertSeeInHtml('Welcome Jon Doe');
         $sent->assertSubjectContains('Welcome Jon Doe');

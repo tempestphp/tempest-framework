@@ -82,11 +82,6 @@ final class SmtpMailerConfig implements MailerConfig
          * Other options used by the underlying EsmtpTransport.
          */
         public array $options = [],
-
-        /*
-         * Identifies the {@see \Tempest\Mail\Mailer} instance in the container, in case you need more than one configuration.
-         */
-        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createTransport(): TransportInterface

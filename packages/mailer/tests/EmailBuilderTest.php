@@ -4,14 +4,14 @@ namespace Tempest\Mail\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Mail\Attachments\FileAttachment;
-use Tempest\Mail\Builder\EmailBuilder;
-use Tempest\Mail\Email;
+use Tempest\Mail\Builder\Email;
+use Tempest\Mail\Email as EmailInterface;
 
 final class EmailBuilderTest extends TestCase
 {
     public function test_builder(): void
     {
-        $email = new EmailBuilder()
+        $email = new Email()
             ->to('michael.scott@dundermifflin.com')
             ->cc(['dwight.schrute@dundermifflin.com', 'jim.halpert@dundermifflin.com'])
             ->bcc('pam.beesly@dundermifflin.com')
@@ -20,7 +20,7 @@ final class EmailBuilderTest extends TestCase
             ->withText('Gotcha!')
             ->make();
 
-        $this->assertInstanceOf(Email::class, $email);
+        $this->assertInstanceOf(EmailInterface::class, $email);
         $this->assertContains('michael.scott@dundermifflin.com', $email->envelope->to);
         $this->assertContains('dwight.schrute@dundermifflin.com', $email->envelope->cc);
         $this->assertContains('jim.halpert@dundermifflin.com', $email->envelope->cc);
