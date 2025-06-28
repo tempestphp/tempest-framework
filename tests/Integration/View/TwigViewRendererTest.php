@@ -20,9 +20,9 @@ final class TwigViewRendererTest extends FrameworkIntegrationTestCase
     public function test_twig(): void
     {
         $viewConfig = $this->container->get(ViewConfig::class);
-
         $viewConfig->rendererClass = TwigViewRenderer::class;
 
+        $this->container->unregister(ViewRenderer::class);
         $this->container->config(new TwigConfig(
             viewPaths: [__DIR__ . '/twig'],
             cachePath: 'twig-cache',

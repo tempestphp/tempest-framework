@@ -20,9 +20,9 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
     public function test_blade(): void
     {
         $viewConfig = $this->container->get(ViewConfig::class);
-
         $viewConfig->rendererClass = BladeViewRenderer::class;
 
+        $this->container->unregister(ViewRenderer::class);
         $this->container->config(new BladeConfig(
             viewPaths: [__DIR__ . '/blade'],
             cachePath: 'blade-cache',
