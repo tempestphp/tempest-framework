@@ -3,7 +3,7 @@
 namespace Tempest\Mail;
 
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Tempest\Mail\Exceptions\MissingTransportException;
+use Tempest\Mail\Exceptions\MailerTransportWasMissing;
 use Tempest\Mail\MailerConfig;
 use Tempest\View\ViewRenderer;
 
@@ -45,7 +45,7 @@ final class GenericMailer implements Mailer
     private function assertTransportInstalled(string $transport): void
     {
         if (! class_exists($transport)) {
-            throw new MissingTransportException($transport);
+            throw new MailerTransportWasMissing($transport);
         }
     }
 }

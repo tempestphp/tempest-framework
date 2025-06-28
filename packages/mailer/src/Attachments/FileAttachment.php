@@ -3,7 +3,7 @@
 namespace Tempest\Mail\Attachments;
 
 use Closure;
-use Tempest\Mail\Exceptions\CouldNotFindFileAttachmentException;
+use Tempest\Mail\Exceptions\FileAttachmentWasNotFound;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
 
@@ -30,7 +30,7 @@ final class FileAttachment implements Attachment
         $path = Path\normalize($path);
 
         if (! Filesystem\is_file($path)) {
-            throw new CouldNotFindFileAttachmentException($path);
+            throw new FileAttachmentWasNotFound($path);
         }
 
         return new self(

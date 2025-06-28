@@ -9,7 +9,7 @@ use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesSmtpTransport;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkApiTransport;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkSmtpTransport;
 
-final class MissingTransportException extends Exception implements MailerException
+final class MailerTransportWasMissing extends Exception implements MailerException
 {
     public function __construct(
         private readonly string $missing,

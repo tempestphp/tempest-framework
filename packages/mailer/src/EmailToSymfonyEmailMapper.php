@@ -7,8 +7,8 @@ namespace Tempest\Mail;
 use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 use Symfony\Component\Mime\Header\Headers;
-use Tempest\Mail\Exceptions\MissingExpeditorAddressException;
-use Tempest\Mail\Exceptions\MissingRecipientAddressException;
+use Tempest\Mail\Exceptions\ExpeditorWasMissing;
+use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 use Tempest\View\View;
@@ -47,13 +47,13 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         } elseif ($this->mailerConfig->from) {
             $symfonyEmail->from($this->mailerConfig->from);
         } else {
-            throw new MissingExpeditorAddressException();
+            throw new ExpeditorWasMissing();
         }
 
         if ($email->envelope->to) {
             $symfonyEmail->to(...$this->convertAddresses($email->envelope->to));
         } else {
-            throw new MissingRecipientAddressException();
+            throw new RecipientWasMissing();
         }
 
         if ($email->envelope->cc) {

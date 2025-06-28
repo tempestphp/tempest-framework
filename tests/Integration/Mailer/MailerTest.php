@@ -5,8 +5,8 @@ namespace Tests\Tempest\Integration\Mailer;
 use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\Envelope;
-use Tempest\Mail\Exceptions\MissingExpeditorAddressException;
-use Tempest\Mail\Exceptions\MissingRecipientAddressException;
+use Tempest\Mail\Exceptions\ExpeditorWasMissing;
+use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
 use Tempest\Mail\Transports\Smtp\Scheme;
@@ -24,7 +24,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
     public function test_sending_mail_requires_from(): void
     {
-        $this->expectException(MissingExpeditorAddressException::class);
+        $this->expectException(ExpeditorWasMissing::class);
 
         $mailer = $this->mail->fake();
 
@@ -39,7 +39,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
     public function test_sending_mail_requires_to(): void
     {
-        $this->expectException(MissingRecipientAddressException::class);
+        $this->expectException(RecipientWasMissing::class);
 
         $mailer = $this->mail->fake();
 

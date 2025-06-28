@@ -4,7 +4,7 @@ namespace Tempest\Mail\Exceptions;
 
 use Exception;
 
-final class CouldNotResolveStorageException extends Exception implements MailerException
+final class StorageCouldNotBeResolved extends Exception implements MailerException
 {
     public function __construct()
     {

@@ -4,7 +4,7 @@ namespace Tempest\Mail\Exceptions;
 
 use Exception;
 
-final class MissingContentException extends Exception implements MailerException
+final class MailContentWasMissing extends Exception implements MailerException
 {
     public function __construct()
     {

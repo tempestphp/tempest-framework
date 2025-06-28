@@ -3,7 +3,7 @@
 namespace Tempest\Mail;
 
 use Tempest\Mail\Attachments\Attachment;
-use Tempest\Mail\Exceptions\MissingContentException;
+use Tempest\Mail\Exceptions\MailContentWasMissing;
 use Tempest\View\View;
 
 /**
@@ -18,7 +18,7 @@ final class Content
         public array $attachments = [],
     ) {
         if (! $text && ! $html) {
-            throw new MissingContentException();
+            throw new MailContentWasMissing();
         }
     }
 }
