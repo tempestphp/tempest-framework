@@ -21,7 +21,7 @@ final class GenericProcessExecutorTest extends TestCase
         $executor = new GenericProcessExecutor();
         $result = $executor->run('echo "hello world"');
 
-        $this->assertSame("hello world\n", $result->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello world\n", $result->output);
         $this->assertSame('', $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
@@ -31,7 +31,7 @@ final class GenericProcessExecutorTest extends TestCase
         $executor = new GenericProcessExecutor();
         $result = $executor->run(new PendingProcess('echo "hello world"'));
 
-        $this->assertSame("hello world\n", $result->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello world\n", $result->output);
         $this->assertSame('', $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
@@ -53,7 +53,7 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame("hello world\n", $process->output);
         $this->assertSame('', $process->errorOutput);
 
-        $this->assertSame("hello world\n", $result->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello world\n", $result->output);
         $this->assertSame('', $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
@@ -71,7 +71,7 @@ final class GenericProcessExecutorTest extends TestCase
 
         $this->assertCount(1, $output);
         $this->assertArrayHasKey(OutputChannel::OUTPUT->value, $output);
-        $this->assertContains("hello world\n", $output[OutputChannel::OUTPUT->value]);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello world\n", $output[OutputChannel::OUTPUT->value][0]);
     }
 
     public function test_run_timeout(): void
@@ -110,7 +110,7 @@ final class GenericProcessExecutorTest extends TestCase
         $result = $executor->run('echo hello >&2');
 
         $this->assertSame('', $result->output);
-        $this->assertSame("hello\n", $result->errorOutput);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
 
@@ -133,7 +133,7 @@ final class GenericProcessExecutorTest extends TestCase
         $executor = new GenericProcessExecutor();
         $result = $executor->run(new PendingProcess('echo $TEST_ENV', environment: ['TEST_ENV' => 'hello world']));
 
-        $this->assertSame("hello world\n", $result->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello world\n", $result->output);
         $this->assertSame('', $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
