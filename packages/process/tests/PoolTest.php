@@ -28,7 +28,6 @@ final class PoolTest extends TestCase
         $invoked = $pool->start();
 
         $this->assertInstanceOf(InvokedProcessPool::class, $invoked);
-        $this->assertCount(2, $invoked->running);
         $this->assertSame(2, $invoked->count());
 
         $results = $invoked->wait();

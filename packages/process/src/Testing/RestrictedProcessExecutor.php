@@ -2,7 +2,7 @@
 
 namespace Tempest\Process\Testing;
 
-use Tempest\Process\InvokedProcess;
+use Tempest\Process\InvokedSystemProcess;
 use Tempest\Process\PendingPool;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\Pool;
@@ -17,7 +17,7 @@ final class RestrictedProcessExecutor implements ProcessExecutor
         throw ProcessExecutionWasForbidden::forPendingProcess($command);
     }
 
-    public function start(array|string|PendingProcess $command): InvokedProcess
+    public function start(array|string|PendingProcess $command): InvokedSystemProcess
     {
         throw ProcessExecutionWasForbidden::forPendingProcess($command);
     }

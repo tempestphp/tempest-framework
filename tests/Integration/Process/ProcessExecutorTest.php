@@ -3,7 +3,7 @@
 namespace Tests\Tempest\Integration\Process;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use Tempest\Process\InvokedProcessInterface;
+use Tempest\Process\InvokedProcess;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Process\ProcessResult;
 use Tempest\Process\Testing\InvokedProcessDescription;
@@ -29,7 +29,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
     public function test_describe_and_assert_async_process(): void
     {
         $this->process->registerProcessResults([
-            'echo *' => new InvokedProcessDescription()
+            'echo *' => $this->process
+                ->describe()
                 ->withOutput('hello')
                 ->withOutput('world')
                 ->withIterations(2)
@@ -59,8 +60,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
     public function test_concurrently(): void
     {
         $this->process->registerProcessResults([
-            'echo "hello"' => new InvokedProcessDescription()->withOutput('hello'),
-            'echo "world"' => new InvokedProcessDescription()->withOutput('world'),
+            'echo "hello"' => $this->process->describe()->withOutput('hello'),
+            'echo "world"' => $this->process->describe()->withOutput('world'),
         ]);
 
         [$hello, $world] = $this->executor->concurrently([
@@ -79,8 +80,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
     public function test_pool(): void
     {
         $this->process->registerProcessResults([
-            'echo "hello"' => new InvokedProcessDescription()->withOutput('hello'),
-            'echo "world"' => new InvokedProcessDescription()->withOutput('world'),
+            'echo "hello"' => $this->process->describe()->withOutput('hello'),
+            'echo "world"' => $this->process->describe()->withOutput('world'),
         ]);
 
         $pool = $this->executor->pool([
@@ -94,7 +95,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         while ($invocation->running->isNotEmpty()) {
             $output = $invocation
                 ->all
-                ->map(fn (InvokedProcessInterface $process) => $process->output)
+                ->map(fn (InvokedProcess $process) => $process->output)
                 ->toArray();
         }
 

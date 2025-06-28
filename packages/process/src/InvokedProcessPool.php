@@ -15,14 +15,14 @@ final class InvokedProcessPool implements Countable
      */
     public ImmutableArray $running {
         get => $this->processes
-            ->filter(fn (InvokedProcessInterface $process) => $process->running)
+            ->filter(fn (InvokedProcess $process) => $process->running)
             ->toImmutableArray();
     }
 
     /**
      * All processes in the pool.
      *
-     * @var ImmutableArray<InvokedProcessInterface>
+     * @var ImmutableArray<InvokedProcess>
      */
     public ImmutableArray $all {
         get => $this->processes->toImmutableArray();
@@ -38,7 +38,7 @@ final class InvokedProcessPool implements Countable
      */
     public function signal(int $signal): ImmutableArray
     {
-        return $this->running->each(fn (InvokedProcessInterface $process) => $process->signal($signal));
+        return $this->running->each(fn (InvokedProcess $process) => $process->signal($signal));
     }
 
     /**
@@ -46,7 +46,7 @@ final class InvokedProcessPool implements Countable
      */
     public function stop(float|int|Duration $timeout = 10, ?int $signal = null): ImmutableArray
     {
-        return $this->running->each(fn (InvokedProcessInterface $process) => $process->stop($timeout, $signal));
+        return $this->running->each(fn (InvokedProcess $process) => $process->stop($timeout, $signal));
     }
 
     /**
@@ -55,7 +55,7 @@ final class InvokedProcessPool implements Countable
     public function wait(): ProcessPoolResults
     {
         return new ProcessPoolResults(
-            $this->running->map(fn (InvokedProcessInterface $process) => $process->wait()),
+            $this->running->map(fn (InvokedProcess $process) => $process->wait()),
         );
     }
 
@@ -64,7 +64,7 @@ final class InvokedProcessPool implements Countable
      */
     public function forEachRunning(\Closure $callback): self
     {
-        $this->running->each(fn (InvokedProcessInterface $process) => $callback($process));
+        $this->running->each(fn (InvokedProcess $process) => $callback($process));
 
         return $this;
     }
@@ -74,7 +74,7 @@ final class InvokedProcessPool implements Countable
      */
     public function forEach(\Closure $callback): self
     {
-        $this->processes->each(fn (InvokedProcessInterface $process) => $callback($process));
+        $this->processes->each(fn (InvokedProcess $process) => $callback($process));
 
         return $this;
     }

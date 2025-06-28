@@ -5,10 +5,7 @@ namespace Tempest\Process\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\GeneratorNotSupportedException;
-use RuntimeException;
 use Tempest\Container\Container;
-use Tempest\Container\GenericContainer;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\ProcessExecutor;
@@ -101,6 +98,14 @@ final class ProcessTester
     public function disableProcessExecution(): void
     {
         $this->container->singleton(ProcessExecutor::class, new RestrictedProcessExecutor());
+    }
+
+    /**
+     * Describes how an asynchronous process is expected to behave.
+     */
+    public function describe(): InvokedProcessDescription
+    {
+        return new InvokedProcessDescription();
     }
 
     /**

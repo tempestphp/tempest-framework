@@ -2,81 +2,55 @@
 
 namespace Tempest\Process;
 
-use Symfony\Component\Process\Exception\ProcessTimedOutException as SymfonyTimeoutException;
-use Symfony\Component\Process\Process as SymfonyProcess;
 use Tempest\DateTime\Duration;
-use Tempest\Process\Exceptions\ProcessExecutionHasTimedOut;
 
-/**
- * Represents a process that has been invoked and is currently running or has completed.
- */
-final class InvokedProcess implements InvokedProcessInterface
+interface InvokedProcess
 {
     /**
      * Gets the process identifier.
      */
     public ?int $pid {
-        get => $this->process->getPid();
+        get;
     }
 
     /**
      * Whether the process is running.
      */
     public bool $running {
-        get => $this->process->isRunning();
+        get;
     }
 
     /**
      * Gets the output of the process.
      */
     public string $output {
-        get => $this->process->getOutput();
+        get;
     }
 
     /**
      * Gets the error output of the process.
      */
     public string $errorOutput {
-        get => $this->process->getErrorOutput();
+        get;
     }
 
-    public function __construct(
-        private readonly SymfonyProcess $process,
-    ) {}
+    /**
+     * Sends a signal to the process.
+     */
+    public function signal(int $signal): self;
 
-    public function signal(int $signal): self
-    {
-        $this->process->signal($signal);
+    /**
+     * Stops the process if it is currently running.
+     *
+     * @param float|int|Duration $timeout The maximum time to wait for the process to stop.
+     * @param int|null $signal A POSIX signal to send to the process.
+     */
+    public function stop(float|int|Duration $timeout = 10, ?int $signal = null): self;
 
-        return $this;
-    }
-
-    public function stop(float|int|Duration $timeout = 10, ?int $signal = null): self
-    {
-        if ($timeout instanceof Duration) {
-            $timeout = $timeout->getTotalSeconds();
-        }
-
-        $this->process->stop((float) $timeout, $signal);
-
-        return $this;
-    }
-
-    public function wait(?callable $output = null): ProcessResult
-    {
-        try {
-            $callback = $output
-                ? fn (string $type, mixed $data) => $output(OutputChannel::fromSymfonyOutputType($type), $data)
-                : null;
-
-            $this->process->wait($callback);
-
-            return ProcessResult::fromSymfonyProcess($this->process);
-        } catch (SymfonyTimeoutException $exception) {
-            throw new ProcessExecutionHasTimedOut(
-                result: ProcessResult::fromSymfonyProcess($this->process),
-                original: $exception,
-            );
-        }
-    }
+    /**
+     * Waits for the process to finish.
+     *
+     * @param null|callable(OutputChannel,string) $output The callback receives the type of output (out or err) and some bytes from the output in real-time while writing the standard input to the process. It allows to have feedback from the independent process during execution.
+     */
+    public function wait(?callable $output = null): ProcessResult;
 }
