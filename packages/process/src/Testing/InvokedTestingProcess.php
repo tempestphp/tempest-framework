@@ -134,6 +134,10 @@ final class InvokedTestingProcess implements InvokedProcess
             return $this->getProcessResult();
         }
 
+        // @mago-expect best-practices/no-empty-loop
+        while ($this->invokeOutputHandlerWithNextLineOfOutput()) {
+        }
+
         $this->remainingRunIterations = 0;
 
         return $this->getProcessResult();
