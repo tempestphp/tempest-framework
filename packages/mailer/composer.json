@@ -1,0 +1,26 @@
+{
+    "name": "tempest/mailer",
+    "description": "A component for working with emails.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/reflection": "dev-main",
+        "tempest/support": "dev-main",
+        "symfony/mailer": "^7.2.6"
+    },
+    "require-dev": {
+        "symfony/postmark-mailer": "^7.2.6",
+        "symfony/amazon-mailer": "^7.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Mail\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Mail\\Tests\\": "tests"
+        }
+    }
+}
