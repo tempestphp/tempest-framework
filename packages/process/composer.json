@@ -7,7 +7,8 @@
 		"php": "^8.4",
 		"symfony/process": "^7.3",
 		"tempest/container": "dev-main",
-		"tempest/support": "dev-main"
+		"tempest/support": "dev-main",
+		"tempest/datetime": "dev-main"
 	},
 	"autoload": {
 		"psr-4": {
