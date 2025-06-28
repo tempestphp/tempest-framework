@@ -6,15 +6,17 @@ use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Container\Container;
+use Tempest\Container\Singleton;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Process\ProcessResult;
 use Tempest\Support\Arr;
 
+#[Singleton]
 final class ProcessTester
 {
-    private ?TestingProcessExecutor $executor = null;
+    private(set) ?TestingProcessExecutor $executor = null;
 
     private bool $allowRunningActualProcesses = false;
 
@@ -98,6 +100,14 @@ final class ProcessTester
     public function disableProcessExecution(): void
     {
         $this->container->singleton(ProcessExecutor::class, new RestrictedProcessExecutor());
+    }
+
+    /**
+     * Stops the process and dumps the recorded process executions.
+     */
+    public function debugExecutedProcesses(): void
+    {
+        dd($this->executor->executions); // @mago-expect best-practices/no-debug-symbols
     }
 
     /**
