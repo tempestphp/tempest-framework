@@ -32,7 +32,6 @@ final class PoolTest extends TestCase
 
         $results = $invoked->wait();
 
-        var_dump($results, $results->count());
         $this->assertSame(2, $results->count());
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
