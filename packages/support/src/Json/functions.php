@@ -19,7 +19,7 @@ use const JSON_UNESCAPED_UNICODE;
 /**
  * Decodes a json encoded string into a dynamic variable.
  *
- * @throws Exception\DecodeException If an error occurred.
+ * @throws Exception\JsonCouldNotBeDecoded If an error occurred.
  */
 function decode(string $json, bool $associative = true): mixed
 {
@@ -27,7 +27,7 @@ function decode(string $json, bool $associative = true): mixed
         /** @var mixed $value */
         $value = json_decode($json, $associative, 512, JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
     } catch (JsonException $jsonException) {
-        throw new Exception\DecodeException(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
+        throw new Exception\JsonCouldNotBeDecoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
     }
 
     return $value;
@@ -36,7 +36,7 @@ function decode(string $json, bool $associative = true): mixed
 /**
  * Returns a string containing the JSON representation of the supplied value.
  *
- * @throws Exception\EncodeException If an error occurred.
+ * @throws Exception\JsonCouldNotBeEncoded If an error occurred.
  *
  * @return non-empty-string
  */
@@ -52,8 +52,20 @@ function encode(mixed $value, bool $pretty = false, int $flags = 0): string
         /** @var non-empty-string $json */
         $json = json_encode($value, $flags);
     } catch (JsonException $jsonException) {
-        throw new Exception\EncodeException(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
+        throw new Exception\JsonCouldNotBeEncoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
     }
 
     return $json;
+}
+
+/**
+ * Determines whether the given value is a valid JSON string.
+ */
+function is_valid(mixed $value): bool
+{
+    if (! is_string($value)) {
+        return false;
+    }
+
+    return json_validate($value);
 }

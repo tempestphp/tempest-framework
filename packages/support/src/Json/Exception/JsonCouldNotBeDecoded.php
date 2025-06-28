@@ -6,6 +6,6 @@ namespace Tempest\Support\Json\Exception;
 
 use InvalidArgumentException;
 
-final class DecodeException extends InvalidArgumentException implements JsonException
+final class JsonCouldNotBeDecoded extends InvalidArgumentException implements JsonException
 {
 }

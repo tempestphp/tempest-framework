@@ -8,6 +8,7 @@ use DateTime;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
 use Tempest\Core\ShellExecutor;
+use Tempest\Support\Filesystem;
 
 use function Tempest\event;
 use function Tempest\internal_storage_path;
@@ -84,11 +85,11 @@ final readonly class GenericScheduler implements Scheduler
      */
     private function getPreviousRuns(): array
     {
-        if (! file_exists(self::getCachePath())) {
+        if (! Filesystem\is_file(self::getCachePath())) {
             return [];
         }
 
-        return unserialize(file_get_contents(self::getCachePath()), ['allowed_classes' => false]);
+        return unserialize(Filesystem\read_file(self::getCachePath()), ['allowed_classes' => false]);
     }
 
     /** @param ScheduledInvocation[] $ranInvocations */
@@ -106,6 +107,6 @@ final readonly class GenericScheduler implements Scheduler
             mkdir(directory: $directory, recursive: true);
         }
 
-        file_put_contents(self::getCachePath(), serialize($lastRuns));
+        Filesystem\write_file(self::getCachePath(), serialize($lastRuns));
     }
 }

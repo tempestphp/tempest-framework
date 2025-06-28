@@ -12,6 +12,7 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
+use Tempest\Support\Filesystem;
 use Tempest\View\GenericView;
 use Throwable;
 
@@ -65,6 +66,6 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     private function getStyleSheet(): string
     {
-        return file_get_contents(__DIR__ . '/HttpErrorResponse/style.css');
+        return Filesystem\read_file(__DIR__ . '/HttpErrorResponse/style.css');
     }
 }

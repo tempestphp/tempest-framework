@@ -4,6 +4,7 @@ namespace Tempest\Mapper\Serializers;
 
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Support\Json;
 
 use function Tempest\map;
 
@@ -17,7 +18,7 @@ final class DtoSerializer implements Serializer
 
         $data = map($input)->toArray();
 
-        return json_encode([
+        return Json\encode([
             'type' => get_class($input),
             'data' => $data,
         ]);

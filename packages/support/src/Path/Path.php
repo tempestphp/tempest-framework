@@ -6,6 +6,7 @@ namespace Tempest\Support\Path;
 
 use Stringable;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Str\ManipulatesString;
 use Tempest\Support\Str\StringInterface;
 
@@ -87,7 +88,7 @@ final class Path implements StringInterface
      */
     public function isDirectory(): bool
     {
-        return is_dir($this->value);
+        return Filesystem\is_directory($this->value);
     }
 
     /**
@@ -95,7 +96,7 @@ final class Path implements StringInterface
      */
     public function isFile(): bool
     {
-        return is_file($this->value);
+        return Filesystem\is_file($this->value);
     }
 
     /**
@@ -103,6 +104,6 @@ final class Path implements StringInterface
      */
     public function exists(): bool
     {
-        return file_exists($this->value);
+        return Filesystem\exists($this->value);
     }
 }
