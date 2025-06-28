@@ -10,6 +10,7 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
+use Tempest\Support\Filesystem;
 use Throwable;
 
 use function Tempest\event;
@@ -76,11 +77,11 @@ final readonly class FileSessionManager implements SessionManager
         $path = $this->getPath($id);
 
         try {
-            if (! is_file($path)) {
+            if (! Filesystem\is_file($path)) {
                 return null;
             }
 
-            $content = file_get_contents($path);
+            $content = Filesystem\read_file($path);
 
             return unserialize($content, ['allowed_classes' => true]);
         } catch (Throwable) {
@@ -122,7 +123,7 @@ final readonly class FileSessionManager implements SessionManager
             $session->data = $data;
         }
 
-        file_put_contents($path, serialize($session));
+        Filesystem\write_file($path, serialize($session));
 
         return $session;
     }

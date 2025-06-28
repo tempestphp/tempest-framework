@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Output;
 
 use Tempest\Console\OutputBuffer;
+use Tempest\Support\Filesystem;
 
 final readonly class LogOutputBuffer implements OutputBuffer
 {
@@ -14,14 +15,14 @@ final readonly class LogOutputBuffer implements OutputBuffer
 
     public function clear(): self
     {
-        file_put_contents($this->path, '');
+        Filesystem\write_file($this->path, '');
 
         return $this;
     }
 
     public function read(): string
     {
-        return file_get_contents($this->path);
+        return Filesystem\read_file($this->path);
     }
 
     public function write(string $contents): void

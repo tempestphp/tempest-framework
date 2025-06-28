@@ -8,6 +8,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Support\Json;
 
 final class GenericHttpClient implements HttpClient
 {
@@ -104,7 +105,7 @@ final class GenericHttpClient implements HttpClient
             uri: $uri,
             // TODO: This bit is dumb, but we need to refactor
             // requests before we can change it.
-            body: $body ? json_decode($body, true) : [],
+            body: $body ? Json\decode($body) : [],
             headers: $headers,
         );
 

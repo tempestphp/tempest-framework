@@ -25,6 +25,7 @@ use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
 use Tempest\Router\Static\Exceptions\NoTextualBodyException;
 use Tempest\Support\Arr;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
 use Tempest\View\Exceptions\ViewCompilationFailed;
@@ -154,7 +155,7 @@ final class StaticGenerateCommand
                         throw new DeadLinksDetectedException($uri, $links);
                     }
 
-                    file_put_contents($file->toString(), $content);
+                    Filesystem\write_file($file->toString(), $content);
 
                     $this->eventBus->dispatch(new StaticPageGenerated($uri, $file->toString(), $content));
                 } catch (Throwable $exception) {

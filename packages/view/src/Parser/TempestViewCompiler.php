@@ -6,6 +6,7 @@ namespace Tempest\View\Parser;
 
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Components\DynamicViewComponent;
@@ -82,16 +83,16 @@ final readonly class TempestViewCompiler
         ];
 
         foreach ($searchPathOptions as $searchPath) {
-            if (file_exists($searchPath)) {
+            if (Filesystem\is_file($searchPath)) {
                 break;
             }
         }
 
-        if (! file_exists($searchPath)) {
+        if (! Filesystem\is_file($searchPath)) {
             throw new ViewNotFound($path);
         }
 
-        return file_get_contents($searchPath);
+        return Filesystem\read_file($searchPath);
     }
 
     private function parseAst(string $template): TempestViewAst
