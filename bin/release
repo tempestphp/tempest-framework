@@ -176,7 +176,7 @@ function updateBranchProtection(bool $enabled): void
     // https://github.com/tempestphp/tempest-framework/settings/rules/1879240
     $ruleset = '1879240';
     $token = Tempest\env('RELEASE_GITHUB_TOKEN');
-    $url = "https://api.github.com/repos/innocenzi/tempest-framework/rulesets/{$ruleset}";
+    $url = "https://api.github.com/repos/tempestphp/tempest-framework/rulesets/{$ruleset}";
 
     $httpClient = Tempest\get(HttpClient::class);
     $response = $httpClient->put(
