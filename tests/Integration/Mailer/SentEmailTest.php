@@ -22,7 +22,7 @@ use function Tempest\view;
 final class SentEmailTest extends FrameworkIntegrationTestCase
 {
     private TestingMailer $mailer {
-        get => $this->container->get(Mailer::class);
+        get => $this->mail->mailer;
     }
 
     private function sendTestEmail(?Envelope $envelope = null, ?Content $content = null): SentTestingEmail
