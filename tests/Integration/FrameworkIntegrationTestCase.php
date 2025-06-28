@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use InvalidArgumentException;
+use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Console\Output\StdoutOutputBuffer;
+use Tempest\Console\OutputBuffer;
+use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -37,6 +41,12 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Console
+        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
+        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
+
+        $this->console = new ConsoleTester($this->container);
 
         // Database
         $this->container

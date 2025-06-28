@@ -5,40 +5,39 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing;
 
 use PHPUnit\Framework\Assert;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Tempest\Container\Container;
 use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Process\Testing\ProcessTester;
 use Tempest\Support\Arr;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 
-use function Tempest\Support\arr;
 use function Tempest\Support\Path\to_absolute_path;
 
 final class InstallerTester
 {
     private string $root;
 
-    private NullShellExecutor $executor;
+    private ProcessTester $process {
+        get => $this->container->get(ProcessTester::class);
+    }
 
     public function __construct(
         private readonly Container $container,
-    ) {
-        $this->executor = new NullShellExecutor();
-    }
+    ) {}
 
     public function configure(string $root, Psr4Namespace $namespace): self
     {
+        $this->process->registerProcessResult('*', '');
+
         $this->root = $root;
         $this->container->get(FrameworkKernel::class)->root = $root;
         $this->container
             ->get(Composer::class)
             ->setMainNamespace($namespace)
             ->setNamespaces($namespace)
-            ->setShellExecutor($this->executor);
+            ->setProcessExecutor($this->process->executor);
 
         Filesystem\ensure_directory_exists($this->root);
         Filesystem\ensure_directory_exists($namespace->path);
@@ -124,10 +123,7 @@ final class InstallerTester
 
     public function assertCommandExecuted(string $command): self
     {
-        Assert::assertTrue(
-            condition: arr($this->executor->executedCommands)->hasValue($command),
-            message: sprintf('The command `%s` was not executed', $command),
-        );
+        $this->process->assertCommandRan($command);
 
         return $this;
     }

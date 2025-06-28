@@ -14,7 +14,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\Application;
-use Tempest\Core\ShellExecutor;
+use Tempest\Process\ProcessExecutor;
 
 final readonly class SchedulerInitializer implements Initializer
 {
@@ -30,7 +30,7 @@ final readonly class SchedulerInitializer implements Initializer
         return new GenericScheduler(
             $container->get(SchedulerConfig::class),
             $container->get(ConsoleArgumentBag::class),
-            $container->get(ShellExecutor::class),
+            $container->get(ProcessExecutor::class),
         );
     }
 }

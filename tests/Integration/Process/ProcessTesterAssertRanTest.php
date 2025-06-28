@@ -60,7 +60,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     {
         $this->process->registerProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function () {});
+        $this->process->assertCommandRan('echo *', function (): void {});
     }
 
     public function test_expectation_succeeds_when_callback_returns_true(): void
