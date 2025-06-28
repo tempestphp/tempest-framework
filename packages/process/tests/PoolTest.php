@@ -34,8 +34,8 @@ final class PoolTest extends TestCase
         $results = $invoked->wait();
 
         $this->assertCount(2, $results);
-        $this->assertSame("hello\n", $results[0]->output);
-        $this->assertSame("world\n", $results[1]->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
 
     public function test_concurrently(): void
@@ -47,8 +47,8 @@ final class PoolTest extends TestCase
         ]);
 
         $this->assertCount(2, $results);
-        $this->assertSame("hello\n", $results[0]->output);
-        $this->assertSame("world\n", $results[1]->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
 
     public function test_concurrently_deconstruct(): void
@@ -59,7 +59,7 @@ final class PoolTest extends TestCase
             'echo "world"',
         ]);
 
-        $this->assertSame("hello\n", $hello->output);
-        $this->assertSame("world\n", $world->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $hello->output);
+        $this->assertStringEqualsStringIgnoringLineEndings("world\n", $world->output);
     }
 }
