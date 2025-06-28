@@ -45,7 +45,7 @@ final class PoolTest extends TestCase
             'echo world',
         ]);
 
-        dump($results);
+        var_dump($results);
         $this->assertCount(2, $results);
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
