@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Container\Singleton;
+use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
 
 /**
@@ -46,16 +47,19 @@ final class RouteConfigurator
     {
         $markedRoute = $this->markRoute($route);
         $this->dynamicRoutes[$route->method->value][$markedRoute->mark] = $route;
+        $this->dynamicRoutes[Method::HEAD->value][$markedRoute->mark] = $route;
 
         $this->routingTree->add($markedRoute);
     }
 
     private function addStaticRoute(DiscoveredRoute $route): void
     {
-        $uriWithTrailingSlash = rtrim($route->uri, '/');
+        $uriWithoutTrailingSlash = rtrim($route->uri, '/');
 
-        $this->staticRoutes[$route->method->value][$uriWithTrailingSlash] = $route;
-        $this->staticRoutes[$route->method->value][$uriWithTrailingSlash . '/'] = $route;
+        $this->staticRoutes[$route->method->value][$uriWithoutTrailingSlash] = $route;
+        $this->staticRoutes[$route->method->value][$uriWithoutTrailingSlash . '/'] = $route;
+        $this->staticRoutes[Method::HEAD->value][$uriWithoutTrailingSlash] = $route;
+        $this->staticRoutes[Method::HEAD->value][$uriWithoutTrailingSlash . '/'] = $route;
     }
 
     private function markRoute(DiscoveredRoute $route): MarkedRoute
