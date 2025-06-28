@@ -14,15 +14,15 @@ final class PoolTest extends TestCase
     {
         $executor = new GenericProcessExecutor();
         $pool = $executor->pool([
-            'echo "hello"',
-            'echo "world"',
+            'echo hello',
+            'echo world',
         ]);
 
         $this->assertInstanceOf(Pool::class, $pool);
         $this->assertCount(2, $pool->processes());
 
         // quick immutability check
-        $pool->processes()->add(new PendingProcess('echo "foo"'));
+        $pool->processes()->add(new PendingProcess('echo foo'));
         $this->assertCount(2, $pool->processes());
 
         $invoked = $pool->start();
@@ -42,8 +42,8 @@ final class PoolTest extends TestCase
     {
         $executor = new GenericProcessExecutor();
         $results = $executor->concurrently([
-            'echo "hello"',
-            'echo "world"',
+            'echo hello',
+            'echo world',
         ]);
 
         $this->assertCount(2, $results);
@@ -55,8 +55,8 @@ final class PoolTest extends TestCase
     {
         $executor = new GenericProcessExecutor();
         [$hello, $world] = $executor->concurrently([
-            'echo "hello"',
-            'echo "world"',
+            'echo hello',
+            'echo world',
         ]);
 
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $hello->output);
