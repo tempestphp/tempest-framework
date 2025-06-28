@@ -5,7 +5,7 @@ namespace Tempest\Process\Testing;
 use RuntimeException;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\InvokedProcess;
-use Tempest\Process\InvokedProcessInterface;
+use Tempest\Process\InvokedSystemProcess;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\Pool;
 use Tempest\Process\ProcessExecutor;
@@ -41,10 +41,10 @@ final class TestingProcessExecutor implements ProcessExecutor
         return $this->recordExecution($command, $this->start($command)->wait());
     }
 
-    public function start(array|string|PendingProcess $command): InvokedProcessInterface
+    public function start(array|string|PendingProcess $command): InvokedProcess
     {
         if ($processResult = $this->findInvokedProcessDescription($command)) {
-            $this->recordExecution($command, $process = new TestingInvokedProcess($processResult));
+            $this->recordExecution($command, $process = new InvokedTestingProcess($processResult));
         } else {
             if (! $this->allowRunningActualProcesses) {
                 throw ProcessExecutionWasForbidden::forPendingProcess($command);
@@ -111,13 +111,13 @@ final class TestingProcessExecutor implements ProcessExecutor
         return null;
     }
 
-    private function recordExecution(array|string|PendingProcess $command, InvokedProcessInterface|ProcessResult $result): ProcessResult
+    private function recordExecution(array|string|PendingProcess $command, InvokedProcess|ProcessResult $result): ProcessResult
     {
         $process = $this->createPendingProcess($command);
         $result = match (true) {
             $result instanceof ProcessResult => $result,
-            $result instanceof TestingInvokedProcess => $result->getProcessResult(),
-            $result instanceof InvokedProcess => $result->wait(), // TODO: fix
+            $result instanceof InvokedTestingProcess => $result->getProcessResult(),
+            $result instanceof InvokedSystemProcess => $result->wait(), // TODO: fix
             default => throw new \RuntimeException('Unexpected result type.'),
         };
 

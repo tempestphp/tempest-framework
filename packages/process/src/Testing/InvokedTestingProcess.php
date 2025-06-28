@@ -3,11 +3,11 @@
 namespace Tempest\Process\Testing;
 
 use Tempest\DateTime\Duration;
-use Tempest\Process\InvokedProcessInterface;
+use Tempest\Process\InvokedProcess;
 use Tempest\Process\OutputChannel;
 use Tempest\Process\ProcessResult;
 
-final class TestingInvokedProcess implements InvokedProcessInterface
+final class InvokedTestingProcess implements InvokedProcess
 {
     public ?int $pid {
         get {

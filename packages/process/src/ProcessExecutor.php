@@ -16,7 +16,7 @@ interface ProcessExecutor
      *
      * @param string[]|string|PendingProcess $command
      */
-    public function start(array|string|PendingProcess $command): InvokedProcessInterface;
+    public function start(array|string|PendingProcess $command): InvokedProcess;
 
     /**
      * Returns a pool of processes, which can be executed.
