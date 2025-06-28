@@ -32,7 +32,8 @@ final class PoolTest extends TestCase
 
         $results = $invoked->wait();
 
-        $this->assertCount(2, $results);
+        var_dump($results, $results->count());
+        $this->assertSame(2, $results->count());
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
@@ -45,8 +46,8 @@ final class PoolTest extends TestCase
             'echo world',
         ]);
 
-        var_dump($results);
-        $this->assertCount(2, $results);
+        var_dump($results, $results->count());
+        $this->assertSame(2, $results->count());
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $results[0]->output);
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
