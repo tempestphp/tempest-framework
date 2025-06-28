@@ -9,15 +9,15 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration;
-use Tempest\Database\Exceptions\InvalidDefaultValue;
-use Tempest\Database\Exceptions\InvalidValue;
+use Tempest\Database\DialectWasNotSupported;
+use Tempest\Database\Exceptions\DefaultValueWasInvalid;
+use Tempest\Database\Exceptions\ValueWasInvalid;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropEnumTypeStatement;
-use Tempest\Database\UnsupportedDialect;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -81,8 +81,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $dialect = $this->container->get(DatabaseConfig::class)?->dialect;
         match ($dialect) {
             DatabaseDialect::MYSQL => $this->expectNotToPerformAssertions(),
-            DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
-            DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
+            DatabaseDialect::SQLITE => $this->expectException(DialectWasNotSupported::class),
+            DatabaseDialect::POSTGRESQL => $this->expectException(DialectWasNotSupported::class),
             null => throw new RuntimeException('No database dialect available'),
         };
 
@@ -183,13 +183,38 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->expectException(InvalidDefaultValue::class);
+        $this->expectException(DefaultValueWasInvalid::class);
         $this->expectExceptionMessage("Default value '{default: \"invalid json\"}' provided for json is not valid");
 
         $this->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
+    }
+
+    public function test_dto_field(): void
+    {
+        $migration = new class() implements DatabaseMigration {
+            private(set) string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('test_table')
+                    ->dto('dto');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(
+            CreateMigrationsTable::class,
+            $migration,
+        );
+
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_invalid_set_values(): void
@@ -209,7 +234,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->expectException(InvalidValue::class);
+        $this->expectException(ValueWasInvalid::class);
         $this->expectExceptionMessage("Value '[]' provided for set is not valid");
 
         $this->migrate(

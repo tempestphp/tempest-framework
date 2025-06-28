@@ -25,4 +25,10 @@ final class Http500Controller
     {
         return new ServerError('custom error');
     }
+
+    #[Get('/returns-converts-to-response')]
+    public function convertsToResponse(): ServerError
+    {
+        throw new ExceptionThatConvertsToRedirectResponse();
+    }
 }

@@ -6,8 +6,8 @@ namespace Tempest\Vite;
 
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
-use Tempest\Vite\Exceptions\ManifestNotFoundException;
+use Tempest\Vite\Exceptions\DevelopmentServerWasNotRunning;
+use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\DevelopmentTagsResolver;
@@ -97,7 +97,7 @@ final class Vite
         }
 
         if (! is_file($path = root_path('public', $this->viteConfig->buildDirectory, $this->viteConfig->manifest))) {
-            throw new ManifestNotFoundException($path);
+            throw new ManifestWasNotFound($path);
         }
 
         return static::$manifest = Manifest::fromArray(json_decode(
@@ -132,7 +132,7 @@ final class Vite
         }
 
         if (! $this->isDevelopmentServerRunning()) {
-            throw new DevelopmentServerNotRunningException();
+            throw new DevelopmentServerWasNotRunning();
         }
 
         $file = file_get_contents($this->getBridgeFilePath());

@@ -22,7 +22,7 @@ final readonly class CurrentUserInitializer implements DynamicInitializer
         $user = $container->get(Authenticator::class)->currentUser();
 
         if (! $user) {
-            throw new CurrentUserNotLoggedIn();
+            throw new AuthenticatedUserWasMissing();
         }
 
         return $user;

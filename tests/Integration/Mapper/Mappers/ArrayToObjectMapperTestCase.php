@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Tempest\Http\Method;
-use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
@@ -28,7 +28,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_missing_values(): void
     {
-        $this->expectException(MissingValuesException::class);
+        $this->expectException(MappingValuesWereMissing::class);
 
         map([])->to(ObjectA::class);
     }

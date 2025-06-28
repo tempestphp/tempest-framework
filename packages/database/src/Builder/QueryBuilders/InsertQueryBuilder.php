@@ -5,8 +5,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
-use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
-use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
@@ -61,11 +61,11 @@ final class InsertQueryBuilder implements BuildsQuery
         foreach ($this->resolveData() as $data) {
             foreach ($data as $key => $value) {
                 if ($definition->getHasMany($key)) {
-                    throw new CannotInsertHasManyRelation($definition->getName(), $key);
+                    throw new HasManyRelationCouldNotBeInsterted($definition->getName(), $key);
                 }
 
                 if ($definition->getHasOne($key)) {
-                    throw new CannotInsertHasOneRelation($definition->getName(), $key);
+                    throw new HasOneRelationCouldNotBeInserted($definition->getName(), $key);
                 }
 
                 $bindings[] = $value;
@@ -119,7 +119,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 $value = $property->getValue($model);
 
                 // BelongsTo and reverse HasMany relations are included
-                if ($property->getType()->isRelation()) {
+                if ($definition->isRelation($property)) {
                     $column .= '_id';
 
                     $value = match (true) {

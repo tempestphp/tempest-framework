@@ -5,7 +5,7 @@ namespace Tempest\View\Tests;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Tempest\View\Exceptions\InvalidClosingTag;
+use Tempest\View\Exceptions\ClosingTagWasInvalid;
 use Tempest\View\Parser\TempestViewLexer;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
@@ -71,9 +71,27 @@ final class TempestViewParserTest extends TestCase
     {
         $tokens = new TempestViewLexer('<a></span></a>')->lex();
 
-        $this->expectException(InvalidClosingTag::class);
+        $this->expectException(ClosingTagWasInvalid::class);
 
         new TempestViewParser($tokens)->parse();
+    }
+
+    public function test_invalid_closing_tag_ignores_commented_out_code(): void
+    {
+        $tokens = new TempestViewLexer(<<<HTML
+        <h1>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg">
+            </svg> -->
+        </h1>
+        HTML)->lex();
+
+        $compiled = new TempestViewParser($tokens)->parse()->compile();
+        $this->assertSame(<<<HTML
+        <h1>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg">
+            </svg> -->
+        </h1>
+        HTML, $compiled);
     }
 
     public function test_doctype(): void

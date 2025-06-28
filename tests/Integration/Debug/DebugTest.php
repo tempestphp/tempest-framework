@@ -20,7 +20,7 @@ final class DebugTest extends FrameworkIntegrationTestCase
         $class = new stdClass();
 
         $eventBus = $this->container->get(EventBus::class);
-        $eventBus->listen(ItemsDebugged::class, function (ItemsDebugged $event) use ($class): void {
+        $eventBus->listen(function (ItemsDebugged $event) use ($class): void {
             $this->assertSame(['foo', $class], $event->items);
         });
 

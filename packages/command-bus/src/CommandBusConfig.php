@@ -22,12 +22,12 @@ final class CommandBusConfig
     ) {}
 
     /**
-     * @throws CommandHandlerAlreadyExists
+     * @throws CommandHandlerWasAlreadyRegistered
      */
     public function addHandler(CommandHandler $commandHandler, string $commandName, MethodReflector $handler): self
     {
         if (array_key_exists($commandName, $this->handlers)) {
-            throw new CommandHandlerAlreadyExists($commandName, new: $handler, existing: $this->handlers[$commandName]->handler);
+            throw new CommandHandlerWasAlreadyRegistered($commandName, new: $handler, existing: $this->handlers[$commandName]->handler);
         }
 
         $this->handlers[$commandName] = $commandHandler

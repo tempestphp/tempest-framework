@@ -4,11 +4,11 @@ namespace Tempest\Support\Tests\Filesystem;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Filesystem;
-use Tempest\Support\Filesystem\Exceptions\NotDirectoryException;
-use Tempest\Support\Filesystem\Exceptions\NotFileException;
-use Tempest\Support\Filesystem\Exceptions\NotFoundException;
-use Tempest\Support\Filesystem\Exceptions\NotReadableException;
-use Tempest\Support\Filesystem\Exceptions\NotSymbolicLinkException;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotADirectory;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotAFile;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotFound;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotReadable;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
 final class UnixFunctionsTest extends TestCase
@@ -119,7 +119,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_delete_directory_on_file(): void
     {
-        $this->expectException(NotDirectoryException::class);
+        $this->expectException(PathWasNotADirectory::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -170,7 +170,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_detele_file_not_found(): void
     {
-        $this->expectException(NotFoundException::class);
+        $this->expectException(PathWasNotFound::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -179,7 +179,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_detele_file_on_dir(): void
     {
-        $this->expectException(NotFileException::class);
+        $this->expectException(PathWasNotAFile::class);
 
         $dir = $this->fixtures . '/tmp';
         mkdir($dir);
@@ -200,7 +200,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_get_permissions_not_found(): void
     {
-        $this->expectException(NotFoundException::class);
+        $this->expectException(PathWasNotFound::class);
 
         Filesystem\get_permissions($this->fixtures . '/file.txt');
     }
@@ -220,7 +220,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_ensure_directory_empty_on_file(): void
     {
-        $this->expectException(NotDirectoryException::class);
+        $this->expectException(PathWasNotADirectory::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -316,7 +316,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_list_directory_on_non_directory(): void
     {
-        $this->expectException(NotDirectoryException::class);
+        $this->expectException(PathWasNotADirectory::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -340,7 +340,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_read_symbolic_link_on_non_symlink(): void
     {
-        $this->expectException(NotSymbolicLinkException::class);
+        $this->expectException(PathWasNotASymbolicLink::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -374,7 +374,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_copy_directory(): void
     {
-        $this->expectException(NotFileException::class);
+        $this->expectException(PathWasNotAFile::class);
 
         $source = $this->fixtures . '/tmp';
         $destination = $this->fixtures . '/tmp2';
@@ -387,7 +387,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_copy_non_existing_file(): void
     {
-        $this->expectException(NotFoundException::class);
+        $this->expectException(PathWasNotFound::class);
 
         $source = $this->fixtures . '/file.txt';
         $destination = $this->fixtures . '/tmp/file.txt';
@@ -397,7 +397,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_copy_non_readable_file(): void
     {
-        $this->expectException(NotReadableException::class);
+        $this->expectException(PathWasNotReadable::class);
 
         $source = $this->fixtures . '/file.txt';
         $destination = $this->fixtures . '/tmp/file.txt';
@@ -455,7 +455,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_read_file_non_readable_file(): void
     {
-        $this->expectException(NotReadableException::class);
+        $this->expectException(PathWasNotReadable::class);
 
         $file = $this->fixtures . '/file.txt';
 
@@ -467,7 +467,7 @@ final class UnixFunctionsTest extends TestCase
 
     public function test_read_file_not_found(): void
     {
-        $this->expectException(NotFoundException::class);
+        $this->expectException(PathWasNotFound::class);
 
         $file = $this->fixtures . '/file.txt';
 

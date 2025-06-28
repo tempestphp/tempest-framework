@@ -5,9 +5,9 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
-use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
-use Tempest\Database\Exceptions\InvalidUpdateStatement;
+use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
+use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
+use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
@@ -70,7 +70,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_global_update_fails_without_allow_all(): void
     {
-        $this->expectException(InvalidUpdateStatement::class);
+        $this->expectException(UpdateStatementWasInvalid::class);
 
         query('chapters')
             ->update(index: 0)
@@ -219,8 +219,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
                     chapters: ['title' => 'Chapter 01'],
                 )
                 ->build();
-        } catch (CannotUpdateHasManyRelation $cannotUpdateHasManyRelation) {
-            $this->assertStringContainsString(Book::class . '::$chapters', $cannotUpdateHasManyRelation->getMessage());
+        } catch (HasManyRelationCouldNotBeUpdated $hasManyRelationCouldNotBeUpdated) {
+            $this->assertStringContainsString(Book::class . '::$chapters', $hasManyRelationCouldNotBeUpdated->getMessage());
         }
     }
 
@@ -233,8 +233,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
                     isbn: ['value' => '979-8344313764'],
                 )
                 ->build();
-        } catch (CannotUpdateHasOneRelation $cannotUpdateHasOneRelation) {
-            $this->assertStringContainsString(Book::class . '::$isbn', $cannotUpdateHasOneRelation->getMessage());
+        } catch (HasOneRelationCouldNotBeUpdated $hasOneRelationCouldNotBeUpdated) {
+            $this->assertStringContainsString(Book::class . '::$isbn', $hasOneRelationCouldNotBeUpdated->getMessage());
         }
     }
 

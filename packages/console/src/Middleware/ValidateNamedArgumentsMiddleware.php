@@ -19,6 +19,10 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
 {
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
+        if ($invocation->consoleCommand->allowDynamicArguments) {
+            return $next($invocation);
+        }
+
         $allowedParameterNames = arr($invocation->consoleCommand->getArgumentDefinitions())
             ->flatMap(function (ConsoleArgumentDefinition $definition) {
                 return [$definition->name, ...$definition->aliases];
@@ -29,7 +33,7 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
 
         $invalidInput = arr($invocation->argumentBag->arguments)
             ->filter(fn (ConsoleInputArgument $argument) => $argument->name !== null)
-            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->contains(ltrim($argument->name, '-')))
+            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->hasValue(ltrim($argument->name, '-')))
             ->filter(fn (ConsoleInputArgument $argument) => ! in_array($argument->name, GlobalFlags::values(), strict: true));
 
         if ($invalidInput->isNotEmpty()) {

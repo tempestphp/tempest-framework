@@ -18,6 +18,7 @@ use Composer\Semver\VersionParser;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Exceptions\InterruptException;
+
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -202,7 +203,7 @@ function suggestNextVersions(string $current): array
     return array_filter([
         'next_alpha' => ! $isBeta ? sprintf('%d.%d.%d-alpha.%d', $major, $minor, $patch, $preRelease + 1) : null,
         'next_beta' => sprintf('%d.%d.%d-beta.%d', $major, $minor, $patch, $isBeta ? ($preRelease + 1) : 1),
-        'next_major' => sprintf('%d.0.0', $major + 1),
+        'next_major' => $isBeta ? sprintf('%d.0.0', $major) : sprintf('%d.0.0', $major + 1),
     ]);
 }
 
@@ -282,10 +283,10 @@ function ensureTagDoesNotExist(string $version): void
 }
 
 /*
-|--------------------------------------------------------------------------
-| Script starts here.
-|--------------------------------------------------------------------------
-*/
+ * |--------------------------------------------------------------------------
+ * | Script starts here.
+ * |--------------------------------------------------------------------------
+ */
 
 try {
     ConsoleApplication::boot();
@@ -313,7 +314,7 @@ try {
 
     if (! $console->confirm("The next tag will be <em>{$tag}</em>. Release?")) {
         $console->error('Cancelled.');
-        exit;
+        exit();
     }
 
     // Bump PHP packages
@@ -364,6 +365,6 @@ try {
         $tag,
     ));
 
-    exit;
+    exit();
 } catch (InterruptException) {
 }

@@ -13,8 +13,8 @@ use Tempest\Database\Stubs\MigrationStub;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 
@@ -48,7 +48,7 @@ final class MakeMigrationCommand
             };
 
             $this->success(sprintf('Migration file successfully created at "%s".', $targetPath));
-        } catch (FileGenerationAbortedException|FileGenerationFailedException|InvalidArgumentException $e) {
+        } catch (FileGenerationWasAborted|FileGenerationFailedException|InvalidArgumentException $e) {
             $this->error($e->getMessage());
         }
     }

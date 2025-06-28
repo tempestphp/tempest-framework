@@ -4,7 +4,7 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\InsertColumnMismatch;
+use Tempest\Database\Exceptions\InsertColumnsMismatched;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -36,7 +36,7 @@ final class InsertStatement implements QueryStatement
                 $rowColumns = $row->keys();
 
                 if (! $columns->equals($rowColumns)) {
-                    throw new InsertColumnMismatch($columns, $rowColumns);
+                    throw new InsertColumnsMismatched($columns, $rowColumns);
                 }
 
                 return sprintf(

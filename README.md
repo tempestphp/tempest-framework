@@ -6,9 +6,7 @@
 
 <h1 align="center">Tempest</h1>
 <div align="center">
-  The PHP framework that lets you focus on your application code instead of framework quirks.
-  <br />
-  Read the <a href="https://tempestphp.com">documentation</a> to get started.
+  Tempest is a community-driven, modern PHP framework that gets out of your way and dares to think outside the box. Read the <a href="https://tempestphp.com">documentation</a> to get started.
 </div>
 
 <br />
@@ -80,13 +78,13 @@ Read how to get started with Tempest [here](https://tempestphp.com).
 Create a Tempest project from scratch:
 
 ```
-composer create-project tempest/app:1.0-alpha.5 <name>
+composer create-project tempest/app <name>
 ```
 
 Or install Tempest in any existing project:
 
 ```
-composer require tempest/framework:1.0-alpha.5
+composer require tempest/framework
 ```
 
 Continue to read how Tempest works in [the docs](https://tempestphp.com).

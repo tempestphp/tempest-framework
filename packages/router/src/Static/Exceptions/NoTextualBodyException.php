@@ -2,11 +2,13 @@
 
 namespace Tempest\Router\Static\Exceptions;
 
-final class NoTextualBodyException extends StaticPageException
+use Exception;
+
+final class NoTextualBodyException extends Exception implements StaticPageException
 {
     public function __construct(
-        string $uri,
+        public readonly string $uri,
     ) {
-        parent::__construct('No textual body', $uri);
+        parent::__construct('No textual body');
     }
 }

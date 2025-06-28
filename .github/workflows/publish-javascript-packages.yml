@@ -3,7 +3,7 @@ name: Release JavaScript packages
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   release:

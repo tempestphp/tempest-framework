@@ -6,7 +6,7 @@ use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
-use Tempest\View\IconCache;
+use Tempest\Icon\IconCache;
 use Tempest\View\ViewCache;
 
 final class InternalCacheInsightsProvider implements InsightsProvider

@@ -14,7 +14,6 @@ final readonly class SessionInitializer implements Initializer
     public function initialize(Container $container): Session
     {
         $sessionManager = $container->get(SessionManager::class);
-
         $sessionIdResolver = $container->get(SessionIdResolver::class);
 
         return $sessionManager->create($sessionIdResolver->resolve());

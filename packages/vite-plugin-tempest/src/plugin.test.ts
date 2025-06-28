@@ -36,9 +36,11 @@ describe('tempest', () => {
 
 		expect(config.base).toBe('/build/custom/')
 		expect(config.build.manifest).toBe('custom-manifest.json')
-		expect(config.build.rollupOptions).toEqual({ input: [
-			'src/main.ts',
-		] })
+		expect(config.build.rollupOptions).toEqual({
+			input: [
+				'src/main.ts',
+			],
+		})
 	})
 
 	it("respects the user's server.cors config", async () => {
@@ -62,7 +64,8 @@ describe('tempest', () => {
 	it('configures default cors.origin values', async () => {
 		mockTempestConfiguration()
 
-		const test = (pattern: RegExp | string, value: string) => pattern instanceof RegExp ? pattern.test(value) : pattern === value
+		const test = (pattern: RegExp | string, value: string) =>
+			pattern instanceof RegExp ? pattern.test(value) : pattern === value
 		fs.writeFileSync(path.join(__dirname, '.env'), 'APP_URL=http://example.com')
 
 		const plugin = tempest()

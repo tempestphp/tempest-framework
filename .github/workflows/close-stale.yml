@@ -22,5 +22,5 @@ jobs:
           close-issue-message: "This issue was closed because it has been inactive for 1 day since being marked as stale."
           stale-pr-label: "Stale"
           stale-pr-message: "This pull request is stale because it has been open for 30 days with no activity."
-          close-pr-message:  "This pull request was closed because it has been inactive for 1 day since being marked as stale."
+          close-pr-message: "This pull request was closed because it has been inactive for 1 day since being marked as stale."
           repo-token: ${{ secrets.GITHUB_TOKEN }}

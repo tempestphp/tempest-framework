@@ -7,10 +7,10 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Database\QueryStatements\BelongsToStatement;
 use Tempest\Database\QueryStatements\VarcharStatement;
-use Tempest\Database\UnsupportedDialect;
 
 /**
  * @internal
@@ -74,7 +74,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_add_belongs_to_unsupported(DatabaseDialect $dialect): void
     {
-        $this->expectException(UnsupportedDialect::class);
+        $this->expectException(DialectWasNotSupported::class);
 
         new AlterTableStatement('table')
             ->add(new BelongsToStatement('table.foo', 'parent.bar'))
@@ -112,7 +112,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_table_drop_constraint_unsupported_dialects(DatabaseDialect $dialect): void
     {
-        $this->expectException(UnsupportedDialect::class);
+        $this->expectException(DialectWasNotSupported::class);
         new AlterTableStatement('table')
             ->dropConstraint('foo')
             ->compile($dialect);
@@ -166,7 +166,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_table_modify_column_unsupported(DatabaseDialect $dialect): void
     {
-        $this->expectException(UnsupportedDialect::class);
+        $this->expectException(DialectWasNotSupported::class);
 
         new AlterTableStatement('table')
             ->modify(new VarcharStatement('foo', 42, false, 'bar'))

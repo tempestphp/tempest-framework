@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Vite;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
+use Tempest\Vite\Exceptions\ManifestEntrypointWasNotFoundException;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
 use Tempest\Vite\ViteDiscovery;
@@ -108,7 +108,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_throws_when_getting_tags_with_manifest_with_unknown_entrypoint(): void
     {
-        $this->expectException(ManifestEntrypointNotFoundException::class);
+        $this->expectException(ManifestEntrypointWasNotFoundException::class);
 
         $this->vite->call(
             callback: function (): void {

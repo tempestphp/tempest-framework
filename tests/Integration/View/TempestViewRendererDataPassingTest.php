@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\View\Exceptions\InvalidExpressionAttribute;
+use Tempest\View\Exceptions\ExpressionAttributeWasInvalid;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -101,7 +101,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     public function test_expression_attribute_with_view_echo_not_allowed(): void
     {
         // <a :href="{{ $href }}"               ❌ exception
-        $this->expectException(InvalidExpressionAttribute::class);
+        $this->expectException(ExpressionAttributeWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -113,7 +113,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     public function test_expression_attribute_with_raw_view_echo_not_allowed(): void
     {
         // <a :href="{!! $href !!}"               ❌ exception
-        $this->expectException(InvalidExpressionAttribute::class);
+        $this->expectException(ExpressionAttributeWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -125,7 +125,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     public function test_expression_attribute_with_short_php_echo_not_allowed(): void
     {
         // <a :href="<?= $href …"               ❌ exception
-        $this->expectException(InvalidExpressionAttribute::class);
+        $this->expectException(ExpressionAttributeWasInvalid::class);
 
         $this->render(
             <<<'HTML'
@@ -137,7 +137,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     public function test_expression_attribute_with_object_without_view_component_not_allowed(): void
     {
         // <a :href="$object"                   ❌ exception
-        $this->expectException(InvalidExpressionAttribute::class);
+        $this->expectException(ExpressionAttributeWasInvalid::class);
 
         $this->render(
             <<<'HTML'

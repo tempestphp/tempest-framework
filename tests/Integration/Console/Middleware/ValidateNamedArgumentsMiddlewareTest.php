@@ -18,4 +18,15 @@ final class ValidateNamedArgumentsMiddlewareTest extends FrameworkIntegrationTes
             ->assertDoesNotContain('help')
             ->assertDoesNotContain('interaction');
     }
+
+    public function test_command_with_dynamic_parameters(): void
+    {
+        $this->console
+            ->call('dynamic:params --dynamic')
+            ->assertContains('yes');
+
+        $this->console
+            ->call('dynamic:params')
+            ->assertContains('no');
+    }
 }

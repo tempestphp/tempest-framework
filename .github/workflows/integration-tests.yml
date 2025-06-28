@@ -4,10 +4,10 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 env:
   POSTGRES_USER: runner
-  POSTGRES_PASSWORD: ''
+  POSTGRES_PASSWORD: ""
   POSTGRES_DB: postgres
 
 jobs:
@@ -89,18 +89,18 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-      - name: 'Setup Redis'
+      - name: "Setup Redis"
         if: ${{ matrix.os != 'windows-latest' }}
         uses: supercharge/redis-github-action@1.7.0
 
-      - name: 'Setup MySQL'
+      - name: "Setup MySQL"
         if: ${{ matrix.database == 'mysql' }}
         uses: ankane/setup-mysql@v1
         with:
           mysql-version: 8.0
-          database: 'app'
+          database: "app"
 
-      - name: 'Setup PostgreSQL'
+      - name: "Setup PostgreSQL"
         if: ${{ matrix.database == 'postgres' }}
         uses: ankane/setup-postgres@v1
 

@@ -11,4 +11,4 @@ HttpApplication::boot(__DIR__ . '/../', discoveryLocations: [
     new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../tests/Fixtures/'),
 ])->run();
 
-exit;
+exit();

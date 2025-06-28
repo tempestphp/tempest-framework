@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\Exceptions\ElementWasInvalid;
 use Tempest\View\WrapsElement;
 
 final class PhpIfElement implements Element, WrapsElement
@@ -36,7 +36,7 @@ final class PhpIfElement implements Element, WrapsElement
     public function setElse(Element $element): self
     {
         if ($this->else !== null) {
-            throw new InvalidElement('There can only be one else element.');
+            throw new ElementWasInvalid('There can only be one else element.');
         }
 
         $this->else = $element;

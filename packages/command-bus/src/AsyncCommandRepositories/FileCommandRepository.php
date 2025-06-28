@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
 use Tempest\CommandBus\CommandRepository;
-use Tempest\CommandBus\Exceptions\CouldNotResolveCommand;
+use Tempest\CommandBus\Exceptions\PendingCommandCouldNotBeResolved;
 
 use function Tempest\Support\arr;
 
@@ -23,7 +23,7 @@ final readonly class FileCommandRepository implements CommandRepository
         $path = __DIR__ . "/../stored-commands/{$uuid}.pending.txt";
 
         if (! file_exists($path)) {
-            throw new CouldNotResolveCommand($uuid);
+            throw new PendingCommandCouldNotBeResolved($uuid);
         }
 
         $payload = file_get_contents($path);

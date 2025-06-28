@@ -6,6 +6,7 @@ namespace Tempest\Router\Tests\Routing\Matching;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
@@ -57,7 +58,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_on_static_route(): void
     {
-        $request = new ServerRequest(uri: '/static', method: 'GET');
+        $request = new GenericRequest(method: Method::GET, uri: '/static');
 
         $matchedRoute = $this->subject->match($request);
 
@@ -68,7 +69,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_returns_null_on_unknown_route(): void
     {
-        $request = new ServerRequest(uri: '/non-existing', method: 'GET');
+        $request = new GenericRequest(Method::GET, '/non-existing');
 
         $matchedRoute = $this->subject->match($request);
 
@@ -77,7 +78,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_returns_null_on_unconfigured_method(): void
     {
-        $request = new ServerRequest(uri: '/static', method: 'POST');
+        $request = new GenericRequest(method: Method::POST, uri: '/static');
 
         $matchedRoute = $this->subject->match($request);
 
@@ -86,7 +87,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_on_dynamic_route(): void
     {
-        $request = new ServerRequest(uri: '/dynamic/5', method: 'GET');
+        $request = new GenericRequest(method: Method::GET, uri: '/dynamic/5');
 
         $matchedRoute = $this->subject->match($request);
 
@@ -97,7 +98,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_on_dynamic_route_with_many_parameters(): void
     {
-        $request = new ServerRequest(uri: '/dynamic/5/brendt/brent/6', method: 'GET');
+        $request = new GenericRequest(method: Method::GET, uri: '/dynamic/5/brendt/brent/6');
 
         $matchedRoute = $this->subject->match($request);
 

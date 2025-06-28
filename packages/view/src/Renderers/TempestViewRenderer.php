@@ -7,8 +7,8 @@ namespace Tempest\View\Renderers;
 use Stringable;
 use Tempest\Container\Container;
 use Tempest\Support\Html\HtmlString;
-use Tempest\View\Exceptions\ViewCompilationError;
-use Tempest\View\Exceptions\ViewVariableIsReserved;
+use Tempest\View\Exceptions\ViewCompilationFailed;
+use Tempest\View\Exceptions\ViewVariableWasReserved;
 use Tempest\View\GenericView;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\View;
@@ -80,7 +80,7 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
-            throw new ViewCompilationError(
+            throw new ViewCompilationFailed(
                 path: $_path,
                 content: file_get_contents($_path),
                 previous: $throwable,
@@ -106,7 +106,7 @@ final class TempestViewRenderer implements ViewRenderer
         $data = $view->data;
 
         if (array_key_exists('slots', $data)) {
-            throw new ViewVariableIsReserved('slots');
+            throw new ViewVariableWasReserved('slots');
         }
     }
 }

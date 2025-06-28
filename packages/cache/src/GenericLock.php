@@ -50,7 +50,7 @@ final class GenericLock implements Lock
 
         while (! $this->acquire()) {
             if ($waitUntil->beforeOrAtTheSameTime(DateTime::now())) {
-                throw new LockAcquisitionTimedOutException($this->key);
+                throw new LockAcquisitionTimedOut($this->key);
             }
 
             usleep(250); // TODO: sleep from clock?

@@ -8,13 +8,13 @@ use Carbon\Carbon;
 use DateTimeImmutable;
 use Integration\ORM\Migrations\CreateCasterEnumType;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tempest\Database\Exceptions\MissingValue;
+use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
-use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Exceptions\ValidationFailed;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -87,6 +87,22 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $foo = Foo::get($foo->id);
 
         $this->assertSame('boo', $foo->bar);
+    }
+
+    public function test_get_with_non_id_object(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        Foo::create(
+            bar: 'baz',
+        );
+
+        $foo = Foo::get(1);
+
+        $this->assertSame(1, $foo->id->id);
     }
 
     public function test_creating_many_and_saving_preserves_model_id(): void
@@ -187,7 +203,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $a = A::select()->first();
 
-        $this->expectException(MissingRelation::class);
+        $this->expectException(RelationWasMissing::class);
 
         $b = $a->b;
     }
@@ -196,7 +212,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $a = map([])->to(AWithValue::class);
 
-        $this->expectException(MissingValue::class);
+        $this->expectException(ValueWasMissing::class);
 
         $name = $a->name;
     }
@@ -550,7 +566,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_validation_on_create(): void
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         ModelWithValidation::create(
             index: -1,
@@ -564,7 +580,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             index: 1,
         );
 
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         $model->update(
             index: -1,
@@ -579,7 +595,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $model->index = -1;
 
-        $this->expectException(ValidationException::class);
+        $this->expectException(ValidationFailed::class);
 
         $model->save();
     }
@@ -591,10 +607,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
                 index: -1,
                 skip: -1,
             );
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('index', $validationException->getMessage());
-            $this->assertStringContainsString(ModelWithValidation::class, $validationException->getMessage());
-            $this->assertStringNotContainsString('skip', $validationException->getMessage());
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertStringContainsString('index', $validationFailed->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
+            $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
         }
     }
 }

@@ -29,6 +29,8 @@ final class ConsoleCommand
 
         /** @var class-string<\Tempest\Console\CompletesConsoleCommand>|null */
         public readonly ?string $complete = null,
+
+        public readonly bool $allowDynamicArguments = false,
     ) {}
 
     public function setHandler(MethodReflector $handler): self

@@ -6,7 +6,7 @@ namespace Tempest\Database\Casters;
 
 use Tempest\Database\Id;
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 
 final readonly class IdCaster implements Caster
 {
@@ -22,7 +22,7 @@ final readonly class IdCaster implements Caster
     public function serialize(mixed $input): string
     {
         if (! ($input instanceof Id)) {
-            throw new CannotSerializeValue(Id::class);
+            throw new ValueCouldNotBeSerialized(Id::class);
         }
 
         return (string) $input->id;

@@ -5,7 +5,7 @@ namespace Tests\Tempest\Integration\Cache;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
-use Tempest\Cache\LockAcquisitionTimedOutException;
+use Tempest\Cache\LockAcquisitionTimedOut;
 use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -89,7 +89,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
     public function test_lock_execution_when_already_locked_by_another_owner(): void
     {
-        $this->expectException(LockAcquisitionTimedOutException::class);
+        $this->expectException(LockAcquisitionTimedOut::class);
 
         $cache = new GenericCache(new ArrayAdapter());
 

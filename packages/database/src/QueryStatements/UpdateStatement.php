@@ -4,8 +4,8 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Exceptions\EmptyUpdateStatement;
-use Tempest\Database\Exceptions\InvalidUpdateStatement;
+use Tempest\Database\Exceptions\UpdateStatementWasEmpty;
+use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -23,7 +23,7 @@ final class UpdateStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         if ($this->allowAll === false && $this->where->isEmpty()) {
-            throw new InvalidUpdateStatement();
+            throw new UpdateStatementWasInvalid();
         }
 
         $query = arr([
@@ -31,7 +31,7 @@ final class UpdateStatement implements QueryStatement
         ]);
 
         if ($this->values->isEmpty()) {
-            throw new EmptyUpdateStatement();
+            throw new UpdateStatementWasEmpty();
         }
 
         $query[] = 'SET ' . $this->values

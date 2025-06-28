@@ -1,19 +1,19 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "moduleDetection": "force",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "allowJs": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noEmit": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true
-  }
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"moduleDetection": "force",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"allowJs": true,
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noPropertyAccessFromIndexSignature": false,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noEmit": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true
+	}
 }

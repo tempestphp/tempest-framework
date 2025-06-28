@@ -11,8 +11,8 @@ use Tempest\Core\Environment;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
-use Tempest\View\Exceptions\InvalidDataAttribute;
-use Tempest\View\Exceptions\ViewVariableIsReserved;
+use Tempest\View\Exceptions\DataAttributeWasInvalid;
+use Tempest\View\Exceptions\ViewVariableWasReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
@@ -145,7 +145,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_slots_is_a_reserved_variable(): void
     {
-        $this->expectException(ViewVariableIsReserved::class);
+        $this->expectException(ViewVariableWasReserved::class);
         $this->expectExceptionMessage('Cannot use reserved variable name `slots`');
 
         $this->render('', slots: []);
@@ -402,7 +402,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_php_code_in_attribute(): void
     {
-        $this->expectException(InvalidDataAttribute::class);
+        $this->expectException(DataAttributeWasInvalid::class);
 
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
     }
@@ -896,5 +896,45 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render('<x-test/>');
 
         $this->assertSnippetsMatch('<div class="foo" :escaped="foo"></div>', $html);
+    }
+
+    public function test_default_slot_value(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <x-slot>Default</x-slot>
+        <x-slot name="a">Default A</x-slot>
+        <x-slot name="b">Default B</x-slot>
+        HTML);
+
+        $this->assertSnippetsMatch(
+            <<<'HTML'
+            Overwritten
+            Overwritten A
+            Overwritten B
+            HTML,
+            $this->render('<x-test>
+        Overwritten
+        <x-slot name="a">Overwritten A</x-slot>
+        <x-slot name="b">Overwritten B</x-slot>
+        </x-test>'),
+        );
+
+        $this->assertSnippetsMatch(
+            <<<'HTML'
+            Overwritten
+            Default A
+            Overwritten B
+            HTML,
+            $this->render('<x-test>
+        Overwritten
+        <x-slot name="b">Overwritten B</x-slot>
+        </x-test>'),
+        );
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        Default
+        Default A
+        Default B
+        HTML, $this->render('<x-test></x-test>'));
     }
 }

@@ -9,7 +9,7 @@ namespace Tempest\View\Attributes;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpIfElement;
-use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\Exceptions\ElementWasInvalid;
 
 final readonly class ElseIfAttribute implements Attribute
 {
@@ -18,7 +18,7 @@ final readonly class ElseIfAttribute implements Attribute
         $previous = $element->getPrevious()?->unwrap(PhpIfElement::class);
 
         if (! ($previous instanceof PhpIfElement)) {
-            throw new InvalidElement('There needs to be an if or elseif element before an elseif element.');
+            throw new ElementWasInvalid('There needs to be an if or elseif element before an elseif element.');
         }
 
         $previous->addElseif($element);

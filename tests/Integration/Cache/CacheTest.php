@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Tempest\Cache\CacheKeyCouldNotBeIncremented;
 use Tempest\Cache\GenericCache;
-use Tempest\Cache\NotNumberException;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\DateTime\Duration;
@@ -83,7 +83,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_increment_non_int_key(): void
     {
-        $this->expectException(NotNumberException::class);
+        $this->expectException(CacheKeyCouldNotBeIncremented::class);
 
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -103,7 +103,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_decrement_non_int_key(): void
     {
-        $this->expectException(NotNumberException::class);
+        $this->expectException(CacheKeyCouldNotBeIncremented::class);
 
         $cache = new GenericCache(new ArrayAdapter());
 
