@@ -15,8 +15,8 @@ final class InvokedProcessPool implements Countable
      */
     public ImmutableArray $running {
         get => $this->processes
-            ->filter(fn (InvokedProcess $process) => $process->running)
-            ->toImmutableArray();
+            ->toImmutableArray()
+            ->filter(fn (InvokedProcess $process) => $process->running);
     }
 
     /**
@@ -55,7 +55,7 @@ final class InvokedProcessPool implements Countable
     public function wait(): ProcessPoolResults
     {
         return new ProcessPoolResults(
-            $this->running->map(fn (InvokedProcess $process) => $process->wait()),
+            $this->all->map(fn (InvokedProcess $process) => $process->wait()),
         );
     }
 
