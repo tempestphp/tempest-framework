@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -13,9 +12,8 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
-use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
-use Tempest\Router\Exceptions\HttpExceptionHandler;
+use Tempest\Process\GenericProcessExecutor;
 
 final class FrameworkKernel implements Kernel
 {
@@ -100,7 +98,7 @@ final class FrameworkKernel implements Kernel
     {
         $composer = new Composer(
             root: $this->root,
-            executor: new GenericShellExecutor(),
+            executor: new GenericProcessExecutor(),
         )->load();
 
         $this->container->singleton(Composer::class, $composer);
