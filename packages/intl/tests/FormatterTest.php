@@ -94,6 +94,25 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $value);
     }
 
+    public function test_default_input(): void
+    {
+        $formatter = new MessageFormatter([]);
+
+        $value = $formatter->format(<<<'TXT'
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT);
+
+        $this->assertSame('field is unknown', $value);
+
+        $value = $formatter->format(<<<'TXT'
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT, field: 'here');
+
+        $this->assertSame('field is here', $value);
+    }
+
     public function test_unquoted_text(): void
     {
         $formatter = new MessageFormatter();
