@@ -19,7 +19,7 @@ final class StringFunction implements FormattingFunction, SelectorFunction
 
     public function format(mixed $value, array $parameters): FormattedValue
     {
-        $string = Str\parse($value, default: '');
+        $string = Str\parse($value, default: Arr\get_by_key($parameters, 'default', default: ''));
         $formatted = match (Arr\get_by_key($parameters, 'style')) {
             'uppercase', 'upper' => Str\to_upper_case($string),
             'lowercase', 'lower' => Str\to_lower_case($string),

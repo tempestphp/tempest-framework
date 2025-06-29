@@ -82,7 +82,18 @@ final class MessageFormatter
                     $variableName = $expression->variable->name->name;
 
                     if (! array_key_exists($variableName, $this->variables)) {
-                        throw new FormattingException("Required input variable `{$variableName}` not provided.");
+                        if ($declaration->optional) {
+                            $parameters = $this->evaluateOptions($expression->function?->options ?? []);
+
+                            $this->variables[$variableName] = new LocalVariable(
+                                identifier: $variableName,
+                                value: $parameters['default'],
+                                function: $this->getSelectorFunction((string) $expression->function?->identifier),
+                                parameters: $parameters,
+                            );
+                        } else {
+                            throw new FormattingException("Required input variable `{$variableName}` not provided.");
+                        }
                     }
 
                     if ($expression->function instanceof FunctionCall) {

@@ -125,7 +125,14 @@ final class MessageFormatParser
         $this->consumeKeyword('.input');
         $this->consumeRequiredWhitespace();
 
-        return new InputDeclaration($this->parseVariableExpression());
+        $expression = $this->parseVariableExpression();
+
+        $optional = (bool) array_find(
+            array: $expression->function?->options ?? [],
+            callback: fn (Option $option) => $option->identifier->name === 'default' && ! is_null($option->value->value),
+        );
+
+        return new InputDeclaration($expression, $optional);
     }
 
     private function parseLocalDeclaration(): LocalDeclaration
