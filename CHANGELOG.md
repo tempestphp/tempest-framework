@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0..1.0.1)  —  2025-06-27
+## [1.0.1](https://github.com/tempestphp/tempest-framework/compare/v1.0.0..v1.0.1)  —  2025-06-27
 
 ### 🚀 Features
 
