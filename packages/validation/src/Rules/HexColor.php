@@ -12,9 +12,7 @@ final readonly class HexColor implements Rule
 {
     public function __construct(
         private bool $orNull = false,
-    )
-    {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {
