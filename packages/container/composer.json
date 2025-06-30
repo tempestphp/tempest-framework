@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/reflection": "dev-main"
+        "tempest/reflection": "1.0.3"
     },
     "autoload": {
         "files": [
