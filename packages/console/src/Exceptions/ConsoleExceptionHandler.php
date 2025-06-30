@@ -16,6 +16,7 @@ use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
+use Tempest\Support\Filesystem;
 use Throwable;
 
 use function Tempest\Support\str;
@@ -76,7 +77,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
     private function getSnippet(string $file, int $lineNumber): string
     {
         $highlighter = $this->highlighter->withGutter();
-        $code = Escape::terminal($highlighter->parse(file_get_contents($file), language: 'php'));
+        $code = Escape::terminal($highlighter->parse(Filesystem\read_file($file), language: 'php'));
         $lines = explode(PHP_EOL, $code);
 
         $lines[$lineNumber - 1] = str($lines[$lineNumber - 1])

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Input;
 
+use Tempest\Support\Json;
+
 use function Tempest\Support\str;
 
 final class StdinInputStream implements InputStream
@@ -12,8 +14,8 @@ final class StdinInputStream implements InputStream
     {
         $input = file_get_contents('php://input');
 
-        if (json_validate($input)) {
-            return json_decode($input, associative: true);
+        if (Json\is_valid($input)) {
+            return Json\decode($input);
         }
 
         $inputStreamData = str($input)
