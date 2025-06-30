@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
@@ -92,69 +88,85 @@ final class LoadDiscoveryClasses
         }
 
         foreach ($this->kernel->discoveryLocations as $location) {
-            if ($this->shouldSkipLocation($location)) {
-                continue;
-            }
-
-            $directories = new RecursiveDirectoryIterator($location->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
-            $files = new RecursiveIteratorIterator($directories);
-
-            /** @var SplFileInfo $file */
-            foreach ($files as $file) {
-                $fileName = $file->getFilename();
-
-                if ($fileName === '') {
-                    continue;
-                }
-
-                if ($fileName === '.') {
-                    continue;
-                }
-
-                if ($fileName === '..') {
-                    continue;
-                }
-
-                $input = $file->getRealPath();
-
-                if ($this->shouldSkipBasedOnConfig($input)) {
-                    continue;
-                }
-
-                // We assume that any PHP file that starts with an uppercase letter will be a class
-                if ($file->getExtension() === 'php' && ucfirst($fileName) === $fileName) {
-                    $className = $location->toClassName($file->getPathname());
-
-                    // Discovery errors (syntax errors, missing imports, etc.)
-                    // are ignored when they happen in vendor files,
-                    // but they are allowed to be thrown in project code
-                    if ($location->isVendor()) {
-                        try {
-                            $input = new ClassReflector($className);
-                        } catch (Throwable) { // @mago-expect best-practices/no-empty-catch-clause
-                        }
-                    } elseif (class_exists($className)) {
-                        $input = new ClassReflector($className);
-                    }
-                }
-
-                if ($this->shouldSkipBasedOnConfig($input)) {
-                    continue;
-                }
-
-                if ($input instanceof ClassReflector) {
-                    // If the input is a class, we'll call `discover`
-                    if (! $this->shouldSkipDiscoveryForClass($discovery, $input)) {
-                        $discovery->discover($location, $input);
-                    }
-                } elseif ($discovery instanceof DiscoversPath) {
-                    // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
-                    $discovery->discoverPath($location, $input);
-                }
-            }
+            $this->discoverPath($discovery, $location, $location->path);
         }
 
         return $discovery;
+    }
+
+    private function discoverPath(Discovery $discovery, DiscoveryLocation $location, string $path): void
+    {
+        if ($this->shouldSkipLocation($location)) {
+            return;
+        }
+
+        $input = realpath($path);
+
+        if ($input === false) {
+            return;
+        }
+
+        // Make sure the path is not marked for skipping
+        if ($this->shouldSkipBasedOnConfig($input)) {
+            return;
+        }
+
+        // Directories are scanned recursively
+        if (is_dir($input)) {
+            if ($this->shouldSkipDirectory($input)) {
+                return;
+            }
+
+            foreach (scandir($input) as $subPath) {
+                if ($subPath === '.' || $subPath === '..') {
+                    continue;
+                }
+
+                $this->discoverPath($discovery, $location, "{$input}/{$subPath}");
+            }
+
+            return;
+        }
+
+        $pathInfo = pathinfo($input);
+        $extension = $pathInfo['extension'] ?? null;
+        $fileName = $pathInfo['filename'] ?: null;
+
+        // We assume that any PHP file that starts with an uppercase letter will be a class
+        if ($extension === 'php' && ucfirst($fileName) === $fileName) {
+            $className = $location->toClassName($input);
+
+            // Discovery errors (syntax errors, missing imports, etc.)
+            // are ignored when they happen in vendor files,
+            // but they are allowed to be thrown in project code
+            if ($location->isVendor()) {
+                try {
+                    $input = new ClassReflector($className);
+                } catch (Throwable $e) { // @mago-expect best-practices/no-empty-catch-clause
+                }
+            } elseif (class_exists($className)) {
+                $input = new ClassReflector($className);
+            }
+        }
+
+        // If the input is a class, we'll try to discover it
+        if ($input instanceof ClassReflector) {
+            // Check whether the class should be skipped
+            if ($this->shouldSkipBasedOnConfig($input)) {
+                return;
+            }
+
+            // Check whether this class is marked with `#[SkipDiscovery]`
+            if ($this->shouldSkipDiscoveryForClass($discovery, $input)) {
+                return;
+            }
+
+            $discovery->discover($location, $input);
+        } elseif ($discovery instanceof DiscoversPath) {
+            // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
+            // Note that we've already checked whether the path was marked for skipping earlier in this method
+            $discovery->discoverPath($location, $input);
+        }
     }
 
     /**
@@ -211,5 +223,15 @@ final class LoadDiscoveryClasses
             // If partial discovery cache is enabled, vendor locations cache should be skipped
             DiscoveryCacheStrategy::PARTIAL => $location->isVendor(),
         };
+    }
+
+    /**
+     * Check whether a given directory should be skipped
+     */
+    private function shouldSkipDirectory(string $path): bool
+    {
+        $directory = pathinfo($path, PATHINFO_BASENAME);
+
+        return $directory === 'node_modules';
     }
 }
