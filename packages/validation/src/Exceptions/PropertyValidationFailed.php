@@ -6,6 +6,7 @@ namespace Tempest\Validation\Exceptions;
 
 use Exception;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 
 use function Tempest\Support\arr;
@@ -27,7 +28,7 @@ final class PropertyValidationFailed extends Exception
             }
         }
 
-        parent::__construct($this->property->getClass()->getName() . '::' . $this->property->getName() . PHP_EOL . json_encode($messages, JSON_PRETTY_PRINT));
+        parent::__construct($this->property->getClass()->getName() . '::' . $this->property->getName() . PHP_EOL . Json\encode($messages, pretty: true));
 
         parent::__construct($this->property->getName());
     }

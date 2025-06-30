@@ -8,6 +8,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\Exceptions\ValueWasInvalid;
 use Tempest\Database\QueryStatement;
+use Tempest\Support\Json;
 
 final readonly class SetStatement implements QueryStatement
 {
@@ -21,7 +22,7 @@ final readonly class SetStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         if ($this->values === []) {
-            throw new ValueWasInvalid($this->name, json_encode($this->values));
+            throw new ValueWasInvalid($this->name, Json\encode($this->values));
         }
 
         return match ($dialect) {

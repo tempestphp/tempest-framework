@@ -11,6 +11,7 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Filesystem;
 
 final class MigrationDiscovery implements Discovery, DiscoversPath
 {
@@ -45,7 +46,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
         $fileName = pathinfo($path, PATHINFO_FILENAME);
 
-        $contents = explode(';', file_get_contents($path));
+        $contents = explode(';', Filesystem\read_file($path));
 
         foreach ($contents as $i => $content) {
             if (! $content) {
