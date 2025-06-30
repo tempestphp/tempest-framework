@@ -13,6 +13,7 @@ use Tempest\Mapper\Mappers\JsonToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToJsonMapper;
 use Tempest\Reflection\FunctionReflector;
+use Tempest\Support\Json;
 
 /** @template ClassType */
 final class ObjectFactory
@@ -126,7 +127,7 @@ final class ObjectFactory
             return $this->from;
         }
 
-        if (is_string($this->from) && json_validate($this->from)) {
+        if (is_string($this->from) && Json\is_valid($this->from)) {
             return $this->with(JsonToArrayMapper::class)->do();
         }
 

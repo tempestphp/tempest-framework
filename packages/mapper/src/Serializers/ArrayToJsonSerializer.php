@@ -7,6 +7,7 @@ namespace Tempest\Mapper\Serializers;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Support\Arr\ArrayInterface;
+use Tempest\Support\Json;
 
 final class ArrayToJsonSerializer implements Serializer
 {
@@ -20,6 +21,6 @@ final class ArrayToJsonSerializer implements Serializer
             throw new ValueCouldNotBeSerialized('array');
         }
 
-        return json_encode($input);
+        return Json\encode($input);
     }
 }
