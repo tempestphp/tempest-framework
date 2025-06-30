@@ -232,6 +232,6 @@ final class LoadDiscoveryClasses
     {
         $directory = pathinfo($path, PATHINFO_BASENAME);
 
-        return $directory === 'node_modules';
+        return $directory === 'node_modules' || $directory === 'vendor';
     }
 }
