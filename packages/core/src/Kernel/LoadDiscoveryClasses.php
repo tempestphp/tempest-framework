@@ -16,7 +16,6 @@ use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
-use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Throwable;
 
 /** @internal */
