@@ -16,6 +16,7 @@ use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Throwable;
 
 /** @internal */
@@ -171,7 +172,7 @@ final class LoadDiscoveryClasses
             if ($input instanceof ClassReflector) {
                 // Check whether this class is marked with `#[SkipDiscovery]`
                 if ($this->shouldSkipDiscoveryForClass($discovery, $input)) {
-                    return;
+                    continue;
                 }
 
                 $discovery->discover($location, $input);
