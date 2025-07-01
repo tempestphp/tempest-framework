@@ -124,7 +124,7 @@ final class LoadDiscoveryClasses
                 return;
             }
 
-            foreach (scandir($input) as $subPath) {
+            foreach (scandir($input, SCANDIR_SORT_NONE) as $subPath) {
                 // `.` and `..` are skipped
                 if ($subPath === '.' || $subPath === '..') {
                     continue;
