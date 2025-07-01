@@ -158,6 +158,16 @@ final class LoadDiscoveryClasses
                 }
             } elseif (class_exists($className)) {
                 $input = new ClassReflector($className);
+
+                $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
+
+                if ($skipDiscovery !== null && $skipDiscovery->except === []) {
+                    $this->shouldSkipForClass[$className] = true;
+                } elseif ($skipDiscovery !== null) {
+                    foreach ($skipDiscovery->except as $except) {
+                        $this->shouldSkipForClass[$className][$except] = true;
+                    }
+                }
             }
 
             // Check skipping once again, because at this point we might have converted our path to a class
@@ -229,18 +239,23 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
+        // There's no `#[SkipDiscovery]` attribute, so the class shouldn't be skipped
         if (! isset($this->shouldSkipForClass[$input->getName()])) {
-            $attribute = $input->getAttribute(SkipDiscovery::class);
-
-            if ($attribute === null) {
-                return false;
-            }
-
-            $this->shouldSkipForClass[$input->getName()] = $attribute->except;
-
+            return false;
         }
 
-        return ! in_array($discovery::class, $this->shouldSkipForClass[$input->getName()], strict: true);
+        // The class has a general `#[SkipDiscovery]` attribute without exceptions
+        if ($this->shouldSkipForClass[$input->getName()] === true) {
+            return true;
+        }
+
+        // Current discovery is not added as "except", so it should be skipped
+        if (! isset($this->shouldSkipForClass[$input->getName()][$discovery::class])) {
+            return true;
+        }
+
+        // Current discovery was present in the except array, so it shouldn't be skipped
+        return false;
     }
 
     /**
