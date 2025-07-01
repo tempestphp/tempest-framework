@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
-final readonly class DiscoveryLocation
+final class DiscoveryLocation
 {
-    public string $namespace;
-    public string $path;
+    public readonly string $namespace;
+    public readonly string $path;
+
+    public string $key {
+        get => (string) crc32($this->path);
+    }
 
     public function __construct(
         string $namespace,
