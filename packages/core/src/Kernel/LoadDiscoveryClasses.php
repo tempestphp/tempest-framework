@@ -22,6 +22,7 @@ use Throwable;
 final class LoadDiscoveryClasses
 {
     private array $appliedDiscovery = [];
+    private array $shouldSkipForClass = [];
 
     public function __construct(
         private readonly Kernel $kernel,
@@ -228,13 +229,18 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
-        $attribute = $input->getAttribute(SkipDiscovery::class);
+        if (! isset($this->shouldSkipForClass[$input->getName()])) {
+            $attribute = $input->getAttribute(SkipDiscovery::class);
 
-        if ($attribute === null) {
-            return false;
+            if ($attribute === null) {
+                return false;
+            }
+
+            $this->shouldSkipForClass[$input->getName()] = $attribute->except;
+
         }
 
-        return ! in_array($discovery::class, $attribute->except, strict: true);
+        return ! in_array($discovery::class, $this->shouldSkipForClass[$input->getName()], strict: true);
     }
 
     /**
