@@ -42,7 +42,7 @@ final class PostmarkConfig implements MailerConfig
         /**
          * Address from which emails are sent by default.
          */
-        public null|string|Address $from = null,
+        public null|string|Address $defaultExpeditor = null,
 
         /**
          * Whether to use Postmark's API or SMTP server.

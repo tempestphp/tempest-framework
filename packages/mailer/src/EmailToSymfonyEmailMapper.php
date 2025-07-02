@@ -43,8 +43,8 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
 
         if ($email->envelope->from) {
             $symfonyEmail->from(...$this->convertAddresses($email->envelope->from));
-        } elseif ($this->mailerConfig->from) {
-            $symfonyEmail->from($this->mailerConfig->from);
+        } elseif ($this->mailerConfig->defaultExpeditor) {
+            $symfonyEmail->from($this->mailerConfig->defaultExpeditor);
         } else {
             throw new ExpeditorWasMissing();
         }
