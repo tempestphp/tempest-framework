@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Support\JavaScript;
 
+use Tempest\Support\Filesystem;
+
 /**
  * Represents the major package managers in the JavaScript ecosystem.
  * This enum is backed for serialization purposes.
@@ -63,7 +65,7 @@ enum PackageManager: string
     {
         return array_find(
             array: PackageManager::cases(),
-            callback: fn ($packageManager) => array_any($packageManager->getLockFiles(), fn ($lockFile) => file_exists($cwd . '/' . $lockFile)),
+            callback: fn ($packageManager) => array_any($packageManager->getLockFiles(), fn ($lockFile) => Filesystem\is_file($cwd . '/' . $lockFile)),
         );
     }
 }
