@@ -17,7 +17,7 @@ final class MemoizeClass
             function () {
                 $this->counter += 1;
                 return 'value';
-            }
+            },
         );
     }
 }
