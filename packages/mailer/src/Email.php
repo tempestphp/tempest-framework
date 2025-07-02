@@ -2,6 +2,9 @@
 
 namespace Tempest\Mail;
 
+/**
+ * Represents an email.
+ */
 interface Email
 {
     /**

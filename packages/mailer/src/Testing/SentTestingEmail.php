@@ -9,7 +9,7 @@ use Symfony\Component\Mime\Email as SymfonyEmail;
 use Symfony\Component\Mime\Part\DataPart;
 use Tempest\Mail\Address;
 use Tempest\Mail\Email;
-use Tempest\Mail\Priority;
+use Tempest\Mail\EmailPriority;
 use Tempest\Mail\SentEmail;
 use Tempest\Support\Arr;
 
@@ -154,9 +154,9 @@ final class SentTestingEmail implements SentEmail
     /**
      * Asserts that the email has the given priority.
      */
-    public function assertPriority(null|int|Priority $priority): self
+    public function assertPriority(null|int|EmailPriority $priority): self
     {
-        if ($priority instanceof Priority) {
+        if ($priority instanceof EmailPriority) {
             $priority = $priority->value;
         }
 

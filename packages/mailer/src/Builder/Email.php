@@ -9,14 +9,17 @@ use Tempest\Mail\Attachments\FileAttachment;
 use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\Email as EmailInterface;
+use Tempest\Mail\EmailPriority;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
-use Tempest\Mail\Priority;
 use Tempest\Support\Arr;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\View;
 use UnitEnum;
 
+/**
+ * A builder class for creating email objects.
+ */
 final class Email
 {
     public function __construct(
@@ -28,7 +31,7 @@ final class Email
         private(set) ?string $subject = null,
         private(set) null|string|View $html = null,
         private(set) ?string $text = null,
-        private(set) Priority|int $priority = Priority::NORMAL,
+        private(set) EmailPriority|int $priority = EmailPriority::NORMAL,
         private(set) array $headers = [],
         private(set) array $attachments = [],
     ) {}
@@ -116,7 +119,7 @@ final class Email
     /**
      * Defines the priority of the email.
      */
-    public function priority(Priority|int $priority): self
+    public function priority(EmailPriority|int $priority): self
     {
         $this->priority = $priority;
 
@@ -183,7 +186,7 @@ final class Email
                 bcc: Arr\wrap($this->bcc),
                 replyTo: Arr\wrap($this->replyTo),
                 priority: is_int($this->priority)
-                    ? Priority::from($this->priority)
+                    ? EmailPriority::from($this->priority)
                     : $this->priority,
                 headers: $this->headers,
             ),

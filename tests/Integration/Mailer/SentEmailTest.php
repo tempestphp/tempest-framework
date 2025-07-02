@@ -7,10 +7,10 @@ use Tempest\Mail\Attachments\DataAttachment;
 use Tempest\Mail\Attachments\FileAttachment;
 use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
+use Tempest\Mail\EmailPriority;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
-use Tempest\Mail\Priority;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
 use Tempest\Mail\Testing\TestingMailer;
@@ -78,7 +78,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent->assertFrom('no-reply@tempestphp.com');
         $sent->assertNotFrom('imaginary-expeditor@example.com');
 
-        $sent->assertPriority(Priority::NORMAL);
+        $sent->assertPriority(EmailPriority::NORMAL);
 
         $sent->assertHasHeader('X-Foo');
         $sent->assertHasHeader('X-Foo', 'bar');

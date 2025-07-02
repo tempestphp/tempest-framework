@@ -15,6 +15,6 @@ final class Envelope
         public null|string|array|Address $bcc = null,
         public null|string|array|Address $replyTo = null,
         public array $headers = [],
-        public Priority $priority = Priority::NORMAL,
+        public EmailPriority $priority = EmailPriority::NORMAL,
     ) {}
 }
