@@ -60,7 +60,7 @@ final readonly class PredisClient implements Redis
         }
 
         if ($expiration?->isNegative()) {
-            throw new InvalidTimeToLiveException($expiration);
+            throw new TimeToLiveWasInvalid($expiration);
         }
 
         $this->command('SET', ...array_filter([

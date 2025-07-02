@@ -19,7 +19,7 @@ final class RedisInitializer implements Initializer
 
         try {
             return new PhpRedisClient($this->buildPhpRedisClient(), $config, $bus);
-        } catch (MissingRedisException) {
+        } catch (ReddisExtensionWasMissing) {
             return new PredisClient($this->buildPredisClient($config), $bus);
         }
     }
@@ -27,7 +27,7 @@ final class RedisInitializer implements Initializer
     private function buildPhpRedisClient(): \Redis
     {
         if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
-            throw new MissingRedisException(\Redis::class);
+            throw new ReddisExtensionWasMissing(\Redis::class);
         }
 
         return new \Redis();
@@ -36,7 +36,7 @@ final class RedisInitializer implements Initializer
     private function buildPredisClient(RedisConfig $config): Predis\Client
     {
         if (! class_exists(Predis\Client::class)) {
-            throw new MissingRedisException(Predis\Client::class);
+            throw new ReddisExtensionWasMissing(Predis\Client::class);
         }
 
         return new Predis\Client(

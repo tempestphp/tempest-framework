@@ -5,7 +5,7 @@ namespace Tempest\KeyValue\Redis;
 use Exception;
 use Tempest\DateTime\Duration;
 
-final class InvalidTimeToLiveException extends Exception implements RedisException
+final class TimeToLiveWasInvalid extends Exception implements RedisException
 {
     public function __construct(Duration $duration)
     {
