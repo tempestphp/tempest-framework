@@ -22,6 +22,7 @@ use Throwable;
 final class LoadDiscoveryClasses
 {
     private array $appliedDiscovery = [];
+    private array $shouldSkipForClass = [];
 
     public function __construct(
         private readonly Kernel $kernel,
@@ -43,65 +44,70 @@ final class LoadDiscoveryClasses
     public function build(): array
     {
         // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-        $discoveryDiscovery = $this->buildDiscovery(DiscoveryDiscovery::class);
+        $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
+
+        // The first pass over all directories to find all discovery classes
+        $this->discover([$discoveryDiscovery]);
+
+        // Manually apply DiscoveryDiscovery
         $this->applyDiscovery($discoveryDiscovery);
 
-        $builtDiscovery = [$discoveryDiscovery];
+        // Resolve all other discoveries from the container, optionally loading their cache
+        $discoveries = array_map(
+            fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+            $this->kernel->discoveryClasses,
+        );
 
-        foreach ($this->kernel->discoveryClasses as $discoveryClass) {
-            $discovery = $this->buildDiscovery($discoveryClass);
-            $builtDiscovery[] = $discovery;
-        }
+        // The second pass over all directories to apply all other discovery classes
+        $this->discover($discoveries);
 
-        return $builtDiscovery;
+        return [$discoveryDiscovery, ...$discoveries];
     }
 
     /**
-     * Create a discovery instance from a class name.
-     * Optionally set the cached discovery items whenever caching is enabled.
+     * Build a list of discovery classes within all registered discovery locations
+     * @param Discovery[] $discoveries
      */
-    private function resolveDiscovery(string $discoveryClass): Discovery
+    private function discover(array $discoveries): void
     {
-        /** @var Discovery $discovery */
-        $discovery = $this->container->get($discoveryClass);
-
-        if ($this->discoveryCache->enabled) {
-            $discovery->setItems(
-                $this->discoveryCache->restore($discoveryClass) ?? new DiscoveryItems(),
-            );
-        } else {
-            $discovery->setItems(new DiscoveryItems());
-        }
-
-        return $discovery;
-    }
-
-    /**
-     * Build one specific discovery instance.
-     */
-    private function buildDiscovery(string $discoveryClass): Discovery
-    {
-        $discovery = $this->resolveDiscovery($discoveryClass);
-
-        if ($this->discoveryCache->strategy === DiscoveryCacheStrategy::FULL && $discovery->getItems()->isLoaded()) {
-            return $discovery;
-        }
-
         foreach ($this->kernel->discoveryLocations as $location) {
-            $this->discoverPath($discovery, $location, $location->path);
-        }
+            // Skip location based on cache status
+            if ($this->isLocationCached($location)) {
+                $cachedForLocation = $this->discoveryCache->restore($location);
 
-        return $discovery;
+                // Merge discovery items
+                foreach ($discoveries as $discovery) {
+                    $itemsForDiscovery = $cachedForLocation[$discovery::class] ?? null;
+
+                    if (! $itemsForDiscovery) {
+                        continue;
+                    }
+
+                    $discovery->setItems(
+                        $discovery->getItems()->addForLocation($location, $itemsForDiscovery),
+                    );
+                }
+
+                continue;
+            }
+
+            // Scan all files within this location
+            $this->scan(
+                location: $location,
+                discoveries: $discoveries,
+                path: $location->path,
+            );
+        }
     }
 
-    private function discoverPath(Discovery $discovery, DiscoveryLocation $location, string $path): void
+    /**
+     * Recursively scan a directory and apply a given set of discovery classes to all files
+     */
+    private function scan(DiscoveryLocation $location, array $discoveries, string $path): void
     {
-        if ($this->shouldSkipLocation($location)) {
-            return;
-        }
-
         $input = realpath($path);
 
+        // Make sure the path is valid
         if ($input === false) {
             return;
         }
@@ -113,26 +119,32 @@ final class LoadDiscoveryClasses
 
         // Directories are scanned recursively
         if (is_dir($input)) {
+            // Make sure the current directory is not marked for skipping
             if ($this->shouldSkipDirectory($input)) {
                 return;
             }
 
-            foreach (scandir($input) as $subPath) {
+            foreach (scandir($input, SCANDIR_SORT_NONE) as $subPath) {
+                // `.` and `..` are skipped
                 if ($subPath === '.' || $subPath === '..') {
                     continue;
                 }
 
-                $this->discoverPath($discovery, $location, "{$input}/{$subPath}");
+                // Scan all files and folders within this directory
+                $this->scan($location, $discoveries, "{$input}/{$subPath}");
             }
 
             return;
         }
 
+        // At this point, we have a single file, let's try and discover it
         $pathInfo = pathinfo($input);
         $extension = $pathInfo['extension'] ?? null;
         $fileName = $pathInfo['filename'] ?: null;
 
-        // We assume that any PHP file that starts with an uppercase letter will be a class
+        // If this is a PHP file starting with an uppercase letter, we assume it's a class.
+        // TODO: Figure out if we can refactor this to checking composer's autoload map (it might not always be available)
+        //       An other idea is to check whether composer has a check to verify whether a file is a class?
         if ($extension === 'php' && ucfirst($fileName) === $fileName) {
             $className = $location->toClassName($input);
 
@@ -142,35 +154,62 @@ final class LoadDiscoveryClasses
             if ($location->isVendor()) {
                 try {
                     $input = new ClassReflector($className);
-                } catch (Throwable $e) { // @mago-expect best-practices/no-empty-catch-clause
+                } catch (Throwable) { // @mago-expect best-practices/no-empty-catch-clause
                 }
             } elseif (class_exists($className)) {
                 $input = new ClassReflector($className);
-            }
-        }
 
-        // If the input is a class, we'll try to discover it
-        if ($input instanceof ClassReflector) {
-            // Check whether the class should be skipped
+                $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
+
+                if ($skipDiscovery !== null && $skipDiscovery->except === []) {
+                    $this->shouldSkipForClass[$className] = true;
+                } elseif ($skipDiscovery !== null) {
+                    foreach ($skipDiscovery->except as $except) {
+                        $this->shouldSkipForClass[$className][$except] = true;
+                    }
+                }
+            }
+
+            // Check skipping once again, because at this point we might have converted our path to a class
             if ($this->shouldSkipBasedOnConfig($input)) {
                 return;
             }
+        }
 
-            // Check whether this class is marked with `#[SkipDiscovery]`
-            if ($this->shouldSkipDiscoveryForClass($discovery, $input)) {
-                return;
+        // Pass the current file to each discovery class
+        foreach ($discoveries as $discovery) {
+            // If the input is a class, we'll try to discover it
+            if ($input instanceof ClassReflector) {
+                // Check whether this class is marked with `#[SkipDiscovery]`
+                if ($this->shouldSkipDiscoveryForClass($discovery, $input)) {
+                    continue;
+                }
+
+                $discovery->discover($location, $input);
+            } elseif ($discovery instanceof DiscoversPath) {
+                // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
+                // Note that we've already checked whether the path was marked for skipping earlier in this method
+                $discovery->discoverPath($location, $input);
             }
-
-            $discovery->discover($location, $input);
-        } elseif ($discovery instanceof DiscoversPath) {
-            // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
-            // Note that we've already checked whether the path was marked for skipping earlier in this method
-            $discovery->discoverPath($location, $input);
         }
     }
 
     /**
-     * Apply the discovered classes and files. Also store the discovered items into cache, if caching is enabled
+     * Create a discovery instance from a class name.
+     * Optionally set the cached discovery items whenever caching is enabled.
+     */
+    private function resolveDiscovery(string $discoveryClass): Discovery
+    {
+        /** @var Discovery $discovery */
+        $discovery = $this->container->get($discoveryClass);
+
+        $discovery->setItems(new DiscoveryItems());
+
+        return $discovery;
+    }
+
+    /**
+     * Apply the discovered classes and files.
      */
     private function applyDiscovery(Discovery $discovery): void
     {
@@ -183,6 +222,9 @@ final class LoadDiscoveryClasses
         $this->appliedDiscovery[$discovery::class] = true;
     }
 
+    /**
+     * Check whether a path or class should be skipped based on user-provided discovery configuration
+     */
     private function shouldSkipBasedOnConfig(ClassReflector|string $input): bool
     {
         if ($input instanceof ClassReflector) {
@@ -197,19 +239,29 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
-        $attribute = $input->getAttribute(SkipDiscovery::class);
-
-        if ($attribute === null) {
+        // There's no `#[SkipDiscovery]` attribute, so the class shouldn't be skipped
+        if (! isset($this->shouldSkipForClass[$input->getName()])) {
             return false;
         }
 
-        return ! in_array($discovery::class, $attribute->except, strict: true);
+        // The class has a general `#[SkipDiscovery]` attribute without exceptions
+        if ($this->shouldSkipForClass[$input->getName()] === true) {
+            return true;
+        }
+
+        // Current discovery is not added as "except", so it should be skipped
+        if (! isset($this->shouldSkipForClass[$input->getName()][$discovery::class])) {
+            return true;
+        }
+
+        // Current discovery was present in the except array, so it shouldn't be skipped
+        return false;
     }
 
     /**
      * Check whether a discovery location should be skipped based on what's cached for a specific discovery class
      */
-    private function shouldSkipLocation(DiscoveryLocation $location): bool
+    private function isLocationCached(DiscoveryLocation $location): bool
     {
         if (! $this->discoveryCache->enabled) {
             return false;
@@ -232,6 +284,6 @@ final class LoadDiscoveryClasses
     {
         $directory = pathinfo($path, PATHINFO_BASENAME);
 
-        return $directory === 'node_modules';
+        return $directory === 'node_modules' || $directory === 'vendor';
     }
 }

@@ -9,6 +9,7 @@ use RuntimeException;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
+use Tempest\Discovery\DiscoveryLocation;
 use Throwable;
 
 use function Tempest\internal_storage_path;
@@ -32,24 +33,40 @@ final class DiscoveryCache
         );
     }
 
-    public function restore(string $className): ?DiscoveryItems
+    /**
+     * @return array<class-string<\Tempest\Discovery\Discovery>, DiscoveryItems>
+     */
+    public function restore(DiscoveryLocation $location): ?array
     {
         if (! $this->enabled) {
             return null;
         }
 
         return $this->pool
-            ->getItem(str_replace('\\', '_', $className))
+            ->getItem($location->key)
             ->get();
     }
 
-    public function store(Discovery $discovery, DiscoveryItems $discoveryItems): void
+    /**
+     * @param Discovery[] $discoveries
+     */
+    public function store(DiscoveryLocation $location, array $discoveries): void
     {
-        $key = str_replace('\\', '_', $discovery::class);
+        $cachedForLocation = [];
+
+        foreach ($discoveries as $discovery) {
+            $items = $discovery->getItems();
+
+            if ($this->strategy === DiscoveryCacheStrategy::PARTIAL) {
+                $items = $items->onlyVendor();
+            }
+
+            $cachedForLocation[$discovery::class] = $items->getForLocation($location);
+        }
 
         $item = $this->pool
-            ->getItem($key)
-            ->set($discoveryItems);
+            ->getItem($location->key)
+            ->set($cachedForLocation);
 
         $this->pool->save($item);
     }

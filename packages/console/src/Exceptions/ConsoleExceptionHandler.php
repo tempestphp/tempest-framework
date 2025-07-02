@@ -6,6 +6,7 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
+use Tempest\Console\GlobalFlags;
 use Tempest\Console\HasExitCode;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
@@ -51,7 +52,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
                 ->writeln();
 
-            if ($this->argumentBag->get('-v') !== null) {
+            if ($this->argumentBag->get(GlobalFlags::VERBOSE_SHORTHAND->value) || $this->argumentBag->get(GlobalFlags::VERBOSE->value)) {
                 foreach ($throwable->getTrace() as $i => $trace) {
                     $this->console->writeln("<style='bold fg-blue'>#{$i}</style> " . $this->formatTrace($trace));
                 }
