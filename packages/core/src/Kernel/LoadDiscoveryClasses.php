@@ -158,7 +158,10 @@ final class LoadDiscoveryClasses
                 }
             } elseif (class_exists($className)) {
                 $input = new ClassReflector($className);
+            }
 
+            if ($input instanceof ClassReflector) {
+                // Resolve `#[SkipDiscovery]` for this class
                 $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
 
                 if ($skipDiscovery !== null && $skipDiscovery->except === []) {
@@ -168,11 +171,11 @@ final class LoadDiscoveryClasses
                         $this->shouldSkipForClass[$className][$except] = true;
                     }
                 }
-            }
 
-            // Check skipping once again, because at this point we might have converted our path to a class
-            if ($this->shouldSkipBasedOnConfig($input)) {
-                return;
+                // Check skipping once again, because at this point we might have converted our path to a class
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    return;
+                }
             }
         }
 
