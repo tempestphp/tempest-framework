@@ -10,7 +10,9 @@ trait HasMemoization
 
     private function memoize(string $key, Closure $closure): mixed
     {
-        $this->memoize[$key] ??= $closure();
+        if (! isset($this->memoize[$key])) {
+            $this->memoize[$key] = $closure();
+        }
 
         return $this->memoize[$key];
     }
