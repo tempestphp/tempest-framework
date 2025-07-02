@@ -28,7 +28,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
             return true;
         }
 
-        return false;
+        return $to instanceof SymfonyEmail;
     }
 
     public function map(mixed $from, mixed $to): SymfonyEmail
