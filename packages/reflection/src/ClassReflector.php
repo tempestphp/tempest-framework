@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
+use Closure;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
@@ -14,7 +15,8 @@ use ReflectionProperty as PHPReflectionProperty;
 final class ClassReflector implements Reflector
 {
     use HasAttributes;
-    use HasMemoization;
+
+    private array $memoize = [];
 
     private readonly PHPReflectionClass $reflectionClass;
 
@@ -166,5 +168,14 @@ final class ClassReflector implements Reflector
     public function implements(string $interface): bool
     {
         return $this->isInstantiable() && $this->getType()->matches($interface);
+    }
+
+    private function memoize(string $key, Closure $closure): mixed
+    {
+        if (! isset($this->memoize[$key])) {
+            $this->memoize[$key] = $closure();
+        }
+
+        return $this->memoize[$key];
     }
 }
