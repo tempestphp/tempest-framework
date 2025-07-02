@@ -15,9 +15,9 @@ final class EmailBuilderTest extends TestCase
             ->to('michael.scott@dundermifflin.com')
             ->cc(['dwight.schrute@dundermifflin.com', 'jim.halpert@dundermifflin.com'])
             ->bcc('pam.beesly@dundermifflin.com')
-            ->withSubject('Important: Please come to my office right away')
-            ->withFileAttachment(__DIR__ . '/Fixtures/attachment.txt')
-            ->withText('Gotcha!')
+            ->subject('Important: Please come to my office right away')
+            ->attachFromFileystem(__DIR__ . '/Fixtures/attachment.txt')
+            ->text('Gotcha!')
             ->make();
 
         $this->assertInstanceOf(EmailInterface::class, $email);

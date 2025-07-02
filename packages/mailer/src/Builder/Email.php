@@ -86,7 +86,7 @@ final class Email
     /**
      * Defines the subject of the email.
      */
-    public function withSubject(string|Stringable $subject): self
+    public function subject(string|Stringable $subject): self
     {
         $this->subject = (string) $subject;
 
@@ -96,7 +96,7 @@ final class Email
     /**
      * Defines the HTML body of the email.
      */
-    public function withHtml(string|View $html): self
+    public function html(string|View $html): self
     {
         $this->html = $html;
 
@@ -106,7 +106,7 @@ final class Email
     /**
      * Defines the text body of the email.
      */
-    public function withText(string $text): self
+    public function text(string $text): self
     {
         $this->text = $text;
 
@@ -116,7 +116,7 @@ final class Email
     /**
      * Defines the priority of the email.
      */
-    public function withPriority(Priority|int $priority): self
+    public function priority(Priority|int $priority): self
     {
         $this->priority = $priority;
 
@@ -126,7 +126,7 @@ final class Email
     /**
      * Defines the headers of the email.
      */
-    public function withHeaders(array $headers): self
+    public function headers(array $headers): self
     {
         $this->headers = $headers;
 
@@ -134,29 +134,17 @@ final class Email
     }
 
     /**
-     * Defines the attachments of the email.
-     *
-     * @param Attachment[] $attachments
+     * Adds attachments to the email.
      */
-    public function withAttachments(array $attachments): self
+    public function attach(Attachment ...$attachments): self
     {
         foreach ($attachments as $attachment) {
             if (! ($attachment instanceof Attachment)) {
                 throw new \InvalidArgumentException(sprintf('All attachments must be instances of `%s`.', Attachment::class));
             }
+
+            $this->attachments[] = $attachment;
         }
-
-        $this->attachments = $attachments;
-
-        return $this;
-    }
-
-    /**
-     * Adds an attachment to the email.
-     */
-    public function withAttachment(Attachment $attachment): self
-    {
-        $this->attachments[] = $attachment;
 
         return $this;
     }
@@ -164,7 +152,7 @@ final class Email
     /**
      * Adds an attachment from the filesystem.
      */
-    public function withFileAttachment(string $path, ?string $name = null, ?string $contentType = null): self
+    public function attachFromFileystem(string $path, ?string $name = null, ?string $contentType = null): self
     {
         $this->attachments[] = FileAttachment::fromPath($path, $name, $contentType);
 
@@ -174,7 +162,7 @@ final class Email
     /**
      * Adds an attachment from the storage.
      */
-    public function withStorageAttachment(string $path, ?string $name = null, ?string $contentType = null, null|string|UnitEnum $tag = null): self
+    public function attachFromStorage(string $path, ?string $name = null, ?string $contentType = null, null|string|UnitEnum $tag = null): self
     {
         $this->attachments[] = StorageAttachment::fromPath($path, $name, $contentType, $tag);
 
