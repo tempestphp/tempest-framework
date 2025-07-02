@@ -9,5 +9,5 @@ interface ExceptionProcessor
     /**
      * Processes the given exception.
      */
-    public function process(Throwable $throwable): Throwable;
+    public function process(Throwable $throwable): void;
 }

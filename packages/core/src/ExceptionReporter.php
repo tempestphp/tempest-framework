@@ -19,7 +19,7 @@ final class ExceptionReporter
     ) {}
 
     /**
-     * Reports the given exception to the registered exceptionm processors.
+     * Reports the given exception to the registered exception processors.
      */
     public function report(Throwable $throwable): void
     {
@@ -29,9 +29,10 @@ final class ExceptionReporter
             return;
         }
 
+        /** @var class-string<\Tempest\Core\ExceptionProcessor> $processor */
         foreach ($this->appConfig->exceptionProcessors as $processor) {
             $handler = $this->container->get($processor);
-            $throwable = $handler->process($throwable);
+            $handler->process($throwable);
         }
     }
 }

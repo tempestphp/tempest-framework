@@ -11,10 +11,8 @@ final class NullExceptionProcessor implements ExceptionProcessor
 {
     public static array $exceptions = [];
 
-    public function process(Throwable $throwable): Throwable
+    public function process(Throwable $throwable): void
     {
         static::$exceptions[] = $throwable;
-
-        return $throwable;
     }
 }
