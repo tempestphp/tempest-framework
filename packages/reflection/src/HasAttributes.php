@@ -13,6 +13,8 @@ use ReflectionProperty as PHPReflectionProperty;
 
 trait HasAttributes
 {
+    use HasMemoization;
+
     abstract public function getReflection(): PHPReflectionClass|PHPReflectionMethod|PHPReflectionProperty|PHPReflectionParameter;
 
     /**

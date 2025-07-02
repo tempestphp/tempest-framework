@@ -11,11 +11,12 @@ use ReflectionProperty as PHPReflectionProperty;
 /**
  * @template TClassName of object
  */
-final readonly class ClassReflector implements Reflector
+final class ClassReflector implements Reflector
 {
     use HasAttributes;
+    use HasMemoization;
 
-    private PHPReflectionClass $reflectionClass;
+    private readonly PHPReflectionClass $reflectionClass;
 
     /**
      * @param class-string<TClassName>|TClassName|PHPReflectionClass<TClassName> $reflectionClass
@@ -77,9 +78,12 @@ final readonly class ClassReflector implements Reflector
     /** @return \Tempest\Reflection\MethodReflector[] */
     public function getPublicMethods(): array
     {
-        return array_map(
-            fn (PHPReflectionMethod $method) => new MethodReflector($method),
-            $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+        return $this->memoize(
+            'public_methods',
+            fn () => array_map(
+                fn (PHPReflectionMethod $method) => new MethodReflector($method),
+                $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+            ),
         );
     }
 
