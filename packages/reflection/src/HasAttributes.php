@@ -10,6 +10,7 @@ use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionParameter as PHPReflectionParameter;
 use ReflectionProperty as PHPReflectionProperty;
+use Tempest\Support\HasMemoization;
 
 trait HasAttributes
 {

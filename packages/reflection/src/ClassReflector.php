@@ -7,6 +7,7 @@ namespace Tempest\Reflection;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
+use Tempest\Support\HasMemoization;
 
 /**
  * @template TClassName of object

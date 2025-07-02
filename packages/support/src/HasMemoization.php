@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Reflection;
+namespace Tempest\Support;
 
 use Closure;
 
