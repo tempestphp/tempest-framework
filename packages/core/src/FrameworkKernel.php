@@ -157,6 +157,7 @@ final class FrameworkKernel implements Kernel
 
     public function loadConfig(): self
     {
+        $this->container->addInitializer(ConfigCacheInitializer::class);
         $this->container->invoke(LoadConfig::class);
 
         return $this;
