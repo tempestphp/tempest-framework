@@ -4,24 +4,17 @@ namespace Tempest\KeyValue\Redis;
 
 use Predis;
 use Tempest\Container\Container;
-use Tempest\Container\DynamicInitializer;
+use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\EventBus\EventBus;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
-use Tempest\Reflection\ClassReflector;
-use UnitEnum;
 
-final class RedisInitializer implements DynamicInitializer
+final class RedisInitializer implements Initializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
-    {
-        return $class->getType()->matches(Redis::class);
-    }
-
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Redis
+    public function initialize(Container $container): Redis
     {
-        $config = $container->get(RedisConfig::class, $tag);
+        $config = $container->get(RedisConfig::class);
         $bus = $container->get(EventBus::class);
 
         try {

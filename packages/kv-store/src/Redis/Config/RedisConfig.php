@@ -66,10 +66,5 @@ final class RedisConfig
          * Less common connection options.
          */
         public array $connection = [],
-
-        /**
-         * Identifier for this key-value store configuration.
-         */
-        public null|string|UnitEnum $tag = null,
     ) {}
 }
