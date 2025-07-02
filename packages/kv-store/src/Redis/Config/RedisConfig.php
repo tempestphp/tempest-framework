@@ -45,7 +45,7 @@ final class RedisConfig
         /**
          * Specifies the protocol used to communicate with the Redis instance. This is specific to predis.
          */
-        public Scheme $scheme = Scheme::TCP,
+        public RedisConnectionScheme $scheme = RedisConnectionScheme::TCP,
 
         /**
          * Specifies if the underlying connection resource should be left open when a script ends its lifecycle.

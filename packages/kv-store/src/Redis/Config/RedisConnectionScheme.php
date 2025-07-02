@@ -5,7 +5,7 @@ namespace Tempest\KeyValue\Redis\Config;
 /**
  * Represents the connection scheme used to connect to Redis (predis only).
  */
-enum Scheme: string
+enum RedisConnectionScheme: string
 {
     /**
      * Connect to Redis using TCP/IP.
