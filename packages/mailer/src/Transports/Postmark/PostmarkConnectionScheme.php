@@ -2,7 +2,7 @@
 
 namespace Tempest\Mail\Transports\Postmark;
 
-enum Scheme: string
+enum PostmarkConnectionScheme: string
 {
     /**
      * Use Postmark's API.

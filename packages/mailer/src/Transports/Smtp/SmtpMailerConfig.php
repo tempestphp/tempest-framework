@@ -21,7 +21,7 @@ final class SmtpMailerConfig implements MailerConfig
         /**
          * Scheme used for this connection.
          */
-        public Scheme $scheme,
+        public SmtpScheme $scheme,
 
         /**
          * Host used for connecting to the SMTP server.

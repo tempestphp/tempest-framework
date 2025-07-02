@@ -2,7 +2,7 @@
 
 namespace Tempest\Mail\Transports\Smtp;
 
-enum Scheme: string
+enum SmtpScheme: string
 {
     case SMTP = 'smtp';
     case SMTPS = 'smtps';

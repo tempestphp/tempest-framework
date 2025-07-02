@@ -2,7 +2,7 @@
 
 namespace Tempest\Mail\Transports\Ses;
 
-enum Scheme: string
+enum SesConnectionScheme: string
 {
     /**
      * Uses Amazon SES's API.

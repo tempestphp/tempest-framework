@@ -54,7 +54,7 @@ final class SesSmtpMailerConfig implements MailerConfig
         /**
          * Whether to use Amazon SES's API or SMTP server.
          */
-        public Scheme $scheme = Scheme::API,
+        public SesConnectionScheme $scheme = SesConnectionScheme::API,
     ) {}
 
     public function createTransport(): TransportInterface

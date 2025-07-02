@@ -18,8 +18,8 @@ final class PostmarkConfig implements MailerConfig
 {
     public string $transport {
         get => match ($this->sceme) {
-            Scheme::API => PostmarkApiTransport::class,
-            Scheme::SMTP => PostmarkSmtpTransport::class,
+            PostmarkConnectionScheme::API => PostmarkApiTransport::class,
+            PostmarkConnectionScheme::SMTP => PostmarkSmtpTransport::class,
         };
     }
 
@@ -47,13 +47,13 @@ final class PostmarkConfig implements MailerConfig
         /**
          * Whether to use Postmark's API or SMTP server.
          */
-        public Scheme $scheme = Scheme::API,
+        public PostmarkConnectionScheme $scheme = PostmarkConnectionScheme::API,
     ) {}
 
     public function createTransport(): TransportInterface
     {
         return new PostmarkTransportFactory()->create(new Dsn(
-            scheme: Scheme::API->value,
+            scheme: PostmarkConnectionScheme::API->value,
             user: $this->key,
             host: $this->host ?? 'default',
             port: $this->port,

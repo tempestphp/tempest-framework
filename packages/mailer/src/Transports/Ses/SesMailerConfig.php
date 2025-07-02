@@ -20,8 +20,8 @@ final class SesMailerConfig implements MailerConfig
 {
     public string $transport {
         get => match ($this->sceme) {
-            Scheme::API => SesApiAsyncAwsTransport::class,
-            Scheme::HTTP => SesHttpAsyncAwsTransport::class,
+            SesConnectionScheme::API => SesApiAsyncAwsTransport::class,
+            SesConnectionScheme::HTTP => SesHttpAsyncAwsTransport::class,
         };
     }
 
@@ -59,7 +59,7 @@ final class SesMailerConfig implements MailerConfig
         /**
          * Whether to use Amazon SES's API or async HTTP transport.
          */
-        public Scheme $scheme = Scheme::HTTP,
+        public SesConnectionScheme $scheme = SesConnectionScheme::HTTP,
     ) {}
 
     public function createTransport(): TransportInterface
