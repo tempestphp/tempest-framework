@@ -10,7 +10,7 @@ use Throwable;
  */
 final class LogExceptionProcessor implements ExceptionProcessor
 {
-    public function process(Throwable $throwable): Throwable
+    public function process(Throwable $throwable): void
     {
         $items = [
             'class' => $throwable::class,
@@ -21,7 +21,5 @@ final class LogExceptionProcessor implements ExceptionProcessor
         ];
 
         Debug::resolve()->log($items, writeToOut: false);
-
-        return $throwable;
     }
 }
