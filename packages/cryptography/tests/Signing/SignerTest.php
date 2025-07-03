@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
 use Tempest\Clock\GenericClock;
 use Tempest\Clock\MockClock;
+use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasMissing;
 use Tempest\Cryptography\Signing\GenericSigner;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
@@ -90,7 +91,7 @@ final class SignerTest extends TestCase
 
     public function test_no_signing_key(): void
     {
-        $this->expectException(SigningKeyWasMissing::class);
+        $this->expectException(SigningKeyWasInvalid::class);
 
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,

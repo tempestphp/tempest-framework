@@ -12,14 +12,8 @@ final class GenericSigner implements Signer
         get => $this->config->algorithm;
     }
 
-    private string $key {
-        get {
-            if (trim($this->config->key) === '') {
-                throw new SigningKeyWasMissing();
-            }
-
-            return $this->config->key;
-        }
+    private SigningKey $key {
+        get => SigningKey::fromString($this->config->key);
     }
 
     public function __construct(
@@ -32,7 +26,7 @@ final class GenericSigner implements Signer
         return new Signature(hash_hmac(
             algo: $this->algorithm->value,
             data: $data,
-            key: $this->key,
+            key: $this->key->value,
         ));
     }
 
@@ -40,8 +34,8 @@ final class GenericSigner implements Signer
     {
         return $this->timelock->invoke(
             callback: fn () => hash_equals(
-                known_string: $this->sign($data)->signature,
-                user_string: $signature->signature,
+                known_string: $this->sign($data)->value,
+                user_string: $signature->value,
             ),
             duration: $this->config->minimumExecutionDuration ?: Duration::zero(),
         );
