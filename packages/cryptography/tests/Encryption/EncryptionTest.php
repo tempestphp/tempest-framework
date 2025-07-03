@@ -23,7 +23,7 @@ final class EncryptionTest extends TestCase
 
     private function createEncrypter(?string $key = null, false|Duration $minimumExecutionDuration = false): GenericEncrypter
     {
-        $key ??= EncryptionKey::generate(EncryptionAlgorithm::AES_256_GCM)->value;
+        $key ??= EncryptionKey::generate(EncryptionAlgorithm::AES_256_GCM)->toString();
 
         return new GenericEncrypter(
             signer: $this->createSigner(new SigningConfig(
@@ -48,7 +48,7 @@ final class EncryptionTest extends TestCase
 
         $serialized = $encrypted->serialize();
 
-        $this->assertTrue(json_validate(base64_decode($serialized)));
+        $this->assertTrue(json_validate(base64_decode($serialized, strict: true)));
         $this->assertSame($data, $encrypter->decrypt($serialized));
     }
 

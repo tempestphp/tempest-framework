@@ -26,7 +26,7 @@ final class EncrypterTest extends FrameworkIntegrationTestCase
     {
         $this->container->config(new EncryptionConfig(
             algorithm: EncryptionAlgorithm::AES_256_GCM,
-            key: $key = EncryptionKey::generate(EncryptionAlgorithm::AES_256_GCM),
+            key: $key = EncryptionKey::generate(EncryptionAlgorithm::AES_256_GCM)->toString(),
         ));
 
         $this->container->config(new SigningConfig(

@@ -32,16 +32,16 @@ final readonly class EncryptedData implements Stringable
 
     public static function unserialize(string $data): self
     {
-        $decoded = Json\decode(base64_decode($data));
+        $decoded = Json\decode(base64_decode($data, strict: true));
 
         if (! is_array($decoded) || ! isset($decoded['payload'], $decoded['iv'], $decoded['tag'], $decoded['signature'], $decoded['algorithm'])) {
             throw EncryptedDataWasInvalid::dueToInvalidFormat();
         }
 
         return new self(
-            payload: base64_decode($decoded['payload']),
-            iv: base64_decode($decoded['iv']),
-            tag: base64_decode($decoded['tag']),
+            payload: base64_decode($decoded['payload'], strict: true),
+            iv: base64_decode($decoded['iv'], strict: true),
+            tag: base64_decode($decoded['tag'], strict: true),
             signature: new Signature($decoded['signature']),
             algorithm: EncryptionAlgorithm::from($decoded['algorithm']),
         );

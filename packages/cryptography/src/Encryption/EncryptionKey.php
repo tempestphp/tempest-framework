@@ -33,11 +33,16 @@ final readonly class EncryptionKey implements Stringable
      */
     public static function fromString(string $key, EncryptionAlgorithm $algorithm): self
     {
-        return new self($key, $algorithm);
+        return new self(base64_decode($key, strict: true), $algorithm);
+    }
+
+    public function toString(): string
+    {
+        return base64_encode($this->value);
     }
 
     public function __toString(): string
     {
-        return $this->value;
+        return $this->toString();
     }
 }
