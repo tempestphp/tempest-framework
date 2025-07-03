@@ -20,17 +20,17 @@ final class TestingProcessExecutor implements ProcessExecutor
     private(set) array $executions = [];
 
     /**
-     * @param array<string|ProcessResult> $registeredProcessResult
+     * @param array<string|ProcessResult> $mocks
      */
     public function __construct(
         private readonly GenericProcessExecutor $executor,
-        public array $registeredProcessResult = [],
+        public array $mocks = [],
         public bool $allowRunningActualProcesses = false,
     ) {}
 
     public function run(array|string|PendingProcess $command): ProcessResult
     {
-        if ($result = $this->findRegisteredProcessResult($command)) {
+        if ($result = $this->findMockedProcess($command)) {
             return $this->recordExecution($command, $result);
         }
 
@@ -69,11 +69,11 @@ final class TestingProcessExecutor implements ProcessExecutor
         return $this->pool($pool)->start()->wait();
     }
 
-    private function findRegisteredProcessResult(array|string|PendingProcess $command): ?ProcessResult
+    private function findMockedProcess(array|string|PendingProcess $command): ?ProcessResult
     {
         $process = $this->createPendingProcess($command);
 
-        foreach ($this->registeredProcessResult as $command => $result) {
+        foreach ($this->mocks as $command => $result) {
             if (! Regex\matches($process->command, $this->buildRegExpFromString($command))) {
                 continue;
             }
@@ -96,7 +96,7 @@ final class TestingProcessExecutor implements ProcessExecutor
     {
         $process = $this->createPendingProcess($command);
 
-        foreach ($this->registeredProcessResult as $command => $result) {
+        foreach ($this->mocks as $command => $result) {
             if (! $this->commandMatchesPattern($process->command, $command)) {
                 continue;
             }
