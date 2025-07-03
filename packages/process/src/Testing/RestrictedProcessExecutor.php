@@ -3,7 +3,6 @@
 namespace Tempest\Process\Testing;
 
 use Tempest\Process\InvokedSystemProcess;
-use Tempest\Process\PendingPool;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\Pool;
 use Tempest\Process\ProcessExecutor;
