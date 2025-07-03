@@ -21,7 +21,7 @@ function checkPackageFile(array $package, string $file): void
 
 function checkPackageLicense(array $package): void
 {
-    $licenseFile = $package['directory'] . DIRECTORY_SEPARATOR . 'LICENCE.md';
+    $licenseFile = $package['directory'] . DIRECTORY_SEPARATOR . 'LICENSE.md';
     $composerFile = $package['directory'] . DIRECTORY_SEPARATOR . 'composer.json';
     $composer = json_decode(file_get_contents($composerFile), true);
 
