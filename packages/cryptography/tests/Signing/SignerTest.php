@@ -3,30 +3,16 @@
 namespace Tempest\Cryptography\Tests\Signing;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Clock\Clock;
-use Tempest\Clock\GenericClock;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;
-use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasMissing;
-use Tempest\Cryptography\Signing\GenericSigner;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
-use Tempest\Cryptography\Timelock;
+use Tempest\Cryptography\Tests\CreatesSigner;
 use Tempest\DateTime\Duration;
 
 final class SignerTest extends TestCase
 {
-    private function createSigner(SigningConfig $config, ?Clock $clock = null): GenericSigner
-    {
-        return new GenericSigner(
-            config: $config ?? new SigningConfig(
-                algorithm: SigningAlgorithm::SHA256,
-                key: 'my_secret_key',
-                minimumExecutionDuration: false,
-            ),
-            timelock: new Timelock($clock ?? new GenericClock()),
-        );
-    }
+    use CreatesSigner;
 
     public function test_good_signature(): void
     {
