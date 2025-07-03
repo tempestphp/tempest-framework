@@ -8,6 +8,9 @@
         "tempest/container": "dev-main",
         "tempest/support": "dev-main"
     },
+    "suggest": {
+        "tempest/clock": "For time-lock support"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Cryptography\\": "src"

@@ -41,10 +41,9 @@ final class GenericClock implements Clock
 
     public function sleep(int|Duration $milliseconds): void
     {
-        if ($milliseconds instanceof Duration) {
-            $milliseconds = (int) $milliseconds->getTotalMilliseconds();
-        }
-
-        usleep($milliseconds * MILLISECONDS_PER_SECOND);
+        usleep(match (true) {
+            is_int($milliseconds) => $milliseconds * MILLISECONDS_PER_SECOND,
+            $milliseconds instanceof Duration => (int) $milliseconds->getTotalMicroseconds(),
+        });
     }
 }
