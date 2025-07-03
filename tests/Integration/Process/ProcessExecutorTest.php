@@ -31,10 +31,10 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         $this->process->registerProcessResults([
             'echo *' => $this->process
                 ->describe()
-                ->withOutput('hello')
-                ->withOutput('world')
-                ->withIterations(2)
-                ->withExitCode(0),
+                ->output('hello')
+                ->output('world')
+                ->iterations(2)
+                ->exitCode(0),
         ]);
 
         $process = $this->executor->start('echo "Hello"');
@@ -60,8 +60,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
     public function test_concurrently(): void
     {
         $this->process->registerProcessResults([
-            'echo "hello"' => $this->process->describe()->withOutput('hello'),
-            'echo "world"' => $this->process->describe()->withOutput('world'),
+            'echo "hello"' => $this->process->describe()->output('hello'),
+            'echo "world"' => $this->process->describe()->output('world'),
         ]);
 
         [$hello, $world] = $this->executor->concurrently([
@@ -80,8 +80,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
     public function test_pool(): void
     {
         $this->process->registerProcessResults([
-            'echo "hello"' => $this->process->describe()->withOutput('hello'),
-            'echo "world"' => $this->process->describe()->withOutput('world'),
+            'echo "hello"' => $this->process->describe()->output('hello'),
+            'echo "world"' => $this->process->describe()->output('world'),
         ]);
 
         $pool = $this->executor->pool([
