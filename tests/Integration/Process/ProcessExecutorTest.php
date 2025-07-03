@@ -17,7 +17,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
 
     public function test_run(): void
     {
-        $this->process->registerProcessResult('echo *', "Hello\n");
+        $this->process->mockProcess('echo *', "Hello\n");
 
         $result = $this->executor->run('echo "Hello"');
 
@@ -28,7 +28,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
 
     public function test_describe_and_assert_async_process(): void
     {
-        $this->process->registerProcessResults([
+        $this->process->mockProcesses([
             'echo *' => $this->process
                 ->describe()
                 ->output('hello')
@@ -59,7 +59,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
 
     public function test_concurrently(): void
     {
-        $this->process->registerProcessResults([
+        $this->process->mockProcesses([
             'echo "hello"' => $this->process->describe()->output('hello'),
             'echo "world"' => $this->process->describe()->output('world'),
         ]);
@@ -79,7 +79,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
 
     public function test_pool(): void
     {
-        $this->process->registerProcessResults([
+        $this->process->mockProcesses([
             'echo "hello"' => $this->process->describe()->output('hello'),
             'echo "world"' => $this->process->describe()->output('world'),
         ]);

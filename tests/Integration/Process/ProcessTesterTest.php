@@ -41,7 +41,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
 
     public function test_registering_result_allows_assertions(): void
     {
-        $this->process->registerProcessResult('echo *', 'Hello');
+        $this->process->mockProcess('echo *', 'Hello');
         $this->process->assertCommandDidNotRun('echo *');
     }
 
@@ -74,14 +74,14 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Expected no processes to be executed, but some were.');
 
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->process->assertNothingRan();
     }
 
     public function test_assert_ran_times_with_string(): void
     {
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
@@ -90,7 +90,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_ran_times_with_callback(): void
     {
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
@@ -102,7 +102,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Expected command "echo *" to be executed 1 times, but it was executed 2 times.');
 
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
@@ -114,7 +114,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Expected command matching callback to be executed 1 times, but it was executed 2 times.');
 
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
@@ -123,7 +123,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_ran_times_with_unrelated_callback(): void
     {
-        $this->process->registerProcessResult('echo *', 'hello');
+        $this->process->mockProcess('echo *', 'hello');
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
@@ -133,7 +133,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
 
     public function test_register_multiple_process_results(): void
     {
-        $this->process->registerProcessResults([
+        $this->process->mockProcesses([
             'echo "hello"' => 'Hello',
             'echo "world"' => new ProcessResult(exitCode: 0, output: 'World', errorOutput: ''),
         ]);
