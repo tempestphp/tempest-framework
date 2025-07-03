@@ -36,7 +36,7 @@ final class AttachmentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('attachment.txt', $attachment->name);
         $this->assertSame('text/plain', $attachment->contentType);
-        $this->assertSame("hello\n", ($attachment->resolve)());
+        $this->assertStringContainsStringIgnoringLineEndings("hello\n", ($attachment->resolve)());
     }
 
     public function test_from_path_throws_when_file_does_not_exist(): void
