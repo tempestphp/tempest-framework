@@ -33,7 +33,7 @@ final class InvokedProcessDescription
     /**
      * Defines the identifier that should be assigned to the process.
      */
-    public function withPid(int $pid): self
+    public function pid(int $pid): self
     {
         $this->pid = $pid;
 
@@ -43,7 +43,7 @@ final class InvokedProcessDescription
     /**
      * Describes a line of standard output in the order it should be received.
      */
-    public function withOutput(string|array $output): self
+    public function output(string|array $output): self
     {
         if (is_string($output)) {
             $output = [$output];
@@ -62,7 +62,7 @@ final class InvokedProcessDescription
     /**
      * Describes a line of error output in the order it should be received.
      */
-    public function withErrorOutput(string|array $errorOutput): self
+    public function errorOutput(string|array $errorOutput): self
     {
         if (is_string($errorOutput)) {
             $errorOutput = [$errorOutput];
@@ -81,7 +81,7 @@ final class InvokedProcessDescription
     /**
      * Defines the exit code of the process.
      */
-    public function withExitCode(int $exitCode): self
+    public function exitCode(int $exitCode): self
     {
         $this->exitCode = $exitCode;
 
@@ -91,7 +91,7 @@ final class InvokedProcessDescription
     /**
      * Specify how many times the "isRunning" method should return "true".
      */
-    public function withIterations(int $iterations): self
+    public function iterations(int $iterations): self
     {
         $this->runIterations = $iterations;
 
