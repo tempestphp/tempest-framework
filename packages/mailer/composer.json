@@ -14,7 +14,8 @@
         "symfony/amazon-mailer": "^7.2.0"
     },
     "suggest": {
-        "tempest/storage": "For storage attachment support"
+        "tempest/storage": "For storage attachment support",
+        "tempest/event-bus": "For event support"
     },
     "autoload": {
         "psr-4": {

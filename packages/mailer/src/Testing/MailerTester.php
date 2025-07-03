@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Container\Container;
+use Tempest\EventBus\EventBus;
 use Tempest\Mail\Email;
 use Tempest\Mail\Mailer;
 use Tempest\Mail\MailerConfig;
@@ -29,6 +30,7 @@ final class MailerTester
         $this->mailer ??= new TestingMailer(
             mailerConfig: $this->container->get(MailerConfig::class),
             viewRenderer: $this->container->get(ViewRenderer::class),
+            eventBus: $this->container->get(EventBus::class),
         );
 
         $this->container->singleton(Mailer::class, $this->mailer);

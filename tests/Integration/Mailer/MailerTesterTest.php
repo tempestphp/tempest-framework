@@ -59,13 +59,13 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextOnlyEmail` was sent but failed the assertion.");
 
         $this->mailer->send(new TextOnlyEmail());
-        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $email) => false);
+        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $_email) => false);
     }
 
     public function test_assert_sent_with_class_string_and_truthy_callback(): void
     {
         $this->mailer->send(new TextOnlyEmail());
-        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $email) => true);
+        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $_email) => true);
     }
 
     public function test_assert_not_sent_with_class_string(): void
@@ -96,7 +96,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
             ],
         ));
 
-        $this->mail->assertSent(GenericEmail::class, function (Email $email) {
+        $this->mail->assertSent(GenericEmail::class, function (Email $email): void {
             $this->assertCount(1, $email->content->attachments);
             $this->assertSame('hello!', ($email->content->attachments[0]->resolve)());
         });

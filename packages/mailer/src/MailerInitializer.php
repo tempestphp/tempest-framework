@@ -5,6 +5,7 @@ namespace Tempest\Mail;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\EventBus\EventBus;
 use Tempest\Mail\MailerConfig;
 use Tempest\View\ViewRenderer;
 
@@ -16,6 +17,7 @@ final class MailerInitializer implements Initializer
         return new GenericMailer(
             mailerConfig: $container->get(MailerConfig::class),
             viewRenderer: $container->get(ViewRenderer::class),
+            eventBus: $container->get(EventBus::class),
         );
     }
 }
