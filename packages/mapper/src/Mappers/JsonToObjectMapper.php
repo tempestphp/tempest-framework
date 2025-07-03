@@ -6,6 +6,7 @@ namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Json;
 use Throwable;
 
 use function Tempest\map;
@@ -18,7 +19,7 @@ final readonly class JsonToObjectMapper implements Mapper
             return false;
         }
 
-        if (! json_validate($from)) {
+        if (! Json\is_valid($from)) {
             return false;
         }
 

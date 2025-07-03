@@ -8,6 +8,8 @@ use DateTimeImmutable;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
+use Tempest\Mapper\Mappers\ArrayToObjectMapper;
+use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;

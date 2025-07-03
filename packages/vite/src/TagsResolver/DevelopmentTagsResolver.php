@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagsResolver;
 
+use Tempest\Support\Filesystem;
 use Tempest\Vite\Exceptions\FileSystemEntrypointWasNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteBridgeFile;
@@ -25,7 +26,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
     {
         return arr($entrypoints)
             ->map(function (string $entrypoint) {
-                if (! file_exists($entrypoint) && ! file_exists(root_path($entrypoint))) {
+                if (! Filesystem\exists($entrypoint) && ! Filesystem\exists(root_path($entrypoint))) {
                     throw new FileSystemEntrypointWasNotFoundException($entrypoint);
                 }
 

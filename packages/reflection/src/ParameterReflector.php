@@ -6,12 +6,12 @@ namespace Tempest\Reflection;
 
 use ReflectionParameter as PHPReflectionParameter;
 
-final readonly class ParameterReflector implements Reflector
+final class ParameterReflector implements Reflector
 {
     use HasAttributes;
 
     public function __construct(
-        private PHPReflectionParameter $reflectionParameter,
+        private readonly PHPReflectionParameter $reflectionParameter,
     ) {}
 
     public function getReflection(): PHPReflectionParameter

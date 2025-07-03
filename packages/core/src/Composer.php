@@ -6,6 +6,7 @@ namespace Tempest\Core;
 
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Arr;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Support\Path;
 use Tempest\Support\Str;
@@ -94,7 +95,7 @@ final class Composer
 
     public function save(): self
     {
-        file_put_contents($this->composerPath, json_encode($this->composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        Filesystem\write_json($this->composerPath, $this->composer, pretty: true);
 
         return $this;
     }
@@ -108,10 +109,10 @@ final class Composer
 
     private function loadComposerFile(string $path): array
     {
-        if (! file_exists($path)) {
+        if (! Filesystem\is_file($path)) {
             throw new ComposerJsonCouldNotBeLocated('Could not locate composer.json.');
         }
 
-        return json_decode(file_get_contents($path), associative: true);
+        return Filesystem\read_json($path);
     }
 }

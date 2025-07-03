@@ -22,7 +22,7 @@ final class DiscoveryCacheInitializer implements Initializer
 
     private function resolveDiscoveryCacheStrategy(bool $isProduction): DiscoveryCacheStrategy
     {
-        if ($this->isDiscoveryGenerateCommand()) {
+        if ($this->isDiscoveryGenerateCommand() || $this->isDiscoveryClearCommand()) {
             return DiscoveryCacheStrategy::NONE;
         }
 
@@ -49,6 +49,17 @@ final class DiscoveryCacheInitializer implements Initializer
 
         $command = $_SERVER['argv'][1] ?? null;
 
-        return $command === 'dg' || $command === 'discovery:generate';
+        return $command === 'dg' || $command === 'discovery:generate' || $command === 'd:g';
+    }
+
+    private function isDiscoveryClearCommand(): bool
+    {
+        if (PHP_SAPI !== 'cli') {
+            return false;
+        }
+
+        $command = $_SERVER['argv'][1] ?? null;
+
+        return $command === 'dc' || $command === 'discovery:clear' || $command === 'd:c';
     }
 }

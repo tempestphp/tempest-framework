@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Kernel;
+use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Str;
-
-use function Tempest\Support\arr;
 
 /** @internal */
 final readonly class LoadConfig
@@ -40,21 +35,11 @@ final readonly class LoadConfig
      */
     public function find(): array
     {
-        $configPaths = [];
+        $configPaths = new MutableArray();
 
         // Scan for config files in all discovery locations
         foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-            $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
-            $files = new RecursiveIteratorIterator($directories);
-
-            /** @var SplFileInfo $file */
-            foreach ($files as $file) {
-                if (! str_ends_with($file->getPathname(), '.config.php')) {
-                    continue;
-                }
-
-                $configPaths[] = $file->getPathname();
-            }
+            $this->scan($discoveryLocation->path, $configPaths);
         }
 
         $suffixes = [
@@ -64,7 +49,7 @@ final readonly class LoadConfig
             'development' => ['.dev.config.php', '.local.config.php'],
         ];
 
-        return arr($configPaths)
+        return $configPaths
             ->filter(fn (string $path) => match (true) {
                 $this->appConfig->environment->isLocal() => ! Str\contains($path, [...$suffixes['production'], ...$suffixes['staging'], ...$suffixes['testing']]),
                 $this->appConfig->environment->isProduction() => ! Str\contains($path, [...$suffixes['staging'], ...$suffixes['testing'], ...$suffixes['development']]),
@@ -93,5 +78,55 @@ final readonly class LoadConfig
             })
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Recursively scan a directory and apply a given set of discovery classes to all files
+     */
+    private function scan(string $path, MutableArray $configPaths): void
+    {
+        $input = realpath($path);
+
+        // Make sure the path is valid
+        if ($input === false) {
+            return;
+        }
+
+        // Directories are scanned recursively
+        if (is_dir($input)) {
+            // Make sure the current directory is not marked for skipping
+            if ($this->shouldSkipDirectory($input)) {
+                return;
+            }
+
+            foreach (scandir($input, SCANDIR_SORT_NONE) as $subPath) {
+                // `.` and `..` are skipped
+                if ($subPath === '.' || $subPath === '..') {
+                    continue;
+                }
+
+                // Scan all files and folders within this directory
+                $this->scan("{$input}/{$subPath}", $configPaths);
+            }
+
+            return;
+        }
+
+        // Only include config files
+        if (! str_ends_with($input, '.config.php')) {
+            return;
+        }
+
+        $configPaths[] = $input;
+    }
+
+    /**
+     * Check whether a given directory should be skipped
+     */
+    private function shouldSkipDirectory(string $path): bool
+    {
+        $directory = pathinfo($path, PATHINFO_BASENAME);
+
+        return $directory === 'node_modules' || $directory === 'vendor';
     }
 }

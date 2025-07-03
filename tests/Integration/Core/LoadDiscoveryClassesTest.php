@@ -50,6 +50,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
             iterator_to_array($migrations),
             static fn (DatabaseMigration $migration) => $migration instanceof HiddenMigratableDatabaseMigration,
         );
+
         $this->assertCount(1, $foundMigrations, 'Expected one hidden migration to be found');
     }
 }

@@ -10,6 +10,7 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
+use Tempest\Support\Json;
 use Tempest\Support\Str\ImmutableString;
 use UnitEnum;
 
@@ -211,7 +212,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
-            default: json_encode($default),
+            default: Json\encode($default),
         );
 
         return $this;

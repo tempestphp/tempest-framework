@@ -9,6 +9,7 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationWasAborted;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
 
@@ -46,7 +47,7 @@ final class StubFileGenerator
                 throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, <em>%s</em> given.', $stubFile->type->name));
             }
 
-            if (file_exists($targetPath) && ! $shouldOverride) {
+            if (Filesystem\is_file($targetPath) && ! $shouldOverride) {
                 throw new FileGenerationWasAborted(sprintf('The file <em>%s</em> already exists and the operation has been aborted.', $targetPath));
             }
 
@@ -75,8 +76,8 @@ final class StubFileGenerator
                 initial: $classManipulator,
             );
 
-            if (file_exists($targetPath) && $shouldOverride) {
-                @unlink($targetPath);
+            if (Filesystem\is_file($targetPath) && $shouldOverride) {
+                Filesystem\delete_file($targetPath);
             }
 
             $classManipulator->save($targetPath);
@@ -109,12 +110,12 @@ final class StubFileGenerator
                 throw new FileGenerationFailedException(sprintf('The stub file must be of type RAW_FILE, "%s" given.', $stubFile->type->name));
             }
 
-            if (file_exists($targetPath) && ! $shouldOverride) {
+            if (Filesystem\is_file($targetPath) && ! $shouldOverride) {
                 throw new FileGenerationWasAborted(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
             }
 
             $this->prepareFilesystem($targetPath);
-            $fileContent = file_get_contents($stubFile->filePath);
+            $fileContent = Filesystem\read_file($stubFile->filePath);
 
             foreach ($replacements as $placeholder => $replacement) {
                 // @phpstan-ignore function.alreadyNarrowedType
@@ -132,11 +133,11 @@ final class StubFileGenerator
                 callback: fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
             );
 
-            if (file_exists($targetPath) && $shouldOverride) {
-                @unlink($targetPath);
+            if (Filesystem\is_file($targetPath) && $shouldOverride) {
+                Filesystem\delete_file($targetPath);
             }
 
-            file_put_contents($targetPath, $fileContent);
+            Filesystem\write_file($targetPath, $fileContent);
         } catch (Throwable $throwable) {
             throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
         }

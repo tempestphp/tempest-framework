@@ -30,7 +30,7 @@ final class JsonTest extends TestCase
 
     public function test_decode_throws_for_invalid_syntax(): void
     {
-        $this->expectException(Json\Exception\DecodeException::class);
+        $this->expectException(Json\Exception\JsonCouldNotBeDecoded::class);
         $this->expectExceptionMessage('The decoded property name is invalid.');
 
         Json\decode('{"\u0000": 1}', false);
@@ -38,7 +38,7 @@ final class JsonTest extends TestCase
 
     public function test_decode_malformed_utf8(): void
     {
-        $this->expectException(Json\Exception\DecodeException::class);
+        $this->expectException(Json\Exception\JsonCouldNotBeDecoded::class);
         $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded.');
 
         Json\decode("\"\xC1\xBF\"");
@@ -82,7 +82,7 @@ final class JsonTest extends TestCase
 
     public function test_encode_throws_for_malformed_utf8(): void
     {
-        $this->expectException(Json\Exception\EncodeException::class);
+        $this->expectException(Json\Exception\JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded.');
 
         Json\encode(["bad utf\xFF"]);
@@ -90,7 +90,7 @@ final class JsonTest extends TestCase
 
     public function test_encode_throws_with_nan(): void
     {
-        $this->expectException(Json\Exception\EncodeException::class);
+        $this->expectException(Json\Exception\JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Inf and NaN cannot be JSON encoded.');
 
         Json\encode(Math\NAN);
@@ -98,7 +98,7 @@ final class JsonTest extends TestCase
 
     public function test_encode_throws_with_inf(): void
     {
-        $this->expectException(Json\Exception\EncodeException::class);
+        $this->expectException(Json\Exception\JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Inf and NaN cannot be JSON encoded.');
 
         Json\encode(Math\INFINITY);
@@ -107,5 +107,18 @@ final class JsonTest extends TestCase
     public function test_encode_preserve_zero_fraction(): void
     {
         $this->assertSame('1.0', Json\encode(1.0));
+    }
+
+    public function test_is_valid(): void
+    {
+        $this->assertTrue(Json\is_valid('{"foo": "bar"}'));
+        $this->assertTrue(Json\is_valid('"foo"'));
+
+        $this->assertFalse(Json\is_valid('invalid'));
+        $this->assertFalse(Json\is_valid('{"foo": "bar",}'));
+        $this->assertFalse(Json\is_valid('{"foo": "bar", "baz": }'));
+
+        $this->assertFalse(Json\is_valid(['foo' => 'bar']));
+        $this->assertFalse(Json\is_valid(1));
     }
 }

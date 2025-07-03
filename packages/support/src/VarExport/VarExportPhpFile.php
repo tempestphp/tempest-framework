@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\VarExport;
 
 use Symfony\Component\VarExporter\VarExporter;
+use Tempest\Support\Filesystem;
 
 /**
  * A wrapper around a PHP file to export variables to. This enables us to take advantage of OPcache file cache.
@@ -23,7 +24,7 @@ final readonly class VarExportPhpFile
 
     public function exists(): bool
     {
-        return file_exists($this->filename);
+        return Filesystem\is_file($this->filename);
     }
 
     /**
@@ -50,7 +51,7 @@ final readonly class VarExportPhpFile
         return {$serializedData};
         PHP;
 
-        file_put_contents($this->filename, $phpFileContent, LOCK_EX);
+        Filesystem\write_file($this->filename, $phpFileContent, LOCK_EX);
     }
 
     public function destroy(): void

@@ -6,6 +6,7 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
+use Tempest\Console\GlobalFlags;
 use Tempest\Console\HasExitCode;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
@@ -16,6 +17,7 @@ use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
+use Tempest\Support\Filesystem;
 use Throwable;
 
 use function Tempest\Support\str;
@@ -50,7 +52,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
                 ->writeln();
 
-            if ($this->argumentBag->get('-v') !== null) {
+            if ($this->argumentBag->get(GlobalFlags::VERBOSE_SHORTHAND->value) || $this->argumentBag->get(GlobalFlags::VERBOSE->value)) {
                 foreach ($throwable->getTrace() as $i => $trace) {
                     $this->console->writeln("<style='bold fg-blue'>#{$i}</style> " . $this->formatTrace($trace));
                 }
@@ -76,7 +78,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
     private function getSnippet(string $file, int $lineNumber): string
     {
         $highlighter = $this->highlighter->withGutter();
-        $code = Escape::terminal($highlighter->parse(file_get_contents($file), language: 'php'));
+        $code = Escape::terminal($highlighter->parse(Filesystem\read_file($file), language: 'php'));
         $lines = explode(PHP_EOL, $code);
 
         $lines[$lineNumber - 1] = str($lines[$lineNumber - 1])

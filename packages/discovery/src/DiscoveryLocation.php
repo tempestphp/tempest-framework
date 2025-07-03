@@ -4,12 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
-final readonly class DiscoveryLocation
+final class DiscoveryLocation
 {
+    public readonly string $namespace;
+    public readonly string $path;
+
+    public string $key {
+        get => (string) crc32($this->path);
+    }
+
     public function __construct(
-        public string $namespace,
-        public string $path,
-    ) {}
+        string $namespace,
+        string $path,
+    ) {
+        $this->namespace = $namespace;
+        $this->path = realpath(rtrim($path, '\\/'));
+    }
 
     public function isVendor(): bool
     {
@@ -18,12 +28,10 @@ final readonly class DiscoveryLocation
 
     public function toClassName(string $path): string
     {
-        $pathWithoutSlashes = rtrim($this->path, '\\/');
-
         // Try to create a PSR-compliant class name from the path
         return str_replace(
             [
-                $pathWithoutSlashes,
+                $this->path,
                 '/',
                 '\\\\',
                 '.php',

@@ -8,6 +8,8 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use ReflectionClass;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Support\Filesystem;
+use Tempest\Support\Filesystem\Exceptions\FilesystemException;
 
 final class ClassManipulator
 {
@@ -17,7 +19,7 @@ final class ClassManipulator
     {
         if (is_file($source)) {
             /** @phpstan-ignore-next-line */
-            $this->classType = ClassType::fromCode(file_get_contents($source));
+            $this->classType = ClassType::fromCode(Filesystem\read_file($source));
         } elseif (is_string($source)) {
             /** @phpstan-ignore-next-line */
             $this->classType = ClassType::from($source, withBodies: true);
@@ -45,9 +47,9 @@ final class ClassManipulator
             mkdir($dir, recursive: true);
         }
 
-        $isSuccess = (bool) file_put_contents($path, $this->print());
-
-        if (! $isSuccess) {
+        try {
+            Filesystem\write_file($path, $this->print());
+        } catch (FilesystemException) {
             throw new FileGenerationFailedException(sprintf('The file "%s" could not be written.', $path));
         }
 

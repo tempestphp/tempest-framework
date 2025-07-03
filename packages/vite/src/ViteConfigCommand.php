@@ -6,6 +6,7 @@ namespace Tempest\Vite;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Support\Json;
 
 final readonly class ViteConfigCommand
 {
@@ -17,7 +18,7 @@ final readonly class ViteConfigCommand
     #[ConsoleCommand(name: 'vite:config', hidden: true)]
     public function __invoke(): void
     {
-        $this->console->writeRaw(json_encode([
+        $this->console->writeRaw(Json\encode([
             'build_directory' => $this->viteConfig->buildDirectory,
             'bridge_file_name' => $this->viteConfig->bridgeFileName,
             'manifest' => $this->viteConfig->manifest,

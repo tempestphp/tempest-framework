@@ -7,12 +7,12 @@ namespace Tempest\Reflection;
 use Generator;
 use ReflectionMethod as PHPReflectionMethod;
 
-final readonly class MethodReflector implements Reflector
+final class MethodReflector implements Reflector
 {
     use HasAttributes;
 
     public function __construct(
-        private PHPReflectionMethod $reflectionMethod,
+        private readonly PHPReflectionMethod $reflectionMethod,
     ) {}
 
     public static function fromParts(string|object $class, string $name): self

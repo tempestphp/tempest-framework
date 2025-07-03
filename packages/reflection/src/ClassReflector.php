@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
+use Closure;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
@@ -11,11 +12,13 @@ use ReflectionProperty as PHPReflectionProperty;
 /**
  * @template TClassName of object
  */
-final readonly class ClassReflector implements Reflector
+final class ClassReflector implements Reflector
 {
     use HasAttributes;
 
-    private PHPReflectionClass $reflectionClass;
+    private array $memoize = [];
+
+    private readonly PHPReflectionClass $reflectionClass;
 
     /**
      * @param class-string<TClassName>|TClassName|PHPReflectionClass<TClassName> $reflectionClass
@@ -77,9 +80,12 @@ final readonly class ClassReflector implements Reflector
     /** @return \Tempest\Reflection\MethodReflector[] */
     public function getPublicMethods(): array
     {
-        return array_map(
-            fn (PHPReflectionMethod $method) => new MethodReflector($method),
-            $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+        return $this->memoize(
+            'public_methods',
+            fn () => array_map(
+                fn (PHPReflectionMethod $method) => new MethodReflector($method),
+                $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+            ),
         );
     }
 
@@ -162,5 +168,14 @@ final readonly class ClassReflector implements Reflector
     public function implements(string $interface): bool
     {
         return $this->isInstantiable() && $this->getType()->matches($interface);
+    }
+
+    private function memoize(string $key, Closure $closure): mixed
+    {
+        if (! isset($this->memoize[$key])) {
+            $this->memoize[$key] = $closure();
+        }
+
+        return $this->memoize[$key];
     }
 }
