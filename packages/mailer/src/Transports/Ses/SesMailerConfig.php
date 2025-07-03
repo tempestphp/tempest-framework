@@ -4,19 +4,17 @@ namespace Tempest\Mail\Transports\Ses;
 
 use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesApiAsyncAwsTransport;
 use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesHttpAsyncAwsTransport;
-use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesSmtpTransport;
 use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesTransportFactory;
 use Symfony\Component\Mailer\Transport\Dsn;
-use Symfony\Component\Mailer\Transport\NullTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
-use UnitEnum;
+use Tempest\Mail\Transports\ProvidesDefaultSender;
 
 /**
  * Send emails using Amazon SES.
  */
-final class SesMailerConfig implements MailerConfig
+final class SesMailerConfig implements MailerConfig, ProvidesDefaultSender
 {
     public string $transport {
         get => match ($this->sceme) {

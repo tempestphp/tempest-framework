@@ -19,6 +19,33 @@ interface SentEmail
     }
 
     /**
+     * The addresses the email was sent from.
+     *
+     * @var Address[]
+     */
+    public array $from {
+        get;
+    }
+
+    /**
+     * The addresses the email was sent to.
+     *
+     * @var Address[]
+     */
+    public array $to {
+        get;
+    }
+
+    /**
+     * The attachments included in the email.
+     *
+     * @var Attachment[]
+     */
+    public array $attachments {
+        get;
+    }
+
+    /**
      * Protocol logs.
      */
     public string $debug {

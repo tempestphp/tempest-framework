@@ -5,10 +5,8 @@ namespace Tempest\Mail;
 use Stringable;
 use Tempest\Mail\Address;
 use Tempest\Mail\Attachment;
-use Tempest\Mail\Content;
 use Tempest\Mail\Email;
 use Tempest\Mail\EmailPriority;
-use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
 use Tempest\Storage\Storage;
 use Tempest\Support\Arr;
@@ -176,23 +174,19 @@ final class EmailBuilder
     public function make(): Email
     {
         return new GenericEmail(
-            envelope: new Envelope(
-                subject: $this->subject,
-                to: Arr\wrap($this->to),
-                from: Arr\wrap($this->from),
-                cc: Arr\wrap($this->cc),
-                bcc: Arr\wrap($this->bcc),
-                replyTo: Arr\wrap($this->replyTo),
-                priority: is_int($this->priority)
-                    ? EmailPriority::from($this->priority)
-                    : $this->priority,
-                headers: $this->headers,
-            ),
-            content: new Content(
-                html: $this->html,
-                text: $this->text,
-                attachments: $this->attachments,
-            ),
+            subject: $this->subject,
+            to: Arr\wrap($this->to),
+            from: Arr\wrap($this->from),
+            cc: Arr\wrap($this->cc),
+            bcc: Arr\wrap($this->bcc),
+            replyTo: Arr\wrap($this->replyTo),
+            priority: is_int($this->priority)
+                ? EmailPriority::from($this->priority)
+                : $this->priority,
+            headers: $this->headers,
+            html: $this->html,
+            text: $this->text,
+            attachments: $this->attachments,
         );
     }
 }

@@ -8,12 +8,12 @@ use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
-use UnitEnum;
+use Tempest\Mail\Transports\ProvidesDefaultSender;
 
 /**
  * Send emails by using an SMTP server.
  */
-final class SmtpMailerConfig implements MailerConfig
+final class SmtpMailerConfig implements MailerConfig, ProvidesDefaultSender
 {
     public string $transport = SmtpTransport::class;
 

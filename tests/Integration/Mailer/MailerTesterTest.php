@@ -4,6 +4,9 @@ namespace Tests\Tempest\Integration\Mailer;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\AssertionFailedError;
+use Tempest\Mail\Attachment;
+use Tempest\Mail\Email;
+use Tempest\Mail\GenericEmail;
 use Tempest\Mail\GenericMailer;
 use Tempest\Mail\Mailer;
 use Tempest\Mail\Testing\TestingMailer;
@@ -56,7 +59,13 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextOnlyEmail` was sent but failed the assertion.");
 
         $this->mailer->send(new TextOnlyEmail());
-        $this->mail->assertSent(TextOnlyEmail::class, fn () => false);
+        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $email) => false);
+    }
+
+    public function test_assert_sent_with_class_string_and_truthy_callback(): void
+    {
+        $this->mailer->send(new TextOnlyEmail());
+        $this->mail->assertSent(TextOnlyEmail::class, fn (Email $email) => true);
     }
 
     public function test_assert_not_sent_with_class_string(): void
@@ -73,5 +82,23 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
 
         $this->mail->assertSent(SendWelcomeEmail::class);
         $this->mail->assertNotSent(TextOnlyEmail::class);
+    }
+
+    public function test_assertions(): void
+    {
+        $this->mailer->send(new GenericEmail(
+            subject: 'Hello',
+            to: 'jon@doe.co',
+            from: 'no-reply@tempestphp.com',
+            text: 'Hello Jon',
+            attachments: [
+                Attachment::fromClosure(fn () => 'hello!'),
+            ],
+        ));
+
+        $this->mail->assertSent(GenericEmail::class, function (Email $email) {
+            $this->assertCount(1, $email->content->attachments);
+            $this->assertSame('hello!', ($email->content->attachments[0]->resolve)());
+        });
     }
 }

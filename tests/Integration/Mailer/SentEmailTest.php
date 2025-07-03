@@ -12,6 +12,7 @@ use Tempest\Mail\Mailer;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
 
@@ -21,30 +22,6 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 {
     private TestingMailer $mailer {
         get => $this->mail->mailer;
-    }
-
-    private function sendTestEmail(?Envelope $envelope = null, ?Content $content = null): SentTestingEmail
-    {
-        return $this->mailer->send(new GenericEmail(
-            envelope: $envelope ?? new Envelope(
-                subject: 'Hello',
-                to: 'jon@doe.co',
-                cc: ['cc1@doe.co', 'cc2@doe.co'],
-                bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
-                from: 'no-reply@tempestphp.com',
-                headers: ['X-Foo' => 'bar'],
-            ),
-            content: $content ?? new Content(
-                text: 'Hello Jon in Text',
-                html: <<<HTML_WRAP
-                    <html>
-                        <body>
-                            <h1>Hello Jon in HTML</h1>
-                        </body>
-                    </html>
-                HTML_WRAP,
-            ),
-        ));
     }
 
     public function test_sent_email_assertions(): void
@@ -84,11 +61,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_send_to_address_vo(): void
     {
-        $sent = $this->sendTestEmail(envelope: new Envelope(
+        $sent = $this->sendTestEmail(
             subject: null,
             to: [new Address('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
-        ));
+        );
 
         $sent->assertSentTo('recipient1@example.com');
         $sent->assertSentTo('recipient2@example.com');
@@ -96,11 +73,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_send_to_address_with_brackets(): void
     {
-        $sent = $this->sendTestEmail(envelope: new Envelope(
+        $sent = $this->sendTestEmail(
             subject: null,
             to: ['Jon Doe <recipient1@example.com>', 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
-        ));
+        );
 
         $sent->assertSentTo('recipient1@example.com');
         $sent->assertSentTo('recipient2@example.com');
@@ -108,11 +85,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_sent_to(): void
     {
-        $sent = $this->sendTestEmail(envelope: new Envelope(
+        $sent = $this->sendTestEmail(
             subject: null,
             to: ['recipient1@example.com', 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
-        ));
+        );
 
         $sent->assertSentTo('recipient1@example.com');
         $sent->assertSentTo('recipient2@example.com');
@@ -124,9 +101,9 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_rendered_html(): void
     {
-        $sent = $this->sendTestEmail(content: new Content(
+        $sent = $this->sendTestEmail(
             html: view(__DIR__ . '/Fixtures/welcome.view.php', fullName: 'Jon Doe'),
-        ));
+        );
 
         $sent->assertSeeInHtml('Welcome Jon Doe');
     }
@@ -142,12 +119,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_attachment_from_closure(): void
     {
-        $sent = $this->sendTestEmail(content: new Content(
+        $sent = $this->sendTestEmail(
             text: 'Hello',
             attachments: [
                 Attachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
             ],
-        ));
+        );
 
         $sent->assertAttached('file.txt', function (TestingAttachment $attachment): void {
             $attachment->assertNamed('file.txt');
@@ -159,12 +136,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_attachment_from_filesystem(): void
     {
-        $sent = $this->sendTestEmail(content: new Content(
+        $sent = $this->sendTestEmail(
             text: 'Hello',
             attachments: [
                 Attachment::fromFilesystem(__FILE__),
             ],
-        ));
+        );
 
         $sent->assertAttached('SentEmailTest.php', function (TestingAttachment $attachment): void {
             $attachment->assertNamed('SentEmailTest.php');
@@ -179,12 +156,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake();
         $storage->write('file.txt', 'owo');
 
-        $sent = $this->sendTestEmail(content: new Content(
+        $sent = $this->sendTestEmail(
             text: 'Hello Jon in Text',
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],
-        ));
+        );
 
         $sent->assertAttached('file.txt', function (TestingAttachment $attachment): void {
             $attachment->assertNamed('file.txt');
@@ -199,13 +176,47 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake('test-disk');
         $storage->write('file.txt', 'owo');
 
-        $sent = $this->sendTestEmail(content: new Content(
+        $sent = $this->sendTestEmail(
             text: 'Hello Jon in Text',
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],
-        ));
+        );
 
         $sent->assertAttached('file.txt');
+    }
+
+    private function sendTestEmail(
+        ?string $subject = null,
+        null|string|array|Address $to = null,
+        null|string|array|Address $from = null,
+        null|string|array|Address $cc = null,
+        null|string|array|Address $bcc = null,
+        null|string|array|Address $replyTo = null,
+        array $headers = [],
+        EmailPriority $priority = EmailPriority::NORMAL,
+        null|string|View $html = null,
+        ?string $text = null,
+        array $attachments = [],
+    ): SentTestingEmail {
+        return $this->mailer->send(new GenericEmail(
+            subject: $subject ?? 'Hello',
+            to: $to ?? 'jon@doe.co',
+            cc: $cc ?? ['cc1@doe.co', 'cc2@doe.co'],
+            bcc: $bcc ?? ['bcc1@doe.co', 'bcc2@doe.co'],
+            from: $from ?? 'no-reply@tempestphp.com',
+            replyTo: $replyTo,
+            headers: $headers ?: ['X-Foo' => 'bar'],
+            priority: $priority,
+            text: $text ?? 'Hello Jon in Text',
+            html: $html ?? <<<HTML_WRAP
+                <html>
+                    <body>
+                        <h1>Hello Jon in HTML</h1>
+                    </body>
+                </html>
+            HTML_WRAP,
+            attachments: $attachments,
+        ));
     }
 }

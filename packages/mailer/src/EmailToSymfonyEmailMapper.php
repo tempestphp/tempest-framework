@@ -8,6 +8,7 @@ use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
+use Tempest\Mail\Transports\ProvidesDefaultSender;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 use Tempest\View\View;
@@ -41,17 +42,23 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
             $symfonyEmail->getHeaders()->addHeader($key, $value);
         }
 
+        if ($this->mailerConfig instanceof ProvidesDefaultSender && $this->mailerConfig->defaultSender) {
+            $symfonyEmail->from($this->mailerConfig->defaultSender);
+        }
+
         if ($email->envelope->from) {
             $symfonyEmail->from(...$this->convertAddresses($email->envelope->from));
-        } elseif ($this->mailerConfig->defaultSender) {
-            $symfonyEmail->from($this->mailerConfig->defaultSender);
-        } else {
+        }
+
+        if ($symfonyEmail->getFrom() === []) {
             throw new SenderWasMissing();
         }
 
         if ($email->envelope->to) {
             $symfonyEmail->to(...$this->convertAddresses($email->envelope->to));
-        } else {
+        }
+
+        if ($symfonyEmail->getTo() === []) {
             throw new RecipientWasMissing();
         }
 

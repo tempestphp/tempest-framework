@@ -8,18 +8,11 @@ use Symfony\Component\Mailer\Transport\TransportInterface;
 interface MailerConfig
 {
     /**
-     * The transport class.
+     * The underlying Symfony transport class.
      *
      * @param class-string<Transport>
      */
     public string $transport {
-        get;
-    }
-
-    /**
-     * The default address from which emails will be sent.
-     */
-    public null|string|Address $defaultSender {
         get;
     }
 

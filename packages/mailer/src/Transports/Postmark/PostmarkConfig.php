@@ -9,12 +9,12 @@ use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
-use UnitEnum;
+use Tempest\Mail\Transports\ProvidesDefaultSender;
 
 /**
  * Send emails using Postmark's API or SMTP server.
  */
-final class PostmarkConfig implements MailerConfig
+final class PostmarkConfig implements MailerConfig, ProvidesDefaultSender
 {
     public string $transport {
         get => match ($this->sceme) {

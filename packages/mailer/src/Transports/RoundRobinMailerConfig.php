@@ -29,11 +29,6 @@ final class RoundRobinMailerConfig implements MailerConfig
          * The period in seconds to wait before retrying a failed transport.
          */
         public int|Duration $waitTimeBeforeRetrying = 60,
-
-        /**
-         * @deprecated Currently ignored.
-         */
-        public null|string|Address $from = null,
     ) {}
 
     public function createTransport(): TransportInterface
