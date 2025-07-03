@@ -3,9 +3,7 @@
 namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\Mail\Address;
-use Tempest\Mail\Attachments\DataAttachment;
-use Tempest\Mail\Attachments\FileAttachment;
-use Tempest\Mail\Attachments\StorageAttachment;
+use Tempest\Mail\Attachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\Envelope;
@@ -147,7 +145,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent = $this->sendTestEmail(content: new Content(
             text: 'Hello',
             attachments: [
-                DataAttachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
+                Attachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
             ],
         ));
 
@@ -164,7 +162,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent = $this->sendTestEmail(content: new Content(
             text: 'Hello',
             attachments: [
-                FileAttachment::fromPath(__FILE__),
+                Attachment::fromFilesystem(__FILE__),
             ],
         ));
 
@@ -184,7 +182,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent = $this->sendTestEmail(content: new Content(
             text: 'Hello Jon in Text',
             attachments: [
-                StorageAttachment::fromPath('file.txt'),
+                Attachment::fromStorage($storage, 'file.txt'),
             ],
         ));
 
@@ -204,7 +202,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent = $this->sendTestEmail(content: new Content(
             text: 'Hello Jon in Text',
             attachments: [
-                StorageAttachment::fromPath('file.txt', tag: 'test-disk'),
+                Attachment::fromStorage($storage, 'file.txt'),
             ],
         ));
 
