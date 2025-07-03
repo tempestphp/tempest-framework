@@ -1,26 +1,24 @@
 <?php
 
-namespace Tempest\Mail\Builder;
+namespace Tempest\Mail;
 
 use Stringable;
 use Tempest\Mail\Address;
-use Tempest\Mail\Attachments\Attachment;
-use Tempest\Mail\Attachments\FileAttachment;
-use Tempest\Mail\Attachments\StorageAttachment;
+use Tempest\Mail\Attachment;
 use Tempest\Mail\Content;
-use Tempest\Mail\Email as EmailInterface;
+use Tempest\Mail\Email;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
+use Tempest\Storage\Storage;
 use Tempest\Support\Arr;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\View;
-use UnitEnum;
 
 /**
  * A builder class for creating email objects.
  */
-final class Email
+final class EmailBuilder
 {
     public function __construct(
         private(set) null|string|array|ArrayInterface|Address $to = null,
@@ -31,9 +29,9 @@ final class Email
         private(set) ?string $subject = null,
         private(set) null|string|View $html = null,
         private(set) ?string $text = null,
+        private(set) array $attachments = [],
         private(set) EmailPriority|int $priority = EmailPriority::NORMAL,
         private(set) array $headers = [],
-        private(set) array $attachments = [],
     ) {}
 
     /**
@@ -157,7 +155,7 @@ final class Email
      */
     public function attachFromFileystem(string $path, ?string $name = null, ?string $contentType = null): self
     {
-        $this->attachments[] = FileAttachment::fromPath($path, $name, $contentType);
+        $this->attachments[] = Attachment::fromFilesystem($path, $name, $contentType);
 
         return $this;
     }
@@ -165,9 +163,9 @@ final class Email
     /**
      * Adds an attachment from the storage.
      */
-    public function attachFromStorage(string $path, ?string $name = null, ?string $contentType = null, null|string|UnitEnum $tag = null): self
+    public function attachFromStorage(Storage $storage, string $path, ?string $name = null, ?string $contentType = null): self
     {
-        $this->attachments[] = StorageAttachment::fromPath($path, $name, $contentType, $tag);
+        $this->attachments[] = Attachment::fromStorage($storage, $path, $name, $contentType);
 
         return $this;
     }
@@ -175,7 +173,7 @@ final class Email
     /**
      * Builds the email.
      */
-    public function make(): EmailInterface
+    public function make(): Email
     {
         return new GenericEmail(
             envelope: new Envelope(

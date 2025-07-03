@@ -11,4 +11,12 @@ final class GenericEmail implements Email
         public Envelope $envelope,
         public Content $content,
     ) {}
+
+    /**
+     * Builds a new generic email.
+     */
+    public static function build(): EmailBuilder
+    {
+        return new EmailBuilder();
+    }
 }
