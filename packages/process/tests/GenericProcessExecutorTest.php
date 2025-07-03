@@ -6,7 +6,7 @@ namespace Tempest\Process\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\Duration;
-use Tempest\Process\Exceptions\ProcessExecutionHasTimedOut;
+use Tempest\Process\Exceptions\ProcessHasTimedOut;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\OutputChannel;
 use Tempest\Process\PendingProcess;
@@ -77,7 +77,7 @@ final class GenericProcessExecutorTest extends TestCase
     public function test_run_timeout(): void
     {
         $this->skipOnWindows();
-        $this->expectException(ProcessExecutionHasTimedOut::class);
+        $this->expectException(ProcessHasTimedOut::class);
 
         $executor = new GenericProcessExecutor();
         $executor->run(new PendingProcess('sleep .2', timeout: Duration::milliseconds(100)));
@@ -86,7 +86,7 @@ final class GenericProcessExecutorTest extends TestCase
     public function test_run_idle_timeout(): void
     {
         $this->skipOnWindows();
-        $this->expectException(ProcessExecutionHasTimedOut::class);
+        $this->expectException(ProcessHasTimedOut::class);
 
         $executor = new GenericProcessExecutor();
         $executor->run(new PendingProcess('sleep .2', idleTimeout: Duration::milliseconds(100)));

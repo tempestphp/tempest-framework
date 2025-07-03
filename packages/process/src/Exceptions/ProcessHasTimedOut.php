@@ -6,7 +6,7 @@ use Exception;
 use Symfony\Component\Process\Exception\ProcessTimedOutException as SymfonyProcessTimedOutException;
 use Tempest\Process\ProcessResult;
 
-final class ProcessExecutionHasTimedOut extends Exception implements ProcessException
+final class ProcessHasTimedOut extends Exception implements ProcessException
 {
     public function __construct(
         public readonly ProcessResult $result,
