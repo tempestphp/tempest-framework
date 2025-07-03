@@ -20,14 +20,14 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     #[TestWith(['echo "hello"'])]
     public function test_expectation_succeeds_when_command_is_ran(string $pattern): void
     {
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan($pattern);
     }
 
     public function test_expectation_succeeds_when_command_is_ran_and_callback_returns_true(): void
     {
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
             return $result->output === "hello\n";
@@ -39,7 +39,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Expected process with command "not-ran" to be executed, but it was not.');
 
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('not-ran');
     }
@@ -49,7 +49,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Callback for command "echo "hello"" returned false.');
 
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
             return $result->output !== "hello\n";
@@ -58,14 +58,14 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
 
     public function test_expectation_succeeds_when_callback_returns_nothing(): void
     {
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('echo *', function (): void {});
     }
 
     public function test_expectation_succeeds_when_callback_returns_true(): void
     {
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
         $this->process->assertRan(function (PendingProcess $process): bool {
@@ -78,7 +78,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Callback for command "echo "hello"" returned false.');
 
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
         $this->process->assertRan(function (PendingProcess $_process): bool {
@@ -88,7 +88,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
 
     public function test_returning_true_from_callback_skips_other_iterations(): void
     {
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "world"');
 
@@ -106,7 +106,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Could not find a matching command for the provided callback.');
 
-        $this->process->registerProcessResult('echo *', "hello\n");
+        $this->process->mockProcess('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
         $this->process->assertRan(function (PendingProcess $_process): void {

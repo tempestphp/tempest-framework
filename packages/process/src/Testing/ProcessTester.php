@@ -31,7 +31,7 @@ final class ProcessTester
     {
         $this->executor ??= new TestingProcessExecutor(
             executor: new GenericProcessExecutor(),
-            registeredProcessResult: [],
+            mocks: [],
             allowRunningActualProcesses: $this->allowRunningActualProcesses,
         );
 
@@ -41,11 +41,11 @@ final class ProcessTester
     /**
      * Sets up the specified command or pattern to return the specified result.
      */
-    public function registerProcessResult(string $command, string|ProcessResult $result): self
+    public function mockProcess(string $command, string|ProcessResult $result): self
     {
         $this->recordProcessExecutions();
 
-        $this->executor->registeredProcessResult[$command] = $result;
+        $this->executor->mocks[$command] = $result;
 
         return $this;
     }
@@ -55,12 +55,12 @@ final class ProcessTester
      *
      * @var array<string,string|ProcessResult> $results
      */
-    public function registerProcessResults(array $results): self
+    public function mockProcesses(array $results): self
     {
         $this->recordProcessExecutions();
 
         foreach ($results as $command => $result) {
-            $this->executor->registeredProcessResult[$command] = $result;
+            $this->executor->mocks[$command] = $result;
         }
 
         return $this;

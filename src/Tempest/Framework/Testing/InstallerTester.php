@@ -29,7 +29,7 @@ final class InstallerTester
 
     public function configure(string $root, Psr4Namespace $namespace): self
     {
-        $this->process->registerProcessResult('*', '');
+        $this->process->mockProcess('*', '');
 
         $this->root = $root;
         $this->container->get(FrameworkKernel::class)->root = $root;

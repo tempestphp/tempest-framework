@@ -37,7 +37,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
     public function test_scheduler_executes_handlers(): void
     {
-        $this->process->registerProcessResult('*', '');
+        $this->process->mockProcess('*', '');
 
         $config = new SchedulerConfig();
 
@@ -58,7 +58,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
     public function test_scheduler_executes_commands(): void
     {
-        $this->process->registerProcessResult('*', '');
+        $this->process->mockProcess('*', '');
 
         $config = new SchedulerConfig();
 
@@ -79,7 +79,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
     public function test_scheduler_only_dispatches_the_command_in_desired_times(): void
     {
-        $this->process->registerProcessResult('*', '');
+        $this->process->mockProcess('*', '');
         $at = new DateTime('2024-05-01 00:00:00');
 
         $config = new SchedulerConfig();
