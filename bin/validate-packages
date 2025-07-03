@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-define('LICENSE_TEMPLATE', file_get_contents(__DIR__ . '/../LICENCE.md'));
+define('LICENSE_TEMPLATE', file_get_contents(__DIR__ . '/../LICENSE.md'));
 
 $packages = json_decode(
     json: exec(__DIR__  . '/get-packages'),
