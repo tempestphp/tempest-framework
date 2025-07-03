@@ -5,7 +5,7 @@ namespace Tempest\Process;
 use Symfony\Component\Process\Exception\ProcessTimedOutException as SymfonyTimeoutException;
 use Symfony\Component\Process\Process as SymfonyProcess;
 use Tempest\DateTime\Duration;
-use Tempest\Process\Exceptions\ProcessExecutionHasTimedOut;
+use Tempest\Process\Exceptions\ProcessHasTimedOut;
 
 /**
  * Represents a process that has been invoked and is currently running or has completed.
@@ -73,7 +73,7 @@ final class InvokedSystemProcess implements InvokedProcess
 
             return ProcessResult::fromSymfonyProcess($this->process);
         } catch (SymfonyTimeoutException $exception) {
-            throw new ProcessExecutionHasTimedOut(
+            throw new ProcessHasTimedOut(
                 result: ProcessResult::fromSymfonyProcess($this->process),
                 original: $exception,
             );
