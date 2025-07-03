@@ -54,7 +54,7 @@ final class SesMailerConfig implements MailerConfig
         /**
          * Address from which emails are sent by default.
          */
-        public null|string|Address $defaultExpeditor = null,
+        public null|string|Address $defaultSender = null,
 
         /**
          * Whether to use Amazon SES's API or async HTTP transport.

@@ -4,8 +4,8 @@ namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\Mail\Content;
 use Tempest\Mail\Envelope;
-use Tempest\Mail\Exceptions\ExpeditorWasMissing;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
+use Tempest\Mail\Exceptions\SenderWasMissing;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -18,7 +18,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
     public function test_sending_mail_requires_from(): void
     {
-        $this->expectException(ExpeditorWasMissing::class);
+        $this->expectException(SenderWasMissing::class);
 
         $this->mailer->send(new GenericEmail(
             envelope: new Envelope(

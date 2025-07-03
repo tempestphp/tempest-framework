@@ -46,7 +46,7 @@ final class SmtpMailerConfig implements MailerConfig
         /**
          * The default address from which emails will be sent.
          */
-        public null|string|Address $defaultExpeditor = null,
+        public null|string|Address $defaultSender = null,
 
         /**
          * Whether to use TLS for this connection.

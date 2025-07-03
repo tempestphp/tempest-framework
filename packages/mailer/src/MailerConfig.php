@@ -19,7 +19,7 @@ interface MailerConfig
     /**
      * The default address from which emails will be sent.
      */
-    public null|string|Address $defaultExpeditor {
+    public null|string|Address $defaultSender {
         get;
     }
 

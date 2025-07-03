@@ -87,7 +87,7 @@ final class SentTestingEmail implements SentEmail
         return $this->assertAddressListContains(
             haystack: $this->symfonyEmail->getFrom(),
             needles: $addresses,
-            message: 'Failed asserting that the email was sent from [%s]. The expeditors are [%s].',
+            message: 'Failed asserting that the email was sent from [%s]. The senders are [%s].',
         );
     }
 
@@ -99,7 +99,7 @@ final class SentTestingEmail implements SentEmail
         return $this->assertAddressListDoesNotContain(
             haystack: $this->symfonyEmail->getFrom(),
             needles: $addresses,
-            message: 'Failed asserting that the email was not sent from [%s]. The expeditors are [%s].',
+            message: 'Failed asserting that the email was not sent from [%s]. The senders are [%s].',
         );
     }
 
