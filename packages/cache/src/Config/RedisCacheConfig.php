@@ -14,11 +14,6 @@ final class RedisCacheConfig implements CacheConfig
 {
     public function __construct(
         /**
-         * The directory where the cache files are stored.
-         */
-        public ?string $directory = null,
-
-        /**
          * Optional namespace to avoid collisions with other caches in the same directory.
          */
         public ?string $namespace = null,
