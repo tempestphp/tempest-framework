@@ -6,10 +6,8 @@
     "require": {
         "php": "^8.4",
         "tempest/container": "dev-main",
-        "tempest/support": "dev-main"
-    },
-    "suggest": {
-        "tempest/clock": "For time-lock support"
+        "tempest/support": "dev-main",
+        "tempest/clock": "dev-main"
     },
     "autoload": {
         "psr-4": {

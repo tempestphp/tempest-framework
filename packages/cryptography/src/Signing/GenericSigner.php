@@ -3,6 +3,8 @@
 namespace Tempest\Cryptography\Signing;
 
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasMissing;
+use Tempest\Cryptography\Timelock;
+use Tempest\DateTime\Duration;
 
 final class GenericSigner implements Signer
 {
@@ -22,6 +24,7 @@ final class GenericSigner implements Signer
 
     public function __construct(
         private readonly SigningConfig $config,
+        private readonly Timelock $timelock,
     ) {}
 
     public function sign(string $data): Signature
@@ -35,9 +38,12 @@ final class GenericSigner implements Signer
 
     public function verify(string $data, Signature $signature): bool
     {
-        return hash_equals(
-            known_string: $this->sign($data)->signature,
-            user_string: $signature->signature,
+        return $this->timelock->invoke(
+            callback: fn () => hash_equals(
+                known_string: $this->sign($data)->signature,
+                user_string: $signature->signature,
+            ),
+            duration: $this->config->minimumExecutionDuration ?: Duration::zero(),
         );
     }
 }

@@ -23,6 +23,7 @@ final class SignerTest extends FrameworkIntegrationTestCase
         $this->container->config(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -36,6 +37,7 @@ final class SignerTest extends FrameworkIntegrationTestCase
         $this->container->config(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $signature = $this->signer->sign('important data');
@@ -44,6 +46,7 @@ final class SignerTest extends FrameworkIntegrationTestCase
         $this->container->config(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key2',
+            minimumExecutionDuration: false,
         ));
 
         $this->container->unregister(Signer::class);

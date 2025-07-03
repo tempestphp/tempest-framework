@@ -11,15 +11,6 @@ use Tempest\DateTime\Duration;
 
 final class TimelockTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (! interface_exists(Clock::class)) {
-            $this->markTestSkipped('The Clock interface is not available. This test requires the `tempest/clock` package.');
-        }
-    }
-
     public function test_callback_is_executed(): void
     {
         $clock = new GenericClock();

@@ -3,18 +3,36 @@
 namespace Tempest\Cryptography\Tests\Signing;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Clock\Clock;
+use Tempest\Clock\GenericClock;
+use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasMissing;
 use Tempest\Cryptography\Signing\GenericSigner;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
+use Tempest\Cryptography\Timelock;
+use Tempest\DateTime\Duration;
 
 final class SignerTest extends TestCase
 {
+    private function createSigner(SigningConfig $config, ?Clock $clock = null): GenericSigner
+    {
+        return new GenericSigner(
+            config: $config ?? new SigningConfig(
+                algorithm: SigningAlgorithm::SHA256,
+                key: 'my_secret_key',
+                minimumExecutionDuration: false,
+            ),
+            timelock: new Timelock($clock ?? new GenericClock()),
+        );
+    }
+
     public function test_good_signature(): void
     {
-        $signer = new GenericSigner(new SigningConfig(
+        $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -25,9 +43,10 @@ final class SignerTest extends TestCase
 
     public function test_bad_signature(): void
     {
-        $signer = new GenericSigner(new SigningConfig(
+        $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -41,14 +60,16 @@ final class SignerTest extends TestCase
 
     public function test_different_algoritms(): void
     {
-        $signer1 = new GenericSigner(new SigningConfig(
+        $signer1 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
-        $signer2 = new GenericSigner(new SigningConfig(
+        $signer2 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA512,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -71,9 +92,10 @@ final class SignerTest extends TestCase
     {
         $this->expectException(SigningKeyWasMissing::class);
 
-        $signer = new GenericSigner(new SigningConfig(
+        $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: '',
+            minimumExecutionDuration: false,
         ));
 
         $signer->sign('important data');
@@ -81,9 +103,10 @@ final class SignerTest extends TestCase
 
     public function test_empty_data(): void
     {
-        $signer = new GenericSigner(new SigningConfig(
+        $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $signature = $signer->sign('');
@@ -94,9 +117,10 @@ final class SignerTest extends TestCase
 
     public function test_consistent_signature(): void
     {
-        $signer = new GenericSigner(new SigningConfig(
+        $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'my_secret_key',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -109,14 +133,16 @@ final class SignerTest extends TestCase
 
     public function test_different_keys(): void
     {
-        $signer1 = new GenericSigner(new SigningConfig(
+        $signer1 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
             key: 'signer1_key_foo',
+            minimumExecutionDuration: false,
         ));
 
-        $signer2 = new GenericSigner(new SigningConfig(
+        $signer2 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA512,
             key: 'signer2_key_bar',
+            minimumExecutionDuration: false,
         ));
 
         $data = 'important data';
@@ -133,5 +159,41 @@ final class SignerTest extends TestCase
         // Verify with the wrong signer
         $this->assertFalse($signer1->verify($data, $signature2));
         $this->assertFalse($signer2->verify($data, $signature1));
+    }
+
+    public function test_time_protection(): void
+    {
+        $signer = $this->createSigner(new SigningConfig(
+            algorithm: SigningAlgorithm::SHA256,
+            key: 'my_secret_key',
+            minimumExecutionDuration: Duration::milliseconds(300),
+        ));
+
+        $data = 'important data';
+        $signature = $signer->sign($data);
+
+        $start = microtime(true);
+        $this->assertTrue($signer->verify($data, $signature));
+        $elapsed = microtime(true) - $start;
+
+        $this->assertGreaterThanOrEqual(0.3, $elapsed);
+    }
+
+    public function test_time_protection_with_mock_clock(): void
+    {
+        $signer = $this->createSigner(new SigningConfig(
+            algorithm: SigningAlgorithm::SHA256,
+            key: 'my_secret_key',
+            minimumExecutionDuration: Duration::second(),
+        ), $clock = new MockClock());
+
+        $data = 'important data';
+        $signature = $signer->sign($data);
+
+        $ms = $clock->timestamp()->getMilliseconds();
+        $this->assertTrue($signer->verify($data, $signature));
+        $elapsed = $clock->timestamp()->getMilliseconds() - $ms;
+
+        $this->assertSame(1_000, $elapsed);
     }
 }
