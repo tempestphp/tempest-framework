@@ -6,6 +6,7 @@ use Tempest\Container\Container;
 use Tempest\Core\Priority;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToObjectMapper;
+use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
@@ -24,6 +25,10 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
         $matchedRoute = $this->routeMatcher->match($request);
+
+        if ($matchedRoute === null && $request->method === Method::HEAD && $request instanceof GenericRequest) {
+            $matchedRoute = $this->routeMatcher->match($request->withMethod(Method::GET));
+        }
 
         if ($matchedRoute === null) {
             return new NotFound();
