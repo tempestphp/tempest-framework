@@ -61,7 +61,7 @@ final class MigrateFreshCommand
         $this->console->call(MigrateUpCommand::class, [
             'fresh' => false,
             'validate' => false,
-            'database' => $database
+            'database' => $database,
         ]);
 
         $seed = $seed || $seeder !== null;
