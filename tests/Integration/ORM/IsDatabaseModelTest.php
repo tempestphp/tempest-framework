@@ -7,12 +7,12 @@ namespace Tests\Tempest\Integration\ORM;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeImmutable;
-use Tempest\DateTime\DateTime as TempestDateTime;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\DateTime\DateTime as TempestDateTime;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -617,7 +617,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
         }
     }
-    
+
     public function test_date_field(): void
     {
         $this->migrate(
@@ -625,10 +625,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateDateTimeModelTable::class,
         );
 
-        $id = query(DateTimeModel::class)->insert([
-            'phpDateTime' => new DateTime('2024-01-01 00:00:00'),
-            'tempestDateTime' => TempestDateTime::parse('2024-01-01 00:00:00'),
-        ])->execute();
+        $id = query(DateTimeModel::class)
+            ->insert([
+                'phpDateTime' => new DateTime('2024-01-01 00:00:00'),
+                'tempestDateTime' => TempestDateTime::parse('2024-01-01 00:00:00'),
+            ])
+            ->execute();
 
         /** @var DateTimeModel $model */
         $model = query(DateTimeModel::class)->select()->whereField('id', $id)->first();

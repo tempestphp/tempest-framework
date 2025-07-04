@@ -39,7 +39,7 @@ final readonly class DateTimeSerializer implements Serializer
         $format = $this->format;
 
         if ($format === null) {
-            $format = match(true) {
+            $format = match (true) {
                 $input instanceof TempestDateTimeInterface => FormatPattern::SQL_DATE_TIME,
                 default => 'Y-m-d H:i:s',
             };

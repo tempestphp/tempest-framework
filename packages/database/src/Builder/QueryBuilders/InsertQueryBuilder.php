@@ -16,8 +16,8 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
-
 use Tests\Tempest\Integration\ORM\Models\DateTimeModel;
+
 use function Tempest\Database\model;
 use function Tempest\map;
 

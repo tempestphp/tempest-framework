@@ -15,6 +15,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTime as TempestDateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
@@ -27,7 +28,6 @@ use Tempest\Mapper\Serializers\NativeDateTimeSerializer;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\DateTime\DateTime as TempestDateTime;
 
 final class SerializerFactoryInitializer implements Initializer
 {
