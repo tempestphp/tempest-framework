@@ -68,7 +68,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('db:seed')
-            ->print();
+            ->assertSuccess();
 
         $book = Book::get(1);
         $this->assertSame('Timeline Taxi', $book->title);
