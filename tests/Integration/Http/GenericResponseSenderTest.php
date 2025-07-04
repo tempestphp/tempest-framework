@@ -49,6 +49,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
             uri: '/test',
         );
 
+        $this->container->singleton(Request::class, $request);
+
         $responseSender = new GenericResponseSender(
             $this->container,
             $this->container->get(ViewRenderer::class),
