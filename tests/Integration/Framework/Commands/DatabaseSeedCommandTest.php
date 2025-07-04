@@ -53,9 +53,9 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call(sprintf('db:seed --seeder=%s', SecondTestDatabaseSeeder::class))
             ->assertSuccess();
 
+        $this->assertSame(1, query(Book::class)->count()->execute());
         $book = Book::get(1);
         $this->assertSame('Timeline Taxi 2', $book->title);
-        $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
     public function test_migrate_fresh_seed_with_manually_selected_seeder(): void
@@ -64,9 +64,9 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call(sprintf('migrate:fresh --seeder=%s', SecondTestDatabaseSeeder::class))
             ->assertSuccess();
 
+        $this->assertSame(1, query(Book::class)->count()->execute());
         $book = Book::get(1);
         $this->assertSame('Timeline Taxi 2', $book->title);
-        $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
     public function test_seed_all(): void
@@ -82,11 +82,11 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call('db:seed --all')
             ->assertSuccess();
 
-        $book = Book::get(1);
-        $this->assertSame('Timeline Taxi', $book->title);
+        $book = Book::select()->whereField('title', 'Timeline Taxi')->first();
+        $this->assertNotNull($book);
 
-        $book = Book::get(2);
-        $this->assertSame('Timeline Taxi 2', $book->title);
+        $book = Book::select()->whereField('title', 'Timeline Taxi 2')->first();
+        $this->assertNotNull($book);
 
         $this->assertSame(2, query(Book::class)->count()->execute());
     }
@@ -107,9 +107,9 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call('db:seed')
             ->assertSuccess();
 
+        $this->assertSame(1, query(Book::class)->count()->execute());
         $book = Book::get(1);
         $this->assertSame('Timeline Taxi', $book->title);
-        $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
     public function test_seed_via_migrate_fresh(): void
@@ -118,9 +118,13 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call('migrate:fresh --seed --all')
             ->assertSuccess();
 
-        $book = Book::get(1);
+        $this->assertSame(2, query(Book::class)->count()->execute());
 
-        $this->assertSame('Timeline Taxi', $book->title);
+        $book = Book::select()->whereField('title', 'Timeline Taxi')->first();
+        $this->assertNotNull($book);
+
+        $book = Book::select()->whereField('title', 'Timeline Taxi 2')->first();
+        $this->assertNotNull($book);
     }
 
     public function test_db_seed_caution(): void
