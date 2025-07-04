@@ -11,6 +11,10 @@ use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 
+use function Tempest\root_path;
+use function Tempest\Support\Path\normalize;
+use function Tempest\Support\Path\to_relative_path;
+
 final class DatabaseInsightsProvider implements InsightsProvider
 {
     public string $name = 'Database';
@@ -22,10 +26,11 @@ final class DatabaseInsightsProvider implements InsightsProvider
 
     public function getInsights(): array
     {
-        return [
+        return array_filter([
             'Engine' => $this->getDatabaseEngine(),
             'Version' => $this->getDatabaseVersion(),
-        ];
+            'Path' => $this->getSQLitePath(),
+        ]);
     }
 
     private function getDatabaseEngine(): string
@@ -61,5 +66,14 @@ final class DatabaseInsightsProvider implements InsightsProvider
         } catch (\Throwable $e) {
             return new Insight('Unavailable', Insight::ERROR);
         }
+    }
+
+    private function getSQLitePath(): null|Insight|string
+    {
+        if (! ($this->databaseConfig instanceof SQLiteConfig)) {
+            return null;
+        }
+
+        return to_relative_path(getcwd(), normalize($this->databaseConfig->path));
     }
 }
