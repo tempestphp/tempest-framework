@@ -94,7 +94,9 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
     public function test_seed_when_only_one_seeder_is_available(): void
     {
         $seederConfig = $this->container->get(SeederConfig::class);
-        unset($seederConfig->seeders[1]);
+        $seederConfig->seeders = [
+            TestDatabaseSeeder::class,
+        ];
 
         $this->migrate(
             CreateMigrationsTable::class,
