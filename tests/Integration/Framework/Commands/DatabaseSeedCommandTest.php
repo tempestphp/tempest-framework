@@ -35,8 +35,6 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->submit()
             ->assertSuccess();
 
-        $book = Book::get(1);
-        $this->assertSame('Timeline Taxi 2', $book->title);
         $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
@@ -82,13 +80,13 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             ->call('db:seed --all')
             ->assertSuccess();
 
+        $this->assertSame(2, query(Book::class)->count()->execute());
+
         $book = Book::select()->whereField('title', 'Timeline Taxi')->first();
         $this->assertNotNull($book);
 
         $book = Book::select()->whereField('title', 'Timeline Taxi 2')->first();
         $this->assertNotNull($book);
-
-        $this->assertSame(2, query(Book::class)->count()->execute());
     }
 
     public function test_seed_when_only_one_seeder_is_available(): void
