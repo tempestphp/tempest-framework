@@ -36,6 +36,33 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
+    public function test_seed_with_manually_selected_seeder(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+        );
+
+        $this->console
+            ->call(sprintf('db:seed --seeder=%s', SecondTestDatabaseSeeder::class))
+            ->assertSuccess();
+
+        $book = Book::get(1);
+        $this->assertSame('Timeline Taxi 2', $book->title);
+        $this->assertSame(1, query(Book::class)->count()->execute());
+    }
+
+    public function test_migrate_fresh_seed_with_manually_selected_seeder(): void
+    {
+        $this->console
+            ->call(sprintf('migrate:fresh --seeder=%s', SecondTestDatabaseSeeder::class))
+            ->assertSuccess();
+
+        $book = Book::get(1);
+        $this->assertSame('Timeline Taxi 2', $book->title);
+        $this->assertSame(1, query(Book::class)->count()->execute());
+    }
+
     public function test_seed_all(): void
     {
         $this->migrate(

@@ -40,6 +40,8 @@ final class MigrateFreshCommand
         bool $seed = false,
         #[ConsoleArgument(description: 'Run all database seeders after the database has been migrated')]
         bool $all = false,
+        #[ConsoleArgument(description: 'Select one specific seeder to run')]
+        ?string $seeder = null,
     ): ExitCode {
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
@@ -56,11 +58,21 @@ final class MigrateFreshCommand
             $this->console->info('There is no migration to drop.');
         }
 
-        $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false, 'database' => $database]);
+        $this->console->call(MigrateUpCommand::class, [
+            'fresh' => false,
+            'validate' => false,
+            'database' => $database
+        ]);
+
+        $seed = $seed || $seeder !== null;
 
         if ($seed) {
             $this->console->header('Seeding database');
-            $this->console->call(DatabaseSeedCommand::class, ['database' => $database, 'all' => $all]);
+            $this->console->call(DatabaseSeedCommand::class, [
+                'database' => $database,
+                'all' => $all,
+                'seeder' => $seeder,
+            ]);
         }
 
         return ExitCode::SUCCESS;

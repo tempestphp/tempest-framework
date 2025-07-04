@@ -28,7 +28,14 @@ final class DatabaseSeedCommand
         ?string $database = null,
         #[ConsoleArgument(description: 'Run all database seeders')]
         bool $all = false,
+        #[ConsoleArgument(description: 'Select one specific seeder to run')]
+        ?string $seeder = null,
     ): void {
+        if ($seeder !== null) {
+            $this->runSeeder($seeder, $database);
+            return;
+        }
+
         if (count($this->seederConfig->seeders) === 1) {
             $this->runSeeder($this->seederConfig->seeders[0], $database);
             return;
