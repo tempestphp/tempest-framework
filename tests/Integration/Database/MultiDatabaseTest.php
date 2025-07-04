@@ -300,9 +300,13 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->call('db:seed --database=backup --all')
             ->assertSuccess();
 
+        /** @var Book $book */
+        /** @phpstan-ignore-next-line */
+        $book = query(Book::class)->select()->onDatabase('backup')->first();
+
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('backup')->first()->title,
+            $book->title,
         );
     }
 

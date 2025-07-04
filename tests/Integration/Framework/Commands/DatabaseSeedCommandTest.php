@@ -6,7 +6,9 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Database\Config\SeederConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\SecondTestDatabaseSeeder;
 use Tests\Tempest\Fixtures\TestDatabaseSeeder;
@@ -20,6 +22,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
             CreateBookTable::class,
         );
 
@@ -40,6 +44,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
             CreateBookTable::class,
         );
 
@@ -67,6 +73,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
             CreateBookTable::class,
         );
 
@@ -90,6 +98,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
             CreateBookTable::class,
         );
 
