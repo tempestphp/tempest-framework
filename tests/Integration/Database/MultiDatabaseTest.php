@@ -188,14 +188,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     public function test_migrate_fresh_command(): void
     {
         $this->console
-            ->call('migrate:fresh --database=main')
+            ->call('migrate:fresh --database=main --all')
             ->assertSuccess();
 
         $this->assertTableExists(Migration::class, 'main');
         $this->assertTableDoesNotExist(Migration::class, 'backup');
 
         $this->console
-            ->call('migrate:fresh --database=backup')
+            ->call('migrate:fresh --database=backup --all')
             ->assertSuccess();
 
         $this->assertTableExists(Migration::class, 'backup');
@@ -284,50 +284,50 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager->onDatabase('backup')->executeUp(new CreateBookTable());
 
         $this->console
-            ->call('db:seed --database=main')
+            ->call('db:seed --database=main --all')
             ->assertSuccess();
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title
+            query(Book::class)->select()->onDatabase('main')->first()->title,
         );
 
         $this->assertNull(
-            query(Book::class)->select()->onDatabase('backup')->first()
+            query(Book::class)->select()->onDatabase('backup')->first(),
         );
 
         $this->console
-            ->call('db:seed --database=backup')
+            ->call('db:seed --database=backup --all')
             ->assertSuccess();
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('backup')->first()->title
+            query(Book::class)->select()->onDatabase('backup')->first()->title,
         );
     }
 
     public function test_migrate_fresh_seed_on_selected_database(): void
     {
         $this->console
-            ->call('migrate:fresh --seed --database=main')
+            ->call('migrate:fresh --seed --database=main --all')
             ->assertSuccess();
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title
+            query(Book::class)->select()->onDatabase('main')->first()->title,
         );
 
-        $this->assertException(PDOException::class, function () {
+        $this->assertException(PDOException::class, function (): void {
             query(Book::class)->select()->onDatabase('backup')->first();
         });
 
         $this->console
-            ->call('migrate:fresh --seed --database=backup')
+            ->call('migrate:fresh --seed --database=backup --all')
             ->assertSuccess();
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('backup')->first()->title
+            query(Book::class)->select()->onDatabase('backup')->first()->title,
         );
     }
 

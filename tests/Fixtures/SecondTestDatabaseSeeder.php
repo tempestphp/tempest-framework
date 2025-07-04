@@ -8,13 +8,13 @@ use UnitEnum;
 
 use function Tempest\Database\query;
 
-final class TestDatabaseSeeder implements DatabaseSeeder
+final class SecondTestDatabaseSeeder implements DatabaseSeeder
 {
     public function run(null|string|UnitEnum $database): void
     {
         query(Book::class)
             ->insert(
-                title: 'Timeline Taxi',
+                title: 'Timeline Taxi 2',
             )
             ->onDatabase($database)
             ->execute();
