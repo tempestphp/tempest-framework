@@ -188,14 +188,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     public function test_migrate_fresh_command(): void
     {
         $this->console
-            ->call('migrate:fresh --database=main --all')
+            ->call('migrate:fresh --database=main')
             ->assertSuccess();
 
         $this->assertTableExists(Migration::class, 'main');
         $this->assertTableDoesNotExist(Migration::class, 'backup');
 
         $this->console
-            ->call('migrate:fresh --database=backup --all')
+            ->call('migrate:fresh --database=backup')
             ->assertSuccess();
 
         $this->assertTableExists(Migration::class, 'backup');
