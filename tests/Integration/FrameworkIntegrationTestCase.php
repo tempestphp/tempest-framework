@@ -6,20 +6,29 @@ namespace Tests\Tempest\Integration;
 
 use Closure;
 use InvalidArgumentException;
+use Tempest\Cache\Testing\CacheTester;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
+use Tempest\Container\GenericContainer;
+use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
+use Tempest\Core\ExceptionTester;
+use Tempest\Core\Kernel;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\Connection\ConnectionInitializer;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\EventBus\Testing\EventBusTester;
+use Tempest\Framework\Testing\Http\HttpRouterTester;
+use Tempest\Framework\Testing\InstallerTester;
 use Tempest\Framework\Testing\IntegrationTest;
+use Tempest\Framework\Testing\ViteTester;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\HttpApplication;
 use Tempest\Router\Route;
@@ -28,6 +37,7 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
+use Tempest\Storage\Testing\StorageTester;
 use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
@@ -37,6 +47,20 @@ use Throwable;
 
 use function Tempest\Support\Path\normalize;
 
+/**
+ * Added these properties because of an autocompletion bug in PhpStorm
+ * @property AppConfig $appConfig
+ * @property Kernel $kernel
+ * @property GenericContainer $container
+ * @property ConsoleTester $console
+ * @property HttpRouterTester $http
+ * @property InstallerTester $installer
+ * @property ViteTester $vite
+ * @property EventBusTester $eventBus
+ * @property StorageTester $storage
+ * @property CacheTester $cache
+ * @property ExceptionTester $exceptions
+ */
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void

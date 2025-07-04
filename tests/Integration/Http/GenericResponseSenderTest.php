@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
@@ -12,6 +15,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\ServerSentEvent;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
+use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
@@ -36,6 +40,33 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame($response, $responseSender->send($response));
 
         ob_get_clean();
+    }
+
+    public function test_sending_head_request(): void
+    {
+        $request = new GenericRequest(
+            method: Method::HEAD,
+            uri: '/test',
+        );
+
+        $responseSender = new GenericResponseSender(
+            $this->container,
+            $this->container->get(ViewRenderer::class),
+        );
+
+        $response = new GenericResponse(
+            status: Status::OK,
+            body: 'body',
+            headers: ['x-custom' => ['true']],
+        );
+
+        ob_start();
+
+        $responseSender->send($response);
+
+        $content = ob_get_clean();
+
+        $this->assertSame('', $content);
     }
 
     public function test_file_response(): void
