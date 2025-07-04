@@ -27,6 +27,7 @@ use Tempest\Mapper\Serializers\NativeDateTimeSerializer;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\DateTime\DateTime as TempestDateTime;
 
 final class SerializerFactoryInitializer implements Initializer
 {
@@ -48,6 +49,7 @@ final class SerializerFactoryInitializer implements Initializer
             ->addSerializer(JsonSerializable::class, SerializableSerializer::class)
             ->addSerializer(BackedEnum::class, EnumSerializer::class)
             ->addSerializer(DateTime::class, DateTimeSerializer::fromProperty(...))
+            ->addSerializer(TempestDateTime::class, DateTimeSerializer::fromProperty(...))
             ->addSerializer(fn (PropertyReflector $property) => $property->getIterableType() !== null, ArrayOfObjectsSerializer::class);
     }
 }

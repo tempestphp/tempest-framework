@@ -11,12 +11,15 @@ use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
+use Tests\Tempest\Integration\ORM\Models\DateTimeModel;
 use function Tempest\Database\model;
+use function Tempest\map;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
@@ -88,12 +91,12 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $entries = [];
 
-        foreach ($this->rows as $model) {
-            // Raw entries are straight up added
-            if (is_array($model) || $model instanceof ImmutableArray) {
-                $entries[] = $model;
+        $baseModelName = model($this->model)->getName();
 
-                continue;
+        foreach ($this->rows as $model) {
+            // Raw entries are converted to model objects
+            if (is_array($model) || $model instanceof ImmutableArray) {
+                $model = map($model)->with(ArrayToObjectMapper::class)->to($baseModelName);
             }
 
             // The rest are model objects

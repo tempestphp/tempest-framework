@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
-use DateTimeInterface as NativeDateTimeInterface;
+use DateTimeInterface as PhpDateTimeInterface;
 use Tempest\DateTime\DateTime;
-use Tempest\DateTime\DateTimeInterface;
+use Tempest\DateTime\DateTimeInterface as TempestDateTimeInterface;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
@@ -16,26 +16,35 @@ use Tempest\Validation\Rules\DateTimeFormat;
 final readonly class DateTimeSerializer implements Serializer
 {
     public function __construct(
-        private FormatPattern|string $format = FormatPattern::ISO8601,
+        private FormatPattern|string|null $format = null,
     ) {}
 
     public static function fromProperty(PropertyReflector $property): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? FormatPattern::ISO8601;
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? null;
 
         return new self($format);
     }
 
     public function serialize(mixed $input): string
     {
-        if ($input instanceof NativeDateTimeInterface) {
+        if ($input instanceof PhpDateTimeInterface) {
             $input = DateTime::parse($input);
         }
 
-        if (! ($input instanceof DateTimeInterface)) {
-            throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
+        if (! ($input instanceof TempestDateTimeInterface)) {
+            throw new ValueCouldNotBeSerialized(TempestDateTimeInterface::class);
         }
 
-        return $input->format($this->format);
+        $format = $this->format;
+
+        if ($format === null) {
+            $format = match(true) {
+                $input instanceof TempestDateTimeInterface => FormatPattern::SQL_DATE_TIME,
+                default => 'Y-m-d H:i:s',
+            };
+        }
+
+        return $input->format($format);
     }
 }
