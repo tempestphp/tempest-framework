@@ -15,7 +15,6 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\DateTime\DateTime;
-use Tempest\DateTime\DateTime as TempestDateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
@@ -49,7 +48,6 @@ final class SerializerFactoryInitializer implements Initializer
             ->addSerializer(JsonSerializable::class, SerializableSerializer::class)
             ->addSerializer(BackedEnum::class, EnumSerializer::class)
             ->addSerializer(DateTime::class, DateTimeSerializer::fromProperty(...))
-            ->addSerializer(TempestDateTime::class, DateTimeSerializer::fromProperty(...))
             ->addSerializer(fn (PropertyReflector $property) => $property->getIterableType() !== null, ArrayOfObjectsSerializer::class);
     }
 }
