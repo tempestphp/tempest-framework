@@ -11,12 +11,14 @@ use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
+use function Tempest\map;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
@@ -84,16 +86,21 @@ final class InsertQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    // So the problem is here that we try to determine a serializer based on the property, but this query builder can also work on non-object models, which of course don't have properties
+    // We'll need a proper refactor here, and have two completely separate strategies of inserting data: one for object models, one for non-object models
+    // (in which case we need to determine the serializer based on the value's type instead of the property)
+    // To further complicate things, if we're inserting an object model, we can pass in both instances of the object to sync with the database OR raw arrays that should be mapped unto the model
+    // Finally, digging into this I realized we don't take a property's `#[MapTo]` into account, this should be fixed in the `ModelInspector`
     private function resolveData(): array
     {
         $entries = [];
 
-        foreach ($this->rows as $model) {
-            // Raw entries are straight up added
-            if (is_array($model) || $model instanceof ImmutableArray) {
-                $entries[] = $model;
+        $baseModelName = model($this->model)->getName();
 
-                continue;
+        foreach ($this->rows as $model) {
+            // Raw entries are converted to model objects
+            if (is_array($model) || $model instanceof ImmutableArray) {
+                $model = map($model)->with(ArrayToObjectMapper::class)->to($baseModelName);
             }
 
             // The rest are model objects
