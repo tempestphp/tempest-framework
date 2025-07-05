@@ -7,7 +7,7 @@
         "php": "^8.4",
         "monolog/monolog": "^3.7.0",
         "psr/log": "^3.0.0",
-        "tempest/container": "1.1.0"
+        "tempest/container": "dev-main"
     },
     "autoload": {
         "psr-4": {
