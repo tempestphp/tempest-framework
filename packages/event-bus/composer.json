@@ -3,9 +3,9 @@
     "description": "A lightweight event bus component designed to facilitate event-driven architecture and asynchronous message handling.",
     "require": {
         "php": "^8.4",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/reflection": "dev-main"
+        "tempest/core": "1.1.0",
+        "tempest/container": "1.1.0",
+        "tempest/reflection": "1.1.0"
     },
     "autoload": {
         "files": [
