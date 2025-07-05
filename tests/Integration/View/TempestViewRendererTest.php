@@ -718,4 +718,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('hi', $html);
     }
+
+    public function test_view_comments(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
+        HTML);
+
+        $this->assertSnippetsMatch('<p>this is rendered text</p>', $html);
+    }
 }

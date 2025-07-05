@@ -19,6 +19,11 @@ final class TextElement implements Element
     public function compile(): string
     {
         return str($this->text)
+            // Render {{-- --}}
+            ->replaceRegex(
+                regex: '/{{--(.|\n)*?--}}/',
+                replace: '',
+            )
             // Render {{
             ->replaceRegex(
                 regex: '/{{(?<match>.*?)}}/',
