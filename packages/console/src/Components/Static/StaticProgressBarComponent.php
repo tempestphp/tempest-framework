@@ -29,10 +29,7 @@ final readonly class StaticProgressBarComponent implements StaticConsoleComponen
             $progress = (int) round(($step / $count) * $width);
 
             if ($step === $count) {
-                $bar = sprintf(
-                    '[%s]',
-                    str_repeat('=', $width + 1),
-                );
+                $bar = sprintf('[%s]', str_repeat('=', $width + 1));
             } else {
                 $bar = sprintf(
                     '[%s>%s]',
@@ -41,12 +38,7 @@ final readonly class StaticProgressBarComponent implements StaticConsoleComponen
                 );
             }
 
-            return sprintf(
-                '%s (%s/%s)',
-                $bar,
-                $step,
-                $count,
-            ) . PHP_EOL;
+            return sprintf('%s (%s/%s)%s', $bar, $step, $count, PHP_EOL);
         };
 
         foreach ($this->data as $item) {
