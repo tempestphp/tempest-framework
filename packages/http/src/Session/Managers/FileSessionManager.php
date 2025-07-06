@@ -123,7 +123,7 @@ final readonly class FileSessionManager implements SessionManager
             $session->data = $data;
         }
 
-        Filesystem\write_file($path, serialize($session));
+        Filesystem\write_file($path, serialize($session), LOCK_EX);
 
         return $session;
     }
