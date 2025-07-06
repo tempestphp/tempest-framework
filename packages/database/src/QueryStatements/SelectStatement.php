@@ -8,7 +8,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
-final class SelectStatement implements QueryStatement
+final class SelectStatement implements QueryStatement, HasWhereStatements
 {
     public function __construct(
         public TableDefinition $table,

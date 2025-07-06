@@ -82,7 +82,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_where(): void
     {
-        $sql = query('books')->select()
+        $sql = query('books')
+            ->select()
             ->where('title = ?', 'a')
             ->where('author_id = ?', 1)
             ->where('OR author_id = ?', 2)
@@ -103,7 +104,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_where_field(): void
     {
-        $sql = query('books')->select()
+        $sql = query('books')
+            ->select()
             ->whereField('title', 'a')
             ->whereField('author_id', 1)
             ->toSql();

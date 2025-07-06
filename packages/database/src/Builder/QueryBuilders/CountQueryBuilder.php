@@ -10,15 +10,18 @@ use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Conditions\HasConditions;
 
 /**
  * @template TModelClass of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\IsQueryBuilderWithWhere<TModelClass>
  */
 final class CountQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, IsQueryBuilderWithWhere;
 
     private ?ModelDefinition $modelDefinition;
 
@@ -106,5 +109,10 @@ final class CountQueryBuilder implements BuildsQuery
         }
 
         return $this->modelDefinition->getTableDefinition();
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->count;
     }
 }

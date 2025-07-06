@@ -5,31 +5,31 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
-use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\FieldStatement;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 use function Tempest\map;
-use function Tempest\Support\str;
 
 /**
  * @template TModelClass of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\IsQueryBuilderWithWhere<TModelClass>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, IsQueryBuilderWithWhere;
 
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;
@@ -57,9 +57,7 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return TModelClass|null */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -79,9 +77,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return TModelClass|null */
     public function get(Id $id): mixed
     {
         return $this->whereField('id', $id)->first();
@@ -118,44 +114,6 @@ final class SelectQueryBuilder implements BuildsQuery
 
             $closure($data);
         } while ($data !== []);
-    }
-
-    /** @return self<TModelClass> */
-    public function where(string $where, mixed ...$bindings): self
-    {
-        if (
-            $this->select->where->isNotEmpty()
-            && ! str($where)->trim()->startsWith(['AND', 'OR'])
-        ) {
-            return $this->andWhere($where, ...$bindings);
-        }
-
-        $this->select->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
-    public function andWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("AND {$where}", ...$bindings);
-    }
-
-    public function orWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("OR {$where}", ...$bindings);
-    }
-
-    /** @return self<TModelClass> */
-    public function whereField(string $field, mixed $value): self
-    {
-        $field = new FieldDefinition(
-            $this->model->getTableDefinition(),
-            $field,
-        );
-
-        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }
 
     /** @return self<TModelClass> */
@@ -263,5 +221,10 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return $relations;
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->select;
     }
 }

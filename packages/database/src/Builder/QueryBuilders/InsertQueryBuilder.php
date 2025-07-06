@@ -26,6 +26,8 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private array $after = [];
 
+    private array $bindings = [];
+
     public function __construct(
         private readonly string|object $model,
         private readonly array $rows,
@@ -74,7 +76,14 @@ final class InsertQueryBuilder implements BuildsQuery
             $this->insert->addEntry($data);
         }
 
-        return new Query($this->insert, $bindings)->onDatabase($this->onDatabase);
+        return new Query($this->insert, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
+    }
+
+    public function bind(mixed ...$bindings): self
+    {
+        $this->bindings = [...$this->bindings, ...$bindings];
+
+        return $this;
     }
 
     public function then(Closure ...$callbacks): self

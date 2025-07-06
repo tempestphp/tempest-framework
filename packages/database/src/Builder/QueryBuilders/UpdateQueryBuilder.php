@@ -7,28 +7,35 @@ use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\UpdateStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
+/**
+ * @template TModelClass of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\IsQueryBuilderWithWhere<TModelClass>
+ */
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, IsQueryBuilderWithWhere;
 
     private UpdateStatement $update;
 
     private array $bindings = [];
 
     public function __construct(
-        private string|object $model,
-        private array|ImmutableArray $values,
-        private SerializerFactory $serializerFactory,
+        /** @var class-string<TModelClass> $model */
+        private readonly string|object $model,
+        private readonly array|ImmutableArray $values,
+        private readonly SerializerFactory $serializerFactory,
     ) {
         $this->update = new UpdateStatement(
             table: model($this->model)->getTableDefinition(),
@@ -40,6 +47,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this->build()->execute(...$bindings);
     }
 
+    /** @return self<TModelClass> */
     public function allowAll(): self
     {
         $this->update->allowAll = true;
@@ -47,15 +55,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function where(string $where, mixed ...$bindings): self
-    {
-        $this->update->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
+    /** @return self<TModelClass> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -77,7 +77,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $this->update->values = $values;
 
         if (model($this->model)->isObjectModel() && is_object($this->model)) {
-            $this->where('`id` = ?', id: $this->model->id->id);
+            $this->where('id = ?', id: $this->model->id->id);
         }
 
         foreach ($values as $value) {
@@ -140,5 +140,10 @@ final class UpdateQueryBuilder implements BuildsQuery
         }
 
         return $values;
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->update;
     }
 }
