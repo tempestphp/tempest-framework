@@ -41,8 +41,7 @@ enum PackageManager: string
     {
         return (
             $this->getBinaryName() .
-            ' ' .
-            match ($this) {
+            ' ' . match ($this) {
                 self::BUN => $script,
                 self::NPM => "run {$script}",
                 self::YARN => $script,

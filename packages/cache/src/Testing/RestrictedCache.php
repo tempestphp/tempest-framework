@@ -14,6 +14,7 @@ use Tempest\DateTime\Duration;
 final class RestrictedCache implements Cache
 {
     public bool $enabled;
+
     public function __construct(
         private ?string $tag = null,
     ) {}
