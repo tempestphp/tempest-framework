@@ -80,6 +80,40 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
+    public function test_multiple_where(): void
+    {
+        $sql = query('books')->select()
+            ->where('title = ?', 'a')
+            ->where('author_id = ?', 1)
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `books`
+        WHERE title = ?
+        AND author_id = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_multiple_where_field(): void
+    {
+        $sql = query('books')->select()
+            ->whereField('title', 'a')
+            ->whereField('author_id', 1)
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `books`
+        WHERE books.title = :title
+        AND books.author_id = :author_id
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
     public function test_where_statement(): void
     {
         $this->migrate(

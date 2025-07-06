@@ -123,6 +123,10 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return self<TModelClass> */
     public function where(string $where, mixed ...$bindings): self
     {
+        if ($this->select->where->isNotEmpty()) {
+            return $this->andWhere($where, ...$bindings);
+        }
+
         $this->select->where[] = new WhereStatement($where);
 
         $this->bind(...$bindings);
@@ -132,7 +136,11 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function andWhere(string $where, mixed ...$bindings): self
     {
-        return $this->where("AND {$where}", ...$bindings);
+        $this->select->where[] = new WhereStatement("AND {$where}");
+
+        $this->bind(...$bindings);
+
+        return $this;
     }
 
     public function orWhere(string $where, mixed ...$bindings): self
