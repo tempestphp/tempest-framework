@@ -43,7 +43,6 @@
     "require-dev": {
         "carthage-software/mago": "0.24.1",
         "guzzlehttp/psr7": "^2.6.1",
-        "illuminate/view": "~11.7.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-azure-blob-storage": "^3.0",
         "league/flysystem-ftp": "^3.0",
