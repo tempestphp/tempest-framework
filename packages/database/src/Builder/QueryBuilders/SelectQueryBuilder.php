@@ -19,10 +19,10 @@ use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
-use UnitEnum;
 
 use function Tempest\Database\model;
 use function Tempest\map;
+use function Tempest\Support\str;
 
 /**
  * @template TModelClass of object
@@ -123,7 +123,10 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return self<TModelClass> */
     public function where(string $where, mixed ...$bindings): self
     {
-        if ($this->select->where->isNotEmpty()) {
+        if (
+            $this->select->where->isNotEmpty()
+            && ! str($where)->trim()->startsWith(['AND', 'OR'])
+        ) {
             return $this->andWhere($where, ...$bindings);
         }
 
@@ -136,11 +139,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function andWhere(string $where, mixed ...$bindings): self
     {
-        $this->select->where[] = new WhereStatement("AND {$where}");
-
-        $this->bind(...$bindings);
-
-        return $this;
+        return $this->where("AND {$where}", ...$bindings);
     }
 
     public function orWhere(string $where, mixed ...$bindings): self

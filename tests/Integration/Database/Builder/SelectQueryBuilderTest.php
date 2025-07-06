@@ -85,6 +85,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')->select()
             ->where('title = ?', 'a')
             ->where('author_id = ?', 1)
+            ->where('OR author_id = ?', 2)
+            ->where('AND author_id <> NULL')
             ->toSql();
 
         $expected = <<<SQL
@@ -92,6 +94,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         FROM `books`
         WHERE title = ?
         AND author_id = ?
+        OR author_id = ?
+        AND author_id <> NULL
         SQL;
 
         $this->assertSameWithoutBackticks($expected, $sql);
