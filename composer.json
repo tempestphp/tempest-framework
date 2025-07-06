@@ -52,7 +52,6 @@
         "league/flysystem-read-only": "^3.0",
         "league/flysystem-sftp-v3": "^3.0",
         "league/flysystem-ziparchive": "^3.0",
-        "illuminate/contracts": "^11.34",
         "masterminds/html5": "^2.9",
         "microsoft/azure-storage-blob": "^1.5",
         "mikey179/vfsstream": "^2.0@dev",
