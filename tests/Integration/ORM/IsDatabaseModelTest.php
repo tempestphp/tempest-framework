@@ -6,8 +6,6 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
-use Integration\ORM\Migrations\CreateCasterEnumType;
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Id;
@@ -559,9 +557,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_table_name_overrides(): void
     {
-        $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('base_models', model(BaseModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_attribute_table_name', model(AttributeTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_static_method_table_name', model(StaticMethodTableNameModel::class)->getTableDefinition()->name);
     }
 
     public function test_validation_on_create(): void

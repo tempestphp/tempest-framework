@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use Tempest\Container\Container;
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -23,6 +22,7 @@ use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Tempest\Database\ShouldMigrate;
 use Throwable;
 
+use function Tempest\Database\model;
 use function Tempest\Database\query;
 use function Tempest\event;
 
@@ -80,7 +80,7 @@ final class MigrationManager
             }
 
             event(new MigrationFailed(
-                name: new ModelDefinition(Migration::class)->getTableDefinition()->name,
+                name: model(Migration::class)->getTableDefinition()->name,
                 exception: new TableWasNotFound(),
             ));
 
