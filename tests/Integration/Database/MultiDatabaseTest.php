@@ -9,6 +9,7 @@ use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
@@ -321,7 +322,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             query(Book::class)->select()->onDatabase('main')->first()->title,
         );
 
-        $this->assertException(PDOException::class, function (): void {
+        $this->assertException(QueryWasInvalid::class, function (): void {
             query(Book::class)->select()->onDatabase('backup')->first();
         });
 
@@ -343,7 +344,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     private function assertTableDoesNotExist(string $tableName, string $onDatabase): void
     {
         $this->assertException(
-            PDOException::class,
+            QueryWasInvalid::class,
             fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
         );
     }
