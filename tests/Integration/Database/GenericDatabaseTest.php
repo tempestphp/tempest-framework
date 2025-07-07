@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Database;
 
 use Exception;
 use Tempest\Database\Database;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -66,5 +67,19 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(1, query(Publisher::class)->count()->execute());
+    }
+
+    public function test_query_was_invalid_exception_is_thrown_on_fetch(): void
+    {
+        $this->assertException(QueryWasInvalid::class, function () {
+            query('books')->select()->orderBy('title DES')->first();
+        });
+    }
+
+    public function test_query_was_invalid_exception_is_thrown_on_execute(): void
+    {
+        $this->assertException(QueryWasInvalid::class, function () {
+            query('books')->update(title: 'Timeline Taxi')->where('title = ?')->execute();
+        });
     }
 }
