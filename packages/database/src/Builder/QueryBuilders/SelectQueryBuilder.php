@@ -134,7 +134,7 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /** @return self<TModelClass> */
-    public function having(string $statement, ...$bindings): self
+    public function having(string $statement, mixed ...$bindings): self
     {
         $this->select->having[] = new HavingStatement($statement);
 
