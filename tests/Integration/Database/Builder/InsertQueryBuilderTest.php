@@ -162,30 +162,26 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_has_many_via_parent_model_throws_exception(): void
     {
-        try {
+        $this->assertException(HasManyRelationCouldNotBeInsterted::class, function () {
             query(Book::class)
                 ->insert(
                     title: 'Timeline Taxi',
                     chapters: ['title' => 'Chapter 01'],
                 )
                 ->build();
-        } catch (HasManyRelationCouldNotBeInsterted $hasManyRelationCouldNotBeInsterted) {
-            $this->assertStringContainsString(Book::class . '::$chapters', $hasManyRelationCouldNotBeInsterted->getMessage());
-        }
+        });
     }
 
     public function test_inserting_has_one_via_parent_model_throws_exception(): void
     {
-        try {
+        $this->assertException(HasOneRelationCouldNotBeInserted::class, function () {
             query(Book::class)
                 ->insert(
                     title: 'Timeline Taxi',
                     isbn: ['value' => '979-8344313764'],
                 )
                 ->build();
-        } catch (HasOneRelationCouldNotBeInserted $hasOneRelationCouldNotBeInserted) {
-            $this->assertStringContainsString(Book::class . '::$isbn', $hasOneRelationCouldNotBeInserted->getMessage());
-        }
+        });
     }
 
     public function test_then_method(): void

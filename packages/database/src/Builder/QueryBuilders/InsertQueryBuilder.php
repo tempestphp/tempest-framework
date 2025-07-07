@@ -3,8 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
-use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Id;
@@ -28,13 +27,16 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
+    private ModelInspector $model;
+
     public function __construct(
         /** @var class-string|string $model */
-        private readonly string|object $model,
+        string|object $model,
         private readonly array $rows,
         private readonly SerializerFactory $serializerFactory,
     ) {
-        $this->insert = new InsertStatement($this->resolveTableDefinition());
+        $this->model = model($model);
+        $this->insert = new InsertStatement($this->model->getTableDefinition());
     }
 
     public function execute(mixed ...$bindings): Id
@@ -59,16 +61,14 @@ final class InsertQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        $definition = model($this->model);
-
         foreach ($this->resolveData() as $data) {
             foreach ($data as $key => $value) {
-                if ($definition->getHasMany($key)) {
-                    throw new HasManyRelationCouldNotBeInsterted($definition->getName(), $key);
+                if ($this->model->getHasMany($key)) {
+                    throw new HasManyRelationCouldNotBeInsterted($this->model->getName(), $key);
                 }
 
-                if ($definition->getHasOne($key)) {
-                    throw new HasOneRelationCouldNotBeInserted($definition->getName(), $key);
+                if ($this->model->getHasOne($key)) {
+                    throw new HasOneRelationCouldNotBeInserted($this->model->getName(), $key);
                 }
 
                 $bindings[] = $value;
@@ -157,16 +157,5 @@ final class InsertQueryBuilder implements BuildsQuery
         }
 
         return $entries;
-    }
-
-    private function resolveTableDefinition(): TableDefinition
-    {
-        $modelDefinition = ModelDefinition::tryFrom($this->model);
-
-        if ($modelDefinition === null) {
-            return new TableDefinition($this->model);
-        }
-
-        return $modelDefinition->getTableDefinition();
     }
 }
