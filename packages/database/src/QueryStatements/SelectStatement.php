@@ -54,12 +54,6 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
                 ->implode(PHP_EOL);
         }
 
-        if ($this->orderBy->isNotEmpty()) {
-            $query[] = 'ORDER BY ' . $this->orderBy
-                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
-                ->implode(', ');
-        }
-
         if ($this->groupBy->isNotEmpty()) {
             $query[] = 'GROUP BY ' . $this->groupBy
                 ->map(fn (GroupByStatement $groupBy) => $groupBy->compile($dialect))
@@ -70,6 +64,12 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
             $query[] = 'HAVING ' . $this->having
                 ->map(fn (HavingStatement $having) => $having->compile($dialect))
                 ->implode(PHP_EOL);
+        }
+
+        if ($this->orderBy->isNotEmpty()) {
+            $query[] = 'ORDER BY ' . $this->orderBy
+                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
+                ->implode(', ');
         }
 
         if ($this->limit !== null) {
