@@ -119,7 +119,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             <<<SQL
             UPDATE `books`
             SET `title` = ?
-            WHERE `id` = ?
+            WHERE `books`.`id` = ?
             SQL,
             $query->toSql(),
         );
@@ -162,7 +162,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             <<<SQL
             UPDATE `books`
             SET `author_id` = ?
-            WHERE `id` = ?
+            WHERE `books`.`id` = ?
             SQL,
             $bookQuery->toSql(),
         );
@@ -202,7 +202,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             <<<SQL
             UPDATE `books`
             SET `author_id` = ?
-            WHERE `id` = ?
+            WHERE `books`.`id` = ?
             SQL,
             $bookQuery->toSql(),
         );
@@ -325,8 +325,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $expected = <<<SQL
         UPDATE `books`
         SET title = ?
-        WHERE books.title = :title
-        AND books.author_id = :author_id
+        WHERE books.title = ?
+        AND books.author_id = ?
         SQL;
 
         $this->assertSameWithoutBackticks($expected, $sql);

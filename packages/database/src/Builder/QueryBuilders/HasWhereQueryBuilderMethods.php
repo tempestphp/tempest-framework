@@ -2,18 +2,21 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Builder\FieldDefinition;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\WhereStatement;
+
 use function Tempest\Support\str;
 
 /**
  * @template TModelClass
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
  */
-trait IsQueryBuilderWithWhere
+trait HasWhereQueryBuilderMethods
 {
-    private abstract function getStatementForWhere(): HasWhereStatements;
+    abstract private function getModel(): ModelInspector;
+
+    abstract private function getStatementForWhere(): HasWhereStatements;
 
     /** @return self<TModelClass> */
     public function where(string $where, mixed ...$bindings): self
@@ -44,11 +47,8 @@ trait IsQueryBuilderWithWhere
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        $field = new FieldDefinition(
-            $this->model->getTableDefinition(),
-            $field,
-        );
+        $field = $this->getModel()->getFieldDefinition($field);
 
-        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
+        return $this->where("{$field} = ?", $value);
     }
 }

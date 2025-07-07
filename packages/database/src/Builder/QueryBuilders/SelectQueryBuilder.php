@@ -25,14 +25,11 @@ use function Tempest\map;
 /**
  * @template TModelClass of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\IsQueryBuilderWithWhere<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, IsQueryBuilderWithWhere;
-
-    /** @var class-string<TModelClass> $modelClass */
-    private readonly string $modelClass;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private ModelInspector $model;
 
@@ -44,10 +41,12 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
-    public function __construct(string|object $model, ?ImmutableArray $fields = null)
-    {
-        $this->modelClass = is_object($model) ? $model::class : $model;
-        $this->model = model($this->modelClass);
+    public function __construct(
+        /** @var class-string<TModelClass>|string|TModelClass $model */
+        string|object $model,
+        ?ImmutableArray $fields = null,
+    ) {
+        $this->model = model($model);
 
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
@@ -68,7 +67,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         $result = map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
 
         if ($result === []) {
             return null;
@@ -94,7 +93,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         return map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
     }
 
     /**
@@ -202,7 +201,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
-        $definition = model($this->modelClass);
+        $definition = model($this->model->getName());
 
         if (! $definition->isObjectModel()) {
             return [];
@@ -226,5 +225,10 @@ final class SelectQueryBuilder implements BuildsQuery
     private function getStatementForWhere(): HasWhereStatements
     {
         return $this->select;
+    }
+
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }

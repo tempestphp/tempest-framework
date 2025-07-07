@@ -7,8 +7,8 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\UpdateStatementWasEmpty;
 use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
 use Tempest\Database\QueryStatement;
-
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\arr;
 
 final class UpdateStatement implements QueryStatement, HasWhereStatements

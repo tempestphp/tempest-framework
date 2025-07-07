@@ -113,8 +113,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $expected = <<<SQL
         SELECT *
         FROM `books`
-        WHERE books.title = :title
-        AND books.author_id = :author_id
+        WHERE books.title = ?
+        AND books.author_id = ?
         SQL;
 
         $this->assertSameWithoutBackticks($expected, $sql);

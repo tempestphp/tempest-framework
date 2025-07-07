@@ -55,12 +55,12 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
             DatabaseDialect::POSTGRESQL => <<<'SQL'
             UPDATE authors
             SET name = ?
-            WHERE id = ?
+            WHERE authors.id = ?
             SQL,
             default => <<<'SQL'
             UPDATE `authors`
             SET `name` = ?
-            WHERE `id` = ?
+            WHERE `authors`.`id` = ?
             SQL,
         };
 

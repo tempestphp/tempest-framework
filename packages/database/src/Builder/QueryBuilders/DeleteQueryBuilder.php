@@ -2,13 +2,11 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\HasWhereStatements;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
@@ -16,26 +14,24 @@ use function Tempest\Database\model;
 /**
  * @template TModelClass of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\IsQueryBuilderWithWhere<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, IsQueryBuilderWithWhere;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private DeleteStatement $delete;
 
     private array $bindings = [];
 
-    public function __construct(
-        /** @var class-string<TModelClass>|string $model */
-        private readonly string|object $model,
-    ) {
-        $table = ModelDefinition::tryFrom($this->model)?->getTableDefinition() ?? new TableDefinition($this->model);
-        $this->delete = new DeleteStatement($table);
+    private ModelInspector $model;
 
-        if (model($this->model)->isObjectModel() && is_object($this->model)) {
-            $this->where('`id` = :id', id: $this->model->id);
-        }
+    public function __construct(
+        /** @var class-string<TModelClass>|string|TModelClass $model */
+        string|object $model,
+    ) {
+        $this->model = model($model);
+        $this->delete = new DeleteStatement($this->model->getTableDefinition());
     }
 
     public function execute(): void
@@ -66,11 +62,23 @@ final class DeleteQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
+        if ($this->model->isObjectModel() && is_object($this->model->instance)) {
+            $this->whereField(
+                $this->model->getPrimaryKey(),
+                $this->model->getPrimaryKeyValue()->id,
+            );
+        }
+
         return new Query($this->delete, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 
     private function getStatementForWhere(): HasWhereStatements
     {
         return $this->delete;
+    }
+
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }
