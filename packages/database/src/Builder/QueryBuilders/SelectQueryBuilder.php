@@ -11,7 +11,9 @@ use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\FieldStatement;
+use Tempest\Database\QueryStatements\GroupByStatement;
 use Tempest\Database\QueryStatements\HasWhereStatements;
+use Tempest\Database\QueryStatements\HavingStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
@@ -119,6 +121,24 @@ final class SelectQueryBuilder implements BuildsQuery
     public function orderBy(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function groupBy(string $statement): self
+    {
+        $this->select->groupBy[] = new GroupByStatement($statement);
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function having(string $statement, ...$bindings): self
+    {
+        $this->select->having[] = new HavingStatement($statement);
+
+        $this->bind(...$bindings);
 
         return $this;
     }

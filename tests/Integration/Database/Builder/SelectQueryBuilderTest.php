@@ -409,6 +409,38 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         SQL, $query);
     }
 
+    public function test_group_by(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->groupBy('name')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        GROUP BY name
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_having(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->having('name = ?', 'Brent')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        HAVING name = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
     private function seed(): void
     {
         $this->migrate(
