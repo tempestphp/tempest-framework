@@ -5,34 +5,31 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
-use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\FieldStatement;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
-use UnitEnum;
 
 use function Tempest\Database\model;
 use function Tempest\map;
 
 /**
  * @template TModelClass of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
-
-    /** @var class-string<TModelClass> $modelClass */
-    private readonly string $modelClass;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private ModelInspector $model;
 
@@ -44,10 +41,12 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
-    public function __construct(string|object $model, ?ImmutableArray $fields = null)
-    {
-        $this->modelClass = is_object($model) ? $model::class : $model;
-        $this->model = model($this->modelClass);
+    public function __construct(
+        /** @var class-string<TModelClass>|string|TModelClass $model */
+        string|object $model,
+        ?ImmutableArray $fields = null,
+    ) {
+        $this->model = model($model);
 
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
@@ -57,9 +56,7 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return TModelClass|null */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -70,7 +67,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         $result = map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
 
         if ($result === []) {
             return null;
@@ -79,9 +76,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return TModelClass|null */
     public function get(Id $id): mixed
     {
         return $this->whereField('id', $id)->first();
@@ -98,7 +93,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         return map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
     }
 
     /**
@@ -118,37 +113,6 @@ final class SelectQueryBuilder implements BuildsQuery
 
             $closure($data);
         } while ($data !== []);
-    }
-
-    /** @return self<TModelClass> */
-    public function where(string $where, mixed ...$bindings): self
-    {
-        $this->select->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
-    public function andWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("AND {$where}", ...$bindings);
-    }
-
-    public function orWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("OR {$where}", ...$bindings);
-    }
-
-    /** @return self<TModelClass> */
-    public function whereField(string $field, mixed $value): self
-    {
-        $field = new FieldDefinition(
-            $this->model->getTableDefinition(),
-            $field,
-        );
-
-        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }
 
     /** @return self<TModelClass> */
@@ -237,7 +201,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
-        $definition = model($this->modelClass);
+        $definition = model($this->model->getName());
 
         if (! $definition->isObjectModel()) {
             return [];
@@ -256,5 +220,15 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return $relations;
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->select;
+    }
+
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }
