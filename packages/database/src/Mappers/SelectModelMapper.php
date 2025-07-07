@@ -27,7 +27,7 @@ final class SelectModelMapper implements Mapper
     {
         $model = model($to);
 
-        $idField = $model->getPrimaryField();
+        $idField = $model->getPrimaryFieldName();
 
         $parsed = arr($from)
             ->groupBy(function (array $data) use ($idField) {

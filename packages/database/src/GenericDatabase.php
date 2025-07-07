@@ -82,11 +82,15 @@ final class GenericDatabase implements Database
 
         $bindings = $this->resolveBindings($query);
 
-        $pdoQuery = $this->connection->prepare($query->toSql());
+        try {
+            $pdoQuery = $this->connection->prepare($query->toSql());
 
-        $pdoQuery->execute($bindings);
+            $pdoQuery->execute($bindings);
 
-        return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
+            return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
+        } catch (PDOException $pdoException) {
+            throw new QueryWasInvalid($query, $bindings, $pdoException);
+        }
     }
 
     public function fetchFirst(BuildsQuery|Query $query): ?array
