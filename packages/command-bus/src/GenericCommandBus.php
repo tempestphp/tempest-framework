@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Tempest\CommandBus;
 
 use Tempest\Container\Container;
+use Tempest\Core\Experimental;
 
+#[Experimental('tempest/command-bus', <<<MD
+you can plug in any other command bus if you'd like.
+MD)]
 final class GenericCommandBus implements CommandBus
 {
     /** @var object[] */

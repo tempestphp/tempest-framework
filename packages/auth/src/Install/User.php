@@ -8,11 +8,15 @@ use BackedEnum;
 use SensitiveParameter;
 use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
+use Tempest\Core\Experimental;
 use Tempest\Database\IsDatabaseModel;
 use UnitEnum;
 
 use function Tempest\Support\arr;
 
+#[Experimental('tempest/auth', <<<MD
+the current implementation is very lightweight, and we welcome people to experiment with more complex implementations as third-party packages before committing to a framework-provided solution.
+MD)]
 final class User implements CanAuthenticate, CanAuthorize
 {
     use IsDatabaseModel;

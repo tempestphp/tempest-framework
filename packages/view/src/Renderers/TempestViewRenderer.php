@@ -6,6 +6,7 @@ namespace Tempest\View\Renderers;
 
 use Stringable;
 use Tempest\Container\Container;
+use Tempest\Core\Experimental;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationFailed;
@@ -18,6 +19,9 @@ use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
 
+#[Experimental('tempest/view', <<<MD
+you can use both [Twig](https://tempestphp.com/docs/essentials/views#using-twig) or [Blade](https://tempestphp.com/docs/essentials/views#using-blade) as alternatives.
+MD)]
 final class TempestViewRenderer implements ViewRenderer
 {
     private ?View $currentView = null;

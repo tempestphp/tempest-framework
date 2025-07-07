@@ -2,11 +2,15 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Tempest\Core\Experimental;
 use Tempest\Mapper\SerializerFactory;
 
 use function Tempest\get;
 use function Tempest\Support\arr;
 
+#[Experimental('tempest/database', <<<MD
+you can use existing ORMs like [Doctrine](https://www.doctrine-project.org/) as an alternative.
+MD)]
 final readonly class QueryBuilder
 {
     public function __construct(

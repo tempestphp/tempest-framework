@@ -6,8 +6,12 @@ namespace Tempest\DateTime;
 
 use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
+use Tempest\Core\Experimental;
 use Tempest\Intl\Locale;
 
+#[Experimental('tempest/datetime', <<<MD
+you can use [Carbon](https://carbon.nesbot.com/docs/) or [Psl](https://github.com/azjezz/psl) as alternatives.
+MD)]
 /**
  * Represents a date and time in a specific timezone.
  */

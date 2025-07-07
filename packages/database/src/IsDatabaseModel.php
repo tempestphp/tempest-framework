@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Core\Experimental;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
