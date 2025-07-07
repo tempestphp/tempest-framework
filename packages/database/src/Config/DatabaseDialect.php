@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Config;
 
-use PDOException;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 
 enum DatabaseDialect: string
 {
@@ -21,12 +21,14 @@ enum DatabaseDialect: string
         };
     }
 
-    public function isTableNotFoundError(PDOException $exception): bool
+    public function isTableNotFoundError(QueryWasInvalid $queryWasInvalid): bool
     {
+        $pdoException = $queryWasInvalid->pdoException;
+
         return match ($this) {
-            self::MYSQL => $exception->getCode() === '42S02' && str_contains($exception->getMessage(), 'table'),
-            self::SQLITE => $exception->getCode() === 'HY000' && str_contains($exception->getMessage(), 'table'),
-            self::POSTGRESQL => $exception->getCode() === '42P01' && str_contains($exception->getMessage(), 'relation'),
+            self::MYSQL => $pdoException->getCode() === '42S02' && str_contains($pdoException->getMessage(), 'table'),
+            self::SQLITE => $pdoException->getCode() === 'HY000' && str_contains($pdoException->getMessage(), 'table'),
+            self::POSTGRESQL => $pdoException->getCode() === '42P01' && str_contains($pdoException->getMessage(), 'relation'),
         };
     }
 }
