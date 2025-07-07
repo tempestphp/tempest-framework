@@ -43,7 +43,6 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
         // Making it so that we don't need to set any $_SERVER variables and stuff like that
-        $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton($request::class, fn () => $request);
 
         return $next($request);
