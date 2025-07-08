@@ -22,20 +22,24 @@ final readonly class ObjectToArrayMapper implements Mapper
         return false;
     }
 
-    public function map(mixed $from, mixed $to): array
+    public function map(mixed $from, mixed $to): mixed
     {
         if ($from instanceof JsonSerializable) {
             return $from->jsonSerialize();
         }
 
-        $class = new ClassReflector($from);
+        if (is_object($from)) {
+            $class = new ClassReflector($from);
 
-        $mappedProperties = [];
+            $mappedProperties = [];
 
-        foreach ($class->getPublicProperties() as $property) {
-            $propertyName = $this->resolvePropertyName($property);
-            $propertyValue = $this->resolvePropertyValue($property, $from);
-            $mappedProperties[$propertyName] = $propertyValue;
+            foreach ($class->getPublicProperties() as $property) {
+                $propertyName = $this->resolvePropertyName($property);
+                $propertyValue = $this->resolvePropertyValue($property, $from);
+                $mappedProperties[$propertyName] = $propertyValue;
+            }
+        } else {
+            $mappedProperties = $from;
         }
 
         return $mappedProperties;

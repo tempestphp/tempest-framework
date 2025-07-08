@@ -250,8 +250,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: [
                 'name' => 'Guillaume',
-                'nativeDate' => '2025-03-02 00:00:00',
-                'date' => '2024-01-01 00:00:00',
+                'nativeDate' => '2025-03-02',
+                'date' => '2024-01-01',
                 'enum' => 'foo',
             ],
             actual: map(new ObjectThatShouldUseCasters(
@@ -277,12 +277,12 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame([
             'name' => 'Guillaume',
-            'nativeDate' => '2025-03-02 00:00:00',
-            'date' => '2024-01-01 00:00:00',
+            'nativeDate' => '2025-03-02',
+            'date' => '2024-01-01',
             'enum' => 'foo',
         ], $array);
 
-        $this->assertSame('{"name":"Guillaume","nativeDate":"2025-03-02 00:00:00","date":"2024-01-01 00:00:00","enum":"foo"}', $json);
+        $this->assertSame('{"name":"Guillaume","nativeDate":"2025-03-02","date":"2024-01-01","enum":"foo"}', $json);
 
         $fromJson = map($json)->to(ObjectThatShouldUseCasters::class);
         $fromArray = map($array)->to(ObjectThatShouldUseCasters::class);
