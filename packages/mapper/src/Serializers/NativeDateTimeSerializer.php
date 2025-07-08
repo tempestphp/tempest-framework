@@ -7,7 +7,9 @@ namespace Tempest\Mapper\Serializers;
 use DateTimeInterface;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class NativeDateTimeSerializer implements Serializer
@@ -16,9 +18,13 @@ final readonly class NativeDateTimeSerializer implements Serializer
         private string $format = 'Y-m-d H:i:s',
     ) {}
 
-    public static function fromProperty(PropertyReflector $property): self
+    public static function fromReflector(PropertyReflector|TypeReflector $property): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
+        if ($property instanceof PropertyReflector) {
+            $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
+        } else {
+            $format = 'Y-m-d H:i:s';
+        }
 
         return new self($format);
     }

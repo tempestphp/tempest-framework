@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use BackedEnum;
-use DateTimeInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -14,6 +12,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
+use Tempest\Mapper\SerializerFactory;
 use Throwable;
 use UnitEnum;
 
@@ -33,6 +32,7 @@ final class GenericDatabase implements Database
     public function __construct(
         private(set) readonly Connection $connection,
         private(set) readonly TransactionManager $transactionManager,
+        private(set) readonly SerializerFactory $serializerFactory,
     ) {}
 
     public function execute(BuildsQuery|Query $query): void
@@ -124,21 +124,15 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
-            // TODO: this should be handled by serializers (except the Query)
+            // TODO: make serializer
             if ($value instanceof Id) {
                 $value = $value->id;
             }
 
             if ($value instanceof Query) {
                 $value = $value->execute();
-            }
-
-            if ($value instanceof BackedEnum) {
-                $value = $value->value;
-            }
-
-            if ($value instanceof DateTimeInterface) {
-                $value = $value->format('Y-m-d H:i:s');
+            } elseif ($serializer = $this->serializerFactory->forValue($value)) {
+                $value = $serializer->serialize($value);
             }
 
             $bindings[$key] = $value;

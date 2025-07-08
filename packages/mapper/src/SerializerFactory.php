@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
+use TypeError;
 
 use function Tempest\get;
 
@@ -24,6 +27,40 @@ final class SerializerFactory
         $this->serializers = [[$for, $serializerClass], ...$this->serializers];
 
         return $this;
+    }
+
+    private function serializerMatches(Closure|string $for, TypeReflector|string $input): bool
+    {
+        if (is_callable($for)) {
+            try {
+                return $for($input);
+            } catch (TypeError $e) {
+                return false;
+            }
+        }
+
+        if ($for === $input) {
+            return true;
+        }
+
+        if ($input instanceof TypeReflector) {
+            return $input->getName() === $for || $input->matches($for);
+        }
+
+        return false;
+    }
+
+    private function resolveSerializer(Closure|string $serializerClass, PropertyReflector|TypeReflector|string $input): ?Serializer
+    {
+        if (is_string($serializerClass)) {
+            return get($serializerClass);
+        }
+
+        try {
+            return $serializerClass($input);
+        } catch (TypeError) {
+            return null;
+        }
     }
 
     public function forProperty(PropertyReflector $property): ?Serializer
@@ -46,10 +83,42 @@ final class SerializerFactory
 
         // Resolve serializer from manual additions
         foreach ($this->serializers as [$for, $serializerClass]) {
-            if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {
-                return is_callable($serializerClass)
-                    ? $serializerClass($property)
-                    : get($serializerClass);
+            if (! $this->serializerMatches($for, $type)) {
+                continue;
+            }
+
+            $serializer = $this->resolveSerializer($serializerClass, $property);
+
+            if ($serializer !== null) {
+                return $serializer;
+            }
+        }
+
+        return null;
+    }
+
+    public function forValue(mixed $value): ?Serializer
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_object($value)) {
+            $input = new ClassReflector($value)->getType();
+        } else {
+            $input = gettype($value);
+        }
+
+        // Resolve serializer from manual additions
+        foreach ($this->serializers as [$for, $serializerClass]) {
+            if (! $this->serializerMatches($for, $input)) {
+                continue;
+            }
+
+            $serializer = $this->resolveSerializer($serializerClass, $input);
+
+            if ($serializer !== null) {
+                return $serializer;
             }
         }
 

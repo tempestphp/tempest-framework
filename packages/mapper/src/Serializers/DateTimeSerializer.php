@@ -11,17 +11,22 @@ use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class DateTimeSerializer implements Serializer
 {
     public function __construct(
-        private FormatPattern|string $format = FormatPattern::ISO8601,
+        private FormatPattern|string $format = FormatPattern::SQL_DATE_TIME,
     ) {}
 
-    public static function fromProperty(PropertyReflector $property): self
+    public static function fromReflector(PropertyReflector|TypeReflector $reflector): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? FormatPattern::ISO8601;
+        if ($reflector instanceof PropertyReflector) {
+            $format = $reflector->getAttribute(DateTimeFormat::class)->format ?: FormatPattern::SQL_DATE_TIME;
+        } else {
+            $format = FormatPattern::SQL_DATE_TIME;
+        }
 
         return new self($format);
     }

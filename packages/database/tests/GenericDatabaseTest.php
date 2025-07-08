@@ -10,6 +10,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\Mapper\SerializerFactory;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            DatabaseDialect::SQLITE,
+            new SerializerFactory(),
         );
 
         $result = $database->withinTransaction(function () {
@@ -60,7 +61,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            DatabaseDialect::SQLITE,
+            new SerializerFactory(),
         );
 
         $result = $database->withinTransaction(function (): never {
