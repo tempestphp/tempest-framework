@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.2](https://github.com/tempestphp/tempest-framework/compare/v1.2.1..1.2.2)  —  2025-07-08
+## [1.2.3](https://github.com/tempestphp/tempest-framework/compare/v1.2.2..1.2.3)  —  2025-07-08
+
+### 🐛 Bug fixes
+
+- **database**: fix datetime serialization for mysql database (#1383) ([dde0e84](https://github.com/tempestphp/tempest-framework/commit/dde0e84a6bba614c4fa3932914ffaee2dd4916e7))
+
+
+## [1.2.2](https://github.com/tempestphp/tempest-framework/compare/v1.2.1..v1.2.2)  —  2025-07-08
 
 ### 🚀 Features
 
