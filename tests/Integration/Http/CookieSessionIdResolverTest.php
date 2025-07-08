@@ -35,6 +35,7 @@ final class CookieSessionIdResolverTest extends FrameworkIntegrationTestCase
         $cookies = $this->container->get(CookieManager::class);
         $resolver = $this->container->get(CookieSessionIdResolver::class);
         $resolver->resolve();
+
         $cookie = $cookies->get('tempest_session_id');
 
         $this->assertFalse($cookie->secure);
