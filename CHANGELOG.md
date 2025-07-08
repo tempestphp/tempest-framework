@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.1](https://github.com/tempestphp/tempest-framework/compare/v1.2.0..1.2.1)  —  2025-07-07
+## [1.2.2](https://github.com/tempestphp/tempest-framework/compare/v1.2.1..1.2.2)  —  2025-07-08
+
+### 🚀 Features
+
+- **vite**: make which extensions vite discovers configurable (#1375) ([de2d6d4](https://github.com/tempestphp/tempest-framework/commit/de2d6d41c2a9fedb6282f1d720279ffcd236f313))
+
+### 🐛 Bug fixes
+
+- **http**: allow session id cookies when on a local non-secure host (#1381) ([47e993a](https://github.com/tempestphp/tempest-framework/commit/47e993a291dcd4147ab260bf4715cde1ba2cecd8))
+
+
+## [1.2.1](https://github.com/tempestphp/tempest-framework/compare/v1.2.0..v1.2.1)  —  2025-07-07
 
 ### 🐛 Bug fixes
 
