@@ -124,11 +124,6 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
-            // TODO: make serializer
-            if ($value instanceof Id) {
-                $value = $value->id;
-            }
-
             if ($value instanceof Query) {
                 $value = $value->execute();
             } elseif ($serializer = $this->serializerFactory->forValue($value)) {
