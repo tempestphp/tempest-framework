@@ -49,7 +49,6 @@ use function Tempest\Support\Path\normalize;
 
 /**
  * Added these properties because of an autocompletion bug in PhpStorm
- * @property AppConfig $appConfig
  * @property Kernel $kernel
  * @property GenericContainer $container
  * @property ConsoleTester $console
