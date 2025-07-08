@@ -11,6 +11,8 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
+use function Tempest\map;
+
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
@@ -48,6 +50,14 @@ final readonly class ObjectToArrayMapper implements Mapper
     private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
         $propertyValue = $property->getValue($object);
+
+        if (is_array($propertyValue)) {
+            foreach ($propertyValue as $key => $value) {
+                $propertyValue[$key] = map($value)->toArray();
+            }
+
+            return $propertyValue;
+        }
 
         if ($propertyValue !== null && ($serializer = $this->serializerFactory->forProperty($property)) !== null) {
             return $serializer->serialize($propertyValue);

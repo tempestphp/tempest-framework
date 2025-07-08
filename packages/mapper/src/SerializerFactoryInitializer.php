@@ -54,10 +54,6 @@ final class SerializerFactoryInitializer implements Initializer
             ->addSerializer(BackedEnum::class, EnumSerializer::class)
             ->addSerializer(DateTime::class, DateTimeSerializer::fromReflector(...))
             ->addSerializer(
-                fn (TypeReflector $type) => $type->isIterable(),
-                ArrayOfObjectsSerializer::class,
-            )
-            ->addSerializer(
                 fn (PropertyReflector $property) => $property->getIterableType() !== null,
                 ArrayOfObjectsSerializer::class,
             );
