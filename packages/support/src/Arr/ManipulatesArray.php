@@ -7,7 +7,9 @@ namespace Tempest\Support\Arr;
 use Closure;
 use Stringable;
 use Tempest\Support\Str\ImmutableString;
+use Tempest\Support\Str\MutableString;
 
+use function Tempest\Support\Json\encode;
 use function Tempest\Support\tap;
 
 /**
@@ -812,6 +814,16 @@ trait ManipulatesArray
     public function dd(mixed ...$dd): void
     {
         ld($this->value, ...$dd);
+    }
+
+    /**
+     * Encodes the array as JSON and returns a string helper instance.
+     */
+    public function jsonEncode(bool $pretty = false, bool $mutable = false): ImmutableString|MutableString
+    {
+        $json = encode($this->value, $pretty);
+
+        return $mutable ? new MutableString($json) : new ImmutableString($json);
     }
 
     /**

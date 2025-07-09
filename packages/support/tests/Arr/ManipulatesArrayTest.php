@@ -1806,4 +1806,50 @@ final class ManipulatesArrayTest extends TestCase
     {
         $this->assertSame([[true, true], [false]], arr([true, true, false])->partition(fn (bool $value) => $value === true)->toArray());
     }
+
+    public function test_json_encode(): void
+    {
+        $data = ['name' => 'tempest', 'version' => '1.0', 'tags' => ['php', 'framework']];
+        $result = arr($data)->jsonEncode();
+
+        $this->assertInstanceOf(\Tempest\Support\Str\ImmutableString::class, $result);
+        $this->assertSame('{"name":"tempest","version":"1.0","tags":["php","framework"]}', $result->toString());
+    }
+
+    public function test_json_encode_pretty(): void
+    {
+        $data = ['name' => 'tempest', 'version' => '1.0'];
+        $result = arr($data)->jsonEncode(pretty: true);
+
+        $this->assertInstanceOf(\Tempest\Support\Str\ImmutableString::class, $result);
+        $this->assertStringContainsString("{\n", $result->toString());
+        $this->assertStringContainsString('"name": "tempest"', $result->toString());
+        $this->assertStringContainsString('"version": "1.0"', $result->toString());
+    }
+
+    public function test_json_encode_mutable(): void
+    {
+        $data = ['name' => 'tempest', 'version' => '1.0'];
+        $result = arr($data)->jsonEncode(mutable: true);
+
+        $this->assertInstanceOf(\Tempest\Support\Str\MutableString::class, $result);
+        $this->assertSame('{"name":"tempest","version":"1.0"}', $result->toString());
+    }
+
+    public function test_json_encode_array(): void
+    {
+        $data = ['php', 'framework', 'tempest'];
+        $result = arr($data)->jsonEncode();
+
+        $this->assertInstanceOf(\Tempest\Support\Str\ImmutableString::class, $result);
+        $this->assertSame('["php","framework","tempest"]', $result->toString());
+    }
+
+    public function test_json_encode_empty_array(): void
+    {
+        $result = arr([])->jsonEncode();
+
+        $this->assertInstanceOf(\Tempest\Support\Str\ImmutableString::class, $result);
+        $this->assertSame('[]', $result->toString());
+    }
 }
