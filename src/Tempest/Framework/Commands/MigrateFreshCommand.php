@@ -33,7 +33,7 @@ final class MigrateFreshCommand
     )]
     public function __invoke(
         #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
-        bool $validate = true,
+        bool $validate = false,
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
         #[ConsoleArgument(description: 'Run database seeders after the database has been migrated')]
