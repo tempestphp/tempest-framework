@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\SSO;
+namespace Tempest\Auth\OAuth;
 
 use Tempest\Container\Inject;
 use Tempest\HttpClient\HttpClient;
-use function dd;
 use function Tempest\Support\str;
 
-final class SSOManager
+final class OAuthManager
 {
     #[Inject]
     private HttpClient $httpClient;
@@ -37,7 +36,7 @@ final class SSOManager
         return $this->driver->authorizationUrl . '?' . $queryString;
     }
 
-    private function formatScopes(array $scopes, $scopeSeparator): string
+    private function formatScopes(array $scopes, string $scopeSeparator): string
     {
         return implode($scopeSeparator, $scopes);
     }
