@@ -6,11 +6,10 @@ namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\SSO\GithubSSOProvider;
 use Tempest\Auth\SSO\SSOManager;
-use Tempest\Core\Commands\InstallCommand;
-use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\get;
+use function Tempest\env;
 
 /**
  * @internal
@@ -38,8 +37,8 @@ final class AuthSSOTest extends FrameworkIntegrationTestCase
     {
         // CLIC sur bouton "Se connecter avec GitHub"
         // /github/auth/redirect
-        $manager = new SSOManager(driver: get(GithubSSOProvider::class))
-            ->redirect();
+
+        // /something/routable
 
         // /github/auth/callback
         //     return new SSOManager(driver: GithubSSOProvider::class)->fetchUserData();

@@ -6,6 +6,7 @@ namespace Tempest\Auth\SSO;
 
 use Tempest\Container\Inject;
 use Tempest\HttpClient\HttpClient;
+use function dd;
 use function Tempest\Support\str;
 
 final class SSOManager
@@ -14,13 +15,14 @@ final class SSOManager
     private HttpClient $httpClient;
 
     public function __construct(
-        private readonly OAuthProviderContract $driver,
+        private readonly OAuth2ProviderContract $driver,
     ) {}
 
-    public function redirect(
-        array $scopes = [],
+    public function generateAuthorizationUrl(
+        ?array $scopes = null,
         bool $isStateless = false
-    ) {
+    ): string {
+        $scopes ??= $this->driver->scopes;
         $queryData = [
             'scope' => $this->formatScopes($scopes, $this->driver->scopeSeparator),
             'client_id' => $this->driver->clientId,
@@ -32,11 +34,7 @@ final class SSOManager
 
         $queryString = http_build_query(array_filter($queryData), arg_separator: '&');
 
-        dd(
-            'test',
-            $this->driver->getAuthorizationUrl() . '?' . $queryString
-//            $this->httpClient->get($this->driver->getAuthorizationUrl() . '?' . $queryString);
-        );
+        return $this->driver->authorizationUrl . '?' . $queryString;
     }
 
     private function formatScopes(array $scopes, $scopeSeparator): string

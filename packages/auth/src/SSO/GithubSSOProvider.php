@@ -8,11 +8,18 @@ final class GithubSSOProvider implements OAuth2ProviderContract
 {
     use IsOAuth2Provider;
 
-    private(set) string $clientId = 'your-github-client-id';
-    private(set) string $clientSecret = 'your-github-client-secret';
-    private(set) array $scopes = ['user:email'];
+    public private(set) array $scopes = ['user:email'];
 
-    private(set) string $accessTokenUrl = 'https://github.com/login/oauth/access_token';
+    public private(set) string $authorizationUrl = 'https://github.com/login/oauth/authorize';
+
+    public private(set) string $accessTokenUrl = 'https://github.com/login/oauth/access_token';
+
+    public function __construct(
+        public readonly string $clientId,
+        public readonly string $clientSecret,
+//        public readonly string $redirectUri = '',
+    ) {}
+
 
 //    protected string $userDataUrl {
 //        get => 'https://api.github.com/user';
