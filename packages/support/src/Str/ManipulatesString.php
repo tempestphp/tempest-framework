@@ -10,10 +10,12 @@ use Countable;
 use Stringable;
 use Tempest\Intl;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Random;
 use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
+use function Tempest\Support\Json\decode;
 use function Tempest\Support\tap;
 
 /**
@@ -863,6 +865,16 @@ trait ManipulatesString
         lw($this->value, ...$dumps);
 
         return $this;
+    }
+
+    /**
+     * Decodes the JSON string and returns an array helper instance.
+     */
+    public function jsonDecode(bool $mutable = false): ImmutableArray|MutableArray
+    {
+        $decoded = decode($this->value);
+
+        return $mutable ? new MutableArray($decoded) : new ImmutableArray($decoded);
     }
 
     /**
