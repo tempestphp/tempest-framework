@@ -190,7 +190,7 @@ function updateBranchProtection(bool $enabled): void
     }
 }
 
-function triggerSubsplit(): Response
+function triggerSubsplit(): void
 {
     $token = Tempest\env('RELEASE_GITHUB_TOKEN');
     $uri = 'https://api.github.com/repos/tempestphp/tempest-framework/actions/workflows/subsplit-packages.yml/dispatches';
