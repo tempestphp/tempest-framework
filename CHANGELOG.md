@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.3](https://github.com/tempestphp/tempest-framework/compare/v1.2.2..1.2.3)  —  2025-07-08
+## [1.3.0](https://github.com/tempestphp/tempest-framework/compare/v1.2.3..1.3.0)  —  2025-07-10
+
+### 🚀 Features
+
+- **database**: run `migrate:fresh` without validation by default (#1390) ([665c825](https://github.com/tempestphp/tempest-framework/commit/665c825230a6803e0e52a64d08c28623aa267b48))
+
+### 🐛 Bug fixes
+
+- **commandbus**: require console as a dependency (#1397) ([e56cb6d](https://github.com/tempestphp/tempest-framework/commit/e56cb6d72678e632c413c01ba7dc317396f1e7ba))
+- **router**: change the `Bindable::resolve` return type from `static` to `self` (#1391) ([3ac0e3a](https://github.com/tempestphp/tempest-framework/commit/3ac0e3aa0489ecd57e0d7dbe23c7e84ad392bfa2))
+- **view**: remove multiline comments before AST parsing (#1395) ([f2c03df](https://github.com/tempestphp/tempest-framework/commit/f2c03df89977fdf0008b40c1777f31cde91108ca))
+
+### 🚜 Refactor
+
+- **mapper**: remove redundant string check (#1393) ([9d0bf46](https://github.com/tempestphp/tempest-framework/commit/9d0bf46854e55eb22b9572847c8e000bddd3a2e3))
+
+
+## [1.2.3](https://github.com/tempestphp/tempest-framework/compare/v1.2.2..v1.2.3)  —  2025-07-08
 
 ### 🐛 Bug fixes
 
