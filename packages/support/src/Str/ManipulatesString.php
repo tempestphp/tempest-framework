@@ -869,7 +869,7 @@ trait ManipulatesString
     /**
      * Decodes the JSON string and returns an array helper instance.
      */
-    public function jsonDecode(): ImmutableArray
+    public function decodeJson(): ImmutableArray
     {
         return arr(decode($this->value));
     }

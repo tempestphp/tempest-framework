@@ -1811,7 +1811,7 @@ final class ManipulatesArrayTest extends TestCase
     public function test_json_encode(): void
     {
         $data = ['name' => 'tempest', 'version' => '1.0', 'tags' => ['php', 'framework']];
-        $result = arr($data)->jsonEncode();
+        $result = arr($data)->encodeJson();
 
         $this->assertInstanceOf(ImmutableString::class, $result);
         $this->assertSame('{"name":"tempest","version":"1.0","tags":["php","framework"]}', $result->toString());
@@ -1820,7 +1820,7 @@ final class ManipulatesArrayTest extends TestCase
     public function test_json_encode_pretty(): void
     {
         $data = ['name' => 'tempest', 'version' => '1.0'];
-        $result = arr($data)->jsonEncode(pretty: true);
+        $result = arr($data)->encodeJson(pretty: true);
 
         $this->assertInstanceOf(ImmutableString::class, $result);
         $this->assertStringContainsString("{\n", $result->toString());
@@ -1831,7 +1831,7 @@ final class ManipulatesArrayTest extends TestCase
     public function test_json_encode_array(): void
     {
         $data = ['php', 'framework', 'tempest'];
-        $result = arr($data)->jsonEncode();
+        $result = arr($data)->encodeJson();
 
         $this->assertInstanceOf(ImmutableString::class, $result);
         $this->assertSame('["php","framework","tempest"]', $result->toString());
@@ -1839,7 +1839,7 @@ final class ManipulatesArrayTest extends TestCase
 
     public function test_json_encode_empty_array(): void
     {
-        $result = arr([])->jsonEncode();
+        $result = arr([])->encodeJson();
 
         $this->assertInstanceOf(ImmutableString::class, $result);
         $this->assertSame('[]', $result->toString());

@@ -756,7 +756,7 @@ b'));
     public function test_json_decode(): void
     {
         $json = '{"name": "tempest", "version": "1.0", "tags": ["php", "framework"]}';
-        $result = str($json)->jsonDecode();
+        $result = str($json)->decodeJson();
 
         $this->assertInstanceOf(ImmutableArray::class, $result);
         $this->assertSame('tempest', $result->get('name'));
@@ -768,7 +768,7 @@ b'));
     public function test_json_decode_array(): void
     {
         $json = '["php", "framework", "tempest"]';
-        $result = str($json)->jsonDecode();
+        $result = str($json)->decodeJson();
 
         $this->assertInstanceOf(ImmutableArray::class, $result);
         $this->assertSame('php', $result->get(0));
@@ -780,6 +780,6 @@ b'));
     {
         $this->expectException(JsonCouldNotBeDecoded::class);
 
-        str('invalid json')->jsonDecode();
+        str('invalid json')->decodeJson();
     }
 }

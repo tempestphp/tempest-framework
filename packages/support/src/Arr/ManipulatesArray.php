@@ -819,7 +819,7 @@ trait ManipulatesArray
     /**
      * Encodes the array as JSON and returns a string helper instance.
      */
-    public function jsonEncode(bool $pretty = false): ImmutableString
+    public function encodeJson(bool $pretty = false): ImmutableString
     {
         return str(encode($this->value, $pretty));
     }
