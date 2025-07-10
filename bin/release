@@ -19,7 +19,6 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Http\Response;
-use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Json;
 
@@ -186,7 +185,7 @@ function updateBranchProtection(bool $enabled): void
         body: Json\encode(['enforcement' => $enabled ? 'active' : 'disabled']),
     );
 
-    if ($response->status->isSuccessful()) {
+    if (! $response->status->isSuccessful()) {
         throw new Exception('Failed to update branch ruleset.');
     }
 }
@@ -208,7 +207,7 @@ function triggerSubsplit(): Response
         body: Json\encode(['ref' => 'main']),
     );
 
-    if ($response->status->isSuccessful()) {
+    if (! $response->status->isSuccessful()) {
         throw new Exception('Failed to update branch ruleset.');
     }
 }
