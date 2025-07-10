@@ -2,7 +2,7 @@
 
 namespace Tempest\Storage\Config;
 
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
+use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use League\Flysystem\FilesystemAdapter;
 use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use UnitEnum;

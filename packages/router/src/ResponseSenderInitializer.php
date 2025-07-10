@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
@@ -15,6 +14,9 @@ final class ResponseSenderInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): ResponseSender
     {
-        return new GenericResponseSender($container->get(ViewRenderer::class));
+        return new GenericResponseSender(
+            $container,
+            $container->get(ViewRenderer::class),
+        );
     }
 }

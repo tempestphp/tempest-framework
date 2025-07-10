@@ -12,7 +12,6 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Vite\ViteConfig;
 
 use function Tempest\Support\str;
-use function Tempest\Support\Str\ends_with;
 
 final class ViteDiscovery implements Discovery, DiscoversPath
 {
@@ -29,7 +28,7 @@ final class ViteDiscovery implements Discovery, DiscoversPath
 
     public function discoverPath(DiscoveryLocation $location, string $path): void
     {
-        if (! ends_with($path, ['.ts', '.css', '.js'])) {
+        if (! in_array(pathinfo($path, PATHINFO_EXTENSION), $this->viteConfig->discoverableExtensions, strict: true)) {
             return;
         }
 

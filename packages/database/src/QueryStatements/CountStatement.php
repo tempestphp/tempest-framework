@@ -9,7 +9,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\Support\arr;
 
-final class CountStatement implements QueryStatement
+final class CountStatement implements QueryStatement, HasWhereStatements
 {
     public bool $distinct = false;
 

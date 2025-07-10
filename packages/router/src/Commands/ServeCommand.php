@@ -14,13 +14,16 @@ final readonly class ServeCommand
         name: 'serve',
         description: 'Starts a PHP development server',
     )]
-    public function __invoke(string $host = 'localhost', int $port = 8000, string $publicDir = 'public/'): void
+    public function __invoke(string $host = '127.0.0.1', int $port = 8000, string $publicDir = 'public/'): void
     {
         $routerFile = __DIR__ . '/router.php';
 
         if (Str\contains($host, ':')) {
-            [$host, $overridenPort] = explode(':', $host, limit: 2);
-            $port = Number\parse($overridenPort, default: $port);
+            [$host, $overriddenPort] = explode(':', $host, limit: 2);
+
+            $host = $host ?: '127.0.0.1';
+
+            $port = Number\parse($overriddenPort, default: $port);
         }
 
         passthru("php -S {$host}:{$port} -t {$publicDir} {$routerFile}");

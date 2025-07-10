@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Database;
+namespace Tests\Tempest\Integration\Database;
 
 use PDOException;
 use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
@@ -9,11 +9,14 @@ use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Integration\Database\Fixtures\MigrationForBackup;
 use Tests\Tempest\Integration\Database\Fixtures\MigrationForMain;
@@ -271,6 +274,68 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableDoesNotExist('main_table', 'backup');
     }
 
+    public function test_database_seed_on_selected_database(): void
+    {
+        /** @var MigrationManager $migrationManager */
+        $migrationManager = $this->container->get(MigrationManager::class);
+
+        $migrationManager->onDatabase('main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('main')->executeUp(new CreateBookTable());
+        $migrationManager->onDatabase('backup')->executeUp(new CreateMigrationsTable());
+        $migrationManager->onDatabase('backup')->executeUp(new CreateBookTable());
+
+        $this->console
+            ->call('db:seed --database=main --all')
+            ->assertSuccess();
+
+        $this->assertSame(
+            'Timeline Taxi',
+            query(Book::class)->select()->onDatabase('main')->first()->title,
+        );
+
+        $this->assertNull(
+            query(Book::class)->select()->onDatabase('backup')->first(),
+        );
+
+        $this->console
+            ->call('db:seed --database=backup --all')
+            ->assertSuccess();
+
+        /** @var Book $book */
+        /** @phpstan-ignore-next-line */
+        $book = query(Book::class)->select()->onDatabase('backup')->first();
+
+        $this->assertSame(
+            'Timeline Taxi',
+            $book->title,
+        );
+    }
+
+    public function test_migrate_fresh_seed_on_selected_database(): void
+    {
+        $this->console
+            ->call('migrate:fresh --seed --database=main --all')
+            ->assertSuccess();
+
+        $this->assertSame(
+            'Timeline Taxi',
+            query(Book::class)->select()->onDatabase('main')->first()->title,
+        );
+
+        $this->assertException(QueryWasInvalid::class, function (): void {
+            query(Book::class)->select()->onDatabase('backup')->first();
+        });
+
+        $this->console
+            ->call('migrate:fresh --seed --database=backup --all')
+            ->assertSuccess();
+
+        $this->assertSame(
+            'Timeline Taxi',
+            query(Book::class)->select()->onDatabase('backup')->first()->title,
+        );
+    }
+
     private function assertTableExists(string $tableName, string $onDatabase): void
     {
         $this->assertTrue(query($tableName)->count()->onDatabase($onDatabase)->execute() >= 0);
@@ -279,7 +344,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     private function assertTableDoesNotExist(string $tableName, string $onDatabase): void
     {
         $this->assertException(
-            PDOException::class,
+            QueryWasInvalid::class,
             fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
         );
     }

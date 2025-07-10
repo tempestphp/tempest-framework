@@ -135,4 +135,13 @@ trait IsRequest
     {
         return has_key($this->query, $key);
     }
+
+    public function withMethod(Method $method): self
+    {
+        $clone = clone $this;
+
+        $clone->method = $method;
+
+        return $clone;
+    }
 }

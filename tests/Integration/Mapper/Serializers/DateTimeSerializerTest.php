@@ -13,7 +13,7 @@ final class DateTimeSerializerTest extends TestCase
     public function test_serialize(): void
     {
         $this->assertSame(
-            '2025-01-01T00:00:00.000Z',
+            '2025-01-01 00:00:00',
             new DateTimeSerializer()->serialize(new DateTime('2025-01-01 00:00:00')),
         );
 
@@ -23,7 +23,7 @@ final class DateTimeSerializerTest extends TestCase
         );
 
         $this->assertSame(
-            '2025-01-01T00:00:00.000Z',
+            '2025-01-01 00:00:00',
             new DateTimeSerializer()->serialize(DateTimeDateTime::parse('2025-01-01 00:00:00')),
         );
     }

@@ -91,14 +91,16 @@ final class GenericLogger implements Logger
 
     private function resolveDriver(LogChannel $channel, MonologLogLevel $level): Monolog
     {
-        if (! isset($this->drivers[spl_object_id($channel)])) {
-            $this->drivers[spl_object_id($channel)] = new Monolog(
+        $key = spl_object_id($channel) . $level->value;
+
+        if (! isset($this->drivers[$key])) {
+            $this->drivers[$key] = new Monolog(
                 name: $this->logConfig->prefix,
                 handlers: $channel->getHandlers($level),
                 processors: $channel->getProcessors(),
             );
         }
 
-        return $this->drivers[spl_object_id($channel)];
+        return $this->drivers[$key];
     }
 }

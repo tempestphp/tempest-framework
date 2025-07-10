@@ -3,13 +3,12 @@
 namespace Tempest\Database\QueryStatements;
 
 use Stringable;
-use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
-final class SelectStatement implements QueryStatement
+final class SelectStatement implements QueryStatement, HasWhereStatements
 {
     public function __construct(
         public TableDefinition $table,
@@ -55,12 +54,6 @@ final class SelectStatement implements QueryStatement
                 ->implode(PHP_EOL);
         }
 
-        if ($this->orderBy->isNotEmpty()) {
-            $query[] = 'ORDER BY ' . $this->orderBy
-                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
-                ->implode(', ');
-        }
-
         if ($this->groupBy->isNotEmpty()) {
             $query[] = 'GROUP BY ' . $this->groupBy
                 ->map(fn (GroupByStatement $groupBy) => $groupBy->compile($dialect))
@@ -71,6 +64,12 @@ final class SelectStatement implements QueryStatement
             $query[] = 'HAVING ' . $this->having
                 ->map(fn (HavingStatement $having) => $having->compile($dialect))
                 ->implode(PHP_EOL);
+        }
+
+        if ($this->orderBy->isNotEmpty()) {
+            $query[] = 'ORDER BY ' . $this->orderBy
+                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
+                ->implode(', ');
         }
 
         if ($this->limit !== null) {

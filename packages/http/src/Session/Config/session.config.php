@@ -5,5 +5,5 @@ use Tempest\Http\Session\Config\FileSessionConfig;
 
 return new FileSessionConfig(
     path: 'sessions',
-    expiration: Duration::hours(2),
+    expiration: Duration::hours(10),
 );

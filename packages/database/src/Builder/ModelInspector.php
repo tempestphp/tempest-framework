@@ -8,10 +8,10 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\Id;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
-use Tempest\Mapper\CastWith;
 use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -27,51 +27,59 @@ use function Tempest\Support\str;
 
 final class ModelInspector
 {
-    private ?ClassReflector $modelClass;
+    private(set) ?ClassReflector $reflector;
 
-    private object|string $model;
+    private(set) object|string $instance;
 
     public function __construct(object|string $model)
     {
         if ($model instanceof HasMany) {
             $model = $model->property->getIterableType()->asClass();
-            $this->modelClass = $model;
+            $this->reflector = $model;
         } elseif ($model instanceof BelongsTo || $model instanceof HasOne) {
             $model = $model->property->getType()->asClass();
-            $this->modelClass = $model;
+            $this->reflector = $model;
         } elseif ($model instanceof ClassReflector) {
-            $this->modelClass = $model;
+            $this->reflector = $model;
         } else {
             try {
-                $this->modelClass = new ClassReflector($model);
+                $this->reflector = new ClassReflector($model);
             } catch (ReflectionException) {
-                $this->modelClass = null;
+                $this->reflector = null;
             }
         }
 
-        $this->model = $model;
+        $this->instance = $model;
     }
 
     public function isObjectModel(): bool
     {
-        return $this->modelClass !== null;
+        return $this->reflector !== null;
     }
 
     public function getTableDefinition(): TableDefinition
     {
         if (! $this->isObjectModel()) {
-            return new TableDefinition($this->model);
+            return new TableDefinition($this->instance);
         }
 
-        $specificName = $this->modelClass
+        $specificName = $this->reflector
             ->getAttribute(Table::class)
             ?->name;
 
         $conventionalName = get(DatabaseConfig::class)
             ->namingStrategy
-            ->getName($this->modelClass->getName());
+            ->getName($this->reflector->getName());
 
         return new TableDefinition($specificName ?? $conventionalName);
+    }
+
+    public function getFieldDefinition(string $field): FieldDefinition
+    {
+        return new FieldDefinition(
+            $this->getTableDefinition(),
+            $field,
+        );
     }
 
     public function getTableName(): string
@@ -85,14 +93,14 @@ final class ModelInspector
             return [];
         }
 
-        if (! is_object($this->model)) {
+        if (! is_object($this->instance)) {
             return [];
         }
 
         $values = [];
 
-        foreach ($this->modelClass->getProperties() as $property) {
-            if (! $property->isInitialized($this->model)) {
+        foreach ($this->reflector->getProperties() as $property) {
+            if (! $property->isInitialized($this->instance)) {
                 continue;
             }
 
@@ -102,7 +110,7 @@ final class ModelInspector
 
             $name = $property->getName();
 
-            $values[$name] = $property->getValue($this->model);
+            $values[$name] = $property->getValue($this->instance);
         }
 
         return $values;
@@ -122,11 +130,11 @@ final class ModelInspector
             return $this->getBelongsTo($singularizedName);
         }
 
-        if (! $this->modelClass->hasProperty($name)) {
+        if (! $this->reflector->hasProperty($name)) {
             return null;
         }
 
-        $property = $this->modelClass->getProperty($name);
+        $property = $this->reflector->getProperty($name);
 
         if ($belongsTo = $property->getAttribute(BelongsTo::class)) {
             return $belongsTo;
@@ -168,11 +176,11 @@ final class ModelInspector
             return $this->getHasOne($singularizedName);
         }
 
-        if (! $this->modelClass->hasProperty($name)) {
+        if (! $this->reflector->hasProperty($name)) {
             return null;
         }
 
-        $property = $this->modelClass->getProperty($name);
+        $property = $this->reflector->getProperty($name);
 
         if ($hasOne = $property->getAttribute(HasOne::class)) {
             return $hasOne;
@@ -189,11 +197,11 @@ final class ModelInspector
 
         $name = str($name)->camel();
 
-        if (! $this->modelClass->hasProperty($name)) {
+        if (! $this->reflector->hasProperty($name)) {
             return null;
         }
 
-        $property = $this->modelClass->getProperty($name);
+        $property = $this->reflector->getProperty($name);
 
         if ($hasMany = $property->getAttribute(HasMany::class)) {
             return $hasMany;
@@ -235,7 +243,7 @@ final class ModelInspector
 
         $selectFields = arr();
 
-        foreach ($this->modelClass->getPublicProperties() as $property) {
+        foreach ($this->reflector->getPublicProperties() as $property) {
             $relation = $this->getRelation($property->getName());
 
             if ($relation instanceof HasMany || $relation instanceof HasOne) {
@@ -297,7 +305,7 @@ final class ModelInspector
 
         $relations = [];
 
-        foreach ($this->modelClass->getPublicProperties() as $property) {
+        foreach ($this->reflector->getPublicProperties() as $property) {
             if (! $property->hasAttribute(Eager::class)) {
                 continue;
             }
@@ -334,7 +342,7 @@ final class ModelInspector
         $failingRules = [];
 
         foreach ($data as $key => $value) {
-            $property = $this->modelClass->getProperty($key);
+            $property = $this->reflector->getProperty($key);
 
             if ($property->hasAttribute(SkipValidation::class)) {
                 continue;
@@ -351,17 +359,22 @@ final class ModelInspector
         }
 
         if ($failingRules !== []) {
-            throw new ValidationFailed($this->modelClass->getName(), $failingRules);
+            throw new ValidationFailed($this->reflector->getName(), $failingRules);
         }
     }
 
     public function getName(): string
     {
-        if ($this->isObjectModel()) {
-            return $this->modelClass->getName();
+        if ($this->reflector) {
+            return $this->reflector->getName();
         }
 
-        return $this->modelClass;
+        return $this->instance;
+    }
+
+    public function getPrimaryFieldName(): string
+    {
+        return $this->getTableDefinition()->name . '.' . $this->getPrimaryKey();
     }
 
     public function getPrimaryKey(): string
@@ -369,8 +382,16 @@ final class ModelInspector
         return 'id';
     }
 
-    public function getPrimaryField(): string
+    public function getPrimaryKeyValue(): ?Id
     {
-        return $this->getTableDefinition()->name . '.' . $this->getPrimaryKey();
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        if (! is_object($this->instance)) {
+            return null;
+        }
+
+        return $this->instance->{$this->getPrimaryKey()};
     }
 }

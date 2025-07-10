@@ -10,7 +10,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\Support\arr;
 
-final class DeleteStatement implements QueryStatement
+final class DeleteStatement implements QueryStatement, HasWhereStatements
 {
     public function __construct(
         public readonly TableDefinition $table,

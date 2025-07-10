@@ -2,9 +2,9 @@
 
 namespace Tempest\Storage;
 
+use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use Exception;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
