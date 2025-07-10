@@ -6,6 +6,8 @@ namespace Tempest\Support\Tests\Str;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Json\Exception\JsonCouldNotBeDecoded;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Support\arr;
@@ -756,21 +758,11 @@ b'));
         $json = '{"name": "tempest", "version": "1.0", "tags": ["php", "framework"]}';
         $result = str($json)->jsonDecode();
 
-        $this->assertInstanceOf(\Tempest\Support\Arr\ImmutableArray::class, $result);
+        $this->assertInstanceOf(ImmutableArray::class, $result);
         $this->assertSame('tempest', $result->get('name'));
         $this->assertSame('1.0', $result->get('version'));
-        $this->assertInstanceOf(\Tempest\Support\Arr\ImmutableArray::class, $result->get('tags'));
+        $this->assertInstanceOf(ImmutableArray::class, $result->get('tags'));
         $this->assertSame(['php', 'framework'], $result->get('tags')->toArray());
-    }
-
-    public function test_json_decode_mutable(): void
-    {
-        $json = '{"name": "tempest", "version": "1.0"}';
-        $result = str($json)->jsonDecode(mutable: true);
-
-        $this->assertInstanceOf(\Tempest\Support\Arr\MutableArray::class, $result);
-        $this->assertSame('tempest', $result->get('name'));
-        $this->assertSame('1.0', $result->get('version'));
     }
 
     public function test_json_decode_array(): void
@@ -778,7 +770,7 @@ b'));
         $json = '["php", "framework", "tempest"]';
         $result = str($json)->jsonDecode();
 
-        $this->assertInstanceOf(\Tempest\Support\Arr\ImmutableArray::class, $result);
+        $this->assertInstanceOf(ImmutableArray::class, $result);
         $this->assertSame('php', $result->get(0));
         $this->assertSame('framework', $result->get(1));
         $this->assertSame('tempest', $result->get(2));
@@ -786,7 +778,7 @@ b'));
 
     public function test_json_decode_invalid_json(): void
     {
-        $this->expectException(\Tempest\Support\Json\Exception\JsonCouldNotBeDecoded::class);
+        $this->expectException(JsonCouldNotBeDecoded::class);
 
         str('invalid json')->jsonDecode();
     }
