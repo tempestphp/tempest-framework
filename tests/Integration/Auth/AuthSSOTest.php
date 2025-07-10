@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Auth\OAuth\GithubSSOProvider;
+use Tempest\Auth\OAuth\GithubOAuthProvider;
 use Tempest\Auth\OAuth\OAuthManager;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
