@@ -62,6 +62,11 @@ export default function tempest(): Plugin {
 							/^https?:\/\/.*\.test(:\d+)?$/,
 						].filter(Boolean),
 					},
+					watch: {
+						ignored: userConfig.server?.watch?.ignored ?? [
+							'**/.tempest/**',
+						],
+					},
 					...(serverConfig
 						? {
 							host: userConfig.server?.host ?? serverConfig.host,
