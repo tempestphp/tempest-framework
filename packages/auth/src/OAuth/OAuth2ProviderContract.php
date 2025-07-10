@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth;
 
-interface OAuth2ProviderContract extends OAuthProviderContract
+use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
+
+interface OAuth2ProviderContract
 {
     /**
      * @var array<string> The default scopes for the OAuth2 provider.
@@ -26,5 +28,28 @@ interface OAuth2ProviderContract extends OAuthProviderContract
      */
     public string $userDataUrl {get;}
 
-//    public function getUserData(array $headers = []): OAuth2UserData;
+    /**
+     * Return headers used in access token endpoint
+     *
+     * @param string $code The code verifier from OAuth redirection
+     *
+     * @return array<string, mixed>
+     */
+    public function getAccessTokenHeaders(string $code): array;
+
+    /**
+     * Return body fields used in access token endpoint
+     *
+     * @param string $code The code verifier from OAuth redirection
+     *
+     * @return array<string, mixed>
+     */
+    public function getAccessTokenFields(string $code): array;
+
+    /**
+     * Transform the response body into valid user data object
+     *
+     * @param array $body Json decoded response body from the user data endpoint
+     */
+    public function getUserDataFromResponse(array $body): OAuthUserData;
 }
