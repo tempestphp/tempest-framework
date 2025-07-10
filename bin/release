@@ -412,10 +412,11 @@ try {
             cleanUpAfterRelease();
             commit('chore: post-release clean up');
             executeCommands('git push');
-            updateBranchProtection(enabled: true);
-            triggerSubsplit();
         },
     );
+
+    updateBranchProtection(enabled: true);
+    triggerSubsplit();
 
     $console->success(sprintf(
         'Released <em>%1$s</em>. The <href="https://github.com/tempestphp/tempest-framework/releases/tag/%1$s">GitHub release</href> will be created automatically in a few seconds.',
