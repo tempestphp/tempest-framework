@@ -18,6 +18,7 @@ use Composer\Semver\VersionParser;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Exceptions\InterruptException;
+use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Json;
@@ -168,7 +169,7 @@ function performPreReleaseChecks(string $remote, string $branch): void
     }
 }
 
-/** 
+/**
  * Disables the protection ruleset, so the release branch can be pushed to without a pull request.
  */
 function updateBranchProtection(bool $enabled): void
@@ -176,19 +177,42 @@ function updateBranchProtection(bool $enabled): void
     // https://github.com/tempestphp/tempest-framework/settings/rules/1879240
     $ruleset = '1879240';
     $token = Tempest\env('RELEASE_GITHUB_TOKEN');
-    $url = "https://api.github.com/repos/tempestphp/tempest-framework/rulesets/{$ruleset}";
+    $uri = "https://api.github.com/repos/tempestphp/tempest-framework/rulesets/{$ruleset}";
 
     $httpClient = Tempest\get(HttpClient::class);
     $response = $httpClient->put(
-        uri: $url, 
+        uri: $uri,
         headers: ['Authorization' => "Bearer {$token}"],
-        body: Json\encode(['enforcement' => $enabled ? 'active' : 'disabled'])
+        body: Json\encode(['enforcement' => $enabled ? 'active' : 'disabled']),
     );
 
-    if ($response->status !== Status::OK) {
+    if ($response->status->isSuccessful()) {
         throw new Exception('Failed to update branch ruleset.');
     }
 }
+
+function triggerSubsplit(): Response
+{
+    $token = Tempest\env('RELEASE_GITHUB_TOKEN');
+    $uri = 'https://api.github.com/repos/tempestphp/tempest-framework/actions/workflows/subsplit-packages.yml/dispatches';
+
+    $httpClient = Tempest\get(HttpClient::class);
+
+    $response = $httpClient->post(
+        uri: $uri,
+        headers: [
+            'Authorization' => "Bearer {$token}",
+            'Accept' => 'application/vnd.github+json',
+            'X-GitHub-Api-Version' => '2022-11-28',
+        ],
+        body: Json\encode(['ref' => 'main']),
+    );
+
+    if ($response->status->isSuccessful()) {
+        throw new Exception('Failed to update branch ruleset.');
+    }
+}
+
 
 /**
  * Gets the current version.
@@ -210,9 +234,9 @@ function suggestNextVersions(string $current): array
     }
 
     $isStable = ! isset($matches[4]);
-    $major = (int) $matches[1];
-    $minor = (int) $matches[2];
-    $patch = (int) $matches[3];
+    $major = (int)$matches[1];
+    $minor = (int)$matches[2];
+    $patch = (int)$matches[3];
 
     // Current version is stable
     if ($isStable) {
@@ -280,8 +304,8 @@ function updateJsonFile(string $path, Closure $callback): void
     $content = $callback(json_decode($content, associative: true), $indent);
     $content = preg_replace_callback(
         '/^ +/m',
-        fn ($m) => str_repeat($indent, \strlen($m[0]) / 4),
-        json_encode($content, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES),
+        fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
+        json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
     );
 
     file_put_contents($path, $content . "\n");
@@ -329,13 +353,13 @@ try {
     $new = $console->ask(
         question: 'What should the new version be?',
         options: arr(suggestNextVersions($current))
-            ->map(fn (string $version, string $type) => (string) str($type)->replace('_', ' ')->append(': ', $version))
+            ->map(fn (string $version, string $type) => (string)str($type)->replace('_', ' ')->append(': ', $version))
             ->values()
             ->toArray(),
     );
 
     $isMajor = str_contains($new, 'major');
-    $version = (string) str($new)->afterLast(': ');
+    $version = (string)str($new)->afterLast(': ');
     $tag = "v{$version}";
 
     // Check the tag
@@ -349,10 +373,10 @@ try {
     // Bump PHP packages
     $console->task(
         label: 'Bumping PHP packages',
-        handler: fn () => [
-            bumpKernelVersion($version),
-            bumpPhpPackages($version, $isMajor),
-        ],
+        handler: function () use ($version, $isMajor) {
+            bumpKernelVersion($version);
+            bumpPhpPackages($version, $isMajor);
+        },
     );
 
     // Bump JavaScript packages
@@ -373,27 +397,26 @@ try {
     // Push tags
     $console->task(
         label: 'Releasing',
-        handler: fn () => [
-            commit("chore: release {$tag}"),
+        handler: function () use ($tag) {
+            commit("chore: release {$tag}");
             executeCommands([
                 "git tag {$tag}",
                 "git push origin tag {$tag}",
-            ]),
-        ],
+            ]);
+        },
     );
 
     // Clean up
     $console->task(
         label: 'Cleaning up',
-        handler: fn () => [
-            cleanUpAfterRelease(),
-            commit('chore: post-release clean up'),
-            executeCommands('git push'),
-        ],
+        handler: function () {
+            cleanUpAfterRelease();
+            commit('chore: post-release clean up');
+            executeCommands('git push');
+            updateBranchProtection(enabled: true);
+            triggerSubsplit();
+        },
     );
-
-    // Re-enable protection
-    updateBranchProtection(enabled: true);
 
     $console->success(sprintf(
         'Released <em>%1$s</em>. The <href="https://github.com/tempestphp/tempest-framework/releases/tag/%1$s">GitHub release</href> will be created automatically in a few seconds.',
