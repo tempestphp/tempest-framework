@@ -24,10 +24,11 @@ final readonly class AuthorizerMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $attribute = $this->matchedRoute
+        $handler = $this->matchedRoute
             ->route
-            ->handler
-            ->getAttribute(Allow::class);
+            ->handler;
+
+        $attribute = $handler->getAttribute(Allow::class) ?? $handler->getDeclaringClass()->getAttribute(Allow::class);
 
         if ($attribute === null) {
             return $next($request);
