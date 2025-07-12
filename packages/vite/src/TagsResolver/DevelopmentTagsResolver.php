@@ -35,7 +35,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
             ->prepend($this->createDevelopmentTag(self::CLIENT_SCRIPT_PATH));
 
         if ($this->bridgeFile->needsReactRefresh) {
-            $tags->prepend($this->createReactRefreshTag());
+            $tags = $tags->prepend($this->createReactRefreshTag());
         }
 
         return $tags->toArray();
@@ -72,11 +72,11 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
     {
         return <<<HTML
             <script type="module">
-                import RefreshRuntime from '{$this->bridgeFile->url}/@react-refresh'
-                RefreshRuntime.injectIntoGlobalHook(window)
-                window.\$RefreshReg$ = () => {}
-                window.\$RefreshSig$ = () => (type) => type
-                window.__vite_plugin_react_preamble_installed__ = true
+                import RefreshRuntime from '{$this->bridgeFile->url}/@react-refresh';
+                RefreshRuntime.injectIntoGlobalHook(window);
+                window.\$RefreshReg$ = () => {};
+                window.\$RefreshSig$ = () => (type) => type;
+                window.__vite_plugin_react_preamble_installed__ = true;
             </script>
         HTML;
     }
