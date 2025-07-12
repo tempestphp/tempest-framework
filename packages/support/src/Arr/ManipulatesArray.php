@@ -8,6 +8,8 @@ use Closure;
 use Stringable;
 use Tempest\Support\Str\ImmutableString;
 
+use function Tempest\Support\Json\encode;
+use function Tempest\Support\str;
 use function Tempest\Support\tap;
 
 /**
@@ -812,6 +814,14 @@ trait ManipulatesArray
     public function dd(mixed ...$dd): void
     {
         ld($this->value, ...$dd);
+    }
+
+    /**
+     * Encodes the array as JSON and returns a string helper instance.
+     */
+    public function encodeJson(bool $pretty = false): ImmutableString
+    {
+        return str(encode($this->value, $pretty));
     }
 
     /**
