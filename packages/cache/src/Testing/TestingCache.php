@@ -9,10 +9,8 @@ use Psr\Clock\ClockInterface;
 use Stringable;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Cache;
-use Tempest\Cache\Config\CustomCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\GenericLock;
-use Tempest\Core\DeferredTasks;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\Support\Random;
@@ -32,10 +30,7 @@ final class TestingCache implements Cache
         ClockInterface $clock,
     ) {
         $this->adapter = new ArrayAdapter(clock: $clock);
-        $this->cache = new GenericCache(
-            cacheConfig: new CustomCacheConfig(adapter: ArrayAdapter::class, tag: $tag),
-            adapter: $this->adapter,
-        );
+        $this->cache = new GenericCache($this->adapter);
     }
 
     public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): TestingLock
