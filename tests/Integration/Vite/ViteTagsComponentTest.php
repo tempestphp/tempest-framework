@@ -121,6 +121,49 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_dev_entrypoints_from_config_and_react_refresh_from_bridgefile(): void
+    {
+        $this->vite->call(
+            callback: function (): void {
+                $this->container->config(new ViteConfig(
+                    entrypoints: ['src/foo.ts', 'src/bar.css'],
+                ));
+
+                $html = $this->render(<<<'HTML'
+                <html lang="en">
+                <head>
+                    <x-vite-tags :entrypoint="['src/foo.ts', 'src/bar.css']" />
+                </head>
+                <body>Foo</body>
+                </html>
+                HTML);
+
+                $this->assertSnippetsMatch(
+                    expected: <<<HTML
+                    <html lang="en"><head>
+                    <script type="module">
+                        import RefreshRuntime from 'http://localhost:5173/@react-refresh';
+                        RefreshRuntime.injectIntoGlobalHook(window);
+                        window.\$RefreshReg$ = () => {};
+                        window.\$RefreshSig$ = () => (type) => type;
+                        window.__vite_plugin_react_preamble_installed__ = true;
+                    </script><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
+                    </body></html>
+                    HTML,
+                    actual: $html,
+                );
+            },
+            files: [
+                'public/vite-tempest' => [
+                    'url' => 'http://localhost:5173',
+                    'needsReactRefresh' => true,
+                ],
+                'src/foo.ts' => '',
+                'src/bar.css' => '',
+            ],
+        );
+    }
+
     public function test_production_entrypoint_from_config(): void
     {
         $this->vite->call(

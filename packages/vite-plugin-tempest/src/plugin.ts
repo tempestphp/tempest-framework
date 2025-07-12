@@ -113,10 +113,15 @@ export default function tempest(): Plugin {
 						? userConfig.server.origin as DevelopmentServerUrl
 						: resolveDevServerUrl(address, server.config)
 
+					const needsReactRefresh = server.config.plugins.some((plugin) =>
+						['vite:react-refresh', 'vite:react-oxc:refresh-runtime'].includes(plugin.name)
+					)
+
 					fs.writeFileSync(
 						bridgeFilePath,
 						JSON.stringify({
 							url: `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`,
+							needsReactRefresh,
 						}),
 					)
 
