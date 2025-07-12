@@ -24,7 +24,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
 
     public function resolveTags(array $entrypoints): array
     {
-        return arr($entrypoints)
+        $tags = arr($entrypoints)
             ->map(function (string $entrypoint) {
                 if (! Filesystem\exists($entrypoint) && ! Filesystem\exists(root_path($entrypoint))) {
                     throw new FileSystemEntrypointWasNotFoundException($entrypoint);
@@ -32,8 +32,13 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
 
                 return $this->createDevelopmentTag($this->fileToAssetPath($entrypoint));
             })
-            ->prepend($this->createDevelopmentTag(self::CLIENT_SCRIPT_PATH))
-            ->toArray();
+            ->prepend($this->createDevelopmentTag(self::CLIENT_SCRIPT_PATH));
+
+        if ($this->bridgeFile->needsReactRefresh) {
+            $tags->prepend($this->createReactRefreshTag());
+        }
+
+        return $tags->toArray();
     }
 
     private function createDevelopmentTag(string $path): string
@@ -61,5 +66,18 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
             ->replaceStart(root_path('public'), '')
             ->replaceStart(root_path(), '')
             ->toString();
+    }
+
+    private function createReactRefreshTag(): string
+    {
+        return <<<HTML
+            <script type="module">
+                import RefreshRuntime from '{$this->bridgeFile->url}/@react-refresh'
+                RefreshRuntime.injectIntoGlobalHook(window)
+                window.\$RefreshReg$ = () => {}
+                window.\$RefreshSig$ = () => (type) => type
+                window.__vite_plugin_react_preamble_installed__ = true
+            </script>
+        HTML;
     }
 }

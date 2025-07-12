@@ -140,6 +140,7 @@ final class Vite
 
         return static::$bridgeFile = new ViteBridgeFile(
             url: $content->get('url'),
+            needsReactRefresh: $content->get('needsReactRefresh', false),
         );
     }
 
