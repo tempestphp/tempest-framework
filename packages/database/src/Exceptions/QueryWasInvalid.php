@@ -7,16 +7,21 @@ namespace Tempest\Database\Exceptions;
 use Exception;
 use PDOException;
 use Tempest\Database\Query;
+use Tempest\Support\Json;
 
 final class QueryWasInvalid extends Exception
 {
+    public readonly PDOException $pdoException;
+
     public function __construct(Query $query, array $bindings, PDOException $previous)
     {
+        $this->pdoException = $previous;
+
         $message = $previous->getMessage();
 
         $message .= PHP_EOL . PHP_EOL . $query->toSql() . PHP_EOL;
 
-        $message .= PHP_EOL . 'bindings: ' . json_encode($bindings, JSON_PRETTY_PRINT);
+        $message .= PHP_EOL . 'bindings: ' . Json\encode($bindings, pretty: true);
 
         parent::__construct(
             message: $message,

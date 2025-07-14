@@ -27,14 +27,13 @@ final class StorageTest extends TestCase
 
         $storage->write('foo.txt', 'bar');
 
-        $this->assertTrue(file_exists($this->fixtures . 'foo.txt'));
-        $this->assertSame('bar', file_get_contents($this->fixtures . 'foo.txt'));
+        $this->assertTrue(Filesystem\is_file($this->fixtures . 'foo.txt'));
+        $this->assertSame('bar', Filesystem\read_file($this->fixtures . 'foo.txt'));
     }
 
     public function test_storage_read(): void
     {
-        mkdir($this->fixtures);
-        file_put_contents($this->fixtures . 'foo.txt', 'baz');
+        Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
 
         $storage = new GenericStorage(new LocalStorageConfig(
             path: $this->fixtures,
@@ -45,8 +44,7 @@ final class StorageTest extends TestCase
 
     public function test_storage_list(): void
     {
-        mkdir($this->fixtures);
-        file_put_contents($this->fixtures . 'foo.txt', 'baz');
+        Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
 
         $storage = new GenericStorage(new LocalStorageConfig(
             path: $this->fixtures,
@@ -57,10 +55,8 @@ final class StorageTest extends TestCase
 
     public function test_storage_list_deep(): void
     {
-        mkdir($this->fixtures);
-        file_put_contents($this->fixtures . 'foo.txt', 'baz');
-        mkdir($this->fixtures . 'dir');
-        file_put_contents($this->fixtures . 'dir/baz.txt', 'bar');
+        Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
+        Filesystem\write_file($this->fixtures . 'dir/baz.txt', 'bar');
 
         $storage = new GenericStorage(new LocalStorageConfig(
             path: $this->fixtures,
@@ -72,10 +68,8 @@ final class StorageTest extends TestCase
 
     public function test_storage_clean_directory(): void
     {
-        mkdir($this->fixtures);
-        file_put_contents($this->fixtures . 'foo.txt', 'baz');
-        mkdir($this->fixtures . 'dir');
-        file_put_contents($this->fixtures . 'dir/foo.txt', 'baz');
+        Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
+        Filesystem\write_file($this->fixtures . 'dir/foo.txt', 'baz');
 
         $storage = new GenericStorage(new LocalStorageConfig(
             path: $this->fixtures,

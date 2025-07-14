@@ -148,6 +148,26 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
+    public function test_different_log_levels_works(): void
+    {
+        $filePath = __DIR__ . '/logs/tempest.log';
+        $config = new LogConfig(
+            prefix: 'tempest',
+            channels: [
+                new AppendLogChannel($filePath),
+            ],
+        );
+
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger->critical('critical');
+        $logger->debug('debug');
+
+        $this->assertFileExists($filePath);
+        $content = file_get_contents($filePath);
+        $this->assertStringContainsString('critical', $content);
+        $this->assertStringContainsString('debug', $content);
+    }
+
     public static function tempestLevelProvider(): array
     {
         return array_map(fn (LogLevel $level) => [$level, strtoupper($level->value)], LogLevel::cases());

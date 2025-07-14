@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Generator;
+use Tempest\Container\Container;
 use Tempest\Http\ContentType;
 use Tempest\Http\Header;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
@@ -19,6 +22,7 @@ use Tempest\View\ViewRenderer;
 final readonly class GenericResponseSender implements ResponseSender
 {
     public function __construct(
+        private Container $container,
         private ViewRenderer $viewRenderer,
     ) {}
 
@@ -26,8 +30,12 @@ final readonly class GenericResponseSender implements ResponseSender
     {
         ob_start();
         $this->sendHeaders($response);
-        ob_flush();
-        $this->sendContent($response);
+
+        if ($this->shouldSendContent()) {
+            ob_flush();
+            $this->sendContent($response);
+        }
+
         ob_end_flush();
 
         if (function_exists('fastcgi_finish_request')) {
@@ -65,6 +73,16 @@ final readonly class GenericResponseSender implements ResponseSender
                 yield "{$key}: {$value}";
             }
         }
+    }
+
+    private function shouldSendContent(): bool
+    {
+        // The request is resolved dynamically from the container
+        // because it's only available via the container at a later point,
+        // after the response sender has been constructed (set by the router)
+        $request = $this->container->get(Request::class);
+
+        return $request->method !== Method::HEAD;
     }
 
     private function sendContent(Response $response): void

@@ -9,6 +9,7 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Components\AnonymousViewComponent;
 
@@ -40,11 +41,11 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        if (! is_file($path)) {
+        if (! Filesystem\is_file($path)) {
             return;
         }
 
-        $contents = str(file_get_contents($path))->ltrim();
+        $contents = str(Filesystem\read_file($path))->ltrim();
 
         $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
 

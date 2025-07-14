@@ -10,6 +10,7 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\CacheItem;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Filesystem;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
@@ -49,7 +50,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function hasItem(string $key): bool
     {
-        return file_exists($this->makePath($key));
+        return Filesystem\is_file($this->makePath($key));
     }
 
     public function clear(): bool
@@ -60,7 +61,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
             /** @phpstan-ignore-next-line  */
             $path->glob('/*.php')->each(fn (string $file) => unlink($file));
 
-            rmdir($this->directory);
+            Filesystem\delete_directory($this->directory);
         }
 
         return true;
@@ -68,7 +69,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function deleteItem(string $key): bool
     {
-        @unlink($this->makePath($key));
+        Filesystem\delete_file($this->makePath($key));
 
         return true;
     }
@@ -86,11 +87,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
     {
         $path = $this->makePath($item);
 
-        if (! is_dir(dirname($path))) {
-            mkdir(dirname($path), recursive: true);
-        }
-
-        file_put_contents($path, $item->get());
+        Filesystem\write_file($path, $item->get());
 
         return true;
     }

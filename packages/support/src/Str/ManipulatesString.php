@@ -14,6 +14,7 @@ use Tempest\Support\Random;
 use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
+use function Tempest\Support\Json\decode;
 use function Tempest\Support\tap;
 
 /**
@@ -863,6 +864,14 @@ trait ManipulatesString
         lw($this->value, ...$dumps);
 
         return $this;
+    }
+
+    /**
+     * Decodes the JSON string and returns an array helper instance.
+     */
+    public function decodeJson(): ImmutableArray
+    {
+        return arr(decode($this->value));
     }
 
     /**

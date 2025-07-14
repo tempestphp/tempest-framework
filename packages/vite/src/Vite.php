@@ -6,6 +6,8 @@ namespace Tempest\Vite;
 
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Support\Filesystem;
+use Tempest\Support\Json;
 use Tempest\Vite\Exceptions\DevelopmentServerWasNotRunning;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Tempest\Vite\Manifest\Manifest;
@@ -100,10 +102,8 @@ final class Vite
             throw new ManifestWasNotFound($path);
         }
 
-        return static::$manifest = Manifest::fromArray(json_decode(
-            json: file_get_contents($path),
-            associative: true,
-            flags: JSON_THROW_ON_ERROR,
+        return static::$manifest = Manifest::fromArray(Json\decode(
+            Filesystem\read_file($path),
         ));
     }
 
@@ -135,8 +135,8 @@ final class Vite
             throw new DevelopmentServerWasNotRunning();
         }
 
-        $file = file_get_contents($this->getBridgeFilePath());
-        $content = arr(json_decode($file, associative: true));
+        $file = Filesystem\read_file($this->getBridgeFilePath());
+        $content = arr(Json\decode($file));
 
         return static::$bridgeFile = new ViteBridgeFile(
             url: $content->get('url'),

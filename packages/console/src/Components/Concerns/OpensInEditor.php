@@ -7,6 +7,7 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\CanOpenInEditor;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
+use Tempest\Support\Filesystem;
 
 use function Tempest\env;
 
@@ -39,14 +40,14 @@ trait OpensInEditor
         $editor = $this->getEditorCommand();
         $tempFile = tempnam(sys_get_temp_dir(), '.TEMPEST_INPUT');
 
-        file_put_contents($tempFile, $text ?? '');
+        Filesystem\write_file($tempFile, $text ?? '');
 
         if (passthru(escapeshellcmd("{$editor} " . escapeshellarg($tempFile))) === false) {
             // TODO: failed. handle that
             return $text;
         }
 
-        $updatedText = file_get_contents($tempFile);
+        $updatedText = Filesystem\read_file($tempFile);
         unlink($tempFile);
 
         $this->setState($previousState);

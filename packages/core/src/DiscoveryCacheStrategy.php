@@ -6,7 +6,7 @@ namespace Tempest\Core;
 
 enum DiscoveryCacheStrategy: string
 {
-    case FULL = 'all';
+    case FULL = 'full';
     case PARTIAL = 'partial';
     case NONE = 'none';
     case INVALID = 'invalid';
@@ -16,7 +16,7 @@ enum DiscoveryCacheStrategy: string
         return match ($input) {
             true, 'true', '1', 1, 'all', 'full' => self::FULL,
             'partial' => self::PARTIAL,
-            'invalid' => self::INVALID,
+            null, 'invalid' => self::INVALID,
             default => self::NONE,
         };
     }

@@ -8,7 +8,6 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
-use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;

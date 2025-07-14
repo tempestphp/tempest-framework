@@ -6,6 +6,7 @@ namespace Tempest\View\Renderers;
 
 use Stringable;
 use Tempest\Container\Container;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewVariableWasReserved;
@@ -82,7 +83,7 @@ final class TempestViewRenderer implements ViewRenderer
         } catch (Throwable $throwable) {
             throw new ViewCompilationFailed(
                 path: $_path,
-                content: file_get_contents($_path),
+                content: Filesystem\read_file($_path),
                 previous: $throwable,
             );
         }

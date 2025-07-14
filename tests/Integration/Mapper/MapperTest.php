@@ -8,6 +8,8 @@ use DateTimeImmutable;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
+use Tempest\Mapper\Mappers\ArrayToObjectMapper;
+use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
@@ -243,7 +245,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Roose', $person->name->last);
     }
 
-    public function test_object_to_array_mapper_use_casters(): void
+    public function test_object_to_array_mapper_use_serializers(): void
     {
         $this->assertSame(
             expected: [
@@ -254,8 +256,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ],
             actual: map(new ObjectThatShouldUseCasters(
                 name: 'Guillaume',
-                date: DateTime::parse('2024-01-01'),
-                nativeDate: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+                nativeDate: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2025-03-02 00:00:00'),
+                date: DateTime::parse('2024-01-01 00:00:00'),
                 enum: EnumToCast::FOO,
             ))->toArray(),
         );
@@ -265,8 +267,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         $object = new ObjectThatShouldUseCasters(
             name: 'Guillaume',
-            date: DateTime::parse('2024-01-01'),
-            nativeDate: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+            nativeDate: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2025-03-02 00:00:00'),
+            date: DateTime::parse('2024-01-01 00:00:00'),
             enum: EnumToCast::FOO,
         );
 
@@ -345,7 +347,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $array = map($object)->with(ObjectToArrayMapper::class)->do();
+        $array = map($object)->toArray();
 
         $this->assertSame([
             'items' => [

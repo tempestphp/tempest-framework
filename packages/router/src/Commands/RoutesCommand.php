@@ -11,6 +11,7 @@ use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
+use Tempest\Support\Json;
 
 use function Tempest\Support\str;
 use function Tempest\Support\Str\after_last;
@@ -45,7 +46,7 @@ final readonly class RoutesCommand
         ksort($sortedRoutes);
 
         if ($json) {
-            $this->console->writeRaw(json_encode($sortedRoutes, flags: JSON_UNESCAPED_UNICODE));
+            $this->console->writeRaw(Json\encode($sortedRoutes));
 
             return;
         }

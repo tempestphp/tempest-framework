@@ -8,8 +8,6 @@ use Tempest\Mapper\Caster;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Reflection\PropertyReflector;
 
-use function Tempest\map;
-
 final readonly class ArrayToObjectCollectionCaster implements Caster
 {
     public function __construct(

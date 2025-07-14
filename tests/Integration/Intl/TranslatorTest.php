@@ -19,6 +19,8 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
     {
+        ini_set('intl.default_locale', 'en-US');
+
         parent::setUp();
 
         $config = $this->container->get(IntlConfig::class);

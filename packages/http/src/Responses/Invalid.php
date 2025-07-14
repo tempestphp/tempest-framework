@@ -9,6 +9,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 
 use function Tempest\Support\arr;
@@ -33,14 +34,10 @@ final class Invalid implements Response
         $this->flash(Session::ORIGINAL_VALUES, $request->body);
         $this->addHeader(
             'x-validation',
-            json_encode(
-                arr($failingRules)
-                    ->map(
-                        fn (array $failingRulesForField) => arr($failingRulesForField)->map(
-                            fn (Rule $rule) => $rule->message(),
-                        )->toArray(),
-                    )
-                    ->toArray(),
+            Json\encode(
+                arr($failingRules)->map(fn (array $failingRulesForField) => arr($failingRulesForField)->map(
+                    fn (Rule $rule) => $rule->message(),
+                )->toArray())->toArray(),
             ),
         );
     }

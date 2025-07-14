@@ -17,6 +17,8 @@ use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Reflection\FunctionReflector;
+use Tempest\Support\Filesystem;
+use Tempest\Support\Json;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
@@ -31,9 +33,6 @@ use function Tempest\Support\Path\to_absolute_path;
 use function Tempest\Support\Path\to_relative_path;
 use function Tempest\Support\str;
 use function Tempest\Support\Str\class_basename;
-
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
 
 /**
  * Provides a bunch of methods to publish and generate files and work with common user input.
@@ -129,13 +128,13 @@ trait PublishesFiles
     public function publishImports(): void
     {
         foreach ($this->publishedFiles as $file) {
-            $contents = str(file_get_contents($file));
+            $contents = str(Filesystem\read_file($file));
 
             foreach ($this->publishedClasses as $old => $new) {
                 $contents = $contents->replace($old, $new);
             }
 
-            file_put_contents($file, $contents);
+            Filesystem\write_file($file, $contents);
         }
     }
 
@@ -188,7 +187,7 @@ trait PublishesFiles
      */
     public function askForOverride(string $targetPath): bool
     {
-        if (! file_exists($targetPath)) {
+        if (! Filesystem\is_file($targetPath)) {
             return true;
         }
 
@@ -206,7 +205,7 @@ trait PublishesFiles
      */
     public function update(string $path, Closure $callback, bool $ignoreNonExisting = false): void
     {
-        if (! is_file($path)) {
+        if (! Filesystem\is_file($path)) {
             if ($ignoreNonExisting) {
                 return;
             }
@@ -214,7 +213,7 @@ trait PublishesFiles
             throw new Exception("The file at path [{$path}] does not exist.");
         }
 
-        $contents = file_get_contents($path);
+        $contents = Filesystem\read_file($path);
 
         $reflector = new FunctionReflector($callback);
         $type = $reflector->getParameters()->current()->getType();
@@ -225,7 +224,7 @@ trait PublishesFiles
             default => throw new Exception('The callback must accept a string or ImmutableString.'),
         };
 
-        file_put_contents($path, $contents);
+        Filesystem\write_file($path, $contents);
     }
 
     /**
@@ -242,7 +241,7 @@ trait PublishesFiles
             function (string $content) use ($callback) {
                 $indent = $this->detectIndent($content);
 
-                $json = json_decode($content, associative: true);
+                $json = Json\decode($content);
                 $json = $callback($json);
 
                 // PHP will output empty arrays for empty dependencies,
@@ -256,7 +255,7 @@ trait PublishesFiles
                 $content = preg_replace_callback(
                     '/^ +/m',
                     fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
-                    json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                    Json\encode($json, pretty: true),
                 );
 
                 return "{$content}\n";

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 
 use function Tempest\Support\arr;
@@ -28,6 +29,6 @@ final class ValidationFailed extends Exception
             $subject = $subject::class;
         }
 
-        parent::__construct($subject . PHP_EOL . json_encode($messages, JSON_PRETTY_PRINT));
+        parent::__construct($subject . PHP_EOL . Json\encode($messages, pretty: true));
     }
 }

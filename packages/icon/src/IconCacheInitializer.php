@@ -15,18 +15,16 @@ final class IconCacheInitializer implements Initializer
     public function initialize(Container $container): IconCache
     {
         return new IconCache(
-            enabled: $this->shouldCacheBeEnabled(
-                $container->get(AppConfig::class)->environment->isProduction(),
-            ),
+            enabled: $this->shouldCacheBeEnabled(),
         );
     }
 
-    private function shouldCacheBeEnabled(bool $isProduction): bool
+    private function shouldCacheBeEnabled(): bool
     {
         if (env('INTERNAL_CACHES') === false) {
             return false;
         }
 
-        return (bool) env('ICON_CACHE', default: $isProduction);
+        return (bool) env('ICON_CACHE', default: true);
     }
 }

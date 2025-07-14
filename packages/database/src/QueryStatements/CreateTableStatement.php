@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
+use Tempest\Support\Json;
 use Tempest\Support\Str\ImmutableString;
 use UnitEnum;
 
+use function Tempest\Database\model;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -28,7 +29,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
+        return new self(model($modelClass)->getTableDefinition()->name);
     }
 
     public function primary(string $name = 'id'): self
@@ -211,7 +212,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
-            default: json_encode($default),
+            default: Json\encode($default),
         );
 
         return $this;

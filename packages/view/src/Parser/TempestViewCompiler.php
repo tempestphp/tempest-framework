@@ -6,6 +6,7 @@ namespace Tempest\View\Parser;
 
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Components\DynamicViewComponent;
@@ -40,22 +41,32 @@ final readonly class TempestViewCompiler
         // 1. Retrieve template
         $template = $this->retrieveTemplate($view);
 
-        // 2. Parse AST
+        // 2. Remove comments before parsing
+        $template = $this->removeComments($template);
+
+        // 3. Parse AST
         $ast = $this->parseAst($template);
 
-        // 3. Map to elements
+        // 4. Map to elements
         $elements = $this->mapToElements($ast);
 
-        // 4. Apply attributes
+        // 5. Apply attributes
         $elements = $this->applyAttributes($elements);
 
-        // 5. Compile to PHP
+        // 6. Compile to PHP
         $compiled = $this->compileElements($elements);
 
-        // 6. Cleanup compiled PHP
+        // 7. Cleanup compiled PHP
         $cleaned = $this->cleanupCompiled($compiled);
 
         return $cleaned;
+    }
+
+    private function removeComments(string $template): string
+    {
+        return str($template)
+            ->replaceRegex('/{{--.*?--}}/s', '')
+            ->toString();
     }
 
     private function retrieveTemplate(string|View $view): string
@@ -82,16 +93,16 @@ final readonly class TempestViewCompiler
         ];
 
         foreach ($searchPathOptions as $searchPath) {
-            if (file_exists($searchPath)) {
+            if (Filesystem\is_file($searchPath)) {
                 break;
             }
         }
 
-        if (! file_exists($searchPath)) {
+        if (! Filesystem\is_file($searchPath)) {
             throw new ViewNotFound($path);
         }
 
-        return file_get_contents($searchPath);
+        return Filesystem\read_file($searchPath);
     }
 
     private function parseAst(string $template): TempestViewAst

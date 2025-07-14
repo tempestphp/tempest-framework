@@ -43,11 +43,9 @@ final readonly class DiscoveryGenerateCommand
         $this->clearDiscoveryCache();
 
         $this->console->task(
-            label: "Generating discovery cache using the {$strategy->value} strategy",
+            label: "Generating discovery cache using the `{$strategy->value}` strategy",
             handler: fn (Closure $log) => $this->generateDiscoveryCache($strategy, $log),
         );
-
-        $this->discoveryCache->storeStrategy($strategy);
     }
 
     public function clearDiscoveryCache(): void
@@ -68,16 +66,12 @@ final readonly class DiscoveryGenerateCommand
 
         $discoveries = $loadDiscoveryClasses->build();
 
-        foreach ($discoveries as $discovery) {
-            $log($discovery::class);
-            $discoveryItems = $discovery->getItems();
-
-            if ($strategy === DiscoveryCacheStrategy::PARTIAL) {
-                $discoveryItems = $discoveryItems->onlyVendor();
-            }
-
-            $this->discoveryCache->store($discovery, $discoveryItems);
+        foreach ($this->kernel->discoveryLocations as $location) {
+            $this->discoveryCache->store($location, $discoveries);
+            $log($location->path);
         }
+
+        $this->discoveryCache->storeStrategy($strategy);
     }
 
     public function resolveKernel(): Kernel

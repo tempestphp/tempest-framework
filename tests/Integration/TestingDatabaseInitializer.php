@@ -13,6 +13,7 @@ use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
 
@@ -55,6 +56,7 @@ final class TestingDatabaseInitializer implements DynamicInitializer
         return new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
+            $container->get(SerializerFactory::class),
         );
     }
 }

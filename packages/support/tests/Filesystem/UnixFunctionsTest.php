@@ -2,8 +2,10 @@
 
 namespace Tempest\Support\Tests\Filesystem;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Filesystem;
+use Tempest\Support\Filesystem\Exceptions\NameWasInvalid;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotADirectory;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotAFile;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
@@ -421,6 +423,152 @@ final class UnixFunctionsTest extends TestCase
         $this->assertEquals('Hello', file_get_contents($destination));
     }
 
+    public function test_move(): void
+    {
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/tmp/file.txt';
+
+        file_put_contents($source, '');
+
+        Filesystem\move($source, $destination);
+
+        $this->assertTrue(is_file($destination));
+        $this->assertFalse(is_file($source));
+    }
+
+    public function test_move_overwrite(): void
+    {
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/tmp/file.txt';
+
+        Filesystem\write_file($source, 'Hello');
+        Filesystem\write_file($destination, 'World');
+
+        Filesystem\move($source, $destination, overwrite: true);
+
+        $this->assertEquals('Hello', file_get_contents($destination));
+        $this->assertFalse(is_file($source));
+    }
+
+    public function test_move_no_overwrite(): void
+    {
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/tmp/file.txt';
+
+        Filesystem\write_file($source, 'Hello');
+        Filesystem\write_file($destination, 'World');
+
+        Filesystem\move($source, $destination, overwrite: false);
+
+        $this->assertEquals('Hello', file_get_contents($source));
+        $this->assertEquals('World', file_get_contents($destination));
+    }
+
+    public function test_move_directory(): void
+    {
+        $source = $this->fixtures . '/tmp';
+        $destination = $this->fixtures . '/tmp2';
+
+        mkdir($source);
+        file_put_contents($source . '/file.txt', 'hello');
+
+        Filesystem\move($source, $destination);
+
+        $this->assertTrue(is_dir($destination));
+        $this->assertSame('hello', file_get_contents($destination . '/file.txt'));
+        $this->assertFalse(is_dir($source));
+    }
+
+    public function test_move_directory_overwrite(): void
+    {
+        $source = $this->fixtures . '/tmp';
+        $destination = $this->fixtures . '/tmp2';
+
+        Filesystem\create_directory($source);
+        Filesystem\write_file($source . '/file.txt', 'hello');
+        Filesystem\create_directory($destination);
+        Filesystem\write_file($destination . '/file.txt', 'hello');
+
+        Filesystem\move($source, $destination, overwrite: true);
+
+        $this->assertTrue(is_dir($destination));
+        $this->assertSame('hello', file_get_contents($destination . '/file.txt'));
+        $this->assertFalse(is_dir($source));
+    }
+
+    public function test_move_directory_no_overwrite(): void
+    {
+        $source = $this->fixtures . '/tmp';
+        $destination = $this->fixtures . '/tmp2';
+
+        Filesystem\create_directory($source);
+        Filesystem\write_file($source . '/file.txt', 'hello');
+        Filesystem\create_directory($destination);
+        Filesystem\write_file($destination . '/file.txt', 'world');
+
+        Filesystem\move($source, $destination, overwrite: false);
+
+        $this->assertTrue(is_dir($source));
+        $this->assertSame('hello', file_get_contents($source . '/file.txt'));
+        $this->assertTrue(is_dir($destination));
+        $this->assertSame('world', file_get_contents($destination . '/file.txt'));
+    }
+
+    public function test_move_not_readable(): void
+    {
+        $this->expectException(PathWasNotReadable::class);
+
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/tmp/file.txt';
+
+        file_put_contents($source, '');
+        chmod($source, 0o000);
+
+        Filesystem\move($source, $destination);
+    }
+
+    public function test_rename(): void
+    {
+        $source = $this->fixtures . '/file.txt';
+        $newName = 'renamed-file.txt';
+
+        Filesystem\write_file($source, '');
+
+        Filesystem\rename($source, $newName);
+
+        $this->assertTrue(is_file($this->fixtures . '/renamed-file.txt'));
+        $this->assertFalse(is_file($source));
+    }
+
+    public function test_rename_overwrite(): void
+    {
+        $source = $this->fixtures . '/file.txt';
+        $newName = 'renamed-file.txt';
+
+        Filesystem\write_file($source, 'Hello');
+        Filesystem\write_file($this->fixtures . '/' . $newName, 'World');
+
+        Filesystem\rename($source, $newName, overwrite: true);
+
+        $this->assertEquals('Hello', file_get_contents($this->fixtures . '/' . $newName));
+        $this->assertFalse(is_file($source));
+    }
+
+    public function test_rename_with_full_path(): void
+    {
+        $this->expectException(NameWasInvalid::class);
+
+        $source = $this->fixtures . '/file.txt';
+        $newName = $this->fixtures . '/renamed-file.txt';
+
+        Filesystem\write_file($source, '');
+
+        Filesystem\rename($source, $newName);
+
+        $this->assertTrue(is_file($newName));
+        $this->assertFalse(is_file($source));
+    }
+
     public function test_write_file(): void
     {
         $file = $this->fixtures . '/tmp/file.txt';
@@ -428,6 +576,34 @@ final class UnixFunctionsTest extends TestCase
         Filesystem\write_file($file, 'Hello');
 
         $this->assertEquals('Hello', file_get_contents($file));
+    }
+
+    #[TestWith([['key' => 'value'], '{"key":"value"}'])]
+    #[TestWith(['basic string', '"basic string"'])]
+    #[TestWith(['{"foo": "bar"}', '{"foo":"bar"}'])]
+    public function test_write_json(mixed $data, string $expected): void
+    {
+        $file = $this->fixtures . '/tmp/file.json';
+
+        Filesystem\write_json($file, $data, pretty: false);
+
+        $this->assertEquals($expected, file_get_contents($file));
+    }
+
+    public function test_write_json_serializable(): void
+    {
+        $file = $this->fixtures . '/tmp/file.json';
+
+        $data = new class implements \JsonSerializable {
+            public function jsonSerialize(): array
+            {
+                return ['key' => 'value'];
+            }
+        };
+
+        Filesystem\write_json($file, $data, pretty: false);
+
+        $this->assertEquals('{"key":"value"}', file_get_contents($file));
     }
 
     public function test_write_non_writable_file(): void
@@ -440,6 +616,17 @@ final class UnixFunctionsTest extends TestCase
         chmod($file, 0o000);
 
         Filesystem\write_file($file, 'Hello');
+    }
+
+    public function test_read_json(): void
+    {
+        $file = $this->fixtures . '/tmp/file.json';
+
+        Filesystem\write_json($file, ['key' => 'value']);
+
+        $data = Filesystem\read_json($file);
+
+        $this->assertEquals(['key' => 'value'], $data);
     }
 
     public function test_read_file(): void
