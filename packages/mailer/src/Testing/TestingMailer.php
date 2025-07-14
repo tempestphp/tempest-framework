@@ -4,7 +4,7 @@ namespace Tempest\Mail\Testing;
 
 use Tempest\EventBus\EventBus;
 use Tempest\Mail\Email;
-use Tempest\Mail\EmailSent;
+use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\EmailToSymfonyEmailMapper;
 use Tempest\Mail\Mailer;
 use Tempest\Mail\MailerConfig;
@@ -35,7 +35,7 @@ final class TestingMailer implements Mailer
             ->with(fn (Email $from) => new EmailToSymfonyEmailMapper($this->mailerConfig, $this->viewRenderer)->map($from, null))
             ->do();
 
-        $this->eventBus?->dispatch(new EmailSent($email));
+        $this->eventBus?->dispatch(new EmailWasSent($email));
 
         return new SentTestingEmail(
             original: $email,

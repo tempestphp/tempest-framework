@@ -29,7 +29,7 @@ final class GenericMailer implements Mailer
             ->with(fn (Email $from) => new EmailToSymfonyEmailMapper($this->mailerConfig, $this->viewRenderer)->map($from, null))
             ->do();
 
-        $this->eventBus?->dispatch(new EmailSent($email));
+        $this->eventBus?->dispatch(new EmailWasSent($email));
 
         return new SentGenericEmail(
             original: $email,

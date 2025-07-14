@@ -4,7 +4,7 @@ namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\EventBus\EventBus;
 use Tempest\Mail\Attachment;
-use Tempest\Mail\EmailSent;
+use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
 use Tempest\Mail\GenericEmail;
@@ -24,7 +24,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
         $this->container
             ->get(EventBus::class)
-            ->listen(function (EmailSent $event) use (&$sent): void {
+            ->listen(function (EmailWasSent $event) use (&$sent): void {
                 $sent = $event;
             });
 
@@ -35,7 +35,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
             from: 'no-reply@tempestphp.com',
         ));
 
-        $this->assertInstanceOf(EmailSent::class, $sent);
+        $this->assertInstanceOf(EmailWasSent::class, $sent);
     }
 
     public function test_default_sender(): void
