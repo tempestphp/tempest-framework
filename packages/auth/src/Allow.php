@@ -7,7 +7,7 @@ namespace Tempest\Auth;
 use Attribute;
 use UnitEnum;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 final readonly class Allow
 {
     public function __construct(

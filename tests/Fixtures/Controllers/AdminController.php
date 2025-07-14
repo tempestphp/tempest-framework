@@ -11,9 +11,9 @@ use Tempest\Router\Get;
 use Tests\Tempest\Integration\Auth\Fixtures\CustomAuthorizer;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 
+#[Allow(UserPermissionUnitEnum::ADMIN)]
 final readonly class AdminController
 {
-    #[Allow(UserPermissionUnitEnum::ADMIN)]
     #[Get('/admin')]
     public function admin(): Response
     {
