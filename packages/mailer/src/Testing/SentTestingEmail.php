@@ -247,6 +247,12 @@ final class SentTestingEmail implements SentEmail
      */
     public function assertNotSeeInHtml(string $expect): self
     {
+        if ($this->symfonyEmail->getHtmlBody() === null) {
+            Assert::assertNull($this->symfonyEmail->getHtmlBody());
+
+            return $this;
+        }
+
         Assert::assertStringNotContainsString(
             needle: $expect,
             haystack: $this->symfonyEmail->getHtmlBody(),
@@ -280,6 +286,12 @@ final class SentTestingEmail implements SentEmail
      */
     public function assertNotSeeInText(string $expect): self
     {
+        if ($this->symfonyEmail->getTextBody() === null) {
+            Assert::assertNull($this->symfonyEmail->getTextBody());
+
+            return $this;
+        }
+
         Assert::assertStringNotContainsString(
             needle: $expect,
             haystack: $this->symfonyEmail->getTextBody(),
