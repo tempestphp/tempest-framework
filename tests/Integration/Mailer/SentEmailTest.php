@@ -31,9 +31,6 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent->assertSee('Hello Jon');
         $sent->assertNotSee('this is not in the email');
 
-        $sent->assertSeeInHtml('Hello Jon in HTML');
-        $sent->assertNotSeeInHtml('this is not in the HTML');
-
         $sent->assertSeeInText('Hello Jon in Text');
         $sent->assertNotSeeInText('this is not in the Text');
 

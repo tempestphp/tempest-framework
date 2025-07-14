@@ -34,7 +34,7 @@ final class EmailBuilderTest extends TestCase
         $this->assertSame('Gotcha!', $email->content);
         $this->assertCount(1, $email->attachments);
 
-        $attachment = $email->content->attachments[0];
+        $attachment = $email->attachments[0];
 
         $this->assertInstanceOf(Attachment::class, $attachment);
         $this->assertSame('attachment.txt', $attachment->name);
