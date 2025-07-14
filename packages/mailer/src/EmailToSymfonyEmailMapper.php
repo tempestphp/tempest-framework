@@ -92,7 +92,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
             $symfonyEmail->attach(
                 body: ($attachment->resolve)(),
                 name: $attachment->name,
-                contentType: $attachment->contentType
+                contentType: $attachment->contentType,
             );
         }
 

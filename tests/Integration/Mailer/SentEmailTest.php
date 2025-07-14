@@ -196,14 +196,13 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): SentTestingEmail
-    {
+    ): SentTestingEmail {
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP
                 <html>
                     <body>
-                        <h1>$html</h1>
+                        <h1>{$html}</h1>
                     </body>
                 </html>
             HTML_WRAP,

@@ -4,8 +4,8 @@ namespace Tempest\Mail\Testing;
 
 use Tempest\EventBus\EventBus;
 use Tempest\Mail\Email;
-use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\EmailToSymfonyEmailMapper;
+use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Mailer;
 use Tempest\Mail\MailerConfig;
 use Tempest\View\ViewRenderer;
