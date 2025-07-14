@@ -25,8 +25,7 @@ final class EmailBuilder
         private(set) null|string|array|ArrayInterface|Address $cc = null,
         private(set) null|string|array|ArrayInterface|Address $bcc = null,
         private(set) ?string $subject = null,
-        private(set) null|string|View $html = null,
-        private(set) ?string $text = null,
+        private(set) ?string $content = null,
         private(set) array $attachments = [],
         private(set) EmailPriority|int $priority = EmailPriority::NORMAL,
         private(set) array $headers = [],
@@ -93,21 +92,11 @@ final class EmailBuilder
     }
 
     /**
-     * Defines the HTML body of the email.
+     * Defines the content of the email.
      */
-    public function html(string|View $html): self
+    public function content(string|View $content): self
     {
-        $this->html = $html;
-
-        return $this;
-    }
-
-    /**
-     * Defines the text body of the email.
-     */
-    public function text(string $text): self
-    {
-        $this->text = $text;
+        $this->content = $content;
 
         return $this;
     }
@@ -137,13 +126,7 @@ final class EmailBuilder
      */
     public function attach(Attachment ...$attachments): self
     {
-        foreach ($attachments as $attachment) {
-            if (! ($attachment instanceof Attachment)) {
-                throw new \InvalidArgumentException(sprintf('All attachments must be instances of `%s`.', Attachment::class));
-            }
-
-            $this->attachments[] = $attachment;
-        }
+        $this->attachments = [...$this->attachments, ...$attachments];
 
         return $this;
     }
@@ -176,16 +159,15 @@ final class EmailBuilder
         return new GenericEmail(
             subject: $this->subject,
             to: Arr\wrap($this->to),
+            content: $this->content,
             from: Arr\wrap($this->from),
             cc: Arr\wrap($this->cc),
             bcc: Arr\wrap($this->bcc),
             replyTo: Arr\wrap($this->replyTo),
+            headers: $this->headers,
             priority: is_int($this->priority)
                 ? EmailPriority::from($this->priority)
                 : $this->priority,
-            headers: $this->headers,
-            html: $this->html,
-            text: $this->text,
             attachments: $this->attachments,
         );
     }

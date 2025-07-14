@@ -4,14 +4,12 @@ namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\Mail\Address;
 use Tempest\Mail\Attachment;
-use Tempest\Mail\Content;
 use Tempest\Mail\EmailPriority;
-use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
-use Tempest\Mail\Mailer;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
@@ -198,24 +196,31 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): SentTestingEmail {
-        return $this->mailer->send(new GenericEmail(
-            subject: $subject ?? 'Hello',
-            to: $to ?? 'jon@doe.co',
-            cc: $cc ?? ['cc1@doe.co', 'cc2@doe.co'],
-            bcc: $bcc ?? ['bcc1@doe.co', 'bcc2@doe.co'],
-            from: $from ?? 'no-reply@tempestphp.com',
-            replyTo: $replyTo,
-            headers: $headers ?: ['X-Foo' => 'bar'],
-            priority: $priority,
-            text: $text ?? 'Hello Jon in Text',
-            html: $html ?? <<<HTML_WRAP
+    ): SentTestingEmail
+    {
+        $content = match (true) {
+            $html instanceof View => $html,
+            $html !== null => <<<HTML_WRAP
                 <html>
                     <body>
-                        <h1>Hello Jon in HTML</h1>
+                        <h1>$html</h1>
                     </body>
                 </html>
             HTML_WRAP,
+            $text !== null => $text,
+            default => 'Hello Jon in Text',
+        };
+
+        return $this->mailer->send(new GenericEmail(
+            subject: $subject ?? 'Hello',
+            to: $to ?? 'jon@doe.co',
+            content: $content,
+            from: $from ?? 'no-reply@tempestphp.com',
+            cc: $cc ?? ['cc1@doe.co', 'cc2@doe.co'],
+            bcc: $bcc ?? ['bcc1@doe.co', 'bcc2@doe.co'],
+            replyTo: $replyTo,
+            headers: $headers ?: ['X-Foo' => 'bar'],
+            priority: $priority,
             attachments: $attachments,
         ));
     }

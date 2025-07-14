@@ -2,9 +2,9 @@
 
 namespace Tests\Tempest\Integration\Mailer\Fixtures;
 
-use Tempest\Mail\Content;
 use Tempest\Mail\Email;
 use Tempest\Mail\Envelope;
+use Tempest\View\View;
 
 final class TextOnlyEmail implements Email
 {
@@ -16,11 +16,13 @@ final class TextOnlyEmail implements Email
         );
     }
 
-    public Content $content {
-        get => new Content(
-            text: $this->text,
-        );
+    public string|View $content {
+        get {
+            return $this->text;
+        }
     }
+
+    public array $attachments = [];
 
     public function __construct(
         private readonly ?string $text = 'Lorem ipsum dolor sit amet',

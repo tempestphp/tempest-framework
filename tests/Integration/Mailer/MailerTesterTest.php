@@ -89,16 +89,16 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
+            content: 'Hello Jon',
             from: 'no-reply@tempestphp.com',
-            text: 'Hello Jon',
             attachments: [
                 Attachment::fromClosure(fn () => 'hello!'),
             ],
         ));
 
         $this->mail->assertSent(GenericEmail::class, function (Email $email): void {
-            $this->assertCount(1, $email->content->attachments);
-            $this->assertSame('hello!', ($email->content->attachments[0]->resolve)());
+            $this->assertCount(1, $email->attachments);
+            $this->assertSame('hello!', ($email->attachments[0]->resolve)());
         });
     }
 }

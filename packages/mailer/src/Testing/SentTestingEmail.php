@@ -228,6 +228,11 @@ final class SentTestingEmail implements SentEmail
      */
     public function assertSeeInHtml(string $expect): self
     {
+        Assert::assertNotNull(
+            actual: $this->symfonyEmail->getHtmlBody(),
+            message: 'The email does not contain an HTML body.',
+        );
+
         Assert::assertStringContainsString(
             needle: $expect,
             haystack: $this->symfonyEmail->getHtmlBody(),
@@ -256,6 +261,11 @@ final class SentTestingEmail implements SentEmail
      */
     public function assertSeeInText(string $expect): self
     {
+        Assert::assertNotNull(
+            actual: $this->symfonyEmail->getTextBody(),
+            message: 'The email does not contain a text body.',
+        );
+
         Assert::assertStringContainsString(
             needle: $expect,
             haystack: $this->symfonyEmail->getTextBody(),

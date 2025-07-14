@@ -18,7 +18,7 @@ final readonly class Attachment
      * @param null|string $contentType Content type of the attachment.
      */
     public function __construct(
-        public \Closure $resolve,
+        public Closure $resolve,
         public ?string $name = null,
         public ?string $contentType = null,
     ) {}

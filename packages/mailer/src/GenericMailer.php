@@ -5,7 +5,6 @@ namespace Tempest\Mail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\EventBus\EventBus;
 use Tempest\Mail\Exceptions\MailerTransportWasMissing;
-use Tempest\Mail\MailerConfig;
 use Tempest\View\ViewRenderer;
 
 use function Tempest\map;
@@ -16,9 +15,9 @@ use function Tempest\map;
 final class GenericMailer implements Mailer
 {
     public function __construct(
-        private MailerConfig $mailerConfig,
-        private ViewRenderer $viewRenderer,
-        private ?EventBus $eventBus = null,
+        private readonly MailerConfig $mailerConfig,
+        private readonly ViewRenderer $viewRenderer,
+        private readonly ?EventBus $eventBus = null,
         private ?TransportInterface $transport = null,
     ) {
         $this->transport ??= $this->createTransport();

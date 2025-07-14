@@ -31,8 +31,8 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
+            content: 'Hello Jon',
             from: 'no-reply@tempestphp.com',
-            text: 'Hello Jon',
         ));
 
         $this->assertInstanceOf(EmailSent::class, $sent);
@@ -49,7 +49,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $sent = $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
-            text: 'Hello Jon',
+            content: 'Hello Jon',
         ));
 
         $this->assertContains('From: brent@tempestphp.com', $sent->headers);
@@ -62,7 +62,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
-            text: 'Hello Jon',
+            content: 'Hello Jon',
         ));
     }
 
@@ -73,8 +73,8 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: '',
+            content: 'Hello Jon',
             from: 'no-reply@tempestphp.com',
-            text: 'Hello Jon',
         ));
     }
 
@@ -89,8 +89,8 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $sent = $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
+            content: 'Hello Jon',
             from: 'no-reply@tempestphp.com',
-            text: 'Hello Jon',
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],

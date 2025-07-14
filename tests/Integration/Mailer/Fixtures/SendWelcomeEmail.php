@@ -2,10 +2,9 @@
 
 namespace Tests\Tempest\Integration\Mailer\Fixtures;
 
-use Tempest\Mail\Content;
 use Tempest\Mail\Email;
 use Tempest\Mail\Envelope;
-
+use Tempest\View\View;
 use function Tempest\view;
 
 final class SendWelcomeEmail implements Email
@@ -18,11 +17,13 @@ final class SendWelcomeEmail implements Email
         );
     }
 
-    public Content $content {
-        get => new Content(
-            html: view(__DIR__ . '/welcome.view.php', fullName: $this->fullName),
-        );
+    public string|View $content {
+        get {
+            return view(__DIR__ . '/welcome.view.php', fullName: $this->fullName);
+        }
     }
+
+    public array $attachments = [];
 
     public function __construct(
         private readonly string $address,

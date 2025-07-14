@@ -19,8 +19,8 @@ use function Tempest\Support\arr;
 final readonly class EmailToSymfonyEmailMapper implements Mapper
 {
     public function __construct(
-        private readonly MailerConfig $mailerConfig,
-        private readonly ViewRenderer $viewRenderer,
+        private MailerConfig $mailerConfig,
+        private ViewRenderer $viewRenderer,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -80,19 +80,20 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
 
         $symfonyEmail->priority($email->envelope->priority->value);
 
-        if ($email->content->text) {
-            $symfonyEmail->text($email->content->text);
+        if ($email->content instanceof View) {
+            $symfonyEmail->html($this->viewRenderer->render($email->content));
+        } elseif (is_file($email->content)) {
+            $symfonyEmail->html($this->viewRenderer->render($email->content));
+        } else {
+            $symfonyEmail->text($email->content);
         }
 
-        if ($email->content->html instanceof View) {
-            $symfonyEmail->html($this->viewRenderer->render($email->content->html));
-        } elseif ($email->content->html) {
-            $symfonyEmail->html($email->content->html);
-        }
-
-        /** @var Attachment $attachment */
-        foreach (Arr\wrap($email->content->attachments) as $attachment) {
-            $symfonyEmail->attach(($attachment->resolve)(), $attachment->name, $attachment->contentType);
+        foreach ($email->attachments as $attachment) {
+            $symfonyEmail->attach(
+                body: ($attachment->resolve)(),
+                name: $attachment->name,
+                contentType: $attachment->contentType
+            );
         }
 
         return $symfonyEmail;
