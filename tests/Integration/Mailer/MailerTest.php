@@ -8,8 +8,6 @@ use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
 use Tempest\Mail\GenericEmail;
-use Tempest\Mail\Mailer;
-use Tempest\Mail\Testing\AttachmentTester;
 use Tempest\Mail\Transports\NullMailerConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -17,13 +15,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 {
     public function test_event(): void
     {
-        $sent = false;
-
-        $this->container
-            ->get(EventBus::class)
-            ->listen(function (EmailWasSent $event) use (&$sent): void {
-                $sent = $event;
-            });
+        $this->eventBus->preventEventHandling();
 
         $this->mail->send(new GenericEmail(
             subject: 'Hello',
@@ -32,7 +24,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
             from: 'no-reply@tempestphp.com',
         ));
 
-        $this->assertInstanceOf(EmailWasSent::class, $sent);
+        $this->eventBus->assertDispatched(EmailWasSent::class);
     }
 
     public function test_default_sender(): void
