@@ -10,5 +10,5 @@ interface Mailer
     /**
      * Sends the given email.
      */
-    public function send(Email $email): SentEmail;
+    public function send(Email $email): void;
 }

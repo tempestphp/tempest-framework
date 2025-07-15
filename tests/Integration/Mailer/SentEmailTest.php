@@ -6,9 +6,8 @@ use Tempest\Mail\Address;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\GenericEmail;
-use Tempest\Mail\Testing\SentTestingEmail;
-use Tempest\Mail\Testing\TestingAttachment;
-use Tempest\Mail\Testing\TestingMailer;
+use Tempest\Mail\Testing\AttachmentTester;
+use Tempest\Mail\Testing\MailTester;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -18,53 +17,47 @@ use function Tempest\view;
 
 final class SentEmailTest extends FrameworkIntegrationTestCase
 {
-    private TestingMailer $mailer {
-        get => $this->mail->mailer;
-    }
-
     public function test_sent_email_assertions(): void
     {
-        $sent = $this->sendTestEmail();
-
-        $sent->assertSubjectContains('Hello');
-
-        $sent->assertSee('Hello Jon');
-        $sent->assertNotSee('this is not in the email');
-
-        $sent->assertNotSeeInHtml('Hello Jon');
-
-        $sent->assertSeeInText('Hello Jon in Text');
-        $sent->assertNotSeeInText('this is not in the Text');
-
-        $sent->assertSentTo('jon@doe.co');
-        $sent->assertNotSentTo('imaginary-recipient@example.com');
-
-        $sent->assertCarbonCopy('cc1@doe.co');
-        $sent->assertCarbonCopy(['cc1@doe.co', 'cc2@doe.co']);
-        $sent->assertNotCarbonCopy('cc3@doe.co');
-
-        $sent->assertBlindCarbonCopy('bcc1@doe.co');
-        $sent->assertBlindCarbonCopy(['bcc1@doe.co', 'bcc2@doe.co']);
-        $sent->assertNotBlindCarbonCopy('bcc3@doe.co');
-
-        $sent->assertFrom('no-reply@tempestphp.com');
-        $sent->assertNotFrom('imaginary-expeditor@example.com');
-
-        $sent->assertPriority(EmailPriority::NORMAL);
-
-        $sent->assertHasHeader('X-Foo');
-        $sent->assertHasHeader('X-Foo', 'bar');
+        $this->mail->send(new GenericEmail(
+            subject: 'Hello',
+            to: 'jon@doe.co',
+            content: new GenericView('Hello Jon'),
+            from: 'no-reply@tempestphp.com',
+            cc: ['cc1@doe.co', 'cc2@doe.co'],
+            bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
+            replyTo: null,
+            headers: ['X-Foo' => 'bar'],
+            priority: EmailPriority::NORMAL,
+            attachments: [],
+        ))
+            ->assertSubjectContains('Hello')
+            ->assertSee('Hello Jon')
+            ->assertNotSee('this is not in the email')
+            ->assertSeeInHtml('Hello Jon')
+            ->assertNotSeeInText('Hello Jon')
+            ->assertSentTo('jon@doe.co')
+            ->assertNotSentTo('imaginary-recipient@example.com')
+            ->assertCarbonCopy('cc1@doe.co')
+            ->assertCarbonCopy(['cc1@doe.co', 'cc2@doe.co'])
+            ->assertNotCarbonCopy('cc3@doe.co')
+            ->assertBlindCarbonCopy('bcc1@doe.co')
+            ->assertBlindCarbonCopy(['bcc1@doe.co', 'bcc2@doe.co'])
+            ->assertNotBlindCarbonCopy('bcc3@doe.co')
+            ->assertFrom('no-reply@tempestphp.com')
+            ->assertNotFrom('imaginary-expeditor@example.com')
+            ->assertPriority(EmailPriority::NORMAL)
+            ->assertHasHeader('X-Foo')
+            ->assertHasHeader('X-Foo', 'bar');
     }
 
     public function test_send_to_address_vo(): void
     {
         $sent = $this->sendTestEmail(
-            subject: null,
             to: [new Address('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
-        );
-
-        $sent->assertSentTo('recipient1@example.com');
+        )
+            ->assertSentTo('recipient1@example.com');
         $sent->assertSentTo('recipient2@example.com');
     }
 
@@ -107,11 +100,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_class_based_html(): void
     {
-        $sent = $this->mailer->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'));
-
-        $sent->assertSeeInHtml('Welcome Jon Doe');
-        $sent->assertSubjectContains('Welcome Jon Doe');
-        $sent->assertSentTo('jon@doe.co');
+        $this->mail
+            ->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'))
+            ->assertSeeInHtml('Welcome Jon Doe')
+            ->assertSubjectContains('Welcome Jon Doe')
+            ->assertSentTo('jon@doe.co');
     }
 
     public function test_assert_attachment_from_closure(): void
@@ -123,7 +116,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $sent->assertAttached('file.txt', function (TestingAttachment $attachment): void {
+        $sent->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -140,7 +133,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $sent->assertAttached('SentEmailTest.php', function (TestingAttachment $attachment): void {
+        $sent->assertAttached('SentEmailTest.php', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('SentEmailTest.php');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -160,7 +153,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $sent->assertAttached('file.txt', function (TestingAttachment $attachment): void {
+        $sent->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -195,7 +188,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): SentTestingEmail {
+    ): MailTester
+    {
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP
@@ -209,7 +203,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             default => 'Hello Jon in Text',
         };
 
-        return $this->mailer->send(new GenericEmail(
+        return $this->mail->send(new GenericEmail(
             subject: $subject ?? 'Hello',
             to: $to ?? 'jon@doe.co',
             content: $content,

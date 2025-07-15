@@ -9,15 +9,12 @@ use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
+use Tempest\Mail\Testing\AttachmentTester;
 use Tempest\Mail\Transports\NullMailerConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class MailerTest extends FrameworkIntegrationTestCase
 {
-    private Mailer $mailer {
-        get => $this->container->get(Mailer::class);
-    }
-
     public function test_event(): void
     {
         $sent = false;
@@ -28,7 +25,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
                 $sent = $event;
             });
 
-        $this->mailer->send(new GenericEmail(
+        $this->mail->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             content: 'Hello Jon',
@@ -40,13 +37,11 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
     public function test_default_sender(): void
     {
-        $this->mail->allowSendingEmails();
-
         $this->container->config(new NullMailerConfig(
             defaultSender: 'brent@tempestphp.com',
         ));
 
-        $sent = $this->mailer->send(new GenericEmail(
+        $sent = $this->mail->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             content: 'Hello Jon',
@@ -59,7 +54,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(SenderWasMissing::class);
 
-        $this->mailer->send(new GenericEmail(
+        $this->mail->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             content: 'Hello Jon',
@@ -70,7 +65,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(RecipientWasMissing::class);
 
-        $this->mailer->send(new GenericEmail(
+        $this->mail->send(new GenericEmail(
             subject: 'Hello',
             to: '',
             content: 'Hello Jon',
@@ -81,24 +76,18 @@ final class MailerTest extends FrameworkIntegrationTestCase
     public function test_send_attachment(): void
     {
         $storage = $this->storage->fake();
-        $storage->write('file.txt', 'owo');
+        $storage->write('attachment.txt', 'owo');
 
-        $this->mail->allowSendingEmails();
-        $this->container->config(new NullMailerConfig());
-
-        $sent = $this->mailer->send(new GenericEmail(
-            subject: 'Hello',
-            to: 'jon@doe.co',
-            content: 'Hello Jon',
-            from: 'no-reply@tempestphp.com',
-            attachments: [
-                Attachment::fromStorage($storage, 'file.txt'),
-            ],
-        ));
-
-        $this->assertCount(1, $sent->attachments);
-        $this->assertSame('file.txt', $sent->attachments[0]->name);
-        $this->assertSame('text/plain', $sent->attachments[0]->contentType);
-        $this->assertSame('owo', ($sent->attachments[0]->resolve)());
+        $this->mail
+            ->send(new GenericEmail(
+                subject: 'Hello',
+                to: 'jon@doe.co',
+                content: 'Hello Jon',
+                from: 'no-reply@tempestphp.com',
+                attachments: [
+                    Attachment::fromStorage($storage, 'attachment.txt'),
+                ],
+            ))
+            ->assertAttached('attachment.txt');
     }
 }

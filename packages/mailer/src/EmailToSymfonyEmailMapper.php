@@ -10,7 +10,6 @@ use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
 use Tempest\Mail\Transports\ProvidesDefaultSender;
 use Tempest\Mapper\Mapper;
-use Tempest\Support\Arr;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 

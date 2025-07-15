@@ -14,13 +14,11 @@ use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\ExceptionTester;
 use Tempest\Core\Kernel;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tempest\Database\Connection\ConnectionInitializer;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -29,6 +27,7 @@ use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Framework\Testing\InstallerTester;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Framework\Testing\ViteTester;
+use Tempest\Mail\Testing\MailTester;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\HttpApplication;
 use Tempest\Router\Route;
@@ -59,6 +58,7 @@ use function Tempest\Support\Path\normalize;
  * @property StorageTester $storage
  * @property CacheTester $cache
  * @property ExceptionTester $exceptions
+ * @property MailTester $mail
  */
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
