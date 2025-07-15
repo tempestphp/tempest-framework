@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
-use Tempest\EventBus\EventBus;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
