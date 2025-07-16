@@ -38,7 +38,7 @@ final class DatabaseInsightsProviderTest extends TestCase
         yield 'sqlite' => [
             new SQLiteConfig(),
             '3.45.2',
-            ['Engine' => 'SQLite', 'Version' => new Insight('3.45.2')],
+            ['Engine' => 'SQLite', 'Version' => new Insight('3.45.2'), 'Path' => 'localhost'],
         ];
         yield 'mysql (simple)' => [
             new MysqlConfig(),

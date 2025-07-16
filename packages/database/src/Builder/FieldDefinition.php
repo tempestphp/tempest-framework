@@ -11,7 +11,6 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
 
-// TODO: remove
 final class FieldDefinition implements Stringable
 {
     public function __construct(
@@ -19,42 +18,6 @@ final class FieldDefinition implements Stringable
         public readonly string $name,
         public ?string $as = null,
     ) {}
-
-    /** @return ImmutableArray<\Tempest\Database\Builder\FieldDefinition> */
-    public static function all(ClassReflector $class, ?TableDefinition $tableDefinition = null): ImmutableArray
-    {
-        $casterFactory = get(CasterFactory::class);
-        $fieldDefinitions = [];
-        $tableDefinition ??= new ModelDefinition($class->getName())->getTableDefinition();
-
-        foreach ($class->getPublicProperties() as $property) {
-            // Don't include the field if it's a 1:1 or n:1 relation
-            if ($property->getType()->isRelation()) {
-                continue;
-            }
-
-            // Don't include the field if it's a 1:n relation
-            if ($property->getIterableType()?->isRelation()) {
-                continue;
-            }
-
-            $caster = $casterFactory->forProperty($property);
-
-            if ($caster !== null) {
-                $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
-
-                continue;
-            }
-
-            if (! $property->getType()->isBuiltIn()) {
-                continue;
-            }
-
-            $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
-        }
-
-        return new ImmutableArray($fieldDefinitions);
-    }
 
     public function as(string $as): self
     {

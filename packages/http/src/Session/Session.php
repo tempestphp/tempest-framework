@@ -35,6 +35,16 @@ final class Session
         $this->getSessionManager()->set($this->id, $key, new FlashValue($value));
     }
 
+    public function reflash(): void
+    {
+        foreach ($this->getSessionManager()->all($this->id) as $key => $value) {
+            if (! ($value instanceof FlashValue))
+                continue;
+
+            unset($this->expiredKeys[$key]);
+        }
+    }
+
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->getSessionManager()->get($this->id, $key, $default);

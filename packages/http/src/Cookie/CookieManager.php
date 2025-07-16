@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Http\Cookie;
 
 use Tempest\Clock\Clock;
+use Tempest\Core\AppConfig;
 use Tempest\DateTime\DateTimeInterface;
+
+use function Tempest\Support\str;
 
 final class CookieManager
 {
@@ -13,6 +16,7 @@ final class CookieManager
     private array $cookies = [];
 
     public function __construct(
+        private AppConfig $appConfig,
         private Clock $clock,
     ) {}
 
@@ -31,7 +35,7 @@ final class CookieManager
     {
         $cookie = $this->get($key) ?? new Cookie(
             key: $key,
-            secure: true,
+            secure: str($this->appConfig->baseUri)->startsWith('https'),
             httpOnly: true,
             sameSite: SameSite::LAX,
         );

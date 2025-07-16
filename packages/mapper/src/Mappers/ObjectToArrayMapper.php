@@ -11,6 +11,8 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
+use function Tempest\map;
+
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
@@ -22,20 +24,24 @@ final readonly class ObjectToArrayMapper implements Mapper
         return false;
     }
 
-    public function map(mixed $from, mixed $to): array
+    public function map(mixed $from, mixed $to): mixed
     {
         if ($from instanceof JsonSerializable) {
             return $from->jsonSerialize();
         }
 
-        $class = new ClassReflector($from);
+        if (is_object($from)) {
+            $class = new ClassReflector($from);
 
-        $mappedProperties = [];
+            $mappedProperties = [];
 
-        foreach ($class->getPublicProperties() as $property) {
-            $propertyName = $this->resolvePropertyName($property);
-            $propertyValue = $this->resolvePropertyValue($property, $from);
-            $mappedProperties[$propertyName] = $propertyValue;
+            foreach ($class->getPublicProperties() as $property) {
+                $propertyName = $this->resolvePropertyName($property);
+                $propertyValue = $this->resolvePropertyValue($property, $from);
+                $mappedProperties[$propertyName] = $propertyValue;
+            }
+        } else {
+            $mappedProperties = $from;
         }
 
         return $mappedProperties;
@@ -44,6 +50,16 @@ final readonly class ObjectToArrayMapper implements Mapper
     private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
         $propertyValue = $property->getValue($object);
+
+        if ($property->getIterableType()?->isClass()) {
+            foreach ($propertyValue as $key => $value) {
+                if (is_object($value)) {
+                    $propertyValue[$key] = map($value)->toArray();
+                }
+            }
+
+            return $propertyValue;
+        }
 
         if ($propertyValue !== null && ($serializer = $this->serializerFactory->forProperty($property)) !== null) {
             return $serializer->serialize($propertyValue);

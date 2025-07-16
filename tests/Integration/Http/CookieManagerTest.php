@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Core\AppConfig;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Cookie\SameSite;
@@ -25,6 +26,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
 
     public function test_creating_a_cookie(): void
     {
+        $this->container->get(AppConfig::class)->baseUri = 'https://test.com';
+
         $cookies = $this->container->get(CookieManager::class);
 
         $cookies->set('new', 'value');
@@ -33,6 +36,20 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
             ->get('/')
             ->assertOk()
             ->assertHeaderContains('set-cookie', 'new=value; Secure; HttpOnly; SameSite=Lax');
+    }
+
+    public function test_creating_a_cookie_with_unsecure_local_host(): void
+    {
+        $this->container->get(AppConfig::class)->baseUri = 'http://test.com';
+
+        $cookies = $this->container->get(CookieManager::class);
+
+        $cookies->set('new', 'value');
+
+        $this->http
+            ->get('/')
+            ->assertOk()
+            ->assertHeaderContains('set-cookie', 'new=value; HttpOnly; SameSite=Lax');
     }
 
     public function test_removing_a_cookie(): void

@@ -118,4 +118,20 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $this->assertFalse($session->isValid());
     }
+
+    public function test_session_reflash(): void
+    {
+        $session = $this->container->get(Session::class);
+
+        $session->flash('test', 'value');
+        $session->flash('test2', ['key' => 'value']);
+
+        $this->assertEquals('value', $session->get('test'));
+
+        $session->reflash();
+        $session->cleanup();
+
+        $this->assertEquals('value', $session->get('test'));
+        $this->assertEquals(['key' => 'value'], $session->get('test2'));
+    }
 }

@@ -31,7 +31,7 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
                     'nativeDateTimeImmutableProp' => '2025-01-01 00:00:00',
                     'nativeDateTimeProp' => '2025-01-01 00:00:00',
                     'nativeDateTimeInterfaceProp' => '2025-01-01 00:00:00',
-                    'dateTimeProp' => '2025-01-01T00:00:00.000Z',
+                    'dateTimeProp' => '2025-01-01 00:00:00',
                 ],
             ],
             new ArrayOfObjectsSerializer()->serialize([new ObjectWithSerializerProperties()]),

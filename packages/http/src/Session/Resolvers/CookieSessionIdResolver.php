@@ -40,10 +40,10 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
             $this->cookies->add(new Cookie(
                 key: $sessionKey,
                 value: $id,
-                path: '/',
-                secure: true,
-                httpOnly: true,
                 expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
+                path: '/',
+                secure: str($this->appConfig->baseUri)->startsWith('https'),
+                httpOnly: true,
                 sameSite: SameSite::LAX,
             ));
         }
