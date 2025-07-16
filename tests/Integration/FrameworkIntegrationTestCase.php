@@ -210,4 +210,13 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         /* @phpstan-ignore-next-line */
         $this->assertTrue(false, "Expected exception {$expectedExceptionClass} was not thrown");
     }
+
+    protected function skipWindows(string $reason): void
+    {
+        if (PHP_OS_FAMILY !== 'Windows') {
+            return;
+        }
+
+        $this->markTestSkipped($reason);
+    }
 }
