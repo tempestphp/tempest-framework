@@ -19,18 +19,19 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 {
     public function test_sent_email_assertions(): void
     {
-        $this->mail->send(new GenericEmail(
-            subject: 'Hello',
-            to: 'jon@doe.co',
-            content: new GenericView('Hello Jon'),
-            from: 'no-reply@tempestphp.com',
-            cc: ['cc1@doe.co', 'cc2@doe.co'],
-            bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
-            replyTo: null,
-            headers: ['X-Foo' => 'bar'],
-            priority: EmailPriority::NORMAL,
-            attachments: [],
-        ))
+        $this->mail
+            ->send(new GenericEmail(
+                subject: 'Hello',
+                to: 'jon@doe.co',
+                content: new GenericView('Hello Jon'),
+                from: 'no-reply@tempestphp.com',
+                cc: ['cc1@doe.co', 'cc2@doe.co'],
+                bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
+                replyTo: null,
+                headers: ['X-Foo' => 'bar'],
+                priority: EmailPriority::NORMAL,
+                attachments: [],
+            ))
             ->assertSubjectContains('Hello')
             ->assertSee('Hello Jon')
             ->assertNotSee('this is not in the email')
@@ -188,8 +189,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): MailTester
-    {
+    ): MailTester {
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP

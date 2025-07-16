@@ -4,9 +4,6 @@ namespace Tempest\Mail;
 
 use Tempest\View\View;
 
-/**
- * Represents a generic email.
- */
 final class GenericEmail implements Email
 {
     public Envelope $envelope {
@@ -34,12 +31,4 @@ final class GenericEmail implements Email
         public EmailPriority $priority = EmailPriority::NORMAL,
         public array $attachments = [],
     ) {}
-
-    /**
-     * Builds a new generic email.
-     */
-    public static function build(): EmailBuilder
-    {
-        return new EmailBuilder();
-    }
 }
