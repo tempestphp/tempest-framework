@@ -1,5 +1,5 @@
 {
-    "name": "tempest/mailer",
+    "name": "tempest/mail",
     "description": "A component for working with emails.",
     "license": "MIT",
     "minimum-stability": "dev",
@@ -7,6 +7,7 @@
         "php": "^8.4",
         "tempest/reflection": "dev-main",
         "tempest/support": "dev-main",
+        "tempest/event-bus": "dev-main",
         "symfony/mailer": "^7.2.6"
     },
     "require-dev": {
@@ -14,8 +15,7 @@
         "symfony/amazon-mailer": "^7.2.0"
     },
     "suggest": {
-        "tempest/storage": "For storage attachment support",
-        "tempest/event-bus": "For event support"
+        "tempest/storage": "For storage attachment support"
     },
     "autoload": {
         "psr-4": {

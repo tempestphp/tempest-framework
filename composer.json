@@ -91,7 +91,7 @@
         "tempest/icon": "self.version",
         "tempest/intl": "self.version",
         "tempest/log": "self.version",
-        "tempest/mailer": "self.version",
+        "tempest/mail": "self.version",
         "tempest/mapper": "self.version",
         "tempest/reflection": "self.version",
         "tempest/router": "self.version",
@@ -128,7 +128,7 @@
             "Tempest\\Icon\\": "packages/icon/src",
             "Tempest\\Intl\\": "packages/intl/src",
             "Tempest\\Log\\": "packages/log/src",
-            "Tempest\\Mail\\": "packages/mailer/src",
+            "Tempest\\Mail\\": "packages/mail/src",
             "Tempest\\Mapper\\": "packages/mapper/src",
             "Tempest\\Reflection\\": "packages/reflection/src",
             "Tempest\\Router\\": "packages/router/src",
@@ -189,9 +189,7 @@
             "Tempest\\Icon\\Tests\\": "packages/icon/tests",
             "Tempest\\Intl\\Tests\\": "packages/intl/tests",
             "Tempest\\Log\\Tests\\": "packages/log/tests",
-            "Tempest\\Mail\\Tests\\": [
-                "packages/mailer/tests"
-            ],
+            "Tempest\\Mail\\Tests\\": "packages/mail/tests",
             "Tempest\\Mapper\\Tests\\": "packages/mapper/tests",
             "Tempest\\Reflection\\Tests\\": "packages/reflection/tests",
             "Tempest\\Router\\Tests\\": "packages/router/tests",
