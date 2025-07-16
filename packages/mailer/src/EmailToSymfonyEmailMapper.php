@@ -13,7 +13,6 @@ use Tempest\Mapper\Mapper;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
-use function \Tempest\Support\Str\strip_tags;
 use function Tempest\Support\arr;
 
 final readonly class EmailToSymfonyEmailMapper implements Mapper

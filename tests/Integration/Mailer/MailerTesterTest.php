@@ -74,7 +74,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
                     Attachment::fromClosure(fn () => 'hello!'),
                 ],
             ))
-            ->assertSent(GenericEmail::class, function (Email $email): void {
+            ->assertSent(GenericEmail::class, function (GenericEmail $email): void {
                 $this->assertCount(1, $email->attachments);
                 $this->assertSame('hello!', ($email->attachments[0]->resolve)());
             });

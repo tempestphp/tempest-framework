@@ -18,6 +18,7 @@ final class AttachmentEmail implements Email, HasAttachments
     }
 
     public function __construct(
+        /** @var \Tempest\Mail\Attachment[] $attachments */
         public array $attachments,
     ) {}
 }
