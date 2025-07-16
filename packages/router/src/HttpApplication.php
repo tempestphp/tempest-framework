@@ -6,7 +6,6 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
@@ -14,7 +13,6 @@ use Tempest\Http\RequestFactory;
 use Tempest\Http\Session\Session;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use Throwable;
 
 use function Tempest\env;
 use function Tempest\Support\path;

@@ -80,6 +80,46 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
+    public function test_multiple_where(): void
+    {
+        $sql = query('books')
+            ->select()
+            ->where('title = ?', 'a')
+            ->where('author_id = ?', 1)
+            ->where('OR author_id = ?', 2)
+            ->where('AND author_id <> NULL')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `books`
+        WHERE title = ?
+        AND author_id = ?
+        OR author_id = ?
+        AND author_id <> NULL
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_multiple_where_field(): void
+    {
+        $sql = query('books')
+            ->select()
+            ->whereField('title', 'a')
+            ->whereField('author_id', 1)
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `books`
+        WHERE books.title = ?
+        AND books.author_id = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
     public function test_where_statement(): void
     {
         $this->migrate(
@@ -367,6 +407,38 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         LEFT JOIN b ON b.id = a.b_id
         LEFT JOIN c ON c.id = b.c_id
         SQL, $query);
+    }
+
+    public function test_group_by(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->groupBy('name')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        GROUP BY name
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_having(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->having('name = ?', 'Brent')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        HAVING name = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     private function seed(): void

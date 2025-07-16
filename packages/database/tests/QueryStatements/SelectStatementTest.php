@@ -38,9 +38,9 @@ final class SelectStatementTest extends TestCase
         FROM `foo` AS `bar`
         INNER JOIN foo ON bar.id = foo.id
         WHERE `foo` = "bar"
-        ORDER BY `foo` DESC
         GROUP BY `foo`
         HAVING `foo` = "bar"
+        ORDER BY `foo` DESC
         LIMIT 10
         OFFSET 100
         SQL;

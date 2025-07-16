@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
+use DateTime as NativeDateTime;
 use DateTimeImmutable;
-use Integration\ORM\Migrations\CreateCasterEnumType;
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\DateTime\DateTime;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -37,6 +37,7 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCasterModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateDateTimeModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
@@ -48,12 +49,14 @@ use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
 use Tests\Tempest\Integration\ORM\Models\CasterEnum;
 use Tests\Tempest\Integration\ORM\Models\CasterModel;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
+use Tests\Tempest\Integration\ORM\Models\DateTimeModel;
 use Tests\Tempest\Integration\ORM\Models\ModelWithValidation;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
 use function Tempest\Database\model;
+use function Tempest\Database\query;
 use function Tempest\map;
 
 /**
@@ -559,9 +562,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_table_name_overrides(): void
     {
-        $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('base_models', model(BaseModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_attribute_table_name', model(AttributeTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_static_method_table_name', model(StaticMethodTableNameModel::class)->getTableDefinition()->name);
     }
 
     public function test_validation_on_create(): void
@@ -612,5 +615,26 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
             $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
         }
+    }
+
+    public function test_date_field(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateDateTimeModelTable::class,
+        );
+
+        $id = query(DateTimeModel::class)
+            ->insert([
+                'phpDateTime' => new NativeDateTime('2024-01-01 00:00:00'),
+                'tempestDateTime' => DateTime::parse('2024-01-01 00:00:00'),
+            ])
+            ->execute();
+
+        /** @var DateTimeModel $model */
+        $model = query(DateTimeModel::class)->select()->whereField('id', $id)->first();
+
+        $this->assertSame('2024-01-01 00:00:00', $model->phpDateTime->format('Y-m-d H:i:s'));
+        $this->assertSame('2024-01-01 00:00:00', $model->tempestDateTime->format('yyyy-MM-dd HH:mm:ss'));
     }
 }

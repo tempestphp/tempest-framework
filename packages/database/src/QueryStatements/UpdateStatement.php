@@ -11,7 +11,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\Support\arr;
 
-final class UpdateStatement implements QueryStatement
+final class UpdateStatement implements QueryStatement, HasWhereStatements
 {
     public function __construct(
         public readonly TableDefinition $table,

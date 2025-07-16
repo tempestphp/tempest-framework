@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasLeadingStatements;
 use Tempest\Database\QueryStatement;
+
+use function Tempest\Database\model;
 
 final class DropTableStatement implements QueryStatement, HasLeadingStatements
 {
@@ -29,7 +30,7 @@ final class DropTableStatement implements QueryStatement, HasLeadingStatements
     /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
+        return new self(model($modelClass)->getTableDefinition()->name);
     }
 
     public function compile(DatabaseDialect $dialect): string

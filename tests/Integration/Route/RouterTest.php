@@ -28,6 +28,7 @@ use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
 
 use function Tempest\uri;
@@ -333,5 +334,21 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/returns-converts-to-response')
             ->assertStatus(Status::FOUND)
             ->assertHeaderContains('Location', 'https://tempestphp.com');
+    }
+
+    public function test_head_requests(): void
+    {
+        $this->registerRoute([HeadController::class, 'implicitHead']);
+        $this->registerRoute([HeadController::class, 'explicitHead']);
+
+        $this->http
+            ->head('/implicit-head')
+            ->assertOk()
+            ->assertHasHeader('x-custom');
+
+        $this->http
+            ->head('/explicit-head')
+            ->assertOk()
+            ->assertHasHeader('x-custom');
     }
 }

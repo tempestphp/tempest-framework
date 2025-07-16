@@ -6,6 +6,7 @@ use Tempest\Container\Container;
 use Tempest\Core\Priority;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToObjectMapper;
+use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
@@ -25,6 +26,10 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
     {
         $matchedRoute = $this->routeMatcher->match($request);
 
+        if ($matchedRoute === null && $request->method === Method::HEAD && $request instanceof GenericRequest) {
+            $matchedRoute = $this->routeMatcher->match($request->withMethod(Method::GET));
+        }
+
         if ($matchedRoute === null) {
             return new NotFound();
         }
@@ -38,7 +43,6 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
         // Making it so that we don't need to set any $_SERVER variables and stuff like that
-        $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton($request::class, fn () => $request);
 
         return $next($request);

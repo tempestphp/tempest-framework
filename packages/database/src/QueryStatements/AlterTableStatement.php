@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
 
+use function Tempest\Database\model;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -26,7 +26,7 @@ final class AlterTableStatement implements QueryStatement, HasTrailingStatements
     /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
+        return new self(model($modelClass)->getTableDefinition()->name);
     }
 
     public function add(QueryStatement $statement): self

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-use PDOException;
 use Tempest\Container\Container;
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -24,6 +22,7 @@ use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Tempest\Database\ShouldMigrate;
 use Throwable;
 
+use function Tempest\Database\model;
 use function Tempest\Database\query;
 use function Tempest\event;
 
@@ -48,12 +47,12 @@ final class MigrationManager
     {
         try {
             $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
-        } catch (PDOException $pdoException) {
-            if ($this->dialect->isTableNotFoundError($pdoException)) {
+        } catch (QueryWasInvalid $queryWasInvalid) {
+            if ($this->dialect->isTableNotFoundError($queryWasInvalid)) {
                 $this->executeUp(new CreateMigrationsTable());
                 $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
             } else {
-                throw $pdoException;
+                throw $queryWasInvalid;
             }
         }
 
@@ -75,13 +74,13 @@ final class MigrationManager
     {
         try {
             $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
-        } catch (PDOException $pdoException) {
-            if (! $this->dialect->isTableNotFoundError($pdoException)) {
-                throw $pdoException;
+        } catch (QueryWasInvalid $queryWasInvalid) {
+            if (! $this->dialect->isTableNotFoundError($queryWasInvalid)) {
+                throw $queryWasInvalid;
             }
 
             event(new MigrationFailed(
-                name: new ModelDefinition(Migration::class)->getTableDefinition()->name,
+                name: model(Migration::class)->getTableDefinition()->name,
                 exception: new TableWasNotFound(),
             ));
 
@@ -132,7 +131,7 @@ final class MigrationManager
             $existingMigrations = Migration::select()
                 ->onDatabase($this->onDatabase)
                 ->all();
-        } catch (PDOException) {
+        } catch (QueryWasInvalid) {
             return;
         }
 
@@ -163,7 +162,7 @@ final class MigrationManager
     {
         try {
             $existingMigrations = Migration::select()->onDatabase($this->onDatabase)->all();
-        } catch (PDOException) {
+        } catch (QueryWasInvalid) {
             return;
         }
 
@@ -231,10 +230,10 @@ final class MigrationManager
                     hash: $this->getMigrationHash($migration),
                 ),
             );
-        } catch (PDOException $pdoException) {
-            event(new MigrationFailed($migration->name, $pdoException));
+        } catch (QueryWasInvalid $queryWasInvalid) {
+            event(new MigrationFailed($migration->name, $queryWasInvalid));
 
-            throw $pdoException;
+            throw $queryWasInvalid;
         }
 
         event(new MigrationMigrated($migration->name));
@@ -264,13 +263,13 @@ final class MigrationManager
 
             // Disable foreign key checks
             new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
-        } catch (PDOException $pdoException) {
+        } catch (QueryWasInvalid $queryWasInvalid) {
             // Disable foreign key checks
             new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
 
-            event(new MigrationFailed($migration->name, $pdoException));
+            event(new MigrationFailed($migration->name, $queryWasInvalid));
 
-            throw $pdoException;
+            throw $queryWasInvalid;
         }
 
         try {
