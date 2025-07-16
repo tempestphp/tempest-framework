@@ -13,8 +13,8 @@ use Tempest\Mapper\Mapper;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
-use function Tempest\Support\arr;
 use function \Tempest\Support\Str\strip_tags;
+use function Tempest\Support\arr;
 
 final readonly class EmailToSymfonyEmailMapper implements Mapper
 {
@@ -82,7 +82,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         $symfonyEmail->priority($email->envelope->priority->value);
 
         // Set HTML content
-        $html = match(true) {
+        $html = match (true) {
             $email->html instanceof View => $this->viewRenderer->render($email->html),
             str_ends_with($email->html, '.view.html') => $this->viewRenderer->render($email->html),
             default => $email->html,
@@ -94,7 +94,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         $text = null;
 
         if ($email instanceof HasTextContent) {
-            $text = match(true) {
+            $text = match (true) {
                 $email->text instanceof View => $this->viewRenderer->render($email->text),
                 str_ends_with($email->text ?? '', '.view.html') => $this->viewRenderer->render($email->text),
                 default => $email->text,

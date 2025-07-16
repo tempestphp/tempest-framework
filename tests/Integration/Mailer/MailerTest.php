@@ -71,11 +71,13 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $storage->write('attachment.txt', 'owo');
 
         $this->mail
-            ->send(new AttachmentEmail(
-                attachments: [
-                    Attachment::fromStorage($storage, 'attachment.txt'),
-                ],
-            ))
+            ->send(
+                new AttachmentEmail(
+                    attachments: [
+                        Attachment::fromStorage($storage, 'attachment.txt'),
+                    ],
+                ),
+            )
             ->assertAttached('attachment.txt');
     }
 
