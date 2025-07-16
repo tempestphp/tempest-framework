@@ -19,14 +19,7 @@ interface Email
     /**
      * The content of the email can be a path to a view file, raw HTML, or a View object
      */
-    public string|View $content {
-        get;
-    }
-
-    /**
-     * @var \Tempest\Mail\Attachment[] $attachments
-     */
-    public array $attachments {
+    public string|View $html {
         get;
     }
 }

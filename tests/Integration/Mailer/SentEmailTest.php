@@ -23,7 +23,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->send(new GenericEmail(
                 subject: 'Hello',
                 to: 'jon@doe.co',
-                content: new GenericView('Hello Jon'),
+                html: new GenericView('Hello Jon'),
                 from: 'no-reply@tempestphp.com',
                 cc: ['cc1@doe.co', 'cc2@doe.co'],
                 bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
@@ -31,12 +31,14 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
                 headers: ['X-Foo' => 'bar'],
                 priority: EmailPriority::NORMAL,
                 attachments: [],
+                text: 'Hello Jan',
             ))
             ->assertSubjectContains('Hello')
             ->assertSee('Hello Jon')
             ->assertNotSee('this is not in the email')
             ->assertSeeInHtml('Hello Jon')
             ->assertNotSeeInText('Hello Jon')
+            ->assertSeeInText('Hello Jan')
             ->assertSentTo('jon@doe.co')
             ->assertNotSentTo('imaginary-recipient@example.com')
             ->assertCarbonCopy('cc1@doe.co')
@@ -208,7 +210,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         return $this->mail->send(new GenericEmail(
             subject: $subject ?? 'Hello',
             to: $to ?? 'jon@doe.co',
-            content: $content,
+            html: $content,
             from: $from ?? 'no-reply@tempestphp.com',
             cc: $cc ?? ['cc1@doe.co', 'cc2@doe.co'],
             bcc: $bcc ?? ['bcc1@doe.co', 'bcc2@doe.co'],

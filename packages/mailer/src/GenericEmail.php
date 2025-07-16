@@ -4,7 +4,7 @@ namespace Tempest\Mail;
 
 use Tempest\View\View;
 
-final class GenericEmail implements Email
+final class GenericEmail implements Email, HasTextContent, HasAttachments
 {
     public Envelope $envelope {
         get => new Envelope(
@@ -22,7 +22,8 @@ final class GenericEmail implements Email
     public function __construct(
         public ?string $subject,
         public null|string|array|Address $to,
-        public string|View $content,
+        public string|View $html,
+        public string|View|null $text = null,
         public null|string|array|Address $from = null,
         public null|string|array|Address $cc = null,
         public null|string|array|Address $bcc = null,

@@ -18,7 +18,7 @@ final class SendWelcomeEmail implements Email
         );
     }
 
-    public string|View $content {
+    public string|View $html {
         get {
             return view(__DIR__ . '/welcome.view.php', fullName: $this->fullName);
         }

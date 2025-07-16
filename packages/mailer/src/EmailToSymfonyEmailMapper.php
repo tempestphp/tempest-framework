@@ -14,6 +14,7 @@ use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
 use function Tempest\Support\arr;
+use function \Tempest\Support\Str\strip_tags;
 
 final readonly class EmailToSymfonyEmailMapper implements Mapper
 {
@@ -37,6 +38,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         $email = $from;
         $symfonyEmail = new SymfonyEmail();
 
+        // Set envelope values
         foreach ($email->envelope->headers as $key => $value) {
             $symfonyEmail->getHeaders()->addHeader($key, $value);
         }
@@ -79,20 +81,37 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
 
         $symfonyEmail->priority($email->envelope->priority->value);
 
-        if ($email->content instanceof View) {
-            $symfonyEmail->html($this->viewRenderer->render($email->content));
-        } elseif (is_file($email->content)) {
-            $symfonyEmail->html($this->viewRenderer->render($email->content));
-        } else {
-            $symfonyEmail->text($email->content);
+        // Set HTML content
+        $html = match(true) {
+            $email->html instanceof View => $this->viewRenderer->render($email->html),
+            str_ends_with($email->html, '.view.html') => $this->viewRenderer->render($email->html),
+            default => $email->html,
+        };
+
+        $symfonyEmail->html($html);
+
+        // Set text content
+        $text = null;
+
+        if ($email instanceof HasTextContent) {
+            $text = match(true) {
+                $email->text instanceof View => $this->viewRenderer->render($email->text),
+                str_ends_with($email->text ?? '', '.view.html') => $this->viewRenderer->render($email->text),
+                default => $email->text,
+            };
         }
 
-        foreach ($email->attachments as $attachment) {
-            $symfonyEmail->attach(
-                body: ($attachment->resolve)(),
-                name: $attachment->name,
-                contentType: $attachment->contentType,
-            );
+        $symfonyEmail->text($text ?? strip_tags($html));
+
+        // Add attachments
+        if ($email instanceof HasAttachments) {
+            foreach ($email->attachments as $attachment) {
+                $symfonyEmail->attach(
+                    body: ($attachment->resolve)(),
+                    name: $attachment->name,
+                    contentType: $attachment->contentType,
+                );
+            }
         }
 
         return $symfonyEmail;

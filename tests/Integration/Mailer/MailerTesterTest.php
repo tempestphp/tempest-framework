@@ -9,7 +9,7 @@ use Tempest\Mail\Email;
 use Tempest\Mail\GenericEmail;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
-use Tests\Tempest\Integration\Mailer\Fixtures\TextOnlyEmail;
+use Tests\Tempest\Integration\Mailer\Fixtures\TextEmail;
 
 final class MailerTesterTest extends FrameworkIntegrationTestCase
 {
@@ -30,25 +30,25 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_sent_with_class_string(): void
     {
-        $this->mail->send(new TextOnlyEmail())->assertSent(TextOnlyEmail::class);
+        $this->mail->send(new TextEmail())->assertSent(TextEmail::class);
     }
 
     public function test_assert_sent_with_class_string_and_callback(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextOnlyEmail` was sent but failed the assertion.");
+        $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextEmail` was sent but failed the assertion.");
 
-        $this->mail->send(new TextOnlyEmail())->assertSent(TextOnlyEmail::class, fn (Email $_email) => false);
+        $this->mail->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => false);
     }
 
     public function test_assert_sent_with_class_string_and_truthy_callback(): void
     {
-        $this->mail->send(new TextOnlyEmail())->assertSent(TextOnlyEmail::class, fn (Email $_email) => true);
+        $this->mail->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => true);
     }
 
     public function test_assert_not_sent_with_class_string(): void
     {
-        $this->mail->assertNotSent(TextOnlyEmail::class);
+        $this->mail->assertNotSent(TextEmail::class);
     }
 
     public function test_assert_sent_and_not_sent_with_another_class(): void
@@ -59,7 +59,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
                 fullName: 'Jon Doe',
             ))
             ->assertSent(SendWelcomeEmail::class)
-            ->assertNotSent(TextOnlyEmail::class);
+            ->assertNotSent(TextEmail::class);
     }
 
     public function test_assertions(): void
@@ -68,7 +68,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
             ->send(new GenericEmail(
                 subject: 'Hello',
                 to: 'jon@doe.co',
-                content: 'Hello Jon',
+                html: 'Hello Jon',
                 from: 'no-reply@tempestphp.com',
                 attachments: [
                     Attachment::fromClosure(fn () => 'hello!'),
