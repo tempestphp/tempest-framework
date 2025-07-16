@@ -74,16 +74,16 @@ abstract class IntegrationTest extends TestCase
             discoveryLocations: $this->discoveryLocations,
         );
 
-        // @phpstan-ignore-next-line
-        $this->container = $this->kernel->container;
+        /** @var GenericContainer $container */
+        $container = $this->kernel->container;
+        $this->container = $container;
 
-        $this->console = $this->container->get(ConsoleTester::class);
-        $this->http = $this->container->get(HttpRouterTester::class);
-        $this->installer = $this->container->get(InstallerTester::class);
-        $this->eventBus = $this->container->get(EventBusTester::class);
-        $this->storage = $this->container->get(StorageTester::class);
-        $this->cache = $this->container->get(CacheTester::class);
-
+        $this->console = new ConsoleTester($this->container);
+        $this->http = new HttpRouterTester($this->container);
+        $this->installer = new InstallerTester($this->container);
+        $this->eventBus = new EventBusTester($this->container);
+        $this->storage = new StorageTester($this->container);
+        $this->cache = new CacheTester($this->container);
         $this->mail = new MailTester(new TestingMailer(
             eventBus: $this->container->get(EventBus::class),
         ));
