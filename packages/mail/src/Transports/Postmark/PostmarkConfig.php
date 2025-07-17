@@ -17,7 +17,7 @@ use Tempest\Mail\Transports\ProvidesDefaultSender;
 final class PostmarkConfig implements MailerConfig, ProvidesDefaultSender
 {
     public string $transport {
-        get => match ($this->sceme) {
+        get => match ($this->scheme) {
             PostmarkConnectionScheme::API => PostmarkApiTransport::class,
             PostmarkConnectionScheme::SMTP => PostmarkSmtpTransport::class,
         };
@@ -54,8 +54,8 @@ final class PostmarkConfig implements MailerConfig, ProvidesDefaultSender
     {
         return new PostmarkTransportFactory()->create(new Dsn(
             scheme: PostmarkConnectionScheme::API->value,
-            user: $this->key,
             host: $this->host ?? 'default',
+            user: $this->key,
             port: $this->port,
         ));
     }

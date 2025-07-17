@@ -17,7 +17,7 @@ use Tempest\Mail\Transports\ProvidesDefaultSender;
 final class SesMailerConfig implements MailerConfig, ProvidesDefaultSender
 {
     public string $transport {
-        get => match ($this->sceme) {
+        get => match ($this->scheme) {
             SesConnectionScheme::API => SesApiAsyncAwsTransport::class,
             SesConnectionScheme::HTTP => SesHttpAsyncAwsTransport::class,
         };
@@ -64,9 +64,9 @@ final class SesMailerConfig implements MailerConfig, ProvidesDefaultSender
     {
         return new SesTransportFactory()->create(new Dsn(
             scheme: $this->scheme->value,
+            host: $this->host ?? 'default',
             user: $this->accessKey,
             password: $this->secretKey,
-            host: $this->host ?? 'default',
             options: [
                 'region' => $this->region,
                 'session_token' => $this->sessionToken,
