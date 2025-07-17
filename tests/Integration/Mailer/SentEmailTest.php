@@ -2,10 +2,11 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
-use Tempest\Mail\Address;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\GenericEmail;
+use Tempest\Mail\MailerConfig;
 use Tempest\Mail\Testing\AttachmentTester;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\View\GenericView;
@@ -24,6 +25,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
                 subject: 'Hello',
                 to: 'jon@doe.co',
                 html: new GenericView('Hello Jon'),
+                text: 'Hello Jan',
                 from: 'no-reply@tempestphp.com',
                 cc: ['cc1@doe.co', 'cc2@doe.co'],
                 bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
@@ -31,7 +33,6 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
                 headers: ['X-Foo' => 'bar'],
                 priority: EmailPriority::NORMAL,
                 attachments: [],
-                text: 'Hello Jan',
             ))
             ->assertSubjectContains('Hello')
             ->assertSee('Hello Jon')
@@ -54,20 +55,30 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('X-Foo', 'bar');
     }
 
+    public function test_with_default_sender(): void
+    {
+        /** @var \Tempest\Mail\Transports\Smtp\SmtpMailerConfig $mailerConfig */
+        $mailerConfig = $this->container->get(MailerConfig::class);
+        $mailerConfig->defaultSender = new EmailAddress('brendt@stitcher.io', 'brendt');
+
+        $this->mail
+            ->send(new GenericEmail(subject: 'Test', to: new EmailAddress('brendt+2@stitcher.io'), html: 'Hi'))
+            ->assertFrom('brendt@stitcher.io');
+    }
+
     public function test_send_to_address_vo(): void
     {
-        $sent = $this->sendTestEmail(
-            to: [new Address('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
+        $this->sendTestEmail(
+            to: [new EmailAddress('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
         )
-            ->assertSentTo('recipient1@example.com');
-        $sent->assertSentTo('recipient2@example.com');
+            ->assertSentTo('recipient1@example.com')
+            ->assertSentTo('recipient2@example.com');
     }
 
     public function test_send_to_address_with_brackets(): void
     {
         $sent = $this->sendTestEmail(
-            subject: null,
             to: ['Jon Doe <recipient1@example.com>', 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
         );
@@ -183,17 +194,18 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     private function sendTestEmail(
         ?string $subject = null,
-        null|string|array|Address $to = null,
-        null|string|array|Address $from = null,
-        null|string|array|Address $cc = null,
-        null|string|array|Address $bcc = null,
-        null|string|array|Address $replyTo = null,
+        null|string|array|EmailAddress $to = null,
+        null|string|array|EmailAddress $from = null,
+        null|string|array|EmailAddress $cc = null,
+        null|string|array|EmailAddress $bcc = null,
+        null|string|array|EmailAddress $replyTo = null,
         array $headers = [],
         EmailPriority $priority = EmailPriority::NORMAL,
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): MailTester {
+    ): MailTester
+    {
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP

@@ -4,7 +4,7 @@ namespace Tempest\Mail;
 
 use Stringable;
 
-final readonly class Address implements Stringable
+final readonly class EmailAddress implements Stringable
 {
     public function __construct(
         public string $email,

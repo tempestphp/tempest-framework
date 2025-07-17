@@ -1,6 +1,6 @@
 <?php
 
-use Tempest\Mail\Address;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tempest\Mail\Transports\Smtp\SmtpScheme;
 use function Tempest\env;
@@ -8,7 +8,7 @@ use function Tempest\env;
 $defaultSender = null;
 
 if (env('MAIL_SENDER_NAME') && env('MAIL_SENDER_EMAIL')) {
-    $defaultSender = new Address(
+    $defaultSender = new EmailAddress(
         email: env('MAIL_SENDER_EMAIL'),
         name: env('MAIL_SENDER_NAME'),
     );

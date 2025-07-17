@@ -7,7 +7,7 @@ use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesHttpAsyncAwsTransport;
 use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesTransportFactory;
 use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Tempest\Mail\Address;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\MailerConfig;
 use Tempest\Mail\Transports\ProvidesDefaultSender;
 
@@ -52,7 +52,7 @@ final class SesMailerConfig implements MailerConfig, ProvidesDefaultSender
         /**
          * Address from which emails are sent by default.
          */
-        public null|string|Address $defaultSender = null,
+        public null|string|EmailAddress $defaultSender = null,
 
         /**
          * Whether to use Amazon SES's API or async HTTP transport.

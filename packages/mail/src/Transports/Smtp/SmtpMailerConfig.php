@@ -6,7 +6,7 @@ use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransportFactory;
 use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Tempest\Mail\Address;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\MailerConfig;
 use Tempest\Mail\Transports\ProvidesDefaultSender;
 
@@ -46,7 +46,7 @@ final class SmtpMailerConfig implements MailerConfig, ProvidesDefaultSender
         /**
          * The default address from which emails will be sent.
          */
-        public null|string|Address $defaultSender = null,
+        public null|string|EmailAddress $defaultSender = null,
 
         /**
          * Whether to use TLS for this connection.
