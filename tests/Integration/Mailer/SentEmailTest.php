@@ -20,7 +20,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 {
     public function test_sent_email_assertions(): void
     {
-        $this->mail
+        $this->mailer
             ->send(new GenericEmail(
                 subject: 'Hello',
                 to: 'jon@doe.co',
@@ -61,7 +61,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $mailerConfig = $this->container->get(MailerConfig::class);
         $mailerConfig->defaultSender = new EmailAddress('brendt@stitcher.io', 'brendt');
 
-        $this->mail
+        $this->mailer
             ->send(new GenericEmail(subject: 'Test', to: new EmailAddress('brendt+2@stitcher.io'), html: 'Hi'))
             ->assertFrom('brendt@stitcher.io');
     }
@@ -89,32 +89,27 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_sent_to(): void
     {
-        $sent = $this->sendTestEmail(
-            subject: null,
+        $this->sendTestEmail(
             to: ['recipient1@example.com', 'recipient2@example.com'],
             from: 'no-reply@tempestphp.com',
-        );
-
-        $sent->assertSentTo('recipient1@example.com');
-        $sent->assertSentTo('recipient2@example.com');
-        $sent->assertSentTo(['recipient1@example.com', 'recipient2@example.com']);
-
-        $sent->assertNotSentTo('recipient3@exampe.com');
-        $sent->assertNotSentTo(['recipient3@exampe.com', 'recipient4@example.com']);
+        )
+            ->assertSentTo('recipient1@example.com')
+            ->assertSentTo('recipient2@example.com')
+            ->assertSentTo(['recipient1@example.com', 'recipient2@example.com'])
+            ->assertNotSentTo('recipient3@exampe.com')
+            ->assertNotSentTo(['recipient3@exampe.com', 'recipient4@example.com']);
     }
 
     public function test_rendered_html(): void
     {
-        $sent = $this->sendTestEmail(
+        $this->sendTestEmail(
             html: view(__DIR__ . '/Fixtures/welcome.view.php', fullName: 'Jon Doe'),
-        );
-
-        $sent->assertSeeInHtml('Welcome Jon Doe');
+        )->assertSeeInHtml('Welcome Jon Doe');
     }
 
     public function test_class_based_html(): void
     {
-        $this->mail
+        $this->mailer
             ->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'))
             ->assertSeeInHtml('Welcome Jon Doe')
             ->assertSubjectContains('Welcome Jon Doe')
@@ -123,14 +118,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_attachment_from_closure(): void
     {
-        $sent = $this->sendTestEmail(
+        $this->sendTestEmail(
             text: 'Hello',
             attachments: [
                 Attachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
             ],
-        );
-
-        $sent->assertAttached('file.txt', function (AttachmentTester $attachment): void {
+        )->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -140,14 +133,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_attachment_from_filesystem(): void
     {
-        $sent = $this->sendTestEmail(
+        $this->sendTestEmail(
             text: 'Hello',
             attachments: [
                 Attachment::fromFilesystem(__FILE__),
             ],
-        );
-
-        $sent->assertAttached('SentEmailTest.php', function (AttachmentTester $attachment): void {
+        )->assertAttached('SentEmailTest.php', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('SentEmailTest.php');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -162,14 +153,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake();
         $storage->write('file.txt', 'owo');
 
-        $sent = $this->sendTestEmail(
+        $this->sendTestEmail(
             text: 'Hello Jon in Text',
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],
-        );
-
-        $sent->assertAttached('file.txt', function (AttachmentTester $attachment): void {
+        )->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -182,14 +171,22 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake('test-disk');
         $storage->write('file.txt', 'owo');
 
-        $sent = $this->sendTestEmail(
+        $this->sendTestEmail(
             text: 'Hello Jon in Text',
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],
-        );
+        )->assertAttached('file.txt');
+    }
 
-        $sent->assertAttached('file.txt');
+    public function test_html_path(): void
+    {
+        $this->mailer->send(new GenericEmail(
+            subject: 'Hello there!',
+            to: 'brent.roose@gmail.com',
+            html: __DIR__ . '/Fixtures/email.view.php',
+            from: 'brendt@stitcher.io'
+        ))->assertSeeInHtml('Hi');
     }
 
     private function sendTestEmail(
@@ -219,7 +216,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             default => 'Hello Jon in Text',
         };
 
-        return $this->mail->send(new GenericEmail(
+        return $this->mailer->send(new GenericEmail(
             subject: $subject ?? 'Hello',
             to: $to ?? 'jon@doe.co',
             html: $content,

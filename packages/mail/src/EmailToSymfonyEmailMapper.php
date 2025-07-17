@@ -83,7 +83,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         // Set HTML content
         $html = match (true) {
             $email->html instanceof View => $this->viewRenderer->render($email->html),
-            str_ends_with($email->html, '.view.html') => $this->viewRenderer->render($email->html),
+            str_ends_with($email->html, '.view.php') => $this->viewRenderer->render($email->html),
             default => $email->html,
         };
 
@@ -95,7 +95,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         if ($email instanceof HasTextContent) {
             $text = match (true) {
                 $email->text instanceof View => $this->viewRenderer->render($email->text),
-                str_ends_with($email->text ?? '', '.view.html') => $this->viewRenderer->render($email->text),
+                str_ends_with($email->text ?? '', '.view.php') => $this->viewRenderer->render($email->text),
                 default => $email->text,
             };
         }

@@ -56,7 +56,7 @@ abstract class IntegrationTest extends TestCase
 
     protected StorageTester $storage;
 
-    protected MailTester $mail;
+    protected MailTester $mailer;
 
     protected CacheTester $cache;
 
@@ -84,7 +84,7 @@ abstract class IntegrationTest extends TestCase
         $this->eventBus = new EventBusTester($this->container);
         $this->storage = new StorageTester($this->container);
         $this->cache = new CacheTester($this->container);
-        $this->mail = new MailTester(new TestingMailer(
+        $this->mailer = new MailTester(new TestingMailer(
             eventBus: $this->container->get(EventBus::class),
         ));
 
