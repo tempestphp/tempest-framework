@@ -3,6 +3,7 @@
 use Tempest\Mail\EmailAddress;
 use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tempest\Mail\Transports\Smtp\SmtpScheme;
+
 use function Tempest\env;
 
 $defaultSender = null;

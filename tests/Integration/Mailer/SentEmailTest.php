@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
-use Tempest\Mail\EmailAddress;
 use Tempest\Mail\Attachment;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\MailerConfig;
@@ -185,7 +185,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             subject: 'Hello there!',
             to: 'brent.roose@gmail.com',
             html: __DIR__ . '/Fixtures/email.view.php',
-            from: 'brendt@stitcher.io'
+            from: 'brendt@stitcher.io',
         ))->assertSeeInHtml('Hi');
     }
 
@@ -201,8 +201,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         null|string|View $html = null,
         ?string $text = null,
         array $attachments = [],
-    ): MailTester
-    {
+    ): MailTester {
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP
