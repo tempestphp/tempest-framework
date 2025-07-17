@@ -43,7 +43,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         }
 
         if ($this->mailerConfig instanceof ProvidesDefaultSender && $this->mailerConfig->defaultSender) {
-            $symfonyEmail->from($this->mailerConfig->defaultSender);
+            $symfonyEmail->from(...$this->convertAddresses($this->mailerConfig->defaultSender));
         }
 
         if ($email->envelope->from) {
@@ -83,7 +83,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         // Set HTML content
         $html = match (true) {
             $email->html instanceof View => $this->viewRenderer->render($email->html),
-            str_ends_with($email->html, '.view.html') => $this->viewRenderer->render($email->html),
+            str_ends_with($email->html, '.view.php') => $this->viewRenderer->render($email->html),
             default => $email->html,
         };
 
@@ -95,7 +95,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         if ($email instanceof HasTextContent) {
             $text = match (true) {
                 $email->text instanceof View => $this->viewRenderer->render($email->text),
-                str_ends_with($email->text ?? '', '.view.html') => $this->viewRenderer->render($email->text),
+                str_ends_with($email->text ?? '', '.view.php') => $this->viewRenderer->render($email->text),
                 default => $email->text,
             };
         }
@@ -116,12 +116,12 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         return $symfonyEmail;
     }
 
-    private function convertAddresses(null|string|array|Address $addresses): array
+    private function convertAddresses(null|string|array|EmailAddress $addresses): array
     {
         return arr($addresses)
-            ->map(fn (string|Address|SymfonyAddress $address) => match (true) {
+            ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
                 $address instanceof SymfonyAddress => $address,
-                $address instanceof Address => new SymfonyAddress($address->email, $address->name),
+                $address instanceof EmailAddress => new SymfonyAddress($address->email, $address->name ?? ''),
                 is_string($address) => SymfonyAddress::create($address),
                 default => null,
             })

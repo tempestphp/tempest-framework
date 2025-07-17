@@ -9,9 +9,9 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 use Symfony\Component\Mime\Part\DataPart;
-use Tempest\Mail\Address;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\Email;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\EmailToSymfonyEmailMapper;
 use Tempest\Support\Arr;
@@ -94,14 +94,14 @@ final class MailTester
     public array $from {
         get => Arr\map_iterable(
             array: $this->sentSymfonyEmail->getFrom(),
-            map: fn (SymfonyAddress $address) => new Address($address->getAddress(), $address->getName()),
+            map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
     public array $to {
         get => Arr\map_iterable(
             array: $this->sentSymfonyEmail->getTo(),
-            map: fn (SymfonyAddress $address) => new Address($address->getAddress(), $address->getName()),
+            map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
@@ -413,7 +413,7 @@ final class MailTester
         return $this;
     }
 
-    private function assertAddressListContains(null|string|array|Address $haystack, string|array $needles, string $message): self
+    private function assertAddressListContains(null|string|array|EmailAddress $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
         $haystack = $this->convertAddresses($haystack);
@@ -429,7 +429,7 @@ final class MailTester
         return $this;
     }
 
-    private function assertAddressListDoesNotContain(null|string|array|Address $haystack, string|array $needles, string $message): self
+    private function assertAddressListDoesNotContain(null|string|array|EmailAddress $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
         $haystack = $this->convertAddresses($haystack);
@@ -445,13 +445,13 @@ final class MailTester
         return $this;
     }
 
-    private function convertAddresses(null|string|array|Address $addresses): array
+    private function convertAddresses(null|string|array|EmailAddress $addresses): array
     {
         return arr($addresses)
-            ->map(function (string|Address|SymfonyAddress $address) {
+            ->map(function (string|EmailAddress|SymfonyAddress $address) {
                 return match (true) {
                     $address instanceof SymfonyAddress => $address->getAddress(),
-                    $address instanceof Address => $address->email,
+                    $address instanceof EmailAddress => $address->email,
                     is_string($address) => $address,
                     default => null,
                 };

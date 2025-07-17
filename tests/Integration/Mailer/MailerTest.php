@@ -17,7 +17,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->eventBus->preventEventHandling();
 
-        $this->mail->send(new GenericEmail(
+        $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             html: 'Hello Jon',
@@ -33,7 +33,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
             defaultSender: 'brent@tempestphp.com',
         ));
 
-        $sent = $this->mail->send(new GenericEmail(
+        $sent = $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             html: 'Hello Jon',
@@ -46,7 +46,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(SenderWasMissing::class);
 
-        $this->mail->send(new GenericEmail(
+        $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: 'jon@doe.co',
             html: 'Hello Jon',
@@ -57,7 +57,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(RecipientWasMissing::class);
 
-        $this->mail->send(new GenericEmail(
+        $this->mailer->send(new GenericEmail(
             subject: 'Hello',
             to: '',
             html: 'Hello Jon',
@@ -70,7 +70,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake();
         $storage->write('attachment.txt', 'owo');
 
-        $this->mail
+        $this->mailer
             ->send(
                 new AttachmentEmail(
                     attachments: [
@@ -88,7 +88,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
         $storage = $this->storage->fake();
         $storage->write('attachment.txt', 'owo');
 
-        $this->mail
+        $this->mailer
             ->send(new GenericEmail(
                 subject: 'Hello',
                 to: 'jon@doe.co',

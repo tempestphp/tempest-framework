@@ -9,7 +9,7 @@ use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesTransportFactory;
 use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\NullTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Tempest\Mail\Address;
+use Tempest\Mail\EmailAddress;
 use Tempest\Mail\MailerConfig;
 use UnitEnum;
 
@@ -49,7 +49,7 @@ final class SesSmtpMailerConfig implements MailerConfig
         /**
          * Address from which emails are sent by default.
          */
-        public null|string|Address $from = null,
+        public null|string|EmailAddress $from = null,
 
         /**
          * Whether to use Amazon SES's API or SMTP server.
