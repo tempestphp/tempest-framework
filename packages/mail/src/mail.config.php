@@ -1,16 +1,27 @@
 <?php
 
+use Tempest\Mail\Address;
 use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tempest\Mail\Transports\Smtp\SmtpScheme;
 use function Tempest\env;
 
+$defaultSender = null;
+
+if (env('MAIL_SENDER_NAME') && env('MAIL_SENDER_EMAIL')) {
+    $defaultSender = new Address(
+        email: env('MAIL_SENDER_EMAIL'),
+        name: env('MAIL_SENDER_NAME'),
+    );
+}
+
 return new SmtpMailerConfig(
-    scheme: match (strtolower(env('MAILER_SMTP_SCHEME', default: 'smtp'))) {
+    scheme: match (strtolower(env('MAIL_SMTP_SCHEME', default: 'smtp'))) {
         'smtps' => SmtpScheme::SMTPS,
         'smtp' => SmtpScheme::SMTP,
     },
-    host: env('MAILER_SMTP_HOST', default: '127.0.0.0'),
-    port: env('MAILER_SMTP_PORT', default: 2525),
-    username: env('MAILER_SMTP_USERNAME', default: ''),
-    password: env('MAILER_SMTP_PASSWORD', default: ''),
+    host: env('MAIL_SMTP_HOST', default: '127.0.0.0'),
+    port: env('MAIL_SMTP_PORT', default: 2525),
+    username: env('MAIL_SMTP_USERNAME', default: ''),
+    password: env('MAIL_SMTP_PASSWORD', default: ''),
+    defaultSender: $defaultSender,
 );
