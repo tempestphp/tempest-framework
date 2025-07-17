@@ -2,6 +2,7 @@
 
 use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tempest\Mail\Transports\Smtp\SmtpScheme;
+use function Tempest\env;
 
 return new SmtpMailerConfig(
     scheme: match (strtolower(env('MAILER_SMTP_SCHEME', default: 'smtp'))) {
