@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/container": "1.4.0",
+        "tempest/container": "dev-main",
         "voku/portable-ascii": "^2.0.3",
         "symfony/uid": "^7.1"
     },
