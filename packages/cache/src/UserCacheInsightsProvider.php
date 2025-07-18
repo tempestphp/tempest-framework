@@ -2,10 +2,12 @@
 
 namespace Tempest\Cache;
 
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Tempest\Cache\Config\CacheConfig;
-use Tempest\Cache\Config\FilesystemCacheConfig;
 use Tempest\Cache\Config\InMemoryCacheConfig;
-use Tempest\Cache\Config\PhpCacheConfig;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Insight;
@@ -39,10 +41,11 @@ final class UserCacheInsightsProvider implements InsightsProvider
     private function getInsight(Cache $cache): array
     {
         $type = ($cache instanceof GenericCache)
-            ? match (get_class($cache->cacheConfig)) {
-                FilesystemCacheConfig::class => new Insight('Filesystem'),
-                PhpCacheConfig::class => new Insight('PHP'),
-                InMemoryCacheConfig::class => new Insight('In-memory'),
+            ? match (get_class($cache->adapter)) {
+                FilesystemAdapter::class => new Insight('Filesystem'),
+                PhpFilesAdapter::class => new Insight('PHP'),
+                ArrayAdapter::class => new Insight('In-memory'),
+                RedisAdapter::class => new Insight('Redis'),
                 default => null,
             }
             : null;
@@ -60,12 +63,10 @@ final class UserCacheInsightsProvider implements InsightsProvider
             return $cache::class;
         }
 
-        $tag = $cache->cacheConfig->tag;
-
-        if ($tag instanceof UnitEnum) {
-            return $tag->name;
+        if ($cache->tag instanceof UnitEnum) {
+            return $cache->tag->name;
         }
 
-        return $tag ?? 'default';
+        return $cache->tag ?? 'default';
     }
 }

@@ -229,7 +229,7 @@ final class FrameworkKernel implements Kernel
                 filename: $filename,
                 line: $line,
             ),
-        ));
+        ), error_levels: E_ERROR);
 
         return $this;
     }
