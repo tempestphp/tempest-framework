@@ -5,12 +5,12 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-				"tempest/support": "dev-main",
-				"tempest/event-bus": "dev-main"
+        "tempest/support": "dev-main",
+        "tempest/event-bus": "dev-main"
     },
-		"require-dev": {
-			"predis/predis": "^3.0.0"
-		},
+    "require-dev": {
+        "predis/predis": "^3.0.0"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\KeyValue\\": "src"
