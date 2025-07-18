@@ -33,7 +33,7 @@ function checkPackageLicense(array $package): void
 
     if (! file_exists($licenseFile)) {
         throw new UnexpectedValueException(
-            sprintf('Package [tempest/%s] is missing it\'s license.', $package['name'])
+            sprintf('Package [tempest/%s] is missing it\'s license (%s).', $package['name'], $licenseFile)
         );
     }
 

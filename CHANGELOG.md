@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0](https://github.com/tempestphp/tempest-framework/compare/v1.3.1..1.4.0)  —  2025-07-17
+
+### 🚀 Features
+
+- **auth**: add class-level permission support (#1405) ([1404246](https://github.com/tempestphp/tempest-framework/commit/14042463f81e6915a61212abaf468a351ca5b2b9))
+- **mailer**: introduce mailer component (#1227) ([3f5f31e](https://github.com/tempestphp/tempest-framework/commit/3f5f31eacfc80a6ba8ac724f042eefd5cf8e6412))
+- **support**: add json encode/decode to array and string utilities (#1396) ([978bba2](https://github.com/tempestphp/tempest-framework/commit/978bba2d3f5017c4c90920d272c2c3d143aa2485))
+- **vite**: inject react refresh when needed (#1406) ([b57bf7f](https://github.com/tempestphp/tempest-framework/commit/b57bf7f9c79179f7135c1eb72894406d80d6a606))
+
+### 🐛 Bug fixes
+
+- **mail**: fix typos (#1410) ([0e29b0e](https://github.com/tempestphp/tempest-framework/commit/0e29b0e83be94a968d4f004d87191ad70b385f3d))
+- **mailer**: small tweaks and bugfixes (#1408) ([f80536a](https://github.com/tempestphp/tempest-framework/commit/f80536a5ba5784978df9cad9cc8453be564b0110))
+- **vite**: exclude `.tempest` from vite's file watcher (#1384) ([e1bdcf2](https://github.com/tempestphp/tempest-framework/commit/e1bdcf2daedcdd2076b33048de2bcd963a403dca))
+
+
 ## [1.3.0](https://github.com/tempestphp/tempest-framework/compare/v1.2.3..v1.3.0)  —  2025-07-10
 
 ### 🚀 Features
