@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Session;
 
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Support\Random;
 
 use function Tempest\get;
 
@@ -16,7 +17,22 @@ final class Session
 
     public const string PREVIOUS_URL = '_previous_url';
 
+    public const string CSRF_TOKEN_KEY = '_csrf_token';
+
     private array $expiredKeys = [];
+
+    /**
+     * Session token used for cross-site request forgery protection.
+     */
+    public string $token {
+        get {
+            if (! $this->get(self::CSRF_TOKEN_KEY)) {
+                $this->set(self::CSRF_TOKEN_KEY, Random\uuid());
+            }
+
+            return $this->get(self::CSRF_TOKEN_KEY);
+        }
+    }
 
     public function __construct(
         public SessionId $id,
