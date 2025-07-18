@@ -114,6 +114,7 @@ final class LockTest extends FrameworkIntegrationTestCase
         $clock->plus(Duration::hours(1));
 
         // Try executing a callback for the specified duration
-        $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1))); // @phpstan-ignore method.alreadyNarrowedType
+        /** @phpstan-ignore-next-line */
+        $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1)));
     }
 }
