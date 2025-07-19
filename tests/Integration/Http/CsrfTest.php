@@ -11,6 +11,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\VerifyCsrfMiddleware;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class CsrfTest extends FrameworkIntegrationTestCase
@@ -97,13 +98,34 @@ final class CsrfTest extends FrameworkIntegrationTestCase
 
     public function test_csrf_component(): void
     {
+        $session = $this->container->get(Session::class);
+        $session->set(Session::CSRF_TOKEN_KEY, 'test');
+
         $rendered = $this->render(<<<HTML
         <x-csrf-token />
         HTML);
 
-        $session = $this->container->get(Session::class);
+        $this->assertSame(
+            '<input type="hidden" name="_csrf_token" value="test">',
+            $rendered,
+        );
+    }
 
-        $this->assertStringMatchesFormat('<input type="hidden" name="_csrf_token" value="%s">', $rendered);
-        $this->assertStringContainsString($session->token, $rendered);
+    public function test_csrf_with_cached_view(): void
+    {
+        $this->get(ViewCache::class)->enabled = true;
+
+        $oldVersion = $this->render(<<<HTML
+        <x-csrf-token />
+        HTML);
+
+        $session = $this->container->get(Session::class);
+        $session->destroy();
+
+        $newVersion = $this->render(<<<HTML
+        <x-csrf-token />
+        HTML);
+
+        $this->assertNotSame($oldVersion, $newVersion);
     }
 }
