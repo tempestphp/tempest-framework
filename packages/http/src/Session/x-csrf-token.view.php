@@ -4,8 +4,8 @@ use Tempest\Http\Session\Session;
 
 use function Tempest\get;
 
-$name = Session::CSRF_TOKEN_KEY;
-$token = get(Session::class)->token;
+$csrfFieldName = Session::CSRF_TOKEN_KEY;
+$csrfTokenValue = get(Session::class)->token;
 ?>
 
-<input type="hidden" name="{{ $name }}" value="{{ $token }}" />
+<input type="hidden" name="{{ $csrfFieldName }}" value="{{ $csrfTokenValue }}" />
