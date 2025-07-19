@@ -219,4 +219,14 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->markTestSkipped($reason);
     }
+
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return null|TClassName
+     */
+    protected function get(string $className): object
+    {
+        return $this->container->get($className);
+    }
 }
