@@ -225,7 +225,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
      * @param class-string<TClassName> $className
      * @return null|TClassName
      */
-    protected function get(string $className): object
+    protected function get(string $className): object|null
     {
         return $this->container->get($className);
     }
