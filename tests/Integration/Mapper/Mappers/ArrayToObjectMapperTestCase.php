@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -71,7 +72,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
             'dateTimeImmutable' => '2024-01-01 10:10:10',
             'dateTime' => '2024-01-01 10:10:10',
             'dateTimeWithFormat' => '01/12/2024 10:10:10',
-            'bool' => 'yes',
+            'bool' => 'no',
             'float' => '0.1',
             'int' => '1',
         ])
@@ -82,7 +83,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 10:10:10', $object->dateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-12-01 10:10:10', $object->dateTimeWithFormat->format('Y-m-d H:i:s'));
         $this->assertNull($object->nullableDateTimeImmutable);
-        $this->assertSame(true, $object->bool);
+        $this->assertSame(false, $object->bool);
         $this->assertSame(0.1, $object->float);
         $this->assertSame(1, $object->int);
     }
