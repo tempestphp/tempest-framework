@@ -10,6 +10,13 @@ final readonly class BooleanCaster implements Caster
 {
     public function cast(mixed $input): bool
     {
-        return boolval($input);
+        if (is_string($input)) {
+            $input = mb_strtolower($input);
+        }
+
+        return match ($input) {
+            1, '1', true, 'true', 'enabled', 'on', 'yes' => true,
+            default => false,
+        };
     }
 }
