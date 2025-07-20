@@ -36,6 +36,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
             key: self::CSRF_COOKIE_KEY,
             value: $this->session->token,
             expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
+            secure: true,
         ));
 
         if ($this->shouldSkipCheck($request)) {
