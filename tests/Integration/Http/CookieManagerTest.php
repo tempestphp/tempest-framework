@@ -15,13 +15,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CookieManagerTest extends FrameworkIntegrationTestCase
 {
-    public function test_existing_cookies(): void
+    public function test_cookie_manager_does_not_get_initialized_with_request_cookies(): void
     {
         $_COOKIE['existing'] = 'value';
 
         $cookies = $this->container->get(CookieManager::class);
 
-        $this->assertEquals('value', $cookies->get('existing')->value);
+        $this->assertNull($cookies->get('existing'));
     }
 
     public function test_creating_a_cookie(): void

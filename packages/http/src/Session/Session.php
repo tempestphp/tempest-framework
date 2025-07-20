@@ -11,15 +11,19 @@ use function Tempest\get;
 
 final class Session
 {
-    public const string VALIDATION_ERRORS = 'validation_errors';
+    public const string VALIDATION_ERRORS = '#validation_errors';
 
-    public const string ORIGINAL_VALUES = 'original_values';
+    public const string ORIGINAL_VALUES = '#original_values';
 
-    public const string PREVIOUS_URL = '_previous_url';
+    public const string PREVIOUS_URL = '#previous_url';
 
-    public const string CSRF_TOKEN_KEY = '_csrf_token';
+    public const string CSRF_TOKEN_KEY = '#csrf_token';
 
     private array $expiredKeys = [];
+
+    private SessionManager $manager {
+        get => get(SessionManager::class);
+    }
 
     /**
      * Session token used for cross-site request forgery protection.
@@ -43,17 +47,23 @@ final class Session
 
     public function set(string $key, mixed $value): void
     {
-        $this->getSessionManager()->set($this->id, $key, $value);
+        $this->manager->set($this->id, $key, $value);
     }
 
+    /**
+     * Stores a value in the session that will be available for the next request only.
+     */
     public function flash(string $key, mixed $value): void
     {
-        $this->getSessionManager()->set($this->id, $key, new FlashValue($value));
+        $this->manager->set($this->id, $key, new FlashValue($value));
     }
 
+    /**
+     * Reflashes all flash values in the session, making them available for the next request.
+     */
     public function reflash(): void
     {
-        foreach ($this->getSessionManager()->all($this->id) as $key => $value) {
+        foreach ($this->manager->all($this->id) as $key => $value) {
             if (! ($value instanceof FlashValue))
                 continue;
 
@@ -63,7 +73,7 @@ final class Session
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->getSessionManager()->get($this->id, $key, $default);
+        $value = $this->manager->get($this->id, $key, $default);
 
         if ($value instanceof FlashValue) {
             $this->expiredKeys[$key] = $key;
@@ -75,7 +85,7 @@ final class Session
 
     public function getPreviousUrl(): string
     {
-        return $this->get(self::PREVIOUS_URL, '');
+        return $this->get(self::PREVIOUS_URL, default: '');
     }
 
     public function setPreviousUrl(string $url): void
@@ -83,6 +93,9 @@ final class Session
         $this->set(self::PREVIOUS_URL, $url);
     }
 
+    /**
+     * Retrieves the value for the given key and removes it from the session.
+     */
     public function consume(string $key, mixed $default = null): mixed
     {
         $value = $this->get($key, $default);
@@ -94,33 +107,28 @@ final class Session
 
     public function all(): array
     {
-        return $this->getSessionManager()->all($this->id);
+        return $this->manager->all($this->id);
     }
 
     public function remove(string $key): void
     {
-        $this->getSessionManager()->remove($this->id, $key);
+        $this->manager->remove($this->id, $key);
     }
 
     public function destroy(): void
     {
-        $this->getSessionManager()->destroy($this->id);
+        $this->manager->destroy($this->id);
     }
 
     public function isValid(): bool
     {
-        return $this->getSessionManager()->isValid($this->id);
+        return $this->manager->isValid($this->id);
     }
 
     public function cleanup(): void
     {
         foreach ($this->expiredKeys as $key) {
-            $this->getSessionManager()->remove($this->id, $key);
+            $this->manager->remove($this->id, $key);
         }
-    }
-
-    private function getSessionManager(): SessionManager
-    {
-        return get(SessionManager::class);
     }
 }

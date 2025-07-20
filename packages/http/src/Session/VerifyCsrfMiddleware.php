@@ -15,6 +15,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Str;
 
 #[Priority(Priority::FRAMEWORK)]
 final readonly class VerifyCsrfMiddleware implements HttpMiddleware
@@ -37,7 +38,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
             value: $this->session->token,
             expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
             path: '/',
-            secure: true,
+            secure: Str\starts_with($this->appConfig->baseUri, 'https'),
         ));
 
         if ($this->shouldSkipCheck($request)) {

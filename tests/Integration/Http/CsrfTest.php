@@ -106,7 +106,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSame(
-            '<input type="hidden" name="_csrf_token" value="test">',
+            '<input type="hidden" name="#csrf_token" value="test">',
             $rendered,
         );
     }
