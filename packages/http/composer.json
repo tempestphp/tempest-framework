@@ -18,7 +18,10 @@
     "autoload": {
         "psr-4": {
             "Tempest\\Http\\": "src"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
