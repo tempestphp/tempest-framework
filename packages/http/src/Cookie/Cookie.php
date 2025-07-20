@@ -26,7 +26,7 @@ final class Cookie implements Stringable
         public DateTimeInterface|int|null $expiresAt = null,
         public ?int $maxAge = null,
         public ?string $domain = null,
-        public ?string $path = null,
+        public ?string $path = '/',
         public bool $secure = false,
         public bool $httpOnly = false,
         public ?SameSite $sameSite = null,

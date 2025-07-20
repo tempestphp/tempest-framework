@@ -36,6 +36,7 @@ final class CookieManager
         $cookie = $this->get($key) ?? new Cookie(
             key: $key,
             secure: str($this->appConfig->baseUri)->startsWith('https'),
+            path: '/',
             httpOnly: true,
             sameSite: SameSite::LAX,
         );
