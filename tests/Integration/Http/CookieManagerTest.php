@@ -35,7 +35,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=value; Secure; HttpOnly; SameSite=Lax');
+            ->assertHeaderContains('set-cookie', 'new=value; Path=/; Secure; HttpOnly; SameSite=Lax');
     }
 
     public function test_creating_a_cookie_with_unsecure_local_host(): void
@@ -49,7 +49,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=value; HttpOnly; SameSite=Lax');
+            ->assertHeaderContains('set-cookie', 'new=value; Path=/; HttpOnly; SameSite=Lax');
     }
 
     public function test_removing_a_cookie(): void
@@ -61,7 +61,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0');
+            ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0; Path=/');
     }
 
     public function test_manually_adding_a_cookie(): void

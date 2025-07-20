@@ -151,6 +151,7 @@
             "packages/datetime/src/functions.php",
             "packages/debug/src/functions.php",
             "packages/event-bus/src/functions.php",
+            "packages/http/src/functions.php",
             "packages/icon/src/functions.php",
             "packages/intl/src/Number/functions.php",
             "packages/intl/src/functions.php",

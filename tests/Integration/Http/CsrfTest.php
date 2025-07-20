@@ -111,6 +111,14 @@ final class CsrfTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_csrf_token_function(): void
+    {
+        $session = $this->container->get(Session::class);
+        $session->set(Session::CSRF_TOKEN_KEY, 'test');
+
+        $this->assertSame('test', \Tempest\Http\csrf_token());
+    }
+
     public function test_csrf_with_cached_view(): void
     {
         $this->get(ViewCache::class)->enabled = true;
