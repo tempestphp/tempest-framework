@@ -20,6 +20,8 @@ use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Paginator\PaginatedData;
+use Tempest\Support\Paginator\Paginator;
 
 use function Tempest\Database\model;
 use function Tempest\map;
@@ -76,6 +78,23 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return $result[array_key_first($result)];
+    }
+
+    /** @return PaginatedData<TModelClass> */
+    public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
+    {
+        $total = new CountQueryBuilder($this->model->model)->execute();
+
+        $paginator = new Paginator(
+            totalItems: $total,
+            itemsPerPage: $itemsPerPage,
+            currentPage: $currentPage,
+            maxLinks: $maxLinks,
+        );
+
+        return $paginator->paginateWith(
+            callback: fn (int $limit, int $offset) => $this->limit($limit)->offset($offset)->all(),
+        );
     }
 
     /** @return TModelClass|null */
