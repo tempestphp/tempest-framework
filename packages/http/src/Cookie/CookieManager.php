@@ -7,9 +7,11 @@ namespace Tempest\Http\Cookie;
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Support\Str;
 
-use function Tempest\Support\str;
-
+/**
+ * Manages cookies that will be sent to the client.
+ */
 final class CookieManager
 {
     /** @var \Tempest\Http\Cookie\Cookie[] */
@@ -31,12 +33,15 @@ final class CookieManager
         return $this->cookies[$key] ?? null;
     }
 
+    /**
+     * Adds or updates a cookie that will be sent to the client in this request.
+     */
     public function set(string $key, string $value, DateTimeInterface|int|null $expiresAt = null): Cookie
     {
         $cookie = $this->get($key) ?? new Cookie(
             key: $key,
-            secure: str($this->appConfig->baseUri)->startsWith('https'),
             path: '/',
+            secure: Str\starts_with($this->appConfig->baseUri, 'https'),
             httpOnly: true,
             sameSite: SameSite::LAX,
         );
@@ -49,6 +54,9 @@ final class CookieManager
         return $cookie;
     }
 
+    /**
+     * Adds a cookie that will be sent to the client in this request.
+     */
     public function add(Cookie $cookie): void
     {
         if ($cookie->expiresAt !== null) {

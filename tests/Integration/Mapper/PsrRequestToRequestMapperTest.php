@@ -37,6 +37,8 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $stream->write(json_encode(['foo' => 'bar']));
         $stream->rewind();
 
+        $_COOKIE['test'] = 'cookie-value';
+
         $request = new PsrRequestToGenericRequestMapper()->map(new ServerRequest(
             uri: new Uri('/json-endpoint'),
             method: 'POST',
@@ -48,6 +50,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals(json_encode(['foo' => 'bar']), $request->raw);
         $this->assertEquals(['foo' => 'bar'], $request->body);
+        $this->assertEquals('cookie-value', $request->getCookie('test')?->value);
     }
 
     public function test_files(): void
