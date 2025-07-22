@@ -120,7 +120,15 @@ function read_file(string $filename): string
         throw Exceptions\PathWasNotReadable::forFile($filename);
     }
 
-    [$result, $message] = box(static fn (): false|string => file_get_contents($filename));
+    [$result, $message] = box(static function () use ($filename): false|string {
+        $file_pointer = fopen($filename, 'rb');
+        flock($file_pointer, LOCK_SH);
+        $contents = file_get_contents($filename);
+        flock($file_pointer, LOCK_UN);
+        fclose($file_pointer);
+
+        return $contents;
+    });
 
     if (false === $result) {
         throw new Exceptions\RuntimeException(sprintf(
