@@ -53,7 +53,7 @@ final readonly class GenericResponseSender implements ResponseSender
         }
 
         foreach ($this->resolveHeaders($response) as $header) {
-            header($header);
+            header($header, replace: false);
         }
 
         http_response_code($response->status->value);

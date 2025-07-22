@@ -4,9 +4,8 @@ namespace Tempest\Cache\Config;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Clock\Clock;
+use Tempest\Container\Container;
 use UnitEnum;
-
-use function Tempest\get;
 
 /**
  * Store cache in an array, for a single request.
@@ -20,10 +19,10 @@ final class InMemoryCacheConfig implements CacheConfig
         public null|string|UnitEnum $tag = null,
     ) {}
 
-    public function createAdapter(): ArrayAdapter
+    public function createAdapter(Container $container): ArrayAdapter
     {
         return new ArrayAdapter(
-            clock: get(Clock::class)->toPsrClock(),
+            clock: $container->get(Clock::class)->toPsrClock(),
         );
     }
 }

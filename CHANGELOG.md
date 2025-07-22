@@ -2,7 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.2](https://github.com/tempestphp/tempest-framework/compare/v1.2.1..1.2.2)  —  2025-07-08
+## [1.4.0](https://github.com/tempestphp/tempest-framework/compare/v1.3.1..1.4.0)  —  2025-07-17
+
+### 🚀 Features
+
+- **auth**: add class-level permission support (#1405) ([1404246](https://github.com/tempestphp/tempest-framework/commit/14042463f81e6915a61212abaf468a351ca5b2b9))
+- **mailer**: introduce mailer component (#1227) ([3f5f31e](https://github.com/tempestphp/tempest-framework/commit/3f5f31eacfc80a6ba8ac724f042eefd5cf8e6412))
+- **support**: add json encode/decode to array and string utilities (#1396) ([978bba2](https://github.com/tempestphp/tempest-framework/commit/978bba2d3f5017c4c90920d272c2c3d143aa2485))
+- **vite**: inject react refresh when needed (#1406) ([b57bf7f](https://github.com/tempestphp/tempest-framework/commit/b57bf7f9c79179f7135c1eb72894406d80d6a606))
+
+### 🐛 Bug fixes
+
+- **mail**: fix typos (#1410) ([0e29b0e](https://github.com/tempestphp/tempest-framework/commit/0e29b0e83be94a968d4f004d87191ad70b385f3d))
+- **mailer**: small tweaks and bugfixes (#1408) ([f80536a](https://github.com/tempestphp/tempest-framework/commit/f80536a5ba5784978df9cad9cc8453be564b0110))
+- **vite**: exclude `.tempest` from vite's file watcher (#1384) ([e1bdcf2](https://github.com/tempestphp/tempest-framework/commit/e1bdcf2daedcdd2076b33048de2bcd963a403dca))
+
+
+## [1.3.0](https://github.com/tempestphp/tempest-framework/compare/v1.2.3..v1.3.0)  —  2025-07-10
+
+### 🚀 Features
+
+- **database**: run `migrate:fresh` without validation by default (#1390) ([665c825](https://github.com/tempestphp/tempest-framework/commit/665c825230a6803e0e52a64d08c28623aa267b48))
+
+### 🐛 Bug fixes
+
+- **commandbus**: require console as a dependency (#1397) ([e56cb6d](https://github.com/tempestphp/tempest-framework/commit/e56cb6d72678e632c413c01ba7dc317396f1e7ba))
+- **router**: change the `Bindable::resolve` return type from `static` to `self` (#1391) ([3ac0e3a](https://github.com/tempestphp/tempest-framework/commit/3ac0e3aa0489ecd57e0d7dbe23c7e84ad392bfa2))
+- **view**: remove multiline comments before AST parsing (#1395) ([f2c03df](https://github.com/tempestphp/tempest-framework/commit/f2c03df89977fdf0008b40c1777f31cde91108ca))
+
+### 🚜 Refactor
+
+- **mapper**: remove redundant string check (#1393) ([9d0bf46](https://github.com/tempestphp/tempest-framework/commit/9d0bf46854e55eb22b9572847c8e000bddd3a2e3))
+
+
+## [1.2.3](https://github.com/tempestphp/tempest-framework/compare/v1.2.2..v1.2.3)  —  2025-07-08
+
+### 🐛 Bug fixes
+
+- **database**: fix datetime serialization for mysql database (#1383) ([dde0e84](https://github.com/tempestphp/tempest-framework/commit/dde0e84a6bba614c4fa3932914ffaee2dd4916e7))
+
+
+## [1.2.2](https://github.com/tempestphp/tempest-framework/compare/v1.2.1..v1.2.2)  —  2025-07-08
 
 ### 🚀 Features
 
