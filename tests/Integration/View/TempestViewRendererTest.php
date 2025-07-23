@@ -203,20 +203,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_default_slot(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
-            <div class="base">
-                
-                    Test
-                
-            </div>
+            <div class="base">Test</div>
             HTML,
             $this->render(
                 <<<'HTML'
                 <x-base-layout>
-                    <x-slot>
-                        Test
-                    </x-slot>
+                    Test
                 </x-base-layout>
                 HTML,
             ),

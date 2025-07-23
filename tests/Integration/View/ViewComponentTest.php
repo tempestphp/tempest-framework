@@ -64,7 +64,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_view_can_access_dynamic_slots(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div :foreach="$slots as $slot">
+        <div :foreach="$slots as $slot" :if="$slot->name !== 'default'">
             <div>{{ $slot->name }}</div>
             <div>{{ $slot->attributes['language'] }}</div>
             <div>{{ $slot->language }}</div>
@@ -79,7 +79,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </x-test>
         HTML_WRAP);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML_WRAP'
+        $this->assertSnippetsMatch(<<<'HTML_WRAP'
         <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
         <div><div>slot-html</div><div>HTML</div><div>HTML</div><div>HTML Body</div></div>
         HTML_WRAP, $html);
@@ -88,7 +88,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_dynamic_slots_are_cleaned_up(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div :foreach="$slots as $slot">
+        <div :foreach="$slots as $slot" :if="$slot->name !== 'default'">
             <div>{{ $slot->name }}</div>
         </div>
         <x-slot />
@@ -108,6 +108,24 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('<div>internal slots still here</div>', $html);
         $this->assertStringContainsString('<div>slots are cleared</div>', $html);
+    }
+
+    public function test_dynamic_slots_include_the_default_slot(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>{{ $slots['default']->name }}</div>
+        <div>{{ $slots['default']->content }}</div>
+        HTML);
+
+        $html = $this->render('<x-test>Hello</x-test>');
+
+        $this->assertSnippetsMatch(
+            <<<'HTML'
+            <div>default</div>
+            <div>Hello</div>
+            HTML,
+            $html,
+        );
     }
 
     public function test_slots_with_nested_view_components(): void
@@ -863,9 +881,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $html = $this->render(<<<'HTML'
         <x-a>
-            <x-slot>
-                <x-b />
-            </x-slot>
+            <x-b />
         </x-a>
         HTML);
 
