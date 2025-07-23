@@ -182,7 +182,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
             array: array_unique($findPrefetchableAssets($chunk), flags: SORT_REGULAR),
         ));
 
-        if (empty($assets)) {
+        if (count($assets) === 0) {
             return null;
         }
 
