@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\Core\Environment;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
@@ -41,58 +42,30 @@ final class ViewComponentElement implements Element
         return $this->viewComponent;
     }
 
-    /** @return Element[] */
-    public function getSlots(): array
+    /** @return ImmutableArray<array-key, Slot> */
+    public function getSlots(): ImmutableArray
     {
-        $slots = [];
+        $slots = arr();
+
+        $default = [];
 
         foreach ($this->getChildren() as $child) {
-            if (! ($child instanceof SlotElement)) {
-                continue;
-            }
+            if ($child instanceof SlotElement) {
+                $slot = Slot::fromElement($child);
 
-            $slots[] = $child;
+                $slots[$slot->name] = $slot;
+            } else {
+                $default[] = $child;
+            }
         }
+
+        $slots[Slot::DEFAULT] = Slot::fromElement(new CollectionElement($default));
 
         return $slots;
     }
 
-    public function getSlot(string $name = 'slot'): ?Element
-    {
-        foreach ($this->getChildren() as $child) {
-            if (! ($child instanceof SlotElement)) {
-                continue;
-            }
-
-            if ($child->matches($name)) {
-                return $child;
-            }
-        }
-
-        if ($name === 'slot') {
-            $elements = [];
-
-            foreach ($this->getChildren() as $child) {
-                if ($child instanceof SlotElement) {
-                    continue;
-                }
-
-                $elements[] = $child;
-            }
-
-            return new CollectionElement($elements);
-        }
-
-        return null;
-    }
-
     public function compile(): string
     {
-        /** @var Slot[] $slots */
-        $slots = arr($this->getSlots())
-            ->mapWithKeys(fn (SlotElement $element) => yield $element->name => Slot::fromElement($element))
-            ->toArray();
-
         $compiled = str($this->viewComponent->compile($this));
 
         $compiled = $compiled
@@ -135,6 +108,9 @@ final class ViewComponentElement implements Element
                 },
             );
 
+        // Add scoped variables
+        $slots = $this->getSlots()->toArray();
+
         $compiled = $compiled
             ->prepend(
                 // Add attributes to the current scope
@@ -155,38 +131,39 @@ final class ViewComponentElement implements Element
                 '<?php unset($attributes); ?>',
                 '<?php $attributes = $_previousAttributes ?? null; ?>',
                 '<?php unset($_previousAttributes); ?>',
-            )
-            // Compile slots
-            ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
-                replace: function ($matches) {
-                    $name = $matches['name'] ?: 'slot';
+            );
 
-                    $slot = $this->getSlot($name);
+        // Compile slots
+        $compiled = $compiled->replaceRegex(
+            regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
+            replace: function ($matches) use ($slots) {
+                $name = $matches['name'] ?: Slot::DEFAULT;
 
-                    $default = $matches['default'] ?? null;
+                $slot = $slots[$name] ?? null;
 
-                    if ($slot === null) {
-                        if ($default) {
-                            // There's no slot, but there's a default value in the view component
-                            return $default;
-                        }
+                $default = $matches['default'] ?? null;
 
-                        // A slot doesn't have any content, so we'll comment it out.
-                        // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
-                    }
-
-                    $compiled = $slot->compile();
-
-                    // There's no default slot content, but there's a default value in the view component
-                    if (trim($compiled) === '') {
+                if ($slot === null) {
+                    if ($default) {
+                        // There's no slot, but there's a default value in the view component
                         return $default;
                     }
 
-                    return $compiled;
-                },
-            );
+                    // A slot doesn't have any content, so we'll comment it out.
+                    // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
+                    return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
+                }
+
+                $compiled = $slot->content;
+
+                // There's no default slot content, but there's a default value in the view component
+                if (trim($compiled) === '') {
+                    return $default;
+                }
+
+                return $compiled;
+            },
+        );
 
         return $this->compiler->compile($compiled->toString());
     }

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\SlotElement;
 
 final class Slot
 {
+    public const string DEFAULT = 'default';
+
     public function __construct(
         public string $name,
         public array $attributes,
@@ -19,10 +22,10 @@ final class Slot
         return $this->attributes[$name] ?? null;
     }
 
-    public static function fromElement(SlotElement $element): self
+    public static function fromElement(SlotElement|CollectionElement $element): self
     {
         return new self(
-            name: $element->name,
+            name: $element->name ?? self::DEFAULT,
             attributes: $element->getAttributes(),
             content: $element->compile(),
         );
