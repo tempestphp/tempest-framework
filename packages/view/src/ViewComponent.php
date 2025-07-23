@@ -10,7 +10,5 @@ interface ViewComponent
 {
     public static function getName(): string;
 
-    public static function getParameters(): ViewComponentParameters;
-
     public function compile(ViewComponentElement $element): string;
 }
