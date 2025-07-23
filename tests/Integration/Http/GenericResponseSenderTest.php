@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use JsonSerializable;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Method;
@@ -116,6 +117,29 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new GenericResponse(
             status: Status::CREATED,
             body: ['key' => 'value'],
+        );
+
+        $responseSender = $this->container->get(GenericResponseSender::class);
+
+        $responseSender->send($response);
+
+        $output = ob_get_clean();
+
+        $this->assertSame('{"key":"value"}', $output);
+    }
+
+    public function test_sending_of_json_serializable_to_json(): void
+    {
+        ob_start();
+
+        $response = new GenericResponse(
+            status: Status::CREATED,
+            body: new class implements JsonSerializable {
+                public function jsonSerialize(): mixed
+                {
+                    return ['key' => 'value'];
+                }
+            },
         );
 
         $responseSender = $this->container->get(GenericResponseSender::class);
