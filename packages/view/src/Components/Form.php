@@ -6,10 +6,11 @@ namespace Tempest\View\Components;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class Form implements ViewComponent
+final readonly class Form implements ViewComponent, ViewComponentMetadata
 {
     public static function getName(): string
     {
@@ -27,6 +28,7 @@ final readonly class Form implements ViewComponent
                 name: 'method',
                 description: 'The HTTP method to use when submitting the form.',
                 default: 'post',
+                possibleValues: ['get', 'post'],
             ),
             new ViewComponentParameter(
                 name: 'enctype',
@@ -34,6 +36,26 @@ final readonly class Form implements ViewComponent
                 default: '',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A form component.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return true;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

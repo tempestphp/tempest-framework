@@ -8,10 +8,11 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\Rule;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class Input implements ViewComponent
+final readonly class Input implements ViewComponent, ViewComponentMetadata
 {
     public function __construct(
         private Session $session,
@@ -36,12 +37,57 @@ final readonly class Input implements ViewComponent
             new ViewComponentParameter(
                 name: 'type',
                 description: 'The type of the input field (e.g., text, email, password, textarea).',
+                possibleValues: [
+                    'button',
+                    'checkbox',
+                    'color',
+                    'date',
+                    'datetime-local',
+                    'email',
+                    'file',
+                    'hidden',
+                    'image',
+                    'month',
+                    'number',
+                    'password',
+                    'radio',
+                    'range',
+                    'reset',
+                    'search',
+                    'submit',
+                    'tel',
+                    'text',
+                    'time',
+                    'url',
+                    'week',
+                    'textarea', // Not an HTML input type, but allowed for textarea elements
+                ],
             ),
             new ViewComponentParameter(
                 name: 'default',
                 description: 'The default value for the input field.',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A generic input component for forms.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

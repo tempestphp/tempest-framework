@@ -10,13 +10,14 @@ use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 use Tempest\View\ViewConfig;
 
 use function Tempest\Support\arr;
 
-final class DynamicViewComponent implements ViewComponent
+final class DynamicViewComponent implements ViewComponent, ViewComponentMetadata
 {
     private Token $token;
 
@@ -46,6 +47,26 @@ final class DynamicViewComponent implements ViewComponent
                 description: 'An expression that resolves to the name of the component to render dynamically.',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A component that renders another component dynamically based on the "is" or ":is" attribute.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

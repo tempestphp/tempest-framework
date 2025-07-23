@@ -6,9 +6,10 @@ namespace Tempest\Http\Session;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class CsrfTokenComponent implements ViewComponent
+final readonly class CsrfTokenComponent implements ViewComponent, ViewComponentMetadata
 {
     public static function getName(): string
     {
@@ -18,6 +19,26 @@ final readonly class CsrfTokenComponent implements ViewComponent
     public static function getParameters(): ViewComponentParameters
     {
         return new ViewComponentParameters();
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A component that generates a CSRF token input field for forms.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

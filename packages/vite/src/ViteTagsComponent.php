@@ -6,10 +6,11 @@ namespace Tempest\Vite;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class ViteTagsComponent implements ViewComponent
+final readonly class ViteTagsComponent implements ViewComponent, ViewComponentMetadata
 {
     public function __construct(
         private ViteConfig $viteConfig,
@@ -32,6 +33,26 @@ final readonly class ViteTagsComponent implements ViewComponent
                 description: 'The entrypoint to use for the Vite tags.',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Generates Vite tags for the specified entrypoints.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

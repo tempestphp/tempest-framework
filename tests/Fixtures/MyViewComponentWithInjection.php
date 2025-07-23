@@ -6,9 +6,10 @@ namespace Tests\Tempest\Fixtures;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class MyViewComponentWithInjection implements ViewComponent
+final readonly class MyViewComponentWithInjection implements ViewComponent, ViewComponentMetadata
 {
     public static function getName(): string
     {
@@ -18,6 +19,26 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
     public static function getParameters(): ViewComponentParameters
     {
         return new ViewComponentParameters();
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A test component.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function __construct() {}

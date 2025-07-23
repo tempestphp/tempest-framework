@@ -6,10 +6,11 @@ namespace Tempest\View\Components;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class Submit implements ViewComponent
+final readonly class Submit implements ViewComponent, ViewComponentMetadata
 {
     public static function getName(): string
     {
@@ -25,6 +26,26 @@ final readonly class Submit implements ViewComponent
                 default: 'Submit',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'A submit button for forms.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string

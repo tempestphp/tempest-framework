@@ -11,10 +11,11 @@ use Tempest\Support\Html\HtmlString;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentMetadata;
 use Tempest\View\ViewComponentParameter;
 use Tempest\View\ViewComponentParameters;
 
-final readonly class Icon implements ViewComponent
+final readonly class Icon implements ViewComponent, ViewComponentMetadata
 {
     public function __construct(
         private AppConfig $appConfig,
@@ -39,6 +40,26 @@ final readonly class Icon implements ViewComponent
                 description: 'Optional CSS class(es) to apply to the icon.',
             ),
         );
+    }
+
+    public static function getDescription(): string
+    {
+        return 'Renders an icon using the Iconify API.';
+    }
+
+    public static function hasSlots(): bool
+    {
+        return false;
+    }
+
+    public static function getNamedSlots(): array
+    {
+        return [];
+    }
+
+    public static function getDeprecationMessage(): ?string
+    {
+        return null;
     }
 
     public function compile(ViewComponentElement $element): string
