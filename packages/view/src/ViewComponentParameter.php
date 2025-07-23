@@ -13,5 +13,6 @@ final readonly class ViewComponentParameter
         public bool $required = false,
         public ?string $description = null,
         public mixed $default = null,
+        public ?array $possibleValues = null,
     ) {}
 }
