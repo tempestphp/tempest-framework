@@ -10,6 +10,8 @@ use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameter;
+use Tempest\View\ViewComponentParameters;
 use Tempest\View\ViewConfig;
 
 use function Tempest\Support\arr;
@@ -28,6 +30,22 @@ final class DynamicViewComponent implements ViewComponent
     public static function getName(): string
     {
         return 'x-dynamic-component';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters(
+            new ViewComponentParameter(
+                name: 'is',
+                required: false,
+                description: 'The name of the component to render dynamically.',
+            ),
+            new ViewComponentParameter(
+                name: ':is',
+                required: false,
+                description: 'An expression that resolves to the name of the component to render dynamically.',
+            ),
+        );
     }
 
     public function compile(ViewComponentElement $element): string

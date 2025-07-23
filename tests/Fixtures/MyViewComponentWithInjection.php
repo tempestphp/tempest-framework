@@ -6,12 +6,18 @@ namespace Tests\Tempest\Fixtures;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameters;
 
 final readonly class MyViewComponentWithInjection implements ViewComponent
 {
     public static function getName(): string
     {
         return 'x-with-injection';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters();
     }
 
     public function __construct() {}

@@ -8,6 +8,8 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\Rule;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameter;
+use Tempest\View\ViewComponentParameters;
 
 final readonly class Input implements ViewComponent
 {
@@ -18,6 +20,28 @@ final readonly class Input implements ViewComponent
     public static function getName(): string
     {
         return 'x-input';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters(
+            new ViewComponentParameter(
+                name: 'name',
+                description: 'The name of the input field.',
+            ),
+            new ViewComponentParameter(
+                name: 'label',
+                description: 'The label for the input field.',
+            ),
+            new ViewComponentParameter(
+                name: 'type',
+                description: 'The type of the input field (e.g., text, email, password, textarea).',
+            ),
+            new ViewComponentParameter(
+                name: 'default',
+                description: 'The default value for the input field.',
+            ),
+        );
     }
 
     public function compile(ViewComponentElement $element): string

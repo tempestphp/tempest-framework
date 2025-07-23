@@ -11,6 +11,8 @@ use Tempest\Support\Html\HtmlString;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameter;
+use Tempest\View\ViewComponentParameters;
 
 final readonly class Icon implements ViewComponent
 {
@@ -22,6 +24,21 @@ final readonly class Icon implements ViewComponent
     public static function getName(): string
     {
         return 'x-icon';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters(
+            new ViewComponentParameter(
+                name: 'name',
+                required: true,
+                description: 'The name of the icon to render.',
+            ),
+            new ViewComponentParameter(
+                name: 'class',
+                description: 'Optional CSS class(es) to apply to the icon.',
+            ),
+        );
     }
 
     public function compile(ViewComponentElement $element): string

@@ -6,12 +6,18 @@ namespace Tempest\Http\Session;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameters;
 
 final readonly class CsrfTokenComponent implements ViewComponent
 {
     public static function getName(): string
     {
         return 'x-csrf-token';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters();
     }
 
     public function compile(ViewComponentElement $element): string

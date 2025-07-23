@@ -6,12 +6,34 @@ namespace Tempest\View\Components;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewComponentParameter;
+use Tempest\View\ViewComponentParameters;
 
 final readonly class Form implements ViewComponent
 {
     public static function getName(): string
     {
         return 'x-form';
+    }
+
+    public static function getParameters(): ViewComponentParameters
+    {
+        return new ViewComponentParameters(
+            new ViewComponentParameter(
+                name: 'action',
+                description: 'The URL to which the form will be submitted.',
+            ),
+            new ViewComponentParameter(
+                name: 'method',
+                description: 'The HTTP method to use when submitting the form.',
+                default: 'post',
+            ),
+            new ViewComponentParameter(
+                name: 'enctype',
+                description: 'The encoding type for the form data.',
+                default: '',
+            ),
+        );
     }
 
     public function compile(ViewComponentElement $element): string
