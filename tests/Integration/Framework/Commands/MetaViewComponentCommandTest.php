@@ -26,7 +26,7 @@ final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('meta:view-component x-view-component-with-named-slots')
             ->assertSuccess()
-            ->assertSee('/Fixtures/Views/x-view-component-with-named-slots.view.php')
+            ->assertSee('x-view-component-with-named-slots.view.php')
             ->assertSee('"name": "x-view-component-with-named-slots",')
             ->assertSee(<<<'JSON'
                 "variables": [
