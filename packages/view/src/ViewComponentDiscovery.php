@@ -84,6 +84,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
         $this->discoveryItems->add($location, [
             $name,
             new AnonymousViewComponent(
+                name: $name,
                 contents: $header . $view,
                 file: $path,
             ),
@@ -99,6 +100,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
         $this->discoveryItems->add($location, [
             $fileName->toString(),
             new AnonymousViewComponent(
+                name: $fileName->toString(),
                 contents: $contents->toString(),
                 file: $path,
             ),
