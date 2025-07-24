@@ -24,7 +24,7 @@ final class MetaViewComponentCommand
         private readonly ViewConfig $viewConfig,
     ) {}
 
-    #[ConsoleCommand(name: 'meta:view-component')]
+    #[ConsoleCommand(name: 'meta:view-component', hidden: true)]
     public function __invoke(
         #[ConsoleArgument(description: "The view component's name or the path to a view component file")]
         ?string $viewComponent = null,
