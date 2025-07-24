@@ -5,7 +5,7 @@ namespace Tempest\Support\Tests\Paginator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\Paginator\Exceptions\InvalidArgumentException;
+use Tempest\Support\Paginator\Exceptions\ArgumentWasInvalid;
 use Tempest\Support\Paginator\PaginatedData;
 use Tempest\Support\Paginator\Paginator;
 
@@ -116,7 +116,7 @@ final class PaginatorTest extends TestCase
 
         $this->assertSame(5, $paginator->currentPage); // Should be capped at max page
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ArgumentWasInvalid::class);
         $this->createPaginator(currentPage: 0);
     }
 

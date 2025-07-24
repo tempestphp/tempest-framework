@@ -2,7 +2,7 @@
 
 namespace Tempest\Support\Paginator;
 
-use Tempest\Support\Paginator\Exceptions\InvalidArgumentException;
+use Tempest\Support\Paginator\Exceptions\ArgumentWasInvalid;
 
 final class Paginator
 {
@@ -13,19 +13,19 @@ final class Paginator
         private(set) int $maxLinks = 10,
     ) {
         if ($this->totalItems < 0) {
-            throw new InvalidArgumentException('Total items cannot be negative');
+            throw new ArgumentWasInvalid('Total items cannot be negative');
         }
 
         if ($this->itemsPerPage <= 0) {
-            throw new InvalidArgumentException('Items per page must be positive');
+            throw new ArgumentWasInvalid('Items per page must be positive');
         }
 
         if ($this->currentPage <= 0) {
-            throw new InvalidArgumentException('Current page must be positive');
+            throw new ArgumentWasInvalid('Current page must be positive');
         }
 
         if ($this->maxLinks <= 0) {
-            throw new InvalidArgumentException('Max links must be positive');
+            throw new ArgumentWasInvalid('Max links must be positive');
         }
 
         $this->currentPage = min(max(1, $this->currentPage), $this->totalPages);
