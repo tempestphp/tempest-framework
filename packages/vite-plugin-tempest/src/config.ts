@@ -15,7 +15,7 @@ export async function loadTempestConfiguration(): Promise<TempestViteConfigurati
 
 			return JSON.parse(fileContent)
 		} catch (e) {
-			console.error(`[vite-plugin-tempest] Error: Failed to read or parse the file at [${path}].`)
+			console.error(`[vite-plugin-tempest] Failed to read or parse the file at [${path}].`)
 
 			throw e
 		}
