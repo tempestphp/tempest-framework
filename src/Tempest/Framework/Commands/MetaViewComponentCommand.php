@@ -105,6 +105,7 @@ final class MetaViewComponentCommand
             ->matchAll('/^\s*\*\s*@var.*$/m')
             ->map(fn (array $matches) => str($matches[0]))
             ->map(fn (ImmutableString $line) => $line->replaceRegex('/^\s*\*\s*@var\s*/', ''))
+            ->map(fn (ImmutableString $line) => $line->trim())
             ->map(fn (ImmutableString $line) => $line->explode(limit: 3))
             ->mapWithKeys(
                 fn (ImmutableArray $parts) => yield $parts[1] => [

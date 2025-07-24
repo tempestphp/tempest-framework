@@ -4,7 +4,7 @@ namespace Integration\Framework\Commands;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-final class ViewViewComponentCommandTest extends FrameworkIntegrationTestCase
+final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_show_meta_for_all_components(): void
     {
