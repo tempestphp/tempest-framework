@@ -108,7 +108,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function registerViewComponent(string $name, string $html): void
     {
-        $viewComponent = new AnonymousViewComponent($html, '');
+        $viewComponent = new AnonymousViewComponent($name, $html, '');
 
         $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
     }
