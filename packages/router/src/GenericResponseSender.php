@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Generator;
+use JsonSerializable;
 use Tempest\Container\Container;
 use Tempest\Http\ContentType;
 use Tempest\Http\Header;
@@ -96,7 +97,7 @@ final readonly class GenericResponseSender implements ResponseSender
 
         if ($response instanceof File || $response instanceof Download) {
             readfile($body);
-        } elseif (is_array($body)) {
+        } elseif (is_array($body) || $body instanceof JsonSerializable) {
             echo json_encode($body);
         } elseif ($body instanceof View) {
             echo $this->viewRenderer->render($body);

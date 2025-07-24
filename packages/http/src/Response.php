@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
+use JsonSerializable;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\View\View;
 
@@ -19,7 +20,7 @@ interface Response
         get;
     }
 
-    public View|string|array|Generator|null $body {
+    public View|string|array|Generator|JsonSerializable|null $body {
         get;
     }
 
