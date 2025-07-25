@@ -8,6 +8,7 @@
  */
 
 use Tempest\Http\Session\Session;
+
 use function Tempest\get;
 use function Tempest\Support\str;
 
@@ -39,4 +40,3 @@ $original = $session->getOriginalValueFor($name, $default);
         </div>
     </div>
 </div>
-

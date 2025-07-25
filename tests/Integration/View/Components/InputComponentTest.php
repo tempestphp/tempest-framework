@@ -88,7 +88,7 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
             ],
             'other' => [
                 new IsInteger(),
-            ]
+            ],
         ];
 
         $this->get(Session::class)->set(Session::VALIDATION_ERRORS, $failingRules);

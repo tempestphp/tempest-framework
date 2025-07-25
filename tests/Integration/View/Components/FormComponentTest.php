@@ -29,7 +29,7 @@ final class FormComponentTest extends FrameworkIntegrationTestCase
 
     public function test_form_with_enum_method(): void
     {
-        $html = $this->render('<x-form :method="\Tempest\Http\Method::GET" />');
+        $html = $this->render('<x-form :method="' . \Tempest\Http\Method::class . '::GET" />');
 
         $this->assertSnippetsMatch('<form method="GET"></form>', $html);
     }
