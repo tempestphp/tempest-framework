@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\View\Elements\CollectionElement;
-use Tempest\View\Elements\SlotElement;
+use Tempest\View\Parser\Token;
 
 final class Slot
 {
@@ -22,12 +21,33 @@ final class Slot
         return $this->attributes[$name] ?? null;
     }
 
-    public static function fromElement(SlotElement|CollectionElement $element): self
+    public static function named(Token $token): self
     {
+        $name = $token->getAttribute('name');
+        $attributes = $token->htmlAttributes;
+        $content = $token->compileChildren();
+
         return new self(
-            name: $element->name ?? self::DEFAULT,
-            attributes: $element->getAttributes(),
-            content: $element->compile(),
+            name: $name,
+            attributes: $attributes,
+            content: $content,
+        );
+    }
+
+    public static function default(Token ...$tokens): self
+    {
+        $name = Slot::DEFAULT;
+        $attributes = [];
+        $content = '';
+
+        foreach ($tokens as $token) {
+            $content .= $token->compile();
+        }
+
+        return new self(
+            name: $name,
+            attributes: $attributes,
+            content: $content,
         );
     }
 

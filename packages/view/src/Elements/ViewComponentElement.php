@@ -11,19 +11,22 @@ use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
+use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
+use Tempest\View\WithToken;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ViewComponentElement implements Element
+final class ViewComponentElement implements Element, WithToken
 {
     use IsElement;
 
     private array $dataAttributes;
 
     public function __construct(
+        public readonly Token $token,
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
@@ -47,19 +50,19 @@ final class ViewComponentElement implements Element
     {
         $slots = arr();
 
-        $default = [];
+        $defaultTokens = [];
 
-        foreach ($this->getChildren() as $child) {
-            if ($child instanceof SlotElement) {
-                $slot = Slot::fromElement($child);
+        foreach ($this->token->children as $child) {
+            if ($child->tag === 'x-slot') {
+                $slot = Slot::named($child);
 
                 $slots[$slot->name] = $slot;
             } else {
-                $default[] = $child;
+                $defaultTokens[] = $child;
             }
         }
 
-        $slots[Slot::DEFAULT] = Slot::fromElement(new CollectionElement($default));
+        $slots[Slot::DEFAULT] = Slot::default(...$defaultTokens);
 
         return $slots;
     }
@@ -154,7 +157,9 @@ final class ViewComponentElement implements Element
                     return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
                 }
 
-                $compiled = $slot->content;
+                $slotElement = $this->getSlotElement($slot->name);
+
+                $compiled = $slotElement?->compile() ?? '';
 
                 // There's no default slot content, but there's a default value in the view component
                 if (trim($compiled) === '') {
@@ -166,5 +171,26 @@ final class ViewComponentElement implements Element
         );
 
         return $this->compiler->compile($compiled->toString());
+    }
+
+    private function getSlotElement(string $name): SlotElement|CollectionElement|null
+    {
+        $defaultElements = [];
+
+        foreach ($this->getChildren() as $childElement) {
+            if ($childElement instanceof SlotElement && $childElement->name === $name) {
+                return $childElement;
+            }
+
+            if (! ($childElement instanceof SlotElement)) {
+                $defaultElements[] = $childElement;
+            }
+        }
+
+        if ($name === Slot::DEFAULT) {
+            return new CollectionElement($defaultElements);
+        }
+
+        return null;
     }
 }
