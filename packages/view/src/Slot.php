@@ -4,17 +4,45 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr\ImmutableArray;
+use Tempest\View\Export\ExportableViewObject;
 use Tempest\View\Parser\Token;
 
-final class Slot
+final class Slot implements ExportableViewObject
 {
     public const string DEFAULT = 'default';
 
     public function __construct(
         public string $name,
         public array $attributes,
-        public string $content,
-    ) {}
+        string $content,
+    ) {
+        $this->content = base64_encode($content);
+    }
+
+    public string $content {
+        get => base64_decode($this->content);
+    }
+
+    public ImmutableArray $exportData {
+        get => new ImmutableArray([
+            'name' => $this->name,
+            'attributes' => $this->attributes,
+            'content' => base64_encode($this->content),
+        ]);
+    }
+
+    public static function restore(mixed ...$data): ExportableViewObject
+    {
+        $self = new ClassReflector(self::class)->newInstanceWithoutConstructor();
+
+        $self->name = $data['name'];
+        $self->attributes = $data['attributes'];
+        $self->content = $data['content'];
+
+        return $self;
+    }
 
     public function __get(string $name): mixed
     {
@@ -49,10 +77,5 @@ final class Slot
             attributes: $attributes,
             content: $content,
         );
-    }
-
-    public static function __set_state(array $array): object
-    {
-        return new self(...$array);
     }
 }

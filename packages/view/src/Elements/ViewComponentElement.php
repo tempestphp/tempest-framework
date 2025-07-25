@@ -9,6 +9,7 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
+use Tempest\View\Export\ViewObjectExporter;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
@@ -112,7 +113,7 @@ final class ViewComponentElement implements Element, WithToken
             );
 
         // Add scoped variables
-        $slots = $this->getSlots()->toArray();
+        $slots = $this->getSlots();
 
         $compiled = $compiled
             ->prepend(
@@ -122,7 +123,7 @@ final class ViewComponentElement implements Element, WithToken
 
                 // Add dynamic slots to the current scope
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = \Tempest\Support\arr(%s); ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
+                sprintf('<?php $slots = %s; ?>', ViewObjectExporter::export($slots)),
             )
             ->append(
                 // Restore previous slots
