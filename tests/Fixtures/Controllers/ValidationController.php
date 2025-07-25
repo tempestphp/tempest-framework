@@ -12,6 +12,7 @@ use Tempest\Router\Get;
 use Tempest\Router\Post;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Requests\BookRequest;
+use Tests\Tempest\Fixtures\Requests\ValidationRequest;
 
 use function Tempest\uri;
 
@@ -24,7 +25,7 @@ final readonly class ValidationController
     }
 
     #[Post('/test-validation-responses')]
-    public function store(RequestForValidationController $request): Response // @mago-expect best-practices/no-unused-parameter
+    public function store(ValidationRequest $request): Response // @mago-expect best-practices/no-unused-parameter
     {
         return new Redirect(uri([self::class, 'get']));
     }
