@@ -181,6 +181,36 @@ final class TestResponseHelperTest extends TestCase
         $helper->assertStatus($expectedStatus);
     }
 
+    public function test_assert_json_has_keys(): void
+    {
+        $helper = new TestResponseHelper(
+            new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+        );
+
+        $helper->assertJsonHasKeys('title', 'author.name');
+    }
+
+    public function test_assert_json_contains(): void
+    {
+        $helper = new TestResponseHelper(
+            new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+        );
+
+        $helper->assertJsonContains(['title' => 'Timeline Taxi']);
+        $helper->assertJsonContains(['author' => ['name' => 'John']]);
+        $helper->assertJsonContains(['author.name' => 'John']);
+    }
+
+    public function test_assert_json(): void
+    {
+        $helper = new TestResponseHelper(
+            new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+        );
+
+        $helper->assertJson(['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]);
+        $helper->assertJson(['title' => 'Timeline Taxi', 'author.name' => 'John']);
+    }
+
     public static function provide_assert_status_cases(): iterable
     {
         return [

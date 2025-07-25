@@ -9,6 +9,7 @@ use Generator;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
+use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Validation\Rule;
@@ -329,9 +330,152 @@ final class TestResponseHelper
         return $this;
     }
 
+    /**
+     * Assert the response body is an exact match to the given array.
+     *
+     * The keys can also be specified using dot notation.
+     *
+     * ### Example
+     * ```
+     * // build the expected array with dot notation
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJson([
+     *          'id' => 1,
+     *          'title' => 'Timeline Taxi',
+     *          'author.name' => 'Brent',
+     *      ]);
+     *
+     * // build the expected array with a normal array
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJson([
+     *          'id' => 1,
+     *          'title' => 'Timeline Taxi',
+     *          'author' => [
+     *              'name' => 'Brent',
+     *          ],
+     *      ]);
+     * ```
+     *
+     * @param array<string, mixed> $expected
+     */
+    public function assertJson(array $expected): self
+    {
+        Assert::assertEquals(
+            expected: arr($expected)->undot()->toArray(),
+            actual: $this->response->body,
+        );
+
+        return $this;
+    }
+
+    /**
+     * Asserts the response contains the given keys.
+     *
+     * The keys can also be specified using dot notation.
+     *
+     * ### Example
+     * ```
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJsonHasKeys('id', 'title', 'author.name');
+     * ```
+     */
+    public function assertJsonHasKeys(string ...$keys): self
+    {
+        foreach ($keys as $key) {
+            Assert::assertArrayHasKey($key, arr($this->response->body)->dot());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts the response contains the given keys and values.
+     *
+     * The keys can also be specified using dot notation.
+     *
+     * ### Example
+     * ```
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJsonContains([
+     *          'id' => 1,
+     *          'title' => 'Timeline Taxi',
+     *      ])
+     *     ->assertJsonContains(['author' => ['name' => 'Brent']])
+     *     ->assertJsonContains(['author.name' => 'Brent']);
+     * ```
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey, TValue> $expected
+     */
+    public function assertJsonContains(array $expected): self
+    {
+        foreach (arr($expected)->undot() as $key => $value) {
+            Assert::assertEquals($this->response->body[$key], $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts the response contains the given JSON validation errors.
+     *
+     * The keys can also be specified using dot notation.
+     *
+     * ### Example
+     * ```
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJsonValidationErrors([
+     *          'title' => 'The title field is required.',
+     *      ]);
+     * ```
+     *
+     * @param array<string, string|string[]> $expectedErrors
+     */
+    public function assertHasJsonValidationErrors(array $expectedErrors): self
+    {
+        Assert::assertInstanceOf(Invalid::class, $this->response);
+        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
+        Assert::assertNotNull($this->response->getHeader('x-validation'));
+
+        $session = get(Session::class);
+        $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
+
+        $dottedExpectedErrors = arr($expectedErrors)->dot();
+        arr($dottedExpectedErrors)
+            ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
+                $expectedErrorValue,
+                $validationRules->get($expectedErrorKey)->message(),
+            ));
+
+        return $this;
+    }
+
+    /**
+     * Asserts the response does not contain any JSON validation errors.
+     *
+     * ### Example
+     * ```
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertHasNoJsonValidationErrors();
+     * ```
+     */
+    public function assertHasNoJsonValidationErrors(): self
+    {
+        Assert::assertNotContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
+        Assert::assertNotInstanceOf(Invalid::class, $this->response);
+        Assert::assertNull($this->response->getHeader('x-validation'));
+
+        return $this;
+    }
+
     public function dd(): void
     {
-        // @phpstan-ignore disallowed.function
+        /**
+         * @noinspection ForgottenDebugOutputInspection
+         * @phpstan-ignore disallowed.function
+         */
         dd($this->response); // @mago-expect best-practices/no-debug-symbols
     }
 }
