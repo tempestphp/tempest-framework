@@ -83,6 +83,17 @@ final class Session
         return $value;
     }
 
+    /** @return \Tempest\Validation\Rule[] */
+    public function getErrorsFor(string $name): array
+    {
+        return $this->get(self::VALIDATION_ERRORS)[$name] ?? [];
+    }
+
+    public function getOriginalValueFor(string $name, mixed $default = ''): mixed
+    {
+        return $this->get(self::ORIGINAL_VALUES)[$name] ?? $default;
+    }
+
     public function getPreviousUrl(): string
     {
         return $this->get(self::PREVIOUS_URL, default: '');

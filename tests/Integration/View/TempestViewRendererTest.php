@@ -78,6 +78,28 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Hello</div>',
+            $html,
+        );
+    }
+
+    public function test_else_with_other_expression_attributes(): void
+    {
+        $this->markTestSkipped('Not supported yet');
+
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div><div :else :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
+        );
+    }
+
     public function test_elseif_attribute(): void
     {
         $this->assertSame(
