@@ -31,8 +31,9 @@ final class ModelInspector
 
     private(set) object|string $instance;
 
-    public function __construct(object|string $model)
-    {
+    public function __construct(
+        private(set) object|string $model,
+    ) {
         if ($model instanceof HasMany) {
             $model = $model->property->getIterableType()->asClass();
             $this->reflector = $model;

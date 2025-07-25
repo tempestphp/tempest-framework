@@ -9,6 +9,9 @@ use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 
+/**
+ * Adds the `Set-Cookie` headers to the response based on the cookie manager.
+ */
 #[Priority(Priority::FRAMEWORK)]
 final readonly class SetCookieMiddleware implements HttpMiddleware
 {

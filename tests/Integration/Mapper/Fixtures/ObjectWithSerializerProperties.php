@@ -41,6 +41,10 @@ final class ObjectWithSerializerProperties
 
     public DateTime $dateTimeProp;
 
+    public UnitEnumToSerialize $unitEnum;
+
+    public BackedEnumToSerialize $backedEnum;
+
     public function __construct()
     {
         $this->stringableProp = \Tempest\Support\str('a');
@@ -51,5 +55,7 @@ final class ObjectWithSerializerProperties
         $this->nativeDateTimeProp = new NativeDateTime('2025-01-01');
         $this->nativeDateTimeInterfaceProp = new NativeDateTimeImmutable('2025-01-01');
         $this->dateTimeProp = DateTime::parse('2025-01-01');
+        $this->unitEnum = UnitEnumToSerialize::BAR;
+        $this->backedEnum = BackedEnumToSerialize::FOO;
     }
 }

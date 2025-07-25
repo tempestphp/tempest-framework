@@ -21,8 +21,16 @@ use const JSON_UNESCAPED_UNICODE;
  *
  * @throws Exception\JsonCouldNotBeDecoded If an error occurred.
  */
-function decode(string $json, bool $associative = true): mixed
+function decode(string $json, bool $associative = true, bool $base64 = false): mixed
 {
+    if ($base64) {
+        $json = base64_decode($json, strict: true);
+
+        if ($json === false) {
+            throw new Exception\JsonCouldNotBeDecoded('The provided base64 string is not valid.');
+        }
+    }
+
     try {
         /** @var mixed $value */
         $value = json_decode($json, $associative, 512, JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
@@ -40,7 +48,7 @@ function decode(string $json, bool $associative = true): mixed
  *
  * @return non-empty-string
  */
-function encode(mixed $value, bool $pretty = false, int $flags = 0): string
+function encode(mixed $value, bool $pretty = false, int $flags = 0, bool $base64 = false): string
 {
     $flags |= JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR;
 
@@ -53,6 +61,10 @@ function encode(mixed $value, bool $pretty = false, int $flags = 0): string
         $json = json_encode($value, $flags);
     } catch (JsonException $jsonException) {
         throw new Exception\JsonCouldNotBeEncoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
+    }
+
+    if ($base64) {
+        return base64_encode($json);
     }
 
     return $json;

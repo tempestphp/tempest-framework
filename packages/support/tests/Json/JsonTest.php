@@ -121,4 +121,28 @@ final class JsonTest extends TestCase
         $this->assertFalse(Json\is_valid(['foo' => 'bar']));
         $this->assertFalse(Json\is_valid(1));
     }
+
+    public function test_base64_encode_and_decode(): void
+    {
+        $data = [
+            'name' => 'azjezz/psl',
+            'type' => 'library',
+            'description' => 'PHP Standard Library.',
+            'keywords' => ['php', 'std', 'stdlib', 'utility', 'psl'],
+            'license' => 'MIT',
+        ];
+
+        $encoded = Json\encode($data, base64: true);
+        $decoded = Json\decode($encoded, base64: true);
+
+        $this->assertSame($data, $decoded);
+    }
+
+    public function test_base64_decode_failure(): void
+    {
+        $this->expectException(Json\Exception\JsonCouldNotBeDecoded::class);
+        $this->expectExceptionMessage('The provided base64 string is not valid.');
+
+        Json\decode('invalid_base64', base64: true);
+    }
 }

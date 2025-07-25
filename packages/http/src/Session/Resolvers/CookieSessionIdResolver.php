@@ -10,6 +10,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Cookie\SameSite;
+use Tempest\Http\Request;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionIdResolver;
@@ -20,6 +21,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 {
     public function __construct(
         private AppConfig $appConfig,
+        private Request $request,
         private CookieManager $cookies,
         private SessionConfig $sessionConfig,
         private Clock $clock,
@@ -32,7 +34,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
             ->append('_session_id')
             ->toString();
 
-        $id = $this->cookies->get($sessionKey)->value ?? null;
+        $id = $this->request->getCookie($sessionKey)?->value;
 
         if (! $id) {
             $id = (string) Uuid::v4();

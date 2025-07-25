@@ -17,8 +17,6 @@ final class FileSessionConfig implements SessionConfig
         public string $path,
 
         public Duration $expiration,
-
-        public string $sessionIdResolver = CookieSessionIdResolver::class,
     ) {}
 
     public function createManager(Container $container): FileSessionManager

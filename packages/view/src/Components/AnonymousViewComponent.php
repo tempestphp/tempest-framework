@@ -10,6 +10,7 @@ use Tempest\View\ViewComponent;
 final readonly class AnonymousViewComponent implements ViewComponent
 {
     public function __construct(
+        public string $name,
         public string $contents,
         public string $file,
     ) {}

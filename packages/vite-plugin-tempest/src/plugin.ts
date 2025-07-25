@@ -62,6 +62,11 @@ export default function tempest(): Plugin {
 							/^https?:\/\/.*\.test(:\d+)?$/,
 						].filter(Boolean),
 					},
+					watch: {
+						ignored: userConfig.server?.watch?.ignored ?? [
+							'**/.tempest/**',
+						],
+					},
 					...(serverConfig
 						? {
 							host: userConfig.server?.host ?? serverConfig.host,
@@ -113,10 +118,15 @@ export default function tempest(): Plugin {
 						? userConfig.server.origin as DevelopmentServerUrl
 						: resolveDevServerUrl(address, server.config)
 
+					const needsReactRefresh = server.config.plugins.some((plugin) =>
+						['vite:react-refresh', 'vite:react-oxc:refresh-runtime'].includes(plugin.name)
+					)
+
 					fs.writeFileSync(
 						bridgeFilePath,
 						JSON.stringify({
 							url: `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`,
+							needsReactRefresh,
 						}),
 					)
 

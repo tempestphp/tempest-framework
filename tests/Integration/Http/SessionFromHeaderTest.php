@@ -23,7 +23,6 @@ final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
         $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
             expiration: Duration::hours(2),
-            sessionIdResolver: HeaderSessionIdResolver::class,
         ));
 
         $this->setSessionId('session_a');

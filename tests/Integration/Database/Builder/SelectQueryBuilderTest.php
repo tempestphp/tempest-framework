@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -17,6 +15,7 @@ use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -439,6 +438,52 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         SQL;
 
         $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_paginate(): void
+    {
+        $this->seed();
+
+        $page1 = query(Chapter::class)
+            ->select()
+            ->paginate(itemsPerPage: 2);
+
+        $this->assertSame(1, $page1->currentPage);
+        $this->assertSame(7, $page1->totalPages);
+        $this->assertSame(13, $page1->totalItems);
+        $this->assertSame(2, $page1->itemsPerPage);
+        $this->assertSame(0, $page1->offset);
+        $this->assertSame(2, $page1->limit);
+        $this->assertSame(2, $page1->nextPage);
+        $this->assertSame(null, $page1->previousPage);
+        $this->assertSame(true, $page1->hasNext);
+        $this->assertSame(false, $page1->hasPrevious);
+
+        $this->assertSame('LOTR 1.1', $page1->data[0]->title);
+        $this->assertSame('LOTR 1.2', $page1->data[1]->title);
+
+        $page3 = query(Chapter::class)
+            ->select()
+            ->paginate(itemsPerPage: 2, currentPage: 3);
+
+        $this->assertSame(3, $page3->currentPage);
+        $this->assertSame('LOTR 2.2', $page3->data[0]->title);
+        $this->assertSame('LOTR 2.3', $page3->data[1]->title);
+
+        $page7 = query(Chapter::class)
+            ->select()
+            ->paginate(itemsPerPage: 2, currentPage: 7);
+
+        $this->assertSame(7, $page7->currentPage);
+        $this->assertSame('Timeline Taxi Chapter 4', $page7->data[0]->title);
+
+        // capped to last page, so this will be page 7
+        $page10 = query(Chapter::class)
+            ->select()
+            ->paginate(itemsPerPage: 2, currentPage: 10);
+
+        $this->assertSame(7, $page10->currentPage);
+        $this->assertSame('Timeline Taxi Chapter 4', $page10->data[0]->title);
     }
 
     private function seed(): void

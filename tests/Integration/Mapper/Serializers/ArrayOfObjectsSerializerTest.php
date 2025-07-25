@@ -32,6 +32,8 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
                     'nativeDateTimeProp' => '2025-01-01 00:00:00',
                     'nativeDateTimeInterfaceProp' => '2025-01-01 00:00:00',
                     'dateTimeProp' => '2025-01-01 00:00:00',
+                    'unitEnum' => 'BAR',
+                    'backedEnum' => 'foo',
                 ],
             ],
             new ArrayOfObjectsSerializer()->serialize([new ObjectWithSerializerProperties()]),

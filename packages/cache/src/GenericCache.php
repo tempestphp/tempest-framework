@@ -6,24 +6,22 @@ use Closure;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Stringable;
-use Tempest\Cache\Config\CacheConfig;
 use Tempest\Core\DeferredTasks;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\Support\Arr;
 use Tempest\Support\Random;
+use UnitEnum;
 
 final class GenericCache implements Cache
 {
     public function __construct(
-        private(set) CacheConfig $cacheConfig,
+        private(set) CacheItemPoolInterface $adapter,
         public bool $enabled = true,
-        private ?CacheItemPoolInterface $adapter = null,
         private ?DeferredTasks $deferredTasks = null,
-    ) {
-        $this->adapter ??= $this->cacheConfig->createAdapter();
-    }
+        public null|UnitEnum|string $tag = null,
+    ) {}
 
     public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock
     {
