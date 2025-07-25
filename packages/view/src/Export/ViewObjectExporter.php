@@ -12,7 +12,11 @@ final class ViewObjectExporter
             return sprintf(
                 'new \%s([%s])',
                 ImmutableArray::class,
-                $object->map(fn (mixed $value) => rtrim(self::export($value), ';'))->implode(', '),
+                $object->map(function (mixed $value, string|int $key) {
+                    $key = is_int($key) ? $key : "'{$key}'";
+
+                    return $key . ' => ' . rtrim(self::export($value), ';');
+                })->implode(', '),
             );
         }
 

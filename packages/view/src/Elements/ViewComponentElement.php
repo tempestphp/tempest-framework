@@ -123,7 +123,7 @@ final class ViewComponentElement implements Element, WithToken
 
                 // Add dynamic slots to the current scope
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = %s; ?>', ViewObjectExporter::export($slots)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
+                sprintf('<?php $slots = %s; ?>', ViewObjectExporter::export($slots)),
             )
             ->append(
                 // Restore previous slots
