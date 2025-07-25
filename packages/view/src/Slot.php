@@ -22,7 +22,7 @@ final class Slot implements ExportableViewObject
     }
 
     public string $content {
-        get => base64_decode($this->content);
+        get => base64_decode($this->content, true);
     }
 
     public ImmutableArray $exportData {
