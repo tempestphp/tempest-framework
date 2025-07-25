@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\uri;
@@ -42,5 +48,77 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data) use ($values): void {
                 $this->assertEquals($values, $data);
             });
+    }
+
+    public function test_assert_json_by_keys_assertion(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::create(name: 'Homer');
+        Book::create(title: 'The Odyssee', author: $author);
+
+        $this->http
+            ->get(uri([ValidationController::class, 'book'], book: 1))
+            ->assertHasNoJsonValidationErrors()
+            ->assertJson(['id' => 1, 'title' => 'The Odyssee', 'author' => ['id' => 1, 'name' => 'Homer']])
+            ->assertJsonByKeys(['id' => 1, 'title' => 'The Odyssee'], ['id', 'title'])
+            ->assertJsonByKeys(['author' => ['name' => 'Homer']], ['author.name']);
+    }
+
+    public function test_update_book(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $book = Book::create(
+            title: 'The Odyssee',
+            author: Author::create(name: 'Homer'),
+        );
+
+        $this->http
+            ->post(
+                uri([ValidationController::class, 'updateBook'], book: 1),
+                body: ['title' => 'Beyond the Odyssee'],
+            )
+            ->assertOk();
+
+        $book->refresh();
+
+        $this->assertSame($book->title, 'Beyond the Odyssee');
+    }
+
+    public function test_failing_post_request(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::create(
+            title: 'The Odyssee',
+            author: Author::create(name: 'Homer'),
+        );
+
+        $this->http
+            ->post(
+                uri([ValidationController::class, 'updateBook'], book: 1),
+                body: ['book' => ['title' => 1]],
+            )
+            ->assertHasJsonValidationError('title', function (array $errors): void {
+                $this->assertContains('Value should be between 1 and 120', $errors);
+            });
+
+        $this->assertSame('The Odyssee', Book::find(id: 1)->first()->title);
     }
 }

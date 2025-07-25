@@ -6,9 +6,11 @@ namespace Tempest\Framework\Testing\Http;
 
 use Closure;
 use Generator;
+use JsonException;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
+use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Validation\Rule;
@@ -219,9 +221,77 @@ final class TestResponseHelper
         return $this;
     }
 
+    public function assertJson(array $expected): self
+    {
+        Assert::assertNotNull($this->response->body);
+        Assert::assertEquals($expected, $this->response->body);
+
+        return $this;
+    }
+
+    public function assertJsonByKeys(array $expected, array $keys): self
+    {
+        $filteredBody = array_reduce(
+            [$expected],
+            function ($carry) use ($keys) {
+                foreach ($keys as $key) {
+                    if (isset($this->response->body[$key])) {
+                        $carry[$key] = $this->response->body[$key];
+                    }
+
+                    if (str_contains($key, '.') && substr_count($key, '.') === 1) {
+                        [$relation, $relatedKey] = explode('.', $key);
+                        $carry[$relation][$relatedKey] = $this->body[$relation][$relatedKey];
+                    }
+                }
+
+                return $carry;
+            },
+            [],
+        );
+
+        Assert::assertNotEmpty($filteredBody);
+        Assert::assertEquals($expected, $filteredBody);
+
+        return $this;
+    }
+
+    public function assertHasJsonValidationError(string $key, ?Closure $test = null): self
+    {
+        Assert::assertInstanceOf(Invalid::class, $this->response);
+
+        $validationErrors = array_map(function ($failingRules) use ($key) {
+            try {
+                $errors = json_decode($failingRules, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                $errors = [];
+            }
+
+            return arr($errors)->filter(fn (array $_error, $errorKey) => $errorKey === $key)->flatten()->first();
+        }, $this->response->getHeader('x-validation')->values);
+
+        Assert::assertNotEmpty($validationErrors, message: 'no validation errors found');
+
+        if ($test !== null) {
+            $test($validationErrors);
+        }
+
+        return $this;
+    }
+
+    public function assertHasNoJsonValidationErrors(): self
+    {
+        Assert::assertNotInstanceOf(Invalid::class, $this->response);
+
+        return $this;
+    }
+
     public function dd(): void
     {
-        // @phpstan-ignore disallowed.function
+        /**
+         * @noinspection ForgottenDebugOutputInspection
+         * @phpstan-ignore disallowed.function
+         */
         dd($this->response); // @mago-expect best-practices/no-debug-symbols
     }
 }
