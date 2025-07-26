@@ -47,7 +47,7 @@ final class RawElement implements Element, WithToken
             }
         }
 
-        $attributes = implode(' ', $attributes);
+        $attributes = implode(' ', [...$attributes, ...$this->rawAttributes]);
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;

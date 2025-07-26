@@ -15,7 +15,7 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render('<x-input name="name" />');
 
         $this->assertStringContainsString('<label for="name">Name</label>', $html);
-        $this->assertStringContainsString(' <input type="text" name="name" id="name"', $html);
+        $this->assertStringContainsString('<input type="text" name="name" id="name"', $html);
     }
 
     public function test_with_label(): void

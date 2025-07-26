@@ -39,7 +39,7 @@ final class FormComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-form action="/submit" />');
 
-        $this->assertSnippetsMatch('<form method="POST" action="/submit"></form>', $html);
+        $this->assertSnippetsMatch('<form action="/submit" method="POST"></form>', $html);
     }
 
     public function test_form_with_enctype(): void

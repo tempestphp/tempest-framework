@@ -43,11 +43,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_view_component_with_php_code_in_attribute(): void
     {
+        $this->registerViewComponent('x-test', '<div :foo="$foo" :bar="$bar"></div>');
+
         $this->assertSame(
             expected: '<div foo="hello" bar="barValue"></div>',
             actual: $this->render(
                 <<<'HTML'
-                <x-my :foo="$this->input" bar="barValue"></x-my>
+                <x-test :foo="$input" bar="barValue"></x-test>
                 HTML,
                 input: 'hello',
             ),

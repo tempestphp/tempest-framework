@@ -28,21 +28,13 @@ final readonly class DataAttribute implements Attribute
 
         $element->setAttribute($this->name, $value);
 
-        // Data attributes should only be parsed for view components
-        if ($element->unwrap(ViewComponentElement::class) === null) {
-            return $element;
-        }
-
-        $value = $element->getAttribute($this->name);
-
-        if (str($value)->startsWith(TempestViewCompiler::PHP_TOKENS)) {
+        if (
+            $element->unwrap(ViewComponentElement::class)
+            && str($value)->startsWith(TempestViewCompiler::PHP_TOKENS)
+        ) {
             throw new DataAttributeWasInvalid($this->name, $value);
         }
 
-        return new PhpDataElement(
-            name: $this->name,
-            value: $element->getAttribute($this->name),
-            wrappingElement: $element,
-        );
+        return $element;
     }
 }

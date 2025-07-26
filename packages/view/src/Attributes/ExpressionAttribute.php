@@ -8,7 +8,8 @@ use Stringable;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
-use Tempest\View\Elements\PhpDataElement;
+use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ExpressionAttributeWasInvalid;
 use Tempest\View\Parser\TempestViewCompiler;
 
@@ -39,16 +40,11 @@ final readonly class ExpressionAttribute implements Attribute
                 sprintf('%s', $value),
             );
         } else {
-            $element->setAttribute(
-                ltrim($this->name, ':'),
-                sprintf('<?= ' . \Tempest\View\Attributes\ExpressionAttribute::class . '::resolveValue(%s) ?>', $value),
-            );
+            $attributeName = ltrim($this->name, ':');
 
-            $element = new PhpDataElement(
-                name: $this->name,
-                value: $value->toString(),
-                wrappingElement: $element,
-            );
+            $element
+                ->addRawAttribute($this->compileAttribute($attributeName, $value->toString()))
+                ->unsetAttribute($attributeName);
         }
 
         $element->unsetAttribute($this->name);
@@ -56,10 +52,37 @@ final readonly class ExpressionAttribute implements Attribute
         return $element;
     }
 
+    private function compileAttribute(string $name, string $value): string
+    {
+        return sprintf(
+            "<?= %s::render(name: '%s', value: %s) ?>",
+            self::class,
+            $name,
+            $value,
+        );
+    }
+
+    public static function render(string $name, mixed $value): string
+    {
+        if ($value === true) {
+            return str($name)->kebab()->toString();
+        }
+
+        if (! $value) {
+            return '';
+        }
+
+        return sprintf(
+            '%s="%s"',
+            str($name)->kebab(),
+            ExpressionAttribute::resolveValue($value),
+        );
+    }
+
     public static function resolveValue(mixed $value): string
     {
         if ($value instanceof Stringable) {
-            $value = (string) $value;
+            $value = (string)$value;
         }
 
         if ($value instanceof ArrayInterface) {
@@ -70,6 +93,6 @@ final readonly class ExpressionAttribute implements Attribute
             $value = trim(implode(' ', $value));
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 }

@@ -51,11 +51,6 @@ final class GenericElement implements Element, WithToken
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;
-//            $attributes = str_replace(
-/*                ['?> <?php', '?> <?='],*/
-/*                ['?><?php', '?><?='],*/
-//                $attributes,
-//            );
         }
 
         // Void elements
