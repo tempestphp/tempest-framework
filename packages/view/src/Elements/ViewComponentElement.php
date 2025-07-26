@@ -26,6 +26,8 @@ final class ViewComponentElement implements Element, WithToken
 
     private ImmutableArray $dataAttributes;
 
+    private ImmutableArray $expressionAttributes;
+
     private ImmutableArray $scopedVariables;
 
     public function __construct(
@@ -36,10 +38,16 @@ final class ViewComponentElement implements Element, WithToken
         array $attributes,
     ) {
         $this->attributes = $attributes;
+
         $this->dataAttributes = arr($attributes)
-            ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
-            // Attributes are converted to camelCase by default for PHP variable usage, but in the context of data attributes, kebab case is good
-            ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value);
+            ->filter(fn (string $_, string $key) => ! str_starts_with($key, ':'))
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->toString() => $value);
+
+        $this->expressionAttributes = arr($attributes)
+            ->filter(fn (string $_, string $key) => str_starts_with($key, ':'))
+            ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse']))
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
+
         $this->scopedVariables = arr();
     }
 
@@ -81,10 +89,12 @@ final class ViewComponentElement implements Element, WithToken
 
     public function compile(): string
     {
+        $slots = $this->getSlots();
+
         $compiled = str($this->viewComponent->compile($this));
 
+        // Fallthrough attributes
         $compiled = $compiled
-            // Fallthrough attributes
             ->replaceRegex(
                 regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/', // Match the very first opening tag, this will never fail.
                 replace: function ($matches) {
@@ -124,25 +134,24 @@ final class ViewComponentElement implements Element, WithToken
             );
 
         // Add scoped variables
-        $slots = $this->getSlots();
-
         $compiled = $compiled
-            // TODO: data from the data element is not accessible anymore, should be refactored to be passed into the function
             ->prepend(
                 // Open the current scope
                 sprintf(
-                    '<?php (function ($attributes, $slots %s %s) { ?>',
-                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "\${$key}")->implode(', ') : '',
+                    '<?php (function ($attributes, $slots %s %s %s) { ?>',
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : ''
                 ),
             )
             ->append(
                 // Close and call the current scope
                 sprintf(
-                    '<?php })(%s, %s %s %s) ?>',
-                    ViewObjectExporter::export($this->dataAttributes),
-                    ViewObjectExporter::export($slots),
-                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) =>  '{$key}: ' . ViewObjectExporter::exportValue($value))->implode(', ') : '',
+                    '<?php })(%s, %s %s %s %s) ?>',
+                    'attributes: ' . ViewObjectExporter::export($this->dataAttributes->mapWithKeys(fn (mixed $value, string $key) => yield str($key)->kebab()->toString() => $value)),
+                    'slots: ' . ViewObjectExporter::export($slots),
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) =>  "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ') : '',
+                    $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) =>  "{$key}: " . $value)->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ') : '',
                 ),
             );

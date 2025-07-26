@@ -3,14 +3,11 @@
 namespace Tempest\View\Components;
 
 use Stringable;
-use Tempest\Core\AppConfig;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ViewComponentElement;
-use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\ViewComponent;
-use Tempest\View\ViewConfig;
 
 use function Tempest\Support\arr;
 
@@ -71,8 +68,8 @@ echo \Tempest\get(' . \Tempest\View\Renderers\TempestViewRenderer::class . '::cl
 HTML, %s, %s), ...$vars)); ?>
 ',
             $compiledChildren,
-            $isExpression ? $name : "'{$name}'",
-            $isExpression ? $name : "'{$name}'",
+            $isExpression ? '$is' : "'{$name}'",
+            $isExpression ? '$is' : "'{$name}'",
         );
     }
 }

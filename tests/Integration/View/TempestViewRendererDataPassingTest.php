@@ -317,7 +317,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
 
         $html = $this->render(<<<'HTML'
-        <x-test>
+        <x-test :language="$language">
             <pre :data-lang="$language"><hello></hello>foo<p>bar</p></pre>
         </x-test>
         HTML, language: 'php');

@@ -45,11 +45,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: '<div foo="hello" bar="barValue"></div>',
-            actual: $this->render(view(
+            actual: $this->render(
                 <<<'HTML'
                 <x-my :foo="$this->input" bar="barValue"></x-my>
                 HTML,
-            )->data(input: 'hello')),
+                input: 'hello',
+            ),
         );
     }
 
@@ -70,14 +71,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <div>{{ $slot->language }}</div>
             <div>{!! $slot->content !!}</div>
         </div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML_WRAP'
         <x-test>
             <x-slot name="slot-php" language="PHP">PHP Body</x-slot>
             <x-slot name="slot-html" language="HTML">HTML Body</x-slot>
         </x-test>
-        HTML_WRAP);
+        HTML_WRAP,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML_WRAP'
         <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
@@ -92,7 +95,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <div>{{ $slot->name }}</div>
         </div>
         <x-slot />
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test>
@@ -104,7 +108,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         <div :if="isset($slots)">slots still here</div>
         <div :else>slots are cleared</div>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringContainsString('<div>internal slots still here</div>', $html);
         $this->assertStringContainsString('<div>slots are cleared</div>', $html);
@@ -115,7 +120,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', <<<'HTML'
         <div>{{ $slots['default']->name }}</div>
         <div>{{ $slots['default']->content }}</div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render('<x-test>Hello</x-test>');
 
@@ -135,13 +141,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <div :foreach="$slots as $slot">
             <div>A{{ $slot->name }}</div>
         </div>
-        HTML);
+        HTML,
+        );
 
         $this->registerViewComponent('x-b', <<<'HTML'
         <div :foreach="$slots as $slot">
             <div>B{{ $slot->name }}</div>
         </div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-a>
@@ -153,7 +161,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <x-slot name="3"></x-slot>
             <x-slot name="4"></x-slot>
         </x-a>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringContainsString('<div>B1</div>', $html);
         $this->assertStringContainsString('<div>B2</div>', $html);
@@ -193,7 +202,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(<<<'HTML'
         <x-input name="a" />
         <x-input name="b" />
-        HTML);
+        HTML,
+        );
 
         $this->assertStringContainsString('<label for="a">A</label>', $html);
         $this->assertStringContainsString('<input type="text" name="a" id="a"', $html);
@@ -268,12 +278,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: '<div>true</div>',
-            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: true)),
+            actual: $this->render('<x-my :if="$show">true</x-my><x-my :else>false</x-my>', show: true),
         );
 
         $this->assertSame(
             expected: '<div>false</div>',
-            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: false)),
+            actual: $this->render('<x-my :if="$show">true</x-my><x-my :else>false</x-my>', show: false),
         );
     }
 
@@ -281,7 +291,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div><x-slot /></div>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(
             expected: '<div>a</div><div>b</div>',
@@ -342,7 +353,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $rendered = $this->render(
             view(<<<HTML
             <x-with-variable :variable="strtoupper('test')"></x-with-variable>
-            HTML),
+            HTML,
+            ),
         );
 
         $this->assertStringEqualsStringIgnoringLineEndings(
@@ -374,13 +386,10 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_with_passed_variable_within_loop(): void
     {
         $rendered = $this->render(
-            view(
-                <<<'HTML'
-                <x-with-variable :foreach="$this->variables as $variable" :variable="$variable"></x-with-variable>
-                HTML,
-            )->data(
-                variables: ['a', 'b', 'c'],
-            ),
+            <<<'HTML'
+            <x-with-variable :foreach="$this->variables as $variable" />
+            HTML,
+            variables: ['a', 'b', 'c'],
         );
 
         $this->assertStringContainsString('a', $rendered);
@@ -430,9 +439,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_view_component_with_camelcase_attribute(): void
     {
-        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
+        $this->registerViewComponent('x-test', <<<'HTML'
+            {{ $metaType ?? 'nothing' }}
+        HTML);
 
-        $this->assertStringCount($html, 'test', 2);
+        $this->assertSame('test', $this->render('<x-test meta_type="test">'));
+        $this->assertSame('test', $this->render('<x-test meta-type="test">'));
+        $this->assertSame('test', $this->render('<x-test metaType="test">'));
     }
 
     public function test_php_code_in_attribute(): void
@@ -502,13 +515,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-slot />
             </body>
             </html>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-layout>
             Hello World
         </x-layout>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringContainsString('<html lang="en"><head><title>Tempest View</title></head><body>', $html);
         $this->assertStringContainsString('Hello World', $html);
@@ -525,12 +540,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </head>
         <body></body>
         </html>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-layout>
         </x-layout>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <html lang="en"><head><!--<x-slot name="styles" />--><link rel="stylesheet" href="#"></head><body></body></html>
@@ -549,12 +566,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </head>
         <body></body>
         </html>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-layout>
         </x-layout>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <html lang="en"><head><link rel="stylesheet" href="#"></head><body></body></html>
@@ -565,7 +584,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'
         <link rel="stylesheet" href="#" />
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <html lang="en">
@@ -574,7 +594,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </head>
         <body class="a"></body>
         </html>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <html lang="en"><head><link rel="stylesheet" href="#">
@@ -586,7 +607,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'
         <link rel="stylesheet" href="#" />
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <!doctype html>
@@ -599,7 +621,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </head>
         <body class="a">b</body>
         </html>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         <!doctype html>
@@ -613,11 +636,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div x-data="foo {{ $attributes['x-data'] }}"></div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test x-data="bar"></x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div x-data="foo bar"></div>
@@ -628,11 +653,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div></div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="test" style="text-decoration: underline;" id="test"></div>
@@ -643,11 +670,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div class="foo" style="font-weight: bold;" id="other"></div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
@@ -658,11 +687,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div class="foo" style="font-weight: bold;" id="other"></div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
@@ -680,7 +711,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(<<<'HTML'
         <div :x="['foo', 'bar']"></div>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div x="foo bar"></div>
@@ -691,11 +723,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-test', <<<'HTML'
         <div class="inner" :class="'upper'"></div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test></x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="inner upper"></div>
@@ -713,14 +747,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                     <x-slot />
                 </body>
             </html>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
             <x-html-base>
                 <br />
                 <hr />
             </x-html-base>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         <!doctype html>
@@ -732,7 +768,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(<<<'HTML'
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" view-box="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"/></g></svg>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" view-box="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"></path><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"></path></g></svg>
@@ -748,7 +785,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <x-foo-bar />
             <x-slot name="test" />
         </div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test>
@@ -756,7 +794,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-foo-bar />
             </x-slot>
         </x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         <div>FOO-BAR
@@ -771,7 +810,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <div>
             <x-slot name="test-slot" />
         </div>
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-test>
@@ -779,7 +819,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 Hi
             </x-slot>
         </x-test>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
             <div>
@@ -809,7 +850,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 </x-my-table-tr>
             </x-my-table-tbody>
         </table>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
             <table>
@@ -833,7 +875,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $html = $this->render(<<<'HTML'
         <x-component is="x-test" prop="test"/>
-        HTML);
+        HTML,
+        );
 
         $this->assertSame('<div>test</div>', $html);
     }
@@ -880,7 +923,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-b>
             hi
         </x-b>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch('<a><b>hi</b></a>', $html);
     }
@@ -894,13 +938,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         use \Tempest\Core\AppConfig;
         ?>
         {{ get(AppConfig::class)->environment->value }}
-        HTML);
+        HTML,
+        );
 
         $html = $this->render(<<<'HTML'
         <x-a>
             <x-b />
         </x-a>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch('<a>testing</a>', $html);
     }
@@ -913,7 +959,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-test thing="a" />
         <x-test thing="b" />
         <x-test thing="c" />
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch('
             <div thing="a">a</div>
@@ -937,7 +984,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-slot>Default</x-slot>
         <x-slot name="a">Default A</x-slot>
         <x-slot name="b">Default B</x-slot>
-        HTML);
+        HTML,
+        );
 
         $this->assertSnippetsMatch(
             <<<'HTML'
