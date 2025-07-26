@@ -173,7 +173,7 @@ final class FrameworkKernel implements Kernel
             }
 
             if (! mkdir($path, recursive: true)) {
-                throw new \RuntimeException('Unable to create internal storage directory because of insufficient user permission.');
+                throw new \RuntimeException('Unable to create internal storage directory because of insufficient user permission on the root directory.');
             }
         } elseif (! is_writable($path)) {
             throw new \RuntimeException('Insufficient user permission to write to internal storage directory.');
