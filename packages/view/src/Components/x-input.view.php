@@ -27,12 +27,8 @@ $original = $session->getOriginalValueFor($name, $default);
 <div>
     <label :for="$id">{{ $label }}</label>
 
-    <x-template :if="$type === 'textarea'">
-        <textarea :name="$name" :id="$id">{{ $original }}</textarea>
-    </x-template>
-    <x-template :else>
-        <input :type="$type" :name="$name" :id="$id" :value="$original"/>
-    </x-template>
+    <textarea :if="$type === 'textarea'" :name="$name" :id="$id">{{ $original }}</textarea>
+    <input :else :type="$type" :name="$name" :id="$id" :value="$original"/>
 
     <div :if="$errors !== []">
         <div :foreach="$errors as $error">

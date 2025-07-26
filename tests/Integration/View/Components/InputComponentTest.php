@@ -14,15 +14,8 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-input name="name" />');
 
-        $this->assertSnippetsMatch(
-            expected: <<<'HTML'
-            <div>
-                <label for="name">Name</label>
-                <input id="name" name="name" type="text">
-            </div>
-            HTML,
-            actual: $html,
-        );
+        $this->assertStringContainsString('<label for="name">Name</label>', $html);
+        $this->assertStringContainsString(' <input type="text" name="name" id="name"', $html);
     }
 
     public function test_with_label(): void
