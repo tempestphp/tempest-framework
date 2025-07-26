@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\View;
+namespace Integration\View\Components;
 
-use InvalidArgumentException;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
@@ -15,7 +14,6 @@ use Tempest\HttpClient\HttpClient;
 use Tempest\Icon\IconCache;
 use Tempest\Icon\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
 use function Tempest\view;
 
 final class IconComponentTest extends FrameworkIntegrationTestCase
@@ -70,12 +68,12 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_name_is_required(): void
+    public function test_fallback_without_name(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `name` attribute is required for the `x-icon` component.');
-
-        $this->render('<x-icon />');
+        $this->assertSame(
+            '',
+            $this->render('<x-icon />'),
+        );
     }
 
     public function test_it_caches_icons_on_the_first_render(): void
@@ -208,7 +206,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
-        $view = view(__DIR__ . '/../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
+        $view = view(__DIR__ . '/../../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
         $html = $this->render($view);
 
         $this->assertSnippetsMatch(
