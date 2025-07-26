@@ -195,7 +195,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-input name="b" />
         HTML);
 
-        ld($html);
+        $this->assertStringContainsString('<label for="a">A</label>', $html);
+        $this->assertStringContainsString('<input type="text" name="a" id="a"', $html);
+
+        $this->assertStringContainsString('<label for="b">B</label>', $html);
+        $this->assertStringContainsString('<input type="text" name="b" id="b"', $html);
     }
 
     public function test_component_with_anther_component_included(): void
@@ -275,10 +279,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_component_with_foreach(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
-            expected: '<div>a</div>
-<div>b</div>',
-            actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $foo }}</x-my>')->data(items: ['a', 'b'])),
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div><x-slot /></div>
+        HTML);
+
+        $this->assertSnippetsMatch(
+            expected: '<div>a</div><div>b</div>',
+            actual: $this->render('<x-test :foreach="$items as $foo">{{ $foo }}</x-test>', items: ['a', 'b']),
         );
     }
 

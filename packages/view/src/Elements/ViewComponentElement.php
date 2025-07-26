@@ -24,7 +24,9 @@ final class ViewComponentElement implements Element, WithToken
 {
     use IsElement;
 
-    private array $dataAttributes;
+    private ImmutableArray $dataAttributes;
+
+    private ImmutableArray $scopedVariables;
 
     public function __construct(
         public readonly Token $token,
@@ -37,8 +39,17 @@ final class ViewComponentElement implements Element, WithToken
         $this->dataAttributes = arr($attributes)
             ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
             // Attributes are converted to camelCase by default for PHP variable usage, but in the context of data attributes, kebab case is good
-            ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value)
-            ->toArray();
+            ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value);
+        $this->scopedVariables = arr();
+    }
+
+    public function addVariable(string $name): self
+    {
+        $name = str($name)->trim()->trim('$')->toString();
+
+        $this->scopedVariables[$name] = $name;
+
+        return $this;
     }
 
     public function getViewComponent(): ViewComponent
@@ -119,14 +130,20 @@ final class ViewComponentElement implements Element, WithToken
             // TODO: data from the data element is not accessible anymore, should be refactored to be passed into the function
             ->prepend(
                 // Open the current scope
-                '<?php (function (\Tempest\Support\Arr\ImmutableArray $attributes, \Tempest\Support\Arr\ImmutableArray $slots) { ?>',
+                sprintf(
+                    '<?php (function ($attributes, $slots %s %s) { ?>',
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : ''
+                ),
             )
             ->append(
                 // Close and call the current scope
                 sprintf(
-                    '<?php })(%s, %s) ?>',
-                    var_export($this->dataAttributes, true),
+                    '<?php })(%s, %s %s %s) ?>',
+                    ViewObjectExporter::export($this->dataAttributes),
                     ViewObjectExporter::export($slots),
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) =>  '{$key}: ' . ViewObjectExporter::exportValue($value))->implode(', ') : '',
+                    $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ') : '',
                 ),
             );
 
