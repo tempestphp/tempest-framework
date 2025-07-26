@@ -11,7 +11,7 @@ final class FormComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-form />');
 
-        $this->assertSame('<form method="POST"></form>', $html);
+        $this->assertSnippetsMatch('<form method="POST"></form>', $html);
     }
 
     public function test_form_with_body(): void

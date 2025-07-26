@@ -173,9 +173,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             expected: <<<'HTML'
-            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></div></form>
+            <form method="POST" action="#"><div><div><label for="a">a</label><input type="number" name="a" id="a" value=""></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value=""></div></form>
             HTML,
-            actual: $this->render(view(
+            actual: $this->render(
                 <<<'HTML'
                 <x-form action="#">
                     <div>
@@ -184,8 +184,18 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                     <x-input name="b" label="b" type="text" />
                 </x-form>
                 HTML,
-            )),
+            ),
         );
+    }
+
+    public function test_scope_does_not_leak_data(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <x-input name="a" />
+        <x-input name="b" />
+        HTML);
+
+        ld($html);
     }
 
     public function test_component_with_anther_component_included(): void

@@ -116,25 +116,18 @@ final class ViewComponentElement implements Element, WithToken
         $slots = $this->getSlots();
 
         $compiled = $compiled
+            // TODO: data from the data element is not accessible anymore, should be refactored to be passed into the function
             ->prepend(
-                // Add attributes to the current scope
-                '<?php $_previousAttributes = $attributes ?? null; ?>',
-                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->dataAttributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
-
-                // Add dynamic slots to the current scope
-                '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = %s; ?>', ViewObjectExporter::export($slots)),
+                // Open the current scope
+                '<?php (function (\Tempest\Support\Arr\ImmutableArray $attributes, \Tempest\Support\Arr\ImmutableArray $slots) { ?>',
             )
             ->append(
-                // Restore previous slots
-                '<?php unset($slots); ?>',
-                '<?php $slots = $_previousSlots ?? null; ?>',
-                '<?php unset($_previousSlots); ?>',
-
-                // Restore previous attributes
-                '<?php unset($attributes); ?>',
-                '<?php $attributes = $_previousAttributes ?? null; ?>',
-                '<?php unset($_previousAttributes); ?>',
+                // Close and call the current scope
+                sprintf(
+                    '<?php })(%s, %s) ?>',
+                    var_export($this->dataAttributes, true),
+                    ViewObjectExporter::export($slots),
+                ),
             );
 
         // Compile slots
