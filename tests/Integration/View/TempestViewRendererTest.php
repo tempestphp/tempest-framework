@@ -90,8 +90,6 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_else_with_other_expression_attributes(): void
     {
-        $this->markTestSkipped('Not supported yet');
-
         $html = $this->render('<div :if="$this->show" :data="$data">Hello</div><div :else :data="$data">Nothing to see</div>', show: false, data: 'test');
 
         $this->assertSame(
@@ -139,6 +137,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             $this->render(
                 view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: false),
             ),
+        );
+    }
+
+    public function test_else_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$show" :data="$data">Hello</div><div :elseif="$show === false" :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
         );
     }
 
@@ -220,6 +228,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             <div>a</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
+        );
+    }
+
+    public function test_forelse_with_other_expression_attribute(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div data="test">Empty</div>
+            HTML,
+            $this->render('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse :data="$data">Empty</div>', items: [], data: 'test'),
         );
     }
 

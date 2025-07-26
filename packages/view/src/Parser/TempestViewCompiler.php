@@ -9,11 +9,13 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Attributes\ElseAttribute;
 use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ViewNotFound;
+use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
@@ -152,6 +154,8 @@ final readonly class TempestViewCompiler
 
             $element->setPrevious($previous);
 
+            $shouldBeRemoved = false;
+
             foreach ($element->getAttributes() as $name => $value) {
                 if ($isDynamicViewComponent && $name !== ':is' && $name !== 'is') {
                     continue;
@@ -166,12 +170,12 @@ final readonly class TempestViewCompiler
 
                 $element = $attribute->apply($element);
 
-                if ($element === null) {
-                    break;
+                if ($shouldBeRemoved === false && $attribute instanceof ShouldBeRemoved) {
+                    $shouldBeRemoved = true;
                 }
             }
 
-            if ($element === null) {
+            if ($shouldBeRemoved) {
                 continue;
             }
 
