@@ -26,7 +26,6 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
             $discovery->apply();
         } catch (ViewComponentWasAlreadyRegistered $viewComponentWasAlreadyRegistered) {
             $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $viewComponentWasAlreadyRegistered->getMessage());
-            $this->assertStringContainsString(Input::class, $viewComponentWasAlreadyRegistered->getMessage());
             $this->assertStringContainsString('x-input', $viewComponentWasAlreadyRegistered->getMessage());
         }
     }

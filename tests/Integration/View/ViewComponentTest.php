@@ -184,7 +184,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             expected: <<<'HTML'
-            <form method="POST" action="#"><div><div><label for="a">a</label><input type="number" name="a" id="a" value=""></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value=""></div></form>
+            <form action="#" method="POST"><div><div><label for="a">a</label><input type="number" name="a" id="a"></div></div><div><label for="b">b</label><input type="text" name="b" id="b"></div></form>
             HTML,
             actual: $this->render(
                 <<<'HTML'

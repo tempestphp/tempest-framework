@@ -8,8 +8,6 @@ use Stringable;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
-use Tempest\View\Elements\GenericElement;
-use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ExpressionAttributeWasInvalid;
 use Tempest\View\Parser\TempestViewCompiler;
 
@@ -55,7 +53,7 @@ final readonly class ExpressionAttribute implements Attribute
     private function compileAttribute(string $name, string $value): string
     {
         return sprintf(
-            "<?= %s::render(name: '%s', value: %s) ?>",
+            "<?= %s::render(name: '%s', value: %s ?? null) ?>",
             self::class,
             $name,
             $value,
