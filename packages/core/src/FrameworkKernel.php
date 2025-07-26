@@ -168,7 +168,15 @@ final class FrameworkKernel implements Kernel
         $path = $this->root . '/.tempest';
 
         if (! is_dir($path)) {
-            mkdir($path, recursive: true);
+            if (file_exists($path)) {
+                throw new \RuntimeException('Unable to create internal storage directory, as a file with the same name (.tempest) already exists.');
+            }
+
+            if (! mkdir($path, recursive: true)) {
+                throw new \RuntimeException('Unable to create internal storage directory because of insufficient user permission on the root directory.');
+            }
+        } elseif (! is_writable($path)) {
+            throw new \RuntimeException('Insufficient user permission to write to internal storage directory.');
         }
 
         $this->internalStorage = realpath($path);
