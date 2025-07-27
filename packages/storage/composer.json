@@ -9,14 +9,16 @@
         "tempest/container": "dev-main"
     },
     "require-dev": {
-        "league/flysystem-aws-s3-v3": "^3.0",
-        "league/flysystem-read-only": "^3.0",
-        "league/flysystem-ftp": "^3.0",
-        "league/flysystem-memory": "^3.0",
-        "league/flysystem-ziparchive": "^3.0",
-        "league/flysystem-sftp-v3": "^3.0",
-        "league/flysystem-azure-blob-storage": "^3.0",
-        "league/flysystem-google-cloud-storage": "^3.0",
+        "aws/aws-sdk-php": "^3.338.0",
+        "azure-oss/storage-blob-flysystem": "^1.2",
+        "league/flysystem-aws-s3-v3": "^3.25.1",
+        "league/flysystem-read-only": "^3.25.1",
+        "league/flysystem-ftp": "^3.25.1",
+        "league/flysystem-memory": "^3.25.1",
+        "league/flysystem-ziparchive": "^3.25.1",
+        "league/flysystem-sftp-v3": "^3.25.1",
+        "league/flysystem-google-cloud-storage": "^3.25.1",
+        "microsoft/azure-storage-blob": "^1.5",
         "tempest/support": "dev-main"
     },
     "autoload": {
