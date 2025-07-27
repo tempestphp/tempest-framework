@@ -1,6 +1,7 @@
 <?php
 
 use Tempest\Http\Session\Session;
+
 use function Tempest\Http\csrf_token;
 
 $name = Session::CSRF_TOKEN_KEY;

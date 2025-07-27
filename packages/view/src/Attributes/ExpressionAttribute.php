@@ -80,7 +80,7 @@ final readonly class ExpressionAttribute implements Attribute
     public static function resolveValue(mixed $value): string
     {
         if ($value instanceof Stringable) {
-            $value = (string)$value;
+            $value = (string) $value;
         }
 
         if ($value instanceof ArrayInterface) {
@@ -91,6 +91,6 @@ final readonly class ExpressionAttribute implements Attribute
             $value = trim(implode(' ', $value));
         }
 
-        return (string)$value;
+        return (string) $value;
     }
 }

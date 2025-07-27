@@ -542,7 +542,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>'),
+            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>', hello: null),
         );
     }
 
@@ -646,9 +646,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             <div :foreach="$items as $item" :if="$item->show">{{ $item->name }}</div>    
             HTML,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -660,9 +660,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             show: true,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -674,9 +674,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             show: true,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -688,9 +688,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             show: false,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -702,9 +702,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             show: false,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -714,11 +714,11 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             <<<'HTML'
             <div :if="$item->show" :foreach="$items as $item">{{ $item->name }}</div>    
             HTML,
-            item: (object)['show' => true],
+            item: (object) ['show' => true],
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -729,9 +729,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             <div :if="$item->show ?? null" :foreach="$items as $item">{{ $item->name }}</div>    
             HTML,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
@@ -749,8 +749,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(<<<'HTML'
         <?php echo 'hi';
-        HTML,
-        );
+        HTML);
 
         $this->assertSame('hi', $html);
     }
@@ -759,8 +758,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(<<<'HTML'
         <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
-        HTML,
-        );
+        HTML);
 
         $this->assertSnippetsMatch('<p>this is rendered text</p>', $html);
     }
@@ -780,8 +778,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             </div>
             --}}
         <p>This should be rendered</p>
-        HTML,
-        );
+        HTML);
 
         $this->assertSnippetsMatch('<p>This should be rendered</p>', $html);
     }

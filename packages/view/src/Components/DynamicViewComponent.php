@@ -7,20 +7,16 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Parser\Token;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewComponent;
 
 use function Tempest\Support\arr;
 
 final class DynamicViewComponent implements ViewComponent
 {
-    private Token $token;
-
-    public function __construct() {}
-
-    public function setToken(Token $token): void
-    {
-        $this->token = $token;
-    }
+    public function __construct(
+        private Token $token,
+    ) {}
 
     public static function getName(): string
     {
@@ -60,13 +56,11 @@ final class DynamicViewComponent implements ViewComponent
 
         return sprintf(
             '<?php 
-$vars = get_defined_vars();
-unset($vars[\'_view\'], $vars[\'_path\'], $vars[\'_data\'], $vars[\'_propIsLocal\'], $vars[\'_isIsLocal\'], $vars[\'_previousAttributes\'], $vars[\'_previousSlots\'], $vars[\'slots\']);
-
-echo \Tempest\get(' . \Tempest\View\Renderers\TempestViewRenderer::class . '::class)->render(\Tempest\view(sprintf(<<<\'HTML\'
+echo \Tempest\get(%s::class)->render(\Tempest\view(sprintf(<<<\'HTML\'
 %s
-HTML, %s, %s), ...$vars)); ?>
+HTML, %s, %s), ...$this->data)); ?>
 ',
+            TempestViewRenderer::class,
             $compiledChildren,
             $isExpression ? '$is' : "'{$name}'",
             $isExpression ? '$is' : "'{$name}'",

@@ -28,10 +28,7 @@ final readonly class DataAttribute implements Attribute
 
         $element->setAttribute($this->name, $value);
 
-        if (
-            $element->unwrap(ViewComponentElement::class)
-            && str($value)->startsWith(TempestViewCompiler::PHP_TOKENS)
-        ) {
+        if ($element->unwrap(ViewComponentElement::class) && str($value)->startsWith(TempestViewCompiler::PHP_TOKENS)) {
             throw new DataAttributeWasInvalid($this->name, $value);
         }
 

@@ -14,6 +14,7 @@ use Tempest\HttpClient\HttpClient;
 use Tempest\Icon\IconCache;
 use Tempest\Icon\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\view;
 
 final class IconComponentTest extends FrameworkIntegrationTestCase

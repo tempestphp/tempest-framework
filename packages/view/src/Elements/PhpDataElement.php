@@ -26,9 +26,9 @@ final class PhpDataElement implements Element, WrapsElement
 
     public function compile(): string
     {
-//        if ($this->unwrap(ViewComponentElement::class)) {
-            return $this->wrappingElement->compile();
-//        }
+        //        if ($this->unwrap(ViewComponentElement::class)) {
+        return $this->wrappingElement->compile();
+        //        }
 
         $localVariableName = str($this->name)->ltrim(':')->camel()->toString();
         $isExpression = str_starts_with($this->name, ':');
@@ -54,8 +54,6 @@ final class PhpDataElement implements Element, WrapsElement
             $localVariableName,
             $localVariableName,
         );
-
-
 
         return sprintf(
             '<?php %s ?>

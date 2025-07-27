@@ -6,6 +6,7 @@
 
 use Tempest\Core\AppConfig;
 use Tempest\Icon\Icon;
+
 use function Tempest\get;
 use function Tempest\Support\str;
 
