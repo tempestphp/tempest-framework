@@ -33,7 +33,7 @@
         "psr/log": "^3.0.0",
         "symfony/cache": "^7.2",
         "symfony/mailer": "^7.2.6",
-        "symfony/process": "^7.1",
+        "symfony/process": "^7.1.7",
         "symfony/uid": "^7.1",
         "symfony/var-dumper": "^7.1",
         "symfony/var-exporter": "^7.1",
