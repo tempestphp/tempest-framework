@@ -19,8 +19,10 @@ jobs:
         php:
           - 8.4
         os:
-          - ubuntu-latest
-          - windows-latest
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2022
+          - windows-2025
 
     name: "Run tests: ${{ matrix.os }}"
 
@@ -53,8 +55,10 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - windows-latest
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2022
+          - windows-2025
         php:
           - 8.4
         database:
