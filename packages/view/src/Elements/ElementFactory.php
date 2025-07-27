@@ -83,8 +83,7 @@ final class ElementFactory
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if ($token->getAttribute('is') || $token->getAttribute(':is')) {
-                $viewComponentClass = $this->container->get(DynamicViewComponent::class);
-                $viewComponentClass->setToken($token);
+                $viewComponentClass = new DynamicViewComponent($token);
             }
 
             if (! ($viewComponentClass instanceof ViewComponent)) {
