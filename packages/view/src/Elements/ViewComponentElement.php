@@ -45,7 +45,7 @@ final class ViewComponentElement implements Element, WithToken
 
         $this->expressionAttributes = arr($attributes)
             ->filter(fn (string $_, string $key) => str_starts_with($key, ':'))
-            ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse']))
+            ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse'], strict: true))
             ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
 
         $this->scopedVariables = arr();
