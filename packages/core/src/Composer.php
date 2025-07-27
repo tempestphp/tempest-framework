@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Filesystem;
-use Tempest\Support\Json;
 use Tempest\Support\Namespace\Psr4Namespace;
 
 use function Tempest\Support\arr;
@@ -34,12 +34,17 @@ final class Composer
     {
         $this->composerPath = normalize($this->root, 'composer.json');
         $this->composer = $this->loadComposerFile($this->composerPath);
-        $this->namespaces = arr($this->composer)
-            ->get('autoload.psr-4', default: arr())
+
+        $mapNamespaces = fn (ImmutableArray $psr4) => $psr4
             ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
             ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()
             ->toArray();
+
+        $this->namespaces = [
+            ...$mapNamespaces(arr($this->composer)->get('autoload.psr-4', default: new ImmutableArray())),
+            ...$mapNamespaces(arr($this->composer)->get('autoload-dev.psr-4', default: new ImmutableArray())),
+        ];
 
         foreach ($this->namespaces as $namespace) {
             if (starts_with(ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
