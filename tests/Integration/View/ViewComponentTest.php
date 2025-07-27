@@ -966,4 +966,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         Default B
         HTML, $this->render('<x-test></x-test>'));
     }
+
+    public function test_view_variables_are_passed_into_the_component(): void
+    {
+        $this->registerViewComponent('x-a', '<x-slot />');
+
+        $html = $this->render(<<<'HTML'
+        <x-a>
+        {{ $title }}
+        </x-a>
+        HTML, title: 'test');
+
+        $this->assertSnippetsMatch('test', $html);
+    }
 }

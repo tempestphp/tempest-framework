@@ -138,7 +138,7 @@ final class ViewComponentElement implements Element, WithToken
             ->prepend(
                 // Open the current scope
                 sprintf(
-                    '<?php (function ($attributes, $slots %s %s %s) { ?>',
+                    '<?php (function ($attributes, $slots %s %s %s) { extract($this->currentView?->data ?? [], EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? (', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
                     $this->expressionAttributes->isNotEmpty() ? (', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
                     $this->scopedVariables->isNotEmpty() ? (', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ')) : '',
