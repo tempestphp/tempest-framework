@@ -37,7 +37,8 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
+          - ubuntu-24.04
         package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
         php:
           - 8.4
