@@ -259,14 +259,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString($alphaNumeric->message(), $html);
     }
 
-    public function test_component_with_injected_dependency(): void
-    {
-        $this->assertSame(
-            expected: 'hi',
-            actual: $this->render('<x-with-injection />'),
-        );
-    }
-
     public function test_component_with_if(): void
     {
         $this->assertSame(

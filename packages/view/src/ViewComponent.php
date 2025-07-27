@@ -6,6 +6,7 @@ namespace Tempest\View;
 
 use Tempest\View\Elements\ViewComponentElement;
 
+/** @internal */
 interface ViewComponent
 {
     public static function getName(): string;
