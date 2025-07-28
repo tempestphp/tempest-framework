@@ -20,6 +20,7 @@ use Tempest\Router\Post;
 use Tempest\Router\Put;
 use Tempest\Router\Trace;
 use Tempest\View\View;
+use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
 
 use function Tempest\view;
@@ -95,5 +96,11 @@ final readonly class TestController
     {
         return new Created(new ViewWithResponseData())
             ->addHeader('x-from-view', 'true');
+    }
+
+    #[Get('/view-model')]
+    public function viewModel(): Response
+    {
+        return new Ok(new ViewModel('Brent'));
     }
 }

@@ -59,7 +59,7 @@ final class TestResponseHelper
         Assert::assertContains(
             $value,
             $header->values,
-            sprintf('Failed to assert that response header [%s] value contains %s. These header values were found: %s', $name, $value, $headerString),
+            sprintf('Failed to assert that response header [%s] value contains [%s]. These header values were found: %s', $name, $value, $headerString),
         );
 
         return $this;
@@ -132,7 +132,7 @@ final class TestResponseHelper
         Assert::assertNotNull(
             $data,
             sprintf(
-                'No session value was set for %s, available session keys: %s',
+                'No session value was set for [%s], available session keys: %s',
                 $key,
                 implode(', ', array_keys($session->data)),
             ),
@@ -156,7 +156,7 @@ final class TestResponseHelper
             $key,
             $validationErrors,
             sprintf(
-                'No validation error was set for %s, available validation errors: %s',
+                'No validation error was set for [%s], available validation errors: %s',
                 $key,
                 implode(', ', array_keys($validationErrors)),
             ),
@@ -215,6 +215,78 @@ final class TestResponseHelper
         }
 
         Assert::assertStringNotContainsString($search, $body);
+
+        return $this;
+    }
+
+    public function assertViewData(string $key, ?Closure $test = null): self
+    {
+        $data = $this->body->data;
+        $value = $data[$key];
+
+        Assert::assertArrayHasKey(
+            key: $key,
+            array: $data,
+            message: sprintf(
+                'No view data was set for [%s], available view data keys: %s',
+                $key,
+                implode(', ', array_keys($data)),
+            ),
+        );
+
+        if ($test !== null) {
+            $test($data, $value);
+        }
+
+        return $this;
+    }
+
+    public function assertViewDataMissing(string $key): self
+    {
+        $data = $this->body->data;
+
+        Assert::assertArrayNotHasKey(
+            key: $key,
+            array: $data,
+            message: sprintf('Failed asserting that view data key [%s] was not set', $key),
+        );
+
+        return $this;
+    }
+
+    public function assertViewDataAll(Closure $test): self
+    {
+        $data = $this->body->data;
+
+        $test($data);
+
+        return $this;
+    }
+
+    public function assertView(string $view): self
+    {
+        if (! ($this->body instanceof View)) {
+            Assert::fail(sprintf('Response is not a %s', View::class));
+        }
+
+        Assert::assertEquals(
+            expected: $view,
+            actual: $this->body->path,
+        );
+
+        return $this;
+    }
+
+    public function assertViewModel(string $expected, ?Closure $test = null): self
+    {
+        Assert::assertInstanceOf(
+            expected: $expected,
+            actual: $this->body,
+        );
+
+        if ($test !== null) {
+            $test($this->body);
+        }
 
         return $this;
     }
