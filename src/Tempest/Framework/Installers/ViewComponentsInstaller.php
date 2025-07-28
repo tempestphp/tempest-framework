@@ -50,7 +50,7 @@ final class ViewComponentsInstaller implements Installer
 
             $this->publish(
                 $viewComponent->file,
-                src_path("Views/{$selectedItem}.view.php"),
+                src_path("ViewComponents/{$selectedItem}.view.php"),
             );
         }
     }

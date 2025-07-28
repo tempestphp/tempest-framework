@@ -61,11 +61,11 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists(
-                path: 'App/Views/x-vendor-a.view.php',
+                path: 'App/ViewComponents/x-vendor-a.view.php',
                 content: 'vendor a',
             )
             ->assertFileExists(
-                path: 'App/Views/x-vendor-b.view.php',
+                path: 'App/ViewComponents/x-vendor-b.view.php',
                 content: 'vendor b',
             );
     }
