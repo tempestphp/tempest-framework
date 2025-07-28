@@ -30,19 +30,17 @@ final class ViewConfig
     {
         $existing = $this->viewComponents[$pending->name] ?? null;
 
-        if ($existing) {
-            if ($pending->isVendorComponent) {
-                // Vendor components don't overwrite existing components
-                return;
-            }
+        if ($existing && $pending->isVendorComponent) {
+            // Vendor components don't overwrite existing components
+            return;
+        }
 
-            if ($existing->isProjectComponent && $pending->isProjectComponent) {
-                // If both pending and existing are project components, we'll throw an exception
-                throw new ViewComponentWasAlreadyRegistered(
-                    pending: $pending,
-                    existing: $existing,
-                );
-            }
+        if ($existing?->isProjectComponent && $pending->isProjectComponent) {
+            // If both pending and existing are project components, we'll throw an exception
+            throw new ViewComponentWasAlreadyRegistered(
+                pending: $pending,
+                existing: $existing,
+            );
         }
 
         $this->viewComponents[$pending->name] = $pending;
