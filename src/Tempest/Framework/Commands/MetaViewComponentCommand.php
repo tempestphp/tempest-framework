@@ -10,6 +10,7 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\Filesystem\is_file;
 use function Tempest\Support\str;

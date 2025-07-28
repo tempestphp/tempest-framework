@@ -33,6 +33,7 @@ use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
+
 use function Tempest\Support\Path\normalize;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest

@@ -16,6 +16,7 @@ use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 use Tempest\View\WithToken;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

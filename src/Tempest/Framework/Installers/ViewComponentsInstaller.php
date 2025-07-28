@@ -7,6 +7,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\IsComponentInstaller;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+
 use function Tempest\src_path;
 use function Tempest\Support\arr;
 
