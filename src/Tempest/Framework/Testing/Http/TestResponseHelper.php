@@ -107,7 +107,7 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertHasCookie(string $key, ?Closure $test = null): self
+    public function assertHasCookie(string $key, ?Closure $callback = null): self
     {
         $cookies = get(CookieManager::class);
 
@@ -115,14 +115,14 @@ final class TestResponseHelper
 
         Assert::assertNotNull($cookie);
 
-        if ($test !== null) {
-            $test($cookie);
+        if ($callback !== null) {
+            $callback($cookie);
         }
 
         return $this;
     }
 
-    public function assertHasSession(string $key, ?Closure $test = null): self
+    public function assertHasSession(string $key, ?Closure $callback = null): self
     {
         /** @var Session $session */
         $session = get(Session::class);
@@ -138,14 +138,14 @@ final class TestResponseHelper
             ),
         );
 
-        if ($test !== null) {
-            $test($session, $data);
+        if ($callback !== null) {
+            $callback($session, $data);
         }
 
         return $this;
     }
 
-    public function assertHasValidationError(string $key, ?Closure $test = null): self
+    public function assertHasValidationError(string $key, ?Closure $callback = null): self
     {
         /** @var Session $session */
         $session = get(Session::class);
@@ -162,8 +162,8 @@ final class TestResponseHelper
             ),
         );
 
-        if ($test !== null) {
-            $test($validationErrors);
+        if ($callback !== null) {
+            $callback($validationErrors);
         }
 
         return $this;
@@ -219,7 +219,14 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertViewData(string $key, ?Closure $test = null): self
+    /**
+     * Asserts view data key exists and optionally assert the value
+     *
+     * ->assertViewData('name', fn (array $data, mixed $value) => Assert::assertEquals('Brent', $value));
+     *
+     * @param Closure(array<string, mixed>, mixed): (void|bool)|null $callback
+     */
+    public function assertViewData(string $key, ?Closure $callback = null): self
     {
         $data = $this->body->data;
         $value = $data[$key];
@@ -234,13 +241,18 @@ final class TestResponseHelper
             ),
         );
 
-        if ($test !== null) {
-            $test($data, $value);
+        if ($callback !== null && $callback($data, $value) === false) {
+            Assert::fail(sprintf('Failed validating view data for [%s]', $key));
         }
 
         return $this;
     }
 
+    /**
+     * Asserts view data key doesn't exist
+     *
+     * ->assertViewDataMissing('email');
+     */
     public function assertViewDataMissing(string $key): self
     {
         $data = $this->body->data;
@@ -254,15 +266,31 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertViewDataAll(Closure $test): self
+    /**
+     * Asserts all view data
+     *
+     * ->assertViewDataAll(fn (array $data) => Assert::assertEquals(['name' => 'Brent'], $data));
+     * ->assertViewDataAll(fn (array $data) => Assert::assertEquals(['name', 'email'], array_keys($data)));
+     *
+     * @param Closure(array<string, mixed>): (void|bool) $callback
+     */
+    public function assertViewDataAll(Closure $callback): self
     {
         $data = $this->body->data;
 
-        $test($data);
+        if ($callback($data) === false) {
+            Assert::fail('Failed validating all view data');
+        }
 
         return $this;
     }
 
+    /**
+     * Asserts the view path
+     *
+     * ->assertView('./view.php');
+     * ->assertView(__DIR__ . '/../view.php');
+     */
     public function assertView(string $view): self
     {
         if (! ($this->body instanceof View)) {
@@ -277,15 +305,25 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertViewModel(string $expected, ?Closure $test = null): self
+    /**
+     * Asserts the view model object
+     *
+     * ->assertViewModel(CustomViewModel::class);
+     * ->assertViewModel(CustomViewModel::class, fn (CustomViewModel $viewModel) => Assert::assertEquals('Brent', $viewModel->name));
+     *
+     * @template T of View
+     * @param class-string<T> $expected
+     * @param Closure(T): (void|bool)|null $callback
+     */
+    public function assertViewModel(string $expected, ?Closure $callback = null): self
     {
         Assert::assertInstanceOf(
             expected: $expected,
             actual: $this->body,
         );
 
-        if ($test !== null) {
-            $test($this->body);
+        if ($callback !== null && $callback($this->body) === false) {
+            Assert::fail('Failed validating view model');
         }
 
         return $this;
