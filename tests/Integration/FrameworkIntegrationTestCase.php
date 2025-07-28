@@ -106,9 +106,14 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         return $this->container->get(ViewRenderer::class)->render($view);
     }
 
-    protected function registerViewComponent(string $name, string $html): void
+    protected function registerViewComponent(string $name, string $html, string $file = '', bool $isVendor = false): void
     {
-        $viewComponent = new AnonymousViewComponent($name, $html, '');
+        $viewComponent = new AnonymousViewComponent(
+            name: $name,
+            contents: $html,
+            file: $file,
+            isVendorComponent: $isVendor,
+        );
 
         $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
     }

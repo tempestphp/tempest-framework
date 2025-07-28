@@ -74,7 +74,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         $controls = [];
 
         if ($this->bufferEnabled) {
-            $controls['esc'] = 'select';
+            $controls['esc or /'] = 'select';
         } else {
             $controls['/'] = 'filter';
             $controls['space'] = 'select';
@@ -113,6 +113,10 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     {
         if (! $this->bufferEnabled && $key === '/') {
             $this->bufferEnabled = true;
+
+            return;
+        } elseif ($this->bufferEnabled && $key === '/') {
+            $this->bufferEnabled = false;
 
             return;
         }

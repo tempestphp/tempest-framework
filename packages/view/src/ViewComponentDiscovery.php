@@ -87,6 +87,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
                 name: $name,
                 contents: $header . $view,
                 file: $path,
+                isVendorComponent: $location->isVendor(),
             ),
         ]);
     }
@@ -103,6 +104,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
                 name: $fileName->toString(),
                 contents: $contents->toString(),
                 file: $path,
+                isVendorComponent: $location->isVendor(),
             ),
         ]);
     }

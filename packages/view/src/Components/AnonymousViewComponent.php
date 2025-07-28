@@ -13,6 +13,7 @@ final readonly class AnonymousViewComponent implements ViewComponent
         public string $name,
         public string $contents,
         public string $file,
+        public bool $isVendorComponent,
     ) {}
 
     public static function getName(): string
