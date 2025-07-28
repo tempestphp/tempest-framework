@@ -72,11 +72,11 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
 
     public function test_installed_vendor_components_are_not_listed_anymore(): void
     {
-        $this->console
-            ->call('install view-components --force')
-            ->assertSee('x-vendor-a')
-            ->assertSee('x-vendor-b')
-            ->submit($this->searchOptionCount - 1);
+        $this->registerViewComponent(
+            name: 'x-vendor-b',
+            html: 'vendor b',
+            file: __DIR__ . '/Fixtures/x-vendor-b.view.php',
+        );
 
         $this->console
             ->call('install view-components --force')

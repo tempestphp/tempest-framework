@@ -27,17 +27,25 @@ final class ViewConfig
         $this->viewProcessors[] = $viewProcessor->getName();
     }
 
-    public function addViewComponent(ViewComponent $viewComponent): void
+    public function addViewComponent(ViewComponent $pending): void
     {
-        $existing = $this->viewComponents[$viewComponent->name] ?? null;
+        $existing = $this->viewComponents[$pending->name] ?? null;
 
-        if ($existing?->isVendorComponent === false) {
-            throw new ViewComponentWasAlreadyRegistered(
-                pending: $viewComponent,
-                existing: $existing,
-            );
+        if ($existing) {
+            if ($pending->isVendorComponent) {
+                // Vendor components don't overwrite existing components
+                return;
+            }
+
+            if ($existing->isProjectComponent && $pending->isProjectComponent) {
+                // If both pending and existing are project components, we'll throw an exception
+                throw new ViewComponentWasAlreadyRegistered(
+                    pending: $pending,
+                    existing: $existing,
+                );
+            }
         }
 
-        $this->viewComponents[$viewComponent->name] = $viewComponent;
+        $this->viewComponents[$pending->name] = $pending;
     }
 }

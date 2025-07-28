@@ -61,7 +61,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
     {
         foreach ($this->discoveryItems as [$name, $viewComponent]) {
             $this->viewConfig->addViewComponent(
-                viewComponent: $viewComponent,
+                pending: $viewComponent,
             );
         }
     }

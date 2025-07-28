@@ -32,7 +32,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $this->assertSame('overwritten', $this->render('<x-form />'));
     }
 
-    public function test_project_view_components_cannot_be_overwritten(): void
+    public function test_project_view_components_cannot_be_overwritten_by_other_project_view_component(): void
     {
         /** @var ViewConfig $viewConfig */
         $viewConfig = $this->get(ViewConfig::class);
@@ -49,12 +49,34 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
             function () use ($viewConfig): void {
                 $viewConfig->addViewComponent(new ViewComponent(
                     name: 'x-form',
-                    contents: 'overwritten',
+                    contents: 'b',
                     file: '',
                     isVendorComponent: false,
                 ));
             },
         );
+    }
+
+    public function test_project_view_components_will_not_be_overwritten_by_vendor_view_component(): void
+    {
+        /** @var ViewConfig $viewConfig */
+        $viewConfig = $this->get(ViewConfig::class);
+
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'overwritten',
+            file: '',
+            isVendorComponent: false,
+        ));
+
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'original',
+            file: '',
+            isVendorComponent: true,
+        ));
+
+        $this->assertSame('overwritten', $this->render('<x-form />'));
     }
 
     public function test_auto_registration(): void

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-final readonly class ViewComponent
+final class ViewComponent
 {
     public function __construct(
-        public string $name,
-        public string $contents,
-        public string $file,
-        public bool $isVendorComponent,
+        public readonly string $name,
+        public readonly string $contents,
+        public readonly string $file,
+        public readonly bool $isVendorComponent,
     ) {}
+
+    public bool $isProjectComponent {
+        get => ! $this->isVendorComponent;
+    }
 }
