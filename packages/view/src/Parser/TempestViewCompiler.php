@@ -145,23 +145,14 @@ final readonly class TempestViewCompiler
         $previous = null;
 
         foreach ($elements as $element) {
-            // TODO
-            $isDynamicViewComponent = $element instanceof ViewComponentElement && $element->getViewComponent() instanceof DynamicViewComponent;
-
-            if (! $isDynamicViewComponent) {
-                $children = $this->applyAttributes($element->getChildren());
-                $element->setChildren($children);
-            }
+            $children = $this->applyAttributes($element->getChildren());
+            $element->setChildren($children);
 
             $element->setPrevious($previous);
 
             $shouldBeRemoved = false;
 
             foreach ($element->getAttributes() as $name => $value) {
-                if ($isDynamicViewComponent && $name !== ':is' && $name !== 'is') {
-                    continue;
-                }
-
                 // TODO: possibly refactor attribute construction to ElementFactory?
                 if ($value instanceof Attribute) {
                     $attribute = $value;
