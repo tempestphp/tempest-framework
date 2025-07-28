@@ -15,7 +15,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="relative antialiased flex flex-col grow font-sans text-(--ui-text) bg-(--ui-bg) !overflow-visible !pr-0">
+<body class="flex flex-col h-full antialiased">
 <x-slot/>
 <x-slot name="scripts"/>
 </body>
