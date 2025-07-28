@@ -30,6 +30,8 @@ final class ViewComponentElement implements Element, WithToken
 
     private ImmutableArray $scopedVariables;
 
+    private ImmutableArray $viewComponentAttributes;
+
     public function __construct(
         public readonly Token $token,
         private readonly Environment $environment,
@@ -38,6 +40,7 @@ final class ViewComponentElement implements Element, WithToken
         array $attributes,
     ) {
         $this->attributes = $attributes;
+        $this->viewComponentAttributes = arr($attributes);
 
         $this->dataAttributes = arr($attributes)
             ->filter(fn (string $_, string $key) => ! str_starts_with($key, ':'))
@@ -91,7 +94,7 @@ final class ViewComponentElement implements Element, WithToken
     {
         $slots = $this->getSlots();
 
-        $compiled = str($this->viewComponent->compile($this));
+        $compiled = str($this->viewComponent->contents);
 
         // Fallthrough attributes
         $compiled = $compiled
@@ -148,8 +151,7 @@ final class ViewComponentElement implements Element, WithToken
                 // Close and call the current scope
                 sprintf(
                     '<?php })(%s, %s %s %s %s) ?>',
-                    'attributes: ' .
-                        ViewObjectExporter::export($this->dataAttributes->mapWithKeys(fn (mixed $value, string $key) => yield str($key)->kebab()->toString() => $value)),
+                    'attributes: ' . ViewObjectExporter::export($this->viewComponentAttributes),
                     'slots: ' . ViewObjectExporter::export($slots),
                     $this->dataAttributes->isNotEmpty()
                         ? (', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', '))
@@ -157,7 +159,9 @@ final class ViewComponentElement implements Element, WithToken
                     $this->expressionAttributes->isNotEmpty()
                         ? (', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', '))
                         : '',
-                    $this->scopedVariables->isNotEmpty() ? (', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')) : '',
+                    $this->scopedVariables->isNotEmpty()
+                        ? (', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', '))
+                        : '',
                 ),
             );
 

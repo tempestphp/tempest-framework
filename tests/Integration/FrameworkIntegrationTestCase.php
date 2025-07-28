@@ -27,9 +27,9 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
-use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
@@ -106,11 +106,16 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         return $this->container->get(ViewRenderer::class)->render($view);
     }
 
-    protected function registerViewComponent(string $name, string $html): void
+    protected function registerViewComponent(string $name, string $html, string $file = '', bool $isVendor = false): void
     {
-        $viewComponent = new AnonymousViewComponent($name, $html, '');
+        $viewComponent = new ViewComponent(
+            name: $name,
+            contents: $html,
+            file: $file,
+            isVendorComponent: $isVendor,
+        );
 
-        $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
+        $this->container->get(ViewConfig::class)->addViewComponent($viewComponent);
     }
 
     protected function rollbackDatabase(): void
