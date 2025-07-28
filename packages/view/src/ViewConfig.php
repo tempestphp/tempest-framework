@@ -27,26 +27,17 @@ final class ViewConfig
         $this->viewProcessors[] = $viewProcessor->getName();
     }
 
-    public function addViewComponent(string $name, ClassReflector|ViewComponent $viewComponent): void
+    public function addViewComponent(ViewComponent $viewComponent): void
     {
-        if (! str_starts_with($name, 'x-')) {
-            $name = "x-{$name}";
+        $existing = $this->viewComponents[$viewComponent->name] ?? null;
+
+        if ($existing?->isVendorComponent === false) {
+            throw new ViewComponentWasAlreadyRegistered(
+                pending: $viewComponent,
+                existing: $existing,
+            );
         }
 
-        if ($existing = $this->viewComponents[$name] ?? null) {
-            if (($existing->isVendorComponent ?? null) === false) {
-                throw new ViewComponentWasAlreadyRegistered(
-                    name: $name,
-                    pending: $viewComponent,
-                    existing: $existing,
-                );
-            }
-        }
-
-        if ($viewComponent instanceof ClassReflector) {
-            $viewComponent = $viewComponent->getName();
-        }
-
-        $this->viewComponents[$name] = $viewComponent;
+        $this->viewComponents[$viewComponent->name] = $viewComponent;
     }
 }

@@ -6,6 +6,5 @@ use function Tempest\uri;
 
 ?>
 
-<x-component name="x-with-header">
-    <?= uri(HomeController::class) ?>
-</x-component>
+because this;
+    {{ uri(HomeController::class) }}

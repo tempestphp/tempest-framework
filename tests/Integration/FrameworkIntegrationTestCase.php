@@ -115,7 +115,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             isVendorComponent: $isVendor,
         );
 
-        $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
+        $this->container->get(ViewConfig::class)->addViewComponent($viewComponent);
     }
 
     protected function rollbackDatabase(): void

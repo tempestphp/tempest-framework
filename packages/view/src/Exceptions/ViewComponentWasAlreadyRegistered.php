@@ -10,15 +10,13 @@ use Tempest\View\Components\ViewComponent;
 
 final class ViewComponentWasAlreadyRegistered extends Exception
 {
-    public function __construct(
-        string $name,
-        ClassReflector|ViewComponent $pending,
-        string|ViewComponent $existing,
-    ) {
+    public function __construct(ViewComponent $pending, ViewComponent $existing)
+    {
         $message = sprintf(
-            "Could not register view component `{$name}` from `%s`, because a component with the same name already exists in `%s`",
-            ($pending instanceof ViewComponent) ? $pending->file : $pending->getName(),
-            ($existing instanceof ViewComponent) ? $existing->file : $existing,
+            'Could not register view component `%s` from `%s`, because a component with the same name already exists in `%s`',
+            $pending->name,
+            $pending->file,
+            $existing->file,
         );
 
         parent::__construct($message);
