@@ -8,15 +8,14 @@ use Tempest\Core\Environment;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
-use Tempest\View\Components\ViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Export\ViewObjectExporter;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
+use Tempest\View\ViewComponent;
 use Tempest\View\WithToken;
-
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

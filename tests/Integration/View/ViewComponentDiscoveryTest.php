@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\View;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\View\Components\ViewComponent;
 use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewComponentDiscovery;
 use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

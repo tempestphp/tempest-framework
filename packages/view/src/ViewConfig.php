@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Tempest\Reflection\ClassReflector;
-use Tempest\View\Components\ViewComponent;
 use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
 use Tempest\View\Renderers\TempestViewRenderer;
 

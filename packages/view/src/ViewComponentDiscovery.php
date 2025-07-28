@@ -10,9 +10,6 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
-use Tempest\Support\Str\ImmutableString;
-use Tempest\View\Components\ViewComponent;
-
 use function Tempest\Support\str;
 
 final class ViewComponentDiscovery implements Discovery, DiscoversPath

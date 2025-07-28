@@ -3,10 +3,9 @@
 namespace Integration\Core;
 
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tempest\View\Components\ViewComponent;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
 use function Tempest\Support\arr;
 
 final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase

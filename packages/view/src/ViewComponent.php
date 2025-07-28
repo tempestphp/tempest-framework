@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\View\Components;
+namespace Tempest\View;
 
 final class ViewComponent
 {

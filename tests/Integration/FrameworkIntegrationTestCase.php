@@ -27,13 +27,12 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
-use Tempest\View\Components\ViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
-
 use function Tempest\Support\Path\normalize;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest

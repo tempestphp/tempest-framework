@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Exceptions;
 
 use Exception;
-use Tempest\Reflection\ClassReflector;
-use Tempest\View\Components\ViewComponent;
+use Tempest\View\ViewComponent;
 
 final class ViewComponentWasAlreadyRegistered extends Exception
 {
