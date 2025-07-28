@@ -839,7 +839,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
         $html = $this->render(<<<'HTML'
-        <x-dynamic-component :is="$name" prop="test" />
+        <x-component :is="$name" prop="test" />
         HTML, name: 'x-test');
 
         $this->assertSame('<div>test</div>', $html);
@@ -850,7 +850,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
         $html = $this->render(<<<'HTML'
-        <x-component :is="$name" :prop="$input" />
+        <x-component :is="$name" :prop="$input" t="t" />
         HTML, name: 'x-test', input: 'test');
 
         $this->assertSame('<div>test</div>', $html);
@@ -861,7 +861,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div><x-slot/></div>');
 
         $html = $this->render(<<<'HTML'
-        <x-dynamic-component :is="$name">test</x-dynamic-component>
+        <x-component :is="$name">test</x-component>
         HTML, name: 'x-test');
 
         $this->assertSnippetsMatch('<div>test</div>', $html);

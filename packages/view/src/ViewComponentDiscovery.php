@@ -11,7 +11,7 @@ use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Str\ImmutableString;
-use Tempest\View\Components\AnonymousViewComponent;
+use Tempest\View\Components\ViewComponent;
 
 use function Tempest\Support\str;
 
@@ -25,7 +25,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(ViewComponent::class)) {
+        if (! $class->implements(ViewComponentInterface::class)) {
             return;
         }
 
@@ -83,7 +83,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         $this->discoveryItems->add($location, [
             $name,
-            new AnonymousViewComponent(
+            new ViewComponent(
                 name: $name,
                 contents: $header . $view,
                 file: $path,
@@ -100,7 +100,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
     ): void {
         $this->discoveryItems->add($location, [
             $fileName->toString(),
-            new AnonymousViewComponent(
+            new ViewComponent(
                 name: $fileName->toString(),
                 contents: $contents->toString(),
                 file: $path,

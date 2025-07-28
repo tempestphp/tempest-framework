@@ -3,9 +3,10 @@
 namespace Integration\Core;
 
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tempest\View\Components\AnonymousViewComponent;
+use Tempest\View\Components\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\arr;
 
 final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
@@ -38,8 +39,8 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
         );
 
         $this->searchOptionCount = arr($this->get(ViewConfig::class)->viewComponents)
-            ->filter(fn (mixed $input) => $input instanceof AnonymousViewComponent)
-            ->filter(fn (AnonymousViewComponent $viewComponent) => $viewComponent->isVendorComponent)
+            ->filter(fn (mixed $input) => $input instanceof ViewComponent)
+            ->filter(fn (ViewComponent $viewComponent) => $viewComponent->isVendorComponent)
             ->count();
     }
 
@@ -56,7 +57,7 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
             ->call('install view-components --force')
             ->assertSee('x-vendor-a')
             ->assertSee('x-vendor-b')
-            ->submit($this->searchOptionCount - 2 . ', ' . $this->searchOptionCount - 1);
+            ->submit(($this->searchOptionCount - 2) . ', ' . ($this->searchOptionCount - 1));
 
         $this->installer
             ->assertFileExists(

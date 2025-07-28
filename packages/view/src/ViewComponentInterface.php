@@ -7,8 +7,12 @@ namespace Tempest\View;
 use Tempest\View\Elements\ViewComponentElement;
 
 /** @internal */
-interface ViewComponent
+interface ViewComponentInterface
 {
+    public bool $isVendorComponent {
+        get;
+    }
+
     public static function getName(): string;
 
     public function compile(ViewComponentElement $element): string;

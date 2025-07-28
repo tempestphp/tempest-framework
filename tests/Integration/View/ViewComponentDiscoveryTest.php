@@ -6,8 +6,6 @@ namespace Tests\Tempest\Integration\View;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\View\Components\Input;
-use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
 use Tempest\View\ViewComponentDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -16,18 +14,9 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 {
-    public function test_duplicates(): void
+    public function test_vendor_components_get_overwritten(): void
     {
-        $discovery = $this->container->get(ViewComponentDiscovery::class);
-        $discovery->setItems(new DiscoveryItems([]));
-
-        try {
-            $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/duplicateComponent.view.php');
-            $discovery->apply();
-        } catch (ViewComponentWasAlreadyRegistered $viewComponentWasAlreadyRegistered) {
-            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $viewComponentWasAlreadyRegistered->getMessage());
-            $this->assertStringContainsString('x-input', $viewComponentWasAlreadyRegistered->getMessage());
-        }
+        // TODO
     }
 
     public function test_auto_registration(): void

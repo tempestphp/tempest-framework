@@ -27,7 +27,7 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
-use Tempest\View\Components\AnonymousViewComponent;
+use Tempest\View\Components\ViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewConfig;
@@ -108,7 +108,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function registerViewComponent(string $name, string $html, string $file = '', bool $isVendor = false): void
     {
-        $viewComponent = new AnonymousViewComponent(
+        $viewComponent = new ViewComponent(
             name: $name,
             contents: $html,
             file: $file,

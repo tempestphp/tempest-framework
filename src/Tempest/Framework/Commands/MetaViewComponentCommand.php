@@ -7,9 +7,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
-use Tempest\View\Components\AnonymousViewComponent;
+use Tempest\View\Components\ViewComponent;
 use Tempest\View\Slot;
-use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
 use function Tempest\Support\arr;
@@ -42,14 +41,13 @@ final class MetaViewComponentCommand
             $data = $this->makeData($viewComponent);
         } else {
             $data = arr($this->viewConfig->viewComponents)
-                ->filter(fn (string|ViewComponent $viewComponent) => $viewComponent instanceof AnonymousViewComponent)
-                ->map(fn (AnonymousViewComponent $viewComponent) => $this->makeData($viewComponent)->toArray());
+                ->map(fn (ViewComponent $viewComponent) => $this->makeData($viewComponent)->toArray());
         }
 
         $this->writeln($data->encodeJson(pretty: true));
     }
 
-    private function makeData(AnonymousViewComponent $viewComponent): ImmutableArray
+    private function makeData(ViewComponent $viewComponent): ImmutableArray
     {
         return arr([
             'file' => $viewComponent->file,
@@ -59,14 +57,10 @@ final class MetaViewComponentCommand
         ]);
     }
 
-    private function resolveViewComponent(string $viewComponent): ?AnonymousViewComponent
+    private function resolveViewComponent(string $viewComponent): ?ViewComponent
     {
         if (is_file($viewComponent)) {
             foreach ($this->viewConfig->viewComponents as $registeredViewComponent) {
-                if (! ($registeredViewComponent instanceof AnonymousViewComponent)) {
-                    continue;
-                }
-
                 if ($registeredViewComponent->file !== $viewComponent) {
                     continue;
                 }
@@ -83,14 +77,10 @@ final class MetaViewComponentCommand
             return null;
         }
 
-        if (! ($viewComponent instanceof AnonymousViewComponent)) {
-            return null;
-        }
-
         return $viewComponent;
     }
 
-    private function resolveSlots(AnonymousViewComponent $viewComponent): ImmutableArray
+    private function resolveSlots(ViewComponent $viewComponent): ImmutableArray
     {
         preg_match_all('/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/', $viewComponent->contents, $matches);
 
@@ -99,7 +89,7 @@ final class MetaViewComponentCommand
             ->values();
     }
 
-    private function resolveVariables(AnonymousViewComponent $viewComponent): ImmutableArray
+    private function resolveVariables(ViewComponent $viewComponent): ImmutableArray
     {
         return str($viewComponent->contents)
             ->matchAll('/^\s*\*\s*@var.*$/m')
@@ -115,7 +105,7 @@ final class MetaViewComponentCommand
                     'description' => $parts[2] ?? null,
                 ],
             )
-            ->filter(fn (array $parts) => $parts['name'] !== '$this')
+            ->filter(fn (array $parts) => ! in_array($parts['name'], ['$this', '$attributes', '$slots'], strict: true))
             ->values();
     }
 }
