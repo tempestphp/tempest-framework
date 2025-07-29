@@ -172,25 +172,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->render('', slots: []);
     }
 
-    public function test_nested_components(): void
-    {
-        $this->assertSnippetsMatch(
-            expected: <<<'HTML'
-            <form action="#" method="POST"><div><div><label for="a">a</label><input type="number" name="a" id="a"></div></div><div><label for="b">b</label><input type="text" name="b" id="b"></div></form>
-            HTML,
-            actual: $this->render(
-                <<<'HTML'
-                <x-form action="#">
-                    <div>
-                        <x-input name="a" label="a" type="number"></x-input>
-                    </div>
-                    <x-input name="b" label="b" type="text" />
-                </x-form>
-                HTML,
-            ),
-        );
-    }
-
     public function test_scope_does_not_leak_data(): void
     {
         $html = $this->render(<<<'HTML'

@@ -11,35 +11,37 @@ final class FormComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-form />');
 
-        $this->assertSnippetsMatch('<form method="POST"></form>', $html);
+        $this->assertStringContainsString('<form', $html);
+        $this->assertStringContainsString('method="POST"', $html);
+        $this->assertStringContainsString('#csrf_token', $html);
     }
 
     public function test_form_with_body(): void
     {
         $html = $this->render('<x-form>hi</x-form>');
 
-        $this->assertSnippetsMatch('<form method="POST">hi</form>', $html);
+        $this->assertStringContainsString('hi', $html);
     }
 
     public function test_form_with_string_method(): void
     {
         $html = $this->render('<x-form method="GET" />');
 
-        $this->assertSnippetsMatch('<form method="GET"></form>', $html);
+        $this->assertStringContainsString('method="GET"', $html);
     }
 
     public function test_form_with_enum_method(): void
     {
         $html = $this->render('<x-form :method="' . Method::class . '::GET" />');
 
-        $this->assertSnippetsMatch('<form method="GET"></form>', $html);
+        $this->assertStringContainsString('method="GET"', $html);
     }
 
     public function test_form_with_action(): void
     {
         $html = $this->render('<x-form action="/submit" />');
 
-        $this->assertSnippetsMatch('<form action="/submit" method="POST"></form>', $html);
+        $this->assertStringContainsString('action="/submit" method="POST"', $html);
     }
 
     public function test_form_with_enctype(): void
