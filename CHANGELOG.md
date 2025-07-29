@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.5.0](https://github.com/tempestphp/tempest-framework/compare/v1.4.0..1.5.0)  —  2025-07-28
+## [1.5.1](https://github.com/tempestphp/tempest-framework/compare/v1.5.0..1.5.1)  —  2025-07-29
+
+### 🚀 Features
+
+- **core**: improve exceptions related to internal storage (#1434) ([00caadf](https://github.com/tempestphp/tempest-framework/commit/00caadf2f8d37d927de8f696e035cd446ee2910d))
+- **testing**: add view data assertions (#1440) ([f573fd1](https://github.com/tempestphp/tempest-framework/commit/f573fd1cceb29a2a44254422599f03f4858898a9))
+- **view**: add csrf token in x-form (#1441) ([e4daa51](https://github.com/tempestphp/tempest-framework/commit/e4daa515e0bdee48179504e9365df1e34eefb019))
+
+
+## [1.5.0](https://github.com/tempestphp/tempest-framework/compare/v1.4.0..v1.5.0)  —  2025-07-28
 
 ### 🚨 Breaking changes
 
