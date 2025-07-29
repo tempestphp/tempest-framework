@@ -10,16 +10,27 @@ enum EncryptionAlgorithm: string
     case AES_128_CBC = 'aes-128-cbc';
     case CHACHA20_POLY1305 = 'chacha20-poly1305';
 
+    /**
+     * Returns the length of the key, in bytes, for the encryption algorithm.
+     */
     public function getKeyLength(): int
     {
         return openssl_cipher_key_length($this->value);
     }
 
+    /**
+     * Returns the initialization vector (IV) length for the encryption algorithm.
+     */
     public function getIvLength(): int
     {
         return openssl_cipher_iv_length($this->value);
     }
 
+    /**
+     * Determines if the encryption algorithm allows embedding associated data.
+     *
+     * @see https://en.wikipedia.org/wiki/Authenticated_encryption
+     */
     public function isAead(): bool
     {
         return match ($this) {
