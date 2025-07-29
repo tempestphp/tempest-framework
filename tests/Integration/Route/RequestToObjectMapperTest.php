@@ -7,6 +7,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToObjectMapper;
 use Tempest\Http\Method;
+use Tempest\Http\RequestParametersIncludedReservedNames;
 use Tempest\Http\Upload;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\NotNull;
@@ -108,5 +109,27 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         } catch (ValidationFailed $validationFailed) {
             $this->assertArrayHasKey('enumParam', $validationFailed->failingRules);
         }
+    }
+
+    public function test_reserved_properties_cannot_be_mapped(): void
+    {
+        $this->assertException(
+            expectedExceptionClass: RequestParametersIncludedReservedNames::class,
+            handler: function (): void {
+                map(new GenericRequest(
+                    method: Method::GET,
+                    uri: '/books?uri=invalid',
+                    body: ['query' => 'invalid'],
+                    files: ['body' => 'invalid'],
+                ))->with(
+                    RequestToObjectMapper::class,
+                )->to(RequestForInvalidMap::class);
+            },
+            assertException: function (RequestParametersIncludedReservedNames $exception): void {
+                $this->assertStringContainsString('uri', $exception->getMessage());
+                $this->assertStringContainsString('query', $exception->getMessage());
+                $this->assertStringContainsString('body', $exception->getMessage());
+            },
+        );
     }
 }

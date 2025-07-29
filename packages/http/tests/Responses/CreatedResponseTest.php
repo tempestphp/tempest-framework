@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests\Responses;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Http\Header;
 use Tempest\Http\Responses\Created;
+use Tempest\Http\Responses\Json;
 use Tempest\Http\Status;
 
 /**
@@ -21,5 +23,21 @@ final class CreatedResponseTest extends TestCase
         $this->assertSame([], $response->headers);
         $this->assertSame('{"foo":"bar"}', $response->body);
         $this->assertNotSame(Status::OK, $response->status);
+    }
+
+    public function test_json_response(): void
+    {
+        $response = new Json(['foo' => 'bar']);
+
+        $this->assertSame(Status::OK, $response->status);
+        $this->assertSame(['foo' => 'bar'], $response->body);
+
+        $accept = $response->getHeader('Accept');
+        $contentType = $response->getHeader('Content-Type');
+
+        $this->assertSame('Accept', $accept->name);
+        $this->assertSame('application/json', $accept->values[0]);
+        $this->assertSame('Content-Type', $contentType->name);
+        $this->assertSame('application/json', $contentType->values[0]);
     }
 }

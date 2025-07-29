@@ -81,7 +81,13 @@ final readonly class FileSessionManager implements SessionManager
                 return null;
             }
 
+            $file_pointer = fopen($path, 'rb');
+            flock($file_pointer, LOCK_SH);
+
             $content = Filesystem\read_file($path);
+
+            flock($file_pointer, LOCK_UN);
+            fclose($file_pointer);
 
             return unserialize($content, ['allowed_classes' => true]);
         } catch (Throwable) {
@@ -123,7 +129,7 @@ final readonly class FileSessionManager implements SessionManager
             $session->data = $data;
         }
 
-        Filesystem\write_file($path, serialize($session));
+        Filesystem\write_file($path, serialize($session), LOCK_EX);
 
         return $session;
     }

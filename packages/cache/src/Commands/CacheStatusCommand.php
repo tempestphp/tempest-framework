@@ -99,12 +99,10 @@ final readonly class CacheStatusCommand
             return $cache::class;
         }
 
-        $tag = $cache->cacheConfig->tag;
-
-        if ($tag instanceof UnitEnum) {
-            return $tag->name;
+        if ($cache->tag instanceof UnitEnum) {
+            return $cache->tag->name;
         }
 
-        return $tag ?? 'default';
+        return $cache->tag ?? 'default';
     }
 }

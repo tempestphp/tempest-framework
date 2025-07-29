@@ -15,14 +15,5 @@ interface SessionConfig
         get;
     }
 
-    /**
-     * Class responsible for resolving the session identifier.
-     *
-     * @var class-string<SessionIdResolver>
-     */
-    public string $sessionIdResolver {
-        get;
-    }
-
     public function createManager(Container $container): SessionManager;
 }

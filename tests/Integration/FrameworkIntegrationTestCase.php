@@ -15,7 +15,6 @@ use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tempest\Database\Connection\ConnectionInitializer;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -28,9 +27,9 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
-use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
@@ -107,11 +106,16 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         return $this->container->get(ViewRenderer::class)->render($view);
     }
 
-    protected function registerViewComponent(string $name, string $html): void
+    protected function registerViewComponent(string $name, string $html, string $file = '', bool $isVendor = false): void
     {
-        $viewComponent = new AnonymousViewComponent($html, '');
+        $viewComponent = new ViewComponent(
+            name: $name,
+            contents: $html,
+            file: $file,
+            isVendorComponent: $isVendor,
+        );
 
-        $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
+        $this->container->get(ViewConfig::class)->addViewComponent($viewComponent);
     }
 
     protected function rollbackDatabase(): void
@@ -210,5 +214,24 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         /* @phpstan-ignore-next-line */
         $this->assertTrue(false, "Expected exception {$expectedExceptionClass} was not thrown");
+    }
+
+    protected function skipWindows(string $reason): void
+    {
+        if (PHP_OS_FAMILY !== 'Windows') {
+            return;
+        }
+
+        $this->markTestSkipped($reason);
+    }
+
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return null|TClassName
+     */
+    protected function get(string $className): ?object
+    {
+        return $this->container->get($className);
     }
 }

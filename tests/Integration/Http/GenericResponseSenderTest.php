@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use JsonSerializable;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
@@ -12,6 +16,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\ServerSentEvent;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
+use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
@@ -36,6 +41,35 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame($response, $responseSender->send($response));
 
         ob_get_clean();
+    }
+
+    public function test_sending_head_request(): void
+    {
+        $request = new GenericRequest(
+            method: Method::HEAD,
+            uri: '/test',
+        );
+
+        $this->container->singleton(Request::class, $request);
+
+        $responseSender = new GenericResponseSender(
+            $this->container,
+            $this->container->get(ViewRenderer::class),
+        );
+
+        $response = new GenericResponse(
+            status: Status::OK,
+            body: 'body',
+            headers: ['x-custom' => ['true']],
+        );
+
+        ob_start();
+
+        $responseSender->send($response);
+
+        $content = ob_get_clean();
+
+        $this->assertSame('', $content);
     }
 
     public function test_file_response(): void
@@ -83,6 +117,29 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new GenericResponse(
             status: Status::CREATED,
             body: ['key' => 'value'],
+        );
+
+        $responseSender = $this->container->get(GenericResponseSender::class);
+
+        $responseSender->send($response);
+
+        $output = ob_get_clean();
+
+        $this->assertSame('{"key":"value"}', $output);
+    }
+
+    public function test_sending_of_json_serializable_to_json(): void
+    {
+        ob_start();
+
+        $response = new GenericResponse(
+            status: Status::CREATED,
+            body: new class implements JsonSerializable {
+                public function jsonSerialize(): mixed
+                {
+                    return ['key' => 'value'];
+                }
+            },
         );
 
         $responseSender = $this->container->get(GenericResponseSender::class);

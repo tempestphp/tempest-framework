@@ -12,6 +12,7 @@ use Tempest\Core\Kernel;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
+use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Router\Exceptions\RouteBindingFailed;
@@ -120,7 +121,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     #[TestWith([Status::NOT_FOUND])]
     #[TestWith([Status::FORBIDDEN])]
     #[TestWith([Status::METHOD_NOT_ALLOWED])]
-    public function test_exception_handler_returns_sane_code_as_http_exception(Status $status): void
+    public function test_exception_handler_returns_same_code_as_http_exception(Status $status): void
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
@@ -147,6 +148,16 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertArrayHasKey('foo', NullExceptionProcessor::$exceptions[0]->context());
 
         NullExceptionProcessor::$exceptions = [];
+    }
+
+    public function test_exception_handler_returns_unprocessable_for_csrf_mismatch(): void
+    {
+        $this->callExceptionHandler(function (): void {
+            $handler = $this->container->get(HttpExceptionHandler::class);
+            $handler->handle(new CsrfTokenDidNotMatch());
+        });
+
+        $this->assertSame(Status::UNPROCESSABLE_CONTENT, $this->response->status);
     }
 
     private function callExceptionHandler(Closure $callback): void

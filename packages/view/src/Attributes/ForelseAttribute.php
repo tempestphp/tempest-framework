@@ -8,10 +8,11 @@ use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpForeachElement;
 use Tempest\View\Exceptions\ElementWasInvalid;
+use Tempest\View\ShouldBeRemoved;
 
-final readonly class ForelseAttribute implements Attribute
+final readonly class ForelseAttribute implements Attribute, ShouldBeRemoved
 {
-    public function apply(Element $element): ?Element
+    public function apply(Element $element): Element
     {
         $previous = $element->getPrevious()?->unwrap(PhpForeachElement::class);
 
@@ -21,6 +22,6 @@ final readonly class ForelseAttribute implements Attribute
 
         $previous->setElse($element);
 
-        return null;
+        return $element;
     }
 }

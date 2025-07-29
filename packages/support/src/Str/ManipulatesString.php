@@ -14,6 +14,7 @@ use Tempest\Support\Random;
 use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
+use function Tempest\Support\Json\decode;
 use function Tempest\Support\tap;
 
 /**
@@ -664,9 +665,9 @@ trait ManipulatesString
     /**
      * Explodes the string into an {@see \Tempest\Support\Arr\ImmutableArray} instance by a separator.
      */
-    public function explode(string $separator = ' '): ImmutableArray
+    public function explode(string $separator = ' ', int $limit = PHP_INT_MAX): ImmutableArray
     {
-        return new ImmutableArray(explode($separator, $this->value));
+        return new ImmutableArray(explode($separator, $this->value, $limit));
     }
 
     /**
@@ -863,6 +864,14 @@ trait ManipulatesString
         lw($this->value, ...$dumps);
 
         return $this;
+    }
+
+    /**
+     * Decodes the JSON string and returns an array helper instance.
+     */
+    public function decodeJson(): ImmutableArray
+    {
+        return arr(decode($this->value));
     }
 
     /**

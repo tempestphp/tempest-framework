@@ -3,6 +3,7 @@
 namespace Tempest\Cache\Config;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Tempest\Container\Container;
 use UnitEnum;
 
 use function Tempest\get;
@@ -26,8 +27,8 @@ final class CustomCacheConfig implements CacheConfig
         public null|string|UnitEnum $tag = null,
     ) {}
 
-    public function createAdapter(): AdapterInterface
+    public function createAdapter(Container $container): AdapterInterface
     {
-        return get($this->adapter);
+        return $container->get($this->adapter);
     }
 }

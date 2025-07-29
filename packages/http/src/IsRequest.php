@@ -42,9 +42,12 @@ trait IsRequest
     private(set) array $files;
 
     #[SkipValidation]
-    public array $cookies {
-        get => get(CookieManager::class)->all();
+    public Session $session {
+        get => get(Session::class);
     }
+
+    #[SkipValidation]
+    public array $cookies = [];
 
     public function __construct(
         Method $method,
@@ -88,10 +91,7 @@ trait IsRequest
 
     public function getCookie(string $name): ?Cookie
     {
-        /** @var CookieManager $cookies */
-        $cookies = get(CookieManager::class);
-
-        return $cookies->get($name);
+        return $this->cookies[$name] ?? null;
     }
 
     private function resolvePath(): string
@@ -134,5 +134,14 @@ trait IsRequest
     public function hasQuery(string $key): bool
     {
         return has_key($this->query, $key);
+    }
+
+    public function withMethod(Method $method): self
+    {
+        $clone = clone $this;
+
+        $clone->method = $method;
+
+        return $clone;
     }
 }

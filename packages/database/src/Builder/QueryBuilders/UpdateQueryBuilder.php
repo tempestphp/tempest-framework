@@ -2,36 +2,46 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\UpdateStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Mapper\SerializerFactory;
-use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
+/**
+ * @template TModelClass of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ */
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private UpdateStatement $update;
 
     private array $bindings = [];
 
+    private ModelInspector $model;
+
     public function __construct(
-        private string|object $model,
-        private array|ImmutableArray $values,
-        private SerializerFactory $serializerFactory,
+        /** @var class-string<TModelClass>|string|TModelClass $model */
+        string|object $model,
+        private readonly array|ImmutableArray $values,
+        private readonly SerializerFactory $serializerFactory,
     ) {
+        $this->model = model($model);
+
         $this->update = new UpdateStatement(
-            table: model($this->model)->getTableDefinition(),
+            table: $this->model->getTableDefinition(),
         );
     }
 
@@ -40,6 +50,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this->build()->execute(...$bindings);
     }
 
+    /** @return self<TModelClass> */
     public function allowAll(): self
     {
         $this->update->allowAll = true;
@@ -47,15 +58,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function where(string $where, mixed ...$bindings): self
-    {
-        $this->update->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
+    /** @return self<TModelClass> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -76,8 +79,11 @@ final class UpdateQueryBuilder implements BuildsQuery
 
         $this->update->values = $values;
 
-        if (model($this->model)->isObjectModel() && is_object($this->model)) {
-            $this->where('`id` = ?', id: $this->model->id->id);
+        if ($this->model->isObjectModel() && is_object($this->model->instance)) {
+            $this->whereField(
+                $this->model->getPrimaryKey(),
+                $this->model->getPrimaryKeyValue()->id,
+            );
         }
 
         foreach ($values as $value) {
@@ -93,28 +99,24 @@ final class UpdateQueryBuilder implements BuildsQuery
 
     private function resolveValues(): ImmutableArray
     {
-        $modelDefinition = model($this->model);
-
-        if (! $modelDefinition->isObjectModel()) {
+        if (! $this->model->isObjectModel()) {
             return arr($this->values);
         }
 
         $values = arr();
 
-        $modelClass = new ClassReflector($this->model);
-
         foreach ($this->values as $column => $value) {
-            $property = $modelClass->getProperty($column);
+            $property = $this->model->reflector->getProperty($column);
 
-            if ($modelDefinition->getHasMany($property->getName())) {
-                throw new HasManyRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
+            if ($this->model->getHasMany($property->getName())) {
+                throw new HasManyRelationCouldNotBeUpdated($this->model->getName(), $property->getName());
             }
 
-            if ($modelDefinition->getHasOne($property->getName())) {
-                throw new HasOneRelationCouldNotBeUpdated($modelClass->getName(), $property->getName());
+            if ($this->model->getHasOne($property->getName())) {
+                throw new HasOneRelationCouldNotBeUpdated($this->model->getName(), $property->getName());
             }
 
-            if ($modelDefinition->isRelation($property)) {
+            if ($this->model->isRelation($property)) {
                 $column .= '_id';
 
                 $value = match (true) {
@@ -140,5 +142,15 @@ final class UpdateQueryBuilder implements BuildsQuery
         }
 
         return $values;
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->update;
+    }
+
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }

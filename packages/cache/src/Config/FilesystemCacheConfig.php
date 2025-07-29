@@ -3,6 +3,7 @@
 namespace Tempest\Cache\Config;
 
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Tempest\Container\Container;
 use UnitEnum;
 
 use function Tempest\internal_storage_path;
@@ -29,7 +30,7 @@ final class FilesystemCacheConfig implements CacheConfig
         public null|string|UnitEnum $tag = null,
     ) {}
 
-    public function createAdapter(): FilesystemAdapter
+    public function createAdapter(Container $container): FilesystemAdapter
     {
         return new FilesystemAdapter(
             namespace: $this->namespace ?? '',

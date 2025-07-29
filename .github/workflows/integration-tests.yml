@@ -89,6 +89,10 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
+      - name: "Setup Redis"
+        if: ${{ matrix.os != 'windows-latest' }}
+        uses: supercharge/redis-github-action@1.7.0
+
       - name: "Setup MySQL"
         if: ${{ matrix.database == 'mysql' }}
         uses: ankane/setup-mysql@v1
@@ -104,7 +108,7 @@ jobs:
         run: php -r "copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
 
       - name: Tempest about
-        run: php ./tempest about
+        run: php ./tempest about -v
 
       - name: List discovered locations
         run: php ./tempest discovery:status
