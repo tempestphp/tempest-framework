@@ -8,6 +8,7 @@ use function Tempest\Support\str;
 
 final class Token
 {
+    /** @var \Tempest\View\Parser\Token[] */
     private(set) array $children = [];
 
     private(set) ?Token $parent = null;

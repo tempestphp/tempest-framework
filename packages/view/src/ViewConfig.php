@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Tempest\Reflection\ClassReflector;
-use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
 use Tempest\View\Renderers\TempestViewRenderer;
 
 final class ViewConfig
 {
     public function __construct(
-        /** @var array<array-key, class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent> */
+        /** @var array<array-key, ViewComponent> */
         public array $viewComponents = [],
 
         /** @var class-string<\Tempest\View\ViewProcessor>[] */
@@ -27,24 +26,23 @@ final class ViewConfig
         $this->viewProcessors[] = $viewProcessor->getName();
     }
 
-    public function addViewComponent(string $name, ClassReflector|AnonymousViewComponent $viewComponent): void
+    public function addViewComponent(ViewComponent $pending): void
     {
-        if (! str_starts_with($name, 'x-')) {
-            $name = "x-{$name}";
+        $existing = $this->viewComponents[$pending->name] ?? null;
+
+        if ($existing && $pending->isVendorComponent) {
+            // Vendor components don't overwrite existing components
+            return;
         }
 
-        if ($existing = $this->viewComponents[$name] ?? null) {
+        if ($existing?->isProjectComponent && $pending->isProjectComponent) {
+            // If both pending and existing are project components, we'll throw an exception
             throw new ViewComponentWasAlreadyRegistered(
-                name: $name,
-                pending: $viewComponent,
+                pending: $pending,
                 existing: $existing,
             );
         }
 
-        if ($viewComponent instanceof ClassReflector) {
-            $viewComponent = $viewComponent->getName();
-        }
-
-        $this->viewComponents[$name] = $viewComponent;
+        $this->viewComponents[$pending->name] = $pending;
     }
 }

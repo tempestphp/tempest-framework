@@ -360,6 +360,7 @@ final class ManipulatesStringTest extends TestCase
     {
         $this->assertTrue(str('path/to/tempest')->explode('/')->equals(['path', 'to', 'tempest']));
         $this->assertTrue(str('john doe')->explode()->equals(['john', 'doe']));
+        $this->assertTrue(str('john doe foo bar')->explode(limit: 2)->equals(['john', 'doe foo bar']));
     }
 
     public function test_implode(): void

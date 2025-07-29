@@ -40,6 +40,12 @@ final class PhpForeachElement implements Element, WrapsElement
     {
         $foreachAttribute = $this->wrappingElement->consumeAttribute(':foreach');
 
+        if ($viewComponent = $this->unwrap(ViewComponentElement::class)) {
+            $name = trim(str($foreachAttribute)->explode('as')->last());
+
+            $viewComponent->addVariable($name);
+        }
+
         $compiled = sprintf(
             '<?php foreach (%s): ?>
 %s',

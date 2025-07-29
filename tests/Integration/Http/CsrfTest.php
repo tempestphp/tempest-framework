@@ -14,6 +14,8 @@ use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Http\csrf_token;
+
 final class CsrfTest extends FrameworkIntegrationTestCase
 {
     public function test_csrf_is_sent_as_cookie(): void
@@ -116,7 +118,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
         $session = $this->container->get(Session::class);
         $session->set(Session::CSRF_TOKEN_KEY, 'test');
 
-        $this->assertSame('test', \Tempest\Http\csrf_token());
+        $this->assertSame('test', csrf_token());
     }
 
     public function test_csrf_with_cached_view(): void

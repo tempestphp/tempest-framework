@@ -665,9 +665,9 @@ trait ManipulatesString
     /**
      * Explodes the string into an {@see \Tempest\Support\Arr\ImmutableArray} instance by a separator.
      */
-    public function explode(string $separator = ' '): ImmutableArray
+    public function explode(string $separator = ' ', int $limit = PHP_INT_MAX): ImmutableArray
     {
-        return new ImmutableArray(explode($separator, $this->value));
+        return new ImmutableArray(explode($separator, $this->value, $limit));
     }
 
     /**

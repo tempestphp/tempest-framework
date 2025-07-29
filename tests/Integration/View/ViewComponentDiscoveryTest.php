@@ -6,9 +6,10 @@ namespace Tests\Tempest\Integration\View;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\View\Components\Input;
 use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
+use Tempest\View\ViewComponent;
 use Tempest\View\ViewComponentDiscovery;
+use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -16,19 +17,66 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 {
-    public function test_duplicates(): void
+    public function test_vendor_components_get_overwritten(): void
     {
-        $discovery = $this->container->get(ViewComponentDiscovery::class);
-        $discovery->setItems(new DiscoveryItems([]));
+        /** @var ViewConfig $viewConfig */
+        $viewConfig = $this->get(ViewConfig::class);
 
-        try {
-            $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/duplicateComponent.view.php');
-            $discovery->apply();
-        } catch (ViewComponentWasAlreadyRegistered $viewComponentWasAlreadyRegistered) {
-            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $viewComponentWasAlreadyRegistered->getMessage());
-            $this->assertStringContainsString(Input::class, $viewComponentWasAlreadyRegistered->getMessage());
-            $this->assertStringContainsString('x-input', $viewComponentWasAlreadyRegistered->getMessage());
-        }
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'overwritten',
+            file: '',
+            isVendorComponent: false,
+        ));
+
+        $this->assertSame('overwritten', $this->render('<x-form />'));
+    }
+
+    public function test_project_view_components_cannot_be_overwritten_by_other_project_view_component(): void
+    {
+        /** @var ViewConfig $viewConfig */
+        $viewConfig = $this->get(ViewConfig::class);
+
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'overwritten',
+            file: '',
+            isVendorComponent: false,
+        ));
+
+        $this->assertException(
+            ViewComponentWasAlreadyRegistered::class,
+            function () use ($viewConfig): void {
+                $viewConfig->addViewComponent(new ViewComponent(
+                    name: 'x-form',
+                    contents: 'b',
+                    file: '',
+                    isVendorComponent: false,
+                ));
+            },
+        );
+    }
+
+    public function test_project_view_components_will_not_be_overwritten_by_vendor_view_component(): void
+    {
+        /** @var ViewConfig $viewConfig */
+        $viewConfig = $this->get(ViewConfig::class);
+
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'overwritten',
+            file: '',
+            isVendorComponent: false,
+        ));
+
+        $viewConfig->addViewComponent(new ViewComponent(
+            name: 'x-form',
+            contents: 'original',
+            file: '',
+            isVendorComponent: true,
+        ));
+
+        $this->assertSame('overwritten', $this->render('<x-form />'));
     }
 
     public function test_auto_registration(): void

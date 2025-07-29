@@ -78,6 +78,26 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Hello</div>',
+            $html,
+        );
+    }
+
+    public function test_else_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div><div :else :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
+        );
+    }
+
     public function test_elseif_attribute(): void
     {
         $this->assertSame(
@@ -120,6 +140,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_else_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$show" :data="$data">Hello</div><div :elseif="$show === false" :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
+        );
+    }
+
     public function test_else_attribute(): void
     {
         $this->assertSame(
@@ -146,9 +176,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_foreach_consumes_attribute(): void
     {
-        $html = $this->render(view(
+        $html = $this->render(
             <<<'HTML'
-            <x-base>
+            <x-base :items="$items">
                 <table>
                     <tr :foreach="$items as $item">
                         <td>{{ $item }}</td>
@@ -156,7 +186,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
                 </table>
             </x-base>
             HTML,
-        )->data(items: ['a', 'b']));
+            items: ['a', 'b'],
+        );
 
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -198,6 +229,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             <div>a</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
+        );
+    }
+
+    public function test_forelse_with_other_expression_attribute(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div data="test">Empty</div>
+            HTML,
+            $this->render('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse :data="$data">Empty</div>', items: [], data: 'test'),
         );
     }
 
@@ -501,7 +542,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>'),
+            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>', hello: null),
         );
     }
 
