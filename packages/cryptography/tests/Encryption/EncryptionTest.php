@@ -4,11 +4,9 @@ namespace Tempest\Cryptography\Tests\Encryption;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Cryptography\Encryption\EncryptedData;
 use Tempest\Cryptography\Encryption\EncryptionAlgorithm;
 use Tempest\Cryptography\Encryption\EncryptionConfig;
 use Tempest\Cryptography\Encryption\EncryptionKey;
-use Tempest\Cryptography\Encryption\Exceptions\DecryptionFailed;
 use Tempest\Cryptography\Encryption\Exceptions\EncryptionKeyWasInvalid;
 use Tempest\Cryptography\Encryption\Exceptions\SignatureMismatched;
 use Tempest\Cryptography\Encryption\GenericEncrypter;

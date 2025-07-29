@@ -11,6 +11,6 @@ final class EncryptionConfig
     public function __construct(
         public EncryptionAlgorithm $algorithm,
         #[\SensitiveParameter]
-        public string $key,
+        public ?string $key,
     ) {}
 }

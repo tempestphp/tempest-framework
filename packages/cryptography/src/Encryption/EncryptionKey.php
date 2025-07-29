@@ -31,9 +31,9 @@ final readonly class EncryptionKey implements Stringable
     /**
      * Creates an encryption key from a string.
      */
-    public static function fromString(string $key, EncryptionAlgorithm $algorithm): self
+    public static function fromString(?string $key, EncryptionAlgorithm $algorithm): self
     {
-        return new self(base64_decode($key, strict: true), $algorithm);
+        return new self(base64_decode($key ?: '', strict: true), $algorithm);
     }
 
     public function toString(): string
