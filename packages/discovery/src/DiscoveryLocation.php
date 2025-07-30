@@ -23,7 +23,7 @@ final class DiscoveryLocation
 
     public function isVendor(): bool
     {
-        return str_contains($this->path, '/vendor/') || str_contains($this->path, '\\vendor\\');
+        return str_contains($this->path, '/vendor/') || str_contains($this->path, '\\vendor\\') || str_starts_with($this->namespace, 'Tempest');
     }
 
     public function toClassName(string $path): string

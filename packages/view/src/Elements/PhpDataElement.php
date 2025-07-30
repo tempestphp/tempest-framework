@@ -26,6 +26,10 @@ final class PhpDataElement implements Element, WrapsElement
 
     public function compile(): string
     {
+        //        if ($this->unwrap(ViewComponentElement::class)) {
+        return $this->wrappingElement->compile();
+        //        }
+
         $localVariableName = str($this->name)->ltrim(':')->camel()->toString();
         $isExpression = str_starts_with($this->name, ':');
         $value = $this->value ?? '';
@@ -50,21 +54,6 @@ final class PhpDataElement implements Element, WrapsElement
             $localVariableName,
             $localVariableName,
         );
-
-        // Support for boolean attributes. When an expression attribute has a falsy value, it won't be rendered at all.
-        // When it's "true", it will only render the attribute name and not the "true" value
-        $coreElement = $this->unwrap(GenericElement::class);
-
-        if ($isExpression && $coreElement) {
-            $attributeName = ltrim($this->name, ':');
-
-            $coreElement
-                ->addRawAttribute(new RawConditionalAttribute(
-                    name: $attributeName,
-                    value: $coreElement->getAttribute($attributeName),
-                )->compile())
-                ->unsetAttribute($attributeName);
-        }
 
         return sprintf(
             '<?php %s ?>

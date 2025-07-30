@@ -9,11 +9,13 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Attributes\ElseAttribute;
 use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ViewNotFound;
+use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
@@ -143,20 +145,14 @@ final readonly class TempestViewCompiler
         $previous = null;
 
         foreach ($elements as $element) {
-            $isDynamicViewComponent = $element instanceof ViewComponentElement && $element->getViewComponent() instanceof DynamicViewComponent;
-
-            if (! $isDynamicViewComponent) {
-                $children = $this->applyAttributes($element->getChildren());
-                $element->setChildren($children);
-            }
+            $children = $this->applyAttributes($element->getChildren());
+            $element->setChildren($children);
 
             $element->setPrevious($previous);
 
-            foreach ($element->getAttributes() as $name => $value) {
-                if ($isDynamicViewComponent && $name !== ':is' && $name !== 'is') {
-                    continue;
-                }
+            $shouldBeRemoved = false;
 
+            foreach ($element->getAttributes() as $name => $value) {
                 // TODO: possibly refactor attribute construction to ElementFactory?
                 if ($value instanceof Attribute) {
                     $attribute = $value;
@@ -166,12 +162,12 @@ final readonly class TempestViewCompiler
 
                 $element = $attribute->apply($element);
 
-                if ($element === null) {
-                    break;
+                if ($shouldBeRemoved === false && $attribute instanceof ShouldBeRemoved) {
+                    $shouldBeRemoved = true;
                 }
             }
 
-            if ($element === null) {
+            if ($shouldBeRemoved) {
                 continue;
             }
 

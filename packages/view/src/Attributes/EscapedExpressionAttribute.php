@@ -11,7 +11,7 @@ final class EscapedExpressionAttribute implements Attribute
         private string $name,
     ) {}
 
-    public function apply(Element $element): ?Element
+    public function apply(Element $element): Element
     {
         $attributeValue = $element->getAttribute($this->name);
 
