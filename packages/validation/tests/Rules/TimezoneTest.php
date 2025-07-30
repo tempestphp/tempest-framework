@@ -17,8 +17,6 @@ final class TimezoneTest extends TestCase
     {
         $rule = new Timezone();
 
-        $this->assertSame('Value should be a valid timezone', $rule->message());
-
         $this->assertFalse($rule->isValid('invalid_timezone'));
         $this->assertFalse($rule->isValid('Asia/Sydney'));
         $this->assertTrue($rule->isValid('America/New_York'));

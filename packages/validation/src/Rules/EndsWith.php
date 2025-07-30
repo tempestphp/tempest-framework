@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class EndsWith implements Rule
+final readonly class EndsWith implements Rule, HasTranslationVariables
 {
     public function __construct(
         private string $needle,
@@ -19,8 +20,10 @@ final readonly class EndsWith implements Rule
         return str_ends_with($value, $this->needle);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value should end with {$this->needle}";
+        return [
+            'needle' => $this->needle,
+        ];
     }
 }

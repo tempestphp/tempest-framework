@@ -11,7 +11,6 @@ use Tempest\Intl\MessageFormat\SelectorFunction;
 use Tempest\Intl\Number;
 use Tempest\Intl\PluralRules\PluralRulesMatcher;
 use Tempest\Support\Arr;
-use Tempest\Support\Str;
 
 final class NumberFunction implements FormattingFunction, SelectorFunction
 {
@@ -26,8 +25,12 @@ final class NumberFunction implements FormattingFunction, SelectorFunction
     {
         $number = Number\parse($value);
 
+        if (Arr\get_by_key($parameters, 'select') === 'exists') {
+            return $this->matchExists($key, $value);
+        }
+
         if (Arr\get_by_key($parameters, 'select') === 'exact') {
-            return $key === Str\parse($value);
+            return Number\parse($key) === $value;
         }
 
         if (Number\parse($key) === $number || $key === $value) {
@@ -36,6 +39,19 @@ final class NumberFunction implements FormattingFunction, SelectorFunction
 
         if ($key === $this->pluralRules->getPluralCategory($this->intlConfig->currentLocale, $number)) {
             return true;
+        }
+
+        return false;
+    }
+
+    private function matchExists(string $key, mixed $value): bool
+    {
+        if ($key === 'true') {
+            return $value !== null;
+        }
+
+        if ($key === 'false' || $key === 'null') {
+            return $value === null;
         }
 
         return false;

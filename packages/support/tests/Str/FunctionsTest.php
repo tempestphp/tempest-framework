@@ -15,11 +15,11 @@ final class FunctionsTest extends TestCase
         $this->assertSame('foo', Str\parse('foo'));
         $this->assertSame('1', Str\parse('1'));
         $this->assertSame('1', Str\parse(1));
-        $this->assertSame(null, Str\parse(new stdClass()));
+        $this->assertSame('', Str\parse(new stdClass()));
         $this->assertSame('', Str\parse(new stdClass(), default: ''));
         $this->assertSame('foo', Str\parse(new stdClass(), default: 'foo'));
         $this->assertSame('foo', Str\parse(new MutableString('foo')));
         $this->assertSame('foo', Str\parse(new ImmutableString('foo')));
-        $this->assertSame(null, Str\parse(['a', 'b']));
+        $this->assertSame('', Str\parse(['a', 'b']));
     }
 }

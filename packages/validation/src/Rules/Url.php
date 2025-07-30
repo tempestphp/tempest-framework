@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Url implements Rule
+final readonly class Url implements Rule, HasTranslationVariables
 {
     /**
      * @param string[] $protocols
@@ -66,8 +67,10 @@ final readonly class Url implements Rule
         return preg_match(sprintf($pattern, $protocolList), $value) === 1;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be a valid URL';
+        return [
+            'protocols' => $this->protocols,
+        ];
     }
 }

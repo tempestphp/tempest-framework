@@ -36,11 +36,4 @@ final class UrlTest extends TestCase
 
         $this->assertFalse($rule->isValid(1));
     }
-
-    public function test_url_message(): void
-    {
-        $rule = new Url();
-
-        $this->assertSame('Value should be a valid URL', $rule->message());
-    }
 }

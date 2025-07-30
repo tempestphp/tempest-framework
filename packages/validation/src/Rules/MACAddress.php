@@ -14,9 +14,4 @@ final readonly class MACAddress implements Rule
     {
         return boolval(filter_var($value, FILTER_VALIDATE_MAC));
     }
-
-    public function message(): string
-    {
-        return 'Value should be a valid MAC Address';
-    }
 }

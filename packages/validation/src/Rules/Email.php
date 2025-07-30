@@ -23,9 +23,4 @@ final readonly class Email implements Rule
 
         return $emailValidator->isValid($value ?? '', $this->validationMethod);
     }
-
-    public function message(): string
-    {
-        return 'Value should be a valid email address';
-    }
 }

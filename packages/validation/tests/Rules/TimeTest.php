@@ -14,9 +14,7 @@ final class TimeTest extends TestCase
 {
     public function test_time(): void
     {
-        $rule = new Time();
-
-        $this->assertSame('Value should be a valid time in the format of hh:mm xm', $rule->message());
+        $rule = new Time(twentyFourHour: false);
 
         $this->assertFalse($rule->isValid('0001'));
         $this->assertFalse($rule->isValid('01:00'));
@@ -41,8 +39,6 @@ final class TimeTest extends TestCase
     public function test_military_time(): void
     {
         $rule = new Time(twentyFourHour: true);
-
-        $this->assertSame('Value should be a valid time in the 24-hour format of hh:mm', $rule->message());
 
         $this->assertFalse($rule->isValid('2400'));
         $this->assertFalse($rule->isValid('01:00 am'));

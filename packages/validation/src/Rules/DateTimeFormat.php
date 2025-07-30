@@ -8,10 +8,11 @@ use Attribute;
 use DateTimeImmutable as NativeDateTimeImmutable;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\FormatPattern;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class DateTimeFormat implements Rule
+final readonly class DateTimeFormat implements Rule, HasTranslationVariables
 {
     /**
      * @param string|FormatPattern $format An ICU or legacy datetime format ({@see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax}, {@see https://www.php.net/manual/en/datetime.format.php}).
@@ -47,8 +48,12 @@ final readonly class DateTimeFormat implements Rule
         return $date->format($this->format) === $value;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value should be a valid datetime in the format {$this->format}";
+        return [
+            'format' => ($this->format instanceof FormatPattern)
+                ? $this->format->value
+                : $this->format,
+        ];
     }
 }

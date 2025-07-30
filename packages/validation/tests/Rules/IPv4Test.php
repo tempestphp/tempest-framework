@@ -16,8 +16,6 @@ final class IPv4Test extends TestCase
     {
         $rule = new IPv4();
 
-        $this->assertSame('Value should be a valid IPv4 address', $rule->message());
-
         $this->assertTrue($rule->isValid('192.168.0.1'));
         $this->assertTrue($rule->isValid('10.0.0.1'));
         $this->assertTrue($rule->isValid('172.16.0.1'));
@@ -40,20 +38,5 @@ final class IPv4Test extends TestCase
 
         $this->assertFalse($rule->isValid('169.254.0.0'));
         $this->assertTrue($rule->isValid('172.16.1.1'));
-    }
-
-    public function test_messages(): void
-    {
-        $rule = new IPv4();
-        $this->assertSame('Value should be a valid IPv4 address', $rule->message());
-
-        $rule = new IPv4(allowPrivateRange: false);
-        $this->assertSame('Value should be a valid IPv4 address that is not in a private range', $rule->message());
-
-        $rule = new IPv4(allowReservedRange: false);
-        $this->assertSame('Value should be a valid IPv4 address that is not in a reserved range', $rule->message());
-
-        $rule = new IPv4(allowPrivateRange: false, allowReservedRange: false);
-        $this->assertSame('Value should be a valid IPv4 address that is not in a private range and not in a reserved range', $rule->message());
     }
 }

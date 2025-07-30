@@ -8,11 +8,12 @@ use Attribute;
 use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]
-final readonly class BetweenDates implements Rule
+final readonly class BetweenDates implements Rule, HasTranslationVariables
 {
     private DateTimeInterface $first;
     private DateTimeInterface $second;
@@ -41,8 +42,12 @@ final readonly class BetweenDates implements Rule
         return $value->betweenTimeExclusive($this->first, $this->second);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value must be a date between {$this->first} and {$this->second}";
+        return [
+            'first' => $this->first,
+            'second' => $this->second,
+            'inclusive' => $this->inclusive,
+        ];
     }
 }

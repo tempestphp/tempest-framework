@@ -18,9 +18,4 @@ final readonly class AlphaNumeric implements Rule
 
         return boolval(preg_match('/^[A-Za-z0-9]+$/', $value));
     }
-
-    public function message(): string
-    {
-        return 'Value should only contain alphanumeric characters';
-    }
 }

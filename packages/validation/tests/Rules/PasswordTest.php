@@ -64,36 +64,4 @@ final class PasswordTest extends TestCase
         $this->assertTrue($rule->isValid('123456789012@'));
         $this->assertFalse($rule->isValid('123456789012'));
     }
-
-    public function test_message(): void
-    {
-        $rule = new Password();
-        $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);
-
-        $rule = new Password(min: 4);
-        $this->assertSame('Value should contain at least 4 characters', $rule->message()[0]);
-
-        $rule = new Password(mixedCase: true);
-        $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);
-        $this->assertSame('at least one uppercase and one lowercase letter', $rule->message()[1]);
-
-        $rule = new Password(letters: true);
-        $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);
-        $this->assertSame('at least one letter', $rule->message()[1]);
-
-        $rule = new Password(numbers: true);
-        $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);
-        $this->assertSame('at least one number', $rule->message()[1]);
-
-        $rule = new Password(symbols: true);
-        $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);
-        $this->assertSame('at least one symbol', $rule->message()[1]);
-
-        $rule = new Password(min: 4, mixedCase: true, letters: true, numbers: true, symbols: true);
-        $this->assertSame('Value should contain at least 4 characters', $rule->message()[0]);
-        $this->assertSame('at least one uppercase and one lowercase letter', $rule->message()[1]);
-        $this->assertSame('at least one number', $rule->message()[2]);
-        $this->assertSame('at least one letter', $rule->message()[3]);
-        $this->assertSame('at least one symbol', $rule->message()[4]);
-    }
 }

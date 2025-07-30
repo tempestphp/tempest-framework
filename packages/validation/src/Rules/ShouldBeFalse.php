@@ -14,9 +14,4 @@ final readonly class ShouldBeFalse implements Rule
     {
         return $value === false || $value === 'false' || $value === 0 || $value === '0';
     }
-
-    public function message(): string
-    {
-        return 'Value should represent a boolean false value.';
-    }
 }

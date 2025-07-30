@@ -14,9 +14,4 @@ final readonly class Even implements Rule
     {
         return is_int($value) && ($value % 2) === 0;
     }
-
-    public function message(): string
-    {
-        return 'Value should be an even number';
-    }
 }

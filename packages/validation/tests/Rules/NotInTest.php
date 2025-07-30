@@ -22,7 +22,5 @@ final class NotInTest extends TestCase
 
         $this->assertTrue($rule->isValid(1));
         $this->assertTrue($rule->isValid(3));
-
-        $this->assertSame('Value cannot be any of: 4, 2, 0', $rule->message());
     }
 }

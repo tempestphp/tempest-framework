@@ -16,8 +16,6 @@ final class HexColorTest extends TestCase
     {
         $rule = new HexColor();
 
-        $this->assertSame('Value should be a valid hexadecimal color.', $rule->message());
-
         $this->assertFalse($rule->isValid('string_123'));
         $this->assertFalse($rule->isValid([])); // Should return false, not a TypeError from preg_match
         $this->assertFalse($rule->isValid('ffffff'));

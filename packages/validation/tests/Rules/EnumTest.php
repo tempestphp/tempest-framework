@@ -19,14 +19,6 @@ final class EnumTest extends TestCase
     {
         $rule = new IsEnum(SomeEnum::class);
 
-        $this->assertSame(
-            sprintf(
-                'The value must be a valid enumeration [%s] case',
-                SomeEnum::class,
-            ),
-            $rule->message(),
-        );
-
         $this->assertFalse($rule->isValid('NOPE_NOT_HERE'));
         $this->assertFalse($rule->isValid('NOPE_NOT_HERE_EITHER'));
         $this->assertTrue($rule->isValid('VALUE_1'));
@@ -37,14 +29,6 @@ final class EnumTest extends TestCase
     {
         $rule = new IsEnum(SomeBackedEnum::class);
 
-        $this->assertSame(
-            sprintf(
-                'The value must be a valid enumeration [%s] case',
-                SomeBackedEnum::class,
-            ),
-            $rule->message(),
-        );
-
         $this->assertFalse($rule->isValid('three'));
         $this->assertFalse($rule->isValid('four'));
         $this->assertTrue($rule->isValid('one'));
@@ -53,12 +37,7 @@ final class EnumTest extends TestCase
 
     public function test_enum_has_to_exist(): void
     {
-        $this->expectExceptionObject(new UnexpectedValueException(
-            sprintf(
-                'The enum parameter must be a valid enum. Was given [%s].',
-                'Bob',
-            ),
-        ));
+        $this->expectExceptionObject(new UnexpectedValueException(sprintf('The enum parameter must be a valid enum. Was given [%s].', 'Bob')));
 
         new IsEnum('Bob');
     }

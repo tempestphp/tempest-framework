@@ -16,8 +16,6 @@ final class EndsWithTest extends TestCase
     {
         $rule = new EndsWith(needle: 'ab');
 
-        $this->assertSame('Value should end with ab', $rule->message());
-
         $this->assertTrue($rule->isValid('ab'));
         $this->assertTrue($rule->isValid('cab'));
         $this->assertFalse($rule->isValid('b'));

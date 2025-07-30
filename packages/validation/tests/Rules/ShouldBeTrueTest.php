@@ -25,11 +25,4 @@ final class ShouldBeTrueTest extends TestCase
         $this->assertTrue($rule->isValid(1));
         $this->assertTrue($rule->isValid('1'));
     }
-
-    public function test_should_be_true_message(): void
-    {
-        $rule = new ShouldBeTrue();
-
-        $this->assertSame('Value should represent a boolean true value.', $rule->message());
-    }
 }

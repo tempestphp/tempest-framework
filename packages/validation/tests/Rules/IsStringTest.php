@@ -20,7 +20,6 @@ final class IsStringTest extends TestCase
         $this->assertTrue($rule->isValid('test string'));
         $this->assertFalse($rule->isValid(false));
         $this->assertFalse($rule->isValid([]));
-        $this->assertSame('Value should be a string', $rule->message());
     }
 
     public function test_valid_nullable_string(): void

@@ -9,14 +9,21 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Intl\Translator;
 use Tempest\Support\Json;
 use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
 
+use function Tempest\get;
 use function Tempest\Support\arr;
 
 final class Invalid implements Response
 {
     use IsResponse;
+
+    public Validator $validator {
+        get => get(Validator::class);
+    }
 
     public function __construct(
         Request $request,
@@ -36,7 +43,7 @@ final class Invalid implements Response
             'x-validation',
             Json\encode(
                 arr($failingRules)->map(fn (array $failingRulesForField) => arr($failingRulesForField)->map(
-                    fn (Rule $rule) => $rule->message(),
+                    fn (Rule $rule) => $this->validator->getErrorMessage($rule),
                 )->toArray())->toArray(),
             ),
         );

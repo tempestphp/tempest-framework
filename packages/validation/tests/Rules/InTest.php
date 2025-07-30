@@ -22,7 +22,5 @@ final class InTest extends TestCase
 
         $this->assertFalse($rule->isValid(1));
         $this->assertFalse($rule->isValid(3));
-
-        $this->assertSame('Value should be one of: 4, 2, 0', $rule->message());
     }
 }

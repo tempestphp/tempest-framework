@@ -9,6 +9,7 @@
         "giggsey/libphonenumber-for-php-lite": "^9.0",
         "tempest/reflection": "dev-main",
         "tempest/support": "dev-main",
+        "tempest/intl": "dev-main",
         "tempest/datetime": "dev-main"
     },
     "autoload": {

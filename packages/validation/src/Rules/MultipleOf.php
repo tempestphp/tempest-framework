@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class MultipleOf implements Rule
+final readonly class MultipleOf implements Rule, HasTranslationVariables
 {
     public function __construct(
         public int $divisor,
@@ -19,8 +20,10 @@ final readonly class MultipleOf implements Rule
         return is_int($value) && ($value % $this->divisor) === 0;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be a multiple of ' . $this->divisor;
+        return [
+            'divisor' => $this->divisor,
+        ];
     }
 }

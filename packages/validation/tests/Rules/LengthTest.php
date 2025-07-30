@@ -20,37 +20,11 @@ final class LengthTest extends TestCase
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    #[DataProvider('provide_returns_the_proper_message_based_on_min_and_max_arguments_cases')]
-    public function test_returns_the_proper_message_based_on_min_and_max_arguments(
-        Length $rule,
-        string $expectedMessage,
-    ): void {
-        $this->assertEquals($expectedMessage, $rule->message());
-    }
-
     public function test_throws_an_exception_if_neither_min_or_max_is_supplied(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         new Length();
-    }
-
-    public static function provide_returns_the_proper_message_based_on_min_and_max_arguments_cases(): iterable
-    {
-        return [
-            'Should provide correct message for string length validation with both minimum and maximum limits of 10 to 20' => [
-                new Length(min: 10, max: 20),
-                'Value should be between 10 and 20',
-            ],
-            'Should provide correct message for string length validation being no less than 10' => [
-                new Length(min: 10),
-                'Value should be no less than 10',
-            ],
-            'Should provide correct message for string length validation being no more than 10' => [
-                new Length(max: 10),
-                'Value should be no more than 10',
-            ],
-        ];
     }
 
     public static function provide_length_cases(): iterable

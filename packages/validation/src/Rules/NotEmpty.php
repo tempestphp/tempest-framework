@@ -14,9 +14,4 @@ final readonly class NotEmpty implements Rule
     {
         return is_string($value) && $value !== '';
     }
-
-    public function message(): string
-    {
-        return 'Value should be a non-empty string';
-    }
 }

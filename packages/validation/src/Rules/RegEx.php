@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class RegEx implements Rule
+final readonly class RegEx implements Rule, HasTranslationVariables
 {
     public function __construct(
         private string $pattern,
@@ -23,8 +24,10 @@ final readonly class RegEx implements Rule
         return preg_match($this->pattern, $value) === 1;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "The value must match the regular expression pattern: {$this->pattern}";
+        return [
+            'pattern' => $this->pattern,
+        ];
     }
 }

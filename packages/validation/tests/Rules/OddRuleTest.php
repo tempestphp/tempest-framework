@@ -22,7 +22,5 @@ final class OddRuleTest extends TestCase
 
         $this->assertTrue($rule->isValid(1));
         $this->assertTrue($rule->isValid(3));
-
-        $this->assertSame('Value should be an odd number', $rule->message());
     }
 }

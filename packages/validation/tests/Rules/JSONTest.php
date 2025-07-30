@@ -40,10 +40,4 @@ final class JSONTest extends TestCase
         $rule = new Json(flags: 232312312); // we intentionally send something that is not valid
         $rule->isValid('{"test": "test"}');
     }
-
-    public function test_it_returns_the_proper_message(): void
-    {
-        $rule = new Json();
-        $this->assertEquals('Value should be a valid JSON string', $rule->message());
-    }
 }

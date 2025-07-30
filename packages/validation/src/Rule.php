@@ -6,10 +6,8 @@ namespace Tempest\Validation;
 
 interface Rule
 {
-    public function isValid(mixed $value): bool;
-
     /**
-     * @return string|string[]
+     * Determines whether the given value is valid for this rule.
      */
-    public function message(): string|array;
+    public function isValid(mixed $value): bool;
 }

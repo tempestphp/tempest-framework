@@ -240,7 +240,7 @@ final class TestResponseHelper
                 'There should be no validation errors, but there were: %s',
                 arr($validationErrors)
                     ->map(function (array $failingRules, $key) {
-                        $failingRules = arr($failingRules)->map(fn (Rule $rule) => $rule->message())->implode(', ');
+                        $failingRules = arr($failingRules)->map(fn (Rule $rule) => $rule->getTranslationVariables())->implode(', ');
 
                         return $key . ': ' . $failingRules;
                     })

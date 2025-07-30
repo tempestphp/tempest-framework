@@ -20,37 +20,11 @@ final class CountTest extends TestCase
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    #[DataProvider('provide_returns_the_proper_message_based_on_min_and_max_arguments_cases')]
-    public function test_returns_the_proper_message_based_on_min_and_max_arguments(
-        Count $rule,
-        string $expectedMessage,
-    ): void {
-        $this->assertEquals($expectedMessage, $rule->message());
-    }
-
     public function test_throws_an_exception_if_neither_min_or_max_is_supplied(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         new Count();
-    }
-
-    public static function provide_returns_the_proper_message_based_on_min_and_max_arguments_cases(): iterable
-    {
-        return [
-            'Should provide correct message when both min and max limits are defined (1, 5)' => [
-                new Count(min: 1, max: 5),
-                'Array should contain between 1 and 5 items',
-            ],
-            'Should provide correct message when only min limit is defined (1)' => [
-                new Count(min: 1),
-                'Array should contain no less than 1 items',
-            ],
-            'Should provide correct message when only max limit is defined (5)' => [
-                new Count(max: 5),
-                'Array should contain no more than 5 items',
-            ],
-        ];
     }
 
     public static function provide_count_cases(): iterable

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class IsFloat implements Rule
+final readonly class IsFloat implements Rule, HasTranslationVariables
 {
     public function __construct(
         private bool $orNull = false,
@@ -28,8 +29,10 @@ final readonly class IsFloat implements Rule
         return is_float($value) || floatval($value) == $value;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be a float';
+        return [
+            'or_null' => $this->orNull,
+        ];
     }
 }
