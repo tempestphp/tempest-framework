@@ -18,6 +18,7 @@
         "league/flysystem-ziparchive": "^3.25.1",
         "league/flysystem-sftp-v3": "^3.25.1",
         "league/flysystem-google-cloud-storage": "^3.25.1",
+        "league/mime-type-detection": "^1.16",
         "microsoft/azure-storage-blob": "^1.5",
         "tempest/support": "dev-main"
     },
