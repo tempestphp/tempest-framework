@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Tempest\View\Components;
 
 use Tempest\Http\Session\Session;
+use Tempest\Support\Html\HtmlString;
 use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
+
+use function Tempest\Support\arr;
 
 final readonly class Input implements ViewComponent
 {
     public function __construct(
+        private Validator $validator,
         private Session $session,
     ) {}
 
@@ -32,10 +37,16 @@ final readonly class Input implements ViewComponent
         $errorHtml = '';
 
         if ($errors) {
-            $errorHtml = '<div>' . implode('', array_map(
-                fn (Rule $failingRule) => "<div>{$failingRule->message()}</div>",
-                $errors,
-            )) . '</div>';
+            $errorHtml = HtmlString::createTag(
+                tag: 'div',
+                content: arr($errors)
+                    ->map(fn (Rule $failingRule) => HtmlString::createTag(
+                        tag: 'div',
+                        content: $this->validator->getErrorMessage($failingRule),
+                    ))
+                    ->implode('')
+                    ->toString(),
+            );
         }
 
         if ($type === 'textarea') {

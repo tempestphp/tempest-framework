@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Time implements Rule
+final readonly class Time implements Rule, HasTranslationVariables
 {
     public function __construct(
-        private bool $twentyFourHour = false,
+        private bool $twentyFourHour = true,
     ) {}
 
     public function isValid(mixed $value): bool
@@ -27,12 +28,10 @@ final readonly class Time implements Rule
         return preg_match('/^([0-1]?[0-9]):[0-5][0-9]\s([aApP].[mM].|[aApP][mM])$/', $value) === 1;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        if ($this->twentyFourHour) {
-            return 'Value should be a valid time in the 24-hour format of hh:mm';
-        }
-
-        return 'Value should be a valid time in the format of hh:mm xm';
+        return [
+            'twenty_four_hour' => $this->twentyFourHour,
+        ];
     }
 }

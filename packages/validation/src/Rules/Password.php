@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Password implements Rule
+final readonly class Password implements Rule, HasTranslationVariables
 {
     private int $min;
 
@@ -51,29 +52,14 @@ final readonly class Password implements Rule
         return true;
     }
 
-    /**
-     * @return string[]
-     */
-    public function message(): array
+    public function getTranslationVariables(): array
     {
-        $messages = ["Value should contain at least {$this->min} characters"];
-
-        if ($this->mixedCase) {
-            $messages[] = 'at least one uppercase and one lowercase letter';
-        }
-
-        if ($this->numbers) {
-            $messages[] = 'at least one number';
-        }
-
-        if ($this->letters) {
-            $messages[] = 'at least one letter';
-        }
-
-        if ($this->symbols) {
-            $messages[] = 'at least one symbol';
-        }
-
-        return $messages;
+        return [
+            'min' => $this->min,
+            'mixed_case' => $this->mixedCase,
+            'numbers' => $this->numbers,
+            'letters' => $this->letters,
+            'symbols' => $this->symbols,
+        ];
     }
 }

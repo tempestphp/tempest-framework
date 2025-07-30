@@ -18,9 +18,4 @@ final readonly class Alpha implements Rule
 
         return boolval(preg_match('/^[A-Za-z]+$/', $value));
     }
-
-    public function message(): string
-    {
-        return 'Value should only contain alphabetic characters';
-    }
 }

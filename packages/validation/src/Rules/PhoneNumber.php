@@ -6,11 +6,12 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use libphonenumber\PhoneNumberUtil;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]
-final readonly class PhoneNumber implements Rule
+final readonly class PhoneNumber implements Rule, HasTranslationVariables
 {
     public function __construct(
         private ?string $defaultRegion = null,
@@ -28,15 +29,10 @@ final readonly class PhoneNumber implements Rule
         }
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        if (! $this->defaultRegion) {
-            return 'Value should be a valid phone number';
-        }
-
-        return sprintf(
-            'Value should be a valid %s phone number',
-            strtoupper($this->defaultRegion),
-        );
+        return [
+            'default_region' => $this->defaultRegion,
+        ];
     }
 }

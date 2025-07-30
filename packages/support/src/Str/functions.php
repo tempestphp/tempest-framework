@@ -491,11 +491,13 @@ namespace Tempest\Support\Str {
      */
     function replace_every(Stringable|string $haystack, array $replacements): string
     {
+        $string = (string) $haystack;
+
         foreach ($replacements as $needle => $replacement) {
-            $haystack = namespace\replace($haystack, $needle, (string) $replacement);
+            $string = namespace\replace($string, $needle, (string) $replacement);
         }
 
-        return $haystack;
+        return $string;
     }
 
     /**
@@ -883,7 +885,7 @@ namespace Tempest\Support\Str {
     /**
      * Parses the given value to a string, returning the default value if it is not a string or `Stringable`.
      */
-    function parse(mixed $string, ?string $default = null): ?string
+    function parse(mixed $string, string $default = ''): string
     {
         if (is_string($string)) {
             return $string;

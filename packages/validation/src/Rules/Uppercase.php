@@ -14,9 +14,4 @@ final readonly class Uppercase implements Rule
     {
         return $value === mb_strtoupper($value);
     }
-
-    public function message(): string
-    {
-        return 'Value should be an uppercase string';
-    }
 }

@@ -8,11 +8,12 @@ use Attribute;
 use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]
-final readonly class BeforeDate implements Rule
+final readonly class BeforeDate implements Rule, HasTranslationVariables
 {
     private DateTimeInterface $date;
 
@@ -38,16 +39,11 @@ final readonly class BeforeDate implements Rule
         return $value->before($this->date);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        $message[] = 'Value must be a date before';
-
-        if ($this->inclusive) {
-            $message[] = 'or equal to';
-        }
-
-        $message[] = $this->date->format();
-
-        return implode(' ', $message);
+        return [
+            'inclusive' => $this->inclusive,
+            'date' => $this->date,
+        ];
     }
 }

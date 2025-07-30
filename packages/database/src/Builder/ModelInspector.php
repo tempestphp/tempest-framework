@@ -31,6 +31,10 @@ final class ModelInspector
 
     private(set) object|string $instance;
 
+    private Validator $validator {
+        get => get(Validator::class);
+    }
+
     public function __construct(
         private(set) object|string $model,
     ) {
@@ -339,7 +343,6 @@ final class ModelInspector
             return;
         }
 
-        $validator = new Validator();
         $failingRules = [];
 
         foreach ($data as $key => $value) {
@@ -349,7 +352,7 @@ final class ModelInspector
                 continue;
             }
 
-            $failingRulesForProperty = $validator->validateValueForProperty(
+            $failingRulesForProperty = $this->validator->validateValueForProperty(
                 $property,
                 $value,
             );
@@ -360,7 +363,7 @@ final class ModelInspector
         }
 
         if ($failingRules !== []) {
-            throw new ValidationFailed($this->reflector->getName(), $failingRules);
+            throw new ValidationFailed($failingRules, $this->reflector->getName());
         }
     }
 

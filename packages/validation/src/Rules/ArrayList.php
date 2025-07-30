@@ -14,9 +14,4 @@ final readonly class ArrayList implements Rule
     {
         return is_array($value) && array_is_list($value);
     }
-
-    public function message(): string
-    {
-        return 'Value must be a list';
-    }
 }

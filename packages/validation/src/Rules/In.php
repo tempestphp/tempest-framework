@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class In implements Rule
+final readonly class In implements Rule, HasTranslationVariables
 {
     public function __construct(
         /** @var array<string|int> */
@@ -18,13 +19,16 @@ final readonly class In implements Rule
 
     public function isValid(mixed $value): bool
     {
-        $isPartOf = in_array($value, $this->values, true);
+        $isPartOf = in_array($value, $this->values, strict: true);
 
         return $this->not ? ! $isPartOf : $isPartOf;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be one of: ' . implode(', ', $this->values);
+        return [
+            'values' => $this->values,
+            'not' => $this->not,
+        ];
     }
 }

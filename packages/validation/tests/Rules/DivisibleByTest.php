@@ -23,7 +23,5 @@ final class DivisibleByTest extends TestCase
         $this->assertFalse($rule->isValid(3));
         $this->assertFalse($rule->isValid(4));
         $this->assertFalse($rule->isValid(6));
-
-        $this->assertSame('Value should be divisible by 5', $rule->message());
     }
 }

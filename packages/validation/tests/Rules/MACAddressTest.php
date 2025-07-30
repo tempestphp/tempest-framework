@@ -16,7 +16,6 @@ final class MACAddressTest extends TestCase
     {
         $rule = new MACAddress();
 
-        $this->assertSame('Value should be a valid MAC Address', $rule->message());
         $this->assertTrue($rule->isValid('00:1A:2B:3C:4D:5E'));
         $this->assertTrue($rule->isValid('01-23-45-67-89-AB'));
         $this->assertTrue($rule->isValid('A1:B2:C3:D4:E5:F6'));

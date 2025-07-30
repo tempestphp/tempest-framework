@@ -20,6 +20,5 @@ final class ArrayListTest extends TestCase
         $this->assertTrue($rule->isValid([]));
         $this->assertTrue($rule->isValid(['a', 'b', 'c']));
         $this->assertFalse($rule->isValid([0 => 'a', 1 => 'b', 3 => 'c']));
-        $this->assertSame('Value must be a list', $rule->message());
     }
 }

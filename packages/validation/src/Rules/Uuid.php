@@ -19,9 +19,4 @@ final readonly class Uuid implements Rule
 
         return Random\is_uuid($value);
     }
-
-    public function message(): string
-    {
-        return 'Value should contain a valid UUID';
-    }
 }

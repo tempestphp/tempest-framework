@@ -6,10 +6,11 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use InvalidArgumentException;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Count implements Rule
+final readonly class Count implements Rule, HasTranslationVariables
 {
     public function __construct(
         private ?int $min = null,
@@ -30,16 +31,11 @@ final readonly class Count implements Rule
         return $length >= $min && $length <= $max;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        if ($this->min && $this->max) {
-            return "Array should contain between {$this->min} and {$this->max} items";
-        }
-
-        if ($this->min) {
-            return "Array should contain no less than {$this->min} items";
-        }
-
-        return "Array should contain no more than {$this->max} items";
+        return [
+            'min' => $this->min,
+            'max' => $this->max,
+        ];
     }
 }

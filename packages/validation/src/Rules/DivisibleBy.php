@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class DivisibleBy implements Rule
+final readonly class DivisibleBy implements Rule, HasTranslationVariables
 {
     public function __construct(
         public int $divisor,
@@ -23,8 +24,10 @@ final readonly class DivisibleBy implements Rule
         return new MultipleOf($this->divisor)->isValid($value);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value should be divisible by {$this->divisor}";
+        return [
+            'divisor' => $this->divisor,
+        ];
     }
 }

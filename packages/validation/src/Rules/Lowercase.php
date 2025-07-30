@@ -14,9 +14,4 @@ final readonly class Lowercase implements Rule
     {
         return $value === mb_strtolower($value);
     }
-
-    public function message(): string
-    {
-        return 'Value should be a lowercase string';
-    }
 }

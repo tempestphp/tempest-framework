@@ -22,7 +22,5 @@ final class EvenRuleTest extends TestCase
 
         $this->assertFalse($rule->isValid(1));
         $this->assertFalse($rule->isValid(3));
-
-        $this->assertSame('Value should be an even number', $rule->message());
     }
 }

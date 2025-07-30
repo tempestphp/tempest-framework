@@ -18,9 +18,4 @@ final readonly class Numeric implements Rule
 
         return boolval(preg_match('/^[0-9]+$/', $value));
     }
-
-    public function message(): string
-    {
-        return 'Value should only contain numeric characters';
-    }
 }

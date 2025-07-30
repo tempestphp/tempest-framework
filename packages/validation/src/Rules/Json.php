@@ -29,9 +29,4 @@ final readonly class Json implements Rule
 
         return json_validate(...$arguments);
     }
-
-    public function message(): string
-    {
-        return 'Value should be a valid JSON string';
-    }
 }

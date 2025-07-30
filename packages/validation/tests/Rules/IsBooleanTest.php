@@ -28,11 +28,4 @@ final class IsBooleanTest extends TestCase
         $this->assertFalse($rule->isValid(2.5));
         $this->assertFalse($rule->isValid('string'));
     }
-
-    public function test_boolean_message(): void
-    {
-        $rule = new IsBoolean();
-
-        $this->assertSame('Value should represent a boolean value', $rule->message());
-    }
 }

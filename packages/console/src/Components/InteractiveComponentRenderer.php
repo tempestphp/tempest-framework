@@ -11,10 +11,10 @@ use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
+use Tempest\Intl\Translator;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Validation\Exceptions\ValueWasInvalid;
-use Tempest\Validation\Rule;
+use Tempest\Support\Arr;
 use Tempest\Validation\Validator;
 
 use function Tempest\Support\arr;
@@ -26,6 +26,10 @@ final class InteractiveComponentRenderer
     private array $validationErrors = [];
 
     private bool $shouldRerender = true;
+
+    public function __construct(
+        private readonly Validator $validator,
+    ) {}
 
     public function render(Console $console, InteractiveConsoleComponent $component, array $validation = []): mixed
     {
@@ -144,12 +148,12 @@ final class InteractiveComponentRenderer
             // If something's returned, we'll need to validate the result
             $this->validationErrors = [];
 
-            $failingRule = $this->validate($return, $validation);
+            $validationError = $this->validate($return, $validation);
 
             // If invalid, we'll remember the validation message and continue
-            if ($failingRule !== null) {
+            if ($validationError !== null) {
                 $component->setState(ComponentState::ERROR);
-                $this->validationErrors[] = $failingRule->message();
+                $this->validationErrors[] = $validationError;
                 Fiber::suspend();
 
                 continue;
@@ -224,9 +228,17 @@ final class InteractiveComponentRenderer
     /**
      * @param \Tempest\Validation\Rule[] $validation
      */
-    private function validate(mixed $value, array $validation): ?Rule
+    private function validate(mixed $value, array $validation): ?string
     {
-        return new Validator()->validateValue($value, $validation)[0] ?? null;
+        $failingRules = $this->validator->validateValue($value, $validation);
+
+        if ($failingRules === []) {
+            return null;
+        }
+
+        return $this->validator->getErrorMessage(
+            rule: Arr\first($failingRules),
+        );
     }
 
     public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool

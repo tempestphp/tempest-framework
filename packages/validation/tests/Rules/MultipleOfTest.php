@@ -23,7 +23,5 @@ final class MultipleOfTest extends TestCase
         $this->assertFalse($rule->isValid(3));
         $this->assertFalse($rule->isValid(4));
         $this->assertFalse($rule->isValid(6));
-
-        $this->assertSame('Value should be a multiple of 5', $rule->message());
     }
 }

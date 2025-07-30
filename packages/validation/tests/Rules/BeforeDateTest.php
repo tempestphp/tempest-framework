@@ -41,8 +41,6 @@ final class BeforeDateTest extends TestCase
         $date = new DateTimeImmutable();
         $rule = new BeforeDate($date);
 
-        $this->assertSame('Value must be a date before ' . $this->formatNativeDateTime($date), $rule->message());
-
         $this->assertFalse($rule->isValid($date->modify('+1 minute')));
         $this->assertTrue($rule->isValid($date->modify('-1 second')));
         $this->assertFalse($rule->isValid($date));
@@ -52,8 +50,6 @@ final class BeforeDateTest extends TestCase
     {
         $date = new DateTimeImmutable();
         $rule = new BeforeDate($date, inclusive: true);
-
-        $this->assertSame('Value must be a date before or equal to ' . $this->formatNativeDateTime($date), $rule->message());
 
         $this->assertFalse($rule->isValid($date->modify('+1 minute')));
         $this->assertTrue($rule->isValid($date->modify('-1 second')));
@@ -81,10 +77,5 @@ final class BeforeDateTest extends TestCase
         $this->assertTrue($utcDate->format('Y-m-d H:i:s') > $date->format('Y-m-d H:i:s'));
         $this->assertFalse($rule->isValid($utcDate->modify('+1 minute')));
         $this->assertTrue($rule->isValid($utcDate->modify('-1 minute')));
-    }
-
-    private function formatNativeDateTime(DateTimeImmutable $dateTime): string
-    {
-        return DateTime::parse($dateTime)->format();
     }
 }

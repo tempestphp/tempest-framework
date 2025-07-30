@@ -16,8 +16,6 @@ final class IPTest extends TestCase
     {
         $rule = new IP();
 
-        $this->assertSame('Value should be a valid IP address', $rule->message());
-
         $this->assertTrue($rule->isValid('192.168.0.1'));
         $this->assertTrue($rule->isValid('10.0.0.1'));
         $this->assertTrue($rule->isValid('172.16.0.1'));
@@ -29,20 +27,5 @@ final class IPTest extends TestCase
         $this->assertFalse($rule->isValid('192.168.0'));
         $this->assertFalse($rule->isValid('192.168.0.1.2'));
         $this->assertFalse($rule->isValid('192.168.0.1/24'));
-    }
-
-    public function test_messages(): void
-    {
-        $rule = new IP();
-        $this->assertSame('Value should be a valid IP address', $rule->message());
-
-        $rule = new IP(allowPrivateRange: false);
-        $this->assertSame('Value should be a valid IP address that is not in a private range', $rule->message());
-
-        $rule = new IP(allowReservedRange: false);
-        $this->assertSame('Value should be a valid IP address that is not in a reserved range', $rule->message());
-
-        $rule = new IP(allowPrivateRange: false, allowReservedRange: false);
-        $this->assertSame('Value should be a valid IP address that is not in a private range and not in a reserved range', $rule->message());
     }
 }

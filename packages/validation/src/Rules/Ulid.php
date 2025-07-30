@@ -18,9 +18,4 @@ final readonly class Ulid implements Rule
 
         return preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/i', $value) === 1;
     }
-
-    public function message(): string
-    {
-        return 'Value should be a valid ULID';
-    }
 }

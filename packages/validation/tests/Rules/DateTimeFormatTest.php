@@ -33,13 +33,6 @@ final class DateTimeFormatTest extends TestCase
         $this->assertTrue($rule->isValid('19/02/2024'));
     }
 
-    public function test_datetime_format_message(): void
-    {
-        $rule = new DateTimeFormat(format: 'yyyy-MM-dd HH:mm:ss');
-
-        $this->assertSame('Value should be a valid datetime in the format yyyy-MM-dd HH:mm:ss', $rule->message());
-    }
-
     public function test_datetime_native_format(): void
     {
         $rule = new DateTimeFormat(format: 'Y-m-d H:i:s');
