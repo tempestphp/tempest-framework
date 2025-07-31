@@ -9,8 +9,8 @@
         "tempest/discovery": "dev-main",
         "tempest/reflection": "dev-main",
         "tempest/support": "dev-main",
-        "vlucas/phpdotenv": "^5.6",
-        "symfony/cache": "^7.2",
+        "vlucas/phpdotenv": "^5.6.1",
+        "symfony/cache": "^7.3",
         "filp/whoops": "^2.15"
     },
     "autoload": {

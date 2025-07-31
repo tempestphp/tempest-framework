@@ -8,7 +8,7 @@
         "tempest/container": "dev-main",
         "tempest/http-client": "dev-main",
         "tempest/support": "dev-main",
-        "symfony/cache": "^7.2"
+        "symfony/cache": "^7.3"
     },
     "suggest": {
         "tempest/event-bus": "For events support"
