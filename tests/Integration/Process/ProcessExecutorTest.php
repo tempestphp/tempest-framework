@@ -2,11 +2,9 @@
 
 namespace Tests\Tempest\Integration\Process;
 
-use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Process\ProcessResult;
-use Tempest\Process\Testing\InvokedProcessDescription;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class ProcessExecutorTest extends FrameworkIntegrationTestCase

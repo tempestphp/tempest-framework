@@ -11,12 +11,12 @@ use Tempest\Process\ProcessResult;
 
 final class RestrictedProcessExecutor implements ProcessExecutor
 {
-    public function run(array|string|PendingProcess $command): ProcessResult
+    public function run(string|PendingProcess $command): ProcessResult
     {
         throw ProcessExecutionWasForbidden::forPendingProcess($command);
     }
 
-    public function start(array|string|PendingProcess $command): InvokedSystemProcess
+    public function start(string|PendingProcess $command): InvokedSystemProcess
     {
         throw ProcessExecutionWasForbidden::forPendingProcess($command);
     }
