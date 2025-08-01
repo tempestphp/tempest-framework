@@ -7,16 +7,16 @@ interface ProcessExecutor
     /**
      * Runs the given process.
      *
-     * @param string[]|string|PendingProcess $command
+     * @param string|PendingProcess $command
      */
-    public function run(array|string|PendingProcess $command): ProcessResult;
+    public function run(string|PendingProcess $command): ProcessResult;
 
     /**
      * Invokes the given process asynchronously.
      *
-     * @param string[]|string|PendingProcess $command
+     * @param string|PendingProcess $command
      */
-    public function start(array|string|PendingProcess $command): InvokedProcess;
+    public function start(string|PendingProcess $command): InvokedProcess;
 
     /**
      * Returns a pool of processes, which can be executed.

@@ -7,7 +7,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 final class GenericProcessExecutor implements ProcessExecutor
 {
-    public function start(array|string|PendingProcess $command): InvokedSystemProcess
+    public function start(string|PendingProcess $command): InvokedSystemProcess
     {
         $pending = $this->createPendingProcess($command);
         $command = $this->createSymfonyProcess($pending);
@@ -16,7 +16,7 @@ final class GenericProcessExecutor implements ProcessExecutor
         return new InvokedSystemProcess($command);
     }
 
-    public function run(array|string|PendingProcess $command): ProcessResult
+    public function run(string|PendingProcess $command): ProcessResult
     {
         return $this->start($command)->wait();
     }

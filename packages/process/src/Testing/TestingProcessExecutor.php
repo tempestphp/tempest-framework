@@ -28,7 +28,7 @@ final class TestingProcessExecutor implements ProcessExecutor
         public bool $allowRunningActualProcesses = false,
     ) {}
 
-    public function run(array|string|PendingProcess $command): ProcessResult
+    public function run(string|PendingProcess $command): ProcessResult
     {
         if ($result = $this->findMockedProcess($command)) {
             return $this->recordExecution($command, $result);
@@ -41,7 +41,7 @@ final class TestingProcessExecutor implements ProcessExecutor
         return $this->recordExecution($command, $this->start($command)->wait());
     }
 
-    public function start(array|string|PendingProcess $command): InvokedProcess
+    public function start(string|PendingProcess $command): InvokedProcess
     {
         if ($processResult = $this->findInvokedProcessDescription($command)) {
             $this->recordExecution($command, $process = new InvokedTestingProcess($processResult));
@@ -69,7 +69,7 @@ final class TestingProcessExecutor implements ProcessExecutor
         return $this->pool($pool)->start()->wait();
     }
 
-    private function findMockedProcess(array|string|PendingProcess $command): ?ProcessResult
+    private function findMockedProcess(string|PendingProcess $command): ?ProcessResult
     {
         $process = $this->createPendingProcess($command);
 
@@ -92,7 +92,7 @@ final class TestingProcessExecutor implements ProcessExecutor
         return null;
     }
 
-    private function findInvokedProcessDescription(array|string|PendingProcess $command): ?InvokedProcessDescription
+    private function findInvokedProcessDescription(string|PendingProcess $command): ?InvokedProcessDescription
     {
         $process = $this->createPendingProcess($command);
 
@@ -111,7 +111,7 @@ final class TestingProcessExecutor implements ProcessExecutor
         return null;
     }
 
-    private function recordExecution(array|string|PendingProcess $command, InvokedProcess|ProcessResult $result): ProcessResult
+    private function recordExecution(string|PendingProcess $command, InvokedProcess|ProcessResult $result): ProcessResult
     {
         $process = $this->createPendingProcess($command);
         $result = match (true) {
