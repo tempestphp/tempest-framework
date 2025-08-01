@@ -1,0 +1,23 @@
+{
+	"name": "tempest/process",
+	"description": "A component for working with processes.",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"require": {
+		"php": "^8.4",
+		"symfony/process": "^7.3",
+		"tempest/container": "dev-main",
+		"tempest/support": "dev-main",
+		"tempest/datetime": "dev-main"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tempest\\Process\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tempest\\Process\\Tests\\": "tests"
+		}
+	}
+}
