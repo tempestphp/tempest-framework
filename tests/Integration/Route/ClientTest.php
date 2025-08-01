@@ -10,7 +10,6 @@ use Laminas\Diactoros\StreamFactory;
 use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
-use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\root_path;
@@ -28,6 +27,8 @@ final class ClientTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        new Process([root_path('tempest'), 'key:generate'])->run();
+
         $this->server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
         $this->server->start();
 
@@ -41,11 +42,7 @@ final class ClientTest extends FrameworkIntegrationTestCase
     protected function tearDown(): void
     {
         if ($this->server->isRunning()) {
-            $this->server->signal(SIGKILL);
-        }
-
-        while (! $this->server->isTerminated()) {
-            usleep(100000);
+            $this->server->stop(2);
         }
 
         parent::tearDown();

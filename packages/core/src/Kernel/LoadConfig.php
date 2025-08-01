@@ -45,7 +45,7 @@ final readonly class LoadConfig
         $suffixes = [
             'production' => ['.production.config.php', '.prod.config.php', '.prd.config.php'],
             'staging' => ['.staging.config.php', '.stg.config.php'],
-            'testing' => ['.test.config.php'],
+            'testing' => ['.test.config.php', '.testing.config.php'],
             'development' => ['.dev.config.php', '.local.config.php'],
         ];
 

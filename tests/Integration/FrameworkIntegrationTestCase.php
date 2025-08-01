@@ -15,6 +15,7 @@ use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Cryptography\CreateSigningKeyCommand;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -60,6 +61,9 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container
             ->removeInitializer(DatabaseInitializer::class)
             ->addInitializer(TestingDatabaseInitializer::class);
+
+        // Generate signing key required for tests
+        $this->console->call(CreateSigningKeyCommand::class);
 
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 

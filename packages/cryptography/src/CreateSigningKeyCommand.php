@@ -44,7 +44,7 @@ final readonly class CreateSigningKeyCommand
         $file = Filesystem\read_file($this->getDotEnvPath());
 
         if (! Str\contains($file, 'SIGNING_KEY=')) {
-            $file .= "\nSIGNING_KEY={$key}\n";
+            $file = "SIGNING_KEY={$key}\n" . $file;
         } else {
             $file = Regex\replace($file, '/^SIGNING_KEY=.*$/m', "SIGNING_KEY={$key}");
         }
