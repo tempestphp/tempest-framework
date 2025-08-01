@@ -14,7 +14,7 @@ final class ScheduleRunCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_invoke(): void
     {
-        $this->process->mockProcess('*', '');
+        $this->process->mock();
 
         @unlink(GenericScheduler::getCachePath());
 
