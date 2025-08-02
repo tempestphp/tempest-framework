@@ -8,7 +8,6 @@ namespace Tempest\Database {
      * @template T of object
      * @param class-string<T>|string|T $model
      * @return QueryBuilder<T>
-     *
      */
     function query(string|object $model): QueryBuilder
     {
