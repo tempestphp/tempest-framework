@@ -7,13 +7,13 @@ namespace Tempest\Validation\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
-use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsEmail;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
+use Tempest\Validation\Rules\IsNotNull;
 use Tempest\Validation\Rules\IsString;
-use Tempest\Validation\Rules\NotNull;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
 use Tempest\Validation\Tests\Fixtures\ObjectWithBoolProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithEnumProp;
@@ -43,7 +43,7 @@ final class ValidatorTest extends TestCase
 
     public function test_validate_value(): void
     {
-        $failingRules = $this->validator->validateValue('a', [new Email()]);
+        $failingRules = $this->validator->validateValue('a', [new IsEmail()]);
 
         $this->assertCount(1, $failingRules);
     }
@@ -115,7 +115,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $validator->validateValuesForClass($class, []);
 
         $this->assertCount(7, $failingRules);
-        $this->assertInstanceOf(NotNull::class, $failingRules['b'][0]);
+        $this->assertInstanceOf(IsNotNull::class, $failingRules['b'][0]);
         $this->assertInstanceOf(IsString::class, $failingRules['title'][0]);
 
         $failingRules = $validator->validateValuesForClass($class, [
@@ -231,7 +231,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithObjectProperty::class, ['prop' => null]);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(NotNull::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsNotNull::class, $failingRules['prop'][0]);
     }
 
     public function test_skip_validation_attribute(): void
@@ -250,14 +250,14 @@ final class ValidatorTest extends TestCase
                 'age' => 0,
             ],
             [
-                'name' => [new IsString(), new NotNull()],
-                'email' => [new Email()],
-                'age' => [new IsInteger(), new NotNull()],
+                'name' => [new IsString(), new IsNotNull()],
+                'email' => [new IsEmail()],
+                'age' => [new IsInteger(), new IsNotNull()],
             ],
         );
 
         $this->assertCount(1, $failingRules);
-        $this->assertInstanceOf(Email::class, $failingRules['email'][0]);
+        $this->assertInstanceOf(IsEmail::class, $failingRules['email'][0]);
     }
 
     public function test_validate_values_all_valid(): void
@@ -269,9 +269,9 @@ final class ValidatorTest extends TestCase
                 'age' => 0,
             ],
             [
-                'name' => [new IsString(), new NotNull()],
-                'email' => [new Email()],
-                'age' => [new IsInteger(), new NotNull()],
+                'name' => [new IsString(), new IsNotNull()],
+                'email' => [new IsEmail()],
+                'age' => [new IsInteger(), new IsNotNull()],
             ],
         );
 

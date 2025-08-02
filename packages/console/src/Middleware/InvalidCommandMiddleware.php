@@ -16,8 +16,8 @@ use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Core\Priority;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\Numeric;
+use Tempest\Validation\Rules\IsNotEmptyString;
+use Tempest\Validation\Rules\IsNumeric;
 
 use function Tempest\Support\str;
 
@@ -70,10 +70,10 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
                     validation: array_filter([
                         $isEnum
                             ? new IsEnum($argument->type)
-                            : new NotEmpty(),
+                            : new IsNotEmptyString(),
                         match ($argument->type) {
                             'bool' => new IsBoolean(),
-                            'int' => new Numeric(),
+                            'int' => new IsNumeric(),
                             default => null,
                         },
                     ]),

@@ -16,8 +16,8 @@ use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
+use Tempest\Validation\Rules\IsNotNull;
 use Tempest\Validation\Rules\IsString;
-use Tempest\Validation\Rules\NotNull;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -133,7 +133,7 @@ final readonly class Validator
             };
         } elseif (! $property->isNullable()) {
             // We only add the NotNull rule if we're not dealing with scalar types, since the null check is included in the scalar rules
-            $rules[] = new NotNull();
+            $rules[] = new IsNotNull();
         }
 
         if ($property->getType()->isEnum()) {

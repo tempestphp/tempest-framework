@@ -10,7 +10,7 @@ use Tempest\Http\Method;
 use Tempest\Http\RequestParametersIncludedReservedNames;
 use Tempest\Http\Upload;
 use Tempest\Validation\Exceptions\ValidationFailed;
-use Tempest\Validation\Rules\NotNull;
+use Tempest\Validation\Rules\IsNotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\EnumForRequest;
@@ -30,7 +30,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         try {
             map($request)->to(RequestObjectA::class);
         } catch (ValidationFailed $validationFailed) {
-            $this->assertInstanceOf(NotNull::class, $validationFailed->failingRules['b'][0]);
+            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['b'][0]);
         }
     }
 

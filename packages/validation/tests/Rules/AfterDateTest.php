@@ -9,7 +9,7 @@ use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Timezone;
-use Tempest\Validation\Rules\AfterDate;
+use Tempest\Validation\Rules\IsAfterDate;
 
 /**
  * @internal
@@ -19,7 +19,7 @@ final class AfterDateTest extends TestCase
     public function test_exclusive(): void
     {
         $now = DateTime::now();
-        $rule = new AfterDate($now);
+        $rule = new IsAfterDate($now);
 
         $this->assertFalse($rule->isValid($now));
         $this->assertFalse($rule->isValid($now->minusSecond()));
@@ -29,7 +29,7 @@ final class AfterDateTest extends TestCase
     public function test_inclusive(): void
     {
         $now = DateTime::now();
-        $rule = new AfterDate($now, inclusive: true);
+        $rule = new IsAfterDate($now, inclusive: true);
 
         $this->assertTrue($rule->isValid($now));
         $this->assertFalse($rule->isValid($now->minusSecond()));
@@ -39,7 +39,7 @@ final class AfterDateTest extends TestCase
     public function test_native_exclusive(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new AfterDate($date);
+        $rule = new IsAfterDate($date);
 
         $this->assertTrue($rule->isValid($date->modify('+1 minute')));
         $this->assertFalse($rule->isValid($date->modify('-1 second')));
@@ -49,7 +49,7 @@ final class AfterDateTest extends TestCase
     public function test_native_inclusive(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new AfterDate($date, inclusive: true);
+        $rule = new IsAfterDate($date, inclusive: true);
 
         $this->assertTrue($rule->isValid($date->modify('+1 minute')));
         $this->assertFalse($rule->isValid($date->modify('-1 second')));
@@ -59,7 +59,7 @@ final class AfterDateTest extends TestCase
     public function test_timezone(): void
     {
         $now = DateTime::now(timezone: Timezone::EUROPE_PARIS);
-        $rule = new AfterDate($now->convertToTimezone(Timezone::AMERICA_NEW_YORK), inclusive: false);
+        $rule = new IsAfterDate($now->convertToTimezone(Timezone::AMERICA_NEW_YORK), inclusive: false);
 
         // should still work even with different timezones
         $this->assertFalse($rule->isValid($now));
@@ -70,7 +70,7 @@ final class AfterDateTest extends TestCase
     public function test_native_timezone(): void
     {
         $date = new DateTimeImmutable('now', new DateTimeZone('America/New_York'));
-        $rule = new AfterDate($date, inclusive: false);
+        $rule = new IsAfterDate($date, inclusive: false);
         $utcDate = new DateTimeImmutable();
 
         // should still work even with different timezones

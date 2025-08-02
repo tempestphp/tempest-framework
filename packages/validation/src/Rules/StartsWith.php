@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value starts with a specified string.
+ */
 #[Attribute]
 final readonly class StartsWith implements Rule, HasTranslationVariables
 {

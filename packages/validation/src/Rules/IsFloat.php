@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is a floating-point number.
+ */
 #[Attribute]
 final readonly class IsFloat implements Rule, HasTranslationVariables
 {

@@ -9,6 +9,9 @@ use Stringable;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is a string or stringable object.
+ */
 #[Attribute]
 final readonly class IsString implements Rule, HasTranslationVariables
 {
