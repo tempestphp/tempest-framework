@@ -45,13 +45,14 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         if ($this->join->isNotEmpty()) {
             $query[] = $this->join
                 ->map(fn (JoinStatement $join) => $join->compile($dialect))
-                ->implode(PHP_EOL);
+                ->implode(' ');
         }
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(fn (WhereStatement $where) => $where->compile($dialect))
-                ->implode(PHP_EOL);
+                ->map(fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
+                ->filter(fn (string $compiled) => $compiled !== '')
+                ->implode(' ');
         }
 
         if ($this->groupBy->isNotEmpty()) {
@@ -63,7 +64,7 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         if ($this->having->isNotEmpty()) {
             $query[] = 'HAVING ' . $this->having
                 ->map(fn (HavingStatement $having) => $having->compile($dialect))
-                ->implode(PHP_EOL);
+                ->implode(' ');
         }
 
         if ($this->orderBy->isNotEmpty()) {
@@ -83,10 +84,10 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         if ($this->raw->isNotEmpty()) {
             $query[] = $this->raw
                 ->map(fn (RawStatement $raw) => $raw->compile($dialect))
-                ->implode(PHP_EOL);
+                ->implode(' ');
         }
 
-        $compiled = $query->implode(PHP_EOL);
+        $compiled = $query->implode(' ');
 
         return $compiled;
     }

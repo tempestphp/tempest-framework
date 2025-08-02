@@ -47,10 +47,7 @@ final class InsertStatement implements QueryStatement
             ->implode(', ');
 
         $sql = sprintf(
-            <<<SQL
-            INSERT INTO %s (%s)
-            VALUES %s
-            SQL,
+            'INSERT INTO %s (%s) VALUES %s',
             $this->table,
             $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
             $entryPlaceholders,

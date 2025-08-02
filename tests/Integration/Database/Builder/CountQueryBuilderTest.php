@@ -10,6 +10,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Integration\Database\Fixtures\BookStatus;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -23,18 +24,12 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')
             ->count()
-            ->where('`title` = ?', 'Timeline Taxi')
-            ->andWhere('`index` <> ?', '1')
-            ->orWhere('`createdAt` > ?', '2025-01-01')
+            ->whereRaw('`title` = ?', 'Timeline Taxi')
+            ->andWhereRaw('`index` <> ?', '1')
+            ->orWhereRaw('`createdAt` > ?', '2025-01-01')
             ->build();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `chapters`
-        WHERE `title` = ?
-        AND `index` <> ?
-        OR `createdAt` > ?
-        SQL;
+        $expected = 'SELECT COUNT(*) AS count FROM chapters WHERE title = ? AND index <> ? OR createdAt > ?';
 
         $sql = $query->toSql();
         $bindings = $query->bindings;
@@ -51,10 +46,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `chapters`
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `chapters`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -65,10 +57,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(`title`) AS `count`
-        FROM `chapters`
-        SQL;
+        $expected = 'SELECT COUNT(`title`) AS `count` FROM `chapters`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -102,10 +91,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(DISTINCT `title`) AS `count`
-        FROM `chapters`
-        SQL;
+        $expected = 'SELECT COUNT(DISTINCT `title`) AS `count` FROM `chapters`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -116,10 +102,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `authors`
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `authors`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -131,26 +114,20 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->when(
                 true,
                 fn (CountQueryBuilder $query) => $query
-                    ->where('`title` = ?', 'Timeline Taxi')
-                    ->andWhere('`index` <> ?', '1')
-                    ->orWhere('`createdAt` > ?', '2025-01-01'),
+                    ->whereRaw('`title` = ?', 'Timeline Taxi')
+                    ->andWhereRaw('`index` <> ?', '1')
+                    ->orWhereRaw('`createdAt` > ?', '2025-01-01'),
             )
             ->when(
                 false,
                 fn (CountQueryBuilder $query) => $query
-                    ->where('`title` = ?', 'Timeline Uber')
-                    ->andWhere('`index` <> ?', '2')
-                    ->orWhere('`createdAt` > ?', '2025-01-02'),
+                    ->whereRaw('`title` = ?', 'Timeline Uber')
+                    ->andWhereRaw('`index` <> ?', '2')
+                    ->orWhereRaw('`createdAt` > ?', '2025-01-02'),
             )
             ->build();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `chapters`
-        WHERE `title` = ?
-        AND `index` <> ?
-        OR `createdAt` > ?
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `chapters` WHERE `title` = ? AND `index` <> ? OR `createdAt` > ?';
 
         $sql = $query->toSql();
         $bindings = $query->bindings;
@@ -173,43 +150,380 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $count);
     }
 
-    public function test_multiple_where(): void
+    public function test_multiple_where_raw(): void
     {
         $sql = query('books')
             ->count()
-            ->where('title = ?', 'a')
-            ->where('author_id = ?', 1)
-            ->where('OR author_id = ?', 2)
-            ->where('AND author_id <> NULL')
+            ->whereRaw('title = ?', 'a')
+            ->whereRaw('author_id = ?', 1)
+            ->whereRaw('OR author_id = ?', 2)
+            ->whereRaw('AND author_id <> NULL')
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `books`
-        WHERE title = ?
-        AND author_id = ?
-        OR author_id = ?
-        AND author_id <> NULL
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where_field(): void
+    public function test_multiple_where(): void
     {
         $sql = query('books')
             ->count()
-            ->whereField('title', 'a')
-            ->whereField('author_id', 1)
+            ->where('title', 'a')
+            ->where('author_id', 1)
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `books`
-        WHERE books.title = ?
-        AND books.author_id = ?
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title = ? AND books.author_id = ?';
 
         $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_where_in(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('category', ['fiction', 'mystery', 'thriller'])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?,?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
+    }
+
+    public function test_where_in_with_enum_class(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('status', BookStatus::class)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?,?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['draft', 'published', 'archived', 'featured'], $query->bindings);
+    }
+
+    public function test_where_in_with_enums(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('status', [BookStatus::PUBLISHED, BookStatus::FEATURED])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['published', 'featured'], $query->bindings);
+    }
+
+    public function test_where_not_in(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNotIn('status', ['draft', 'archived'])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status NOT IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['draft', 'archived'], $query->bindings);
+    }
+
+    public function test_where_not_in_with_enums(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNotIn('status', [BookStatus::DRAFT, BookStatus::ARCHIVED])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status NOT IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['draft', 'archived'], $query->bindings);
+    }
+
+    public function test_where_between(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereBetween('publication_year', 2020, 2024)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.publication_year BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([2020, 2024], $query->bindings);
+    }
+
+    public function test_where_not_between(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNotBetween('price', 10.0, 50.0)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.price NOT BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([10.0, 50.0], $query->bindings);
+    }
+
+    public function test_where_null(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNull('deleted_at')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.deleted_at IS NULL';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([], $query->bindings);
+    }
+
+    public function test_where_not_null(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNotNull('published_at')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published_at IS NOT NULL';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([], $query->bindings);
+    }
+
+    public function test_where_not(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNot('status', 'draft')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status != ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['draft'], $query->bindings);
+    }
+
+    public function test_where_like(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereLike('title', '%fantasy%')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title LIKE ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['%fantasy%'], $query->bindings);
+    }
+
+    public function test_where_not_like(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereNotLike('title', '%test%')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title NOT LIKE ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['%test%'], $query->bindings);
+    }
+
+    public function test_or_where_in(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereIn('category', ['fiction', 'mystery'])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.category IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 'fiction', 'mystery'], $query->bindings);
+    }
+
+    public function test_or_where_not_in(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereNotIn('status', ['draft', 'archived'])
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.status NOT IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 'draft', 'archived'], $query->bindings);
+    }
+
+    public function test_or_where_between(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereBetween('rating', 4.0, 5.0)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.rating BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 4.0, 5.0], $query->bindings);
+    }
+
+    public function test_or_where_not_between(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereNotBetween('price', 20.0, 80.0)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.price NOT BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 20.0, 80.0], $query->bindings);
+    }
+
+    public function test_or_where_null(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereNull('deleted_at')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.deleted_at IS NULL';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true], $query->bindings);
+    }
+
+    public function test_or_where_not_null(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', false)
+            ->orWhereNotNull('featured_at')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.featured_at IS NOT NULL';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([false], $query->bindings);
+    }
+
+    public function test_or_where_not(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereNot('status', 'archived')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.status != ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 'archived'], $query->bindings);
+    }
+
+    public function test_or_where_like(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereLike('description', '%adventure%')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.description LIKE ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, '%adventure%'], $query->bindings);
+    }
+
+    public function test_or_where_not_like(): void
+    {
+        $query = query('books')
+            ->count()
+            ->where('published', true)
+            ->orWhereNotLike('title', '%boring%')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.title NOT LIKE ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, '%boring%'], $query->bindings);
+    }
+
+    public function test_chained_convenient_where_methods(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('category', ['fiction', 'mystery'])
+            ->whereNotNull('published_at')
+            ->whereBetween('rating', 3.0, 5.0)
+            ->whereNot('status', 'draft')
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?,?) AND books.published_at IS NOT NULL AND books.rating BETWEEN ? AND ? AND books.status != ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['fiction', 'mystery', 3.0, 5.0, 'draft'], $query->bindings);
+    }
+
+    public function test_mixed_convenient_and_or_where_methods(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('category', ['fiction'])
+            ->orWhereNull('featured_at')
+            ->orWhereNotBetween('price', 100.0, 200.0)
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?) OR books.featured_at IS NULL OR books.price NOT BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['fiction', 100.0, 200.0], $query->bindings);
+    }
+
+    public function test_convenient_where_methods_in_groups(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereIn('status', ['published', 'featured'])
+            ->andWhereGroup(function ($group): void {
+                $group
+                    ->whereNotNull('published_at')
+                    ->orWhereBetween('rating', 4.0, 5.0);
+            })
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?) AND (books.published_at IS NOT NULL OR books.rating BETWEEN ? AND ?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['published', 'featured', 4.0, 5.0], $query->bindings);
+    }
+
+    public function test_nested_where_with_count_query(): void
+    {
+        $query = query('books')
+            ->count()
+            ->whereRaw('published = ?', true)
+            ->orWhereGroup(function ($group): void {
+                $group
+                    ->whereRaw('status = ?', 'featured')
+                    ->andWhereRaw('rating >= ?', 4.5);
+            })
+            ->build();
+
+        $expected = 'SELECT COUNT(*) AS count FROM books WHERE published = ? OR (status = ? AND rating >= ?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame([true, 'featured', 4.5], $query->bindings);
     }
 }

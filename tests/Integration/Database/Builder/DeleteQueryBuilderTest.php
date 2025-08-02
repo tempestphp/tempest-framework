@@ -18,14 +18,11 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('foo')
             ->delete()
-            ->where('`bar` = ?', 'boo')
+            ->whereRaw('`bar` = ?', 'boo')
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            DELETE FROM `foo`
-            WHERE `bar` = ?
-            SQL,
+            'DELETE FROM `foo` WHERE `bar` = ?',
             $query->toSql(),
         );
 
@@ -43,9 +40,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            DELETE FROM `authors`
-            SQL,
+            'DELETE FROM `authors`',
             $query->toSql(),
         );
     }
@@ -60,10 +55,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            DELETE FROM `authors`
-            WHERE `authors`.`id` = ?
-            SQL,
+            'DELETE FROM `authors` WHERE `authors`.`id` = ?',
             $query->toSql(),
         );
 
@@ -79,19 +71,16 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->delete()
             ->when(
                 true,
-                fn (DeleteQueryBuilder $query) => $query->where('`bar` = ?', 'boo'),
+                fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'boo'),
             )
             ->when(
                 false,
-                fn (DeleteQueryBuilder $query) => $query->where('`bar` = ?', 'foo'),
+                fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'foo'),
             )
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            DELETE FROM `foo`
-            WHERE `bar` = ?
-            SQL,
+            'DELETE FROM `foo` WHERE `bar` = ?',
             $query->toSql(),
         );
 
@@ -110,48 +99,56 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ['id' => 2, 'name' => 'Other'],
         )->execute();
 
-        query('authors')->delete()->where('id = ?', 1)->execute();
+        query('authors')->delete()->whereRaw('id = ?', 1)->execute();
 
-        $count = query('authors')->count()->where('id = ?', 1)->execute();
+        $count = query('authors')->count()->whereRaw('id = ?', 1)->execute();
 
         $this->assertSame(0, $count);
+    }
+
+    public function test_multiple_where_raw(): void
+    {
+        $sql = query('books')
+            ->delete()
+            ->whereRaw('title = ?', 'a')
+            ->whereRaw('author_id = ?', 1)
+            ->whereRaw('OR author_id = ?', 2)
+            ->whereRaw('AND author_id <> NULL')
+            ->toSql();
+
+        $expected = 'DELETE FROM `books` WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_multiple_where(): void
     {
         $sql = query('books')
             ->delete()
-            ->where('title = ?', 'a')
-            ->where('author_id = ?', 1)
-            ->where('OR author_id = ?', 2)
-            ->where('AND author_id <> NULL')
+            ->where('title', 'a')
+            ->where('author_id', 1)
             ->toSql();
 
-        $expected = <<<SQL
-        DELETE FROM `books`
-        WHERE title = ?
-        AND author_id = ?
-        OR author_id = ?
-        AND author_id <> NULL
-        SQL;
+        $expected = 'DELETE FROM `books` WHERE books.title = ? AND books.author_id = ?';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where_field(): void
+    public function test_nested_where_with_delete_query(): void
     {
-        $sql = query('books')
+        $query = query('books')
             ->delete()
-            ->whereField('title', 'a')
-            ->whereField('author_id', 1)
-            ->toSql();
+            ->whereRaw('status = ?', 'draft')
+            ->andWhereGroup(function ($group): void {
+                $group
+                    ->whereRaw('created_at < ?', '2022-01-01')
+                    ->andWhereRaw('author_id IS NULL');
+            })
+            ->build();
 
-        $expected = <<<SQL
-        DELETE FROM `books`
-        WHERE books.title = ?
-        AND books.author_id = ?
-        SQL;
+        $expected = 'DELETE FROM books WHERE status = ? AND (created_at < ? AND author_id IS NULL)';
 
-        $this->assertSameWithoutBackticks($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['draft', '2022-01-01'], $query->bindings);
     }
 }

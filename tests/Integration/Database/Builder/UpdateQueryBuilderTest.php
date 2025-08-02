@@ -29,15 +29,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
                 title: 'Chapter 01',
                 index: 1,
             )
-            ->where('`id` = ?', 10)
+            ->whereRaw('`id` = ?', 10)
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `chapters`
-            SET `title` = ?, `index` = ?
-            WHERE `id` = ?
-            SQL,
+            'UPDATE `chapters` SET `title` = ?, `index` = ? WHERE `id` = ?',
             $query->toSql(),
         );
 
@@ -55,10 +51,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `chapters`
-            SET `index` = ?
-            SQL,
+            'UPDATE `chapters` SET `index` = ?',
             $query->toSql(),
         );
 
@@ -84,15 +77,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->update(
                 title: 'Chapter 02',
             )
-            ->where('`id` = ?', 10)
+            ->whereRaw('`id` = ?', 10)
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `books`
-            SET `title` = ?
-            WHERE `id` = ?
-            SQL,
+            'UPDATE `books` SET `title` = ? WHERE `id` = ?',
             $query->toSql(),
         );
 
@@ -116,11 +105,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `books`
-            SET `title` = ?
-            WHERE `books`.`id` = ?
-            SQL,
+            'UPDATE `books` SET `title` = ? WHERE `books`.`id` = ?',
             $query->toSql(),
         );
 
@@ -159,11 +144,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `books`
-            SET `author_id` = ?
-            WHERE `books`.`id` = ?
-            SQL,
+            'UPDATE `books` SET `author_id` = ? WHERE `books`.`id` = ?',
             $bookQuery->toSql(),
         );
 
@@ -171,10 +152,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $authorQuery = $bookQuery->bindings[0];
 
-        $expected = <<<SQL
-        INSERT INTO `authors` (`name`)
-        VALUES (?)
-        SQL;
+        $expected = 'INSERT INTO `authors` (`name`) VALUES (?)';
 
         if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
             $expected .= ' RETURNING *';
@@ -199,11 +177,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `books`
-            SET `author_id` = ?
-            WHERE `books`.`id` = ?
-            SQL,
+            'UPDATE `books` SET `author_id` = ? WHERE `books`.`id` = ?',
             $bookQuery->toSql(),
         );
 
@@ -247,20 +221,16 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             )
             ->when(
                 true,
-                fn (UpdateQueryBuilder $query) => $query->where('`id` = ?', 10),
+                fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 10),
             )
             ->when(
                 false,
-                fn (UpdateQueryBuilder $query) => $query->where('`id` = ?', 20),
+                fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 20),
             )
             ->build();
 
         $this->assertSameWithoutBackticks(
-            <<<SQL
-            UPDATE `chapters`
-            SET `title` = ?, `index` = ?
-            WHERE `id` = ?
-            SQL,
+            'UPDATE `chapters` SET `title` = ?, `index` = ? WHERE `id` = ?',
             $query->toSql(),
         );
 
@@ -281,9 +251,9 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         query('authors')->update(
             name: 'Brendt',
-        )->where('id = ?', 1)->execute();
+        )->whereRaw('id = ?', 1)->execute();
 
-        $count = query('authors')->count()->where('name = ?', 'Brendt')->execute();
+        $count = query('authors')->count()->whereRaw('name = ?', 'Brendt')->execute();
 
         $this->assertSame(1, $count);
     }
@@ -294,20 +264,13 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->update(
                 title: 'Timeline Taxi',
             )
-            ->where('title = ?', 'a')
-            ->where('author_id = ?', 1)
-            ->where('OR author_id = ?', 2)
-            ->where('AND author_id <> NULL')
+            ->whereRaw('title = ?', 'a')
+            ->whereRaw('author_id = ?', 1)
+            ->whereRaw('OR author_id = ?', 2)
+            ->whereRaw('AND author_id <> NULL')
             ->toSql();
 
-        $expected = <<<SQL
-        UPDATE `books`
-        SET title = ?
-        WHERE title = ?
-        AND author_id = ?
-        OR author_id = ?
-        AND author_id <> NULL
-        SQL;
+        $expected = 'UPDATE `books` SET title = ? WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -318,17 +281,30 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->update(
                 title: 'Timeline Taxi',
             )
-            ->whereField('title', 'a')
-            ->whereField('author_id', 1)
+            ->where('title', 'a')
+            ->where('author_id', 1)
             ->toSql();
 
-        $expected = <<<SQL
-        UPDATE `books`
-        SET title = ?
-        WHERE books.title = ?
-        AND books.author_id = ?
-        SQL;
+        $expected = 'UPDATE `books` SET title = ? WHERE books.title = ? AND books.author_id = ?';
 
         $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_nested_where_with_update_query(): void
+    {
+        $query = query('books')
+            ->update(status: 'archived')
+            ->whereRaw('published = ?', true)
+            ->andWhereGroup(function ($group): void {
+                $group
+                    ->whereRaw('views < ?', 100)
+                    ->orWhereRaw('last_accessed < ?', '2023-01-01');
+            })
+            ->build();
+
+        $expected = 'UPDATE books SET status = ? WHERE published = ? AND (views < ? OR last_accessed < ?)';
+
+        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSame(['archived', true, 100, '2023-01-01'], $query->bindings);
     }
 }

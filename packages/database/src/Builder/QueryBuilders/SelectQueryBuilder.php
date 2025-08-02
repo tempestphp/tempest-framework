@@ -100,7 +100,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return T|null */
     public function get(Id $id): mixed
     {
-        return $this->whereField('id', $id)->first();
+        return $this->where('id', $id)->first();
     }
 
     /** @return T[] */
