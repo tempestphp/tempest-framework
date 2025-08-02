@@ -82,7 +82,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $this->update->values = $values;
 
         if ($this->model->isObjectModel() && is_object($this->model->instance)) {
-            $this->whereField(
+            $this->where(
                 $this->model->getPrimaryKey(),
                 $this->model->getPrimaryKeyValue()->id,
             );

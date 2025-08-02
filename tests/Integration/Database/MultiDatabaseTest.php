@@ -121,13 +121,26 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame('Backup 1', $publishersBackup[0]->name);
         $this->assertSame('Backup 2', $publishersBackup[1]->name);
 
-        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->onDatabase('main')->execute();
-        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->onDatabase('backup')->execute();
+        query(Publisher::class)
+            ->update(name: 'Updated Main 1')
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('main')
+            ->execute();
 
-        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('main')->first()->name);
-        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('backup')->first()->name);
+        query(Publisher::class)
+            ->update(name: 'Updated Backup 1')
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('backup')
+            ->execute();
 
-        query(Publisher::class)->delete()->where('id = ?', 1)->onDatabase('main')->execute();
+        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->whereRaw('id = ?', 1)->onDatabase('main')->first()->name);
+        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->whereRaw('id = ?', 1)->onDatabase('backup')->first()->name);
+
+        query(Publisher::class)
+            ->delete()
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('main')
+            ->execute();
 
         $this->assertSame(1, query(Publisher::class)->count()->onDatabase('main')->execute());
         $this->assertSame(2, query(Publisher::class)->count()->onDatabase('backup')->execute());

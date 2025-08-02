@@ -29,20 +29,13 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')
             ->select('title', 'index')
-            ->where('`title` = ?', 'Timeline Taxi')
-            ->andWhere('`index` <> ?', '1')
-            ->orWhere('`createdAt` > ?', '2025-01-01')
+            ->whereRaw('`title` = ?', 'Timeline Taxi')
+            ->andWhereRaw('`index` <> ?', '1')
+            ->orWhereRaw('`createdAt` > ?', '2025-01-01')
             ->orderBy('`index` ASC')
             ->build();
 
-        $expected = <<<SQL
-        SELECT title, index
-        FROM chapters
-        WHERE title = ?
-        AND index <> ?
-        OR createdAt > ?
-        ORDER BY index ASC
-        SQL;
+        $expected = 'SELECT title, index FROM chapters WHERE title = ? AND index <> ? OR createdAt > ? ORDER BY index ASC';
 
         $sql = $query->toSql();
         $bindings = $query->bindings;
@@ -57,10 +50,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT *
-        FROM `chapters`
-        SQL;
+        $expected = 'SELECT * FROM `chapters`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -71,10 +61,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = <<<SQL
-        SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id`
-        FROM `authors`
-        SQL;
+        $expected = 'SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id` FROM `authors`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -83,20 +70,13 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $sql = query('books')
             ->select()
-            ->where('title = ?', 'a')
-            ->where('author_id = ?', 1)
-            ->where('OR author_id = ?', 2)
-            ->where('AND author_id <> NULL')
+            ->whereRaw('title = ?', 'a')
+            ->whereRaw('author_id = ?', 1)
+            ->whereRaw('OR author_id = ?', 2)
+            ->whereRaw('AND author_id <> NULL')
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT *
-        FROM `books`
-        WHERE title = ?
-        AND author_id = ?
-        OR author_id = ?
-        AND author_id <> NULL
-        SQL;
+        $expected = 'SELECT * FROM `books` WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -105,16 +85,11 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $sql = query('books')
             ->select()
-            ->whereField('title', 'a')
-            ->whereField('author_id', 1)
+            ->where('title', 'a')
+            ->where('author_id', 1)
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT *
-        FROM `books`
-        WHERE books.title = ?
-        AND books.author_id = ?
-        SQL;
+        $expected = 'SELECT * FROM `books` WHERE books.title = ? AND books.author_id = ?';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -133,7 +108,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::select()->where('title = ?', 'B')->first();
+        $book = Book::select()->whereRaw('title = ?', 'B')->first();
 
         $this->assertSame('B', $book->title);
     }
@@ -246,7 +221,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::select()->where("title <> 'A'")->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->whereRaw("title <> 'A'")->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);
@@ -276,28 +251,21 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->when(
                 true,
                 fn (SelectQueryBuilder $query) => $query
-                    ->where('`title` = ?', 'Timeline Taxi')
-                    ->andWhere('`index` <> ?', '1')
-                    ->orWhere('`createdAt` > ?', '2025-01-01'),
+                    ->whereRaw('`title` = ?', 'Timeline Taxi')
+                    ->andWhereRaw('`index` <> ?', '1')
+                    ->orWhereRaw('`createdAt` > ?', '2025-01-01'),
             )
             ->when(
                 false,
                 fn (SelectQueryBuilder $query) => $query
-                    ->where('`title` = ?', 'Timeline Uber')
-                    ->andWhere('`index` <> ?', '2')
-                    ->orWhere('`createdAt` > ?', '2025-01-02'),
+                    ->whereRaw('`title` = ?', 'Timeline Uber')
+                    ->andWhereRaw('`index` <> ?', '2')
+                    ->orWhereRaw('`createdAt` > ?', '2025-01-02'),
             )
             ->orderBy('`index` ASC')
             ->build();
 
-        $expected = <<<SQL
-        SELECT title, index
-        FROM `chapters`
-        WHERE `title` = ?
-        AND `index` <> ?
-        OR `createdAt` > ?
-        ORDER BY `index` ASC
-        SQL;
+        $expected = 'SELECT title, index FROM `chapters` WHERE `title` = ? AND `index` <> ? OR `createdAt` > ? ORDER BY `index` ASC';
 
         $sql = $query->toSql();
         $bindings = $query->bindings;
@@ -317,7 +285,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $author = query('authors')
             ->select()
-            ->whereField('id', 2)
+            ->where('id', 2)
             ->first();
 
         $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], $author);
@@ -335,7 +303,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $authors = query('authors')
             ->select()
-            ->where('name <> ?', 'Brent')
+            ->whereRaw('name <> ?', 'Brent')
             ->all();
 
         $this->assertSame(
@@ -348,10 +316,10 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Book::class)->select();
 
-        $this->assertSameWithoutBackticks(<<<SQL
-        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`
-        FROM `books`
-        SQL, $query->build()->toSql());
+        $this->assertSameWithoutBackticks(
+            'SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id` FROM `books`',
+            $query->build()->toSql(),
+        );
     }
 
     public function test_with_belongs_to_relation(): void
@@ -361,13 +329,10 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->with('author', 'chapters', 'isbn')
             ->build();
 
-        $this->assertSameWithoutBackticks(<<<SQL
-        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, authors.id AS `author.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id`, isbns.id AS `isbn.id`
-        FROM `books`
-        LEFT JOIN authors ON authors.id = books.author_id
-        LEFT JOIN chapters ON chapters.book_id = books.id
-        LEFT JOIN isbns ON isbns.book_id = books.id
-        SQL, $query->toSql());
+        $this->assertSameWithoutBackticks(
+            'SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, authors.id AS `author.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id`, isbns.id AS `isbn.id` FROM `books` LEFT JOIN authors ON authors.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns ON isbns.book_id = books.id',
+            $query->toSql(),
+        );
     }
 
     public function test_select_query_execute_with_relations(): void
@@ -400,12 +365,10 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = AWithEager::select()->with('b.c')->toSql();
 
-        $this->assertSameWithoutBackticks(<<<SQL
-        SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id`
-        FROM `a`
-        LEFT JOIN b ON b.id = a.b_id
-        LEFT JOIN c ON c.id = b.c_id
-        SQL, $query);
+        $this->assertSameWithoutBackticks(
+            'SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c ON c.id = b.c_id',
+            $query,
+        );
     }
 
     public function test_group_by(): void
@@ -415,11 +378,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->groupBy('name')
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT *
-        FROM authors
-        GROUP BY name
-        SQL;
+        $expected = 'SELECT * FROM authors GROUP BY name';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -431,11 +390,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->having('name = ?', 'Brent')
             ->toSql();
 
-        $expected = <<<SQL
-        SELECT *
-        FROM authors
-        HAVING name = ?
-        SQL;
+        $expected = 'SELECT * FROM authors HAVING name = ?';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }

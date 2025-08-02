@@ -22,10 +22,7 @@ final class DeleteStatementTest extends TestCase
             where: arr([new WhereStatement('`bar` = "1"')]),
         );
 
-        $expected = <<<SQL
-        DELETE FROM `foo`
-        WHERE `bar` = "1"
-        SQL;
+        $expected = 'DELETE FROM `foo` WHERE `bar` = "1"';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));

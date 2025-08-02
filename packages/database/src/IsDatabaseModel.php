@@ -60,7 +60,7 @@ trait IsDatabaseModel
     {
         $query = self::select();
 
-        array_walk($conditions, fn ($value, $column) => $query->whereField($column, $value));
+        array_walk($conditions, fn ($value, $column) => $query->where($column, $value));
 
         return $query;
     }
@@ -93,7 +93,7 @@ trait IsDatabaseModel
         $existing = self::select()->bind(...$find);
 
         foreach ($find as $key => $value) {
-            $existing = $existing->where("{$key} = :{$key}");
+            $existing = $existing->whereRaw("{$key} = :{$key}");
         }
 
         $model = $existing->first() ?? self::new(...$find);

@@ -477,8 +477,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ['title' => 'B'],
         );
 
-        $this->assertNull(Book::select()->whereField('title', 'A')->first());
-        $this->assertNotNull(Book::select()->whereField('title', 'B')->first());
+        $this->assertNull(Book::select()->where('title', 'A')->first());
+        $this->assertNotNull(Book::select()->where('title', 'B')->first());
     }
 
     public function test_delete(): void
@@ -635,7 +635,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ->execute();
 
         /** @var DateTimeModel $model */
-        $model = query(DateTimeModel::class)->select()->whereField('id', $id)->first();
+        $model = query(DateTimeModel::class)->select()->where('id', $id)->first();
 
         $this->assertSame('2024-01-01 00:00:00', $model->phpDateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 00:00:00', $model->tempestDateTime->format('yyyy-MM-dd HH:mm:ss'));

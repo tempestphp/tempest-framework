@@ -2,7 +2,10 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use ArrayAccess;
+use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\WhereStatement;
 
@@ -14,41 +17,157 @@ use function Tempest\Support\str;
  */
 trait HasWhereQueryBuilderMethods
 {
+    use HasConvenientWhereMethods;
+
     abstract private function getModel(): ModelInspector;
 
     abstract private function getStatementForWhere(): HasWhereStatements;
 
-    /** @return self<TModelClass> */
-    public function where(string $where, mixed ...$bindings): self
+    /**
+     * Adds a where condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function where(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
-        if ($this->getStatementForWhere()->where->isNotEmpty() && ! str($where)->trim()->startsWith(['AND', 'OR'])) {
-            return $this->andWhere($where, ...$bindings);
+        $operator = WhereOperator::fromOperator($operator);
+        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
+
+        if ($this->getStatementForWhere()->where->isNotEmpty()) {
+            return $this->andWhere($field, $value, $operator);
         }
 
-        $this->getStatementForWhere()->where[] = new WhereStatement($where);
+        $this->getStatementForWhere()->where[] = new WhereStatement($condition['sql']);
+        $this->bind(...$condition['bindings']);
 
+        return $this;
+    }
+
+    /**
+     * Adds an `AND WHERE` condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function andWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
+    {
+        $operator = WhereOperator::fromOperator($operator);
+        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
+
+        $this->getStatementForWhere()->where[] = new WhereStatement("AND {$condition['sql']}");
+        $this->bind(...$condition['bindings']);
+
+        return $this;
+    }
+
+    /**
+     * Adds an `OR WHERE` condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function orWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
+    {
+        $operator = WhereOperator::fromOperator($operator);
+        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
+
+        $this->getStatementForWhere()->where[] = new WhereStatement("OR {$condition['sql']}");
+        $this->bind(...$condition['bindings']);
+
+        return $this;
+    }
+
+    /**
+     * Adds a raw SQL `WHERE` condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function whereRaw(string $rawCondition, mixed ...$bindings): self
+    {
+        if ($this->getStatementForWhere()->where->isNotEmpty() && ! str($rawCondition)->trim()->startsWith(['AND', 'OR'])) {
+            return $this->andWhereRaw($rawCondition, ...$bindings);
+        }
+
+        $this->getStatementForWhere()->where[] = new WhereStatement($rawCondition);
         $this->bind(...$bindings);
 
         return $this;
     }
 
-    /** @return self<TModelClass> */
-    public function andWhere(string $where, mixed ...$bindings): self
+    /**
+     * Adds a raw SQL `AND WHERE` condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        return $this->where("AND {$where}", ...$bindings);
+        $this->getStatementForWhere()->where[] = new WhereStatement("AND {$rawCondition}");
+        $this->bind(...$bindings);
+
+        return $this;
     }
 
-    /** @return self<TModelClass> */
-    public function orWhere(string $where, mixed ...$bindings): self
+    /**
+     * Adds a raw SQL `OR WHERE` condition to the query.
+     *
+     * @return self<TModelClass>
+     */
+    public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        return $this->where("OR {$where}", ...$bindings);
+        $this->getStatementForWhere()->where[] = new WhereStatement("OR {$rawCondition}");
+        $this->bind(...$bindings);
+
+        return $this;
     }
 
-    /** @return self<TModelClass> */
-    public function whereField(string $field, mixed $value): self
+    /**
+     * Adds a grouped where statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
+     *
+     * @param Closure(WhereGroupBuilder):void $callback
+     * @return self<TModelClass>
+     */
+    public function whereGroup(Closure $callback): self
     {
-        $field = $this->getModel()->getFieldDefinition($field);
+        $groupBuilder = new WhereGroupBuilder($this->getModel());
+        $callback($groupBuilder);
+        $group = $groupBuilder->build();
 
-        return $this->where("{$field} = ?", $value);
+        if (! $group->conditions->isEmpty()) {
+            $this->getStatementForWhere()->where[] = $group;
+            $this->bind(...$groupBuilder->getBindings());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a grouped `AND WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
+     *
+     * @param Closure(WhereGroupBuilder):void $callback
+     * @return self<TModelClass>
+     */
+    public function andWhereGroup(Closure $callback): self
+    {
+        if ($this->getStatementForWhere()->where->isNotEmpty()) {
+            $this->getStatementForWhere()->where[] = new WhereStatement('AND');
+        }
+
+        return $this->whereGroup($callback);
+    }
+
+    /**
+     * Adds a grouped `OR WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
+     *
+     * @param Closure(WhereGroupBuilder):void $callback
+     * @return self<TModelClass>
+     */
+    public function orWhereGroup(Closure $callback): self
+    {
+        if ($this->getStatementForWhere()->where->isNotEmpty()) {
+            $this->getStatementForWhere()->where[] = new WhereStatement('OR');
+        }
+
+        return $this->whereGroup($callback);
     }
 }
