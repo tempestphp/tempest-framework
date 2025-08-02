@@ -27,8 +27,6 @@ final class ClientTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        new Process([root_path('tempest'), 'key:generate'])->run();
-
         $this->server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
         $this->server->start();
 
@@ -42,7 +40,7 @@ final class ClientTest extends FrameworkIntegrationTestCase
     protected function tearDown(): void
     {
         if ($this->server->isRunning()) {
-            $this->server->stop(2);
+            $this->server->stop(timeout: 10);
         }
 
         parent::tearDown();

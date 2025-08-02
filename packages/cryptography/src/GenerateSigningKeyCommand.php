@@ -13,7 +13,7 @@ use Tempest\Support\Str;
 
 use function Tempest\root_path;
 
-final readonly class CreateSigningKeyCommand
+final readonly class GenerateSigningKeyCommand
 {
     public function __construct(
         private EncryptionConfig $encryptionConfig,
@@ -21,15 +21,20 @@ final readonly class CreateSigningKeyCommand
     ) {}
 
     #[ConsoleCommand('key:generate', description: 'Generates the signing key required to sign and verify data.')]
-    public function __invoke(): ExitCode
+    public function __invoke(bool $override = true): ExitCode
     {
         $key = EncryptionKey::generate($this->encryptionConfig->algorithm);
 
-        $this->console->writeln();
-        $this->console->success('Signing key generated successfully.');
-
         $this->createDotEnvIfNotExists();
-        $this->addToDotEnv($key->toString());
+        $this->addToDotEnv($key->toString(), $override);
+
+        $this->console->writeln();
+
+        if ($override) {
+            $this->console->success('Signing key generated successfully.');
+        } else {
+            $this->console->info('The signing key already exists.');
+        }
 
         return ExitCode::SUCCESS;
     }
@@ -39,13 +44,13 @@ final readonly class CreateSigningKeyCommand
         return root_path('.env');
     }
 
-    private function addToDotEnv(string $key): void
+    private function addToDotEnv(string $key, bool $override): void
     {
         $file = Filesystem\read_file($this->getDotEnvPath());
 
         if (! Str\contains($file, 'SIGNING_KEY=')) {
             $file = "SIGNING_KEY={$key}\n" . $file;
-        } else {
+        } elseif ($override) {
             $file = Regex\replace($file, '/^SIGNING_KEY=.*$/m', "SIGNING_KEY={$key}");
         }
 
