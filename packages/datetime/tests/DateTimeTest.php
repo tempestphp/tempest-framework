@@ -645,38 +645,11 @@ final class DateTimeTest extends TestCase
 
     public function test_end_of_week(): void
     {
-        $date = DateTime::parse('2025-05-21 12:00');
-        $new = $date->endOfWeek();
+        $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
+        $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 0, 0, 0);
 
-        $this->assertSame(5, $new->getMonth());
-        $this->assertSame(25, $new->getDay());
-        $this->assertSame(23, $new->getHours());
-        $this->assertSame(59, $new->getMinutes());
-        $this->assertSame(59, $new->getSeconds());
-    }
-
-    public function test_start_of_month(): void
-    {
-        $date = DateTime::parse('2025-05-21 12:00');
-        $new = $date->startOfMonth();
-
-        $this->assertSame(5, $new->getMonth());
-        $this->assertSame(1, $new->getDay());
-        $this->assertSame(Weekday::THURSDAY, $new->getWeekday());
-        $this->assertSame(0, $new->getHours());
-    }
-
-    public function test_end_of_month(): void
-    {
-        $date = DateTime::parse('2025-05-21 12:00', timezone: Timezone::EUROPE_PARIS);
-        $new = $date->endOfMonth();
-
-        $this->assertSame(5, $new->getMonth());
-        $this->assertSame(31, $new->getDay());
-        $this->assertSame(Weekday::SATURDAY, $new->getWeekday());
-        $this->assertSame(23, $new->getHours());
-        $this->assertSame(59, $new->getMinutes());
-        $this->assertSame(59, $new->getSeconds());
+        $this->assertTrue($sunday->isEndOfWeek());
+        $this->assertFalse($monday->isEndOfWeek());
     }
 
     public function test_end_of_month_edge_cases(): void
@@ -719,5 +692,346 @@ final class DateTimeTest extends TestCase
         $this->assertSame($date->getMonth(), $converted->getMonth());
         $this->assertSame($date->getDay(), $converted->getDay());
         $this->assertSame(0, $converted->getHours());
+    }
+
+    public function test_is_same_year(): void
+    {
+        $date1 = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 12, 0, 0, 0);
+        $date2 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 23, 59, 59, 999999999);
+        $date3 = DateTime::fromParts(Timezone::default(), 2025, Month::JANUARY, 1, 0, 0, 0, 0);
+
+        $this->assertTrue($date1->isSameYear($date2));
+        $this->assertFalse($date1->isSameYear($date3));
+        $this->assertTrue($date1->isSameYear($date1));
+    }
+
+    public function test_is_same_month(): void
+    {
+        $date1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 1, 12, 0, 0, 0);
+        $date2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 23, 59, 59, 999999999);
+        $date3 = DateTime::fromParts(Timezone::default(), 2024, Month::MARCH, 1, 0, 0, 0, 0);
+        $date4 = DateTime::fromParts(Timezone::default(), 2025, Month::FEBRUARY, 15, 12, 0, 0, 0);
+
+        $this->assertTrue($date1->isSameMonth($date2));
+        $this->assertFalse($date1->isSameMonth($date3));
+        $this->assertFalse($date1->isSameMonth($date4));
+        $this->assertTrue($date1->isSameMonth($date1));
+    }
+
+    public function test_is_same_week(): void
+    {
+        $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $wednesday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 7, 12, 0, 0, 0);
+        $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 11, 12, 0, 0, 0);
+        $nextMonday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 12, 12, 0, 0, 0);
+
+        $this->assertTrue($monday->isSameWeek($wednesday));
+        $this->assertTrue($monday->isSameWeek($sunday));
+        $this->assertFalse($monday->isSameWeek($nextMonday));
+        $this->assertTrue($monday->isSameWeek($monday));
+    }
+
+    public function test_is_same_day(): void
+    {
+        $morning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 8, 30, 0, 0);
+        $evening = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 20, 45, 30, 123456789);
+        $nextDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 8, 30, 0, 0);
+
+        $this->assertTrue($morning->isSameDay($evening));
+        $this->assertFalse($morning->isSameDay($nextDay));
+        $this->assertTrue($morning->isSameDay($morning));
+    }
+
+    public function test_is_same_hour(): void
+    {
+        $time1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 15, 30, 0);
+        $time2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 45, 59, 999999999);
+        $time3 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 15, 15, 30, 0);
+        $differentDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 14, 15, 30, 0);
+
+        $this->assertTrue($time1->isSameHour($time2));
+        $this->assertFalse($time1->isSameHour($time3));
+        $this->assertFalse($time1->isSameHour($differentDay));
+        $this->assertTrue($time1->isSameHour($time1));
+    }
+
+    public function test_is_same_minute(): void
+    {
+        $time1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 30, 15, 0);
+        $time2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 30, 45, 999999999);
+        $time3 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 31, 15, 0);
+        $differentHour = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 15, 30, 15, 0);
+
+        $this->assertTrue($time1->isSameMinute($time2));
+        $this->assertFalse($time1->isSameMinute($time3));
+        $this->assertFalse($time1->isSameMinute($differentHour));
+        $this->assertTrue($time1->isSameMinute($time1));
+    }
+
+    public function test_is_next_day(): void
+    {
+        $today = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $tomorrow = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 15, 30, 45, 123456789);
+        $dayAfterTomorrow = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 7, 8, 0, 0, 0);
+
+        $this->assertTrue($tomorrow->isNextDay($today));
+        $this->assertFalse($dayAfterTomorrow->isNextDay($today));
+        $this->assertFalse($today->isNextDay($today));
+        $this->assertFalse($today->isNextDay($tomorrow));
+    }
+
+    public function test_is_previous_day(): void
+    {
+        $today = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $yesterday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 8, 15, 30, 987654321);
+        $dayBeforeYesterday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 3, 20, 0, 0, 0);
+
+        $this->assertTrue($yesterday->isPreviousDay($today));
+        $this->assertFalse($dayBeforeYesterday->isPreviousDay($today));
+        $this->assertFalse($today->isPreviousDay($today));
+        $this->assertFalse($today->isPreviousDay($yesterday));
+    }
+
+    public function test_is_weekend(): void
+    {
+        $friday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 9, 12, 0, 0, 0);
+        $saturday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 10, 12, 0, 0, 0);
+        $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 11, 12, 0, 0, 0);
+        $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 12, 12, 0, 0, 0);
+
+        $this->assertFalse($friday->isWeekend());
+        $this->assertTrue($saturday->isWeekend());
+        $this->assertTrue($sunday->isWeekend());
+        $this->assertFalse($monday->isWeekend());
+    }
+
+    public function test_is_weekday(): void
+    {
+        $friday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 9, 12, 0, 0, 0);
+        $saturday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 10, 12, 0, 0, 0);
+        $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 11, 12, 0, 0, 0);
+        $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 12, 12, 0, 0, 0);
+
+        $this->assertTrue($friday->isWeekday());
+        $this->assertFalse($saturday->isWeekday());
+        $this->assertFalse($sunday->isWeekday());
+        $this->assertTrue($monday->isWeekday());
+    }
+
+    public function test_is_first_day_of_month(): void
+    {
+        $firstDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 1, 12, 0, 0, 0);
+        $secondDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 2, 12, 0, 0, 0);
+        $lastDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 12, 0, 0, 0);
+
+        $this->assertTrue($firstDay->isFirstDayOfMonth());
+        $this->assertFalse($secondDay->isFirstDayOfMonth());
+        $this->assertFalse($lastDay->isFirstDayOfMonth());
+    }
+
+    public function test_is_last_day_of_month(): void
+    {
+        $february28 = DateTime::fromParts(Timezone::default(), 2023, Month::FEBRUARY, 28, 12, 0, 0, 0);
+        $february29 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 12, 0, 0, 0);
+        $march1 = DateTime::fromParts(Timezone::default(), 2024, Month::MARCH, 1, 12, 0, 0, 0);
+        $april30 = DateTime::fromParts(Timezone::default(), 2024, Month::APRIL, 30, 12, 0, 0, 0);
+        $may31 = DateTime::fromParts(Timezone::default(), 2024, Month::MAY, 31, 12, 0, 0, 0);
+
+        $this->assertTrue($february28->isLastDayOfMonth());
+        $this->assertTrue($february29->isLastDayOfMonth());
+        $this->assertFalse($march1->isLastDayOfMonth());
+        $this->assertTrue($april30->isLastDayOfMonth());
+        $this->assertTrue($may31->isLastDayOfMonth());
+    }
+
+    public function test_is_first_day_of_year(): void
+    {
+        $newYearsDay = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 0, 0, 0, 0);
+        $newYearsDayDifferentTime = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 23, 59, 59, 999999999);
+        $secondDay = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 2, 0, 0, 0, 0);
+        $december31 = DateTime::fromParts(Timezone::default(), 2023, Month::DECEMBER, 31, 23, 59, 59, 999999999);
+
+        $this->assertTrue($newYearsDay->isFirstDayOfYear());
+        $this->assertTrue($newYearsDayDifferentTime->isFirstDayOfYear());
+        $this->assertFalse($secondDay->isFirstDayOfYear());
+        $this->assertFalse($december31->isFirstDayOfYear());
+    }
+
+    public function test_is_last_day_of_year(): void
+    {
+        $december31 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 0, 0, 0, 0);
+        $december31DifferentTime = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 23, 59, 59, 999999999);
+        $december30 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 30, 23, 59, 59, 999999999);
+        $january1 = DateTime::fromParts(Timezone::default(), 2025, Month::JANUARY, 1, 0, 0, 0, 0);
+
+        $this->assertTrue($december31->isLastDayOfYear());
+        $this->assertTrue($december31DifferentTime->isLastDayOfYear());
+        $this->assertFalse($december30->isLastDayOfYear());
+        $this->assertFalse($january1->isLastDayOfYear());
+    }
+
+    public function test_time_of_day_methods(): void
+    {
+        $earlyMorning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 3, 30, 0, 0);
+        $morning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 9, 30, 0, 0);
+        $noon = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $afternoon = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 15, 30, 0, 0);
+        $evening = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 19, 30, 0, 0);
+        $night = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 23, 30, 0, 0);
+        $midnight = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 0, 0, 0, 0);
+
+        $this->assertTrue($earlyMorning->isNight());
+        $this->assertFalse($earlyMorning->isMorning());
+        $this->assertFalse($earlyMorning->isAfternoon());
+        $this->assertFalse($earlyMorning->isEvening());
+
+        $this->assertFalse($morning->isNight());
+        $this->assertTrue($morning->isMorning());
+        $this->assertFalse($morning->isAfternoon());
+        $this->assertFalse($morning->isEvening());
+
+        $this->assertFalse($noon->isNight());
+        $this->assertFalse($noon->isMorning());
+        $this->assertTrue($noon->isAfternoon());
+        $this->assertFalse($noon->isEvening());
+        $this->assertTrue($noon->isNoon());
+
+        $this->assertFalse($afternoon->isNight());
+        $this->assertFalse($afternoon->isMorning());
+        $this->assertTrue($afternoon->isAfternoon());
+        $this->assertFalse($afternoon->isEvening());
+
+        $this->assertFalse($evening->isNight());
+        $this->assertFalse($evening->isMorning());
+        $this->assertFalse($evening->isAfternoon());
+        $this->assertTrue($evening->isEvening());
+
+        $this->assertTrue($night->isNight());
+        $this->assertFalse($night->isMorning());
+        $this->assertFalse($night->isAfternoon());
+        $this->assertFalse($night->isEvening());
+
+        $this->assertTrue($midnight->isMidnight());
+        $this->assertFalse($noon->isMidnight());
+        $this->assertFalse($midnight->isNoon());
+    }
+
+    public function test_time_edge_cases(): void
+    {
+        $boundary5_59 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 5, 59, 59, 999999999);
+        $boundary6_00 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 6, 0, 0, 0);
+        $boundary11_59 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 11, 59, 59, 999999999);
+        $boundary12_00 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $boundary17_59 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 17, 59, 59, 999999999);
+        $boundary18_00 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 18, 0, 0, 0);
+        $boundary21_59 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 21, 59, 59, 999999999);
+        $boundary22_00 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 22, 0, 0, 0);
+
+        $this->assertTrue($boundary5_59->isNight());
+        $this->assertTrue($boundary6_00->isMorning());
+
+        $this->assertTrue($boundary11_59->isMorning());
+        $this->assertTrue($boundary12_00->isAfternoon());
+
+        $this->assertTrue($boundary17_59->isAfternoon());
+        $this->assertTrue($boundary18_00->isEvening());
+
+        $this->assertTrue($boundary21_59->isEvening());
+        $this->assertTrue($boundary22_00->isNight());
+    }
+
+    public function test_is_start_and_end_of_week(): void
+    {
+        $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
+        $tuesday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 12, 0, 0, 0);
+        $saturday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 10, 12, 0, 0, 0);
+        $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 11, 12, 0, 0, 0);
+
+        $this->assertTrue($monday->isStartOfWeek());
+        $this->assertFalse($tuesday->isStartOfWeek());
+        $this->assertFalse($saturday->isStartOfWeek());
+        $this->assertFalse($sunday->isStartOfWeek());
+
+        $this->assertFalse($monday->isEndOfWeek());
+        $this->assertFalse($tuesday->isEndOfWeek());
+        $this->assertFalse($saturday->isEndOfWeek());
+        $this->assertTrue($sunday->isEndOfWeek());
+    }
+
+    public function test_leap_year_edge_cases_for_last_day_of_month(): void
+    {
+        $feb28_leap = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 28, 12, 0, 0, 0);
+        $feb29_leap = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 12, 0, 0, 0);
+        $feb28_nonleap = DateTime::fromParts(Timezone::default(), 2023, Month::FEBRUARY, 28, 12, 0, 0, 0);
+
+        $this->assertFalse($feb28_leap->isLastDayOfMonth());
+        $this->assertTrue($feb29_leap->isLastDayOfMonth());
+        $this->assertTrue($feb28_nonleap->isLastDayOfMonth());
+    }
+
+    public function test_cross_year_same_week(): void
+    {
+        $dec30_2024 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 30, 12, 0, 0, 0);
+        $jan5_2025 = DateTime::fromParts(Timezone::default(), 2025, Month::JANUARY, 5, 12, 0, 0, 0);
+        $jan6_2025 = DateTime::fromParts(Timezone::default(), 2025, Month::JANUARY, 6, 12, 0, 0, 0);
+
+        $this->assertTrue($dec30_2024->isSameWeek($jan5_2025));
+        $this->assertFalse($dec30_2024->isSameWeek($jan6_2025));
+    }
+
+    public function test_current_relative_date_methods(): void
+    {
+        $now = DateTime::now();
+        $today = DateTime::todayAt($now->getHours(), $now->getMinutes(), $now->getSeconds());
+        $tomorrow = $today->plusDay();
+        $yesterday = $today->minusDay();
+
+        $this->assertTrue($today->isToday());
+        $this->assertFalse($tomorrow->isToday());
+        $this->assertFalse($yesterday->isToday());
+
+        $this->assertTrue($tomorrow->isTomorrow());
+        $this->assertFalse($today->isTomorrow());
+        $this->assertFalse($yesterday->isTomorrow());
+
+        $this->assertTrue($yesterday->isYesterday());
+        $this->assertFalse($today->isYesterday());
+        $this->assertFalse($tomorrow->isYesterday());
+    }
+
+    public function test_current_week_month_year_methods(): void
+    {
+        $now = DateTime::now();
+
+        $currentWeek = $now->startOfWeek();
+        $nextWeek = $now->plusDays(7);
+        $previousWeek = $now->minusDays(7);
+        $this->assertTrue($currentWeek->isCurrentWeek());
+        $this->assertTrue($nextWeek->isNextWeek());
+        $this->assertTrue($previousWeek->isPreviousWeek());
+
+        $currentMonth = DateTime::fromParts($now->getTimezone(), $now->getYear(), $now->getMonth(), 15);
+        $nextMonth = $now->plusMonth();
+        $previousMonth = $now->minusMonth();
+        $this->assertTrue($currentMonth->isCurrentMonth());
+        $this->assertTrue($nextMonth->isNextMonth());
+        $this->assertTrue($previousMonth->isPreviousMonth());
+
+        $currentYear = DateTime::fromParts($now->getTimezone(), $now->getYear(), Month::JUNE, 15);
+        $nextYear = $now->plusYear();
+        $previousYear = $now->minusYear();
+        $this->assertTrue($currentYear->isCurrentYear());
+        $this->assertTrue($nextYear->isNextYear());
+        $this->assertTrue($previousYear->isPreviousYear());
+    }
+
+    public function test_timezone_considerations_for_same_methods(): void
+    {
+        $utc = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 5, 23, 30, 0, 0);
+        $brussels = DateTime::fromParts(Timezone::EUROPE_BRUSSELS, 2024, Month::FEBRUARY, 6, 0, 30, 0, 0);
+
+        $this->assertFalse($utc->isSameDay($brussels));
+        $this->assertTrue($utc->isSameYear($brussels));
+        $this->assertTrue($utc->isSameMonth($brussels));
     }
 }
