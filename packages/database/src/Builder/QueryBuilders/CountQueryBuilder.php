@@ -21,7 +21,7 @@ use function Tempest\Database\model;
  */
 final class CountQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TapsQueryBuilder;
 
     private CountStatement $count;
 
@@ -85,5 +85,10 @@ final class CountQueryBuilder implements BuildsQuery
     private function getModel(): ModelInspector
     {
         return $this->model;
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }

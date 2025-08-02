@@ -331,4 +331,20 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
+
+    public function test_tap(): void
+    {
+        $query = query(Book::class)
+            ->update(title: 'Chapter 02')
+            ->tap(fn (UpdateQueryBuilder $query) => $query->where('id = ?', 10))
+            ->build();
+
+        $this->assertSameWithoutBackticks(<<<SQL
+        UPDATE `books`
+        SET `title` = ?
+        WHERE `id` = ?
+        SQL, $query->toSql());
+
+        $this->assertSame(['Chapter 02', 10], $query->bindings);
+    }
 }

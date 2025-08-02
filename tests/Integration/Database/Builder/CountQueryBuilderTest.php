@@ -212,4 +212,21 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
+
+    public function test_tap(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        $count = query('authors')
+            ->count()
+            ->tap(fn (CountQueryBuilder $query) => $query->where('id = ?', 1))
+            ->execute();
+
+        $this->assertSame(1, $count);
+    }
 }

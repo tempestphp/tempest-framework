@@ -154,4 +154,19 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
+
+    public function test_tap(): void
+    {
+        $query = query('foo')
+            ->delete()
+            ->tap(fn (DeleteQueryBuilder $query) => $query->where('bar = ?', 'boo'))
+            ->build();
+
+        $this->assertSameWithoutBackticks(<<<SQL
+        DELETE FROM `foo`
+        WHERE bar = ?
+        SQL, $query->toSql());
+
+        $this->assertSameWithoutBackticks('boo', $query->bindings[0]);
+    }
 }

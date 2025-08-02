@@ -424,6 +424,47 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
+    public function test_tap(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->tap(fn (SelectQueryBuilder $query) => $query->where('name = ?', 'Brent'))
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        WHERE name = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_tap_invokable(): void
+    {
+        $sql = query('authors')
+            ->select()
+            ->tap(new readonly class('Brent') {
+                public function __construct(
+                    private string $author,
+                ) {}
+
+                public function __invoke(SelectQueryBuilder $query): void
+                {
+                    $query->where('name = ?', $this->author);
+                }
+            })
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM authors
+        WHERE name = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
     public function test_having(): void
     {
         $sql = query('authors')
