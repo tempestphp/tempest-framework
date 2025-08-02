@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is a boolean or boolean-like value (truthy/falsy).
+ */
 #[Attribute]
 final readonly class IsBoolean implements Rule, HasTranslationVariables
 {
@@ -21,7 +24,7 @@ final readonly class IsBoolean implements Rule, HasTranslationVariables
             return true;
         }
 
-        return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === true || $value === 'true' || $value === 1 || $value === '1';
+        return new IsTruthy()->isValid($value) || new IsFalsy()->isValid($value);
     }
 
     public function getTranslationVariables(): array

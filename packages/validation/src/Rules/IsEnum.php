@@ -13,6 +13,9 @@ use UnitEnum;
 
 use function Tempest\Support\arr;
 
+/**
+ * Validates that the value is a valid case of a specified enum.
+ */
 #[Attribute]
 final readonly class IsEnum implements Rule, HasTranslationVariables
 {

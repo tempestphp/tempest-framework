@@ -12,7 +12,7 @@ use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
-use Tempest\Validation\Rules\DateTimeFormat;
+use Tempest\Validation\Rules\HasDateTimeFormat;
 
 final readonly class DateTimeSerializer implements Serializer
 {
@@ -23,7 +23,7 @@ final readonly class DateTimeSerializer implements Serializer
     public static function fromReflector(PropertyReflector|TypeReflector $reflector): self
     {
         if ($reflector instanceof PropertyReflector) {
-            $format = $reflector->getAttribute(DateTimeFormat::class)?->format ?? FormatPattern::SQL_DATE_TIME;
+            $format = $reflector->getAttribute(HasDateTimeFormat::class)?->format ?? FormatPattern::SQL_DATE_TIME;
         } else {
             $format = FormatPattern::SQL_DATE_TIME;
         }

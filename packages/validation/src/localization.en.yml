@@ -1,44 +1,44 @@
 validation_field:
-  after_date: Date
-  before_date: Date
-  between: Number
-  between_dates: Date
-  divisible_by: Number
-  email: Email
-  even: Number
-  odd: Number
-  multiple_of: Number
-  password: Password
+  is_after_date: Date
+  is_before_date: Date
+  is_between: Number
+  is_between_dates: Date
+  is_divisible_by: Number
+  is_email: Email
+  is_even_number: Number
+  is_odd_number: Number
+  is_multiple_of: Number
+  is_password: Password
 validation_error:
-  after_date: |
+  is_after_date: |
     .input {$field :string}
     .input {$inclusive :boolean}
     .input {$date :datetime date_style=long time_style=none}
     .match $inclusive
       true {{{$field} must be after or equal to {$date}}}
       false {{{$field} must be after {$date}}}
-  alpha: |
+  is_alpha: |
     .input {$field :string}
     {$field} must contain only alphabetic characters
-  alpha_numeric: |
+  is_alpha_numeric: |
     .input {$field :string}
     {$field} must contain only alphanumeric characters
-  array_list: |
+  is_array_list: |
     .input {$field :string}
     {$field} must be a list
-  before_date: |
+  is_before_date: |
     .input {$field :string}
     .input {$inclusive :boolean}
     .input {$date :datetime date_style=long time_style=none}
     .match $inclusive
       true {{{$field} must be a date before or equal to {$date}}}
       false {{{$field} must be a date before {$date}}}
-  between: |
+  is_between: |
     .input {$field :string}
     .input {$min :number}
     .input {$max :number}
     {$field} must be between {$min} and {$max}
-  between_dates: |
+  is_between_dates: |
     .input {$field :string}
     .input {$first :datetime date_style=long time_style=none}
     .input {$second :datetime date_style=long time_style=none}
@@ -46,7 +46,7 @@ validation_error:
     .match $inclusive
       true {{{$field} must be a date between {$first} and {$second}, included}}
       false {{{$field} must be a date between {$first} and {$second}}}
-  count: |
+  has_count: |
     .input {$field :string}
     .input {$min :number default=null}
     .input {$max :number default=null}
@@ -56,11 +56,11 @@ validation_error:
       true true {{{$field} must have between {$min} and {$max} items}}
       true false {{{$field} must have at least {$min} items}}
       false true {{{$field} must have at most {$max} items}}
-  date_time_format: |
+  has_date_time_format: |
     .input {$field :string}
     .input {$format :string}
     {$field} must use the format {$format}
-  divisible_by: |
+  is_divisible_by: |
     .input {$field :string}
     .input {$divisor :number}
     {$field} must be divisible by {$divisor}
@@ -72,24 +72,24 @@ validation_error:
     .input {$field :string}
     .input {$needle :string}
     {$field} must not start with "{$needle}"
-  email: |
+  is_email: |
     .input {$field :string}
     {$field} must be a valid email address
   ends_with: |
     .input {$field :string}
     .input {$needle :string}
     {$field} must end with "{$needle}"
-  even: |
+  is_even_number: |
     .input {$field :string}
     {$field} must be even
-  hex_color: |
+  is_hex_color: |
     .input {$field :string}
     {$field} must be a hexadecimal color
-  in: |
+  is_in: |
     .input {$field :string}
     .input {$values :string final_glue=| or |}
     {$field} must be {$values}
-  ip: |
+  is_ip: |
     .input {$field :string}
     .input {$allow_private_range :boolean}
     .input {$allow_reserved_range :boolean}
@@ -98,7 +98,7 @@ validation_error:
       true false {{{$field} must be a valid IP address, not in a reserved range}}
       false true {{{$field} must be a valid IP address, not in a private range}}
       false false {{{$field} must be a valid IP address, not in a private or reserved range}}
-  ipv4: |
+  is_ipv4: |
     .input {$field :string}
     .input {$allow_private_range :boolean}
     .input {$allow_reserved_range :boolean}
@@ -107,7 +107,7 @@ validation_error:
       true false {{{$field} must be a valid IPv4 address, not in a reserved range}}
       false true {{{$field} must be a valid IPv4 address, not in a private range}}
       false false {{{$field} must be a valid IPv4 address, not in a private or reserved range}}
-  ipv6: |
+  is_ipv6: |
     .input {$field :string}
     .input {$allow_private_range :boolean}
     .input {$allow_reserved_range :boolean}
@@ -144,10 +144,10 @@ validation_error:
     .match $or_null
       true {{{$field} must be a string or be empty}}
       false {{{$field} must be a string}}
-  json: |
+  is_json_string: |
     .input {$field :string}
     {$field} must be a valid JSON string
-  length: |
+  has_length: |
     .input {$field :string}
     .input {$min :number default=null}
     .input {$max :number default=null}
@@ -157,33 +157,33 @@ validation_error:
       true true {{{$field} must be between {$min} and {$max}}}
       true false {{{$field} must be at least {$min}}}
       false true {{{$field} must be at most {$max}}}
-  lowercase: |
+  is_lowercase: |
     .input {$field :string}
     {$field} must be a lowercase string
-  mac_address: |
+  is_mac_address: |
     .input {$field :string}
     {$field} must be a valid MAC address
-  multiple_of: |
+  is_multiple_of: |
     .input {$field :string}
     .input {$divisor :number}
     {$field} must be a multiple of {$divisor}
-  not_empty: |
+  is_not_empty_string: |
     .input {$field :string}
     {$field} must not be empty
-  not_in: |
+  is_not_in: |
     .input {$field :string}
     .input {$values :string final_glue=| or |}
     {$field} must not be {$values}
-  not_null: |
+  is_not_null: |
     .input {$field :string}
     {$field} must be specified
-  numeric: |
+  is_numeric: |
     .input {$field :string}
     {$field} must be numeric
-  odd: |
+  is_odd_number: |
     .input {$field :string}
     {$field} must be odd
-  password: |
+  is_password: |
     .input {$min :number}
     .input {$mixed_case :boolean}
     .input {$numbers :boolean}
@@ -202,48 +202,48 @@ validation_error:
       false false true false {{{$field} must contain at least {$min} characters and one letter}}
       false false false true {{{$field} must contain at least {$min} characters and one symbol}}
       * * * * {{{$field} must contain at least {$min} characters}}
-  phone_number: |
+  is_phone_number: |
     .input {$field :string}
     {$field} must be a phone number
-  regex: |
+  matches_regex: |
     .input {$field :string}
     .input {$pattern :string}
     {$field} must match the pattern {$pattern}
-  should_be_false: |
+  is_falsy: |
     .input {$field :string}
     {$field} must be false
-  should_be_true: |
+  is_truthy: |
     .input {$field :string}
     {$field} must be true
   starts_with: |
     .input {$field :string}
     .input {$needle :string}
     {$field} must start with {$needle}
-  time: |
+  is_time: |
     .input {$field :string}
     .input {$twenty_four_hour :boolean}
     .match $twenty_four_hour
       true {{{$field} must be a valid time in 24-hour format}}
       false {{{$field} must be a valid time in 12-hour format}}
-  timestamp: |
+  is_unix_timestamp: |
     .input {$field :string}
     {$field} must be a valid timestamp
-  timezone: |
+  is_timezone: |
     .input {$field :string}
     {$field} must be a valid timezone
-  ulid: |
+  is_ulid: |
     .input {$field :string}
     {$field} must be a lexicographically sortable identifier
-  uppercase: |
+  is_uppercase: |
     .input {$field :string}
     {$field} must be an uppercase string
-  url: |
+  is_url: |
     .input {$field :string}
     .input {$protocols :string final_glue=| or |}
     .local $has_protocols = {$protocols :boolean}
     .match $has_protocols
       false {{{$field} must be a valid URL}}
       true {{{$field} must be a URL using {$protocols}}}
-  uuid: |
+  is_uuid: |
     .input {$field :string}
     {$field} must be a universally unique identifier

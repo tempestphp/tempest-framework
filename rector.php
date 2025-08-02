@@ -20,6 +20,7 @@ use Rector\Php82\Rector\Param\AddSensitiveParameterAttributeRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
 use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;

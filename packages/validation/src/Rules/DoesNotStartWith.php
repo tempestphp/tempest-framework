@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value does not start with a specified string.
+ */
 #[Attribute]
 final readonly class DoesNotStartWith implements Rule, HasTranslationVariables
 {

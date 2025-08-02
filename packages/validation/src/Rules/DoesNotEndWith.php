@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value does not end with a specified string.
+ */
 #[Attribute]
 final readonly class DoesNotEndWith implements Rule, HasTranslationVariables
 {

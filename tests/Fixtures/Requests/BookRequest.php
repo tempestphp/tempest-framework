@@ -7,7 +7,7 @@ namespace Tests\Tempest\Fixtures\Requests;
 use Tempest\Database\HasOne;
 use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 
@@ -15,7 +15,7 @@ final class BookRequest implements Request
 {
     use IsRequest;
 
-    #[Length(min: 1, max: 120)]
+    #[HasLength(min: 1, max: 120)]
     public string $title;
 
     public ?Author $author = null;

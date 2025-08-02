@@ -9,7 +9,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\IsNotEmptyString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -25,7 +25,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             $request,
             [
                 'foo' => [
-                    new NotEmpty(),
+                    new IsNotEmptyString(),
                 ],
             ],
         );
@@ -52,7 +52,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             $request,
             [
                 'foo' => [
-                    new NotEmpty(),
+                    new IsNotEmptyString(),
                 ],
             ],
         );

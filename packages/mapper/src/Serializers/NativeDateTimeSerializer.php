@@ -10,7 +10,7 @@ use Tempest\Mapper\Serializer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
-use Tempest\Validation\Rules\DateTimeFormat;
+use Tempest\Validation\Rules\HasDateTimeFormat;
 
 final readonly class NativeDateTimeSerializer implements Serializer
 {
@@ -21,7 +21,7 @@ final readonly class NativeDateTimeSerializer implements Serializer
     public static function fromReflector(PropertyReflector|TypeReflector $property): self
     {
         if ($property instanceof PropertyReflector) {
-            $format = $property->getAttribute(DateTimeFormat::class)?->format ?? 'Y-m-d H:i:s';
+            $format = $property->getAttribute(HasDateTimeFormat::class)?->format ?? 'Y-m-d H:i:s';
         } else {
             $format = 'Y-m-d H:i:s';
         }

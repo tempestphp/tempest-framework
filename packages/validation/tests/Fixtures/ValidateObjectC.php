@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Fixtures;
 
-use Tempest\Validation\Rules\Email;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
+use Tempest\Validation\Rules\IsEmail;
 
 final class ValidateObjectC
 {
-    #[Length(min: 2)]
+    #[HasLength(min: 2)]
     public string $name;
 
-    #[Email]
+    #[IsEmail]
     public string $email;
 }

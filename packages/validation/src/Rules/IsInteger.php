@@ -8,6 +8,9 @@ use Attribute;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is an integer.
+ */
 #[Attribute]
 final readonly class IsInteger implements Rule, HasTranslationVariables
 {
