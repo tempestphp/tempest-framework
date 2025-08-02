@@ -26,10 +26,11 @@ final class DeleteQueryBuilder implements BuildsQuery
 
     private ModelInspector $model;
 
-    public function __construct(
-        /** @var class-string<TModelClass>|string|TModelClass $model */
-        string|object $model,
-    ) {
+    /**
+     * @param class-string<TModelClass>|string|TModelClass $model
+     */
+    public function __construct(string|object $model)
+    {
         $this->model = model($model);
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
     }
