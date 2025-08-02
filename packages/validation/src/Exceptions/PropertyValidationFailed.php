@@ -24,7 +24,7 @@ final class PropertyValidationFailed extends Exception
 
         foreach ($this->failingRules as $key => $failingRulesForProperty) {
             foreach ($failingRulesForProperty as $failingRule) {
-                $messages[$key][] = arr($failingRule->message())->join()->toString();
+                $messages[$key][] = arr($failingRule->getTranslationVariables())->join()->toString();
             }
         }
 

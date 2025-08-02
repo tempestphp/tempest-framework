@@ -374,13 +374,7 @@ trait ManipulatesString
      */
     public function replaceEvery(array $replacements): self
     {
-        $haystack = $this->value;
-
-        foreach ($replacements as $needle => $replacement) {
-            $haystack = namespace\replace($this->value, $needle, (string) $replacement);
-        }
-
-        return $this->createOrModify($haystack);
+        return $this->createOrModify(namespace\replace_every($this->value, $replacements));
     }
 
     /**

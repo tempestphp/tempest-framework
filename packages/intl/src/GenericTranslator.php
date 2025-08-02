@@ -33,7 +33,7 @@ final readonly class GenericTranslator implements Translator
         }
 
         try {
-            return $this->formatter->format($message, ...$arguments);
+            return $this->formatter->format(mb_trim($message), ...$arguments);
         } catch (\Throwable $exception) {
             $this->eventBus?->dispatch(new TranslationFailure(
                 locale: $locale,

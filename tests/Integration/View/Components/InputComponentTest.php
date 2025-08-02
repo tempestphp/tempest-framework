@@ -3,9 +3,10 @@
 namespace Integration\View\Components;
 
 use Tempest\Http\Session\Session;
+use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Validator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class InputComponentTest extends FrameworkIntegrationTestCase
@@ -77,7 +78,7 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
         $failingRules = [
             'name' => [
                 new IsString(),
-                new Length(min: 5),
+                new HasLength(min: 5),
             ],
             'other' => [
                 new IsInteger(),
@@ -88,8 +89,10 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
 
         $html = $this->render('<x-input name="name" />');
 
-        $this->assertStringContainsString(new IsString()->message(), $html);
-        $this->assertStringContainsString(new Length(min: 5)->message(), $html);
-        $this->assertStringNotContainsString(new IsInteger()->message(), $html);
+        $validator = $this->container->get(Validator::class);
+
+        $this->assertStringContainsString($validator->getErrorMessage(new IsString()), $html);
+        $this->assertStringContainsString($validator->getErrorMessage(new HasLength(min: 5)), $html);
+        $this->assertStringNotContainsString($validator->getErrorMessage(new IsInteger()), $html);
     }
 }

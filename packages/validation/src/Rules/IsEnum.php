@@ -5,13 +5,23 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use BackedEnum;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 use UnexpectedValueException;
 use UnitEnum;
 
+use function Tempest\Support\arr;
+
+/**
+ * Validates that the value is a valid case of a specified enum.
+ */
 #[Attribute]
-final readonly class IsEnum implements Rule
+final readonly class IsEnum implements Rule, HasTranslationVariables
 {
+    /**
+     * @param class-string<UnitEnum|BackedEnum> $enum
+     */
     public function __construct(
         private string $enum,
         private array $only = [],
@@ -66,9 +76,19 @@ final readonly class IsEnum implements Rule
         );
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "The value must be a valid enumeration [{$this->enum}] case";
+        $values = arr($this->enum::cases())
+            ->filter(fn (UnitEnum $case) => $this->isDesirable($case))
+            ->map(static fn (UnitEnum $enum) => ($enum instanceof BackedEnum) ? $enum->value : $enum->name)
+            ->toArray();
+
+        return [
+            'enum' => $this->enum,
+            'values' => $values,
+            'only' => $this->only,
+            'except' => $this->except,
+        ];
     }
 
     private function isDesirable($value): bool

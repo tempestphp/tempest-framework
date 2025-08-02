@@ -32,8 +32,8 @@ final class CatalogInitializer implements Initializer
                     Str\ends_with($path, ['.yaml', '.yml']) => Yaml::parse($contents),
                 };
 
-                foreach (Arr\undot($messages) as $key => $message) {
-                    $catalog[$locale][$key] = $message;
+                foreach (Arr\dot($messages) as $key => $message) {
+                    $catalog[$locale] = Arr\set_by_key($catalog[$locale], $key, $message);
                 }
             }
         }

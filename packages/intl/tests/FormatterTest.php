@@ -76,7 +76,7 @@ final class FormatterTest extends TestCase
         $this->assertSame('The total was 31%.', $value);
     }
 
-    #[TestWith([0, "pas d'avion"])]
+    #[TestWith([0, 'pas d‘avion'])]
     #[TestWith([1, 'un avion'])]
     #[TestWith([5, '5 avions'])]
     public function test_match_number(int $count, string $expected): void
@@ -86,12 +86,31 @@ final class FormatterTest extends TestCase
         $value = $formatter->format(<<<'TXT'
         .input {$aircraft :number}
         .match $aircraft
-            0 {{pas d'avion}}
+            0 {{pas d‘avion}}
             1 {{un avion}}
             * {{{$aircraft} avions}}
         TXT, aircraft: $count);
 
         $this->assertSame($expected, $value);
+    }
+
+    public function test_default_input(): void
+    {
+        $formatter = new MessageFormatter([]);
+
+        $value = $formatter->format(<<<'TXT'
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT);
+
+        $this->assertSame('field is unknown', $value);
+
+        $value = $formatter->format(<<<'TXT'
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT, field: 'here');
+
+        $this->assertSame('field is here', $value);
     }
 
     public function test_unquoted_text(): void
@@ -273,7 +292,7 @@ final class FormatterTest extends TestCase
     #[TestWith(['value', 'value'])]
     #[TestWith([1, '1'])]
     #[TestWith([1.1, '1.1'])]
-    #[TestWith([['name' => 'Jon'], ''])]
+    #[TestWith([['name' => 'Jon'], 'Jon'])]
     public function test_string_formatting(mixed $input, string $expected): void
     {
         $formatter = new MessageFormatter([new StringFunction()]);

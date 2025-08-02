@@ -7,9 +7,9 @@ namespace Tests\Tempest\Integration\Console\Fixtures;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
-use Tempest\Validation\Rules\Count;
-use Tempest\Validation\Rules\Email;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasCount;
+use Tempest\Validation\Rules\HasLength;
+use Tempest\Validation\Rules\IsEmail;
 
 final readonly class InteractiveCommand
 {
@@ -34,8 +34,8 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:validation')]
     public function validation(): void
     {
-        $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max: 2)]);
-        $b = $this->console->ask('b', validation: [new Email()]);
+        $a = $this->console->ask('a', validation: [new HasLength(min: 2), new HasLength(max: 2)]);
+        $b = $this->console->ask('b', validation: [new IsEmail()]);
 
         $this->console->success("{$a} {$b}");
     }
@@ -110,7 +110,7 @@ final readonly class InteractiveCommand
             question: 'Pick several',
             options: ['a', 'b', 'c'],
             multiple: true,
-            validation: [new Count(min: 1)],
+            validation: [new HasCount(min: 1)],
         );
 
         $result = json_encode($result);

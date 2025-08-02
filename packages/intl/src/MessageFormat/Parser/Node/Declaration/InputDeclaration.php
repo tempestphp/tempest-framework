@@ -8,5 +8,6 @@ final readonly class InputDeclaration implements Declaration
 {
     public function __construct(
         public VariableExpression $expression,
+        public bool $optional,
     ) {}
 }
