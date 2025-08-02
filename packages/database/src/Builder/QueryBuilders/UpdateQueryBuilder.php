@@ -24,7 +24,7 @@ use function Tempest\Support\arr;
  */
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TapsQueryBuilder;
 
     private UpdateStatement $update;
 
@@ -152,5 +152,10 @@ final class UpdateQueryBuilder implements BuildsQuery
     private function getModel(): ModelInspector
     {
         return $this->model;
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }

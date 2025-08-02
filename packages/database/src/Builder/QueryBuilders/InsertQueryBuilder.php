@@ -19,7 +19,7 @@ use function Tempest\Database\model;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, TapsQueryBuilder;
 
     private InsertStatement $insert;
 

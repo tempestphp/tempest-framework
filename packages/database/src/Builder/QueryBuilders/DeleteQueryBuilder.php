@@ -18,7 +18,7 @@ use function Tempest\Database\model;
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TapsQueryBuilder;
 
     private DeleteStatement $delete;
 
@@ -80,5 +80,10 @@ final class DeleteQueryBuilder implements BuildsQuery
     private function getModel(): ModelInspector
     {
         return $this->model;
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }

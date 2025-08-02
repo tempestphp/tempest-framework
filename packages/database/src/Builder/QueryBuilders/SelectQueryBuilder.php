@@ -33,7 +33,7 @@ use function Tempest\map;
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TapsQueryBuilder;
 
     private ModelInspector $model;
 
@@ -232,11 +232,6 @@ final class SelectQueryBuilder implements BuildsQuery
         return new Query($this->select, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 
-    private function clone(): self
-    {
-        return clone $this;
-    }
-
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
@@ -269,5 +264,10 @@ final class SelectQueryBuilder implements BuildsQuery
     private function getModel(): ModelInspector
     {
         return $this->model;
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }
