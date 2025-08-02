@@ -263,14 +263,6 @@ final class TimestampTest extends TestCase
         $this->assertSame($expected === Order::EQUAL, $a->betweenTimeInclusive($b, $b));
     }
 
-    public function test_future_past(): void
-    {
-        $now = Timestamp::monotonic();
-
-        $this->assertFalse($now->minusSecond()->isFuture());
-        $this->assertFalse($now->plusSecond()->isPast());
-    }
-
     public function test_nanoseconds_modifications(): void
     {
         $timestamp = Timestamp::fromParts(0, 100);
@@ -467,5 +459,182 @@ final class TimestampTest extends TestCase
         $this->assertSame('2024-03-31T20:33:52.12+00:00', $timestamp->toRfc3339());
         $this->assertSame('2024-03-31T20:33:52+00:00', $timestamp->toRfc3339(secondsStyle: SecondsStyle::Seconds));
         $this->assertSame('2024-03-31T20:33:52.12Z', $timestamp->toRfc3339(useZ: true));
+    }
+
+    public function test_temporal_convenience_methods(): void
+    {
+        $timestamp1 = Timestamp::now();
+        $timestamp2 = $timestamp1->plusMilliseconds(300);
+        $timestamp3 = $timestamp2->plusMilliseconds(300);
+
+        $this->assertTrue($timestamp1->isBefore($timestamp2));
+        $this->assertFalse($timestamp2->isBefore($timestamp1));
+
+        $this->assertTrue($timestamp2->isAfter($timestamp1));
+        $this->assertFalse($timestamp1->isAfter($timestamp2));
+
+        $this->assertTrue($timestamp1->isBeforeOrAt($timestamp2));
+        $this->assertTrue($timestamp1->isBeforeOrAt($timestamp1));
+        $this->assertFalse($timestamp2->isBeforeOrAt($timestamp1));
+
+        $this->assertTrue($timestamp2->isAfterOrAt($timestamp1));
+        $this->assertTrue($timestamp2->isAfterOrAt($timestamp2));
+        $this->assertFalse($timestamp1->isAfterOrAt($timestamp2));
+
+        $this->assertTrue($timestamp2->isBetween($timestamp1, $timestamp3));
+        $this->assertTrue($timestamp1->isBetween($timestamp1, $timestamp3));
+        $this->assertTrue($timestamp3->isBetween($timestamp1, $timestamp3));
+        $this->assertFalse($timestamp1->isBetween($timestamp2, $timestamp3));
+
+        $this->assertTrue($timestamp2->isBetweenExclusive($timestamp1, $timestamp3));
+        $this->assertFalse($timestamp1->isBetweenExclusive($timestamp1, $timestamp3));
+        $this->assertFalse($timestamp3->isBetweenExclusive($timestamp1, $timestamp3));
+
+        $this->assertTrue($timestamp1->isSameTime($timestamp1));
+        $this->assertFalse($timestamp1->isSameTime($timestamp2));
+    }
+
+    public function test_at_the_same_time_edge_cases(): void
+    {
+        $timestamp1 = Timestamp::fromParts(1234567890, 123456789);
+        $timestamp2 = Timestamp::fromParts(1234567890, 123456789);
+        $timestamp3 = Timestamp::fromParts(1234567890, 123456790);
+
+        $this->assertTrue($timestamp1->atTheSameTime($timestamp2));
+        $this->assertFalse($timestamp1->atTheSameTime($timestamp3));
+        $this->assertTrue($timestamp1->isSameTime($timestamp2));
+        $this->assertFalse($timestamp1->isSameTime($timestamp3));
+    }
+
+    public function test_between_time_boundary_conditions(): void
+    {
+        $start = Timestamp::fromParts(1000, 0);
+        $middle = Timestamp::fromParts(1500, 0);
+        $end = Timestamp::fromParts(2000, 0);
+        $before = Timestamp::fromParts(500, 0);
+        $after = Timestamp::fromParts(2500, 0);
+
+        $this->assertTrue($middle->betweenTimeInclusive($start, $end));
+        $this->assertTrue($start->betweenTimeInclusive($start, $end));
+        $this->assertTrue($end->betweenTimeInclusive($start, $end));
+        $this->assertFalse($before->betweenTimeInclusive($start, $end));
+        $this->assertFalse($after->betweenTimeInclusive($start, $end));
+
+        $this->assertTrue($middle->betweenTimeExclusive($start, $end));
+        $this->assertFalse($start->betweenTimeExclusive($start, $end));
+        $this->assertFalse($end->betweenTimeExclusive($start, $end));
+        $this->assertFalse($before->betweenTimeExclusive($start, $end));
+        $this->assertFalse($after->betweenTimeExclusive($start, $end));
+
+        $this->assertTrue($middle->isBetween($start, $end));
+        $this->assertTrue($start->isBetween($start, $end));
+        $this->assertTrue($end->isBetween($start, $end));
+
+        $this->assertTrue($middle->isBetweenExclusive($start, $end));
+        $this->assertFalse($start->isBetweenExclusive($start, $end));
+        $this->assertFalse($end->isBetweenExclusive($start, $end));
+    }
+
+    public function test_between_time_reversed_parameters(): void
+    {
+        $early = Timestamp::fromParts(1000, 0);
+        $middle = Timestamp::fromParts(1500, 0);
+        $late = Timestamp::fromParts(2000, 0);
+
+        $this->assertTrue($middle->betweenTimeInclusive($late, $early));
+        $this->assertTrue($middle->betweenTimeExclusive($late, $early));
+        $this->assertTrue($middle->isBetween($late, $early));
+        $this->assertTrue($middle->isBetweenExclusive($late, $early));
+    }
+
+    public function test_nano_precision_temporal_comparisons(): void
+    {
+        $base = Timestamp::fromParts(1234567890, 0);
+        $plusOneNano = Timestamp::fromParts(1234567890, 1);
+        $minusOneNano = Timestamp::fromParts(1234567889, 999999999);
+
+        $this->assertTrue($base->isAfter($minusOneNano));
+        $this->assertTrue($base->isBefore($plusOneNano));
+        $this->assertTrue($plusOneNano->isAfter($base));
+        $this->assertTrue($minusOneNano->isBefore($base));
+
+        $this->assertTrue($base->isAfterOrAt($minusOneNano));
+        $this->assertTrue($base->isBeforeOrAt($plusOneNano));
+        $this->assertTrue($base->isAfterOrAt($base));
+        $this->assertTrue($base->isBeforeOrAt($base));
+
+        $this->assertFalse($base->isSameTime($plusOneNano));
+        $this->assertFalse($base->isSameTime($minusOneNano));
+        $this->assertTrue($base->isSameTime($base));
+    }
+
+    public function test_future_past_comprehensive(): void
+    {
+        $now = Timestamp::monotonic();
+        $future = $now->plusMilliseconds(1);
+        $past = $now->minusMilliseconds(1);
+
+        $this->assertTrue($future->isFuture());
+        $this->assertFalse($future->isPast());
+
+        $this->assertTrue($past->isPast());
+        $this->assertFalse($past->isFuture());
+
+        $this->assertFalse($now->minusSecond()->isFuture());
+        $this->assertFalse($now->plusSecond()->isPast());
+
+        $veryFuture = $now->plusSeconds(3600);
+        $veryPast = $now->minusSeconds(3600);
+
+        $this->assertTrue($veryFuture->isFuture());
+        $this->assertFalse($veryFuture->isPast());
+        $this->assertTrue($veryPast->isPast());
+        $this->assertFalse($veryPast->isFuture());
+    }
+
+    public function test_since_and_between_duration_methods(): void
+    {
+        $start = Timestamp::fromParts(1000, 500000000);
+        $end = Timestamp::fromParts(1005, 750000000);
+
+        $duration = $end->since($start);
+        $this->assertSame(5, $duration->getSeconds());
+        $this->assertSame(250000000, $duration->getNanoseconds());
+
+        $reverseDuration = $start->since($end);
+        $this->assertSame(-5, $reverseDuration->getSeconds());
+        $this->assertSame(-250000000, $reverseDuration->getNanoseconds());
+
+        $betweenDuration = $start->between($end);
+        $this->assertSame(-5, $betweenDuration->getSeconds());
+        $this->assertSame(-250000000, $betweenDuration->getNanoseconds());
+
+        $sameDuration = $start->since($start);
+        $this->assertSame(0, $sameDuration->getSeconds());
+        $this->assertSame(0, $sameDuration->getNanoseconds());
+    }
+
+    public function test_temporal_comparison_with_large_values(): void
+    {
+        $large1 = Timestamp::fromParts(9223372036, 999999999);
+        $large2 = Timestamp::fromParts(9223372036, 999999998);
+
+        $this->assertTrue($large1->isAfter($large2));
+        $this->assertFalse($large1->isBefore($large2));
+        $this->assertTrue($large1->isAfterOrAt($large2));
+        $this->assertFalse($large1->isBeforeOrAt($large2));
+        $this->assertFalse($large1->isSameTime($large2));
+    }
+
+    public function test_temporal_comparison_edge_case_overflow_boundary(): void
+    {
+        $maxSeconds = Timestamp::fromParts(9223372036854775806, 0);
+        $nearMax = Timestamp::fromParts(9223372036854775805, 999999999);
+
+        $this->assertTrue($maxSeconds->isAfter($nearMax));
+        $this->assertFalse($maxSeconds->isBefore($nearMax));
+        $this->assertTrue($maxSeconds->isAfterOrAt($nearMax));
+        $this->assertFalse($maxSeconds->isBeforeOrAt($nearMax));
+        $this->assertFalse($maxSeconds->isSameTime($nearMax));
     }
 }
