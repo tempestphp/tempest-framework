@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Tempest\Core\Priority;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -16,6 +17,7 @@ use Tempest\Http\Response;
 final readonly class SetCookieMiddleware implements HttpMiddleware
 {
     public function __construct(
+        private Encrypter $encrypter,
         private CookieManager $cookies,
     ) {}
 
@@ -24,7 +26,8 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
         $response = $next($request);
 
         foreach ($this->cookies->all() as $cookie) {
-            $response->addHeader('set-cookie', (string) $cookie);
+            $cookieValue = $cookie->value === '' ? '' : $this->encrypter->encrypt($cookie->value)->serialize();
+            $response->addHeader('set-cookie', (string) $cookie->withValue($cookieValue));
         }
 
         return $response;

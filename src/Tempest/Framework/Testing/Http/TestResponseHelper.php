@@ -7,11 +7,14 @@ namespace Tempest\Framework\Testing\Http;
 use Closure;
 use Generator;
 use PHPUnit\Framework\Assert;
-use Tempest\Http\Cookie\CookieManager;
+use PHPUnit\Framework\ExpectationFailedException;
+use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Support\Arr;
 use Tempest\Validation\Rule;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
@@ -49,13 +52,15 @@ final class TestResponseHelper
         return $this;
     }
 
+    /**
+     * Asserts that the given header contains the given value.
+     */
     public function assertHeaderContains(string $name, mixed $value): self
     {
         $this->assertHasHeader($name);
 
         $header = $this->response->getHeader($name);
-
-        $headerString = var_export($header, true); // @mago-expect best-practices/no-debug-symbols
+        $headerString = var_export($header, return: true); // @mago-expect best-practices/no-debug-symbols
 
         Assert::assertContains(
             $value,
@@ -64,6 +69,28 @@ final class TestResponseHelper
         );
 
         return $this;
+    }
+
+    /**
+     * Asserts that the given header contains the given value. The value may contains placeholders such as `%s`, `%d`, etc.
+     */
+    public function assertHeaderMatches(string $name, string $format): self
+    {
+        $this->assertHasHeader($name);
+
+        $header = $this->response->getHeader($name);
+        $headerString = var_export($header, return: true); // @mago-expect best-practices/no-debug-symbols
+
+        foreach ($header->values as $value) {
+            try {
+                Assert::assertStringMatchesFormat($format, $value);
+
+                return $this;
+            } catch (ExpectationFailedException) { // @mago-expect best-practices/no-empty-catch-clause
+            }
+        }
+
+        Assert::fail(sprintf('Failed to assert that response header [%s] value contains [%s]. These header values were found: %s', $name, $format, $headerString));
     }
 
     public function assertRedirect(?string $to = null): self
@@ -108,16 +135,34 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertHasCookie(string $key, ?Closure $callback = null): self
+    public function assertHasCookie(string $key, null|string|Closure $value = null): self
     {
-        $cookies = get(CookieManager::class);
+        /** @var array<string,Cookie> */
+        $cookies = Arr\map_with_keys(
+            array: $this->response->getHeader('set-cookie')->values,
+            map: function (string $cookie) {
+                $cookie = Cookie::createFromString($cookie);
+                yield $cookie->key => $cookie;
+            },
+        );
 
-        $cookie = $cookies->get($key);
+        Assert::assertArrayHasKey(
+            key: $key,
+            array: $cookies,
+            message: sprintf('No cookie was set for [%s], available cookies: %s', $key, implode(', ', array_keys($cookies))),
+        );
 
-        Assert::assertNotNull($cookie);
+        $encrypter = get(Encrypter::class);
+        $cookie = $cookies[$key]->value
+            ? $encrypter->decrypt($cookies[$key]->value)
+            : '';
 
-        if ($callback !== null) {
-            $callback($cookie);
+        if ($value instanceof Closure) {
+            $value($cookie);
+        }
+
+        if (is_string($value)) {
+            Assert::assertEquals($value, $cookie);
         }
 
         return $this;

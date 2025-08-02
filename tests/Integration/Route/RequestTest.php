@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Route;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRequest;
@@ -70,7 +71,10 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
         $_SERVER['HTTP_X-TEST'] = 'test';
-        $_COOKIE['test'] = 'test';
+        $_COOKIE['test'] = $this->container
+            ->get(Encrypter::class)
+            ->encrypt('test')
+            ->serialize();
 
         $request = new RequestFactory(new MemoryInputStream([
             'test' => 'test',
@@ -80,7 +84,10 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $request->getUri()->getPath());
         $this->assertEquals(['test' => 'test'], $request->getParsedBody());
         $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
-        $this->assertEquals(['test' => 'test'], $request->getCookieParams());
+
+        $this->assertCount(1, $request->getCookieParams());
+        $this->assertArrayHasKey('test', $request->getCookieParams());
+        $this->assertSame('test', $this->container->get(Encrypter::class)->decrypt($request->getCookieParams()['test']));
     }
 
     public function test_custom_request_test(): void
