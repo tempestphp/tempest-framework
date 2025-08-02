@@ -149,7 +149,7 @@ final class ModelInspector
             return null;
         }
 
-        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->haSAttribute(SerializeWith::class)) {
+        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->hasAttribute(SerializeWith::class)) {
             return null;
         }
 
