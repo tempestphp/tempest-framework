@@ -34,7 +34,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
             SQL,
         };
 
-        $this->assertSame($expected, $query->toSql());
+        $this->assertSame($expected, $query->toSql()->toString());
         $this->assertSame(['test'], $query->bindings);
     }
 
@@ -55,7 +55,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
             SQL,
         };
 
-        $this->assertSame($expected, $query->toSql());
+        $this->assertSame($expected, $query->toSql()->toString());
 
         $this->assertSame(['other', 1], $query->bindings);
     }

@@ -7,6 +7,7 @@ use BackedEnum;
 use Countable;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
 use UnitEnum;
 
 /**
@@ -66,7 +67,7 @@ trait HasConvenientWhereMethods
 
                 $sql .= " {$operator->value} ? AND ?";
                 $bindings = array_map(
-                    fn (DateTime|string|float|int|Countable $value) => match (true) {
+                    fn (DateTimeInterface|string|float|int|Countable $value) => match (true) {
                         $value instanceof Countable => count($value),
                         default => $value,
                     },
@@ -117,7 +118,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds a `WHERE BETWEEN` condition.
      */
-    public function whereBetween(string $field, DateTime|string|float|int|Countable $min, DateTime|string|float|int|Countable $max): self
+    public function whereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
         return $this->where($field, [$min, $max], WhereOperator::BETWEEN);
     }
@@ -125,7 +126,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds a `WHERE NOT BETWEEN` condition.
      */
-    public function whereNotBetween(string $field, DateTime|string|float|int|Countable $min, DateTime|string|float|int|Countable $max): self
+    public function whereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
         return $this->where($field, [$min, $max], WhereOperator::NOT_BETWEEN);
     }
@@ -193,7 +194,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds an `OR WHERE BETWEEN` condition.
      */
-    public function orWhereBetween(string $field, DateTime|string|float|int|Countable $min, DateTime|string|float|int|Countable $max): self
+    public function orWhereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
         return $this->orWhere($field, [$min, $max], WhereOperator::BETWEEN);
     }
@@ -201,7 +202,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds an `OR WHERE NOT BETWEEN` condition.
      */
-    public function orWhereNotBetween(string $field, DateTime|string|float|int|Countable $min, DateTime|string|float|int|Countable $max): self
+    public function orWhereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
         return $this->orWhere($field, [$min, $max], WhereOperator::NOT_BETWEEN);
     }
@@ -329,7 +330,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds a `WHERE` condition for records created after a specific date.
      */
-    public function whereAfter(string $field, DateTime|string $date): self
+    public function whereAfter(string $field, DateTimeInterface|string $date): self
     {
         return $this->where($field, DateTime::parse($date), WhereOperator::GREATER_THAN);
     }
@@ -337,7 +338,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds a `WHERE` condition for records created before a specific date.
      */
-    public function whereBefore(string $field, DateTime|string $date): self
+    public function whereBefore(string $field, DateTimeInterface|string $date): self
     {
         return $this->where($field, DateTime::parse($date), WhereOperator::LESS_THAN);
     }
@@ -394,7 +395,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds an `OR WHERE` condition for records created after a specific date.
      */
-    public function orWhereAfter(string $field, DateTime|string $date): self
+    public function orWhereAfter(string $field, DateTimeInterface|string $date): self
     {
         return $this->orWhere($field, DateTime::parse($date), WhereOperator::GREATER_THAN);
     }
@@ -402,7 +403,7 @@ trait HasConvenientWhereMethods
     /**
      * Adds an `OR WHERE` condition for records created before a specific date.
      */
-    public function orWhereBefore(string $field, DateTime|string $date): self
+    public function orWhereBefore(string $field, DateTimeInterface|string $date): self
     {
         return $this->orWhere($field, DateTime::parse($date), WhereOperator::LESS_THAN);
     }

@@ -14,6 +14,7 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\model;
 
@@ -60,9 +61,14 @@ final class InsertQueryBuilder implements BuildsQuery
         return $id;
     }
 
-    public function toSql(): string
+    public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
+    }
+
+    public function toRawSql(): ImmutableString
+    {
+        return $this->build()->toRawSql();
     }
 
     public function build(mixed ...$bindings): Query
