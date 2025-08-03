@@ -60,11 +60,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function text(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function text(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
@@ -74,12 +71,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function varchar(
-        string $name,
-        int $length = 255,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function varchar(string $name, int $length = 255, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new VarcharStatement(
             name: $name,
             size: $length,
@@ -90,11 +83,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function char(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function char(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new CharStatement(
             name: $name,
             nullable: $nullable,
@@ -104,12 +94,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function integer(
-        string $name,
-        bool $unsigned = false,
-        bool $nullable = false,
-        ?int $default = null,
-    ): self {
+    public function integer(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null): self
+    {
         $this->statements[] = new IntegerStatement(
             name: $name,
             unsigned: $unsigned,
@@ -120,11 +106,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function float(
-        string $name,
-        bool $nullable = false,
-        ?float $default = null,
-    ): self {
+    public function float(string $name, bool $nullable = false, ?float $default = null): self
+    {
         $this->statements[] = new FloatStatement(
             name: $name,
             nullable: $nullable,
@@ -134,11 +117,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function datetime(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function datetime(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new DatetimeStatement(
             name: $name,
             nullable: $nullable,
@@ -148,11 +128,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function date(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function date(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new DateStatement(
             name: $name,
             nullable: $nullable,
@@ -162,11 +139,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function boolean(
-        string $name,
-        bool $nullable = false,
-        ?bool $default = null,
-    ): self {
+    public function boolean(string $name, bool $nullable = false, ?bool $default = null): self
+    {
         $this->statements[] = new BooleanStatement(
             name: $name,
             nullable: $nullable,
@@ -176,11 +150,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function json(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function json(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -201,11 +172,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function array(
-        string $name,
-        bool $nullable = false,
-        array $default = [],
-    ): self {
+    public function array(string $name, bool $nullable = false, array $default = []): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -215,12 +183,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function enum(
-        string $name,
-        string $enumClass,
-        bool $nullable = false,
-        null|UnitEnum|BackedEnum $default = null,
-    ): self {
+    public function enum(string $name, string $enumClass, bool $nullable = false, null|UnitEnum|BackedEnum $default = null): self
+    {
         $this->statements[] = new EnumStatement(
             name: $name,
             enumClass: $enumClass,
@@ -231,12 +195,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function set(
-        string $name,
-        array $values,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function set(string $name, array $values, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new SetStatement(
             name: $name,
             values: $values,
