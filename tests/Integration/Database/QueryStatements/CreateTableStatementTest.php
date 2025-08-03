@@ -18,7 +18,6 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropEnumTypeStatement;
-use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -128,8 +127,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 public function up(): QueryStatement
                 {
                     return new CompoundStatement(
-                        new DropEnumTypeStatement(EnumForCreateTable::class),
-                        new CreateEnumTypeStatement(EnumForCreateTable::class),
+                        new DropEnumTypeStatement(CreateTableStatementTestEnumForCreateTable::class),
+                        new CreateEnumTypeStatement(CreateTableStatementTestEnumForCreateTable::class),
                     );
                 }
 
@@ -150,8 +149,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return new CreateTableStatement('test_table')
                     ->enum(
                         name: 'enum',
-                        enumClass: EnumForCreateTable::class,
-                        default: EnumForCreateTable::BAR,
+                        enumClass: CreateTableStatementTestEnumForCreateTable::class,
+                        default: CreateTableStatementTestEnumForCreateTable::BAR,
                     );
             }
 
@@ -281,4 +280,10 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame($varcharStatement, $stringStatement);
     }
+}
+
+enum CreateTableStatementTestEnumForCreateTable: string
+{
+    case FOO = 'foo';
+    case BAR = 'bar';
 }

@@ -2,24 +2,26 @@
 
 namespace Tests\Tempest\Integration\Database;
 
-use PDOException;
 use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\ShouldMigrate;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
-use Tests\Tempest\Integration\Database\Fixtures\MigrationForBackup;
-use Tests\Tempest\Integration\Database\Fixtures\MigrationForMain;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
@@ -39,8 +41,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $files = [
-            __DIR__ . '/Fixtures/main.sqlite',
-            __DIR__ . '/Fixtures/backup.sqlite',
+            __DIR__ . '/db-main.sqlite',
+            __DIR__ . '/db-backup.sqlite',
         ];
 
         foreach ($files as $file) {
@@ -55,12 +57,12 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->container->addInitializer(DatabaseInitializer::class);
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/main.sqlite',
+            path: __DIR__ . '/db-main.sqlite',
             tag: 'main',
         ));
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/backup.sqlite',
+            path: __DIR__ . '/db-backup.sqlite',
             tag: 'backup',
         ));
     }
@@ -155,7 +157,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/main.sqlite',
+            path: __DIR__ . '/db-main.sqlite',
             tag: 'sqlite-main',
         ));
 
@@ -264,25 +266,25 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager->onDatabase('main')->executeUp(new CreateMigrationsTable());
         $migrationManager->onDatabase('backup')->executeUp(new CreateMigrationsTable());
 
-        $migrationManager->onDatabase('main')->executeUp(new MigrationForMain());
-        $migrationManager->onDatabase('main')->executeUp(new MigrationForBackup());
+        $migrationManager->onDatabase('main')->executeUp(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('main')->executeUp(new MultiDatabaseTestMigrationForBackup());
 
         $this->assertTableExists('main_table', 'main');
         $this->assertTableDoesNotExist('backup_table', 'main');
 
-        $migrationManager->onDatabase('backup')->executeUp(new MigrationForMain());
-        $migrationManager->onDatabase('backup')->executeUp(new MigrationForBackup());
+        $migrationManager->onDatabase('backup')->executeUp(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('backup')->executeUp(new MultiDatabaseTestMigrationForBackup());
 
         $this->assertTableExists('backup_table', 'backup');
         $this->assertTableDoesNotExist('main_table', 'backup');
 
-        $migrationManager->onDatabase('main')->executeDown(new MigrationForMain());
-        $migrationManager->onDatabase('main')->executeDown(new MigrationForBackup());
+        $migrationManager->onDatabase('main')->executeDown(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('main')->executeDown(new MultiDatabaseTestMigrationForBackup());
         $this->assertTableDoesNotExist('main_table', 'main');
         $this->assertTableDoesNotExist('backup_table', 'main');
 
-        $migrationManager->onDatabase('backup')->executeDown(new MigrationForBackup());
-        $migrationManager->onDatabase('backup')->executeDown(new MigrationForMain());
+        $migrationManager->onDatabase('backup')->executeDown(new MultiDatabaseTestMigrationForBackup());
+        $migrationManager->onDatabase('backup')->executeDown(new MultiDatabaseTestMigrationForMain());
         $this->assertTableDoesNotExist('backup_table', 'backup');
         $this->assertTableDoesNotExist('main_table', 'backup');
     }
@@ -360,5 +362,45 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             QueryWasInvalid::class,
             fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
         );
+    }
+}
+
+final class MultiDatabaseTestMigrationForMain implements DatabaseMigration, ShouldMigrate
+{
+    public string $name = '000_main';
+
+    public function shouldMigrate(Database $database): bool
+    {
+        return $database->tag === 'main';
+    }
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('main_table')->primary();
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('main_table');
+    }
+}
+
+final class MultiDatabaseTestMigrationForBackup implements DatabaseMigration, ShouldMigrate
+{
+    public string $name = '000_backup';
+
+    public function shouldMigrate(Database $database): bool
+    {
+        return $database->tag === 'backup';
+    }
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('backup_table')->primary();
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('backup_table');
     }
 }

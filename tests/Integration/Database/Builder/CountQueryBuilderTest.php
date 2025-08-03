@@ -10,7 +10,6 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tests\Tempest\Integration\Database\Fixtures\BookStatus;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -526,4 +525,12 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->toSql());
         $this->assertSame([true, 'featured', 4.5], $query->bindings);
     }
+}
+
+enum BookStatus: string
+{
+    case DRAFT = 'draft';
+    case PUBLISHED = 'published';
+    case ARCHIVED = 'archived';
+    case FEATURED = 'featured';
 }
