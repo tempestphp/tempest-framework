@@ -27,6 +27,7 @@ final class DtoSerializationTest extends FrameworkIntegrationTestCase
             {
                 return new CreateTableStatement('model_with_settings')
                     ->primary()
+                    ->text('title')
                     ->json('settings');
             }
 
@@ -37,13 +38,14 @@ final class DtoSerializationTest extends FrameworkIntegrationTestCase
         });
 
         query(ModelWithSettings::class)
-            ->insert(new ModelWithSettings(new Settings(Theme::DARK)))
+            ->insert(new ModelWithSettings('model', new Settings(Theme::DARK)))
             ->execute();
 
         $model = query(ModelWithSettings::class)
             ->select()
             ->first();
 
+        $this->assertSame('model', $model->title);
         $this->assertSame(Theme::DARK, $model->settings->theme);
     }
 }
@@ -57,12 +59,11 @@ enum Theme: string
 final class ModelWithSettings
 {
     public function __construct(
+        public string $title,
         public Settings $settings,
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
 #[SerializeAs('settings')]
 final class Settings
 {
