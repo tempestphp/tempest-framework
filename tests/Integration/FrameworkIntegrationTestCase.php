@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use InvalidArgumentException;
+use Stringable;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -139,7 +140,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->assertSame($expected, $actual);
     }
 
-    protected function assertSameWithoutBackticks(string $expected, string $actual): void
+    protected function assertSameWithoutBackticks(Stringable|string $expected, Stringable|string $actual): void
     {
         $clean = function (string $string): string {
             return str($string)
@@ -149,8 +150,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         };
 
         $this->assertSame(
-            $clean($expected),
-            $clean($actual),
+            $clean((string) $expected),
+            $clean((string) $actual),
         );
     }
 
