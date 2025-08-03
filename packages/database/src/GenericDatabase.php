@@ -124,6 +124,14 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
+            // Database handle booleans differently. We might need a database-aware serializer at some point.
+            if (is_bool($value)) {
+                $value = match ($this->dialect) {
+                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
+                    default => $value ? '1' : '0',
+                };
+            }
+
             if ($value instanceof Query) {
                 $value = $value->execute();
             } elseif ($serializer = $this->serializerFactory->forValue($value)) {
