@@ -367,7 +367,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         query(User::class)
             ->select()
-            ->whereIn('name', 'not-an-array')
+            ->whereIn('name', 'not-an-array') // @phpstan-ignore argument.type
             ->all();
     }
 
