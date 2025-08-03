@@ -4,6 +4,7 @@
  */
 ?>
 
+<!doctype html>
 <html lang="en" class="h-dvh flex flex-col scroll-smooth">
 <head>
     <title>{{ $title ?? 'Tempest' }}</title>
