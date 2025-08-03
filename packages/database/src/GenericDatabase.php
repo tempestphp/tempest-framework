@@ -44,7 +44,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $statement = $this->connection->prepare($query->toSql());
+            $statement = $this->connection->prepare($query->toSql()->toString());
 
             $statement->execute($bindings);
 
@@ -60,7 +60,7 @@ final class GenericDatabase implements Database
         $sql = $this->lastQuery->toSql();
 
         // TODO: properly determine whether a query is an insert or not
-        if (! str_starts_with($sql, 'INSERT')) {
+        if (! $sql->trim()->startsWith('INSERT')) {
             return null;
         }
 
@@ -83,7 +83,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $pdoQuery = $this->connection->prepare($query->toSql());
+            $pdoQuery = $this->connection->prepare($query->toSql()->toString());
 
             $pdoQuery->execute($bindings);
 

@@ -2,7 +2,6 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use ArrayAccess;
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;

@@ -13,6 +13,7 @@ use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
@@ -68,9 +69,14 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function toSql(): string
+    public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
+    }
+
+    public function toRawSql(): ImmutableString
+    {
+        return $this->build()->toRawSql();
     }
 
     public function build(mixed ...$bindings): Query

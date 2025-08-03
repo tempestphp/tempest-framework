@@ -11,6 +11,7 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\model;
 
@@ -67,9 +68,14 @@ final class CountQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function toSql(): string
+    public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
+    }
+
+    public function toRawSql(): ImmutableString
+    {
+        return $this->build()->toRawSql();
     }
 
     public function build(mixed ...$bindings): Query
