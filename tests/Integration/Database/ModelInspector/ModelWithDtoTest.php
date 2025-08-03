@@ -1,13 +1,16 @@
 <?php
 
-namespace Integration\Database;
+namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\DatabaseMigration;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tests\Tempest\Integration\Database\Fixtures\DtoForModelWithSerializer;
-use Tests\Tempest\Integration\Database\Fixtures\ModelWithSerializedDto;
+use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Mapper\CastWith;
+use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\model;
@@ -16,7 +19,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 {
     public function test_model_inspector_is_relation_with_dto(): void
     {
-        $definition = model(ModelWithSerializedDto::class);
+        $definition = model(ModelWithDtoTestModelWithSerializedDto::class);
         $this->assertFalse($definition->isRelation('dto'));
     }
 
@@ -27,7 +30,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return CreateTableStatement::forModel(ModelWithSerializedDto::class)
+                return CreateTableStatement::forModel(ModelWithDtoTestModelWithSerializedDto::class)
                     ->primary()
                     ->dto('dto');
             }
@@ -40,10 +43,26 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 
         $this->migrate(CreateMigrationsTable::class, $migration);
 
-        ModelWithSerializedDto::new(dto: new DtoForModelWithSerializer('test'))->save();
+        ModelWithDtoTestModelWithSerializedDto::new(dto: new ModelWithDtoTestDtoForModelWithSerializer('test'))->save();
 
-        $model = ModelWithSerializedDto::get(1);
+        $model = ModelWithDtoTestModelWithSerializedDto::get(1);
 
         $this->assertSame('test', $model->dto->data);
     }
+}
+
+#[CastWith(DtoCaster::class)]
+#[SerializeWith(DtoSerializer::class)]
+final class ModelWithDtoTestDtoForModelWithSerializer
+{
+    public function __construct(
+        public string $data,
+    ) {}
+}
+
+final class ModelWithDtoTestModelWithSerializedDto
+{
+    use IsDatabaseModel;
+
+    public ModelWithDtoTestDtoForModelWithSerializer $dto;
 }
