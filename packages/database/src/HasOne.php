@@ -38,7 +38,7 @@ final class HasOne implements Relation
 
     public function getSelectFields(): ImmutableArray
     {
-        $relationModel = model($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getType()->asClass());
 
         return $relationModel
             ->getSelectFields()
@@ -53,8 +53,8 @@ final class HasOne implements Relation
 
     public function getJoinStatement(): JoinStatement
     {
-        $ownerModel = model($this->property->getType()->asClass());
-        $relationModel = model($this->property->getClass());
+        $ownerModel = inspect($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getClass());
 
         $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
         $relationJoin = $this->getRelationJoin($relationModel);

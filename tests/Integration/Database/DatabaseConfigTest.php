@@ -11,7 +11,7 @@ use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
 use Tests\Tempest\Fixtures\Models\MultiWordModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 /**
  * @internal
@@ -27,6 +27,6 @@ final class DatabaseConfigTest extends FrameworkIntegrationTestCase
             namingStrategy: new $strategy(),
         ));
 
-        $this->assertSame($expected, model(MultiWordModel::class)->getTableDefinition()->name);
+        $this->assertSame($expected, inspect(MultiWordModel::class)->getTableDefinition()->name);
     }
 }

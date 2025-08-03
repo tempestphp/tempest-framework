@@ -10,28 +10,28 @@ use Tempest\Mapper\Serializers\DtoSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\IntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 final class ModelInspectorTest extends IntegrationTestCase
 {
     public function test_virtual_array_is_never_a_relation(): void
     {
-        $this->assertFalse(model(ModelInspectorTestModelWithVirtualHasMany::class)->isRelation('dtos'));
+        $this->assertFalse(inspect(ModelInspectorTestModelWithVirtualHasMany::class)->isRelation('dtos'));
     }
 
     public function test_virtual_property_is_never_a_relation(): void
     {
-        $this->assertFalse(model(ModelInspectorTestModelWithVirtualDto::class)->isRelation('dto'));
+        $this->assertFalse(inspect(ModelInspectorTestModelWithVirtualDto::class)->isRelation('dto'));
     }
 
     public function test_serialized_property_type_is_never_a_relation(): void
     {
-        $this->assertFalse(model(ModelInspectorTestModelWithSerializedDto::class)->isRelation('dto'));
+        $this->assertFalse(inspect(ModelInspectorTestModelWithSerializedDto::class)->isRelation('dto'));
     }
 
     public function test_serialized_property_is_never_a_relation(): void
     {
-        $this->assertFalse(model(ModelInspectorTestModelWithSerializedDtoProperty::class)->isRelation('dto'));
+        $this->assertFalse(inspect(ModelInspectorTestModelWithSerializedDtoProperty::class)->isRelation('dto'));
     }
 }
 

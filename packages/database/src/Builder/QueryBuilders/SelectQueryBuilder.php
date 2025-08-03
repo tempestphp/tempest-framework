@@ -24,7 +24,7 @@ use Tempest\Support\Paginator\PaginatedData;
 use Tempest\Support\Paginator\Paginator;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\map;
 
 /**
@@ -51,7 +51,7 @@ final class SelectQueryBuilder implements BuildsQuery
      */
     public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
-        $this->model = model($model);
+        $this->model = inspect($model);
 
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
@@ -246,7 +246,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
-        $definition = model($this->model->getName());
+        $definition = inspect($this->model->getName());
 
         if (! $definition->isObjectModel()) {
             return [];

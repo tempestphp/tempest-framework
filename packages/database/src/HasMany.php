@@ -38,7 +38,7 @@ final class HasMany implements Relation
 
     public function getSelectFields(): ImmutableArray
     {
-        $relationModel = model($this->property->getIterableType()->asClass());
+        $relationModel = inspect($this->property->getIterableType()->asClass());
 
         return $relationModel
             ->getSelectFields()
@@ -53,12 +53,12 @@ final class HasMany implements Relation
 
     public function primaryKey(): string
     {
-        return model($this->property->getIterableType()->asClass())->getPrimaryKey();
+        return inspect($this->property->getIterableType()->asClass())->getPrimaryKey();
     }
 
     public function idField(): string
     {
-        $relationModel = model($this->property->getIterableType()->asClass());
+        $relationModel = inspect($this->property->getIterableType()->asClass());
 
         return sprintf(
             '%s.%s',
@@ -69,8 +69,8 @@ final class HasMany implements Relation
 
     public function getJoinStatement(): JoinStatement
     {
-        $ownerModel = model($this->property->getIterableType()->asClass());
-        $relationModel = model($this->property->getClass());
+        $ownerModel = inspect($this->property->getIterableType()->asClass());
+        $relationModel = inspect($this->property->getClass());
 
         $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
         $relationJoin = $this->getRelationJoin($relationModel);

@@ -13,7 +13,7 @@ use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 /**
  * @template T of object
@@ -35,7 +35,7 @@ final class CountQueryBuilder implements BuildsQuery
      */
     public function __construct(string|object $model, ?string $column = null)
     {
-        $this->model = model($model);
+        $this->model = inspect($model);
 
         $this->count = new CountStatement(
             table: $this->model->getTableDefinition(),

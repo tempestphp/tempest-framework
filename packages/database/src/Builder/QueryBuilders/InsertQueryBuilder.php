@@ -16,7 +16,7 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 /**
  * @template T of object
@@ -42,7 +42,7 @@ final class InsertQueryBuilder implements BuildsQuery
         private readonly array $rows,
         private readonly SerializerFactory $serializerFactory,
     ) {
-        $this->model = model($model);
+        $this->model = inspect($model);
         $this->insert = new InsertStatement($this->model->getTableDefinition());
     }
 
@@ -119,7 +119,7 @@ final class InsertQueryBuilder implements BuildsQuery
             }
 
             // The rest are model objects
-            $definition = model($model);
+            $definition = inspect($model);
 
             $modelClass = new ClassReflector($model);
 

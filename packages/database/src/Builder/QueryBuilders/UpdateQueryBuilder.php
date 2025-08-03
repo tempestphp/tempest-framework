@@ -15,7 +15,7 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 
 /**
@@ -41,7 +41,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         private readonly array|ImmutableArray $values,
         private readonly SerializerFactory $serializerFactory,
     ) {
-        $this->model = model($model);
+        $this->model = inspect($model);
 
         $this->update = new UpdateStatement(
             table: $this->model->getTableDefinition(),
