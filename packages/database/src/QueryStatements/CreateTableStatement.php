@@ -83,6 +83,16 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
+    public function string(string $name, int $length = 255, bool $nullable = false, ?string $default = null): self
+    {
+        return $this->varchar(
+            name: $name,
+            length: $length,
+            nullable: $nullable,
+            default: $default,
+        );
+    }
+
     public function char(string $name, bool $nullable = false, ?string $default = null): self
     {
         $this->statements[] = new CharStatement(
