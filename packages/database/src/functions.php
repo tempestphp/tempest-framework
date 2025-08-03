@@ -19,7 +19,7 @@ namespace Tempest\Database {
      * @param class-string<T>|string|T $model
      * @return ModelInspector<T>
      */
-    function model(string|object $model): ModelInspector
+    function inspect(string|object $model): ModelInspector
     {
         return new ModelInspector($model);
     }

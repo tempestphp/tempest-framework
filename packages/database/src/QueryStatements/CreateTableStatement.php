@@ -13,7 +13,7 @@ use Tempest\Support\Json;
 use Tempest\Support\Str\ImmutableString;
 use UnitEnum;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -29,7 +29,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self(model($modelClass)->getTableDefinition()->name);
+        return new self(inspect($modelClass)->getTableDefinition()->name);
     }
 
     /**

@@ -72,7 +72,7 @@ trait IsDatabaseModel
 
     public static function create(mixed ...$params): self
     {
-        model(self::class)->validate(...$params);
+        inspect(self::class)->validate(...$params);
 
         $model = self::new(...$params);
 
@@ -162,9 +162,9 @@ trait IsDatabaseModel
 
     public function save(): self
     {
-        $model = model($this);
+        $model = inspect($this);
 
-        $model->validate(...model($this)->getPropertyValues());
+        $model->validate(...inspect($this)->getPropertyValues());
 
         if (! isset($this->id)) {
             $query = query($this::class)->insert($this);
@@ -172,7 +172,7 @@ trait IsDatabaseModel
             $this->id = $query->execute();
         } else {
             query($this)->update(
-                ...model($this)->getPropertyValues(),
+                ...inspect($this)->getPropertyValues(),
             )->execute();
         }
 
@@ -181,7 +181,7 @@ trait IsDatabaseModel
 
     public function update(mixed ...$params): self
     {
-        model(self::class)->validate(...$params);
+        inspect(self::class)->validate(...$params);
 
         foreach ($params as $key => $value) {
             $this->{$key} = $value;

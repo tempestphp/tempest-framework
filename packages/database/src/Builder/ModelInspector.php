@@ -21,7 +21,7 @@ use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -292,7 +292,7 @@ final class ModelInspector
 
         unset($relationNames[0]);
 
-        $relationModel = model($currentRelation);
+        $relationModel = inspect($currentRelation);
 
         $newRelationString = implode('.', $relationNames);
         $currentRelation->setParent($parent);
@@ -334,7 +334,7 @@ final class ModelInspector
                 $currentRelationName,
             ), '.');
 
-            foreach (model($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
+            foreach (inspect($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
                 $relations[$name] = $nestedEagerRelation;
             }
         }

@@ -22,7 +22,7 @@ use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Tempest\Database\ShouldMigrate;
 use Throwable;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 use function Tempest\event;
 
@@ -80,7 +80,7 @@ final class MigrationManager
             }
 
             event(new MigrationFailed(
-                name: model(Migration::class)->getTableDefinition()->name,
+                name: inspect(Migration::class)->getTableDefinition()->name,
                 exception: new TableWasNotFound(),
             ));
 

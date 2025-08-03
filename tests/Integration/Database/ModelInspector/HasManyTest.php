@@ -8,13 +8,13 @@ use Tempest\Database\HasMany;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 final class HasManyTest extends FrameworkIntegrationTestCase
 {
     public function test_has_many(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('owners');
 
         $this->assertInstanceOf(HasMany::class, $relation);
@@ -26,7 +26,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_with_overwritten_owner_join_field(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinField');
 
         $this->assertInstanceOf(HasMany::class, $relation);
@@ -38,7 +38,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_with_overwritten_owner_join_field_and_table(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinFieldAndTable');
 
         $this->assertInstanceOf(HasMany::class, $relation);
@@ -50,7 +50,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_with_overwritten_relation_join_field(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('relationJoinField');
 
         $this->assertInstanceOf(HasMany::class, $relation);
@@ -62,7 +62,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_with_overwritten_relation_join_field_and_table(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('relationJoinFieldAndTable');
 
         $this->assertInstanceOf(HasMany::class, $relation);
@@ -74,7 +74,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_with_parent(): void
     {
-        $model = model(HasManyTestRelationModel::class);
+        $model = inspect(HasManyTestRelationModel::class);
         $relation = $model->getRelation('owners')->setParent('parent');
 
         $this->assertSame(

@@ -46,14 +46,14 @@ final class BelongsTo implements Relation
             }
         }
 
-        $relationModel = model($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getType()->asClass());
 
         return str($relationModel->getTableName())->singularizeLastWord() . '_' . $relationModel->getPrimaryKey();
     }
 
     public function getSelectFields(): ImmutableArray
     {
-        $relationModel = model($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getType()->asClass());
 
         return $relationModel
             ->getSelectFields()
@@ -70,8 +70,8 @@ final class BelongsTo implements Relation
 
     public function getJoinStatement(): JoinStatement
     {
-        $relationModel = model($this->property->getType()->asClass());
-        $ownerModel = model($this->property->getClass());
+        $relationModel = inspect($this->property->getType()->asClass());
+        $ownerModel = inspect($this->property->getClass());
 
         $relationJoin = $this->getRelationJoin($relationModel);
         $ownerJoin = $this->getOwnerJoin($ownerModel);

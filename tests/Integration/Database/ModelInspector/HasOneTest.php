@@ -9,13 +9,13 @@ use Tempest\Database\HasOne;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 final class HasOneTest extends FrameworkIntegrationTestCase
 {
     public function test_has_one(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('owner');
 
         $this->assertInstanceOf(HasOne::class, $relation);
@@ -27,7 +27,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_with_overwritten_owner_join_field(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinField');
 
         $this->assertInstanceOf(HasOne::class, $relation);
@@ -39,7 +39,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_with_overwritten_owner_join_field_and_table(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinFieldAndTable');
 
         $this->assertInstanceOf(HasOne::class, $relation);
@@ -51,7 +51,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_with_overwritten_relation_join_field(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('relationJoinField');
 
         $this->assertInstanceOf(HasOne::class, $relation);
@@ -63,7 +63,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_with_overwritten_relation_join_field_and_table(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('relationJoinFieldAndTable');
 
         $this->assertInstanceOf(HasOne::class, $relation);
@@ -75,7 +75,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_with_parent(): void
     {
-        $model = model(HasOneTestRelationModel::class);
+        $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('owner')->setParent('parent');
 
         $this->assertSame(

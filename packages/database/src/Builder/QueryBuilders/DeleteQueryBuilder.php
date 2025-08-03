@@ -10,7 +10,7 @@ use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 /**
  * @template TModelClass of object
@@ -32,7 +32,7 @@ final class DeleteQueryBuilder implements BuildsQuery
      */
     public function __construct(string|object $model)
     {
-        $this->model = model($model);
+        $this->model = inspect($model);
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
     }
 

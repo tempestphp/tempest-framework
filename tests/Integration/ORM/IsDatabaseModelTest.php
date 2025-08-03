@@ -57,7 +57,7 @@ use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 use function Tempest\map;
 
@@ -564,9 +564,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_table_name_overrides(): void
     {
-        $this->assertEquals('base_models', model(BaseModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_attribute_table_name', model(AttributeTableNameModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_static_method_table_name', model(StaticMethodTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('base_models', inspect(BaseModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_attribute_table_name', inspect(AttributeTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_static_method_table_name', inspect(StaticMethodTableNameModel::class)->getTableDefinition()->name);
     }
 
     public function test_validation_on_create(): void
@@ -608,7 +608,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     public function test_skipped_validation(): void
     {
         try {
-            model(ModelWithValidation::class)->validate(
+            inspect(ModelWithValidation::class)->validate(
                 index: -1,
                 skip: -1,
             );

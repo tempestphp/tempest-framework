@@ -13,13 +13,13 @@ use Tempest\Mapper\Serializers\DtoSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 {
     public function test_model_inspector_is_relation_with_dto(): void
     {
-        $definition = model(ModelWithDtoTestModelWithSerializedDto::class);
+        $definition = inspect(ModelWithDtoTestModelWithSerializedDto::class);
         $this->assertFalse($definition->isRelation('dto'));
     }
 

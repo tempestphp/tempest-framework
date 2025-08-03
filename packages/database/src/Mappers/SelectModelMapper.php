@@ -11,7 +11,7 @@ use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr\MutableArray;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -25,7 +25,7 @@ final class SelectModelMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array
     {
-        $model = model($to);
+        $model = inspect($to);
 
         $idField = $model->getPrimaryFieldName();
 
@@ -58,7 +58,7 @@ final class SelectModelMapper implements Mapper
             }
 
             $mapped = [];
-            $relationModel = model($relation);
+            $relationModel = inspect($relation);
 
             foreach ($value as $item) {
                 $mapped[] = $this->values($relationModel, $item);
@@ -115,7 +115,7 @@ final class SelectModelMapper implements Mapper
                     break;
                 }
 
-                $currentModel = model($relation);
+                $currentModel = inspect($relation);
             }
 
             if ($key) {

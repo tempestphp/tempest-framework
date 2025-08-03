@@ -8,13 +8,13 @@ use Tempest\Database\HasMany;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 final class BelongsToTest extends FrameworkIntegrationTestCase
 {
     public function test_belongs_to(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relation');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
@@ -27,7 +27,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
     public function test_belongs_to_with_relation_join_field(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relationJoinField');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
@@ -40,7 +40,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
     public function test_belongs_to_with_relation_join_field_and_table(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relationJoinFieldAndTable');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
@@ -53,7 +53,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
     public function test_belongs_to_with_owner_join_field(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('ownerJoinField');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
@@ -66,7 +66,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
     public function test_belongs_to_with_owner_join_field_and_table(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('ownerJoinFieldAndTable');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
@@ -79,7 +79,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
     public function test_belongs_to_with_parent(): void
     {
-        $model = model(BelongsToTestOwnerModel::class);
+        $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relation')->setParent('parent');
 
         $this->assertSame(
