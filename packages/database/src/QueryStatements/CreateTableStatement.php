@@ -190,11 +190,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function dto(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    public function object(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
