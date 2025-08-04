@@ -2,12 +2,16 @@
 
 namespace Tempest\Mapper\Serializers;
 
+use BackedEnum;
+use JsonSerializable;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr;
 use Tempest\Support\Json;
-
-use function Tempest\map;
+use UnitEnum;
 
 final readonly class DtoSerializer implements Serializer
 {
@@ -17,25 +21,25 @@ final readonly class DtoSerializer implements Serializer
 
     public function serialize(mixed $input): array|string
     {
+        // Support top-level arrays
         if (is_array($input)) {
-            // Handle top-level arrays
-            return Json\encode($this->wrapWithTypeInfo($input));
+            return Json\encode($this->serializeWithType($input));
         }
 
         if (! is_object($input)) {
             throw new ValueCouldNotBeSerialized('object or array');
         }
 
-        return Json\encode($this->wrapWithTypeInfo($input));
+        return Json\encode($this->serializeWithType($input));
     }
 
-    private function wrapWithTypeInfo(mixed $input): mixed
+    private function serializeWithType(mixed $input): mixed
     {
-        if ($input instanceof \BackedEnum) {
+        if ($input instanceof BackedEnum) {
             return $input->value;
         }
 
-        if ($input instanceof \UnitEnum) {
+        if ($input instanceof UnitEnum) {
             return $input->name;
         }
 
@@ -43,7 +47,7 @@ final readonly class DtoSerializer implements Serializer
             $data = $this->extractObjectData($input);
 
             foreach ($data as $key => $value) {
-                $data[$key] = $this->wrapWithTypeInfo($value);
+                $data[$key] = $this->serializeWithType($value);
             }
 
             $type = $this->mapperConfig->serializationMap[get_class($input)] ?? get_class($input);
@@ -55,7 +59,7 @@ final readonly class DtoSerializer implements Serializer
         }
 
         if (is_array($input)) {
-            return array_map([$this, 'wrapWithTypeInfo'], $input);
+            return Arr\map_iterable($input, $this->serializeWithType(...));
         }
 
         return $input;
@@ -63,17 +67,13 @@ final readonly class DtoSerializer implements Serializer
 
     private function extractObjectData(object $input): array
     {
-        if ($input instanceof \JsonSerializable) {
+        if ($input instanceof JsonSerializable) {
             return $input->jsonSerialize();
         }
 
-        $data = [];
-        $class = new \ReflectionClass($input);
-
-        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $data[$property->getName()] = $property->getValue($input);
-        }
-
-        return $data;
+        return Arr\map_with_keys(
+            array: new ClassReflector($input)->getPublicProperties(),
+            map: fn (PropertyReflector $property) => yield $property->getName() => $property->getValue($input),
+        );
     }
 }
