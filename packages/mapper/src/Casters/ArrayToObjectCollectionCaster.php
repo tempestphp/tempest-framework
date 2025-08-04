@@ -17,11 +17,15 @@ final readonly class ArrayToObjectCollectionCaster implements Caster
     public function cast(mixed $input): mixed
     {
         $values = [];
-
-        $objectCaster = new ObjectCaster($this->property->getIterableType());
+        $iterableType = $this->property->getIterableType();
+        $objectCaster = new ObjectCaster($iterableType);
 
         foreach ($input as $key => $item) {
-            $values[$key] = $objectCaster->cast($item);
+            if (is_object($item) && $iterableType->matches($item::class)) {
+                $values[$key] = $item;
+            } else {
+                $values[$key] = $objectCaster->cast($item);
+            }
         }
 
         return $values;

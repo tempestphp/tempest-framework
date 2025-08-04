@@ -7,6 +7,7 @@ namespace Tempest\Mapper\Casters;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use InvalidArgumentException;
 use Tempest\Mapper\Caster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
@@ -43,7 +44,7 @@ final readonly class NativeDateTimeCaster implements Caster
         $date = $class::createFromFormat($this->format, $input);
 
         if (! $date) {
-            return new $class($input);
+            throw new InvalidArgumentException("Must be a valid date in the format {$this->format}");
         }
 
         return $date;

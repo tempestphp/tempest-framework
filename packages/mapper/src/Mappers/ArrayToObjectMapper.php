@@ -173,25 +173,23 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        // If this isn't a property with iterable type defined, and the type accepts the value, we don't have to cast it
-        // We need to check the iterable type, because otherwise raw array input might incorrectly be seen as "accepted by the property's array type",
-        // which isn't sufficient a check.
-        // Oh how we long for the day that PHP gets generics…
         if ($property->getIterableType() === null && $property->getType()->accepts($value)) {
+            if (($caster = $this->casterFactory->forProperty($property)) !== null) {
+                if (! is_object($value) || ! $property->getType()->matches($value::class)) {
+                    return $caster->cast($value);
+                }
+            }
             return $value;
         }
 
-        // If there is an iterable type, and it accepts the value within the array given, we don't have to cast it either
-        if ($property->getIterableType()?->accepts(arr($value)->first())) {
-            return $value;
-        }
-
-        // If there's a caster, we'll cast the value
         if (($caster = $this->casterFactory->forProperty($property)) !== null) {
             return $caster->cast($value);
         }
 
-        // Otherwise we'll return the value as-is
+        if ($property->getIterableType()?->accepts(arr($value)->first())) {
+            return $value;
+        }
+
         return $value;
     }
 }
