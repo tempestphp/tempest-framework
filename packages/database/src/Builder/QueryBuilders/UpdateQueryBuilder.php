@@ -48,12 +48,19 @@ final class UpdateQueryBuilder implements BuildsQuery
         );
     }
 
+    /**
+     * Executes the update query and returns the primary key of the updated record.
+     */
     public function execute(mixed ...$bindings): ?PrimaryKey
     {
         return $this->build()->execute(...$bindings);
     }
 
-    /** @return self<T> */
+    /**
+     * Allows the update operation to proceed without WHERE conditions, updating all records.
+     *
+     * @return self<T>
+     */
     public function allowAll(): self
     {
         $this->update->allowAll = true;
@@ -61,7 +68,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<T>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -69,11 +80,17 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    /**
+     * Returns the SQL statement without the bindings.
+     */
     public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
     }
 
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
     public function toRawSql(): ImmutableString
     {
         return $this->build()->toRawSql();

@@ -29,35 +29,65 @@ final readonly class ModelQueryBuilder
     /**
      * Returns a builder for selecting records using this model's table.
      *
+     * **Example**
+     * ```php
+     * model(User::class)
+     *   ->select('id', 'username', 'email')
+     *   ->execute();
+     * ```
+     *
      * @return SelectQueryBuilder<TModel>
      */
-    public function select(): SelectQueryBuilder
+    public function select(string ...$columns): SelectQueryBuilder
     {
-        return query($this->model)->select();
+        return query($this->model)->select(...$columns);
     }
 
     /**
      * Returns a builder for inserting records using this model's table.
      *
+     * **Example**
+     * ```php
+     * model(User::class)
+     *   ->insert(username: 'Frieren')
+     *   ->execute();
+     * ```
+     *
      * @return InsertQueryBuilder<TModel>
      */
-    public function insert(): InsertQueryBuilder
+    public function insert(mixed ...$values): InsertQueryBuilder
     {
-        return query($this->model)->insert();
+        return query($this->model)->insert(...$values);
     }
 
     /**
      * Returns a builder for updating records using this model's table.
      *
+     * **Example**
+     * ```php
+     * model(User::class)
+     *   ->update(is_admin: true)
+     *   ->whereIn('id', [1, 2, 3])
+     *   ->execute();
+     * ```
+     *
      * @return UpdateQueryBuilder<TModel>
      */
-    public function update(): UpdateQueryBuilder
+    public function update(mixed ...$values): UpdateQueryBuilder
     {
-        return query($this->model)->update();
+        return query($this->model)->update(...$values);
     }
 
     /**
      * Returns a builder for deleting records using this model's table.
+     *
+     * **Example**
+     * ```php
+     * model(User::class)
+     *     ->delete()
+     *     ->where(name: 'Frieren')
+     *     ->execute();
+     * ```
      *
      * @return DeleteQueryBuilder<TModel>
      */
@@ -69,6 +99,11 @@ final readonly class ModelQueryBuilder
     /**
      * Returns a builder for counting records using this model's table.
      *
+     * **Example**
+     * ```php
+     * model(User::class)->count()->execute();
+     * ```
+     *
      * @return CountQueryBuilder<TModel>
      */
     public function count(): CountQueryBuilder
@@ -79,6 +114,11 @@ final readonly class ModelQueryBuilder
     /**
      * Creates a new instance of this model without persisting it to the database.
      *
+     * **Example**
+     * ```php
+     * model(User::class)->new(name: 'Frieren');
+     * ```
+     *
      * @return TModel
      */
     public function new(mixed ...$params): object
@@ -88,6 +128,11 @@ final readonly class ModelQueryBuilder
 
     /**
      * Finds a model instance by its ID.
+     *
+     * **Example**
+     * ```php
+     * model(User::class)->findById(1);
+     * ```
      *
      * @return TModel
      */
@@ -103,6 +148,11 @@ final readonly class ModelQueryBuilder
     /**
      * Finds a model instance by its ID.
      *
+     * **Example**
+     * ```php
+     * model(User::class)->resolve(1);
+     * ```
+     *
      * @return TModel
      */
     public function resolve(string|int|PrimaryKey $id): object
@@ -116,6 +166,11 @@ final readonly class ModelQueryBuilder
 
     /**
      * Gets a model instance by its ID, optionally loading the given relationships.
+     *
+     * **Example**
+     * ```php
+     * model(User::class)->get(1);
+     * ```
      *
      * @return TModel|null
      */
@@ -152,7 +207,7 @@ final readonly class ModelQueryBuilder
      *
      * **Example**
      * ```php
-     * model(MagicUser::class)->find(name: 'Frieren');
+     * model(User::class)->find(name: 'Frieren');
      * ```
      *
      * @return SelectQueryBuilder<TModel>
@@ -173,7 +228,7 @@ final readonly class ModelQueryBuilder
      *
      * **Example**
      * ```php
-     * model(MagicUser::class)->create(name: 'Frieren', kind: Kind::ELF);
+     * model(User::class)->create(name: 'Frieren', kind: Kind::ELF);
      * ```
      *
      * @return TModel
@@ -205,7 +260,7 @@ final readonly class ModelQueryBuilder
      *
      * **Example**
      * ```php
-     * $model = model(MagicUser::class)->findOrNew(
+     * $model = model(User::class)->findOrNew(
      *     find: ['name' => 'Frieren'],
      *     update: ['kind' => Kind::ELF],
      * );
@@ -237,7 +292,7 @@ final readonly class ModelQueryBuilder
      *
      * **Example**
      * ```php
-     * $model = model(MagicUser::class)->updateOrCreate(
+     * $model = model(User::class)->updateOrCreate(
      *     find: ['name' => 'Frieren'],
      *    update: ['kind' => Kind::ELF],
      * );

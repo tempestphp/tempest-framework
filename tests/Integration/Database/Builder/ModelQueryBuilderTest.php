@@ -20,55 +20,141 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
+        model(TestUserModel::class)->create(name: 'Frieren');
+        model(TestUserModel::class)->create(name: 'Fern');
+        model(TestUserModelWithoutId::class)->create(name: 'Stark');
+
         $builderWithId = model(TestUserModel::class)->select();
         $builderWithoutId = model(TestUserModelWithoutId::class)->select();
 
         $this->assertInstanceOf(SelectQueryBuilder::class, $builderWithId);
         $this->assertInstanceOf(SelectQueryBuilder::class, $builderWithoutId);
+
+        $resultsWithId = $builderWithId->all();
+        $resultsWithoutId = $builderWithoutId->all();
+
+        $this->assertCount(2, $resultsWithId);
+        $this->assertInstanceOf(TestUserModel::class, $resultsWithId[0]);
+        $this->assertInstanceOf(TestUserModel::class, $resultsWithId[1]);
+
+        $this->assertCount(1, $resultsWithoutId);
+        $this->assertInstanceOf(TestUserModelWithoutId::class, $resultsWithoutId[0]);
+        $this->assertSame('Stark', $resultsWithoutId[0]->name);
+
+        $builderWithSpecificColumns = model(TestUserModel::class)->select('name');
+        $this->assertInstanceOf(SelectQueryBuilder::class, $builderWithSpecificColumns);
+
+        $resultsWithSpecificColumns = $builderWithSpecificColumns->all();
+        $this->assertCount(2, $resultsWithSpecificColumns);
+        $this->assertInstanceOf(TestUserModel::class, $resultsWithSpecificColumns[0]);
+        $this->assertNull($resultsWithSpecificColumns[0]->id);
+        $this->assertSame('Frieren', $resultsWithSpecificColumns[0]->name);
     }
 
     public function test_insert(): void
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
-        $builderWithId = model(TestUserModel::class)->insert();
-        $builderWithoutId = model(TestUserModelWithoutId::class)->insert();
+        $builderWithId = model(TestUserModel::class)->insert(name: 'Frieren');
+        $builderWithoutId = model(TestUserModelWithoutId::class)->insert(name: 'Stark');
 
         $this->assertInstanceOf(InsertQueryBuilder::class, $builderWithId);
         $this->assertInstanceOf(InsertQueryBuilder::class, $builderWithoutId);
+
+        $insertedId = $builderWithId->execute();
+        $this->assertInstanceOf(PrimaryKey::class, $insertedId);
+
+        $insertedIdWithoutPk = $builderWithoutId->execute();
+        $this->assertInstanceOf(PrimaryKey::class, $insertedIdWithoutPk);
+
+        $retrieved = model(TestUserModel::class)->get($insertedId);
+        $this->assertNotNull($retrieved);
+        $this->assertSame('Frieren', $retrieved->name);
+
+        $starkRecords = model(TestUserModelWithoutId::class)->select()->where('name', 'Stark')->all();
+        $this->assertCount(1, $starkRecords);
+        $this->assertSame('Stark', $starkRecords[0]->name);
     }
 
     public function test_update(): void
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
-        $builderWithId = model(TestUserModel::class)->update();
-        $builderWithoutId = model(TestUserModelWithoutId::class)->update();
+        $createdWithId = model(TestUserModel::class)->create(name: 'Frieren');
+        model(TestUserModelWithoutId::class)->create(name: 'Stark');
+
+        $builderWithId = model(TestUserModel::class)->update(name: 'Eisen');
+        $builderWithoutId = model(TestUserModelWithoutId::class)->update(name: 'Fern');
 
         $this->assertInstanceOf(UpdateQueryBuilder::class, $builderWithId);
         $this->assertInstanceOf(UpdateQueryBuilder::class, $builderWithoutId);
+
+        $builderWithId->where('id', $createdWithId->id)->execute();
+        $builderWithoutId->where('name', 'Stark')->execute();
+
+        $retrieved = model(TestUserModel::class)->get($createdWithId->id);
+        $this->assertNotNull($retrieved);
+        $this->assertSame('Eisen', $retrieved->name);
+
+        $starkRecords = model(TestUserModelWithoutId::class)->select()->where('name', 'Fern')->all();
+        $this->assertCount(1, $starkRecords);
+        $this->assertSame('Fern', $starkRecords[0]->name);
     }
 
     public function test_delete(): void
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
+        $createdWithId = model(TestUserModel::class)->create(name: 'Frieren');
+        model(TestUserModel::class)->create(name: 'Fern');
+        model(TestUserModelWithoutId::class)->create(name: 'Stark');
+        model(TestUserModelWithoutId::class)->create(name: 'Eisen');
+
         $builderWithId = model(TestUserModel::class)->delete();
         $builderWithoutId = model(TestUserModelWithoutId::class)->delete();
 
         $this->assertInstanceOf(DeleteQueryBuilder::class, $builderWithId);
         $this->assertInstanceOf(DeleteQueryBuilder::class, $builderWithoutId);
+
+        $builderWithId->where('id', $createdWithId->id)->execute();
+        $builderWithoutId->where('name', 'Stark')->execute();
+
+        $remainingWithId = model(TestUserModel::class)->select()->all();
+        $this->assertCount(1, $remainingWithId);
+        $this->assertSame('Fern', $remainingWithId[0]->name);
+
+        $remainingWithoutId = model(TestUserModelWithoutId::class)->select()->all();
+        $this->assertCount(1, $remainingWithoutId);
+        $this->assertSame('Eisen', $remainingWithoutId[0]->name);
     }
 
     public function test_count(): void
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
+        model(TestUserModel::class)->create(name: 'Frieren');
+        model(TestUserModel::class)->create(name: 'Fern');
+        model(TestUserModel::class)->create(name: 'Stark');
+        model(TestUserModelWithoutId::class)->create(name: 'Eisen');
+        model(TestUserModelWithoutId::class)->create(name: 'Heiter');
+
         $builderWithId = model(TestUserModel::class)->count();
         $builderWithoutId = model(TestUserModelWithoutId::class)->count();
 
         $this->assertInstanceOf(CountQueryBuilder::class, $builderWithId);
         $this->assertInstanceOf(CountQueryBuilder::class, $builderWithoutId);
+
+        $countWithId = $builderWithId->execute();
+        $countWithoutId = $builderWithoutId->execute();
+
+        $this->assertSame(3, $countWithId);
+        $this->assertSame(2, $countWithoutId);
+
+        $countFilteredWithId = model(TestUserModel::class)->count()->where('name', 'Frieren')->execute();
+        $countFilteredWithoutId = model(TestUserModelWithoutId::class)->count()->where('name', 'Eisen')->execute();
+
+        $this->assertSame(1, $countFilteredWithId);
+        $this->assertSame(1, $countFilteredWithoutId);
     }
 
     public function test_new(): void
