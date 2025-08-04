@@ -200,7 +200,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
-                    ->object('dto');
+                    ->dto('dto');
             }
 
             public function down(): ?QueryStatement

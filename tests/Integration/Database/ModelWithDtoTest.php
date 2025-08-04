@@ -29,7 +29,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
             {
                 return CreateTableStatement::forModel(ModelWithSerializedDto::class)
                     ->primary()
-                    ->object('dto');
+                    ->dto('dto');
             }
 
             public function down(): null

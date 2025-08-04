@@ -210,7 +210,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /**
      * Alias for `json()` method. Adds a JSON column for storing serializable objects.
      */
-    public function object(string $name, bool $nullable = false, ?string $default = null): self
+    public function dto(string $name, bool $nullable = false, ?string $default = null): self
     {
         $this->statements[] = new JsonStatement(
             name: $name,
