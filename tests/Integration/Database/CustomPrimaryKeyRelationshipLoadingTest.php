@@ -85,7 +85,6 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('spells');
 
-        $this->assertIsArray($loadedMage->spells);
         $this->assertCount(2, $loadedMage->spells);
 
         $spellNames = array_map(fn (SpellWithUuid $spell) => $spell->name, $loadedMage->spells);
@@ -161,7 +160,6 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertInstanceOf(GrimoireWithUuid::class, $loadedMage->grimoire);
         $this->assertSame('Combat Magic Fundamentals', $loadedMage->grimoire->title);
 
-        $this->assertIsArray($loadedMage->spells);
         $this->assertCount(1, $loadedMage->spells);
         $this->assertSame('Basic Attack Magic', $loadedMage->spells[0]->name);
 
@@ -197,7 +195,6 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('artifacts');
 
-        $this->assertIsArray($loadedMage->artifacts);
         $this->assertCount(1, $loadedMage->artifacts);
         $this->assertSame('Hero Sword', $loadedMage->artifacts[0]->name);
         $this->assertSame('Legendary', $loadedMage->artifacts[0]->rarity);
