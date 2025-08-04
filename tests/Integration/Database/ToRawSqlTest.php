@@ -132,7 +132,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $rawSql = query('books')
             ->select()
             ->where('published', true)
-            ->orderBy('created_at DESC')
+            ->orderByRaw('created_at DESC')
             ->limit(10)
             ->offset(5)
             ->toRawSql()
@@ -376,7 +376,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
             ->select('title', 'author_id')
             ->where('published', true)
             ->where('rating', 4.5, WhereOperator::GREATER_THAN_OR_EQUAL)
-            ->orderBy('created_at DESC')
+            ->orderByRaw('created_at DESC')
             ->limit(5)
             ->toRawSql()
             ->toString();
