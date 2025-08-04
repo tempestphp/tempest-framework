@@ -19,11 +19,11 @@ final readonly class DtoCaster implements Caster
     public function cast(mixed $input): mixed
     {
         if (is_string($input) && Json\is_valid($input)) {
-            return $this->deserializeRecursively(Json\decode($input));
+            return $this->deserialize(Json\decode($input));
         }
 
         if (is_array($input)) {
-            return $this->deserializeRecursively($input);
+            return $this->deserialize($input);
         }
 
         if (is_string($input)) {
@@ -33,7 +33,7 @@ final readonly class DtoCaster implements Caster
         return $input;
     }
 
-    private function deserializeRecursively(mixed $input): mixed
+    private function deserialize(mixed $input): mixed
     {
         if (is_array($input) && isset($input['type'], $input['data'])) {
             $class = Arr\find_key(
@@ -41,14 +41,11 @@ final readonly class DtoCaster implements Caster
                 value: $input['type'],
             ) ?: $input['type'];
 
-            return map($this->deserializeRecursively($input['data']))->to($class);
+            return map($this->deserialize($input['data']))->to($class);
         }
 
         if (is_array($input)) {
-            return array_map(
-                fn (mixed $value) => $this->deserializeRecursively($value),
-                $input,
-            );
+            return array_map(fn (mixed $value) => $this->deserialize($value), $input);
         }
 
         return $input;
