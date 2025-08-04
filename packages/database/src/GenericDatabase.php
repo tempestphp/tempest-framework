@@ -55,7 +55,7 @@ final class GenericDatabase implements Database
         }
     }
 
-    public function getLastInsertId(): ?Id
+    public function getLastInsertId(): ?PrimaryKey
     {
         $sql = $this->lastQuery->toSql();
 
@@ -71,7 +71,7 @@ final class GenericDatabase implements Database
             $lastInsertId = $this->connection->lastInsertId();
         }
 
-        return Id::tryFrom($lastInsertId);
+        return PrimaryKey::tryFrom($lastInsertId);
     }
 
     public function fetch(BuildsQuery|Query $query): array

@@ -6,8 +6,8 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -124,7 +124,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $book = Book::new(
             title: 'Timeline Taxi',
             author: Author::new(
-                id: new Id(10),
+                id: new PrimaryKey(10),
                 name: 'Brent',
             ),
         );
@@ -173,11 +173,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
             ->then(
-                fn (Id $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 01', 'book_id' => $id],
                     ['title' => 'Chapter 02', 'book_id' => $id],
                 ),
-                fn (Id $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 03', 'book_id' => $id],
                 ),
             )

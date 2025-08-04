@@ -3,11 +3,11 @@
 namespace Tempest\Database\Serializers;
 
 use Tempest\Core\KernelEvent;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tempest\EventBus\EventHandler;
 use Tempest\Mapper\SerializerFactory;
 
-final readonly class IdSerializerProvider
+final readonly class PrimaryKeySerializerProvider
 {
     public function __construct(
         private SerializerFactory $serializerFactory,
@@ -16,6 +16,6 @@ final readonly class IdSerializerProvider
     #[EventHandler(KernelEvent::BOOTED)]
     public function __invoke(KernelEvent $_event): void
     {
-        $this->serializerFactory->addSerializer(Id::class, IdSerializer::class);
+        $this->serializerFactory->addSerializer(PrimaryKey::class, PrimaryKeySerializer::class);
     }
 }

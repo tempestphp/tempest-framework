@@ -28,7 +28,7 @@ final class Query
         public array $executeAfter = [],
     ) {}
 
-    public function execute(mixed ...$bindings): ?Id
+    public function execute(mixed ...$bindings): ?PrimaryKey
     {
         $this->bindings = [...$this->bindings, ...$bindings];
 
@@ -41,7 +41,7 @@ final class Query
         // TODO: add support for "after" queries to attach hasMany relations
 
         return isset($query->bindings['id'])
-            ? new Id($query->bindings['id'])
+            ? new PrimaryKey($query->bindings['id'])
             : $database->getLastInsertId();
     }
 

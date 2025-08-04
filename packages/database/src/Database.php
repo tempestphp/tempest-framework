@@ -20,7 +20,7 @@ interface Database
 
     public function execute(BuildsQuery|Query $query): void;
 
-    public function getLastInsertId(): ?Id;
+    public function getLastInsertId(): ?PrimaryKey;
 
     public function fetch(BuildsQuery|Query $query): array;
 

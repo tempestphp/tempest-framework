@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\ORM\Mappers;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -40,7 +40,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
     public function test_update_query(): void
     {
-        $author = Author::new(id: new Id(1), name: 'original');
+        $author = Author::new(id: new PrimaryKey(1), name: 'original');
 
         $query = query($author)->update(name: 'other')->build();
 

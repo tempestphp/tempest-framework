@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM\Models;
 
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 
 #[Table('parent')]
 final class ParentModel
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         public string $name,

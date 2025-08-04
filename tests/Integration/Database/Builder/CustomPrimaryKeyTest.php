@@ -4,8 +4,8 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -22,7 +22,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
         $frieren = model(FrierenModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
         $this->assertInstanceOf(FrierenModel::class, $frieren);
-        $this->assertInstanceOf(Id::class, $frieren->uuid);
+        $this->assertInstanceOf(PrimaryKey::class, $frieren->uuid);
         $this->assertSame('Frieren', $frieren->name);
         $this->assertSame('Time Magic', $frieren->magic);
 
@@ -69,7 +69,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 
 final class FrierenModel
 {
-    public ?Id $uuid = null;
+    public ?PrimaryKey $uuid = null;
 
     public function __construct(
         public string $name,
@@ -79,9 +79,9 @@ final class FrierenModel
 
 final class ModelWithMultipleIds
 {
-    public ?Id $uuid = null;
+    public ?PrimaryKey $uuid = null;
 
-    public ?Id $external_id = null;
+    public ?PrimaryKey $external_id = null;
 
     public function __construct(
         public string $name = 'test',

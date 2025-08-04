@@ -5,8 +5,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
-use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\UpdateStatement;
@@ -48,7 +48,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         );
     }
 
-    public function execute(mixed ...$bindings): ?Id
+    public function execute(mixed ...$bindings): ?PrimaryKey
     {
         return $this->build()->execute(...$bindings);
     }
@@ -94,7 +94,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             $primaryKeyValue = $this->model->getPrimaryKeyValue();
 
             if ($primaryKeyValue !== null) {
-                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->id);
+                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->value);
             }
         }
 
@@ -133,7 +133,7 @@ final class UpdateQueryBuilder implements BuildsQuery
 
                 $value = match (true) {
                     $value === null => null,
-                    isset($value->id) => $value->id->id,
+                    isset($value->id) => $value->id->value,
                     default => new InsertQueryBuilder(
                         $value::class,
                         [$value],

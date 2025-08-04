@@ -61,7 +61,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $sql = $query->toSql();
 
-        $expected = 'SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id` FROM `authors`';
+        $expected = 'SELECT authors.id AS `authors.id`, authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id` FROM `authors`';
 
         $this->assertSameWithoutBackticks($expected, $sql);
     }
@@ -317,7 +317,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query(Book::class)->select();
 
         $this->assertSameWithoutBackticks(
-            'SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id` FROM `books`',
+            'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id` FROM `books`',
             $query->build()->toSql(),
         );
     }
@@ -330,7 +330,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            'SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, authors.id AS `author.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id`, isbns.id AS `isbn.id` FROM `books` LEFT JOIN authors ON authors.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns ON isbns.book_id = books.id',
+            'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id`, authors.id AS `author.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, chapters.id AS `chapters.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, isbns.id AS `isbn.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id` FROM `books` LEFT JOIN authors ON authors.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns ON isbns.book_id = books.id',
             $query->toSql(),
         );
     }
@@ -366,7 +366,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = AWithEager::select()->with('b.c')->toSql();
 
         $this->assertSameWithoutBackticks(
-            'SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c ON c.id = b.c_id',
+            'SELECT a.id AS `a.id`, a.b_id AS `a.b_id`, b.id AS `b.id`, b.c_id AS `b.c_id`, c.id AS `b.c.id`, c.name AS `b.c.name` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c ON c.id = b.c_id',
             $query,
         );
     }

@@ -10,10 +10,10 @@ use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
@@ -78,7 +78,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(1),
+                id: new PrimaryKey(1),
                 name: 'Main 1',
                 description: 'Description Main 1',
             )
@@ -87,7 +87,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(2),
+                id: new PrimaryKey(2),
                 name: 'Main 2',
                 description: 'Description Main 2',
             )
@@ -96,7 +96,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(1),
+                id: new PrimaryKey(1),
                 name: 'Backup 1',
                 description: 'Description Backup 1',
             )
@@ -105,7 +105,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(2),
+                id: new PrimaryKey(2),
                 name: 'Backup 2',
                 description: 'Description Backup 2',
             )

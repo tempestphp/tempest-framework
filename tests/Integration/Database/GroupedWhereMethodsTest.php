@@ -8,6 +8,7 @@ use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
@@ -350,6 +351,8 @@ final class CreateProductTable implements DatabaseMigration
 final class Product
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         public string $name,
