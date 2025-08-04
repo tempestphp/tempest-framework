@@ -16,9 +16,9 @@ use Tempest\Support\Str\ImmutableString;
 use function Tempest\Database\inspect;
 
 /**
- * @template T of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class CountQueryBuilder implements BuildsQuery
 {
@@ -31,7 +31,7 @@ final class CountQueryBuilder implements BuildsQuery
     private ModelInspector $model;
 
     /**
-     * @param class-string<T>|string|T $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(string|object $model, ?string $column = null)
     {
@@ -54,7 +54,7 @@ final class CountQueryBuilder implements BuildsQuery
     /**
      * Modifies the count query to only count distinct values in the specified column.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function distinct(): self
     {
@@ -70,7 +70,7 @@ final class CountQueryBuilder implements BuildsQuery
     /**
      * Binds the provided values to the query, allowing for parameterized queries.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function bind(mixed ...$bindings): self
     {

@@ -8,9 +8,9 @@ namespace Tempest\Database {
     /**
      * Creates a new query builder instance for the given model or table name.
      *
-     * @template T of object
-     * @param class-string<T>|string|T $model
-     * @return QueryBuilder<T>
+     * @template TModel of object
+     * @param class-string<TModel>|string|TModel $model
+     * @return QueryBuilder<TModel>
      */
     function query(string|object $model): QueryBuilder
     {
@@ -32,9 +32,9 @@ namespace Tempest\Database {
     /**
      * Inspects the given model or table name to provide database insights.
      *
-     * @template T of object
-     * @param class-string<T>|string|T $model
-     * @return ModelInspector<T>
+     * @template TModel of object
+     * @param class-string<TModel>|string|TModel $model
+     * @return ModelInspector<TModel>
      * @internal
      */
     function inspect(string|object $model): ModelInspector

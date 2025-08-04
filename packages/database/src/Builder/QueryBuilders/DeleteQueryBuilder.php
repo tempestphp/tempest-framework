@@ -13,9 +13,9 @@ use Tempest\Support\Str\ImmutableString;
 use function Tempest\Database\inspect;
 
 /**
- * @template TModelClass of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
@@ -28,7 +28,7 @@ final class DeleteQueryBuilder implements BuildsQuery
     private ModelInspector $model;
 
     /**
-     * @param class-string<TModelClass>|string|TModelClass $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(string|object $model)
     {
@@ -47,7 +47,7 @@ final class DeleteQueryBuilder implements BuildsQuery
     /**
      * Allows the delete operation to proceed without WHERE conditions, deleting all records.
      *
-     * @return self<TModelClass>
+     * @return self<TModel>
      */
     public function allowAll(): self
     {
@@ -59,7 +59,7 @@ final class DeleteQueryBuilder implements BuildsQuery
     /**
      * Binds the provided values to the query, allowing for parameterized queries.
      *
-     * @return self<TModelClass>
+     * @return self<TModel>
      */
     public function bind(mixed ...$bindings): self
     {

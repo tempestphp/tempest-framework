@@ -19,9 +19,9 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 
 /**
- * @template T of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class UpdateQueryBuilder implements BuildsQuery
 {
@@ -34,7 +34,7 @@ final class UpdateQueryBuilder implements BuildsQuery
     private ModelInspector $model;
 
     /**
-     * @param class-string<T>|string|T $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(
         string|object $model,
@@ -59,7 +59,7 @@ final class UpdateQueryBuilder implements BuildsQuery
     /**
      * Allows the update operation to proceed without WHERE conditions, updating all records.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function allowAll(): self
     {
@@ -71,7 +71,7 @@ final class UpdateQueryBuilder implements BuildsQuery
     /**
      * Binds the provided values to the query, allowing for parameterized queries.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function bind(mixed ...$bindings): self
     {
