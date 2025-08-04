@@ -30,9 +30,9 @@ use function Tempest\Database\inspect;
 use function Tempest\map;
 
 /**
- * @template T of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
@@ -49,7 +49,7 @@ final class SelectQueryBuilder implements BuildsQuery
     private array $bindings = [];
 
     /**
-     * @param class-string<T>|string|T $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
@@ -66,7 +66,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Returns the first record matching the query.
      *
-     * @return T|null
+     * @return TModel|null
      */
     public function first(mixed ...$bindings): mixed
     {
@@ -90,7 +90,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Returnd length-aware paginated data for the current query.
      *
-     * @return PaginatedData<T>
+     * @return PaginatedData<TModel>
      */
     public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
     {
@@ -111,7 +111,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Returns the first record matching the given primary key.
      *
-     * @return T|null
+     * @return TModel|null
      */
     public function get(PrimaryKey $id): mixed
     {
@@ -125,7 +125,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Returns all records matching the query.
      *
-     * @return T[]
+     * @return TModel[]
      */
     public function all(mixed ...$bindings): array
     {
@@ -143,7 +143,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Performs multiple queries in chunks, passing each chunk to the provided closure.
      *
-     * @param Closure(T[]): void $closure
+     * @param Closure(TModel[]): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
@@ -164,7 +164,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Orders the results of the query by the given field name and direction.
      *
-     * @return self<TModelClass>
+     * @return self<TModel>
      */
     public function orderBy(string $field, Direction $direction = Direction::ASC): self
     {
@@ -176,7 +176,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Orders the results of the query by the given raw SQL statement.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function orderByRaw(string $statement): self
     {
@@ -188,7 +188,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Groups the results of the query by the given raw SQL statement.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function groupBy(string $statement): self
     {
@@ -200,7 +200,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Adds a `HAVING` clause to the query with the given raw SQL statement.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function having(string $statement, mixed ...$bindings): self
     {
@@ -214,7 +214,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Limits the number of results returned by the query by the specified amount.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function limit(int $limit): self
     {
@@ -226,7 +226,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Sets the offset for the query, allowing you to skip a number of results.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function offset(int $offset): self
     {
@@ -238,7 +238,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Joins the specified tables to the query using raw SQL statements, allowing for complex queries across multiple tables.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function join(string ...$joins): self
     {
@@ -250,7 +250,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Includes the specified relationships in the query, allowing for eager loading.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function with(string ...$relations): self
     {
@@ -262,7 +262,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Adds a raw SQL statement to the query.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function raw(string $raw): self
     {
@@ -274,7 +274,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /**
      * Binds the provided values to the query, allowing for parameterized queries.
      *
-     * @return self<T>
+     * @return self<TModel>
      */
     public function bind(mixed ...$bindings): self
     {

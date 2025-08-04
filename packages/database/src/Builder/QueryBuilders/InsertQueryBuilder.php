@@ -19,8 +19,8 @@ use Tempest\Support\Str\ImmutableString;
 use function Tempest\Database\inspect;
 
 /**
- * @template T of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  */
 final class InsertQueryBuilder implements BuildsQuery
 {
@@ -35,7 +35,7 @@ final class InsertQueryBuilder implements BuildsQuery
     private ModelInspector $model;
 
     /**
-     * @param class-string<T>|string|T $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(
         string|object $model,
