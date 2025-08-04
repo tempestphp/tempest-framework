@@ -10,7 +10,7 @@ use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
@@ -356,6 +356,10 @@ final class ModelInspector
                 continue;
             }
 
+            if ($property->getType()->getName() === PrimaryKey::class) {
+                continue;
+            }
+
             $failingRulesForProperty = $validator->validateValueForProperty(
                 $property,
                 $value,
@@ -406,7 +410,7 @@ final class ModelInspector
         }
 
         $idProperties = arr($this->reflector->getProperties())
-            ->filter(fn (PropertyReflector $property) => $property->getType()->getName() === Id::class);
+            ->filter(fn (PropertyReflector $property) => $property->getType()->getName() === PrimaryKey::class);
 
         return match ($idProperties->count()) {
             0 => null,
@@ -418,7 +422,7 @@ final class ModelInspector
         };
     }
 
-    public function getPrimaryKeyValue(): ?Id
+    public function getPrimaryKeyValue(): ?PrimaryKey
     {
         if (! $this->isObjectModel()) {
             return null;

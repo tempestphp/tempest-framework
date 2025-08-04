@@ -9,6 +9,7 @@ use SensitiveParameter;
 use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use UnitEnum;
 
 use function Tempest\Support\arr;
@@ -16,6 +17,8 @@ use function Tempest\Support\arr;
 final class User implements CanAuthenticate, CanAuthorize
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public string $password;
 

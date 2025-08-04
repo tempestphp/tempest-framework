@@ -10,9 +10,9 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration as MigrationModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Database\QueryStatements\VarcharStatement;
@@ -36,7 +36,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, MigrationModel::all());
         $this->assertSame(
             '0000-01-01_create_users_table',
-            MigrationModel::get(new Id(2))->name,
+            MigrationModel::get(new PrimaryKey(2))->name,
         );
 
         try {
@@ -60,7 +60,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '0000-01-02_add_email_to_user_table',
-            MigrationModel::get(new Id(3))->name,
+            MigrationModel::get(new PrimaryKey(3))->name,
         );
 
         /** @var User $user */

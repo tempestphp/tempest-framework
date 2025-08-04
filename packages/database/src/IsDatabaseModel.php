@@ -11,15 +11,11 @@ use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\SkipValidation;
 
 use function Tempest\Database\model;
 
 trait IsDatabaseModel
 {
-    #[SkipValidation]
-    public Id $id;
-
     /**
      * Returns a builder for selecting records using this model's table.
      *
@@ -61,7 +57,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|Id $id): static
+    public static function findById(string|int|PrimaryKey $id): static
     {
         return self::resolve($id);
     }
@@ -69,7 +65,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function resolve(string|int|Id $id): static
+    public static function resolve(string|int|PrimaryKey $id): static
     {
         return model(self::class)->resolve($id);
     }
@@ -77,7 +73,7 @@ trait IsDatabaseModel
     /**
      * Gets a model instance by its ID, optionally loading the given relationships.
      */
-    public static function get(string|int|Id $id, array $relations = []): ?self
+    public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
     {
         return model(self::class)->get($id, $relations);
     }
@@ -167,10 +163,19 @@ trait IsDatabaseModel
      */
     public function refresh(): self
     {
-        $model = self::find(id: $this->id)->first();
+        $model = inspect($this);
 
-        foreach (new ClassReflector($model)->getPublicProperties() as $property) {
-            $property->setValue($this, $property->getValue($model));
+        if (! $model->hasPrimaryKey()) {
+            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'refresh');
+        }
+
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+        $primaryKeyValue = $primaryKeyProperty->getValue($this);
+
+        $refreshed = self::find(id: $primaryKeyValue)->first();
+
+        foreach (new ClassReflector($refreshed)->getPublicProperties() as $property) {
+            $property->setValue($this, $property->getValue($refreshed));
         }
 
         return $this;
@@ -181,7 +186,16 @@ trait IsDatabaseModel
      */
     public function load(string ...$relations): self
     {
-        $new = self::get($this->id, $relations);
+        $model = inspect($this);
+
+        if (! $model->hasPrimaryKey()) {
+            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'load');
+        }
+
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+        $primaryKeyValue = $primaryKeyProperty->getValue($this);
+
+        $new = self::get($primaryKeyValue, $relations);
 
         foreach (new ClassReflector($new)->getPublicProperties() as $property) {
             $property->setValue($this, $property->getValue($new));
@@ -198,15 +212,35 @@ trait IsDatabaseModel
         $model = inspect($this);
         $model->validate(...inspect($this)->getPropertyValues());
 
-        if (! isset($this->id)) {
-            $this->id = query($this::class)
+        // Models without primary keys always insert
+        if (! $model->hasPrimaryKey()) {
+            query($this::class)
                 ->insert($this)
                 ->execute();
-        } else {
-            query($this)
-                ->update(...inspect($this)->getPropertyValues())
-                ->execute();
+
+            return $this;
         }
+
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+        $isInitialized = $primaryKeyProperty->isInitialized($this);
+        $primaryKeyValue = $isInitialized ? $primaryKeyProperty->getValue($this) : null;
+
+        // If there is a primary key property but it's not set, we insert the model
+        // to generate the id and populate the model instance with it
+        if ($primaryKeyValue === null) {
+            $id = query($this::class)
+                ->insert($this)
+                ->execute();
+
+            $primaryKeyProperty->setValue($this, $id);
+
+            return $this;
+        }
+
+        // Is the model was already save, we update it
+        query($this)
+            ->update(...inspect($this)->getPropertyValues())
+            ->execute();
 
         return $this;
     }

@@ -7,7 +7,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -103,7 +103,7 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 #[Table('relation')]
 final class HasOneTestRelationModel
 {
-    public Id $id;
+    public PrimaryKey $id;
 
     #[HasOne]
     public HasOneTestOwnerModel $owner;
@@ -126,7 +126,7 @@ final class HasOneTestRelationModel
 #[Table('owner')]
 final class HasOneTestOwnerModel
 {
-    public Id $id;
+    public PrimaryKey $id;
 
     public HasOneTestRelationModel $relation;
 

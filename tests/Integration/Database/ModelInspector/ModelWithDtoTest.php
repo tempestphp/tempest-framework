@@ -5,6 +5,7 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Mapper\Casters\DtoCaster;
@@ -63,6 +64,8 @@ final class ModelWithDtoTestDtoForModelWithSerializer
 final class ModelWithDtoTestModelWithSerializedDto
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public ModelWithDtoTestDtoForModelWithSerializer $dto;
 }

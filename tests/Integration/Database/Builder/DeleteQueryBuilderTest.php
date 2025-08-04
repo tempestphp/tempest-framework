@@ -3,8 +3,8 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -48,7 +48,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_delete_on_model_object(): void
     {
         $author = new Author(name: 'brent');
-        $author->id = new Id(10);
+        $author->id = new PrimaryKey(10);
 
         $query = query($author)
             ->delete()

@@ -6,12 +6,15 @@ namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 
 #[Table('a')]
 final class AWithValue
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         public string $name,

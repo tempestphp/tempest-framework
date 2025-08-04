@@ -6,12 +6,15 @@ namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Eager;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 
 #[Table('b')]
 final class BWithEager
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         #[Eager]

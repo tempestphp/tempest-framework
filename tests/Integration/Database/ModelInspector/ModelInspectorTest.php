@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Virtual;
 use Tempest\Mapper\Casters\DtoCaster;
 use Tempest\Mapper\CastWith;
@@ -46,6 +47,8 @@ final class ModelInspectorTestModelWithVirtualHasMany
 {
     use IsDatabaseModel;
 
+    public PrimaryKey $id;
+
     #[Virtual]
     /** @var \Tests\Tempest\Integration\Database\ModelInspector\ModelInspectorTestDtoForModelWithVirtual[] $dto */
     public array $dtos;
@@ -54,6 +57,8 @@ final class ModelInspectorTestModelWithVirtualHasMany
 final class ModelInspectorTestModelWithVirtualDto
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     #[Virtual]
     public ModelInspectorTestDtoForModelWithVirtual $dto;
@@ -72,6 +77,8 @@ final class ModelInspectorTestModelWithSerializedDto
 {
     use IsDatabaseModel;
 
+    public PrimaryKey $id;
+
     public ModelInspectorTestDtoForModelWithSerializer $dto;
 }
 
@@ -85,6 +92,8 @@ final class ModelInspectorTestDtoForModelWithSerializerOnProperty
 final class ModelInspectorTestModelWithSerializedDtoProperty
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     #[SerializeWith(DtoSerializer::class)]
     public ModelInspectorTestDtoForModelWithSerializerOnProperty $dto;

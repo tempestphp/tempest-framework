@@ -8,8 +8,8 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\model;
@@ -187,7 +187,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $createdWithoutId = model(TestUserModelWithoutId::class)->create(name: 'Serie');
 
         $this->assertInstanceOf(TestUserModel::class, $createdWithId);
-        $this->assertInstanceOf(Id::class, $createdWithId->id);
+        $this->assertInstanceOf(PrimaryKey::class, $createdWithId->id);
         $this->assertSame('Ubel', $createdWithId->name);
 
         $this->assertInstanceOf(TestUserModelWithoutId::class, $createdWithoutId);
@@ -267,7 +267,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertInstanceOf(TestUserModel::class, $resultWithId);
-        $this->assertInstanceOf(Id::class, $resultWithId->id);
+        $this->assertInstanceOf(PrimaryKey::class, $resultWithId->id);
         $this->assertSame('Aura', $resultWithId->name);
     }
 
@@ -276,7 +276,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $created = model(TestUserModel::class)->create(name: 'Heiter');
-        $retrieved = model(TestUserModel::class)->get((string) $created->id->id);
+        $retrieved = model(TestUserModel::class)->get((string) $created->id->value);
 
         $this->assertNotNull($retrieved);
         $this->assertSame('Heiter', $retrieved->name);
@@ -288,7 +288,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $created = model(TestUserModel::class)->create(name: 'Eisen');
-        $retrieved = model(TestUserModel::class)->get($created->id->id);
+        $retrieved = model(TestUserModel::class)->get($created->id->value);
 
         $this->assertNotNull($retrieved);
         $this->assertSame('Eisen', $retrieved->name);
@@ -299,7 +299,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
-        $result = model(TestUserModel::class)->get(new Id(999));
+        $result = model(TestUserModel::class)->get(new PrimaryKey(999));
 
         $this->assertNull($result);
     }
@@ -338,7 +338,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $created = model(TestUserModelWithCustomPrimaryKey::class)->create(name: 'Fern');
 
         $this->assertInstanceOf(TestUserModelWithCustomPrimaryKey::class, $created);
-        $this->assertInstanceOf(Id::class, $created->uuid);
+        $this->assertInstanceOf(PrimaryKey::class, $created->uuid);
         $this->assertSame('Fern', $created->name);
 
         $retrieved = model(TestUserModelWithCustomPrimaryKey::class)->get($created->uuid);
@@ -365,7 +365,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
 
 final class TestUserModel
 {
-    public ?Id $id = null;
+    public ?PrimaryKey $id = null;
 
     public function __construct(
         public string $name,
@@ -418,7 +418,7 @@ final class TestModelWithoutIdMigration implements DatabaseMigration
 
 final class TestUserModelWithCustomPrimaryKey
 {
-    public ?Id $uuid = null;
+    public ?PrimaryKey $uuid = null;
 
     public function __construct(
         public string $name,

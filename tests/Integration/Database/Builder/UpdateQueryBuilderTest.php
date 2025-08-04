@@ -8,8 +8,8 @@ use Tempest\Database\Database;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
@@ -94,7 +94,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_model_update_with_object(): void
     {
         $book = Book::new(
-            id: new Id(10),
+            id: new PrimaryKey(10),
             title: 'Chapter 01',
         );
 
@@ -118,7 +118,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_model_values_get_serialized(): void
     {
         $author = Author::new(
-            id: new Id(10),
+            id: new PrimaryKey(10),
         );
 
         $query = query($author)
@@ -136,7 +136,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_insert_new_relation_on_update(): void
     {
         $book = Book::new(
-            id: new Id(10),
+            id: new PrimaryKey(10),
         );
 
         $bookQuery = query($book)
@@ -169,11 +169,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_attach_existing_relation_on_update(): void
     {
         $book = Book::new(
-            id: new Id(10),
+            id: new PrimaryKey(10),
         );
 
         $bookQuery = query($book)
-            ->update(author: Author::new(id: new Id(5), name: 'Brent'))
+            ->update(author: Author::new(id: new PrimaryKey(5), name: 'Brent'))
             ->build();
 
         $this->assertSameWithoutBackticks(

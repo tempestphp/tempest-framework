@@ -6,12 +6,15 @@ namespace Tests\Tempest\Integration\ORM\Models;
 
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 
 #[Table('child')]
 final class ChildModel
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     #[HasOne]
     public ThroughModel $through;

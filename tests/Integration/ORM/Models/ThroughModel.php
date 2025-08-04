@@ -6,12 +6,15 @@ namespace Tests\Tempest\Integration\ORM\Models;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 
 #[Table('through')]
 final class ThroughModel
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         public ParentModel $parent,

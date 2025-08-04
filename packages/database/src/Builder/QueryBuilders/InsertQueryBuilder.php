@@ -6,8 +6,8 @@ use Closure;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
-use Tempest\Database\Id;
 use Tempest\Database\OnDatabase;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
@@ -46,7 +46,7 @@ final class InsertQueryBuilder implements BuildsQuery
         $this->insert = new InsertStatement($this->model->getTableDefinition());
     }
 
-    public function execute(mixed ...$bindings): Id
+    public function execute(mixed ...$bindings): PrimaryKey
     {
         $id = $this->build()->execute(...$bindings);
 
@@ -146,7 +146,7 @@ final class InsertQueryBuilder implements BuildsQuery
 
                     $value = match (true) {
                         $value === null => null,
-                        isset($value->id) => $value->id->id,
+                        isset($value->id) => $value->id->value,
                         default => new InsertQueryBuilder(
                             $value::class,
                             [$value],

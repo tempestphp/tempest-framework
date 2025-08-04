@@ -6,7 +6,7 @@ use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -102,7 +102,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 #[Table('relation')]
 final class HasManyTestRelationModel
 {
-    public Id $id;
+    public PrimaryKey $id;
 
     /** @var \Tests\Tempest\Integration\Database\ModelInspector\HasManyTestOwnerModel[] */
     public array $owners = [];
@@ -138,7 +138,7 @@ final class HasManyTestRelationWithoutIdModel
 #[Table('owner')]
 final class HasManyTestOwnerModel
 {
-    public Id $id;
+    public PrimaryKey $id;
 
     public HasManyTestRelationModel $relation;
 

@@ -9,8 +9,8 @@ use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\DateTime\DateTime;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
@@ -76,12 +76,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame('baz', $foo->bar);
-        $this->assertInstanceOf(Id::class, $foo->id);
+        $this->assertInstanceOf(PrimaryKey::class, $foo->id);
 
         $foo = Foo::get($foo->id);
 
         $this->assertSame('baz', $foo->bar);
-        $this->assertInstanceOf(Id::class, $foo->id);
+        $this->assertInstanceOf(PrimaryKey::class, $foo->id);
 
         $foo->update(
             bar: 'boo',
@@ -105,7 +105,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $foo = Foo::get(1);
 
-        $this->assertSame(1, $foo->id->id);
+        $this->assertSame(1, $foo->id->value);
     }
 
     public function test_creating_many_and_saving_preserves_model_id(): void
@@ -122,9 +122,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             bar: 'b',
         );
 
-        $this->assertEquals(1, $a->id->id);
+        $this->assertEquals(1, $a->id->value);
         $a->save();
-        $this->assertEquals(1, $a->id->id);
+        $this->assertEquals(1, $a->id->value);
     }
 
     public function test_complex_query(): void
@@ -148,12 +148,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $book = Book::get($book->id, relations: ['author']);
 
-        $this->assertEquals(1, $book->id->id);
+        $this->assertEquals(1, $book->id->value);
         $this->assertSame('Book Title', $book->title);
         $this->assertSame(AuthorType::B, $book->author->type);
         $this->assertInstanceOf(Author::class, $book->author);
         $this->assertSame('Author Name', $book->author->name);
-        $this->assertEquals(1, $book->author->id->id);
+        $this->assertEquals(1, $book->author->id->value);
     }
 
     public function test_all_with_relations(): void
@@ -181,12 +181,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $book = $books[0];
 
-        $this->assertEquals(1, $book->id->id);
+        $this->assertEquals(1, $book->id->value);
         $this->assertSame('Book Title', $book->title);
         $this->assertSame(AuthorType::B, $book->author->type);
         $this->assertInstanceOf(Author::class, $book->author);
         $this->assertSame('Author Name', $book->author->name);
-        $this->assertEquals(1, $book->author->id->id);
+        $this->assertEquals(1, $book->author->id->value);
     }
 
     public function test_missing_relation_exception(): void
@@ -450,7 +450,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $a = AWithVirtual::select()->first();
 
-        $this->assertSame(-$a->id->id, $a->fake);
+        $this->assertSame(-$a->id->value, $a->fake);
     }
 
     public function test_update_or_create(): void
@@ -579,7 +579,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     public function test_validation_on_update(): void
     {
         $model = ModelWithValidation::new(
-            id: new Id(1),
+            id: new PrimaryKey(1),
             index: 1,
         );
 

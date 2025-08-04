@@ -73,7 +73,7 @@ final class DeleteQueryBuilder implements BuildsQuery
             $primaryKeyValue = $this->model->getPrimaryKeyValue();
 
             if ($primaryKeyValue !== null) {
-                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->id);
+                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->value);
             }
         }
 

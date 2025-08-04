@@ -10,7 +10,7 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
@@ -91,7 +91,7 @@ final readonly class ModelQueryBuilder
      *
      * @return TModel
      */
-    public function findById(string|int|Id $id): object
+    public function findById(string|int|PrimaryKey $id): object
     {
         if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'findById');
@@ -105,7 +105,7 @@ final readonly class ModelQueryBuilder
      *
      * @return TModel
      */
-    public function resolve(string|int|Id $id): object
+    public function resolve(string|int|PrimaryKey $id): object
     {
         if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'resolve');
@@ -119,15 +119,15 @@ final readonly class ModelQueryBuilder
      *
      * @return TModel|null
      */
-    public function get(string|int|Id $id, array $relations = []): ?object
+    public function get(string|int|PrimaryKey $id, array $relations = []): ?object
     {
         if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'get');
         }
 
         $id = match (true) {
-            $id instanceof Id => $id,
-            default => new Id($id),
+            $id instanceof PrimaryKey => $id,
+            default => new PrimaryKey($id),
         };
 
         return $this->select()
@@ -194,7 +194,7 @@ final readonly class ModelQueryBuilder
 
         if ($id !== null && $primaryKeyProperty !== null) {
             $primaryKeyName = $primaryKeyProperty->getName();
-            $model->{$primaryKeyName} = new Id($id);
+            $model->{$primaryKeyName} = new PrimaryKey($id);
         }
 
         return $model;

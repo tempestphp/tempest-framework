@@ -2,11 +2,11 @@
 
 namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 
 final class Publisher
 {
-    public Id $id;
+    public PrimaryKey $id;
 
     public string $name;
 
