@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
+use Tempest\Mapper\Serializers\DtoSerializer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
@@ -73,6 +74,10 @@ final class SerializerFactory
         // Get SerializerWith from the property's type if there's no property-defined SerializerWith
         if ($serializeWith === null && $type->isClass()) {
             $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
+
+            if ($serializeWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
+                $serializeWith = new SerializeWith(DtoSerializer::class);
+            }
         }
 
         // Return the serializer if defined with SerializerWith

@@ -30,9 +30,7 @@ final class SelectModelMapper implements Mapper
         $idField = $model->getPrimaryFieldName();
 
         $parsed = arr($from)
-            ->groupBy(function (array $data) use ($idField) {
-                return $data[$idField];
-            })
+            ->groupBy(fn (array $data, int $i) => $data[$idField] ?? $i)
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 

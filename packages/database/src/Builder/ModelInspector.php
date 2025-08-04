@@ -12,6 +12,7 @@ use Tempest\Database\Id;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
+use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -149,7 +150,11 @@ final class ModelInspector
             return null;
         }
 
-        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->haSAttribute(SerializeWith::class)) {
+        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->hasAttribute(SerializeWith::class)) {
+            return null;
+        }
+
+        if ($property->getType()->asClass()->hasAttribute(SerializeAs::class)) {
             return null;
         }
 

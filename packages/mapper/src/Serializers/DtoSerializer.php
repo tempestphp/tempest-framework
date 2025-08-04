@@ -3,13 +3,18 @@
 namespace Tempest\Mapper\Serializers;
 
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
+use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\Serializer;
 use Tempest\Support\Json;
 
 use function Tempest\map;
 
-final class DtoSerializer implements Serializer
+final readonly class DtoSerializer implements Serializer
 {
+    public function __construct(
+        private MapperConfig $mapperConfig,
+    ) {}
+
     public function serialize(mixed $input): array|string
     {
         if (! is_object($input)) {
@@ -17,9 +22,10 @@ final class DtoSerializer implements Serializer
         }
 
         $data = map($input)->toArray();
+        $type = $this->mapperConfig->serializationMap[get_class($input)] ?? get_class($input);
 
         return Json\encode([
-            'type' => get_class($input),
+            'type' => $type,
             'data' => $data,
         ]);
     }

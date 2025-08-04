@@ -18,9 +18,9 @@ use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
 /**
- * @template TModelClass of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
  */
 final class UpdateQueryBuilder implements BuildsQuery
 {
@@ -32,8 +32,10 @@ final class UpdateQueryBuilder implements BuildsQuery
 
     private ModelInspector $model;
 
+    /**
+     * @param class-string<T>|string|T $model
+     */
     public function __construct(
-        /** @var class-string<TModelClass>|string|TModelClass $model */
         string|object $model,
         private readonly array|ImmutableArray $values,
         private readonly SerializerFactory $serializerFactory,
@@ -50,7 +52,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this->build()->execute(...$bindings);
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function allowAll(): self
     {
         $this->update->allowAll = true;
@@ -58,7 +60,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];

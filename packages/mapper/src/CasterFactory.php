@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
+use Tempest\Mapper\Casters\DtoCaster;
 use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\get;
@@ -36,6 +37,10 @@ final class CasterFactory
         // Get CastWith from the property's type if there's no property-defined CastWith
         if ($castWith === null && $type->isClass()) {
             $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
+
+            if ($castWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
+                $castWith = new CastWith(DtoCaster::class);
+            }
         }
 
         // Return the caster if defined with CastWith
