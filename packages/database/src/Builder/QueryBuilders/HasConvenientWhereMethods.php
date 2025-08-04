@@ -11,6 +11,8 @@ use Tempest\DateTime\DateTimeInterface;
 use UnitEnum;
 
 /**
+ * @template TModel of object
+ *
  * Shared methods for building WHERE conditions and convenience WHERE methods.
  */
 trait HasConvenientWhereMethods
@@ -99,6 +101,8 @@ trait HasConvenientWhereMethods
      * Adds a `WHERE IN` condition.
      *
      * @param class-string<UnitEnum>|UnitEnum|array<UnitEnum|mixed> $values
+     *
+     * @return static<TModel>
      */
     public function whereIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
@@ -109,6 +113,8 @@ trait HasConvenientWhereMethods
      * Adds a `WHERE NOT IN` condition.
      *
      * @param class-string<UnitEnum>|UnitEnum|array<UnitEnum|mixed> $values
+     *
+     * @return static<TModel>
      */
     public function whereNotIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
@@ -117,6 +123,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE BETWEEN` condition.
+     *
+     * @return static<TModel>
      */
     public function whereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
@@ -125,6 +133,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE NOT BETWEEN` condition.
+     *
+     * @return static<TModel>
      */
     public function whereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
@@ -133,6 +143,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE IS NULL` condition.
+     *
+     * @return static<TModel>
      */
     public function whereNull(string $field): self
     {
@@ -141,6 +153,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE IS NOT NULL` condition.
+     *
+     * @return static<TModel>
      */
     public function whereNotNull(string $field): self
     {
@@ -149,6 +163,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE NOT` condition (shorthand for != operator).
+     *
+     * @return static<TModel>
      */
     public function whereNot(string $field, mixed $value): self
     {
@@ -157,6 +173,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE LIKE` condition.
+     *
+     * @return static<TModel>
      */
     public function whereLike(string $field, string $value): self
     {
@@ -165,6 +183,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE NOT LIKE` condition.
+     *
+     * @return static<TModel>
      */
     public function whereNotLike(string $field, string $value): self
     {
@@ -175,6 +195,8 @@ trait HasConvenientWhereMethods
      * Adds an `OR WHERE IN` condition.
      *
      * @param class-string<UnitEnum>|UnitEnum|array<UnitEnum|mixed> $values
+     *
+     * @return static<TModel>
      */
     public function orWhereIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
@@ -185,6 +207,8 @@ trait HasConvenientWhereMethods
      * Adds an `OR WHERE NOT IN` condition.
      *
      * @param class-string<UnitEnum>|UnitEnum|array<UnitEnum|mixed> $values
+     *
+     * @return static<TModel>
      */
     public function orWhereNotIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
@@ -193,6 +217,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE BETWEEN` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
@@ -201,6 +227,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE NOT BETWEEN` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
@@ -209,6 +237,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE IS NULL` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereNull(string $field): self
     {
@@ -217,6 +247,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE IS NOT NULL` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereNotNull(string $field): self
     {
@@ -225,6 +257,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE NOT` condition (shorthand for != operator).
+     *
+     * @return static<TModel>
      */
     public function orWhereNot(string $field, mixed $value): self
     {
@@ -233,6 +267,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE LIKE` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereLike(string $field, string $value): self
     {
@@ -241,6 +277,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE NOT LIKE` condition.
+     *
+     * @return static<TModel>
      */
     public function orWhereNotLike(string $field, string $value): self
     {
@@ -249,6 +287,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from today.
+     *
+     * @return static<TModel>
      */
     public function whereToday(string $field): self
     {
@@ -259,6 +299,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from yesterday.
+     *
+     * @return static<TModel>
      */
     public function whereYesterday(string $field): self
     {
@@ -269,6 +311,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from this week.
+     *
+     * @return static<TModel>
      */
     public function whereThisWeek(string $field): self
     {
@@ -279,6 +323,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from last week.
+     *
+     * @return static<TModel>
      */
     public function whereLastWeek(string $field): self
     {
@@ -289,6 +335,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from this month.
+     *
+     * @return static<TModel>
      */
     public function whereThisMonth(string $field): self
     {
@@ -299,6 +347,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from last month.
+     *
+     * @return static<TModel>
      */
     public function whereLastMonth(string $field): self
     {
@@ -309,6 +359,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from this year.
+     *
+     * @return static<TModel>
      */
     public function whereThisYear(string $field): self
     {
@@ -319,6 +371,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records from last year.
+     *
+     * @return static<TModel>
      */
     public function whereLastYear(string $field): self
     {
@@ -329,6 +383,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records created after a specific date.
+     *
+     * @return static<TModel>
      */
     public function whereAfter(string $field, DateTimeInterface|string $date): self
     {
@@ -337,6 +393,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds a `WHERE` condition for records created before a specific date.
+     *
+     * @return static<TModel>
      */
     public function whereBefore(string $field, DateTimeInterface|string $date): self
     {
@@ -345,6 +403,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records from today.
+     *
+     * @return static<TModel>
      */
     public function orWhereToday(string $field): self
     {
@@ -354,6 +414,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records from yesterday.
+     *
+     * @return static<TModel>
      */
     public function orWhereYesterday(string $field): self
     {
@@ -364,6 +426,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records from this week.
+     *
+     * @return static<TModel>
      */
     public function orWhereThisWeek(string $field): self
     {
@@ -374,6 +438,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records from this month.
+     *
+     * @return static<TModel>
      */
     public function orWhereThisMonth(string $field): self
     {
@@ -384,6 +450,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records from this year.
+     *
+     * @return static<TModel>
      */
     public function orWhereThisYear(string $field): self
     {
@@ -394,6 +462,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records created after a specific date.
+     *
+     * @return static<TModel>
      */
     public function orWhereAfter(string $field, DateTimeInterface|string $date): self
     {
@@ -402,6 +472,8 @@ trait HasConvenientWhereMethods
 
     /**
      * Adds an `OR WHERE` condition for records created before a specific date.
+     *
+     * @return static<TModel>
      */
     public function orWhereBefore(string $field, DateTimeInterface|string $date): self
     {
@@ -411,12 +483,16 @@ trait HasConvenientWhereMethods
     /**
      * Abstract method that must be implemented by classes using this trait.
      * Should add a basic WHERE condition.
+     *
+     * @return static<TModel>
      */
     abstract public function where(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self;
 
     /**
      * Abstract method that must be implemented by classes using this trait.
      * Should add an OR WHERE condition.
+     *
+     * @return static<TModel>
      */
     abstract public function orWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self;
 }

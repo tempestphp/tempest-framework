@@ -11,6 +11,10 @@ use Tempest\Database\QueryStatements\WhereStatement;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+/**
+ * @template TModel of object
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
+ */
 final class WhereGroupBuilder
 {
     use HasConvenientWhereMethods;
@@ -27,6 +31,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a `WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function where(string $field, mixed $value = null, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -35,6 +41,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a `WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function andWhere(string $field, mixed $value = null, WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -53,6 +61,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a `OR WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function orWhere(string $field, mixed $value = null, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -72,6 +82,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a raw SQL `WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function whereRaw(string $rawCondition, mixed ...$bindings): self
     {
@@ -87,6 +99,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a raw SQL `AND WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
@@ -102,6 +116,8 @@ final class WhereGroupBuilder
 
     /**
      * Adds a raw SQL `OR WHERE` condition to the group.
+     *
+     * @return self<TModel>
      */
     public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
@@ -120,6 +136,8 @@ final class WhereGroupBuilder
      *
      * @param Closure(WhereGroupBuilder):void $callback
      * @param 'AND'|'OR' $operator
+     *
+     * @return self<TModel>
      */
     public function whereGroup(Closure $callback, string $operator = 'AND'): self
     {
@@ -144,6 +162,8 @@ final class WhereGroupBuilder
      * Adds another nested `AND WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
      * @param Closure(WhereGroupBuilder):void $callback
+     *
+     * @return self<TModel>
      */
     public function andWhereGroup(Closure $callback): self
     {
@@ -154,6 +174,8 @@ final class WhereGroupBuilder
      * Adds another nested `OR WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
      * @param Closure(WhereGroupBuilder):void $callback
+     *
+     * @return self<TModel>
      */
     public function orWhereGroup(Closure $callback): self
     {
