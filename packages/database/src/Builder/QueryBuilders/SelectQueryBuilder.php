@@ -6,6 +6,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Direction;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
@@ -161,11 +162,23 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /**
+     * Orders the results of the query by the given field name and direction.
+     *
+     * @return self<TModelClass>
+     */
+    public function orderBy(string $field, Direction $direction = Direction::ASC): self
+    {
+        $this->select->orderBy[] = new OrderByStatement("`{$field}` {$direction->value}");
+
+        return $this;
+    }
+
+    /**
      * Orders the results of the query by the given raw SQL statement.
      *
      * @return self<T>
      */
-    public function orderBy(string $statement): self
+    public function orderByRaw(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
 

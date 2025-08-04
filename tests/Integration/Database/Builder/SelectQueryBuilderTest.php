@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
+use Tempest\Database\Direction;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -32,7 +33,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereRaw('`title` = ?', 'Timeline Taxi')
             ->andWhereRaw('`index` <> ?', '1')
             ->orWhereRaw('`createdAt` > ?', '2025-01-01')
-            ->orderBy('`index` ASC')
+            ->orderByRaw('`index` ASC')
             ->build();
 
         $expected = 'SELECT title, index FROM chapters WHERE title = ? AND index <> ? OR createdAt > ? ORDER BY index ASC';
@@ -150,9 +151,66 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::select()->orderBy('title DESC')->first();
+        $book = Book::select()->orderByRaw('title DESC')->first();
 
         $this->assertSame('D', $book->title);
+    }
+
+    public function test_order_by_with_field_and_direction(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
+
+        $book = Book::select()->orderBy('title', Direction::DESC)->first();
+        $this->assertSame('D', $book->title);
+
+        $book = Book::select()->orderBy('title', Direction::ASC)->first();
+        $this->assertSame('A', $book->title);
+    }
+
+    public function test_order_by_with_field_defaults_to_asc(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
+
+        $book = Book::select()->orderBy('title')->first();
+        $this->assertSame('A', $book->title);
+    }
+
+    public function test_order_by_sql_generation(): void
+    {
+        $this->assertSameWithoutBackticks(
+            expected: 'SELECT * FROM `books` ORDER BY `title` ASC',
+            actual: query('books')->select()->orderBy('title')->toSql(),
+        );
+
+        $this->assertSameWithoutBackticks(
+            expected: 'SELECT * FROM `books` ORDER BY `title` DESC',
+            actual: query('books')->select()->orderBy('title', Direction::DESC)->toSql(),
+        );
+
+        $this->assertSameWithoutBackticks(
+            expected: 'SELECT * FROM `books` ORDER BY title DESC NULLS LAST',
+            actual: query('books')->select()->orderByRaw('title DESC NULLS LAST')->toSql(),
+        );
     }
 
     public function test_limit(): void
@@ -262,7 +320,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
                     ->andWhereRaw('`index` <> ?', '2')
                     ->orWhereRaw('`createdAt` > ?', '2025-01-02'),
             )
-            ->orderBy('`index` ASC')
+            ->orderByRaw('`index` ASC')
             ->build();
 
         $expected = 'SELECT title, index FROM `chapters` WHERE `title` = ? AND `index` <> ? OR `createdAt` > ? ORDER BY `index` ASC';
