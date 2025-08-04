@@ -6,7 +6,7 @@ namespace Tempest\Database\Exceptions;
 
 use Exception;
 
-final class ModelDidNotHavePrimaryColumn extends Exception
+final class ModelDidNotHavePrimaryColumn extends Exception implements DatabaseException
 {
     public static function neededForMethod(string|object $model, string $method): self
     {

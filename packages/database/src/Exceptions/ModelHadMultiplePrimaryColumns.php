@@ -8,7 +8,7 @@ use Exception;
 
 use function Tempest\Support\arr;
 
-final class ModelHadMultiplePrimaryColumns extends Exception
+final class ModelHadMultiplePrimaryColumns extends Exception implements DatabaseException
 {
     public static function found(string|object $model, array $properties): self
     {
