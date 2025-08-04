@@ -6,6 +6,7 @@ namespace Tempest\Framework\Testing\Http;
 
 use Closure;
 use Generator;
+use JsonSerializable;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
@@ -34,7 +35,7 @@ final class TestResponseHelper
         get => $this->response->headers;
     }
 
-    public View|string|array|Generator|null $body {
+    public View|string|array|Generator|JsonSerializable|null $body {
         get => $this->response->body;
     }
 
