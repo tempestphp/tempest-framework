@@ -142,11 +142,13 @@ final class InsertQueryBuilder implements BuildsQuery
 
                 // BelongsTo and reverse HasMany relations are included
                 if ($definition->isRelation($property)) {
-                    $column .= '_id';
+                    $relationModel = inspect($property->getType()->asClass());
+                    $primaryKey = $relationModel->getPrimaryKey() ?? 'id';
+                    $column .= '_' . $primaryKey;
 
                     $value = match (true) {
                         $value === null => null,
-                        isset($value->id) => $value->id->value,
+                        isset($value->{$primaryKey}) => $value->{$primaryKey}->value,
                         default => new InsertQueryBuilder(
                             $value::class,
                             [$value],
