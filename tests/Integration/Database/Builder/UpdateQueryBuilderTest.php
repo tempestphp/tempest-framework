@@ -307,4 +307,28 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->toSql());
         $this->assertSame(['archived', true, 100, '2023-01-01'], $query->bindings);
     }
+
+    public function test_update_mapping(): void
+    {
+        $author = Author::new(id: new PrimaryKey(1), name: 'original');
+
+        $query = query($author)
+            ->update(name: 'other')
+            ->build();
+
+        $dialect = $this->container->get(Database::class)->dialect;
+
+        $expected = match ($dialect) {
+            DatabaseDialect::POSTGRESQL => <<<'SQL'
+            UPDATE authors SET name = ? WHERE authors.id = ?
+            SQL,
+            default => <<<'SQL'
+            UPDATE `authors` SET `name` = ? WHERE `authors`.`id` = ?
+            SQL,
+        };
+
+        $this->assertSame($expected, $query->toSql()->toString());
+
+        $this->assertSame(['other', 1], $query->bindings);
+    }
 }

@@ -213,4 +213,25 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         return $query;
     }
+
+    public function test_insert_mapping(): void
+    {
+        $author = Author::new(name: 'test');
+
+        $query = query(Author::class)->insert($author)->build();
+
+        $dialect = $this->container->get(Database::class)->dialect;
+
+        $expected = match ($dialect) {
+            DatabaseDialect::POSTGRESQL => <<<'SQL'
+            INSERT INTO authors (name) VALUES (?) RETURNING *
+            SQL,
+            default => <<<'SQL'
+            INSERT INTO `authors` (`name`) VALUES (?)
+            SQL,
+        };
+
+        $this->assertSame($expected, $query->toSql()->toString());
+        $this->assertSame(['test'], $query->bindings);
+    }
 }
