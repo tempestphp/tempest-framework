@@ -6,6 +6,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
@@ -101,7 +102,11 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return T|null */
     public function get(Id $id): mixed
     {
-        return $this->where('id', $id)->first();
+        if (! $this->model->hasPrimaryKey()) {
+            throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model->getName(), 'get');
+        }
+
+        return $this->where($this->model->getPrimaryKey(), $id)->first();
     }
 
     /** @return T[] */

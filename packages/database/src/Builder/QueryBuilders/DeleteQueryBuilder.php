@@ -69,11 +69,12 @@ final class DeleteQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        if ($this->model->isObjectModel() && is_object($this->model->instance)) {
-            $this->where(
-                $this->model->getPrimaryKey(),
-                $this->model->getPrimaryKeyValue()->id,
-            );
+        if ($this->model->isObjectModel() && is_object($this->model->instance) && $this->model->hasPrimaryKey()) {
+            $primaryKeyValue = $this->model->getPrimaryKeyValue();
+
+            if ($primaryKeyValue !== null) {
+                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->id);
+            }
         }
 
         return new Query($this->delete, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);

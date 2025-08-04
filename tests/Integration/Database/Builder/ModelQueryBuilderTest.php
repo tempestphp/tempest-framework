@@ -330,6 +330,37 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             update: ['name' => 'Updated Denken'],
         );
     }
+
+    public function test_custom_primary_key_name(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
+
+        $created = model(TestUserModelWithCustomPrimaryKey::class)->create(name: 'Fern');
+
+        $this->assertInstanceOf(TestUserModelWithCustomPrimaryKey::class, $created);
+        $this->assertInstanceOf(Id::class, $created->uuid);
+        $this->assertSame('Fern', $created->name);
+
+        $retrieved = model(TestUserModelWithCustomPrimaryKey::class)->get($created->uuid);
+        $this->assertNotNull($retrieved);
+        $this->assertSame('Fern', $retrieved->name);
+        $this->assertTrue($created->uuid->equals($retrieved->uuid));
+    }
+
+    public function test_custom_primary_key_update_or_create(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
+
+        $original = model(TestUserModelWithCustomPrimaryKey::class)->create(name: 'Stark');
+
+        $updated = model(TestUserModelWithCustomPrimaryKey::class)->updateOrCreate(
+            find: ['name' => 'Stark'],
+            update: ['name' => 'Stark the Strong'],
+        );
+
+        $this->assertTrue($original->uuid->equals($updated->uuid));
+        $this->assertSame('Stark the Strong', $updated->name);
+    }
 }
 
 final class TestUserModel
@@ -376,6 +407,32 @@ final class TestModelWithoutIdMigration implements DatabaseMigration
     public function up(): QueryStatement
     {
         return CreateTableStatement::forModel(TestUserModelWithoutId::class)
+            ->text('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class TestUserModelWithCustomPrimaryKey
+{
+    public ?Id $uuid = null;
+
+    public function __construct(
+        public string $name,
+    ) {}
+}
+
+final class TestModelWithCustomPrimaryKeyMigration implements DatabaseMigration
+{
+    public string $name = '002_test_model_with_custom_primary_key';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(TestUserModelWithCustomPrimaryKey::class)
+            ->primary(name: 'uuid')
             ->text('name');
     }
 

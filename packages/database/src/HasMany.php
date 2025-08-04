@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
@@ -53,17 +54,29 @@ final class HasMany implements Relation
 
     public function primaryKey(): string
     {
-        return inspect($this->property->getIterableType()->asClass())->getPrimaryKey();
+        $relationModel = inspect($this->property->getIterableType()->asClass());
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
+        }
+
+        return $primaryKey;
     }
 
     public function idField(): string
     {
         $relationModel = inspect($this->property->getIterableType()->asClass());
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
+        }
 
         return sprintf(
             '%s.%s',
             $this->property->getName(),
-            $relationModel->getPrimaryKey(),
+            $primaryKey,
         );
     }
 
@@ -99,10 +112,16 @@ final class HasMany implements Relation
             return $ownerJoin;
         }
 
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
+        }
+
         return sprintf(
             '%s.%s',
             $ownerModel->getTableName(),
-            str($relationModel->getTableName())->singularizeLastWord() . '_' . $relationModel->getPrimaryKey(),
+            str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
         );
     }
 
@@ -122,10 +141,16 @@ final class HasMany implements Relation
             return $relationJoin;
         }
 
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
+        }
+
         return sprintf(
             '%s.%s',
             $relationModel->getTableName(),
-            $relationModel->getPrimaryKey(),
+            $primaryKey,
         );
     }
 }

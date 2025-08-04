@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
@@ -47,8 +48,13 @@ final class BelongsTo implements Relation
         }
 
         $relationModel = inspect($this->property->getType()->asClass());
+        $primaryKey = $relationModel->getPrimaryKey();
 
-        return str($relationModel->getTableName())->singularizeLastWord() . '_' . $relationModel->getPrimaryKey();
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'BelongsTo');
+        }
+
+        return str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey;
     }
 
     public function getSelectFields(): ImmutableArray
@@ -97,11 +103,13 @@ final class BelongsTo implements Relation
             return $relationJoin;
         }
 
-        return sprintf(
-            '%s.%s',
-            $relationModel->getTableName(),
-            $relationModel->getPrimaryKey(),
-        );
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'BelongsTo');
+        }
+
+        return sprintf('%s.%s', $relationModel->getTableName(), $primaryKey);
     }
 
     private function getOwnerJoin(ModelInspector $ownerModel): string

@@ -4,8 +4,10 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\Id;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -80,14 +82,29 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'owner.relation_id AS `parent.owner.relation_id`',
-            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
+            $relation->getSelectFields()[1]->compile(DatabaseDialect::SQLITE),
         );
+    }
+
+    public function test_has_one_throws_exception_for_model_without_primary_key(): void
+    {
+        $model = inspect(HasOneTestRelationNoIdModel::class);
+        $relation = $model->getRelation('owner');
+
+        $this->expectException(ModelDidNotHavePrimaryColumn::class);
+        $this->expectExceptionMessage(
+            "`Tests\Tempest\Integration\Database\ModelInspector\HasOneTestRelationNoIdModel` does not have a primary column defined, which is required for `HasOne` relationships.",
+        );
+
+        $relation->getJoinStatement();
     }
 }
 
 #[Table('relation')]
 final class HasOneTestRelationModel
 {
+    public Id $id;
+
     #[HasOne]
     public HasOneTestOwnerModel $owner;
 
@@ -109,6 +126,8 @@ final class HasOneTestRelationModel
 #[Table('owner')]
 final class HasOneTestOwnerModel
 {
+    public Id $id;
+
     public HasOneTestRelationModel $relation;
 
     #[BelongsTo(relationJoin: 'overwritten_id')]
@@ -122,6 +141,23 @@ final class HasOneTestOwnerModel
 
     #[BelongsTo(ownerJoin: 'overwritten.overwritten_id')]
     public HasOneTestRelationModel $ownerJoinFieldAndTable;
+
+    public string $name;
+}
+
+#[Table('relation')]
+final class HasOneTestRelationNoIdModel
+{
+    #[HasOne]
+    public HasOneTestOwnerNoIdModel $owner;
+
+    public string $name;
+}
+
+#[Table('owner')]
+final class HasOneTestOwnerNoIdModel
+{
+    public HasOneTestRelationNoIdModel $relation;
 
     public string $name;
 }

@@ -4,7 +4,9 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
+use Tempest\Database\Id;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -84,14 +86,29 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'relation.name AS `parent.relation.name`',
-            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
+            $relation->getSelectFields()[1]->compile(DatabaseDialect::SQLITE),
         );
+    }
+
+    public function test_belongs_to_throws_exception_for_model_without_primary_key(): void
+    {
+        $model = inspect(BelongsToTestOwnerWithoutIdModel::class);
+        $relation = $model->getRelation('relation');
+
+        $this->expectException(ModelDidNotHavePrimaryColumn::class);
+        $this->expectExceptionMessage(
+            "`Tests\Tempest\Integration\Database\ModelInspector\BelongsToTestRelationWithoutIdModel` does not have a primary column defined, which is required for `BelongsTo` relationships.",
+        );
+
+        $relation->getJoinStatement();
     }
 }
 
 #[Table('relation')]
 final class BelongsToTestRelationModel
 {
+    public Id $id;
+
     /** @var \Tests\Tempest\Integration\Database\ModelInspector\BelongsToTestOwnerModel[] */
     public array $owners = [];
 
@@ -117,6 +134,8 @@ final class BelongsToTestRelationModel
 #[Table('owner')]
 final class BelongsToTestOwnerModel
 {
+    public Id $id;
+
     public BelongsToTestRelationModel $relation;
 
     #[BelongsTo(relationJoin: 'overwritten_id')]
@@ -130,6 +149,22 @@ final class BelongsToTestOwnerModel
 
     #[BelongsTo(ownerJoin: 'overwritten.overwritten_id')]
     public BelongsToTestRelationModel $ownerJoinFieldAndTable;
+
+    public string $name;
+
+    public BelongsToTestRelationModel $relationNoPrimaryKey;
+}
+
+#[Table('relation_no_primary_key')]
+final class BelongsToTestRelationWithoutIdModel
+{
+    public string $name;
+}
+
+#[Table('owner_no_primary_key')]
+final class BelongsToTestOwnerWithoutIdModel
+{
+    public BelongsToTestRelationWithoutIdModel $relation;
 
     public string $name;
 }

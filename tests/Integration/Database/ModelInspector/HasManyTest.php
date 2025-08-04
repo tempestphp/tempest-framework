@@ -4,7 +4,9 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
+use Tempest\Database\Id;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -79,14 +81,29 @@ final class HasManyTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'owner.relation_id AS `parent.owners.relation_id`',
-            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
+            $relation->getSelectFields()[1]->compile(DatabaseDialect::SQLITE),
         );
+    }
+
+    public function test_has_many_throws_exception_for_model_without_primary_key(): void
+    {
+        $model = inspect(HasManyTestRelationWithoutIdModel::class);
+        $relation = $model->getRelation('owners');
+
+        $this->expectException(ModelDidNotHavePrimaryColumn::class);
+        $this->expectExceptionMessage(
+            "`Tests\Tempest\Integration\Database\ModelInspector\HasManyTestRelationWithoutIdModel` does not have a primary column defined, which is required for `HasMany` relationships.",
+        );
+
+        $relation->getJoinStatement();
     }
 }
 
 #[Table('relation')]
 final class HasManyTestRelationModel
 {
+    public Id $id;
+
     /** @var \Tests\Tempest\Integration\Database\ModelInspector\HasManyTestOwnerModel[] */
     public array $owners = [];
 
@@ -109,9 +126,20 @@ final class HasManyTestRelationModel
     public string $name;
 }
 
+#[Table('relation')]
+final class HasManyTestRelationWithoutIdModel
+{
+    /** @var \Tests\Tempest\Integration\Database\ModelInspector\HasManyTestOwnerWithoutIdModel[] */
+    public array $owners = [];
+
+    public string $name;
+}
+
 #[Table('owner')]
 final class HasManyTestOwnerModel
 {
+    public Id $id;
+
     public HasManyTestRelationModel $relation;
 
     #[BelongsTo(relationJoin: 'overwritten_id')]
@@ -125,6 +153,14 @@ final class HasManyTestOwnerModel
 
     #[BelongsTo(ownerJoin: 'overwritten.overwritten_id')]
     public HasManyTestRelationModel $ownerJoinFieldAndTable;
+
+    public string $name;
+}
+
+#[Table('owner')]
+final class HasManyTestOwnerWithoutIdModel
+{
+    public HasManyTestRelationWithoutIdModel $relation;
 
     public string $name;
 }

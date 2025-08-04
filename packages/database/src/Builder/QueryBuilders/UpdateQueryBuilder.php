@@ -83,15 +83,19 @@ final class UpdateQueryBuilder implements BuildsQuery
     {
         $values = $this->resolveValues();
 
-        unset($values['id']);
+        if ($this->model->hasPrimaryKey()) {
+            $primaryKey = $this->model->getPrimaryKey();
+            unset($values[$primaryKey]);
+        }
 
         $this->update->values = $values;
 
-        if ($this->model->isObjectModel() && is_object($this->model->instance)) {
-            $this->where(
-                $this->model->getPrimaryKey(),
-                $this->model->getPrimaryKeyValue()->id,
-            );
+        if ($this->model->isObjectModel() && is_object($this->model->instance) && $this->model->hasPrimaryKey()) {
+            $primaryKeyValue = $this->model->getPrimaryKeyValue();
+
+            if ($primaryKeyValue !== null) {
+                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->id);
+            }
         }
 
         foreach ($values as $value) {

@@ -16,4 +16,13 @@ final class ModelDidNotHavePrimaryColumn extends Exception
 
         return new self("`{$model}` does not have a primary column defined, which is required for the `{$method}` method.");
     }
+
+    public static function neededForRelation(string|object $model, string $relationType): self
+    {
+        if (is_object($model)) {
+            $model = get_class($model);
+        }
+
+        return new self("`{$model}` does not have a primary column defined, which is required for `{$relationType}` relationships.");
+    }
 }
