@@ -43,19 +43,46 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     }
 
     /**
-     * Adds a foreign key relationship to another table.
+     * Adds an integer column with a foreign key relationship to another table.
+     *
+     * **Example**
+     * ```php
+     * $table->belongsTo('orders.customer_id', 'customers.id');
+     * ```
+     *
+     * @param string $local The local column in the format `this_table.foreign_id`.
+     * @param string $foreign The foreign column in the format `other_table.id`.
      */
-    public function belongsTo(
-        string $local,
-        string $foreign,
-        OnDelete $onDelete = OnDelete::RESTRICT,
-        OnUpdate $onUpdate = OnUpdate::NO_ACTION,
-        bool $nullable = false,
-    ): self {
+    public function belongsTo(string $local, string $foreign, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION, bool $nullable = false): self
+    {
         [, $localKey] = explode('.', $local);
 
         $this->integer($localKey, nullable: $nullable);
 
+        $this->statements[] = new BelongsToStatement(
+            local: $local,
+            foreign: $foreign,
+            onDelete: $onDelete,
+            onUpdate: $onUpdate,
+        );
+
+        return $this;
+    }
+
+    /**
+     * Adds a foreign key constraint to another table.
+     *
+     * **Example**
+     * ```php
+     * $table->integer('customer_id', nullable: false);
+     * $table->foreignKey('orders.customer_id', 'customers.id');
+     * ```
+     *
+     * @param string $local The local column in the format `this_table.foreign_id`.
+     * @param string $foreign The foreign column in the format `other_table.id`.
+     */
+    public function foreignKey(string $local, string $foreign, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION): self
+    {
         $this->statements[] = new BelongsToStatement(
             local: $local,
             foreign: $foreign,
