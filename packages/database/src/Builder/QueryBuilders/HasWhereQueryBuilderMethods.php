@@ -11,8 +11,9 @@ use Tempest\Database\QueryStatements\WhereStatement;
 use function Tempest\Support\str;
 
 /**
- * @template TModel
+ * @template TModel of object
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
 {
@@ -123,7 +124,7 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped where statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      * @return self<TModel>
      */
     public function whereGroup(Closure $callback): self
@@ -143,7 +144,7 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped `AND WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      * @return self<TModel>
      */
     public function andWhereGroup(Closure $callback): self
@@ -158,7 +159,7 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped `OR WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      * @return self<TModel>
      */
     public function orWhereGroup(Closure $callback): self
