@@ -28,10 +28,17 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_cannot_serialize_non_object(): void
+    public function test_can_serialize_empty_array(): void
+    {
+        $result = new DtoSerializer(new MapperConfig())->serialize([]);
+
+        $this->assertSame('[]', $result);
+    }
+
+    public function test_cannot_serialize_non_object_non_array(): void
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 
-        new DtoSerializer(new MapperConfig())->serialize([]);
+        new DtoSerializer(new MapperConfig())->serialize('string');
     }
 }

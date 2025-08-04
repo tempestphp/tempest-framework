@@ -18,14 +18,39 @@ final readonly class DtoCaster implements Caster
 
     public function cast(mixed $input): mixed
     {
-        if (! Json\is_valid($input)) {
+        if (is_string($input) && Json\is_valid($input)) {
+            return $this->deserializeRecursively(Json\decode($input));
+        }
+
+        if (is_array($input)) {
+            return $this->deserializeRecursively($input);
+        }
+
+        if (is_string($input)) {
             throw new ValueCouldNotBeCast('json string');
         }
 
-        ['type' => $type, 'data' => $data] = Json\decode($input);
+        return $input;
+    }
 
-        $class = Arr\find_key($this->mapperConfig->serializationMap, $type) ?: $type;
+    private function deserializeRecursively(mixed $input): mixed
+    {
+        if (is_array($input) && isset($input['type'], $input['data'])) {
+            $class = Arr\find_key(
+                array: $this->mapperConfig->serializationMap,
+                value: $input['type'],
+            ) ?: $input['type'];
 
-        return map($data)->to($class);
+            return map($this->deserializeRecursively($input['data']))->to($class);
+        }
+
+        if (is_array($input)) {
+            return array_map(
+                fn (mixed $value) => $this->deserializeRecursively($value),
+                $input,
+            );
+        }
+
+        return $input;
     }
 }
