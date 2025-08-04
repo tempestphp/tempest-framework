@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
@@ -12,118 +13,232 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\SkipValidation;
 
-use function Tempest\make;
+use function Tempest\Database\model;
 
 trait IsDatabaseModel
 {
     #[SkipValidation]
     public Id $id;
 
-    public static function new(mixed ...$params): self
-    {
-        return make(self::class)->from($params);
-    }
-
-    public static function resolve(string $input): static
-    {
-        return self::get(new Id($input));
-    }
-
     /**
-     * @return \Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder<self>
+     * Returns a builder for selecting records using this model's table.
+     *
+     * @return SelectQueryBuilder<self>
      */
     public static function select(): SelectQueryBuilder
     {
-        return query(self::class)->select();
+        return model(self::class)->select();
     }
 
-    /** @return self[] */
-    public static function all(array $relations = []): array
+    /**
+     * Returns a builder for inserting records using this model's table.
+     *
+     * @return InsertQueryBuilder<self>
+     */
+    public static function insert(): InsertQueryBuilder
     {
-        return self::select()
-            ->with(...$relations)
-            ->all();
+        return model(self::class)->insert();
     }
 
-    public static function get(string|int|Id $id, array $relations = []): ?self
-    {
-        if (! ($id instanceof Id)) {
-            $id = new Id($id);
-        }
-
-        return self::select()
-            ->with(...$relations)
-            ->get($id);
-    }
-
-    public static function find(mixed ...$conditions): SelectQueryBuilder
-    {
-        $query = self::select();
-
-        array_walk($conditions, fn ($value, $column) => $query->where($column, $value));
-
-        return $query;
-    }
-
+    /**
+     * Returns a builder for counting records using this model's table.
+     *
+     * @return CountQueryBuilder<self>
+     */
     public static function count(): CountQueryBuilder
     {
-        return query(self::class)->count();
+        return model(self::class)->count();
     }
 
+    /**
+     * Creates a new instance of this model without persisting it to the database.
+     */
+    public static function new(mixed ...$params): self
+    {
+        return model(self::class)->new(...$params);
+    }
+
+    /**
+     * Finds a model instance by its ID.
+     */
+    public static function findById(string|int|Id $id): static
+    {
+        return self::resolve($id);
+    }
+
+    /**
+     * Finds a model instance by its ID.
+     */
+    public static function resolve(string|int|Id $id): static
+    {
+        return model(self::class)->resolve($id);
+    }
+
+    /**
+     * Gets a model instance by its ID, optionally loading the given relationships.
+     */
+    public static function get(string|int|Id $id, array $relations = []): ?self
+    {
+        return model(self::class)->get($id, $relations);
+    }
+
+    /**
+     * Gets all records from the model's table.
+     *
+     * @return self[]
+     */
+    public static function all(array $relations = []): array
+    {
+        return model(self::class)->all($relations);
+    }
+
+    /**
+     * Finds records based on their columns.
+     *
+     * **Example**
+     * ```php
+     * MagicUser::find(name: 'Frieren');
+     * ```
+     *
+     * @return SelectQueryBuilder<self>
+     */
+    public static function find(mixed ...$conditions): SelectQueryBuilder
+    {
+        return model(self::class)->find(...$conditions);
+    }
+
+    /**
+     * Creates a new model instance and persists it to the database.
+     *
+     * **Example**
+     * ```php
+     * MagicUser::create(name: 'Frieren', kind: Kind::ELF);
+     * ```
+     *
+     * @return self
+     */
     public static function create(mixed ...$params): self
     {
-        inspect(self::class)->validate(...$params);
-
-        $model = self::new(...$params);
-
-        $id = query(self::class)
-            ->insert($model)
-            ->build()
-            ->execute();
-
-        if ($id !== null) {
-            $model->id = new Id($id);
-        }
-
-        return $model;
+        return model(self::class)->create(...$params);
     }
 
+    /**
+     * Finds an existing model instance or creates a new one if it doesn't exist, without persisting it to the database.
+     *
+     * **Example**
+     * ```php
+     * $model = MagicUser::findOrNew(
+     *     find: ['name' => 'Frieren'],
+     *     update: ['kind' => Kind::ELF],
+     * );
+     * ```
+     *
+     * @param array<string,mixed> $find Properties to search for in the existing model.
+     * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
+     * @return self
+     */
     public static function findOrNew(array $find, array $update): self
     {
-        $existing = self::select()->bind(...$find);
-
-        foreach ($find as $key => $value) {
-            $existing = $existing->whereRaw("{$key} = :{$key}");
-        }
-
-        $model = $existing->first() ?? self::new(...$find);
-
-        foreach ($update as $key => $value) {
-            $model->{$key} = $value;
-        }
-
-        return $model;
+        return model(self::class)->findOrNew($find, $update);
     }
 
+    /**
+     * Finds an existing model instance or creates a new one if it doesn't exist, and persists it to the database.
+     *
+     * **Example**
+     * ```php
+     * $model = MagicUser::findOrNew(
+     *     find: ['name' => 'Frieren'],
+     *    update: ['kind' => Kind::ELF],
+     * );
+     * ```
+     *
+     * @param array<string,mixed> $find Properties to search for in the existing model.
+     * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
+     * @return TModel
+     */
     public static function updateOrCreate(array $find, array $update): self
     {
-        $model = self::findOrNew($find, $update);
-
-        if (! isset($model->id)) {
-            return self::create(...$update);
-        }
-
-        return $model->save();
+        return model(self::class)->updateOrCreate($find, $update);
     }
 
+    /**
+     * Refreshes the model instance with the latest data from the database.
+     */
     public function refresh(): self
     {
         $model = self::find(id: $this->id)->first();
+
         foreach (new ClassReflector($model)->getPublicProperties() as $property) {
             $property->setValue($this, $property->getValue($model));
         }
 
         return $this;
+    }
+
+    /**
+     * Loads the specified relations on the model instance.
+     */
+    public function load(string ...$relations): self
+    {
+        $new = self::get($this->id, $relations);
+
+        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
+            $property->setValue($this, $property->getValue($new));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Saves the model to the database.
+     */
+    public function save(): self
+    {
+        $model = inspect($this);
+        $model->validate(...inspect($this)->getPropertyValues());
+
+        if (! isset($this->id)) {
+            $this->id = query($this::class)
+                ->insert($this)
+                ->execute();
+        } else {
+            query($this)
+                ->update(...inspect($this)->getPropertyValues())
+                ->execute();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Updates the specified columns and persist the model to the database.
+     */
+    public function update(mixed ...$params): self
+    {
+        inspect(self::class)->validate(...$params);
+
+        foreach ($params as $key => $value) {
+            $this->{$key} = $value;
+        }
+
+        query($this)
+            ->update(...$params)
+            ->build()
+            ->execute();
+
+        return $this;
+    }
+
+    /**
+     * Deletes this model from the database.
+     */
+    public function delete(): void
+    {
+        query($this)
+            ->delete()
+            ->build()
+            ->execute();
     }
 
     public function __get(string $name): mixed
@@ -147,59 +262,5 @@ trait IsDatabaseModel
         }
 
         throw new RelationWasMissing($this, $name);
-    }
-
-    public function load(string ...$relations): self
-    {
-        $new = self::get($this->id, $relations);
-
-        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
-            $property->setValue($this, $property->getValue($new));
-        }
-
-        return $this;
-    }
-
-    public function save(): self
-    {
-        $model = inspect($this);
-
-        $model->validate(...inspect($this)->getPropertyValues());
-
-        if (! isset($this->id)) {
-            $query = query($this::class)->insert($this);
-
-            $this->id = $query->execute();
-        } else {
-            query($this)->update(
-                ...inspect($this)->getPropertyValues(),
-            )->execute();
-        }
-
-        return $this;
-    }
-
-    public function update(mixed ...$params): self
-    {
-        inspect(self::class)->validate(...$params);
-
-        foreach ($params as $key => $value) {
-            $this->{$key} = $value;
-        }
-
-        query($this)
-            ->update(...$params)
-            ->build()
-            ->execute();
-
-        return $this;
-    }
-
-    public function delete(): void
-    {
-        query($this)
-            ->delete()
-            ->build()
-            ->execute();
     }
 }
