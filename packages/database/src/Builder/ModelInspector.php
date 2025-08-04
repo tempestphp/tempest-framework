@@ -6,6 +6,8 @@ use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\Id;
@@ -381,14 +383,42 @@ final class ModelInspector
         return $this->instance;
     }
 
-    public function getPrimaryFieldName(): string
+    public function getQualifiedPrimaryKey(): ?string
     {
-        return $this->getTableDefinition()->name . '.' . $this->getPrimaryKey();
+        $primaryKey = $this->getPrimaryKey();
+
+        return $primaryKey !== null
+            ? ($this->getTableDefinition()->name . '.' . $primaryKey)
+            : null;
     }
 
-    public function getPrimaryKey(): string
+    public function getPrimaryKey(): ?string
     {
-        return 'id';
+        return $this->getPrimaryKeyProperty()?->getName();
+    }
+
+    public function hasPrimaryKey(): bool
+    {
+        return $this->getPrimaryKeyProperty() !== null;
+    }
+
+    public function getPrimaryKeyProperty(): ?PropertyReflector
+    {
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        $idProperties = arr($this->reflector->getProperties())
+            ->filter(fn (PropertyReflector $property) => $property->getType()->getName() === Id::class);
+
+        return match ($idProperties->count()) {
+            0 => null,
+            1 => $idProperties->first(),
+            default => throw ModelHadMultiplePrimaryColumns::found(
+                model: $this->model,
+                properties: $idProperties->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
+            ),
+        };
     }
 
     public function getPrimaryKeyValue(): ?Id
@@ -401,6 +431,12 @@ final class ModelInspector
             return null;
         }
 
-        return $this->instance->{$this->getPrimaryKey()};
+        $primaryKey = $this->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            return null;
+        }
+
+        return $this->instance->{$primaryKey};
     }
 }

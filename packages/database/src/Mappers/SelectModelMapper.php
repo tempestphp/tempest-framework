@@ -5,6 +5,7 @@ namespace Tempest\Database\Mappers;
 use Exception;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
@@ -27,10 +28,10 @@ final class SelectModelMapper implements Mapper
     {
         $model = inspect($to);
 
-        $idField = $model->getPrimaryFieldName();
+        $idField = $model->getQualifiedPrimaryKey();
 
         $parsed = arr($from)
-            ->groupBy(fn (array $data, int $i) => $data[$idField] ?? $i)
+            ->groupBy(fn (array $data, int $i) => $idField !== null ? ($data[$idField] ?? $i) : $i)
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 

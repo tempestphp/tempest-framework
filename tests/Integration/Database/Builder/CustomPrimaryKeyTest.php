@@ -1,0 +1,130 @@
+<?php
+
+namespace Tests\Tempest\Integration\Database\Builder;
+
+use Tempest\Database\DatabaseMigration;
+use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
+use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\inspect;
+use function Tempest\Database\model;
+
+final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
+{
+    public function test_model_with_custom_primary_key_name(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateFrierenModelMigration::class);
+
+        $frieren = model(FrierenModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+
+        $this->assertInstanceOf(FrierenModel::class, $frieren);
+        $this->assertInstanceOf(Id::class, $frieren->uuid);
+        $this->assertSame('Frieren', $frieren->name);
+        $this->assertSame('Time Magic', $frieren->magic);
+
+        $retrieved = model(FrierenModel::class)->get($frieren->uuid);
+        $this->assertNotNull($retrieved);
+        $this->assertSame('Frieren', $retrieved->name);
+        $this->assertTrue($frieren->uuid->equals($retrieved->uuid));
+    }
+
+    public function test_update_or_create_with_custom_primary_key(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateFrierenModelMigration::class);
+
+        $frieren = model(FrierenModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+
+        $updated = model(FrierenModel::class)->updateOrCreate(
+            find: ['name' => 'Frieren'],
+            update: ['magic' => 'Advanced Time Magic'],
+        );
+
+        $this->assertTrue($frieren->uuid->equals($updated->uuid));
+        $this->assertSame('Advanced Time Magic', $updated->magic);
+    }
+
+    public function test_model_with_multiple_id_properties_throws_exception(): void
+    {
+        $this->expectException(ModelHadMultiplePrimaryColumns::class);
+        $this->expectExceptionMessage(
+            '`Tests\Tempest\Integration\Database\Builder\ModelWithMultipleIds` has multiple `Id` properties (uuid and external_id). Only one `Id` property is allowed per model.',
+        );
+
+        inspect(ModelWithMultipleIds::class)->getPrimaryKey();
+    }
+
+    public function test_model_without_id_property_still_works(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateModelWithoutIdMigration::class);
+
+        $model = model(ModelWithoutId::class)->new(name: 'Test');
+        $this->assertInstanceOf(ModelWithoutId::class, $model);
+        $this->assertSame('Test', $model->name);
+    }
+}
+
+final class FrierenModel
+{
+    public ?Id $uuid = null;
+
+    public function __construct(
+        public string $name,
+        public string $magic,
+    ) {}
+}
+
+final class ModelWithMultipleIds
+{
+    public ?Id $uuid = null;
+
+    public ?Id $external_id = null;
+
+    public function __construct(
+        public string $name = 'test',
+    ) {}
+}
+
+final class ModelWithoutId
+{
+    public function __construct(
+        public string $name,
+    ) {}
+}
+
+final class CreateFrierenModelMigration implements DatabaseMigration
+{
+    public string $name = '001_create_frieren_model';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(FrierenModel::class)
+            ->primary(name: 'uuid')
+            ->text('name')
+            ->text('magic');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class CreateModelWithoutIdMigration implements DatabaseMigration
+{
+    public string $name = '002_create_model_without_id';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(ModelWithoutId::class)
+            ->text('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}

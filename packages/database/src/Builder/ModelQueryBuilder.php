@@ -93,7 +93,7 @@ final readonly class ModelQueryBuilder
      */
     public function findById(string|int|Id $id): object
     {
-        if (! $this->supportsIds()) {
+        if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'findById');
         }
 
@@ -107,7 +107,7 @@ final readonly class ModelQueryBuilder
      */
     public function resolve(string|int|Id $id): object
     {
-        if (! $this->supportsIds()) {
+        if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'resolve');
         }
 
@@ -121,7 +121,7 @@ final readonly class ModelQueryBuilder
      */
     public function get(string|int|Id $id, array $relations = []): ?object
     {
-        if (! $this->supportsIds()) {
+        if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'get');
         }
 
@@ -189,8 +189,12 @@ final readonly class ModelQueryBuilder
             ->build()
             ->execute();
 
-        if ($id !== null && property_exists($model, 'id')) {
-            $model->id = new Id($id);
+        $inspector = inspect($this->model);
+        $primaryKeyProperty = $inspector->getPrimaryKeyProperty();
+
+        if ($id !== null && $primaryKeyProperty !== null) {
+            $primaryKeyName = $primaryKeyProperty->getName();
+            $model->{$primaryKeyName} = new Id($id);
         }
 
         return $model;
@@ -245,13 +249,18 @@ final readonly class ModelQueryBuilder
      */
     public function updateOrCreate(array $find, array $update): object
     {
-        if (! $this->supportsIds()) {
+        $inspector = inspect($this->model);
+
+        if (! $inspector->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'updateOrCreate');
         }
 
         $model = $this->findOrNew($find, $update);
 
-        if (! isset($model->id)) {
+        $primaryKeyProperty = $inspector->getPrimaryKeyProperty();
+        $primaryKeyName = $primaryKeyProperty->getName();
+
+        if (! isset($model->{$primaryKeyName})) {
             return $this->create(...$update);
         }
 
@@ -264,13 +273,5 @@ final readonly class ModelQueryBuilder
         }
 
         return $model;
-    }
-
-    /**
-     * Checks if the model supports ID-based operations.
-     */
-    private function supportsIds(): bool
-    {
-        return property_exists($this->model, 'id');
     }
 }
