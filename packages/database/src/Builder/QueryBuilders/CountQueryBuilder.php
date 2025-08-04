@@ -43,12 +43,19 @@ final class CountQueryBuilder implements BuildsQuery
         );
     }
 
+    /**
+     * Executes the count query and returns the number of matching records.
+     */
     public function execute(mixed ...$bindings): int
     {
         return $this->build()->fetchFirst(...$bindings)[$this->count->getKey()];
     }
 
-    /** @return self<T> */
+    /**
+     * Modifies the count query to only count distinct values in the specified column.
+     *
+     * @return self<T>
+     */
     public function distinct(): self
     {
         if ($this->count->column === null || $this->count->column === '*') {
@@ -60,7 +67,11 @@ final class CountQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<T>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -68,11 +79,17 @@ final class CountQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    /**
+     * Returns the SQL statement without the bindings.
+     */
     public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
     }
 
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
     public function toRawSql(): ImmutableString
     {
         return $this->build()->toRawSql();

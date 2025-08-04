@@ -62,7 +62,11 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return T|null */
+    /**
+     * Returns the first record matching the query.
+     *
+     * @return T|null
+     */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -82,7 +86,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /** @return PaginatedData<T> */
+    /**
+     * Returnd length-aware paginated data for the current query.
+     *
+     * @return PaginatedData<T>
+     */
     public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
     {
         $total = new CountQueryBuilder($this->model->model)->execute();
@@ -99,7 +107,11 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return T|null */
+    /**
+     * Returns the first record matching the given primary key.
+     *
+     * @return T|null
+     */
     public function get(PrimaryKey $id): mixed
     {
         if (! $this->model->hasPrimaryKey()) {
@@ -109,7 +121,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this->where($this->model->getPrimaryKey(), $id)->first();
     }
 
-    /** @return T[] */
+    /**
+     * Returns all records matching the query.
+     *
+     * @return T[]
+     */
     public function all(mixed ...$bindings): array
     {
         $query = $this->build(...$bindings);
@@ -124,7 +140,9 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /**
-     * @param Closure(T[] $models): void $closure
+     * Performs multiple queries in chunks, passing each chunk to the provided closure.
+     *
+     * @param Closure(T[]): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
@@ -142,7 +160,11 @@ final class SelectQueryBuilder implements BuildsQuery
         } while ($data !== []);
     }
 
-    /** @return self<T> */
+    /**
+     * Orders the results of the query by the given raw SQL statement.
+     *
+     * @return self<T>
+     */
     public function orderBy(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
@@ -150,7 +172,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Groups the results of the query by the given raw SQL statement.
+     *
+     * @return self<T>
+     */
     public function groupBy(string $statement): self
     {
         $this->select->groupBy[] = new GroupByStatement($statement);
@@ -158,7 +184,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Adds a `HAVING` clause to the query with the given raw SQL statement.
+     *
+     * @return self<T>
+     */
     public function having(string $statement, mixed ...$bindings): self
     {
         $this->select->having[] = new HavingStatement($statement);
@@ -168,7 +198,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Limits the number of results returned by the query by the specified amount.
+     *
+     * @return self<T>
+     */
     public function limit(int $limit): self
     {
         $this->select->limit = $limit;
@@ -176,7 +210,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Sets the offset for the query, allowing you to skip a number of results.
+     *
+     * @return self<T>
+     */
     public function offset(int $offset): self
     {
         $this->select->offset = $offset;
@@ -184,7 +222,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Joins the specified tables to the query using raw SQL statements, allowing for complex queries across multiple tables.
+     *
+     * @return self<T>
+     */
     public function join(string ...$joins): self
     {
         $this->joins = [...$this->joins, ...$joins];
@@ -192,7 +234,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Includes the specified relationships in the query, allowing for eager loading.
+     *
+     * @return self<T>
+     */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
@@ -200,7 +246,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Adds a raw SQL statement to the query.
+     *
+     * @return self<T>
+     */
     public function raw(string $raw): self
     {
         $this->select->raw[] = new RawStatement($raw);
@@ -208,7 +258,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<T>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -216,11 +270,17 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    /**
+     * Returns the SQL statement without the bindings.
+     */
     public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
     }
 
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
     public function toRawSql(): ImmutableString
     {
         return $this->build()->toRawSql();

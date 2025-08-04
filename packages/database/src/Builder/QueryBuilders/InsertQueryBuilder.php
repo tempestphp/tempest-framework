@@ -46,6 +46,9 @@ final class InsertQueryBuilder implements BuildsQuery
         $this->insert = new InsertStatement($this->model->getTableDefinition());
     }
 
+    /**
+     * Executes the insert query and returns the primary key of the inserted record.
+     */
     public function execute(mixed ...$bindings): PrimaryKey
     {
         $id = $this->build()->execute(...$bindings);
@@ -61,11 +64,17 @@ final class InsertQueryBuilder implements BuildsQuery
         return $id;
     }
 
+    /**
+     * Returns the SQL statement without the bindings.
+     */
     public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
     }
 
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
     public function toRawSql(): ImmutableString
     {
         return $this->build()->toRawSql();
@@ -92,6 +101,9 @@ final class InsertQueryBuilder implements BuildsQuery
         return new Query($this->insert, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -99,6 +111,9 @@ final class InsertQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    /**
+     * Registers callbacks to be executed after the insert operation completes.
+     */
     public function then(Closure ...$callbacks): self
     {
         $this->after = [...$this->after, ...$callbacks];

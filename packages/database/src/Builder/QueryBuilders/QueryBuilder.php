@@ -20,6 +20,8 @@ final readonly class QueryBuilder
     ) {}
 
     /**
+     * Creates a `SELECT` query builder for retrieving records from the database.
+     *
      * @return SelectQueryBuilder<T>
      */
     public function select(string ...$columns): SelectQueryBuilder
@@ -31,6 +33,8 @@ final readonly class QueryBuilder
     }
 
     /**
+     * Creates an `INSERT` query builder for adding new records to the database.
+     *
      * @return InsertQueryBuilder<T>
      */
     public function insert(mixed ...$values): InsertQueryBuilder
@@ -47,6 +51,8 @@ final readonly class QueryBuilder
     }
 
     /**
+     * Creates an `UPDATE` query builder for modifying existing records in the database.
+     *
      * @return UpdateQueryBuilder<T>
      */
     public function update(mixed ...$values): UpdateQueryBuilder
@@ -59,6 +65,8 @@ final readonly class QueryBuilder
     }
 
     /**
+     * Creates a `DELETE` query builder for removing records from the database.
+     *
      * @return DeleteQueryBuilder<T>
      */
     public function delete(): DeleteQueryBuilder
@@ -67,6 +75,8 @@ final readonly class QueryBuilder
     }
 
     /**
+     * Creates a `COUNT` query builder for counting records in the database.
+     *
      * @return CountQueryBuilder<T>
      */
     public function count(?string $column = null): CountQueryBuilder

@@ -6,6 +6,8 @@ namespace Tempest\Database {
     use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 
     /**
+     * Creates a new query builder instance for the given model or table name.
+     *
      * @template T of object
      * @param class-string<T>|string|T $model
      * @return QueryBuilder<T>
@@ -13,16 +15,6 @@ namespace Tempest\Database {
     function query(string|object $model): QueryBuilder
     {
         return new QueryBuilder($model);
-    }
-
-    /**
-     * @template T of object
-     * @param class-string<T>|string|T $model
-     * @return ModelInspector<T>
-     */
-    function inspect(string|object $model): ModelInspector
-    {
-        return new ModelInspector($model);
     }
 
     /**
@@ -35,5 +27,18 @@ namespace Tempest\Database {
     function model(string $modelClass): ModelQueryBuilder
     {
         return new ModelQueryBuilder($modelClass);
+    }
+
+    /**
+     * Inspects the given model or table name to provide database insights.
+     *
+     * @template T of object
+     * @param class-string<T>|string|T $model
+     * @return ModelInspector<T>
+     * @internal
+     */
+    function inspect(string|object $model): ModelInspector
+    {
+        return new ModelInspector($model);
     }
 }

@@ -36,12 +36,19 @@ final class DeleteQueryBuilder implements BuildsQuery
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
     }
 
+    /**
+     * Executes the delete query, removing matching records from the database.
+     */
     public function execute(): void
     {
         $this->build()->execute();
     }
 
-    /** @return self<TModelClass> */
+    /**
+     * Allows the delete operation to proceed without WHERE conditions, deleting all records.
+     *
+     * @return self<TModelClass>
+     */
     public function allowAll(): self
     {
         $this->delete->allowAll = true;
@@ -49,7 +56,11 @@ final class DeleteQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<TModelClass>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -57,11 +68,17 @@ final class DeleteQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    /**
+     * Returns the SQL statement without the bindings.
+     */
     public function toSql(): ImmutableString
     {
         return $this->build()->toSql();
     }
 
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
     public function toRawSql(): ImmutableString
     {
         return $this->build()->toRawSql();
