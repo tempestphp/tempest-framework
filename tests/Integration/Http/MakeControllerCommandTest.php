@@ -44,6 +44,7 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists($expectedPath)
+            ->assertFileNotContains($expectedPath, 'SkipDiscovery')
             ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';');
     }
 

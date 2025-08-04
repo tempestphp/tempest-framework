@@ -32,6 +32,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return new self(model($modelClass)->getTableDefinition()->name);
     }
 
+    /**
+     * Adds a primary key column to the table. MySQL and SQLite use an auto-incrementing `INTEGER` column, and PostgreSQL uses `SERIAL`.
+     */
     public function primary(string $name = 'id'): self
     {
         $this->statements[] = new PrimaryKeyStatement($name);
@@ -39,6 +42,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
+    /**
+     * Adds a foreign key relationship to another table.
+     */
     public function belongsTo(
         string $local,
         string $foreign,
@@ -60,11 +66,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function text(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a `TEXT` column to the table.
+     */
+    public function text(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
@@ -74,12 +80,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function varchar(
-        string $name,
-        int $length = 255,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a `VARCHAR` column to the table.
+     */
+    public function varchar(string $name, int $length = 255, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new VarcharStatement(
             name: $name,
             size: $length,
@@ -90,11 +95,24 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function char(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a `VARCHAR` column to the table.
+     */
+    public function string(string $name, int $length = 255, bool $nullable = false, ?string $default = null): self
+    {
+        return $this->varchar(
+            name: $name,
+            length: $length,
+            nullable: $nullable,
+            default: $default,
+        );
+    }
+
+    /**
+     * Adds a `CHAR` column to the table.
+     */
+    public function char(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new CharStatement(
             name: $name,
             nullable: $nullable,
@@ -104,12 +122,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function integer(
-        string $name,
-        bool $unsigned = false,
-        bool $nullable = false,
-        ?int $default = null,
-    ): self {
+    /**
+     * Adds an `INTEGER` column to the table.
+     */
+    public function integer(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null): self
+    {
         $this->statements[] = new IntegerStatement(
             name: $name,
             unsigned: $unsigned,
@@ -120,11 +137,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function float(
-        string $name,
-        bool $nullable = false,
-        ?float $default = null,
-    ): self {
+    /**
+     * Adds a `FLOAT` column to the table.
+     */
+    public function float(string $name, bool $nullable = false, ?float $default = null): self
+    {
         $this->statements[] = new FloatStatement(
             name: $name,
             nullable: $nullable,
@@ -134,11 +151,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function datetime(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a datetime column to the table. Uses `DATETIME` for MySQL/SQLite and `TIMESTAMP` for PostgreSQL.
+     */
+    public function datetime(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new DatetimeStatement(
             name: $name,
             nullable: $nullable,
@@ -148,11 +165,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function date(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a `DATE` column to the table.
+     */
+    public function date(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new DateStatement(
             name: $name,
             nullable: $nullable,
@@ -162,11 +179,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function boolean(
-        string $name,
-        bool $nullable = false,
-        ?bool $default = null,
-    ): self {
+    /**
+     * Adds a `BOOLEAN` column to the table.
+     */
+    public function boolean(string $name, bool $nullable = false, ?bool $default = null): self
+    {
         $this->statements[] = new BooleanStatement(
             name: $name,
             nullable: $nullable,
@@ -176,11 +193,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function json(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a JSON column to the table. Uses `JSON` for MySQL, `TEXT` for SQLite, and `JSONB` for PostgreSQL.
+     */
+    public function json(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -190,11 +207,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function dto(
-        string $name,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Alias for `json()` method. Adds a JSON column for storing serializable objects.
+     */
+    public function dto(string $name, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -204,11 +221,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function array(
-        string $name,
-        bool $nullable = false,
-        array $default = [],
-    ): self {
+    /**
+     * Adds a JSON column for storing arrays. The default value is automatically JSON-encoded, as opposed to `json` and `object`.
+     */
+    public function array(string $name, bool $nullable = false, array $default = []): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -218,12 +235,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function enum(
-        string $name,
-        string $enumClass,
-        bool $nullable = false,
-        null|UnitEnum|BackedEnum $default = null,
-    ): self {
+    /**
+     * Adds an enum column to the table. Uses the `ENUM` type for MySQL, falls back to `TEXT` for SQLite, and uses a custom enum type for PostgreSQL.
+     */
+    public function enum(string $name, string $enumClass, bool $nullable = false, null|UnitEnum|BackedEnum $default = null): self
+    {
         $this->statements[] = new EnumStatement(
             name: $name,
             enumClass: $enumClass,
@@ -234,12 +250,11 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
-    public function set(
-        string $name,
-        array $values,
-        bool $nullable = false,
-        ?string $default = null,
-    ): self {
+    /**
+     * Adds a `SET` column to the table. Only supported in MySQL.
+     */
+    public function set(string $name, array $values, bool $nullable = false, ?string $default = null): self
+    {
         $this->statements[] = new SetStatement(
             name: $name,
             values: $values,
@@ -250,6 +265,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
+    /**
+     * Adds a unique constraint on the specified columns.
+     */
     public function unique(string ...$columns): self
     {
         $this->trailingStatements[] = new UniqueStatement(
@@ -260,6 +278,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
+    /**
+     * Adds an index on the specified columns.
+     */
     public function index(string ...$columns): self
     {
         $this->trailingStatements[] = new IndexStatement(
@@ -270,6 +291,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         return $this;
     }
 
+    /**
+     * Adds a raw SQL statement to the table definition.
+     */
     public function raw(string $statement): self
     {
         $this->statements[] = new RawStatement($statement);

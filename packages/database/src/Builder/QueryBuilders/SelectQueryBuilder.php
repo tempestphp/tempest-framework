@@ -27,9 +27,9 @@ use function Tempest\Database\model;
 use function Tempest\map;
 
 /**
- * @template TModelClass of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
@@ -45,11 +45,11 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
-    public function __construct(
-        /** @var class-string<TModelClass>|string|TModelClass $model */
-        string|object $model,
-        ?ImmutableArray $fields = null,
-    ) {
+    /**
+     * @param class-string<T>|string|T $model
+     */
+    public function __construct(string|object $model, ?ImmutableArray $fields = null)
+    {
         $this->model = model($model);
 
         $this->select = new SelectStatement(
@@ -60,7 +60,7 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return TModelClass|null */
+    /** @return T|null */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -80,7 +80,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /** @return PaginatedData<TModelClass> */
+    /** @return PaginatedData<T> */
     public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
     {
         $total = new CountQueryBuilder($this->model->model)->execute();
@@ -97,13 +97,13 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return TModelClass|null */
+    /** @return T|null */
     public function get(Id $id): mixed
     {
         return $this->whereField('id', $id)->first();
     }
 
-    /** @return TModelClass[] */
+    /** @return T[] */
     public function all(mixed ...$bindings): array
     {
         $query = $this->build(...$bindings);
@@ -118,7 +118,7 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /**
-     * @param Closure(TModelClass[] $models): void $closure
+     * @param Closure(T[] $models): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
@@ -136,7 +136,7 @@ final class SelectQueryBuilder implements BuildsQuery
         } while ($data !== []);
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function orderBy(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
@@ -144,7 +144,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function groupBy(string $statement): self
     {
         $this->select->groupBy[] = new GroupByStatement($statement);
@@ -152,7 +152,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function having(string $statement, mixed ...$bindings): self
     {
         $this->select->having[] = new HavingStatement($statement);
@@ -162,7 +162,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function limit(int $limit): self
     {
         $this->select->limit = $limit;
@@ -170,7 +170,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function offset(int $offset): self
     {
         $this->select->offset = $offset;
@@ -178,7 +178,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function join(string ...$joins): self
     {
         $this->joins = [...$this->joins, ...$joins];
@@ -186,7 +186,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
@@ -194,7 +194,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function raw(string $raw): self
     {
         $this->select->raw[] = new RawStatement($raw);
@@ -202,7 +202,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
