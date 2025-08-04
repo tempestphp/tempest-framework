@@ -2,21 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\ORM;
+namespace Tests\Tempest\Integration\Database\Builder;
 
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use Tempest\Database\BelongsTo;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
+use Tempest\Database\HasOne;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CompoundStatement;
+use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropEnumTypeStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\PrimaryKeyStatement;
+use Tempest\Database\QueryStatements\RawStatement;
+use Tempest\Database\QueryStatements\TextStatement;
+use Tempest\Database\Table;
 use Tempest\DateTime\DateTime;
+use Tempest\Mapper\Caster;
 use Tempest\Mapper\CasterFactory;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
+use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Arr;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\IsBetween;
+use Tempest\Validation\SkipValidation;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -34,28 +52,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateCasterModelTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateDateTimeModelTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
-use Tests\Tempest\Integration\ORM\Models\AttributeTableNameModel;
-use Tests\Tempest\Integration\ORM\Models\BaseModel;
-use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
-use Tests\Tempest\Integration\ORM\Models\CarbonModel;
-use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
-use Tests\Tempest\Integration\ORM\Models\CasterEnum;
-use Tests\Tempest\Integration\ORM\Models\CasterModel;
-use Tests\Tempest\Integration\ORM\Models\ChildModel;
-use Tests\Tempest\Integration\ORM\Models\DateTimeModel;
-use Tests\Tempest\Integration\ORM\Models\ModelWithValidation;
-use Tests\Tempest\Integration\ORM\Models\ParentModel;
-use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
-use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
@@ -640,4 +636,350 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 00:00:00', $model->phpDateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 00:00:00', $model->tempestDateTime->format('yyyy-MM-dd HH:mm:ss'));
     }
+}
+
+final class Foo
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public string $bar;
+}
+
+final class FooDatabaseMigration implements DatabaseMigration
+{
+    private(set) string $name = 'foos';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement(
+            tableName: 'foos',
+            statements: [
+                new PrimaryKeyStatement(),
+                new TextStatement('bar'),
+            ],
+        );
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class CreateATable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-a';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement(
+            'a',
+            [
+                new PrimaryKeyStatement(),
+                new RawStatement('b_id INTEGER'),
+            ],
+        );
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('a');
+    }
+}
+
+final class CreateBTable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-b';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement(
+            'b',
+            [
+                new PrimaryKeyStatement(),
+                new RawStatement('c_id INTEGER'),
+            ],
+        );
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('b');
+    }
+}
+
+final class CreateCTable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-c';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('c', [
+            new PrimaryKeyStatement(),
+            new TextStatement('name'),
+        ]);
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('c');
+    }
+}
+
+final class CreateCarbonModelTable implements DatabaseMigration
+{
+    public string $name = '2024-12-17_create_users_table';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(CarbonModel::class)
+            ->primary()
+            ->datetime('createdAt');
+    }
+
+    public function down(): QueryStatement
+    {
+        return DropTableStatement::forModel(CarbonModel::class);
+    }
+}
+
+final class CreateCasterModelTable implements DatabaseMigration
+{
+    public string $name = '0000_create_caster_model_table';
+
+    public function up(): QueryStatement
+    {
+        return new CompoundStatement(
+            new DropEnumTypeStatement(CasterEnum::class),
+            new CreateEnumTypeStatement(CasterEnum::class),
+            CreateTableStatement::forModel(CasterModel::class)
+                ->primary()
+                ->datetime('date')
+                ->array('array_prop')
+                ->enum('enum_prop', CasterEnum::class),
+        );
+    }
+
+    public function down(): QueryStatement
+    {
+        return DropTableStatement::forModel(CasterModel::class);
+    }
+}
+
+final class CreateDateTimeModelTable implements DatabaseMigration
+{
+    public string $name = '0001_datetime_model_table';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(DateTimeModel::class)
+            ->primary()
+            ->datetime('phpDateTime')
+            ->datetime('tempestDateTime');
+    }
+
+    public function down(): null
+    {
+        return null;
+    }
+}
+
+final class CreateHasManyChildTable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-has-many-child';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('child')
+            ->primary()
+            ->varchar('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class CreateHasManyParentTable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-has-many-parent';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('parent')
+            ->primary()
+            ->varchar('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class CreateHasManyThroughTable implements DatabaseMigration
+{
+    private(set) string $name = '100-create-has-many-through';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('through')
+            ->primary()
+            ->belongsTo('through.parent_id', 'parent.id')
+            ->belongsTo('through.child_id', 'child.id')
+            ->belongsTo('through.child2_id', 'child.id', nullable: true);
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+#[Table('custom_attribute_table_name')]
+final class AttributeTableNameModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+}
+
+final class BaseModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+}
+
+final readonly class CarbonCaster implements Caster
+{
+    public function cast(mixed $input): mixed
+    {
+        return new Carbon($input);
+    }
+}
+
+final class CarbonModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public function __construct(
+        public Carbon $createdAt,
+    ) {}
+}
+
+final readonly class CarbonSerializer implements Serializer
+{
+    public function serialize(mixed $input): string
+    {
+        if (! ($input instanceof Carbon)) {
+            throw new ValueCouldNotBeSerialized(Carbon::class);
+        }
+
+        return $input->format('Y-m-d H:i:s');
+    }
+}
+
+enum CasterEnum: string
+{
+    case FOO = 'foo';
+    case BAR = 'bar';
+}
+
+final class CasterModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public function __construct(
+        public DateTimeImmutable $date,
+        public array $array_prop,
+        public CasterEnum $enum_prop,
+    ) {}
+}
+
+#[Table('child')]
+final class ChildModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    #[HasOne]
+    public ThroughModel $through;
+
+    #[HasOne(ownerJoin: 'child2_id')]
+    public ThroughModel $through2;
+
+    public function __construct(
+        public string $name,
+    ) {}
+}
+
+final class DateTimeModel
+{
+    use IsDatabaseModel;
+
+    public function __construct(
+        public PrimaryKey $id,
+        public NativeDateTime $phpDateTime,
+        public DateTime $tempestDateTime,
+    ) {}
+}
+
+final class ModelWithValidation
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    #[IsBetween(min: 1, max: 10)]
+    public int $index;
+
+    #[SkipValidation]
+    public int $skip;
+}
+
+#[Table('parent')]
+final class ParentModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $name,
+
+        /** @var \Tests\Tempest\Integration\Database\Builder\ThroughModel[] */
+        public array $through = [],
+    ) {}
+}
+
+#[Table('custom_static_method_table_name')]
+final class StaticMethodTableNameModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+}
+
+#[Table('through')]
+final class ThroughModel
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public function __construct(
+        public ParentModel $parent,
+        public ChildModel $child,
+        #[BelongsTo(ownerJoin: 'child2_id')]
+        public ?ChildModel $child2 = null,
+    ) {}
 }
