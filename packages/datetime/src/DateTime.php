@@ -120,11 +120,6 @@ final readonly class DateTime implements DateTimeInterface
     /**
      * Creates a DateTime instance for a specific time on the current day within the specified timezone.
      *
-     * This method facilitates the creation of a {@see DateTime} object representing a precise time on today's date. It is
-     * particularly useful when you need to set a specific time of day for the current date in a given timezone. The
-     * method combines the current date context with a specific time, offering a convenient way to specify times such
-     * as "today at 14:00" in code.
-     *
      * The time components (hours, minutes, seconds, nanoseconds) must be within their valid ranges. The method
      * enforces these constraints and throws an {@see Exception\InvalidArgumentException} if any component is out of bounds.
      *
@@ -287,7 +282,7 @@ final readonly class DateTime implements DateTimeInterface
     /**
      * Parses a date and time string into an instance of {@see Tempest\DateTime\DateTime} using a specific format pattern, with optional customization for timezone and locale.
      *
-     *  This method is specifically designed for cases where a custom format pattern is used to parse the input string.
+     * This method is specifically designed for cases where a custom format pattern is used to parse the input string.
      * It allows for precise control over the parsing process by specifying the exact format pattern that matches the input string.
      * Additionally, the method supports specifying a timezone and locale for parsing, enabling accurate interpretation of locale-specific formats.
      *
@@ -502,70 +497,6 @@ final readonly class DateTime implements DateTimeInterface
             $seconds,
             $nanoseconds,
         );
-    }
-
-    /**
-     * Returns a new instance set to midnight of the same day.
-     */
-    public function startOfDay(): static
-    {
-        return $this->withTime(0, 0, 0, 0);
-    }
-
-    /**
-     * Returns a new instance set to the end of the day.
-     */
-    public function endOfDay(): static
-    {
-        return $this->withTime(23, 59, 59, 999_999_999);
-    }
-
-    /**
-     * Returns a new instance set to the start of the week.
-     */
-    public function startOfWeek(): static
-    {
-        return $this->withDay($this->day - ($this->getWeekday()->value - 1))->startOfDay();
-    }
-
-    /**
-     * Returns a new instance set to the end of the week.
-     */
-    public function endOfWeek(): static
-    {
-        return $this->withDay($this->getDay() + (7 - $this->getWeekday()->value))->endOfDay();
-    }
-
-    /**
-     * Returns a new instance set to the start of the month.
-     */
-    public function startOfMonth(): static
-    {
-        return $this->withDay(1)->startOfDay();
-    }
-
-    /**
-     * Returns a new instance set to the end of the month.
-     */
-    public function endOfMonth(): static
-    {
-        return $this->withDay(Month::from($this->month)->getDaysForYear($this->year))->endOfDay();
-    }
-
-    /**
-     * Returns a new instance set to the start of the year.
-     */
-    public function startOfYear(): static
-    {
-        return $this->withDate($this->getYear(), 1, 1)->startOfDay();
-    }
-
-    /**
-     * Returns a new instance set to the end of the year.
-     */
-    public function endOfYear(): static
-    {
-        return $this->withDate($this->getYear(), 12, Month::DECEMBER->getDaysForYear($this->getYear()))->endOfDay();
     }
 
     #[\Override]

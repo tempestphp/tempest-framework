@@ -15,9 +15,9 @@ use Tempest\Support\Conditions\HasConditions;
 use function Tempest\Database\model;
 
 /**
- * @template TModelClass of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
  */
 final class CountQueryBuilder implements BuildsQuery
 {
@@ -29,11 +29,11 @@ final class CountQueryBuilder implements BuildsQuery
 
     private ModelInspector $model;
 
-    public function __construct(
-        /** @var class-string<TModelClass>|string|TModelClass $model */
-        string|object $model,
-        ?string $column = null,
-    ) {
+    /**
+     * @param class-string<T>|string|T $model
+     */
+    public function __construct(string|object $model, ?string $column = null)
+    {
         $this->model = model($model);
 
         $this->count = new CountStatement(
@@ -47,7 +47,7 @@ final class CountQueryBuilder implements BuildsQuery
         return $this->build()->fetchFirst(...$bindings)[$this->count->getKey()];
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function distinct(): self
     {
         if ($this->count->column === null || $this->count->column === '*') {
@@ -59,7 +59,7 @@ final class CountQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];

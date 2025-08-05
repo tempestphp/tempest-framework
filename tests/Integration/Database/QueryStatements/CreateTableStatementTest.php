@@ -242,4 +242,43 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             $migration,
         );
     }
+
+    public function test_string_method_integration(): void
+    {
+        $migration = new class() implements DatabaseMigration {
+            private(set) string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('frieren_table')
+                    ->primary()
+                    ->string('name', length: 100, nullable: false, default: 'Frieren')
+                    ->string('type', nullable: true);
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(CreateMigrationsTable::class, $migration);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_string_method_with_custom_parameters(): void
+    {
+        $varcharStatement = new CreateTableStatement('frieren_mages')
+            ->primary()
+            ->varchar('name', length: 120, nullable: true, default: 'Himmel')
+            ->compile(DatabaseDialect::MYSQL);
+
+        $stringStatement = new CreateTableStatement('frieren_mages')
+            ->primary()
+            ->varchar('name', length: 120, nullable: true, default: 'Himmel')
+            ->compile(DatabaseDialect::MYSQL);
+
+        $this->assertSame($varcharStatement, $stringStatement);
+    }
 }

@@ -23,6 +23,8 @@ jobs:
         id: generate_release_notes
         with:
           args: -v --latest --strip header
+        env:
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Clean up release notes
         run: |

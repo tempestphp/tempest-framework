@@ -6,7 +6,9 @@ namespace Tempest\Router;
 
 use Generator;
 use JsonSerializable;
+use Stringable;
 use Tempest\Container\Container;
+use Tempest\DateTime\Duration;
 use Tempest\Http\ContentType;
 use Tempest\Http\Header;
 use Tempest\Http\Method;
@@ -16,6 +18,8 @@ use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
 use Tempest\Http\ServerSentEvent;
+use Tempest\Http\ServerSentMessage;
+use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
@@ -119,16 +123,38 @@ final readonly class GenericResponseSender implements ResponseSender
                 break;
             }
 
-            $event = 'message';
-            $data = Json\encode($message);
-
-            if ($message instanceof ServerSentEvent) {
-                $event = $message->event;
-                $data = Json\encode($message->data);
+            if (! ($message instanceof ServerSentEvent)) {
+                $message = new ServerSentMessage(data: $message);
             }
 
-            echo "event: {$event}\n";
-            echo "data: {$data}";
+            if ($message->id) {
+                echo "id: {$message->id}\n";
+            }
+
+            if ($message->retryAfter) {
+                $retry = match (true) {
+                    is_int($message->retryAfter) => $message->retryAfter,
+                    $message->retryAfter instanceof Duration => $message->retryAfter->getTotalMilliseconds(),
+                };
+
+                echo "retry: {$retry}\n";
+            }
+
+            if ($message->event) {
+                echo "event: {$message->event}\n";
+            }
+
+            $data = match (true) {
+                is_string($message->data) => $message->data,
+                $message->data instanceof Stringable => (string) $message->data,
+                $message->data instanceof JsonSerializable => Json\encode($message->data),
+                is_iterable($message->data) => iterator_to_array($message->data),
+            };
+
+            foreach (Arr\wrap($data) as $line) {
+                echo "data: {$line}\n";
+            }
+
             echo "\n\n";
 
             if (ob_get_level() > 0) {

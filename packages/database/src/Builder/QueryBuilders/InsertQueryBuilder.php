@@ -17,6 +17,10 @@ use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 
+/**
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ */
 final class InsertQueryBuilder implements BuildsQuery
 {
     use HasConditions, OnDatabase;
@@ -29,8 +33,10 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private ModelInspector $model;
 
+    /**
+     * @param class-string<T>|string|T $model
+     */
     public function __construct(
-        /** @var class-string|string $model */
         string|object $model,
         private readonly array $rows,
         private readonly SerializerFactory $serializerFactory,

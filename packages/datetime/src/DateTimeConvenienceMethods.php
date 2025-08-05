@@ -532,6 +532,382 @@ trait DateTimeConvenienceMethods
     }
 
     /**
+     * Returns a new instance set to midnight of the same day.
+     */
+    public function startOfDay(): static
+    {
+        return $this->withTime(0, 0, 0, 0);
+    }
+
+    /**
+     * Returns a new instance set to the end of the day.
+     */
+    public function endOfDay(): static
+    {
+        return $this->withTime(23, 59, 59, 999_999_999);
+    }
+
+    /**
+     * Returns a new instance set to the start of the week.
+     */
+    public function startOfWeek(): static
+    {
+        return $this->minusDays($this->getWeekday()->value - 1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the week.
+     */
+    public function endOfWeek(): static
+    {
+        return $this->plusDays(7 - $this->getWeekday()->value)->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the month.
+     */
+    public function startOfMonth(): static
+    {
+        return $this->withDay(1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the month.
+     */
+    public function endOfMonth(): static
+    {
+        return $this->withDay(Month::from($this->getMonth())->getDaysForYear($this->getYear()))->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the year.
+     */
+    public function startOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 1, 1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the year.
+     */
+    public function endOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 12, Month::DECEMBER->getDaysForYear($this->getYear()))->endOfDay();
+    }
+
+    /**
+     * Checks if this date is today.
+     */
+    public function isToday(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        return $this->getDate() === $now->getDate();
+    }
+
+    /**
+     * Checks if this date is tomorrow.
+     */
+    public function isTomorrow(): bool
+    {
+        $tomorrow = DateTime::now($this->getTimezone())->plusDay();
+        return $this->getDate() === $tomorrow->getDate();
+    }
+
+    /**
+     * Checks if this date is yesterday.
+     */
+    public function isYesterday(): bool
+    {
+        $yesterday = DateTime::now($this->getTimezone())->minusDay();
+        return $this->getDate() === $yesterday->getDate();
+    }
+
+    /**
+     * Checks if this date is in the current week.
+     */
+    public function isCurrentWeek(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        $startOfThisWeek = $this->startOfWeek();
+        $endOfThisWeek = $this->endOfWeek();
+
+        return $now->betweenTimeInclusive($startOfThisWeek, $endOfThisWeek);
+    }
+
+    /**
+     * Checks if this date is in the current month.
+     */
+    public function isCurrentMonth(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        return $this->getYear() === $now->getYear() && $this->getMonth() === $now->getMonth();
+    }
+
+    /**
+     * Checks if this date is in the current year.
+     */
+    public function isCurrentYear(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        return $this->getYear() === $now->getYear();
+    }
+
+    /**
+     * Checks if two dates are on the same day.
+     */
+    public function isSameDay(DateTimeInterface $other): bool
+    {
+        return $this->getYear() === $other->getYear() && $this->getMonth() === $other->getMonth() && $this->getDay() === $other->getDay();
+    }
+
+    /**
+     * Checks if two dates are in the same week.
+     */
+    public function isSameWeek(DateTimeInterface $other): bool
+    {
+        $thisWeek = $this->getISOWeekNumber();
+        $otherWeek = $other->getISOWeekNumber();
+
+        return $thisWeek[0] === $otherWeek[0] && $thisWeek[1] === $otherWeek[1];
+    }
+
+    /**
+     * Checks if two dates are in the same month.
+     */
+    public function isSameMonth(DateTimeInterface $other): bool
+    {
+        return $this->getYear() === $other->getYear() && $this->getMonth() === $other->getMonth();
+    }
+
+    /**
+     * Checks if two dates are in the same year.
+     */
+    public function isSameYear(DateTimeInterface $other): bool
+    {
+        return $this->getYear() === $other->getYear();
+    }
+
+    /**
+     * Checks if two dates are in the same hour.
+     */
+    public function isSameHour(DateTimeInterface $other): bool
+    {
+        return $this->isSameDay($other) && $this->getHours() === $other->getHours();
+    }
+
+    /**
+     * Checks if two dates are in the same minute.
+     */
+    public function isSameMinute(DateTimeInterface $other): bool
+    {
+        return $this->isSameHour($other) && $this->getMinutes() === $other->getMinutes();
+    }
+
+    /**
+     * Checks if this date is the next day after the other.
+     */
+    public function isNextDay(DateTimeInterface $other): bool
+    {
+        return $this->isSameDay($other->plusDay());
+    }
+
+    /**
+     * Checks if this date is the previous day before the other.
+     */
+    public function isPreviousDay(DateTimeInterface $other): bool
+    {
+        return $this->isSameDay($other->minusDay());
+    }
+
+    /**
+     * Checks if this date is in the next week.
+     */
+    public function isNextWeek(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        $nextWeek = $now->plusDays(7);
+
+        return $this->isSameWeek($nextWeek);
+    }
+
+    /**
+     * Checks if this date is in previous week.
+     */
+    public function isPreviousWeek(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        $previousWeek = $now->minusDays(7);
+
+        return $this->isSameWeek($previousWeek);
+    }
+
+    /**
+     * Checks if this date is in next month.
+     */
+    public function isNextMonth(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        $nextMonth = $now->plusMonth();
+
+        return $this->isSameMonth($nextMonth);
+    }
+
+    /**
+     * Checks if this date is in previous month.
+     */
+    public function isPreviousMonth(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        $previousMonth = $now->minusMonth();
+
+        return $this->isSameMonth($previousMonth);
+    }
+
+    /**
+     * Checks if this date is in next year.
+     */
+    public function isNextYear(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+        return $this->getYear() === ($now->getYear() + 1);
+    }
+
+    /**
+     * Checks if this date is in previous year.
+     */
+    public function isPreviousYear(): bool
+    {
+        $now = DateTime::now($this->getTimezone());
+
+        return $this->getYear() === ($now->getYear() - 1);
+    }
+
+    /**
+     * Checks if this date falls on a weekend (Saturday/Sunday).
+     */
+    public function isWeekend(): bool
+    {
+        $weekday = $this->getWeekday();
+
+        return $weekday === Weekday::SATURDAY || $weekday === Weekday::SUNDAY;
+    }
+
+    /**
+     * Checks if this date falls on a weekday (Monday-Friday).
+     */
+    public function isWeekday(): bool
+    {
+        return ! $this->isWeekend();
+    }
+
+    /**
+     * Checks if this is the 1st day of the month.
+     */
+    public function isFirstDayOfMonth(): bool
+    {
+        return $this->getDay() === 1;
+    }
+
+    /**
+     * Checks if this is the last day of the month.
+     */
+    public function isLastDayOfMonth(): bool
+    {
+        $lastDay = Month::from($this->getMonth())
+            ->getDaysForYear($this->getYear());
+
+        return $this->getDay() === $lastDay;
+    }
+
+    /**
+     * Checks if this is January 1st.
+     */
+    public function isFirstDayOfYear(): bool
+    {
+        return $this->getMonth() === 1 && $this->getDay() === 1;
+    }
+
+    /**
+     * Checks if this is December 31st.
+     */
+    public function isLastDayOfYear(): bool
+    {
+        return $this->getMonth() === 12 && $this->getDay() === 31;
+    }
+
+    /**
+     * Checks if time is in morning (6:00-11:59).
+     */
+    public function isMorning(): bool
+    {
+        $hour = $this->getHours();
+
+        return $hour >= 6 && $hour < 12;
+    }
+
+    /**
+     * Checks if time is in afternoon (12:00-17:59).
+     */
+    public function isAfternoon(): bool
+    {
+        $hour = $this->getHours();
+
+        return $hour >= 12 && $hour < 18;
+    }
+
+    /**
+     * Checks if time is in evening (18:00-21:59).
+     */
+    public function isEvening(): bool
+    {
+        $hour = $this->getHours();
+
+        return $hour >= 18 && $hour < 22;
+    }
+
+    /**
+     * Checks if time is at night (22:00-5:59).
+     */
+    public function isNight(): bool
+    {
+        $hour = $this->getHours();
+
+        return $hour >= 22 || $hour < 6;
+    }
+
+    /**
+     * Checks if time is exactly midnight (00:00:00).
+     */
+    public function isMidnight(): bool
+    {
+        return $this->getHours() === 0 && $this->getMinutes() === 0 && $this->getSeconds() === 0;
+    }
+
+    /**
+     * Checks if time is exactly noon (12:00:00).
+     */
+    public function isNoon(): bool
+    {
+        return $this->getHours() === 12 && $this->getMinutes() === 0 && $this->getSeconds() === 0;
+    }
+
+    /**
+     * Checks if this is Monday.
+     */
+    public function isStartOfWeek(): bool
+    {
+        return $this->getWeekday() === Weekday::MONDAY;
+    }
+
+    /**
+     * Checks if this is Sunday.
+     */
+    public function isEndOfWeek(): bool
+    {
+        return $this->getWeekday() === Weekday::SUNDAY;
+    }
+
+    /**
      * Formats this {@see DateTimeInterface} instance based on a specific pattern, with optional customization for timezone and locale.
      *
      * This method allows for detailed customization of the output string by specifying a format pattern. If no pattern is provided,
