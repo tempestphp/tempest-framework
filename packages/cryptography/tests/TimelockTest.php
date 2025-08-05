@@ -11,6 +11,8 @@ use Tempest\DateTime\Duration;
 
 final class TimelockTest extends TestCase
 {
+    use HasMoreIntegerAssertions;
+
     public function test_callback_is_executed(): void
     {
         $clock = new GenericClock();
@@ -29,8 +31,7 @@ final class TimelockTest extends TestCase
 
         $elapsed = microtime(true) - $start;
 
-        $this->assertGreaterThanOrEqual(0.1, $elapsed, 'The timelock did not wait for the specified duration.');
-        $this->assertLessThan(0.2, $elapsed, 'The timelock waited for too long.');
+        $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015);
     }
 
     public function test_return_early(): void
@@ -62,7 +63,7 @@ final class TimelockTest extends TestCase
             );
         } catch (\RuntimeException) {
             $elapsed = microtime(true) - $start;
-            $this->assertGreaterThanOrEqual(0.1, $elapsed, 'The exception was thrown before the timelock duration elapsed.');
+            $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015);
         }
     }
 
