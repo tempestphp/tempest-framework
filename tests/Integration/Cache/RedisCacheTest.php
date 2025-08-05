@@ -8,7 +8,6 @@ use Tempest\Cache\GenericCache;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\PhpRedisClient;
 use Tempest\KeyValue\Redis\PredisClient;
-use Tempest\KeyValue\Redis\Redis;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class RedisCacheTest extends FrameworkIntegrationTestCase
@@ -37,6 +36,12 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
             ),
         );
 
+        try {
+            $redis->connect();
+        } catch (\Throwable) {
+            $this->markTestSkipped('Could not connect to Redis.');
+        }
+
         $cache = new GenericCache(new RedisAdapter($redis->getClient()));
 
         $cache->put('key', 'value');
@@ -58,6 +63,12 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
             ],
             options: ['prefix' => 'tempest_test:'],
         ));
+
+        try {
+            $redis->connect();
+        } catch (\Throwable) {
+            $this->markTestSkipped('Could not connect to Redis.');
+        }
 
         $cache = new GenericCache(new RedisAdapter($redis->getClient()));
 
