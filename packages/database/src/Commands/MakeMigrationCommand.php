@@ -16,7 +16,7 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationWasAborted;
 use Tempest\Validation\Rules\EndsWith;
-use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\IsNotEmptyString;
 
 use function Tempest\Support\str;
 
@@ -74,7 +74,7 @@ final class MakeMigrationCommand
             ->toString();
 
         $targetPath = $this->promptTargetPath($suggestedPath, rules: [
-            new NotEmpty(),
+            new IsNotEmptyString(),
             new EndsWith('.sql'),
         ]);
         $shouldOverride = $this->askForOverride($targetPath);

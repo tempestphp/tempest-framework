@@ -9,8 +9,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Http\Session\Session;
-use Tempest\Validation\Rules\AlphaNumeric;
-use Tempest\Validation\Rules\Between;
+use Tempest\Validation\Rules\IsAlphaNumeric;
+use Tempest\Validation\Rules\IsBetween;
+use Tempest\Validation\Validator;
 use Tempest\View\Exceptions\DataAttributeWasInvalid;
 use Tempest\View\Exceptions\ViewVariableWasReserved;
 use Tempest\View\ViewCache;
@@ -214,8 +215,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_view_component_with_injected_view(): void
     {
-        $between = new Between(min: 1, max: 10);
-        $alphaNumeric = new AlphaNumeric();
+        $between = new IsBetween(min: 1, max: 10);
+        $alphaNumeric = new IsAlphaNumeric();
 
         $session = $this->container->get(Session::class);
 
@@ -235,9 +236,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             HTML,
         ));
 
+        $validator = $this->container->get(Validator::class);
+
         $this->assertStringContainsString('value="original name"', $html);
-        $this->assertStringContainsString($between->message(), $html);
-        $this->assertStringContainsString($alphaNumeric->message(), $html);
+        $this->assertStringContainsString($validator->getErrorMessage($between), $html);
+        $this->assertStringContainsString($validator->getErrorMessage($alphaNumeric), $html);
     }
 
     public function test_component_with_if(): void

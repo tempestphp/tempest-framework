@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use DateTime;
 use DateTimeImmutable;
-use Tempest\Validation\Rules\DateTimeFormat;
+use Tempest\Validation\Rules\HasDateTimeFormat;
 
 final class ObjectWithBuiltInCasters
 {
@@ -18,7 +18,7 @@ final class ObjectWithBuiltInCasters
 
     public DateTime $dateTime;
 
-    #[DateTimeFormat('d/m/Y H:i:s')]
+    #[HasDateTimeFormat('d/m/Y H:i:s')]
     public DateTime $dateTimeWithFormat;
 
     public bool $bool;

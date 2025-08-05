@@ -8,12 +8,14 @@ use Closure;
 use Generator;
 use JsonSerializable;
 use PHPUnit\Framework\Assert;
+use Tempest\Container\Container;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
@@ -24,6 +26,7 @@ final class TestResponseHelper
 {
     public function __construct(
         private(set) Response $response,
+        private(set) ?Container $container = null,
     ) {}
 
     public Status $status {
@@ -111,9 +114,9 @@ final class TestResponseHelper
 
     public function assertHasCookie(string $key, ?Closure $callback = null): self
     {
-        $cookies = get(CookieManager::class);
+        $this->assertHasContainer();
 
-        $cookie = $cookies->get($key);
+        $cookie = $this->container->get(CookieManager::class)->get($key);
 
         Assert::assertNotNull($cookie);
 
@@ -126,14 +129,14 @@ final class TestResponseHelper
 
     public function assertHasSession(string $key, ?Closure $callback = null): self
     {
-        /** @var Session $session */
-        $session = get(Session::class);
+        $this->assertHasContainer();
 
+        $session = $this->container->get(Session::class);
         $data = $session->get($key);
 
         Assert::assertNotNull(
-            $data,
-            sprintf(
+            actual: $data,
+            message: sprintf(
                 'No session value was set for [%s], available session keys: %s',
                 $key,
                 implode(', ', array_keys($session->data)),
@@ -149,15 +152,13 @@ final class TestResponseHelper
 
     public function assertHasValidationError(string $key, ?Closure $callback = null): self
     {
-        /** @var Session $session */
-        $session = get(Session::class);
-
+        $session = $this->container->get(Session::class);
         $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
         Assert::assertArrayHasKey(
-            $key,
-            $validationErrors,
-            sprintf(
+            key: $key,
+            array: $validationErrors,
+            message: sprintf(
                 'No validation error was set for [%s], available validation errors: %s',
                 $key,
                 implode(', ', array_keys($validationErrors)),
@@ -173,23 +174,16 @@ final class TestResponseHelper
 
     public function assertHasNoValidationsErrors(): self
     {
-        /** @var Session $session */
-        $session = get(Session::class);
-
+        $session = $this->container->get(Session::class);
         $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
         Assert::assertEmpty(
-            $validationErrors,
-            sprintf(
-                'There should be no validation errors, but there were: %s',
-                arr($validationErrors)
-                    ->map(function (array $failingRules, $key) {
-                        $failingRules = arr($failingRules)->map(fn (Rule $rule) => $rule->message())->implode(', ');
-
-                        return $key . ': ' . $failingRules;
-                    })
-                    ->implode(', '),
-            ),
+            actual: $validationErrors,
+            message: arr($validationErrors)
+                ->map(fn (array $failingRules, string $key) => $key . ': ' . arr($failingRules)->map(fn (Rule $rule) => $rule::class)->implode(', '))
+                ->implode(', ')
+                ->prepend('There should be no validation errors, but there were: ')
+                ->toString(),
         );
 
         return $this;
@@ -200,7 +194,7 @@ final class TestResponseHelper
         $body = $this->body;
 
         if ($body instanceof View) {
-            $body = get(ViewRenderer::class)->render($body);
+            $body = $this->container->get(ViewRenderer::class)->render($body);
         }
 
         Assert::assertStringContainsString($search, $body);
@@ -213,7 +207,7 @@ final class TestResponseHelper
         $body = $this->body;
 
         if ($body instanceof View) {
-            $body = get(ViewRenderer::class)->render($body);
+            $body = $this->container->get(ViewRenderer::class)->render($body);
         }
 
         Assert::assertStringNotContainsString($search, $body);
@@ -436,18 +430,21 @@ final class TestResponseHelper
      */
     public function assertHasJsonValidationErrors(array $expectedErrors): self
     {
+        $this->assertHasContainer();
+
         Assert::assertInstanceOf(Invalid::class, $this->response);
         Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
         Assert::assertNotNull($this->response->getHeader('x-validation'));
 
-        $session = get(Session::class);
+        $session = $this->container->get(Session::class);
+        $validator = $this->container->get(Validator::class);
         $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
 
-        $dottedExpectedErrors = arr($expectedErrors)->dot();
-        arr($dottedExpectedErrors)
+        arr($expectedErrors)
+            ->dot()
             ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
-                $expectedErrorValue,
-                $validationRules->get($expectedErrorKey)->message(),
+                expected: $expectedErrorValue,
+                actual: $validator->getErrorMessage($validationRules->get($expectedErrorKey)),
             ));
 
         return $this;
@@ -478,5 +475,12 @@ final class TestResponseHelper
          * @phpstan-ignore disallowed.function
          */
         dd($this->response); // @mago-expect best-practices/no-debug-symbols
+    }
+
+    private function assertHasContainer(): void
+    {
+        if ($this->container === null) {
+            Assert::fail('This assertion requires a container.');
+        }
     }
 }

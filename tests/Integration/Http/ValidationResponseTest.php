@@ -96,7 +96,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
                 uri([ValidationController::class, 'updateBook'], book: 1),
                 body: ['book' => ['title' => 1]],
             )
-            ->assertHasJsonValidationErrors(['title' => ['Value should be between 1 and 120']]);
+            ->assertHasJsonValidationErrors(['title' => ['Value must be between 1 and 120']]);
 
         $this->assertSame('Timeline Taxi', Book::find(id: 1)->first()->title);
     }

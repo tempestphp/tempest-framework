@@ -19,6 +19,10 @@ use function Tempest\Support\arr;
 
 final readonly class RequestToObjectMapper implements Mapper
 {
+    public function __construct(
+        private Validator $validator,
+    ) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return $from instanceof Request;
@@ -53,10 +57,10 @@ final readonly class RequestToObjectMapper implements Mapper
             ];
         }
 
-        $failingRules = new Validator()->validateValuesForClass($to, $data);
+        $failingRules = $this->validator->validateValuesForClass($to, $data);
 
         if ($failingRules !== []) {
-            throw new ValidationFailed($from, $failingRules);
+            throw $this->validator->createValidationFailureException($failingRules, $from);
         }
 
         return map($data)->with(ArrayToObjectMapper::class)->to($to);

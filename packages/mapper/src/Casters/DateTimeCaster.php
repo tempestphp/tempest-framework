@@ -10,7 +10,7 @@ use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Caster;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\Rules\DateTimeFormat;
+use Tempest\Validation\Rules\HasDateTimeFormat;
 
 final readonly class DateTimeCaster implements Caster
 {
@@ -21,7 +21,7 @@ final readonly class DateTimeCaster implements Caster
     public static function fromProperty(PropertyReflector $property): self
     {
         return new self(
-            $property->getAttribute(DateTimeFormat::class)->format ?? FormatPattern::ISO8601,
+            $property->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::ISO8601,
         );
     }
 

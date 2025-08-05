@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is a boolean or boolean-like value (truthy/falsy).
+ */
 #[Attribute]
-final readonly class IsBoolean implements Rule
+final readonly class IsBoolean implements Rule, HasTranslationVariables
 {
     public function __construct(
         private bool $orNull = false,
@@ -20,11 +24,13 @@ final readonly class IsBoolean implements Rule
             return true;
         }
 
-        return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === true || $value === 'true' || $value === 1 || $value === '1';
+        return new IsTruthy()->isValid($value) || new IsFalsy()->isValid($value);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should represent a boolean value';
+        return [
+            'or_null' => $this->orNull,
+        ];
     }
 }

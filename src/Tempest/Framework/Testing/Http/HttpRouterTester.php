@@ -13,6 +13,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Validation\Validator;
 
 use function Tempest\map;
 
@@ -140,7 +141,8 @@ final class HttpRouterTester
         $this->container->get(RouteConfig::class)->throwHttpExceptions = $this->throwHttpExceptions;
 
         return new TestResponseHelper(
-            $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
+            response: $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
+            container: $this->container,
         );
     }
 

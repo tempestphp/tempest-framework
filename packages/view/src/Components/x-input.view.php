@@ -8,12 +8,16 @@
  */
 
 use Tempest\Http\Session\Session;
+use Tempest\Validation\Validator;
 
 use function Tempest\get;
 use function Tempest\Support\str;
 
 /** @var Session $session */
 $session = get(Session::class);
+
+/** @var Validator $validator */
+$validator = get(Validator::class);
 
 $label ??= str($name)->title();
 $id ??= $name;
@@ -30,9 +34,9 @@ $original = $session->getOriginalValueFor($name, $default);
     <textarea :if="$type === 'textarea'" :name="$name" :id="$id">{{ $original }}</textarea>
     <input :else :type="$type" :name="$name" :id="$id" :value="$original"/>
 
-    <div :if="$errors !== []">
-        <div :foreach="$errors as $error">
-            {{ $error->message() }}
-        </div>
-    </div>
+    <ul :if="$errors !== []">
+        <li :foreach="$errors as $error">
+            {{ $validator->getErrorMessage($error) }}
+        </li>
+    </ul>
 </div>

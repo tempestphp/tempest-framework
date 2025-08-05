@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Fixtures;
 
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 
 final class ObjectToBeValidated
 {
     public function __construct(
-        #[Length(min: 2, max: 3)]
+        #[HasLength(min: 2, max: 3)]
         public string $name,
     ) {}
 }

@@ -6,10 +6,14 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use Stringable;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is a string or stringable object.
+ */
 #[Attribute]
-final readonly class IsString implements Rule
+final readonly class IsString implements Rule, HasTranslationVariables
 {
     public function __construct(
         private bool $orNull = false,
@@ -28,8 +32,10 @@ final readonly class IsString implements Rule
         return is_string($value);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be a string';
+        return [
+            'or_null' => $this->orNull,
+        ];
     }
 }
