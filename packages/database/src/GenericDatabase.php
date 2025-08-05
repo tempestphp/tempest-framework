@@ -59,19 +59,25 @@ final class GenericDatabase implements Database
     {
         $sql = $this->lastQuery->toSql();
 
-        // TODO: properly determine whether a query is an insert or not
         if (! $sql->trim()->startsWith('INSERT')) {
             return null;
         }
 
         if ($this->dialect === DatabaseDialect::POSTGRESQL) {
             $data = $this->lastStatement->fetch(PDO::FETCH_ASSOC);
-            $lastInsertId = $data['id'] ?? null;
-        } else {
-            $lastInsertId = $this->connection->lastInsertId();
+
+            if (! $data) {
+                return null;
+            }
+
+            if ($this->lastQuery->primaryKeyColumn && isset($data[$this->lastQuery->primaryKeyColumn])) {
+                return PrimaryKey::tryFrom($data[$this->lastQuery->primaryKeyColumn]);
+            }
+
+            return null;
         }
 
-        return PrimaryKey::tryFrom($lastInsertId);
+        return PrimaryKey::tryFrom($this->connection->lastInsertId());
     }
 
     public function fetch(BuildsQuery|Query $query): array

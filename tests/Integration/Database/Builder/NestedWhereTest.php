@@ -70,7 +70,6 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
     public function test_complex_nested_where_scenario(): void
     {
-        // Test a realistic complex query:
         // WHERE status = 'published'
         // AND (
         //   (category = 'fiction' AND rating > 4.0)
@@ -115,7 +114,6 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
     public function test_where_group_without_existing_conditions(): void
     {
-        // Test starting with a group
         $query = query('books')
             ->select()
             ->whereGroup(function ($group): void {

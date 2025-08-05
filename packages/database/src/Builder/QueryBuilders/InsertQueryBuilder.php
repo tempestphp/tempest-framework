@@ -49,9 +49,13 @@ final class InsertQueryBuilder implements BuildsQuery
     /**
      * Executes the insert query and returns the primary key of the inserted record.
      */
-    public function execute(mixed ...$bindings): PrimaryKey
+    public function execute(mixed ...$bindings): ?PrimaryKey
     {
         $id = $this->build()->execute(...$bindings);
+
+        if ($id === null) {
+            return null;
+        }
 
         foreach ($this->after as $after) {
             $query = $after($id);
@@ -98,7 +102,11 @@ final class InsertQueryBuilder implements BuildsQuery
             $this->insert->addEntry($data);
         }
 
-        return new Query($this->insert, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
+        return new Query(
+            sql: $this->insert,
+            bindings: [...$this->bindings, ...$bindings],
+            primaryKeyColumn: $this->model->getPrimaryKey(),
+        )->onDatabase($this->onDatabase);
     }
 
     /**
@@ -135,9 +143,7 @@ final class InsertQueryBuilder implements BuildsQuery
 
             // The rest are model objects
             $definition = inspect($model);
-
             $modelClass = new ClassReflector($model);
-
             $entry = [];
 
             // Including all public properties
@@ -152,8 +158,12 @@ final class InsertQueryBuilder implements BuildsQuery
                 }
 
                 $column = $property->getName();
-
                 $value = $property->getValue($model);
+
+                // Skip null primary key values to allow database auto-generation
+                if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
+                    continue;
+                }
 
                 // BelongsTo and reverse HasMany relations are included
                 if ($definition->isRelation($property)) {

@@ -64,8 +64,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $insertedId = $builderWithId->execute();
         $this->assertInstanceOf(PrimaryKey::class, $insertedId);
 
-        $insertedIdWithoutPk = $builderWithoutId->execute();
-        $this->assertInstanceOf(PrimaryKey::class, $insertedIdWithoutPk);
+        $this->assertNull($builderWithoutId->execute());
 
         $retrieved = model(TestUserModel::class)->get($insertedId);
         $this->assertNotNull($retrieved);
