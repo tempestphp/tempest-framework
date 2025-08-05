@@ -2,13 +2,9 @@
 
 namespace Tempest\Http;
 
-/**
- * Represents a message streamed through server-sent events.
- */
-final class ServerSentEvent
+interface ServerSentEvent
 {
-    public function __construct(
-        public mixed $data,
-        public string $event = 'message',
-    ) {}
+    public array $datalines {
+        get;
+    }
 }

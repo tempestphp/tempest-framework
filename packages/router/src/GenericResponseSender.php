@@ -16,6 +16,7 @@ use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
 use Tempest\Http\ServerSentEvent;
+use Tempest\Http\ServerSentMessage;
 use Tempest\Support\Json;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
@@ -119,17 +120,13 @@ final readonly class GenericResponseSender implements ResponseSender
                 break;
             }
 
-            $event = 'message';
-            $data = Json\encode($message);
-
-            if ($message instanceof ServerSentEvent) {
-                $event = $message->event;
-                $data = Json\encode($message->data);
+            if (! ($message instanceof ServerSentEvent)) {
+                $message = new ServerSentMessage(data: $message);
             }
 
-            echo "event: {$event}\n";
-            echo "data: {$data}";
-            echo "\n\n";
+            foreach ($message->datalines as $dataline) {
+                echo $dataline;
+            }
 
             if (ob_get_level() > 0) {
                 ob_flush();

@@ -13,7 +13,7 @@ use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\ServerSentEvent;
+use Tempest\Http\ServerSentMessage;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
 use Tempest\View\ViewRenderer;
@@ -190,8 +190,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     {
         ob_start();
         $response = new EventStream(function () {
-            yield new ServerSentEvent(data: 'hello', event: 'first');
-            yield new ServerSentEvent(data: 'goodbye', event: 'last');
+            yield new ServerSentMessage(data: 'hello', event: 'first');
+            yield new ServerSentMessage(data: 'goodbye', event: 'last');
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
