@@ -17,16 +17,16 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 {
     public function test_model_with_custom_primary_key_name(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateFrierenModelMigration::class);
+        $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
-        $frieren = model(FrierenModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+        $frieren = model(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
-        $this->assertInstanceOf(FrierenModel::class, $frieren);
+        $this->assertInstanceOf(CustomPrimaryKeyUserModel::class, $frieren);
         $this->assertInstanceOf(PrimaryKey::class, $frieren->uuid);
         $this->assertSame('Frieren', $frieren->name);
         $this->assertSame('Time Magic', $frieren->magic);
 
-        $retrieved = model(FrierenModel::class)->get($frieren->uuid);
+        $retrieved = model(CustomPrimaryKeyUserModel::class)->get($frieren->uuid);
         $this->assertNotNull($retrieved);
         $this->assertSame('Frieren', $retrieved->name);
         $this->assertTrue($frieren->uuid->equals($retrieved->uuid));
@@ -34,11 +34,11 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_with_custom_primary_key(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateFrierenModelMigration::class);
+        $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
-        $frieren = model(FrierenModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+        $frieren = model(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
-        $updated = model(FrierenModel::class)->updateOrCreate(
+        $updated = model(CustomPrimaryKeyUserModel::class)->updateOrCreate(
             find: ['name' => 'Frieren'],
             update: ['magic' => 'Advanced Time Magic'],
         );
@@ -67,7 +67,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class FrierenModel
+final class CustomPrimaryKeyUserModel
 {
     public ?PrimaryKey $uuid = null;
 
@@ -95,13 +95,13 @@ final class ModelWithoutId
     ) {}
 }
 
-final class CreateFrierenModelMigration implements DatabaseMigration
+final class CreateCustomPrimaryKeyUserModelTable implements DatabaseMigration
 {
-    public string $name = '001_create_frieren_model';
+    public string $name = '001_create_user_model';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(FrierenModel::class)
+        return CreateTableStatement::forModel(CustomPrimaryKeyUserModel::class)
             ->primary(name: 'uuid')
             ->text('name')
             ->text('magic');

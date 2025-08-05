@@ -18,8 +18,24 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_belongs_to_vs_foreign_key(): void
     {
+        $customersMigration = new class() implements DatabaseMigration {
+            private(set) string $name = '0001_create_customers';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('customers')
+                    ->primary()
+                    ->text('name');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
         $belongsToMigration = new class() implements DatabaseMigration {
-            private(set) string $name = '0001_test_belongs_to';
+            private(set) string $name = '0002_test_belongs_to';
 
             public function up(): QueryStatement
             {
@@ -36,7 +52,7 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
         };
 
         $foreignKeyMigration = new class() implements DatabaseMigration {
-            private(set) string $name = '0002_test_foreign_key';
+            private(set) string $name = '0003_test_foreign_key';
 
             public function up(): QueryStatement
             {
@@ -53,15 +69,31 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $belongsToMigration, $foreignKeyMigration);
+        $this->migrate(CreateMigrationsTable::class, $customersMigration, $belongsToMigration, $foreignKeyMigration);
 
         $this->expectNotToPerformAssertions();
     }
 
     public function test_foreign_key_allows_different_column_names(): void
     {
-        $migration = new class() implements DatabaseMigration {
-            private(set) string $name = '0003_test_different_column_names';
+        $categoriesMigration = new class() implements DatabaseMigration {
+            private(set) string $name = '0001_create_categories';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('categories')
+                    ->primary()
+                    ->text('name');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $productsMigration = new class() implements DatabaseMigration {
+            private(set) string $name = '0002_test_different_column_names';
 
             public function up(): QueryStatement
             {
@@ -78,7 +110,7 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $migration);
+        $this->migrate(CreateMigrationsTable::class, $categoriesMigration, $productsMigration);
 
         $this->expectNotToPerformAssertions();
     }

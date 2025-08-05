@@ -365,8 +365,8 @@ final class CreateCacheEntryMigration implements DatabaseMigration
     public function up(): QueryStatement
     {
         return CreateTableStatement::forModel(CacheEntry::class)
-            ->text('cache_key')
-            ->text('cache_value')
+            ->string('cache_key')
+            ->string('cache_value')
             ->integer('ttl')
             ->unique('cache_key');
     }
