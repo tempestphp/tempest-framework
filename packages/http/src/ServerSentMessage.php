@@ -18,7 +18,7 @@ final class ServerSentMessage implements ServerSentEvent
         get {
             return [
                 "event: {$this->event}\n",
-                "data: " . Json\encode($this->data),
+                'data: ' . Json\encode($this->data),
                 "\n\n",
             ];
         }
