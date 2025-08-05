@@ -155,6 +155,8 @@ final readonly class GenericResponseSender implements ResponseSender
                 echo "data: {$line}\n";
             }
 
+            echo "\n\n";
+
             if (ob_get_level() > 0) {
                 ob_flush();
             }
