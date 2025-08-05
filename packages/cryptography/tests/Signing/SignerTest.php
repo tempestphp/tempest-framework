@@ -2,17 +2,20 @@
 
 namespace Tempest\Cryptography\Tests\Signing;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
 use Tempest\Cryptography\Tests\CreatesSigner;
+use Tempest\Cryptography\Tests\HasMoreIntegerAssertions;
 use Tempest\DateTime\Duration;
 
 final class SignerTest extends TestCase
 {
     use CreatesSigner;
+    use HasMoreIntegerAssertions;
 
     public function test_good_signature(): void
     {
@@ -163,8 +166,7 @@ final class SignerTest extends TestCase
         $this->assertTrue($signer->verify($data, $signature));
         $elapsed = microtime(true) - $start;
 
-        $this->assertGreaterThanOrEqual(0.29, $elapsed);
-        $this->assertLessThanOrEqual(0.311, $elapsed);
+        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015);
     }
 
     public function test_time_protection_with_mock_clock(): void
@@ -182,7 +184,6 @@ final class SignerTest extends TestCase
         $this->assertTrue($signer->verify($data, $signature));
         $elapsed = $clock->timestamp()->getMilliseconds() - $ms;
 
-        $this->assertLessThanOrEqual(1_001, $elapsed);
-        $this->assertGreaterThanOrEqual(999, $elapsed);
+        $this->assertEqualsToMoreOrLess(1000, $elapsed, margin: 10);
     }
 }

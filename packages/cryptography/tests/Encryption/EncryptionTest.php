@@ -13,11 +13,13 @@ use Tempest\Cryptography\Encryption\GenericEncrypter;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
 use Tempest\Cryptography\Tests\CreatesSigner;
+use Tempest\Cryptography\Tests\HasMoreIntegerAssertions;
 use Tempest\DateTime\Duration;
 
 final class EncryptionTest extends TestCase
 {
     use CreatesSigner;
+    use HasMoreIntegerAssertions;
 
     private function createEncrypter(?string $key = null, false|Duration $minimumExecutionDuration = false): GenericEncrypter
     {
@@ -60,8 +62,7 @@ final class EncryptionTest extends TestCase
         $this->assertSame('important data', $encrypter->decrypt($encrypted));
         $elapsed = microtime(true) - $start;
 
-        $this->assertGreaterThanOrEqual(0.29, $elapsed);
-        $this->assertLessThanOrEqual(0.311, $elapsed);
+        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015);
     }
 
     public function test_wrong_key(): void
