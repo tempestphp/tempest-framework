@@ -56,6 +56,43 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
         $this->assertSame(80, $retrievedCharacter->stats->mana);
     }
 
+    public function test_simple_dto_serialization_with_named_arguments(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+            public string $name = '001_simple_character_named_args';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('characters')
+                    ->primary()
+                    ->text('name')
+                    ->json('stats');
+            }
+
+            public function down(): null
+            {
+                return null;
+            }
+        });
+
+        query(Character::class)
+            ->insert(
+                name: 'Fern',
+                stats: new CharacterStats(level: 25, health: 80, mana: 120),
+            )
+            ->execute();
+
+        $retrievedCharacter = query(Character::class)
+            ->select()
+            ->first();
+
+        $this->assertSame('Fern', $retrievedCharacter->name);
+        $this->assertInstanceOf(CharacterStats::class, $retrievedCharacter->stats);
+        $this->assertSame(25, $retrievedCharacter->stats->level);
+        $this->assertSame(80, $retrievedCharacter->stats->health);
+        $this->assertSame(120, $retrievedCharacter->stats->mana);
+    }
+
     public function test_dto_with_enums(): void
     {
         $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {

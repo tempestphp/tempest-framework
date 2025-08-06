@@ -323,7 +323,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
-            $entry[$key] = $value;
+            $entry[$key] = $this->serializeIterableValue($key, $value);
         }
 
         return $entry;
@@ -446,5 +446,37 @@ final class InsertQueryBuilder implements BuildsQuery
         }
 
         return $this->serializerFactory->forProperty($property)?->serialize($value) ?? $value;
+    }
+
+    private function serializeIterableValue(string $key, mixed $value): mixed
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        // Booleans should be handled by the database layer, not by serializers
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        // Only serialize if we have an object model to work with
+        if (! $this->model->isObjectModel()) {
+            return $value;
+        }
+
+        if (! $this->model?->reflector->hasProperty($key)) {
+            return $value;
+        }
+
+        $property = $this->model->reflector->getProperty($key);
+
+        if ($property->getType()->accepts(PrimaryKey::class)) {
+            return $value;
+        }
+
+        return $this->serializeValue(
+            property: $property,
+            value: $value,
+        );
     }
 }
