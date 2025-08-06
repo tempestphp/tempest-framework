@@ -16,8 +16,6 @@ use function Tempest\uri;
 <!--        ERROR!-->
 <!--    --><?php //}
 
-
-
 ?>
 
     <x-form action="<?= uri([FormController::class, 'store']) ?>">
