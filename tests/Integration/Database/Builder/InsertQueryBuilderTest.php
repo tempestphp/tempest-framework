@@ -71,7 +71,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query(Author::class)
             ->insert(
                 $author,
-                ['name' => 'other name', 'type' => AuthorType::B->value, 'publisher_id' => null],
+                ['name' => 'other name', 'type' => AuthorType::B, 'publisher_id' => null],
             )
             ->build();
 
