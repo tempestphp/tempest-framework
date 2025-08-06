@@ -43,7 +43,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     }
 
     /**
-     * Adds an integer column with a foreign key relationship to another table.
+     * Adds an integer column with a foreign key relationship to another table. This is an alias to `foreignId`.
      *
      * **Example**
      * ```php
@@ -70,12 +70,42 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     }
 
     /**
+     * Adds an integer column with a foreign key relationship to another table.
+     *
+     * **Example**
+     * ```php
+     * new CreateTableStatement('orders')
+     *   ->foreignId('customer_id', constrainedOn: 'customers');
+     * ```
+     * ```php
+     * new CreateTableStatement('orders')
+     *   ->foreignId('orders.customer_id', constrainedOn: 'customers.id');
+     * ```
+     *
+     * @param string $local The local column in the format `[this_table.]foreign_id`.
+     * @param string $constrainedOn The foreign table in the format `other_table[.id]`.
+     */
+    public function foreignId(string $local, string $constrainedOn, OnDelete $onDelete = OnDelete::RESTRICT, OnUpdate $onUpdate = OnUpdate::NO_ACTION, bool $nullable = false): self
+    {
+        if (! str_contains($local, '.')) {
+            $local = $this->tableName . '.' . $local;
+        }
+
+        if (! str_contains($constrainedOn, '.')) {
+            $constrainedOn = $constrainedOn . '.id';
+        }
+
+        return $this->belongsTo($local, $constrainedOn, $onDelete, $onUpdate, $nullable);
+    }
+
+    /**
      * Adds a foreign key constraint to another table.
      *
      * **Example**
      * ```php
-     * $table->integer('customer_id', nullable: false);
-     * $table->foreignKey('orders.customer_id', 'customers.id');
+     * new CreateTableStatement('orders')
+     *     ->integer('customer_id', nullable: false)
+     *     ->foreignKey('orders.customer_id', 'customers.id');
      * ```
      *
      * @param string $local The local column in the format `this_table.foreign_id`.

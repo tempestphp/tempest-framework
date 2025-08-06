@@ -73,6 +73,22 @@ final class CreateTableStatementTest extends TestCase
             ->compile($dialect);
 
         $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->primary()
+            ->foreignId('author_id', constrainedOn: 'authors', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->primary()
+            ->foreignId('books.author_id', constrainedOn: 'authors.id', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
     }
 
     public static function provide_fk_create_table_database_drivers(): Generator
