@@ -393,12 +393,26 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
-            if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
+            $propertyName = $property->getName();
+            $value = $property->getValue($model);
+
+            if ($definition->getHasMany($propertyName)) {
+                if (is_iterable($value)) {
+                    $this->addHasManyRelationCallback($propertyName, $value);
+                }
+
                 continue;
             }
 
-            $column = $property->getName();
-            $value = $property->getValue($model);
+            if ($definition->getHasOne($propertyName)) {
+                if (is_object($value) || is_array($value)) {
+                    $this->addHasOneRelationCallback($propertyName, $value);
+                }
+
+                continue;
+            }
+
+            $column = $propertyName;
 
             if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
                 continue;

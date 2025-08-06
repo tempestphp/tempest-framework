@@ -11,6 +11,7 @@ use Tempest\Database\BelongsTo;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
+use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -636,6 +637,36 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 00:00:00', $model->phpDateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 00:00:00', $model->tempestDateTime->format('yyyy-MM-dd HH:mm:ss'));
     }
+
+    public function test_model_create_with_has_many_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTestUserMigration::class,
+            CreateTestPostMigration::class,
+        );
+
+        $user = TestUser::create(
+            name: 'Jon',
+            posts: [
+                new TestPost('hello', 'world'),
+                new TestPost('foo', 'bar'),
+            ],
+        );
+
+        $this->assertSame('Jon', $user->name);
+        $this->assertInstanceOf(PrimaryKey::class, $user->id);
+
+        $posts = TestPost::select()
+            ->where('testuser_id', $user->id->value)
+            ->all();
+
+        $this->assertCount(2, $posts);
+        $this->assertSame('hello', $posts[0]->title);
+        $this->assertSame('world', $posts[0]->body);
+        $this->assertSame('foo', $posts[1]->title);
+        $this->assertSame('bar', $posts[1]->body);
+    }
 }
 
 final class Foo
@@ -982,4 +1013,67 @@ final class ThroughModel
         #[BelongsTo(ownerJoin: 'child2_id')]
         public ?ChildModel $child2 = null,
     ) {}
+}
+
+final class TestUser
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    /** @var \Tests\Tempest\Integration\Database\Builder\TestPost[] */
+    #[HasMany]
+    public array $posts = [];
+
+    public function __construct(
+        public string $name,
+    ) {}
+}
+
+final class TestPost
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $title,
+        public string $body,
+    ) {}
+}
+
+final class CreateTestUserMigration implements DatabaseMigration
+{
+    public string $name = '010_create_test_users';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(TestUser::class)
+            ->primary()
+            ->text('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class CreateTestPostMigration implements DatabaseMigration
+{
+    public string $name = '011_create_test_posts';
+
+    public function up(): QueryStatement
+    {
+        return CreateTableStatement::forModel(TestPost::class)
+            ->primary()
+            ->belongsTo('test_posts.testuser_id', 'test_users.id')
+            ->string('title')
+            ->text('body');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
 }

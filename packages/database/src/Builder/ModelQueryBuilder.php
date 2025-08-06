@@ -241,7 +241,6 @@ final readonly class ModelQueryBuilder
 
         $id = query($this->model)
             ->insert($model)
-            ->build()
             ->execute();
 
         $inspector = inspect($this->model);
