@@ -4,8 +4,6 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
-use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
@@ -26,10 +24,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_insert_on_plain_table(): void
     {
         $query = query('chapters')
-            ->insert(
-                title: 'Chapter 01',
-                index: 1,
-            )
+            ->insert(title: 'Chapter 01', index: 1)
             ->build();
 
         $expected = $this->buildExpectedInsert('INSERT INTO `chapters` (`title`, `index`) VALUES (?, ?)');
@@ -72,11 +67,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_insert_on_model_table(): void
     {
-        $author = new Author(
-            name: 'brent',
-            type: AuthorType::A,
-        );
-
+        $author = new Author(name: 'brent', type: AuthorType::A);
         $query = query(Author::class)
             ->insert(
                 $author,
@@ -94,15 +85,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $book = Book::new(
             title: 'Timeline Taxi',
-            author: Author::new(
-                name: 'Brent',
-            ),
+            author: Author::new(name: 'Brent'),
         );
 
         $bookQuery = query(Book::class)
-            ->insert(
-                $book,
-            )
+            ->insert($book)
             ->build();
 
         $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
@@ -130,9 +117,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         );
 
         $bookQuery = query(Book::class)
-            ->insert(
-                $book,
-            )
+            ->insert($book)
             ->build();
 
         $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
@@ -140,30 +125,6 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->toSql());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
-    }
-
-    public function test_inserting_has_many_via_parent_model_throws_exception(): void
-    {
-        $this->assertException(HasManyRelationCouldNotBeInsterted::class, function (): void {
-            query(Book::class)
-                ->insert(
-                    title: 'Timeline Taxi',
-                    chapters: ['title' => 'Chapter 01'],
-                )
-                ->build();
-        });
-    }
-
-    public function test_inserting_has_one_via_parent_model_throws_exception(): void
-    {
-        $this->assertException(HasOneRelationCouldNotBeInserted::class, function (): void {
-            query(Book::class)
-                ->insert(
-                    title: 'Timeline Taxi',
-                    isbn: ['value' => '979-8344313764'],
-                )
-                ->build();
-        });
     }
 
     public function test_then_method(): void
@@ -218,7 +179,9 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $author = Author::new(name: 'test');
 
-        $query = query(Author::class)->insert($author)->build();
+        $query = query(Author::class)
+            ->insert($author)
+            ->build();
 
         $dialect = $this->container->get(Database::class)->dialect;
 

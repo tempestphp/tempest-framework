@@ -6,17 +6,22 @@ use Closure;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\HasOne;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Intl;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\Support\str;
 
 /**
  * @template TModel of object
@@ -87,15 +92,7 @@ final class InsertQueryBuilder implements BuildsQuery
     public function build(mixed ...$bindings): Query
     {
         foreach ($this->resolveData() as $data) {
-            foreach ($data as $key => $value) {
-                if ($this->model->getHasMany($key)) {
-                    throw new HasManyRelationCouldNotBeInsterted($this->model->getName(), $key);
-                }
-
-                if ($this->model->getHasOne($key)) {
-                    throw new HasOneRelationCouldNotBeInserted($this->model->getName(), $key);
-                }
-
+            foreach ($data as $value) {
                 $bindings[] = $value;
             }
 
@@ -129,72 +126,325 @@ final class InsertQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    private function resolveData(): array
+    private function removeTablePrefix(string $columnName): string
     {
-        $entries = [];
+        return str($columnName)->contains('.')
+            ? str($columnName)->afterLast('.')->toString()
+            : $columnName;
+    }
 
-        foreach ($this->rows as $model) {
-            // Raw entries are straight up added
-            if (is_array($model) || $model instanceof ImmutableArray) {
-                $entries[] = $model;
+    private function getDefaultForeignKeyName(): string
+    {
+        return str($this->model->getName())
+            ->afterLast('\\')
+            ->lower()
+            ->append('_', $this->model->getPrimaryKey())
+            ->toString();
+    }
 
+    private function convertObjectToArray(object $object, array $excludeProperties = []): array
+    {
+        $reflection = new \ReflectionClass($object);
+        $data = [];
+
+        foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            if (! $property->isInitialized($object)) {
                 continue;
             }
 
-            // The rest are model objects
-            $definition = inspect($model);
-            $modelClass = new ClassReflector($model);
-            $entry = [];
+            $propertyName = $property->getName();
 
-            // Including all public properties
-            foreach ($modelClass->getPublicProperties() as $property) {
-                if (! $property->isInitialized($model)) {
-                    continue;
-                }
-
-                // HasMany and HasOne relations are skipped
-                if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
-                    continue;
-                }
-
-                $column = $property->getName();
-                $value = $property->getValue($model);
-
-                // Skip null primary key values to allow database auto-generation
-                if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
-                    continue;
-                }
-
-                // BelongsTo and reverse HasMany relations are included
-                if ($definition->isRelation($property)) {
-                    $relationModel = inspect($property->getType()->asClass());
-                    $primaryKey = $relationModel->getPrimaryKey() ?? 'id';
-                    $column .= '_' . $primaryKey;
-
-                    $value = match (true) {
-                        $value === null => null,
-                        isset($value->{$primaryKey}) => $value->{$primaryKey}->value,
-                        default => new InsertQueryBuilder(
-                            $value::class,
-                            [$value],
-                            $this->serializerFactory,
-                        )->build(),
-                    };
-                }
-
-                // Check if the value needs serialization
-                $serializer = $this->serializerFactory->forProperty($property);
-
-                if ($value !== null && $serializer !== null) {
-                    $value = $serializer->serialize($value);
-                }
-
-                $entry[$column] = $value;
+            if (! in_array($propertyName, $excludeProperties, true)) {
+                $data[$propertyName] = $property->getValue($object);
             }
-
-            $entries[] = $entry;
         }
 
-        return $entries;
+        return $data;
+    }
+
+    private function prepareRelationItem(mixed $item, string $foreignKey, PrimaryKey $parentId): array
+    {
+        if (is_array($item)) {
+            $item[$foreignKey] = $parentId;
+            return $item;
+        }
+
+        if (! is_object($item)) {
+            return [];
+        }
+
+        $foreignKeyProperty = str($foreignKey)->before('_')->toString();
+
+        if (property_exists($item, $foreignKey)) {
+            $item->{$foreignKey} = $parentId;
+            return $this->convertObjectToArray($item);
+        }
+
+        if (property_exists($item, $foreignKeyProperty)) {
+            $data = $this->convertObjectToArray($item, [$foreignKeyProperty]);
+            $data[$foreignKey] = $parentId;
+            return $data;
+        }
+
+        $data = $this->convertObjectToArray($item);
+        $data[$foreignKey] = $parentId;
+
+        return $data;
+    }
+
+    private function addHasManyRelationCallback(string $relationName, array $relations): void
+    {
+        $hasMany = $this->model->getHasMany($relationName);
+
+        if ($hasMany === null) {
+            return;
+        }
+
+        if (! $this->model->hasPrimaryKey()) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($this->model->getName(), 'HasMany');
+        }
+
+        $this->after[] = function (PrimaryKey $parentId) use ($hasMany, $relations) {
+            $foreignKey = $hasMany->ownerJoin
+                ? $this->removeTablePrefix($hasMany->ownerJoin)
+                : $this->getDefaultForeignKeyName();
+
+            $insert = Arr\map_iterable(
+                array: $relations,
+                map: fn ($item) => $this->prepareRelationItem($item, $foreignKey, $parentId),
+            );
+
+            if ($insert === []) {
+                return null;
+            }
+
+            return new InsertQueryBuilder(
+                model: $hasMany->property->getIterableType()->asClass(),
+                rows: $insert,
+                serializerFactory: $this->serializerFactory,
+            );
+        };
+    }
+
+    private function addHasOneRelationCallback(string $relationName, object|iterable $relation): void
+    {
+        $hasOne = $this->model->getHasOne($relationName);
+
+        if ($hasOne === null) {
+            return;
+        }
+
+        $this->after[] = function (PrimaryKey $parentId) use ($hasOne, $relation) {
+            if ($hasOne->ownerJoin) {
+                return $this->handleCustomHasOneRelation($hasOne, $relation, $parentId);
+            }
+
+            return $this->handleStandardHasOneRelation($hasOne, $relation, $parentId);
+        };
+    }
+
+    private function handleCustomHasOneRelation(HasOne $hasOne, object|array $relation, PrimaryKey $parentId): null
+    {
+        $relatedModelId = new InsertQueryBuilder(
+            model: $hasOne->property->getType()->asClass(),
+            rows: [$relation],
+            serializerFactory: $this->serializerFactory,
+        )->execute();
+
+        $ownerModel = inspect($this->model->getName());
+        $foreignKeyColumn = $hasOne->relationJoin ?? $this->removeTablePrefix($hasOne->ownerJoin);
+
+        $updateQuery = sprintf(
+            'UPDATE %s SET %s = ? WHERE %s = ?',
+            $ownerModel->getTableName(),
+            $foreignKeyColumn,
+            $ownerModel->getPrimaryKey(),
+        );
+
+        $query = new Query($updateQuery, [$relatedModelId->value, $parentId->value]);
+        $query->onDatabase($this->onDatabase)->execute();
+
+        return null;
+    }
+
+    private function handleStandardHasOneRelation(HasOne $hasOne, object|array $relation, PrimaryKey $parentId): ?PrimaryKey
+    {
+        $ownerModel = inspect($this->model->getName());
+
+        if (! $ownerModel->hasPrimaryKey()) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($ownerModel->getName(), 'HasOne');
+        }
+
+        // TODO: we might need to bake this into the naming strategy class
+        $foreignKeyColumn = Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+
+        $preparedData = is_array($relation)
+            ? [...$relation, ...[$foreignKeyColumn => $parentId->value]]
+            : [...$this->convertObjectToArray($relation), ...[$foreignKeyColumn => $parentId->value]];
+
+        $relatedModelQuery = new InsertQueryBuilder(
+            model: $hasOne->property->getType()->asClass(),
+            rows: [$preparedData],
+            serializerFactory: $this->serializerFactory,
+        );
+
+        return $relatedModelQuery->execute();
+    }
+
+    private function resolveData(): array
+    {
+        return Arr\map_iterable(
+            array: $this->rows,
+            map: fn (object|iterable $model) => $this->resolveModelData($model),
+        );
+    }
+
+    private function resolveModelData(object|iterable $model): array
+    {
+        return is_iterable($model)
+            ? $this->resolveIterableData($model)
+            : $this->resolveObjectData($model);
+    }
+
+    private function resolveIterableData(iterable $model): array
+    {
+        $entry = [];
+
+        foreach ($model as $key => $value) {
+            if ($this->handleHasManyRelation($key, $value)) {
+                continue;
+            }
+
+            if ($this->handleHasOneRelation($key, $value)) {
+                continue;
+            }
+
+            if ($this->handleBelongsToRelation($key, $value, $entry)) {
+                continue;
+            }
+
+            $entry[$key] = $value;
+        }
+
+        return $entry;
+    }
+
+    private function handleHasManyRelation(string $key, mixed $relations): bool
+    {
+        $hasMany = $this->model->getHasMany($key);
+
+        if ($hasMany === null) {
+            return false;
+        }
+
+        if (! is_iterable($relations)) {
+            throw new HasManyRelationCouldNotBeInsterted($this->model->getName(), $key);
+        }
+
+        $this->addHasManyRelationCallback($key, $relations);
+
+        return true;
+    }
+
+    private function handleHasOneRelation(string $key, mixed $relation): bool
+    {
+        $hasOne = $this->model->getHasOne($key);
+
+        if ($hasOne === null) {
+            return false;
+        }
+
+        if (! is_object($relation) && ! is_array($relation)) {
+            throw new HasOneRelationCouldNotBeInserted($this->model->getName(), $key);
+        }
+
+        $this->addHasOneRelationCallback($key, $relation);
+
+        return true;
+    }
+
+    private function handleBelongsToRelation(string $key, mixed $value, array &$entry): bool
+    {
+        $belongsTo = $this->model->getBelongsTo($key);
+
+        if ($belongsTo === null || ! is_object($value) && ! is_array($value)) {
+            return false;
+        }
+
+        $relatedId = new InsertQueryBuilder(
+            model: $belongsTo->property->getType()->asClass(),
+            rows: [$value],
+            serializerFactory: $this->serializerFactory,
+        )->execute();
+
+        $entry[$belongsTo->getOwnerFieldName()] = $relatedId;
+
+        return true;
+    }
+
+    private function resolveObjectData(object $model): array
+    {
+        $definition = inspect($model);
+        $modelClass = new ClassReflector($model);
+        $entry = [];
+
+        foreach ($modelClass->getPublicProperties() as $property) {
+            if (! $property->isInitialized($model)) {
+                continue;
+            }
+
+            if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
+                continue;
+            }
+
+            $column = $property->getName();
+            $value = $property->getValue($model);
+
+            if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
+                continue;
+            }
+
+            if ($definition->isRelation($property)) {
+                [$column, $value] = $this->resolveRelationProperty($definition, $property, $value);
+            } else {
+                $value = $this->serializeValue($property, $value);
+            }
+
+            $entry[$column] = $value;
+        }
+
+        return $entry;
+    }
+
+    private function resolveRelationProperty(ModelInspector $definition, PropertyReflector $property, mixed $value): array
+    {
+        $relationModel = inspect($property->getType()->asClass());
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if (! $primaryKey) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'BelongsTo');
+        }
+
+        $belongsTo = $definition->getBelongsTo($property->getName());
+        $column = $belongsTo
+            ? $belongsTo->getOwnerFieldName()
+            : ($property->getName() . '_' . $primaryKey);
+
+        $resolvedValue = match (true) {
+            $value === null => null,
+            isset($value->{$primaryKey}) => $value->{$primaryKey}->value,
+            default => new InsertQueryBuilder($value::class, [$value], $this->serializerFactory)->build(),
+        };
+
+        return [$column, $resolvedValue];
+    }
+
+    private function serializeValue(PropertyReflector $property, mixed $value): mixed
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return $this->serializerFactory->forProperty($property)?->serialize($value) ?? $value;
     }
 }

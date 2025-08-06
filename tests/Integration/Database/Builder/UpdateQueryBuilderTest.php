@@ -5,12 +5,14 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
-use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
+use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\Exceptions\UpdateStatementWasInvalid;
+use Tempest\Database\HasMany;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
+use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -184,32 +186,17 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([5, 10], $bookQuery->bindings);
     }
 
-    public function test_update_has_many_relation_via_parent_model_throws_exception(): void
+    public function test_update_has_many_relation_without_primary_key(): void
     {
-        try {
-            query(Book::class)
-                ->update(
-                    title: 'Timeline Taxi',
-                    chapters: ['title' => 'Chapter 01'],
-                )
-                ->build();
-        } catch (HasManyRelationCouldNotBeUpdated $hasManyRelationCouldNotBeUpdated) {
-            $this->assertStringContainsString(Book::class . '::$chapters', $hasManyRelationCouldNotBeUpdated->getMessage());
-        }
-    }
+        $this->expectException(CouldNotUpdateRelation::class);
 
-    public function test_update_has_one_relation_via_parent_model_throws_exception(): void
-    {
-        try {
-            query(Book::class)
-                ->update(
-                    title: 'Timeline Taxi',
-                    isbn: ['value' => '979-8344313764'],
-                )
-                ->build();
-        } catch (HasOneRelationCouldNotBeUpdated $hasOneRelationCouldNotBeUpdated) {
-            $this->assertStringContainsString(Book::class . '::$isbn', $hasOneRelationCouldNotBeUpdated->getMessage());
-        }
+        query(Book::class)
+            ->update(
+                title: 'Timeline Taxi',
+                chapters: [['title' => 'Chapter 01']],
+            )
+            ->allowAll()
+            ->build();
     }
 
     public function test_update_on_plain_table_with_conditions(): void
@@ -331,4 +318,166 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(['other', 1], $query->bindings);
     }
+
+    public function test_update_with_where_in(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereIn('id', [1, 2, 3])
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?,?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_where_not_in(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereNotIn('author_id', [1, 2])
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` NOT IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_where_null(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereNull('author_id')
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` IS NULL';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_where_not_null(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereNotNull('author_id')
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` IS NOT NULL';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_where_between(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereBetween('id', 1, 100)
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_where_not_between(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereNotBetween('id', 1, 10)
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` NOT BETWEEN ? AND ?';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_with_or_where_in(): void
+    {
+        $sql = query('books')
+            ->update(title: 'Updated Book')
+            ->whereIn('id', [1, 2])
+            ->orWhereIn('author_id', [10, 20])
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?,?) OR `books`.`author_id` IN (?,?)';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_update_captures_primary_key_for_relations_with_convenience_where_methods(): void
+    {
+        $sql = query(Book::class)
+            ->update(title: 'Updated Book')
+            ->whereIn('id', [5])
+            ->toSql();
+
+        $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?)';
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_throws_exception_when_relation_update_with_non_primary_key_where(): void
+    {
+        $this->expectException(CouldNotUpdateRelation::class);
+
+        query(TestModelWithRelations::class)
+            ->update(items: [['name' => 'Test Item']])
+            ->where('name', 'some name')
+            ->execute();
+    }
+
+    public function test_throws_exception_when_relation_update_with_whereIn_multiple_values(): void
+    {
+        $this->expectException(CouldNotUpdateRelation::class);
+
+        query(TestModelWithRelations::class)
+            ->update(items: [['name' => 'Test Item']])
+            ->whereIn('id', [1, 2])
+            ->execute();
+    }
+
+    public function test_throws_exception_when_relation_update_with_whereNotIn(): void
+    {
+        $this->expectException(CouldNotUpdateRelation::class);
+
+        query(TestModelWithRelations::class)
+            ->update(items: [['name' => 'Test Item']])
+            ->whereNotIn('id', [999])
+            ->execute();
+    }
+
+    public function test_throws_exception_when_relation_update_with_whereBetween(): void
+    {
+        $this->expectException(CouldNotUpdateRelation::class);
+
+        query(TestModelWithRelations::class)
+            ->update(items: [['name' => 'Test Item']])
+            ->whereBetween('id', 1, 10)
+            ->execute();
+    }
+
+    public function test_throws_exception_when_relation_update_with_whereNot(): void
+    {
+        $this->expectException(CouldNotUpdateRelation::class);
+
+        query(TestModelWithRelations::class)
+            ->update(items: [['name' => 'Test Item']])
+            ->whereNot('id', 999)
+            ->execute();
+    }
+}
+
+#[Table('test_models')]
+final class TestModelWithRelations
+{
+    use IsDatabaseModel;
+
+    public PrimaryKey $id;
+
+    #[HasMany]
+    public array $items = [];
+
+    public function __construct(
+        public string $name = '',
+    ) {}
 }
