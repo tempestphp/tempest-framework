@@ -27,12 +27,12 @@ final readonly class EncryptedData implements Stringable
             'algorithm' => $this->algorithm->value,
         ];
 
-        return base64_encode(Json\encode($data));
+        return Json\encode($data, base64: true);
     }
 
     public static function unserialize(string $data): self
     {
-        $decoded = Json\decode(base64_decode($data, strict: true));
+        $decoded = Json\decode($data, base64: true);
 
         if (! is_array($decoded) || ! isset($decoded['payload'], $decoded['iv'], $decoded['tag'], $decoded['signature'], $decoded['algorithm'])) {
             throw EncryptedDataWasInvalid::dueToInvalidFormat();

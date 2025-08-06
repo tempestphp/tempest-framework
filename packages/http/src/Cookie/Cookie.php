@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Cookie;
 
+use InvalidArgumentException;
 use Stringable;
 use Tempest\DateTime\DateTimeInterface;
 
@@ -31,6 +32,14 @@ final class Cookie implements Stringable
         public bool $httpOnly = false,
         public ?SameSite $sameSite = null,
     ) {}
+
+    public function withValue(string $value): self
+    {
+        $clone = clone $this;
+        $clone->value = $value;
+
+        return $clone;
+    }
 
     public function __toString(): string
     {
@@ -77,5 +86,50 @@ final class Cookie implements Stringable
         }
 
         return null;
+    }
+
+    /**
+     * Creates acookie from the `Set-Cookie` header.
+     */
+    public static function createFromString(string $string): self
+    {
+        if (! ($attributes = preg_split('/\s*;\s*/', $string, -1, PREG_SPLIT_NO_EMPTY))) {
+            throw new InvalidArgumentException(sprintf('The raw value of the `Set Cookie` header `%s` could not be parsed.', $string));
+        }
+
+        $nameAndValue = explode('=', array_shift($attributes), 2);
+        $cookie = ['name' => $nameAndValue[0], 'value' => isset($nameAndValue[1]) ? urldecode($nameAndValue[1]) : ''];
+
+        while ($attribute = array_shift($attributes)) {
+            $attribute = explode('=', $attribute, 2);
+            $attributeName = strtolower($attribute[0]);
+            $attributeValue = $attribute[1] ?? null;
+
+            if (in_array($attributeName, ['expires', 'domain', 'path', 'samesite'], true)) {
+                $cookie[$attributeName] = $attributeValue;
+                continue;
+            }
+
+            if (in_array($attributeName, ['secure', 'httponly'], true)) {
+                $cookie[$attributeName] = true;
+                continue;
+            }
+
+            if ($attributeName === 'max-age') {
+                $cookie['expires'] = time() + ((int) $attributeValue);
+            }
+        }
+
+        return new Cookie(
+            key: $cookie['name'],
+            value: $cookie['value'] ?? null,
+            expiresAt: isset($cookie['expires']) ? ((int) $cookie['expires']) : null,
+            maxAge: isset($cookie['max-age']) ? ((int) $cookie['max-age']) : null,
+            domain: $cookie['domain'] ?? null,
+            path: $cookie['path'] ?? '/',
+            secure: isset($cookie['secure']) && $cookie['secure'] === true,
+            httpOnly: isset($cookie['httponly']) && $cookie['httponly'] === true,
+            sameSite: isset($cookie['samesite']) ? SameSite::from($cookie['samesite']) : null,
+        );
     }
 }
