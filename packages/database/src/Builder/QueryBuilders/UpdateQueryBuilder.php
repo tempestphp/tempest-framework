@@ -184,9 +184,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             return $this->resolveRelationValue($property, $column, $value);
         }
 
-        if (! $property->getType()->isRelation() && ! $property->getIterableType()?->isRelation()) {
-            $value = $this->serializeValue($property, $value);
-        }
+        $value = $this->serializeValue($property, $value);
 
         return [$column, $value];
     }
