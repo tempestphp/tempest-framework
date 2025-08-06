@@ -39,6 +39,7 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
             'db.stg.config.php',
             'db.prd.config.php',
             'db.test.config.php',
+            'db.testing.config.php',
             'db.production.config.php',
         ]);
 
@@ -50,6 +51,7 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('db.production.config.php', $config[3]);
         $this->assertStringContainsString('db.local.config.php', $config[4]);
         $this->assertStringContainsString('db.test.config.php', $config[5]);
+        $this->assertStringContainsString('db.testing.config.php', $config[6]);
     }
 
     public function test_non_production_configs_are_discarded_in_production(): void

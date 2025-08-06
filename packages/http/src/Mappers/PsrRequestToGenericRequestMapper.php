@@ -6,6 +6,7 @@ namespace Tempest\Http\Mappers;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Psr\Http\Message\UploadedFileInterface;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -19,6 +20,10 @@ use function Tempest\Support\arr;
 
 final readonly class PsrRequestToGenericRequestMapper implements Mapper
 {
+    public function __construct(
+        private readonly Encrypter $encrypter,
+    ) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return false;
@@ -55,7 +60,13 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            'cookies' => Arr\map_iterable($_COOKIE, static fn (string $value, string $key) => new Cookie($key, $value)),
+            'cookies' => Arr\map_iterable(
+                array: $_COOKIE,
+                map: fn (string $value, string $key) => new Cookie(
+                    key: $key,
+                    value: $this->encrypter->decrypt($value),
+                ),
+            ),
         ])
             ->to(GenericRequest::class);
     }

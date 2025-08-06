@@ -22,6 +22,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $cookies = $this->container->get(CookieManager::class);
 
         $this->assertNull($cookies->get('existing'));
+
+        unset($_COOKIE['existing']);
     }
 
     public function test_creating_a_cookie(): void
@@ -29,13 +31,13 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->container->get(AppConfig::class)->baseUri = 'https://test.com';
 
         $cookies = $this->container->get(CookieManager::class);
-
         $cookies->set('new', 'value');
 
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=value; Path=/; Secure; HttpOnly; SameSite=Lax');
+            ->assertHeaderMatches('set-cookie', 'new=%s; Path=/; Secure; HttpOnly; SameSite=Lax')
+            ->assertHasCookie('new', 'value');
     }
 
     public function test_creating_a_cookie_with_unsecure_local_host(): void
@@ -43,19 +45,18 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->container->get(AppConfig::class)->baseUri = 'http://test.com';
 
         $cookies = $this->container->get(CookieManager::class);
-
         $cookies->set('new', 'value');
 
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=value; Path=/; HttpOnly; SameSite=Lax');
+            ->assertHeaderMatches('set-cookie', 'new=%s; Path=/; HttpOnly; SameSite=Lax')
+            ->assertHasCookie('new', 'value');
     }
 
     public function test_removing_a_cookie(): void
     {
         $cookies = $this->container->get(CookieManager::class);
-
         $cookies->remove('new');
 
         $this->http
@@ -83,6 +84,6 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'key=value; Expires=Sun, 01-Jan-2023 00:00:01 GMT; Max-Age=1; Domain=test.com; Path=/test; Secure; HttpOnly; SameSite=Strict');
+            ->assertHeaderMatches('set-cookie', 'key=%s; Expires=Sun, 01-Jan-2023 00:00:01 GMT; Max-Age=1; Domain=test.com; Path=/test; Secure; HttpOnly; SameSite=Strict');
     }
 }
