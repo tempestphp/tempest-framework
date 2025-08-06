@@ -144,6 +144,13 @@ trait HasConsole
         return $this;
     }
 
+    public function header(string $header, ?string $subheader = null): self
+    {
+        $this->console->header($header, $subheader);
+
+        return $this;
+    }
+
     public function task(string $label, null|Process|Closure $handler): bool
     {
         return $this->console->task($label, $handler);

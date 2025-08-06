@@ -94,6 +94,41 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function isPast(): bool;
 
     /**
+     * Alias for {@see before()}. Checks if this temporal object is before the given one.
+     */
+    public function isBefore(TemporalInterface $other): bool;
+
+    /**
+     * Alias for {@see after()}. Checks if this temporal object is after the given one.
+     */
+    public function isAfter(TemporalInterface $other): bool;
+
+    /**
+     * Alias for {@see beforeOrAtTheSameTime()}. Checks if this temporal object is before or at the same time as the given one.
+     */
+    public function isBeforeOrAt(TemporalInterface $other): bool;
+
+    /**
+     * Alias for {@see afterOrAtTheSameTime()}. Checks if this temporal object is after or at the same time as the given one.
+     */
+    public function isAfterOrAt(TemporalInterface $other): bool;
+
+    /**
+     * Alias for {@see betweenTimeInclusive()}. Checks if this temporal object is between the given times (inclusive).
+     */
+    public function isBetween(TemporalInterface $a, TemporalInterface $b): bool;
+
+    /**
+     * Alias for {@see betweenTimeExclusive()}. Checks if this temporal object is between the given times (exclusive).
+     */
+    public function isBetweenExclusive(TemporalInterface $a, TemporalInterface $b): bool;
+
+    /**
+     * Alias for {@see equals()}. Checks if this temporal object represents the same time as the given one.
+     */
+    public function isSameTime(TemporalInterface $other): bool;
+
+    /**
      * Adds the specified duration to this temporal object, returning a new instance with the added duration.
      *
      * @throws Exception\UnderflowException If adding the duration results in an arithmetic underflow.

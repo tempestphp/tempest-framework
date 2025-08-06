@@ -7,6 +7,8 @@ namespace Tempest\Router\Commands;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Router\Stubs\ControllerStub;
 
@@ -38,6 +40,9 @@ final class MakeControllerCommand
             replacements: [
                 'dummy-path' => $controllerPath,
                 'dummy-view' => $controllerView,
+            ],
+            manipulations: [
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

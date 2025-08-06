@@ -5,34 +5,35 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
-use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\FieldStatement;
+use Tempest\Database\QueryStatements\GroupByStatement;
+use Tempest\Database\QueryStatements\HasWhereStatements;
+use Tempest\Database\QueryStatements\HavingStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
-use UnitEnum;
+use Tempest\Support\Paginator\PaginatedData;
+use Tempest\Support\Paginator\Paginator;
 
 use function Tempest\Database\model;
 use function Tempest\map;
 
 /**
- * @template TModelClass of object
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
-
-    /** @var class-string<TModelClass> $modelClass */
-    private readonly string $modelClass;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private ModelInspector $model;
 
@@ -44,10 +45,12 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
+    /**
+     * @param class-string<T>|string|T $model
+     */
     public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
-        $this->modelClass = is_object($model) ? $model::class : $model;
-        $this->model = model($this->modelClass);
+        $this->model = model($model);
 
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
@@ -57,9 +60,7 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return T|null */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -70,7 +71,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         $result = map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
 
         if ($result === []) {
             return null;
@@ -79,15 +80,30 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /**
-     * @return TModelClass|null
-     */
+    /** @return PaginatedData<T> */
+    public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
+    {
+        $total = new CountQueryBuilder($this->model->model)->execute();
+
+        $paginator = new Paginator(
+            totalItems: $total,
+            itemsPerPage: $itemsPerPage,
+            currentPage: $currentPage,
+            maxLinks: $maxLinks,
+        );
+
+        return $paginator->paginateWith(
+            callback: fn (int $limit, int $offset) => $this->limit($limit)->offset($offset)->all(),
+        );
+    }
+
+    /** @return T|null */
     public function get(Id $id): mixed
     {
         return $this->whereField('id', $id)->first();
     }
 
-    /** @return TModelClass[] */
+    /** @return T[] */
     public function all(mixed ...$bindings): array
     {
         $query = $this->build(...$bindings);
@@ -98,11 +114,11 @@ final class SelectQueryBuilder implements BuildsQuery
 
         return map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->to($this->modelClass);
+            ->to($this->model->getName());
     }
 
     /**
-     * @param Closure(TModelClass[] $models): void $closure
+     * @param Closure(T[] $models): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
@@ -120,38 +136,7 @@ final class SelectQueryBuilder implements BuildsQuery
         } while ($data !== []);
     }
 
-    /** @return self<TModelClass> */
-    public function where(string $where, mixed ...$bindings): self
-    {
-        $this->select->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
-    public function andWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("AND {$where}", ...$bindings);
-    }
-
-    public function orWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("OR {$where}", ...$bindings);
-    }
-
-    /** @return self<TModelClass> */
-    public function whereField(string $field, mixed $value): self
-    {
-        $field = new FieldDefinition(
-            $this->model->getTableDefinition(),
-            $field,
-        );
-
-        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
-    }
-
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function orderBy(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
@@ -159,7 +144,25 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
+    public function groupBy(string $statement): self
+    {
+        $this->select->groupBy[] = new GroupByStatement($statement);
+
+        return $this;
+    }
+
+    /** @return self<T> */
+    public function having(string $statement, mixed ...$bindings): self
+    {
+        $this->select->having[] = new HavingStatement($statement);
+
+        $this->bind(...$bindings);
+
+        return $this;
+    }
+
+    /** @return self<T> */
     public function limit(int $limit): self
     {
         $this->select->limit = $limit;
@@ -167,7 +170,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function offset(int $offset): self
     {
         $this->select->offset = $offset;
@@ -175,7 +178,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function join(string ...$joins): self
     {
         $this->joins = [...$this->joins, ...$joins];
@@ -183,7 +186,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
@@ -191,7 +194,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function raw(string $raw): self
     {
         $this->select->raw[] = new RawStatement($raw);
@@ -199,7 +202,7 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -237,7 +240,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
-        $definition = model($this->modelClass);
+        $definition = model($this->model->getName());
 
         if (! $definition->isObjectModel()) {
             return [];
@@ -256,5 +259,15 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return $relations;
+    }
+
+    private function getStatementForWhere(): HasWhereStatements
+    {
+        return $this->select;
+    }
+
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }

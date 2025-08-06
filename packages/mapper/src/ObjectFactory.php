@@ -127,7 +127,7 @@ final class ObjectFactory
             return $this->from;
         }
 
-        if (is_string($this->from) && Json\is_valid($this->from)) {
+        if (Json\is_valid($this->from)) {
             return $this->with(JsonToArrayMapper::class)->do();
         }
 

@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\Parser\Token;
+use Tempest\View\WithToken;
 
 use function Tempest\Support\Html\is_void_tag;
-use function Tempest\Support\str;
 
-final class GenericElement implements Element
+final class GenericElement implements Element, WithToken
 {
     use IsElement;
 
     public function __construct(
+        public readonly Token $token,
         private readonly string $tag,
         array $attributes,
     ) {
@@ -49,11 +51,6 @@ final class GenericElement implements Element
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;
-            $attributes = str_replace(
-                ['?> <?php', '?> <?='],
-                ['?><?php', '?><?='],
-                $attributes,
-            );
         }
 
         // Void elements

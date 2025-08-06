@@ -7,16 +7,13 @@ namespace Tempest\View\Elements;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Attributes\PhpAttribute;
-use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
-use Tempest\View\ViewComponent;
+use Tempest\View\Slot;
 use Tempest\View\ViewConfig;
-
-use function Tempest\Support\str;
 
 final class ElementFactory
 {
@@ -65,7 +62,7 @@ final class ElementFactory
         }
 
         if (! $token->tag || $token->type === TokenType::COMMENT || $token->type === TokenType::PHP) {
-            return new RawElement(tag: null, content: $token->compile());
+            return new RawElement(token: $token, tag: null, content: $token->compile());
         }
 
         $attributes = $token->htmlAttributes;
@@ -76,6 +73,7 @@ final class ElementFactory
 
         if ($token->tag === 'code' || $token->tag === 'pre') {
             return new RawElement(
+                token: $token,
                 tag: $token->tag,
                 content: $token->compileChildren(),
                 attributes: $attributes,
@@ -83,16 +81,8 @@ final class ElementFactory
         }
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
-            if ($token->getAttribute('is') || $token->getAttribute(':is')) {
-                $viewComponentClass = $this->container->get(DynamicViewComponent::class);
-                $viewComponentClass->setToken($token);
-            }
-
-            if (! ($viewComponentClass instanceof ViewComponent)) {
-                $viewComponentClass = $this->container->get($viewComponentClass);
-            }
-
             $element = new ViewComponentElement(
+                token: $token,
                 environment: $this->appConfig->environment,
                 compiler: $this->compiler,
                 viewComponent: $viewComponentClass,
@@ -100,15 +90,18 @@ final class ElementFactory
             );
         } elseif ($token->tag === 'x-template') {
             $element = new TemplateElement(
+                token: $token,
                 attributes: $attributes,
             );
         } elseif ($token->tag === 'x-slot') {
             $element = new SlotElement(
-                name: $token->getAttribute('name') ?? 'slot',
+                token: $token,
+                name: $token->getAttribute('name') ?? Slot::DEFAULT,
                 attributes: $attributes,
             );
         } else {
             $element = new GenericElement(
+                token: $token,
                 tag: $token->tag,
                 attributes: $attributes,
             );

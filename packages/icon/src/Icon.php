@@ -7,7 +7,6 @@ use Tempest\EventBus\EventBus;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
-use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\Support\Str\ImmutableString;
 

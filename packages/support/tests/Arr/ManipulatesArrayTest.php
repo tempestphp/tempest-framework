@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Arr\MapWithKeysDidNotUseAGenerator;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -1805,5 +1806,42 @@ final class ManipulatesArrayTest extends TestCase
     public function test_partition(): void
     {
         $this->assertSame([[true, true], [false]], arr([true, true, false])->partition(fn (bool $value) => $value === true)->toArray());
+    }
+
+    public function test_json_encode(): void
+    {
+        $data = ['name' => 'tempest', 'version' => '1.0', 'tags' => ['php', 'framework']];
+        $result = arr($data)->encodeJson();
+
+        $this->assertInstanceOf(ImmutableString::class, $result);
+        $this->assertSame('{"name":"tempest","version":"1.0","tags":["php","framework"]}', $result->toString());
+    }
+
+    public function test_json_encode_pretty(): void
+    {
+        $data = ['name' => 'tempest', 'version' => '1.0'];
+        $result = arr($data)->encodeJson(pretty: true);
+
+        $this->assertInstanceOf(ImmutableString::class, $result);
+        $this->assertStringContainsString("{\n", $result->toString());
+        $this->assertStringContainsString('"name": "tempest"', $result->toString());
+        $this->assertStringContainsString('"version": "1.0"', $result->toString());
+    }
+
+    public function test_json_encode_array(): void
+    {
+        $data = ['php', 'framework', 'tempest'];
+        $result = arr($data)->encodeJson();
+
+        $this->assertInstanceOf(ImmutableString::class, $result);
+        $this->assertSame('["php","framework","tempest"]', $result->toString());
+    }
+
+    public function test_json_encode_empty_array(): void
+    {
+        $result = arr([])->encodeJson();
+
+        $this->assertInstanceOf(ImmutableString::class, $result);
+        $this->assertSame('[]', $result->toString());
     }
 }

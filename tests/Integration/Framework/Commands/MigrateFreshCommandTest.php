@@ -26,8 +26,7 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call(MigrateFreshCommand::class)
-            ->assertContains('DROPPING')
-            ->assertNotSee('There is no migration to drop')
+            ->assertContains('MIGRATED')
             ->assertSuccess();
 
         Assert::assertNotEmpty(Migration::all());
@@ -46,7 +45,6 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(MigrateFreshCommand::class)
-            ->assertContains('Migration files are valid')
             ->assertExitCode(ExitCode::SUCCESS);
 
         $migrations = Migration::all();
@@ -56,25 +54,29 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
         }
 
         $this->console
-            ->call(MigrateFreshCommand::class)
+            ->call(MigrateFreshCommand::class, ['--validate'])
             ->assertExitCode(ExitCode::INVALID);
     }
 
-    public function test_migrate_fresh_command_skips_validation_and_runs_if_specified(): void
+    public function test_migrate_fresh_command_skips_validation_by_default(): void
     {
         $this->console
             ->call(MigrateFreshCommand::class)
-            ->assertContains('Migration files are valid')
             ->assertExitCode(ExitCode::SUCCESS);
 
         $migrations = Migration::all();
+
         foreach ($migrations as $migration) {
             $migration->hash = 'invalid-hash';
             $migration->save();
         }
 
         $this->console
-            ->call('migrate:fresh --no-validate')
+            ->call('migrate:fresh --validate')
+            ->assertExitCode(ExitCode::INVALID);
+
+        $this->console
+            ->call('migrate:fresh')
             ->assertExitCode(ExitCode::SUCCESS);
     }
 }

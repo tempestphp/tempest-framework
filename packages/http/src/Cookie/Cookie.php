@@ -12,22 +12,30 @@ use Tempest\DateTime\DateTimeInterface;
  */
 final class Cookie implements Stringable
 {
+    /**
+     * @param null|int $maxAge The maximum age of the cookie in seconds. This is an alternative to the expiration date. If set, the cookie will expire after the specified number of seconds.
+     * @param null|string $domain This specifies the domain for which the cookie is valid. If set, the cookie will be sent to this domain and its subdomains. If `⁠null`, it defaults to the current domain.
+     * @param null|string $path The URL path that must exist in the requested URL for the cookie to be sent. If set, the cookie will only be sent for requests to this path and its subdirectories.
+     * @param null|bool $secure When `true`, this cookie is only transmitted over secure connections.
+     * @param null|bool $httpOnly When `true`, this cookie will not be accessible using JavaScript.
+     * @param null|SameSite $sameSite See {@see \Tempest\Http\Cookie\SameSite}.
+     */
     public function __construct(
         public string $key,
-        public string $value = '',
+        public ?string $value = null,
         public DateTimeInterface|int|null $expiresAt = null,
         public ?int $maxAge = null,
         public ?string $domain = null,
-        public ?string $path = null,
-        public ?bool $secure = null,
-        public ?bool $httpOnly = null,
+        public ?string $path = '/',
+        public bool $secure = false,
+        public bool $httpOnly = false,
         public ?SameSite $sameSite = null,
     ) {}
 
     public function __toString(): string
     {
         $parts = [
-            $this->key . '=' . rawurlencode($this->value),
+            $this->key . '=' . rawurlencode($this->value ?? ''),
         ];
 
         if ($expiresAt = $this->getExpiresAtTime()) {

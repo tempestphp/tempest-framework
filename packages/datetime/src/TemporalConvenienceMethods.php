@@ -116,6 +116,62 @@ trait TemporalConvenienceMethods
         return $ca !== Comparison\Order::EQUAL && $cb !== Comparison\Order::EQUAL && $ca !== $cb;
     }
 
+    /**
+     * Alias for {@see before()}. Checks if this temporal object is before the given one.
+     */
+    public function isBefore(TemporalInterface $other): bool
+    {
+        return $this->before($other);
+    }
+
+    /**
+     * Alias for {@see after()}. Checks if this temporal object is after the given one.
+     */
+    public function isAfter(TemporalInterface $other): bool
+    {
+        return $this->after($other);
+    }
+
+    /**
+     * Alias for {@see beforeOrAtTheSameTime()}. Checks if this temporal object is before or at the same time as the given one.
+     */
+    public function isBeforeOrAt(TemporalInterface $other): bool
+    {
+        return $this->beforeOrAtTheSameTime($other);
+    }
+
+    /**
+     * Alias for {@see afterOrAtTheSameTime()}. Checks if this temporal object is after or at the same time as the given one.
+     */
+    public function isAfterOrAt(TemporalInterface $other): bool
+    {
+        return $this->afterOrAtTheSameTime($other);
+    }
+
+    /**
+     * Alias for {@see betweenTimeInclusive()}. Checks if this temporal object is between the given times (inclusive).
+     */
+    public function isBetween(TemporalInterface $a, TemporalInterface $b): bool
+    {
+        return $this->betweenTimeInclusive($a, $b);
+    }
+
+    /**
+     * Alias for {@see betweenTimeExclusive()}. Checks if this temporal object is between the given times (exclusive).
+     */
+    public function isBetweenExclusive(TemporalInterface $a, TemporalInterface $b): bool
+    {
+        return $this->betweenTimeExclusive($a, $b);
+    }
+
+    /**
+     * Alias for {@see equals()}. Checks if this temporal object represents the same time as the given one.
+     */
+    public function isSameTime(TemporalInterface $other): bool
+    {
+        return $this->equals($other);
+    }
+
     public function isFuture(): bool
     {
         return $this->after(Timestamp::now());
@@ -501,10 +557,12 @@ trait TemporalConvenienceMethods
 
     /**
      * Stops the execution and dumps the current state of this temporal object.
+     *
+     * @phpstan-ignore disallowed.function
+     * @mago-expect best-practices/no-debug-symbols
      */
     public function dd(): void
     {
-        // @phpstan-ignore disallowed.function
-        dd($this); // @mago-expect best-practices/no-debug-symbols
+        dd($this);
     }
 }

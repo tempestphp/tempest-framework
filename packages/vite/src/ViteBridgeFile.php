@@ -8,5 +8,6 @@ final readonly class ViteBridgeFile
 {
     public function __construct(
         public string $url,
+        public bool $needsReactRefresh = false,
     ) {}
 }

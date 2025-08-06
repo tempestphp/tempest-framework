@@ -8,20 +8,16 @@ use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\AppConfig;
 
 final readonly class CookieManagerInitializer implements Initializer
 {
     #[Singleton]
     public function initialize(Container $container): CookieManager
     {
-        $cookieManager = new CookieManager(
+        return new CookieManager(
+            appConfig: $container->get(AppConfig::class),
             clock: $container->get(Clock::class),
         );
-
-        foreach ($_COOKIE as $key => $value) {
-            $cookieManager->add(new Cookie($key, $value));
-        }
-
-        return $cookieManager;
     }
 }

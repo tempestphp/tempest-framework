@@ -23,7 +23,7 @@ final class StdinInputStream implements InputStream
             ->mapWithKeys(function (string $item) {
                 $parts = explode('=', $item, 2);
 
-                $key = $parts[0];
+                $key = urldecode($parts[0]);
 
                 $value = $_POST[str_replace('.', '_', $key)] ?? $parts[1] ?? '';
 

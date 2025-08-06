@@ -4,12 +4,18 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
+use Tempest\Mapper\MapperConfig;
+use Tempest\Support\Arr;
 use Tempest\Support\Json;
 
 use function Tempest\map;
 
-final class DtoCaster implements Caster
+final readonly class DtoCaster implements Caster
 {
+    public function __construct(
+        private MapperConfig $mapperConfig,
+    ) {}
+
     public function cast(mixed $input): mixed
     {
         if (! Json\is_valid($input)) {
@@ -18,6 +24,8 @@ final class DtoCaster implements Caster
 
         ['type' => $type, 'data' => $data] = Json\decode($input);
 
-        return map($data)->to($type);
+        $class = Arr\find_key($this->mapperConfig->serializationMap, $type) ?: $type;
+
+        return map($data)->to($class);
     }
 }

@@ -6,11 +6,13 @@ namespace Tempest\Http\Mappers;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Psr\Http\Message\UploadedFileInterface;
+use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\RequestHeaders;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Mapper;
+use Tempest\Support\Arr;
 
 use function Tempest\map;
 use function Tempest\Support\arr;
@@ -53,6 +55,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
+            'cookies' => Arr\map_iterable($_COOKIE, static fn (string $value, string $key) => new Cookie($key, $value)),
             ...$data,
             ...$uploads,
         ])

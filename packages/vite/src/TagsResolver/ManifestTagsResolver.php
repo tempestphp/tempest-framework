@@ -177,10 +177,16 @@ final readonly class ManifestTagsResolver implements TagsResolver
             return $assets;
         };
 
-        $assets = Json\encode(array_values(array_map(
+        $assets = array_values(array_map(
             callback: fn (array $asset) => array_map('strval', $asset),
             array: array_unique($findPrefetchableAssets($chunk), flags: SORT_REGULAR),
-        )));
+        ));
+
+        if (count($assets) === 0) {
+            return null;
+        }
+
+        $assets = Json\encode($assets);
 
         $script = match ($this->viteConfig->prefetching->strategy) {
             PrefetchStrategy::AGGRESSIVE => <<<JS
@@ -191,7 +197,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
                         return link
                     }
 
-                    const fragment = new DocumentFragment()
+                    const fragment = new DocumentFragment();
                     {$assets}.forEach((asset) => fragment.append(makeLink(asset)))
                     document.head.append(fragment)
                 }))

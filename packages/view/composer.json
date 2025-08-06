@@ -9,7 +9,8 @@
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",
         "tempest/clock": "dev-main",
-        "symfony/cache": "^7.2"
+        "league/commonmark": "^2.7",
+        "symfony/cache": "^7.3"
     },
     "autoload": {
         "files": [

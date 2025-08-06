@@ -62,14 +62,14 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `authors`
-            WHERE `id` = :id
+            WHERE `authors`.`id` = ?
             SQL,
             $query->toSql(),
         );
 
         $this->assertSame(
             10,
-            $query->bindings['id']->id,
+            $query->bindings[0],
         );
     }
 
@@ -115,5 +115,43 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $count = query('authors')->count()->where('id = ?', 1)->execute();
 
         $this->assertSame(0, $count);
+    }
+
+    public function test_multiple_where(): void
+    {
+        $sql = query('books')
+            ->delete()
+            ->where('title = ?', 'a')
+            ->where('author_id = ?', 1)
+            ->where('OR author_id = ?', 2)
+            ->where('AND author_id <> NULL')
+            ->toSql();
+
+        $expected = <<<SQL
+        DELETE FROM `books`
+        WHERE title = ?
+        AND author_id = ?
+        OR author_id = ?
+        AND author_id <> NULL
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_multiple_where_field(): void
+    {
+        $sql = query('books')
+            ->delete()
+            ->whereField('title', 'a')
+            ->whereField('author_id', 1)
+            ->toSql();
+
+        $expected = <<<SQL
+        DELETE FROM `books`
+        WHERE books.title = ?
+        AND books.author_id = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 }

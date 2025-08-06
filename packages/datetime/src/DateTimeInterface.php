@@ -402,6 +402,216 @@ interface DateTimeInterface extends TemporalInterface
     public function minusDays(int $days): static;
 
     /**
+     * Returns a new instance set to midnight of the same day.
+     */
+    public function startOfDay(): static;
+
+    /**
+     * Returns a new instance set to the end of the day.
+     */
+    public function endOfDay(): static;
+
+    /**
+     * Returns a new instance set to the start of the week.
+     */
+    public function startOfWeek(): static;
+
+    /**
+     * Returns a new instance set to the end of the week.
+     */
+    public function endOfWeek(): static;
+
+    /**
+     * Returns a new instance set to the start of the month.
+     */
+    public function startOfMonth(): static;
+
+    /**
+     * Returns a new instance set to the end of the month.
+     */
+    public function endOfMonth(): static;
+
+    /**
+     * Returns a new instance set to the start of the year.
+     */
+    public function startOfYear(): static;
+
+    /**
+     * Returns a new instance set to the end of the year.
+     */
+    public function endOfYear(): static;
+
+    /**
+     * Checks if this date is today.
+     */
+    public function isToday(): bool;
+
+    /**
+     * Checks if this date is tomorrow.
+     */
+    public function isTomorrow(): bool;
+
+    /**
+     * Checks if this date is yesterday.
+     */
+    public function isYesterday(): bool;
+
+    /**
+     * Checks if this date is in the current week.
+     */
+    public function isCurrentWeek(): bool;
+
+    /**
+     * Checks if this date is in the current month.
+     */
+    public function isCurrentMonth(): bool;
+
+    /**
+     * Checks if this date is in the current year.
+     */
+    public function isCurrentYear(): bool;
+
+    /**
+     * Checks if two dates are on the same day.
+     */
+    public function isSameDay(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if two dates are in the same week.
+     */
+    public function isSameWeek(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if two dates are in the same month.
+     */
+    public function isSameMonth(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if two dates are in the same year.
+     */
+    public function isSameYear(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if two dates are in the same hour.
+     */
+    public function isSameHour(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if two dates are in the same minute.
+     */
+    public function isSameMinute(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if this date is the next day after the other.
+     */
+    public function isNextDay(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if this date is the previous day before the other.
+     */
+    public function isPreviousDay(DateTimeInterface $other): bool;
+
+    /**
+     * Checks if this date is in next week.
+     */
+    public function isNextWeek(): bool;
+
+    /**
+     * Checks if this date is in previous week.
+     */
+    public function isPreviousWeek(): bool;
+
+    /**
+     * Checks if this date is in next month.
+     */
+    public function isNextMonth(): bool;
+
+    /**
+     * Checks if this date is in previous month.
+     */
+    public function isPreviousMonth(): bool;
+
+    /**
+     * Checks if this date is in next year.
+     */
+    public function isNextYear(): bool;
+
+    /**
+     * Checks if this date is in previous year.
+     */
+    public function isPreviousYear(): bool;
+
+    /**
+     * Checks if this date falls on a weekend (Saturday/Sunday).
+     */
+    public function isWeekend(): bool;
+
+    /**
+     * Checks if this date falls on a weekday (Monday-Friday).
+     */
+    public function isWeekday(): bool;
+
+    /**
+     * Checks if this is the 1st day of the month.
+     */
+    public function isFirstDayOfMonth(): bool;
+
+    /**
+     * Checks if this is the last day of the month.
+     */
+    public function isLastDayOfMonth(): bool;
+
+    /**
+     * Checks if this is January 1st.
+     */
+    public function isFirstDayOfYear(): bool;
+
+    /**
+     * Checks if this is December 31st.
+     */
+    public function isLastDayOfYear(): bool;
+
+    /**
+     * Checks if time is in morning (6:00-11:59).
+     */
+    public function isMorning(): bool;
+
+    /**
+     * Checks if time is in afternoon (12:00-17:59).
+     */
+    public function isAfternoon(): bool;
+
+    /**
+     * Checks if time is in evening (18:00-21:59).
+     */
+    public function isEvening(): bool;
+
+    /**
+     * Checks if time is at night (22:00-5:59).
+     */
+    public function isNight(): bool;
+
+    /**
+     * Checks if time is exactly midnight (00:00:00).
+     */
+    public function isMidnight(): bool;
+
+    /**
+     * Checks if time is exactly noon (12:00:00).
+     */
+    public function isNoon(): bool;
+
+    /**
+     * Checks if this is Monday.
+     */
+    public function isStartOfWeek(): bool;
+
+    /**
+     * Checks if this is Sunday.
+     */
+    public function isEndOfWeek(): bool;
+
+    /**
      * Formats this {@see DateTimeInterface} instance based on a specific pattern, with optional customization for timezone and locale.
      *
      * This method allows for detailed customization of the output string by specifying a format pattern. If no pattern is provided,

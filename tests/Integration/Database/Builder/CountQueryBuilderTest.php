@@ -172,4 +172,44 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(2, $count);
     }
+
+    public function test_multiple_where(): void
+    {
+        $sql = query('books')
+            ->count()
+            ->where('title = ?', 'a')
+            ->where('author_id = ?', 1)
+            ->where('OR author_id = ?', 2)
+            ->where('AND author_id <> NULL')
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT COUNT(*) AS `count`
+        FROM `books`
+        WHERE title = ?
+        AND author_id = ?
+        OR author_id = ?
+        AND author_id <> NULL
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
+
+    public function test_multiple_where_field(): void
+    {
+        $sql = query('books')
+            ->count()
+            ->whereField('title', 'a')
+            ->whereField('author_id', 1)
+            ->toSql();
+
+        $expected = <<<SQL
+        SELECT COUNT(*) AS `count`
+        FROM `books`
+        WHERE books.title = ?
+        AND books.author_id = ?
+        SQL;
+
+        $this->assertSameWithoutBackticks($expected, $sql);
+    }
 }

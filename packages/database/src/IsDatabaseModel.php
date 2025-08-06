@@ -116,6 +116,16 @@ trait IsDatabaseModel
         return $model->save();
     }
 
+    public function refresh(): self
+    {
+        $model = self::find(id: $this->id)->first();
+        foreach (new ClassReflector($model)->getPublicProperties() as $property) {
+            $property->setValue($this, $property->getValue($model));
+        }
+
+        return $this;
+    }
+
     public function __get(string $name): mixed
     {
         $property = PropertyReflector::fromParts($this, $name);

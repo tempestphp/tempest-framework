@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Responses;
 
 use Generator;
+use JsonSerializable;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
@@ -14,7 +15,7 @@ final class NotFound implements Response
 {
     use IsResponse;
 
-    public function __construct(View|Generator|string|array|null $body = null)
+    public function __construct(View|JsonSerializable|Generator|string|array|null $body = null)
     {
         $this->status = Status::NOT_FOUND;
         $this->body = $body;

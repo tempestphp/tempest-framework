@@ -9,11 +9,13 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Attributes\ElseAttribute;
 use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ViewNotFound;
+use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
@@ -41,22 +43,32 @@ final readonly class TempestViewCompiler
         // 1. Retrieve template
         $template = $this->retrieveTemplate($view);
 
-        // 2. Parse AST
+        // 2. Remove comments before parsing
+        $template = $this->removeComments($template);
+
+        // 3. Parse AST
         $ast = $this->parseAst($template);
 
-        // 3. Map to elements
+        // 4. Map to elements
         $elements = $this->mapToElements($ast);
 
-        // 4. Apply attributes
+        // 5. Apply attributes
         $elements = $this->applyAttributes($elements);
 
-        // 5. Compile to PHP
+        // 6. Compile to PHP
         $compiled = $this->compileElements($elements);
 
-        // 6. Cleanup compiled PHP
+        // 7. Cleanup compiled PHP
         $cleaned = $this->cleanupCompiled($compiled);
 
         return $cleaned;
+    }
+
+    private function removeComments(string $template): string
+    {
+        return str($template)
+            ->replaceRegex('/{{--.*?--}}/s', '')
+            ->toString();
     }
 
     private function retrieveTemplate(string|View $view): string
@@ -133,20 +145,14 @@ final readonly class TempestViewCompiler
         $previous = null;
 
         foreach ($elements as $element) {
-            $isDynamicViewComponent = $element instanceof ViewComponentElement && $element->getViewComponent() instanceof DynamicViewComponent;
-
-            if (! $isDynamicViewComponent) {
-                $children = $this->applyAttributes($element->getChildren());
-                $element->setChildren($children);
-            }
+            $children = $this->applyAttributes($element->getChildren());
+            $element->setChildren($children);
 
             $element->setPrevious($previous);
 
-            foreach ($element->getAttributes() as $name => $value) {
-                if ($isDynamicViewComponent && $name !== ':is' && $name !== 'is') {
-                    continue;
-                }
+            $shouldBeRemoved = false;
 
+            foreach ($element->getAttributes() as $name => $value) {
                 // TODO: possibly refactor attribute construction to ElementFactory?
                 if ($value instanceof Attribute) {
                     $attribute = $value;
@@ -156,12 +162,12 @@ final readonly class TempestViewCompiler
 
                 $element = $attribute->apply($element);
 
-                if ($element === null) {
-                    break;
+                if ($shouldBeRemoved === false && $attribute instanceof ShouldBeRemoved) {
+                    $shouldBeRemoved = true;
                 }
             }
 
-            if ($element === null) {
+            if ($shouldBeRemoved) {
                 continue;
             }
 

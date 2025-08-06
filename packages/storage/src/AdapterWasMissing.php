@@ -2,9 +2,9 @@
 
 namespace Tempest\Storage;
 
+use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
 use Exception;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -33,7 +33,7 @@ final class AdapterWasMissing extends Exception implements StorageException
             ReadOnlyFilesystemAdapter::class => 'league/flysystem-read-only',
             SftpAdapter::class => 'league/flysystem-sftp',
             ZipArchiveAdapter::class => 'league/flysystem-ziparchive',
-            AzureBlobStorageAdapter::class => 'league/flysystem-azure-blob-storage',
+            AzureBlobStorageAdapter::class => 'azure-oss/storage-blob-flysystem',
             FtpAdapter::class => 'league/flysystem-ftp',
             GoogleCloudStorageAdapter::class => 'league/flysystem-google-cloud-storage',
             default => null,

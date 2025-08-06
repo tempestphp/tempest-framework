@@ -78,6 +78,26 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Hello</div>',
+            $html,
+        );
+    }
+
+    public function test_else_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$this->show" :data="$data">Hello</div><div :else :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
+        );
+    }
+
     public function test_elseif_attribute(): void
     {
         $this->assertSame(
@@ -120,6 +140,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_else_if_with_other_expression_attributes(): void
+    {
+        $html = $this->render('<div :if="$show" :data="$data">Hello</div><div :elseif="$show === false" :data="$data">Nothing to see</div>', show: false, data: 'test');
+
+        $this->assertSame(
+            '<div data="test">Nothing to see</div>',
+            $html,
+        );
+    }
+
     public function test_else_attribute(): void
     {
         $this->assertSame(
@@ -146,9 +176,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_foreach_consumes_attribute(): void
     {
-        $html = $this->render(view(
+        $html = $this->render(
             <<<'HTML'
-            <x-base>
+            <x-base :items="$items">
                 <table>
                     <tr :foreach="$items as $item">
                         <td>{{ $item }}</td>
@@ -156,7 +186,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
                 </table>
             </x-base>
             HTML,
-        )->data(items: ['a', 'b']));
+            items: ['a', 'b'],
+        );
 
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -201,22 +232,26 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_forelse_with_other_expression_attribute(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div data="test">Empty</div>
+            HTML,
+            $this->render('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse :data="$data">Empty</div>', items: [], data: 'test'),
+        );
+    }
+
     public function test_default_slot(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
-            <div class="base">
-                
-                    Test
-                
-            </div>
+            <div class="base">Test</div>
             HTML,
             $this->render(
                 <<<'HTML'
                 <x-base-layout>
-                    <x-slot>
-                        Test
-                    </x-slot>
+                    Test
                 </x-base-layout>
                 HTML,
             ),
@@ -507,7 +542,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>'),
+            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>', hello: null),
         );
     }
 
@@ -717,5 +752,34 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSame('hi', $html);
+    }
+
+    public function test_view_comments(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
+        HTML);
+
+        $this->assertSnippetsMatch('<p>this is rendered text</p>', $html);
+    }
+
+    public function test_multiline_view_comments(): void
+    {
+        $html = $this->render(<<<'HTML'
+        {{-- this is a comment
+                <div>
+                    <!-- Start -->
+                    <x-label>{{ Tempest\Intl\translate('test_2') }}</x-label>
+                <x-input
+                    name="test"
+                    type="text"
+                    class="py-2.5 sm:py-3 px-4 block w-full border-gray-500 border-1 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="This is placeholder" />
+                <!-- end -->
+            </div>
+            --}}
+        <p>This should be rendered</p>
+        HTML);
+
+        $this->assertSnippetsMatch('<p>This should be rendered</p>', $html);
     }
 }

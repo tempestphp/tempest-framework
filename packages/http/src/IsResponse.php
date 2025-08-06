@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
+use JsonSerializable;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
@@ -17,7 +18,7 @@ trait IsResponse
 {
     private(set) Status $status = Status::OK;
 
-    private(set) View|string|array|Generator|null $body = null;
+    private(set) View|string|array|Generator|JsonSerializable|null $body = null;
 
     /** @var \Tempest\Http\Header[] */
     private(set) array $headers = [];

@@ -4,34 +4,40 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Support\Conditions\HasConditions;
 
+use function Tempest\Database\model;
+
 /**
- * @template TModelClass of object
+ * @template T of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
+ * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
  */
 final class CountQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
-
-    private ?ModelDefinition $modelDefinition;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
 
     private CountStatement $count;
 
     private array $bindings = [];
 
+    private ModelInspector $model;
+
+    /**
+     * @param class-string<T>|string|T $model
+     */
     public function __construct(string|object $model, ?string $column = null)
     {
-        $this->modelDefinition = ModelDefinition::tryFrom($model);
+        $this->model = model($model);
 
         $this->count = new CountStatement(
-            table: $this->resolveTable($model),
+            table: $this->model->getTableDefinition(),
             column: $column,
         );
     }
@@ -41,7 +47,7 @@ final class CountQueryBuilder implements BuildsQuery
         return $this->build()->fetchFirst(...$bindings)[$this->count->getKey()];
     }
 
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function distinct(): self
     {
         if ($this->count->column === null || $this->count->column === '*') {
@@ -53,35 +59,7 @@ final class CountQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
-    public function where(string $where, mixed ...$bindings): self
-    {
-        $this->count->where[] = new WhereStatement($where);
-
-        $this->bind(...$bindings);
-
-        return $this;
-    }
-
-    public function andWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("AND {$where}", ...$bindings);
-    }
-
-    public function orWhere(string $where, mixed ...$bindings): self
-    {
-        return $this->where("OR {$where}", ...$bindings);
-    }
-
-    /** @return self<TModelClass> */
-    public function whereField(string $field, mixed $value): self
-    {
-        $field = $this->modelDefinition->getFieldDefinition($field);
-
-        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
-    }
-
-    /** @return self<TModelClass> */
+    /** @return self<T> */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -99,12 +77,13 @@ final class CountQueryBuilder implements BuildsQuery
         return new Query($this->count, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 
-    private function resolveTable(string|object $model): TableDefinition
+    private function getStatementForWhere(): HasWhereStatements
     {
-        if ($this->modelDefinition === null) {
-            return new TableDefinition($model);
-        }
+        return $this->count;
+    }
 
-        return $this->modelDefinition->getTableDefinition();
+    private function getModel(): ModelInspector
+    {
+        return $this->model;
     }
 }

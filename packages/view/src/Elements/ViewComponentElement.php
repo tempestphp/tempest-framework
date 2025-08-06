@@ -5,35 +5,62 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\Core\Environment;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
+use Tempest\View\Export\ViewObjectExporter;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
+use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
+use Tempest\View\WithToken;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ViewComponentElement implements Element
+final class ViewComponentElement implements Element, WithToken
 {
     use IsElement;
 
-    private array $dataAttributes;
+    private ImmutableArray $dataAttributes;
+
+    private ImmutableArray $expressionAttributes;
+
+    private ImmutableArray $scopedVariables;
+
+    private ImmutableArray $viewComponentAttributes;
 
     public function __construct(
+        public readonly Token $token,
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
     ) {
         $this->attributes = $attributes;
+        $this->viewComponentAttributes = arr($attributes);
+
         $this->dataAttributes = arr($attributes)
-            ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
-            // Attributes are converted to camelCase by default for PHP variable usage, but in the context of data attributes, kebab case is good
-            ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value)
-            ->toArray();
+            ->filter(fn (string $_, string $key) => ! str_starts_with($key, ':'))
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->toString() => $value);
+
+        $this->expressionAttributes = arr($attributes)
+            ->filter(fn (string $_, string $key) => str_starts_with($key, ':'))
+            ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse'], strict: true))
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
+
+        $this->scopedVariables = arr();
+    }
+
+    public function addVariable(string $name): self
+    {
+        $name = str($name)->trim()->trim('$')->toString();
+
+        $this->scopedVariables[$name] = $name;
+
+        return $this;
     }
 
     public function getViewComponent(): ViewComponent
@@ -41,62 +68,36 @@ final class ViewComponentElement implements Element
         return $this->viewComponent;
     }
 
-    /** @return Element[] */
-    public function getSlots(): array
+    /** @return ImmutableArray<array-key, Slot> */
+    public function getSlots(): ImmutableArray
     {
-        $slots = [];
+        $slots = arr();
 
-        foreach ($this->getChildren() as $child) {
-            if (! ($child instanceof SlotElement)) {
-                continue;
+        $defaultTokens = [];
+
+        foreach ($this->token->children as $child) {
+            if ($child->tag === 'x-slot') {
+                $slot = Slot::named($child);
+
+                $slots[$slot->name] = $slot;
+            } else {
+                $defaultTokens[] = $child;
             }
-
-            $slots[] = $child;
         }
+
+        $slots[Slot::DEFAULT] = Slot::default(...$defaultTokens);
 
         return $slots;
     }
 
-    public function getSlot(string $name = 'slot'): ?Element
-    {
-        foreach ($this->getChildren() as $child) {
-            if (! ($child instanceof SlotElement)) {
-                continue;
-            }
-
-            if ($child->matches($name)) {
-                return $child;
-            }
-        }
-
-        if ($name === 'slot') {
-            $elements = [];
-
-            foreach ($this->getChildren() as $child) {
-                if ($child instanceof SlotElement) {
-                    continue;
-                }
-
-                $elements[] = $child;
-            }
-
-            return new CollectionElement($elements);
-        }
-
-        return null;
-    }
-
     public function compile(): string
     {
-        /** @var Slot[] $slots */
-        $slots = arr($this->getSlots())
-            ->mapWithKeys(fn (SlotElement $element) => yield $element->name => Slot::fromElement($element))
-            ->toArray();
+        $slots = $this->getSlots();
 
-        $compiled = str($this->viewComponent->compile($this));
+        $compiled = str($this->viewComponent->contents);
 
+        // Fallthrough attributes
         $compiled = $compiled
-            // Fallthrough attributes
             ->replaceRegex(
                 regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/', // Match the very first opening tag, this will never fail.
                 replace: function ($matches) {
@@ -135,59 +136,90 @@ final class ViewComponentElement implements Element
                 },
             );
 
+        // Add scoped variables
         $compiled = $compiled
             ->prepend(
-                // Add attributes to the current scope
-                '<?php $_previousAttributes = $attributes ?? null; ?>',
-                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->dataAttributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
-
-                // Add dynamic slots to the current scope
-                '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = \Tempest\Support\arr(%s); ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
+                // Open the current scope
+                sprintf(
+                    '<?php (function ($attributes, $slots %s %s %s) { extract($this->currentView?->data ?? [], EXTR_SKIP); ?>',
+                    $this->dataAttributes->isNotEmpty() ? (', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
+                    $this->expressionAttributes->isNotEmpty() ? (', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
+                    $this->scopedVariables->isNotEmpty() ? (', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ')) : '',
+                ),
             )
             ->append(
-                // Restore previous slots
-                '<?php unset($slots); ?>',
-                '<?php $slots = $_previousSlots ?? null; ?>',
-                '<?php unset($_previousSlots); ?>',
+                // Close and call the current scope
+                sprintf(
+                    '<?php })(%s, %s %s %s %s) ?>',
+                    'attributes: ' . ViewObjectExporter::export($this->viewComponentAttributes),
+                    'slots: ' . ViewObjectExporter::export($slots),
+                    $this->dataAttributes->isNotEmpty()
+                        ? (', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', '))
+                        : '',
+                    $this->expressionAttributes->isNotEmpty()
+                        ? (', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', '))
+                        : '',
+                    $this->scopedVariables->isNotEmpty()
+                        ? (', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', '))
+                        : '',
+                ),
+            );
 
-                // Restore previous attributes
-                '<?php unset($attributes); ?>',
-                '<?php $attributes = $_previousAttributes ?? null; ?>',
-                '<?php unset($_previousAttributes); ?>',
-            )
-            // Compile slots
-            ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
-                replace: function ($matches) {
-                    $name = $matches['name'] ?: 'slot';
+        // Compile slots
+        $compiled = $compiled->replaceRegex(
+            regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
+            replace: function ($matches) use ($slots) {
+                $name = $matches['name'] ?: Slot::DEFAULT;
 
-                    $slot = $this->getSlot($name);
+                $slot = $slots[$name] ?? null;
 
-                    $default = $matches['default'] ?? null;
+                $default = $matches['default'] ?? null;
 
-                    if ($slot === null) {
-                        if ($default) {
-                            // There's no slot, but there's a default value in the view component
-                            return $default;
-                        }
-
-                        // A slot doesn't have any content, so we'll comment it out.
-                        // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
-                    }
-
-                    $compiled = $slot->compile();
-
-                    // There's no default slot content, but there's a default value in the view component
-                    if (trim($compiled) === '') {
+                if ($slot === null) {
+                    if ($default) {
+                        // There's no slot, but there's a default value in the view component
                         return $default;
                     }
 
-                    return $compiled;
-                },
-            );
+                    // A slot doesn't have any content, so we'll comment it out.
+                    // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
+                    return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
+                }
+
+                $slotElement = $this->getSlotElement($slot->name);
+
+                $compiled = $slotElement?->compile() ?? '';
+
+                // There's no default slot content, but there's a default value in the view component
+                if (trim($compiled) === '') {
+                    return $default;
+                }
+
+                return $compiled;
+            },
+        );
 
         return $this->compiler->compile($compiled->toString());
+    }
+
+    private function getSlotElement(string $name): SlotElement|CollectionElement|null
+    {
+        $defaultElements = [];
+
+        foreach ($this->getChildren() as $childElement) {
+            if ($childElement instanceof SlotElement && $childElement->name === $name) {
+                return $childElement;
+            }
+
+            if (! ($childElement instanceof SlotElement)) {
+                $defaultElements[] = $childElement;
+            }
+        }
+
+        if ($name === Slot::DEFAULT) {
+            return new CollectionElement($defaultElements);
+        }
+
+        return null;
     }
 }

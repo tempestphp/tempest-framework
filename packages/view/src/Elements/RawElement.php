@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\Parser\Token;
+use Tempest\View\WithToken;
 
 use function Tempest\Support\str;
 
-final class RawElement implements Element
+final class RawElement implements Element, WithToken
 {
     use IsElement;
 
     public function __construct(
+        public readonly Token $token,
         private readonly ?string $tag,
         private readonly string $content,
         array $attributes = [],
@@ -44,7 +47,7 @@ final class RawElement implements Element
             }
         }
 
-        $attributes = implode(' ', $attributes);
+        $attributes = implode(' ', [...$attributes, ...$this->rawAttributes]);
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;

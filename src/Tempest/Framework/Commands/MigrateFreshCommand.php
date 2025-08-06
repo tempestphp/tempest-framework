@@ -33,9 +33,15 @@ final class MigrateFreshCommand
     )]
     public function __invoke(
         #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
-        bool $validate = true,
+        bool $validate = false,
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
+        #[ConsoleArgument(description: 'Run database seeders after the database has been migrated')]
+        bool $seed = false,
+        #[ConsoleArgument(description: 'Run all database seeders after the database has been migrated')]
+        bool $all = false,
+        #[ConsoleArgument(description: 'Select one specific seeder to run')]
+        ?string $seeder = null,
     ): ExitCode {
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
@@ -52,7 +58,24 @@ final class MigrateFreshCommand
             $this->console->info('There is no migration to drop.');
         }
 
-        return $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false, 'database' => $database]);
+        $this->console->call(MigrateUpCommand::class, [
+            'fresh' => false,
+            'validate' => false,
+            'database' => $database,
+        ]);
+
+        $seed = $seed || $seeder !== null;
+
+        if ($seed) {
+            $this->console->header('Seeding database');
+            $this->console->call(DatabaseSeedCommand::class, [
+                'database' => $database,
+                'all' => $all,
+                'seeder' => $seeder,
+            ]);
+        }
+
+        return ExitCode::SUCCESS;
     }
 
     #[EventHandler]

@@ -11,8 +11,12 @@ use Tempest\Support\Json;
 
 final class QueryWasInvalid extends Exception
 {
+    public readonly PDOException $pdoException;
+
     public function __construct(Query $query, array $bindings, PDOException $previous)
     {
+        $this->pdoException = $previous;
+
         $message = $previous->getMessage();
 
         $message .= PHP_EOL . PHP_EOL . $query->toSql() . PHP_EOL;
