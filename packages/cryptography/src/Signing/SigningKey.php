@@ -18,9 +18,9 @@ final readonly class SigningKey implements Stringable
     /**
      * Creates a signing key from a string.
      */
-    public static function fromString(string $key): self
+    public static function fromString(?string $key): self
     {
-        return new self($key);
+        return new self($key ?: '');
     }
 
     public function __toString(): string

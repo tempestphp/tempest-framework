@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
@@ -20,9 +21,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 {
+    private Encrypter $encrypter {
+        get => $this->container->get(Encrypter::class);
+    }
+
     public function test_generic_request_is_used_when_interface_is_passed(): void
     {
-        $mapper = new PsrRequestToGenericRequestMapper();
+        $mapper = new PsrRequestToGenericRequestMapper($this->encrypter);
 
         $request = $mapper->map(
             from: $this->http->makePsrRequest('/'),
@@ -38,9 +43,9 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $stream->write(json_encode(['foo' => 'bar']));
         $stream->rewind();
 
-        $_COOKIE['test'] = 'cookie-value';
+        $_COOKIE['test'] = $this->encrypter->encrypt('cookie-value')->serialize();
 
-        $request = new PsrRequestToGenericRequestMapper()->map(new ServerRequest(
+        $request = new PsrRequestToGenericRequestMapper($this->encrypter)->map(new ServerRequest(
             uri: new Uri('/json-endpoint'),
             method: 'POST',
             body: $stream,
@@ -60,7 +65,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         copy(__DIR__ . '/Fixtures/upload.txt', $currentPath);
 
-        $mapper = new PsrRequestToGenericRequestMapper();
+        $mapper = new PsrRequestToGenericRequestMapper($this->encrypter);
 
         /** @var GenericRequest $request */
         $request = $mapper->map(
