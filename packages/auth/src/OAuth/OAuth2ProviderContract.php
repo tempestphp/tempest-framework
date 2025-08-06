@@ -11,22 +11,30 @@ interface OAuth2ProviderContract
     /**
      * @var array<string> The default scopes for the OAuth2 provider.
      */
-    public array $scopes {get;}
+    public array $scopes {
+        get;
+    }
 
     /**
      * @var string The URL to redirect the user for authorization.
      */
-    public string $authorizationUrl {get;}
+    public string $authorizationUrl {
+        get;
+    }
 
     /**
      * @var string The URL to exchange the authorization code for an access token.
      */
-    public string $accessTokenUrl {get;}
+    public string $accessTokenUrl {
+        get;
+    }
 
     /**
      * @var string The URL to fetch user data after authorization.
      */
-    public string $userDataUrl {get;}
+    public string $userDataUrl {
+        get;
+    }
 
     /**
      * Return headers used in access token endpoint

@@ -8,8 +8,9 @@ use Tempest\Auth\OAuth\GithubOAuthProvider;
 use Tempest\Auth\OAuth\OAuthManager;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\get;
+
 use function Tempest\env;
+use function Tempest\get;
 
 /**
  * @internal
@@ -37,20 +38,15 @@ final class AuthSSOTest extends FrameworkIntegrationTestCase
     {
         // CLIC sur bouton "Se connecter avec GitHub"
         // /github/auth/redirect
-
         // /something/routable
-
         // /github/auth/callback
         //     return new SSOManager(driver: GithubSSOProvider::class)->fetchUserData();
         // OAuth2Data
         // 'token', 'refreshToken', 'expiresIn'
-
         // OAuth1Data
         // 'token', 'tokenSecret'
-
         // All providers
         // 'id', 'nickname', 'name', 'email', 'avatar'
-
-//        return new SSOManager(driver: GithubSSOProvider::class)->fetchUserDataFromToken( AccessToken $accessToken );
+        //        return new SSOManager(driver: GithubSSOProvider::class)->fetchUserDataFromToken( AccessToken $accessToken );
     }
 }

@@ -36,7 +36,7 @@ final class GithubOAuthProvider implements OAuth2ProviderContract
     {
         return [
             'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json',
         ];
     }
 
@@ -55,7 +55,7 @@ final class GithubOAuthProvider implements OAuth2ProviderContract
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
             'code' => $code,
-            'redirect_uri' => 'http://127.0.0.1:8000/auth/github/callback'
+            'redirect_uri' => 'http://127.0.0.1:8000/auth/github/callback',
         ];
     }
 
