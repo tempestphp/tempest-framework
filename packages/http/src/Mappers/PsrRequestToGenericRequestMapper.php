@@ -21,7 +21,7 @@ use function Tempest\Support\arr;
 final readonly class PsrRequestToGenericRequestMapper implements Mapper
 {
     public function __construct(
-        private readonly Encrypter $encrypter,
+        private Encrypter $encrypter,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
