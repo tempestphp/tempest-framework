@@ -8,24 +8,25 @@ use Tempest\Auth\OAuth\DataObjects\AccessToken;
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 use Tempest\Http\Session\Session;
 use Tempest\HttpClient\HttpClient;
+
 use function dd;
 use function json_encode;
 use function Tempest\get;
 use function Tempest\Support\str;
 
-final class OAuthManager
+final readonly class OAuthManager
 {
-    private readonly HttpClient $httpClient;
+    private HttpClient $httpClient;
 
     public function __construct(
-        private readonly OAuth2ProviderContract $driver,
+        private OAuth2ProviderContract $driver,
     ) {
         $this->httpClient = get(HttpClient::class);
     }
 
     public function generateAuthorizationUrl(
         ?array $scopes = null,
-        bool $isStateless = false
+        bool $isStateless = false,
     ): string {
         $scopes ??= $this->driver->scopes;
         $queryData = [
@@ -33,8 +34,9 @@ final class OAuthManager
             'client_id' => $this->driver->clientId,
         ];
 
-        if ( ! $isStateless ) {
+        if (! $isStateless) {
             $queryData['state'] = $this->generateState();
+
             // TODO : Store the state in the session for later validation
         }
 
@@ -45,29 +47,29 @@ final class OAuthManager
 
     public function generateAccessToken(
         string $code,
-        ?string $state = null
+        ?string $state = null,
     ): AccessToken {
         $response = $this->httpClient->post(
             uri: $this->driver->accessTokenUrl,
             headers: $this->driver->getAccessTokenHeaders($code),
-            body: json_encode($this->driver->getAccessTokenFields($code))
+            body: json_encode($this->driver->getAccessTokenFields($code)),
         );
 
         try {
             $body = json_decode($response->body, associative: true);
             $accessToken = AccessToken::from($body);
-        } catch ( \Error $e ) {
+        } catch (\Error $e) {
             $errorMessage = 'Failed to decode access token response.';
 
-            if ( isset($body['error'], $body['error_description']) ) {
+            if (isset($body['error'], $body['error_description'])) {
                 $errorMessage .= sprintf(
                     ' Error: "%s". Description: "%s"',
                     $body['error'],
-                    $body['error_description']
+                    $body['error_description'],
                 );
             }
 
-            throw new \RuntimeException( $errorMessage );
+            throw new \RuntimeException($errorMessage);
         }
 
         return $accessToken;
@@ -80,24 +82,24 @@ final class OAuthManager
             headers: [
                 'Authorization' => $accessToken->tokenType . ' ' . $accessToken->accessToken,
                 'Accept' => 'application/json',
-            ]
+            ],
         );
 
         try {
             $body = json_decode($response->body, associative: true);
             $userData = $this->driver->getUserDataFromResponse($body);
-        } catch ( \Error $e ) {
+        } catch (\Error $e) {
             $errorMessage = 'Failed to get user data.';
 
-            if ( isset($body['error'], $body['error_description']) ) {
+            if (isset($body['error'], $body['error_description'])) {
                 $errorMessage .= sprintf(
                     ' Error: "%s". Description: "%s"',
                     $body['error'],
-                    $body['error_description']
+                    $body['error_description'],
                 );
             }
 
-            throw new \RuntimeException( $errorMessage );
+            throw new \RuntimeException($errorMessage);
         }
 
         return $userData;

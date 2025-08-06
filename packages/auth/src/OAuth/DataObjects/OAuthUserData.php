@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Auth\OAuth\DataObjects;
 
 use Tempest\Mapper\MapFrom;
+
 use function Tempest\map;
 
 final readonly class OAuthUserData
