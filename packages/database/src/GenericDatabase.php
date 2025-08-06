@@ -45,7 +45,6 @@ final class GenericDatabase implements Database
 
         try {
             $statement = $this->connection->prepare($query->toSql()->toString());
-
             $statement->execute($bindings);
 
             $this->lastStatement = $statement;
@@ -90,7 +89,6 @@ final class GenericDatabase implements Database
 
         try {
             $pdoQuery = $this->connection->prepare($query->toSql()->toString());
-
             $pdoQuery->execute($bindings);
 
             return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
