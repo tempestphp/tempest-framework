@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use Tempest\Database\BelongsTo;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasOne;
@@ -259,7 +260,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         );
 
         model(TestProfile::class)->create(
-            user_id: $user->id->value,
+            user: $user,
             bio: 'Ancient elf mage who loves magic and collecting spells',
             age: 1000,
         );
@@ -330,11 +331,10 @@ final class TestProfile
 
     public ?PrimaryKey $id = null;
 
-    #[HasOne]
+    #[BelongsTo(ownerJoin: 'user_id')]
     public ?TestUser $user;
 
     public function __construct(
-        public int $user_id,
         public string $bio,
         public int $age,
     ) {}
