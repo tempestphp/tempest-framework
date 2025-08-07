@@ -412,15 +412,15 @@ final class ModelInspector
             return null;
         }
 
-        $idProperties = arr($this->reflector->getProperties())
-            ->filter(fn (PropertyReflector $property) => $property->getType()->getName() === PrimaryKey::class);
+        $primaryKeys = arr($this->reflector->getProperties())
+            ->filter(fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
 
-        return match ($idProperties->count()) {
+        return match ($primaryKeys->count()) {
             0 => null,
-            1 => $idProperties->first(),
+            1 => $primaryKeys->first(),
             default => throw ModelHadMultiplePrimaryColumns::found(
                 model: $this->model,
-                properties: $idProperties->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
+                properties: $primaryKeys->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
             ),
         };
     }
