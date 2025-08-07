@@ -146,25 +146,6 @@ final readonly class ModelQueryBuilder
     }
 
     /**
-     * Finds a model instance by its ID.
-     *
-     * **Example**
-     * ```php
-     * model(User::class)->resolve(1);
-     * ```
-     *
-     * @return TModel
-     */
-    public function resolve(string|int|PrimaryKey $id): object
-    {
-        if (! inspect($this->model)->hasPrimaryKey()) {
-            throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'resolve');
-        }
-
-        return $this->get($id);
-    }
-
-    /**
      * Gets a model instance by its ID, optionally loading the given relationships.
      *
      * **Example**
