@@ -16,7 +16,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\query;
 
 /**
  * @internal
@@ -31,12 +31,12 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateGrimoireWithUuidMigration::class,
         );
 
-        $mage = model(MageWithUuid::class)->create(
+        $mage = query(MageWithUuid::class)->create(
             name: 'Frieren',
             element: 'Time',
         );
 
-        $grimoire = model(GrimoireWithUuid::class)->create(
+        $grimoire = query(GrimoireWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             title: 'Ancient Time Magic Compendium',
             spells_count: 847,
@@ -45,7 +45,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertInstanceOf(PrimaryKey::class, $mage->uuid);
         $this->assertInstanceOf(PrimaryKey::class, $grimoire->uuid);
 
-        $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
+        $loadedMage = query(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('grimoire');
 
         $this->assertInstanceOf(GrimoireWithUuid::class, $loadedMage->grimoire);
@@ -63,26 +63,26 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateSpellWithUuidMigration::class,
         );
 
-        $mage = model(MageWithUuid::class)->create(
+        $mage = query(MageWithUuid::class)->create(
             name: 'Flamme',
             element: 'Fire',
         );
 
-        $spell1 = model(SpellWithUuid::class)->create(
+        $spell1 = query(SpellWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             name: 'Zoltraak',
             power_level: 95,
             mana_cost: 150,
         );
 
-        $spell2 = model(SpellWithUuid::class)->create(
+        $spell2 = query(SpellWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             name: 'Volzandia',
             power_level: 87,
             mana_cost: 120,
         );
 
-        $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
+        $loadedMage = query(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('spells');
 
         $this->assertCount(2, $loadedMage->spells);
@@ -106,19 +106,19 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateSpellWithUuidMigration::class,
         );
 
-        $mage = model(MageWithUuid::class)->create(
+        $mage = query(MageWithUuid::class)->create(
             name: 'Serie',
             element: 'Ancient',
         );
 
-        $spell = model(SpellWithUuid::class)->create(
+        $spell = query(SpellWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             name: 'Goddess Magic',
             power_level: 100,
             mana_cost: 999,
         );
 
-        $loadedSpell = model(SpellWithUuid::class)->get($spell->uuid);
+        $loadedSpell = query(SpellWithUuid::class)->get($spell->uuid);
         $loadedSpell->load('mage');
 
         $this->assertInstanceOf(MageWithUuid::class, $loadedSpell->mage);
@@ -136,25 +136,25 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateSpellWithUuidMigration::class,
         );
 
-        $mage = model(MageWithUuid::class)->create(
+        $mage = query(MageWithUuid::class)->create(
             name: 'Fern',
             element: 'Combat',
         );
 
-        $grimoire = model(GrimoireWithUuid::class)->create(
+        $grimoire = query(GrimoireWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             title: 'Combat Magic Fundamentals',
             spells_count: 42,
         );
 
-        $spell = model(SpellWithUuid::class)->create(
+        $spell = query(SpellWithUuid::class)->create(
             mage_uuid: $mage->uuid->value,
             name: 'Basic Attack Magic',
             power_level: 75,
             mana_cost: 50,
         );
 
-        $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
+        $loadedMage = query(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('grimoire', 'spells');
 
         $this->assertInstanceOf(GrimoireWithUuid::class, $loadedMage->grimoire);
@@ -163,7 +163,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertCount(1, $loadedMage->spells);
         $this->assertSame('Basic Attack Magic', $loadedMage->spells[0]->name);
 
-        $loadedSpell = model(SpellWithUuid::class)->get($spell->uuid);
+        $loadedSpell = query(SpellWithUuid::class)->get($spell->uuid);
         $loadedSpell->load('mage.grimoire');
 
         $this->assertInstanceOf(MageWithUuid::class, $loadedSpell->mage);
@@ -180,26 +180,26 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateArtifactWithUuidMigration::class,
         );
 
-        $mage = model(MageWithUuid::class)->create(
+        $mage = query(MageWithUuid::class)->create(
             name: 'Himmel',
             element: 'Hero',
         );
 
-        $artifact = model(ArtifactWithUuid::class)->create(
+        $artifact = query(ArtifactWithUuid::class)->create(
             owner_uuid: $mage->uuid->value,
             name: 'Hero Sword',
             rarity: 'Legendary',
             enchantment_level: 10,
         );
 
-        $loadedMage = model(MageWithUuid::class)->get($mage->uuid);
+        $loadedMage = query(MageWithUuid::class)->get($mage->uuid);
         $loadedMage->load('artifacts');
 
         $this->assertCount(1, $loadedMage->artifacts);
         $this->assertSame('Hero Sword', $loadedMage->artifacts[0]->name);
         $this->assertSame('Legendary', $loadedMage->artifacts[0]->rarity);
 
-        $loadedArtifact = model(ArtifactWithUuid::class)->get($artifact->uuid);
+        $loadedArtifact = query(ArtifactWithUuid::class)->get($artifact->uuid);
         $loadedArtifact->load('owner');
 
         $this->assertInstanceOf(MageWithUuid::class, $loadedArtifact->owner);
@@ -215,27 +215,27 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateSpellWithUuidMigration::class,
         );
 
-        $mage1 = model(MageWithUuid::class)->create(name: 'Stark', element: 'Axe');
-        $mage2 = model(MageWithUuid::class)->create(name: 'Eisen', element: 'Monk');
+        $mage1 = query(MageWithUuid::class)->create(name: 'Stark', element: 'Axe');
+        $mage2 = query(MageWithUuid::class)->create(name: 'Eisen', element: 'Monk');
 
-        $spell1 = model(SpellWithUuid::class)->create(
+        $spell1 = query(SpellWithUuid::class)->create(
             mage_uuid: $mage1->uuid->value,
             name: 'Axe Technique',
             power_level: 80,
             mana_cost: 30,
         );
 
-        $spell2 = model(SpellWithUuid::class)->create(
+        $spell2 = query(SpellWithUuid::class)->create(
             mage_uuid: $mage2->uuid->value,
             name: 'Warrior Meditation',
             power_level: 60,
             mana_cost: 20,
         );
 
-        $loadedMage1 = model(MageWithUuid::class)->get($mage1->uuid);
+        $loadedMage1 = query(MageWithUuid::class)->get($mage1->uuid);
         $loadedMage1->load('spells');
 
-        $loadedMage2 = model(MageWithUuid::class)->get($mage2->uuid);
+        $loadedMage2 = query(MageWithUuid::class)->get($mage2->uuid);
         $loadedMage2->load('spells');
 
         $this->assertCount(1, $loadedMage1->spells);
@@ -259,24 +259,24 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
             CreateSpellSimpleMigration::class,
         );
 
-        $mage = model(MageSimple::class)->create(
+        $mage = query(MageSimple::class)->create(
             name: 'Fern',
             element: 'Combat',
         );
 
-        $spell = model(SpellSimple::class)->create(
+        $spell = query(SpellSimple::class)->create(
             mage_uuid: $mage->uuid->value,
             name: 'Cutting Magic',
             power_level: 90,
         );
 
-        $loadedMage = model(MageSimple::class)->get($mage->uuid);
+        $loadedMage = query(MageSimple::class)->get($mage->uuid);
         $loadedMage->load('spells');
 
         $this->assertCount(1, $loadedMage->spells);
         $this->assertSame('Cutting Magic', $loadedMage->spells[0]->name);
 
-        $loadedSpell = model(SpellSimple::class)->get($spell->uuid);
+        $loadedSpell = query(SpellSimple::class)->get($spell->uuid);
         $loadedSpell->load('mage');
 
         $this->assertInstanceOf(MageSimple::class, $loadedSpell->mage);
