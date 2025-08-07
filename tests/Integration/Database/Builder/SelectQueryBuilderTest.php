@@ -75,7 +75,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereRaw('author_id = ?', 1)
             ->whereRaw('OR author_id = ?', 2)
             ->whereRaw('AND author_id <> NULL')
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT * FROM `books` WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
@@ -88,7 +88,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->select()
             ->where('title', 'a')
             ->where('author_id', 1)
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT * FROM `books` WHERE books.title = ? AND books.author_id = ?';
 
@@ -199,17 +199,17 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM `books` ORDER BY `title` ASC',
-            actual: query('books')->select()->orderBy('title')->toSql(),
+            actual: query('books')->select()->orderBy('title')->compile(),
         );
 
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM `books` ORDER BY `title` DESC',
-            actual: query('books')->select()->orderBy('title', Direction::DESC)->toSql(),
+            actual: query('books')->select()->orderBy('title', Direction::DESC)->compile(),
         );
 
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM `books` ORDER BY title DESC NULLS LAST',
-            actual: query('books')->select()->orderByRaw('title DESC NULLS LAST')->toSql(),
+            actual: query('books')->select()->orderByRaw('title DESC NULLS LAST')->compile(),
         );
     }
 
@@ -421,7 +421,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_eager_loads_combined_with_manual_loads(): void
     {
-        $query = AWithEager::select()->with('b.c')->toSql();
+        $query = AWithEager::select()->with('b.c')->compile();
 
         $this->assertSameWithoutBackticks(
             'SELECT a.id AS `a.id`, a.b_id AS `a.b_id`, b.id AS `b.id`, b.c_id AS `b.c_id`, c.id AS `b.c.id`, c.name AS `b.c.name` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c ON c.id = b.c_id',
@@ -434,7 +434,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('authors')
             ->select()
             ->groupBy('name')
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT * FROM authors GROUP BY name';
 
@@ -446,7 +446,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('authors')
             ->select()
             ->having('name = ?', 'Brent')
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT * FROM authors HAVING name = ?';
 

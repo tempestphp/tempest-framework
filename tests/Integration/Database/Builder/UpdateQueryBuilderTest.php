@@ -252,7 +252,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereRaw('author_id = ?', 1)
             ->whereRaw('OR author_id = ?', 2)
             ->whereRaw('AND author_id <> NULL')
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET title = ? WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
@@ -267,7 +267,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             )
             ->where('title', 'a')
             ->where('author_id', 1)
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET title = ? WHERE books.title = ? AND books.author_id = ?';
 
@@ -321,7 +321,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereIn('id', [1, 2, 3])
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?,?,?)';
 
@@ -333,7 +333,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereNotIn('author_id', [1, 2])
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` NOT IN (?,?)';
 
@@ -345,7 +345,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereNull('author_id')
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` IS NULL';
 
@@ -357,7 +357,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereNotNull('author_id')
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`author_id` IS NOT NULL';
 
@@ -369,7 +369,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereBetween('id', 1, 100)
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` BETWEEN ? AND ?';
 
@@ -381,7 +381,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query('books')
             ->update(title: 'Updated Book')
             ->whereNotBetween('id', 1, 10)
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` NOT BETWEEN ? AND ?';
 
@@ -394,7 +394,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->update(title: 'Updated Book')
             ->whereIn('id', [1, 2])
             ->orWhereIn('author_id', [10, 20])
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?,?) OR `books`.`author_id` IN (?,?)';
 
@@ -406,7 +406,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = query(Book::class)
             ->update(title: 'Updated Book')
             ->whereIn('id', [5])
-            ->toSql();
+            ->compile();
 
         $expected = 'UPDATE `books` SET `title` = ? WHERE `books`.`id` IN (?)';
 
