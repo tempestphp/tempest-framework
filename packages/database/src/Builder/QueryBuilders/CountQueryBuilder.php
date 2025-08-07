@@ -84,7 +84,7 @@ final class CountQueryBuilder implements BuildsQuery
      */
     public function toSql(): ImmutableString
     {
-        return $this->build()->toSql();
+        return $this->build()->compile();
     }
 
     /**

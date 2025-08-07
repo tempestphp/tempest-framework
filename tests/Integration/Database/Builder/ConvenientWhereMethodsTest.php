@@ -23,7 +23,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.category IN (?,?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
@@ -36,7 +36,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.status NOT IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
@@ -49,7 +49,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.publication_year BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
@@ -62,7 +62,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.price NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([10.0, 50.0], $query->bindings);
     }
 
@@ -75,7 +75,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.deleted_at IS NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -88,7 +88,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.published_at IS NOT NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -101,7 +101,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.status != ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft'], $query->bindings);
     }
 
@@ -114,7 +114,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.title LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
@@ -127,7 +127,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.title NOT LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%test%'], $query->bindings);
     }
 
@@ -140,7 +140,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'UPDATE `books` SET title = ? WHERE books.category IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['New Title', 'fiction', 'mystery'], $query->bindings);
     }
 
@@ -153,7 +153,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'UPDATE `books` SET status = ? WHERE books.rating BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['updated', 3.0, 5.0], $query->bindings);
     }
 
@@ -166,7 +166,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'UPDATE `books` SET status = ? WHERE books.deleted_at IS NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['archived'], $query->bindings);
     }
 
@@ -179,7 +179,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'DELETE FROM `books` WHERE books.status IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
@@ -192,7 +192,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'DELETE FROM `books` WHERE books.deleted_at IS NOT NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -209,7 +209,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.category IN (?,?) AND books.published_at IS NOT NULL AND books.rating BETWEEN ? AND ? OR books.status != ? OR books.title LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 'mystery', 3.0, 5.0, 'draft', '%bestseller%'], $query->bindings);
     }
 
@@ -232,7 +232,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.published = ? AND (books.category IN (?,?) OR books.featured_at IS NULL) OR (books.rating BETWEEN ? AND ? AND books.title NOT LIKE ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'fiction', 'mystery', 4.0, 5.0, '%draft%'], $query->bindings);
     }
 
@@ -254,7 +254,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.status IN (?,?) AND (books.published_at IS NOT NULL OR (books.rating BETWEEN ? AND ? AND books.category NOT IN (?)))';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['published', 'featured', 4.0, 5.0, 'children'], $query->bindings);
     }
 
@@ -286,7 +286,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `books` WHERE books.category IN (?) AND books.status NOT IN (?) AND books.rating BETWEEN ? AND ? AND books.price NOT BETWEEN ? AND ? AND books.deleted_at IS NULL AND books.published_at IS NOT NULL AND books.featured != ? AND books.title LIKE ? AND books.description NOT LIKE ? OR books.tags IN (?) OR books.awards NOT IN (?) OR books.pages BETWEEN ? AND ? OR books.weight NOT BETWEEN ? AND ? OR books.special_edition IS NULL OR books.isbn IS NOT NULL OR books.limited_edition != ? OR books.publisher LIKE ? OR books.format NOT LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([
             'fiction',
             'draft',
@@ -321,7 +321,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
@@ -337,7 +337,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
@@ -353,7 +353,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
@@ -370,7 +370,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.status = ? OR events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['active', $startDate, $endDate], $query->bindings);
     }
 
@@ -387,7 +387,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.priority = ? OR events.created_at NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['high', $startDate, $endDate], $query->bindings);
     }
 
@@ -404,7 +404,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
@@ -421,7 +421,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
@@ -439,7 +439,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM `events` WHERE events.created_at BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 }

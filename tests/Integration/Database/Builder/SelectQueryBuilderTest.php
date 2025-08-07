@@ -38,7 +38,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT title, index FROM chapters WHERE title = ? AND index <> ? OR createdAt > ? ORDER BY index ASC';
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
         $bindings = $query->bindings;
 
         $this->assertSameWithoutBackticks($expected, $sql);
@@ -49,7 +49,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')->select()->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT * FROM `chapters`';
 
@@ -60,7 +60,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)->select()->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT authors.id AS `authors.id`, authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id` FROM `authors`';
 
@@ -325,7 +325,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT title, index FROM `chapters` WHERE `title` = ? AND `index` <> ? OR `createdAt` > ? ORDER BY `index` ASC';
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
         $bindings = $query->bindings;
 
         $this->assertSameWithoutBackticks($expected, $sql);
@@ -376,7 +376,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id` FROM `books`',
-            $query->build()->toSql(),
+            $query->build()->compile(),
         );
     }
 
@@ -389,7 +389,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id`, authors.id AS `author.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, chapters.id AS `chapters.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, isbns.id AS `isbn.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id` FROM `books` LEFT JOIN authors ON authors.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns ON isbns.book_id = books.id',
-            $query->toSql(),
+            $query->compile(),
         );
     }
 

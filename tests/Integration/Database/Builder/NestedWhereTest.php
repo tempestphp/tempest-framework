@@ -24,7 +24,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE title = ? AND (author_id = ? OR author_id = ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['test', 1, 2], $query->bindings);
     }
 
@@ -42,7 +42,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE status = ? OR (priority = ? AND urgent = ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['active', 'high', true], $query->bindings);
     }
 
@@ -64,7 +64,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE published = ? AND (category = ? OR (author_name = ? AND rating > ?))';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'fiction', 'Tolkien', 4.5], $query->bindings);
     }
 
@@ -99,7 +99,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE status = ? AND ((category = ? AND rating > ?) OR (category = ? AND author_id IN (?, ?, ?))) AND created_at > ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([
             'published',
             'fiction',
@@ -125,7 +125,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE (title LIKE ? OR description LIKE ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%test%', '%test%'], $query->bindings);
     }
 
@@ -143,7 +143,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.published = ? AND (category = ? OR priority = ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'fiction', 'high'], $query->bindings);
     }
 }

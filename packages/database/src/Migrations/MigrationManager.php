@@ -323,7 +323,7 @@ final class MigrationManager
         $query = new Query($statement->compile($this->dialect));
 
         // Remove comments
-        $sql = preg_replace('/--.*$/m', '', $query->toSql()->toString()); // Remove SQL single-line comments
+        $sql = preg_replace('/--.*$/m', '', $query->compile()->toString()); // Remove SQL single-line comments
         $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
 
         // Remove blank lines and excessive spaces

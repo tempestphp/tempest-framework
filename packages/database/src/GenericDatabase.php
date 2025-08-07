@@ -44,7 +44,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $statement = $this->connection->prepare($query->toSql()->toString());
+            $statement = $this->connection->prepare($query->compile()->toString());
             $statement->execute($bindings);
 
             $this->lastStatement = $statement;
@@ -56,7 +56,7 @@ final class GenericDatabase implements Database
 
     public function getLastInsertId(): ?PrimaryKey
     {
-        $sql = $this->lastQuery->toSql();
+        $sql = $this->lastQuery->compile();
 
         if (! $sql->trim()->startsWith('INSERT')) {
             return null;
@@ -88,7 +88,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $pdoQuery = $this->connection->prepare($query->toSql()->toString());
+            $pdoQuery = $this->connection->prepare($query->compile()->toString());
             $pdoQuery->execute($bindings);
 
             return $pdoQuery->fetchAll(PDO::FETCH_NAMED);

@@ -23,7 +23,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'DELETE FROM `foo` WHERE `bar` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSameWithoutBackticks(
@@ -41,7 +41,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'DELETE FROM `authors`',
-            $query->toSql(),
+            $query->compile(),
         );
     }
 
@@ -56,7 +56,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'DELETE FROM `authors` WHERE `authors`.`id` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -81,7 +81,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'DELETE FROM `foo` WHERE `bar` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -148,7 +148,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'DELETE FROM books WHERE status = ? AND (created_at < ? AND author_id IS NULL)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', '2022-01-01'], $query->bindings);
     }
 }

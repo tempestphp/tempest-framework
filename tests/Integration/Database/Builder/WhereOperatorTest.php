@@ -21,7 +21,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.title = ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['Test Book'], $query->bindings);
     }
 
@@ -34,7 +34,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.rating > ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([4.0], $query->bindings);
     }
 
@@ -47,7 +47,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.title LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
@@ -60,7 +60,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.category IN (?,?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
@@ -73,7 +73,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.publication_year BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
@@ -86,7 +86,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.deleted_at IS NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -101,7 +101,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.published = ? AND books.rating >= ? OR books.category = ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 4.0, 'bestseller'], $query->bindings);
     }
 
@@ -115,7 +115,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.published = ? AND (title LIKE ? OR description LIKE ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, '%test%', '%test%'], $query->bindings);
     }
 
@@ -133,7 +133,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.published = ? AND (books.category = ? OR books.rating > ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'fiction', 4.5], $query->bindings);
     }
 
@@ -151,7 +151,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT * FROM books WHERE books.status = ? AND (books.category IN (?,?) OR custom_field IS NOT NULL)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['published', 'fiction', 'mystery'], $query->bindings);
     }
 

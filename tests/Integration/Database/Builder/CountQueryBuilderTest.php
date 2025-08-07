@@ -30,7 +30,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS count FROM chapters WHERE title = ? AND index <> ? OR createdAt > ?';
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
         $bindings = $query->bindings;
 
         $this->assertSameWithoutBackticks($expected, $sql);
@@ -43,7 +43,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->count('*')
             ->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `chapters`';
 
@@ -54,7 +54,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')->count('title')->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT COUNT(`title`) AS `count` FROM `chapters`';
 
@@ -88,7 +88,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->distinct()
             ->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT COUNT(DISTINCT `title`) AS `count` FROM `chapters`';
 
@@ -99,7 +99,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)->count()->build();
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `authors`';
 
@@ -128,7 +128,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `chapters` WHERE `title` = ? AND `index` <> ? OR `createdAt` > ?';
 
-        $sql = $query->toSql();
+        $sql = $query->compile();
         $bindings = $query->bindings;
 
         $this->assertSameWithoutBackticks($expected, $sql);
@@ -186,7 +186,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?,?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
@@ -199,7 +199,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?,?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', 'published', 'archived', 'featured'], $query->bindings);
     }
 
@@ -212,7 +212,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['published', 'featured'], $query->bindings);
     }
 
@@ -225,7 +225,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status NOT IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
@@ -238,7 +238,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status NOT IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
@@ -251,7 +251,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.publication_year BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
@@ -264,7 +264,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.price NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([10.0, 50.0], $query->bindings);
     }
 
@@ -277,7 +277,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.deleted_at IS NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -290,7 +290,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published_at IS NOT NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([], $query->bindings);
     }
 
@@ -303,7 +303,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status != ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft'], $query->bindings);
     }
 
@@ -316,7 +316,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
@@ -329,7 +329,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title NOT LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['%test%'], $query->bindings);
     }
 
@@ -343,7 +343,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.category IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'fiction', 'mystery'], $query->bindings);
     }
 
@@ -357,7 +357,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.status NOT IN (?,?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'draft', 'archived'], $query->bindings);
     }
 
@@ -371,7 +371,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.rating BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 4.0, 5.0], $query->bindings);
     }
 
@@ -385,7 +385,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.price NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 20.0, 80.0], $query->bindings);
     }
 
@@ -399,7 +399,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.deleted_at IS NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true], $query->bindings);
     }
 
@@ -413,7 +413,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.featured_at IS NOT NULL';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([false], $query->bindings);
     }
 
@@ -427,7 +427,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.status != ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'archived'], $query->bindings);
     }
 
@@ -441,7 +441,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.description LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, '%adventure%'], $query->bindings);
     }
 
@@ -455,7 +455,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.published = ? OR books.title NOT LIKE ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, '%boring%'], $query->bindings);
     }
 
@@ -471,7 +471,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?,?) AND books.published_at IS NOT NULL AND books.rating BETWEEN ? AND ? AND books.status != ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 'mystery', 3.0, 5.0, 'draft'], $query->bindings);
     }
 
@@ -486,7 +486,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.category IN (?) OR books.featured_at IS NULL OR books.price NOT BETWEEN ? AND ?';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['fiction', 100.0, 200.0], $query->bindings);
     }
 
@@ -504,7 +504,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.status IN (?,?) AND (books.published_at IS NOT NULL OR books.rating BETWEEN ? AND ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['published', 'featured', 4.0, 5.0], $query->bindings);
     }
 
@@ -522,7 +522,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'SELECT COUNT(*) AS count FROM books WHERE published = ? OR (status = ? AND rating >= ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'featured', 4.5], $query->bindings);
     }
 }
