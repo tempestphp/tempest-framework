@@ -22,7 +22,7 @@ use function Tempest\Database\inspect;
  */
 final class CountQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private CountStatement $count;
 
