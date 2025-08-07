@@ -36,7 +36,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `chapters` SET `title` = ?, `index` = ? WHERE `id` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -54,7 +54,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `chapters` SET `index` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -70,7 +70,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         query('chapters')
             ->update(index: 0)
             ->build()
-            ->toSql();
+            ->compile();
     }
 
     public function test_model_update_with_values(): void
@@ -84,7 +84,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `books` SET `title` = ? WHERE `id` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -108,7 +108,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `books` SET `title` = ? WHERE `books`.`id` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -147,7 +147,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `books` SET `author_id` = ? WHERE `books`.`id` = ?',
-            $bookQuery->toSql(),
+            $bookQuery->compile(),
         );
 
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[0]);
@@ -160,10 +160,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             $expected .= ' RETURNING *';
         }
 
-        $this->assertSameWithoutBackticks(
-            $expected,
-            $authorQuery->toSql(),
-        );
+        $this->assertSameWithoutBackticks($expected, $authorQuery->compile());
 
         $this->assertSame(['Brent'], $authorQuery->bindings);
     }
@@ -180,7 +177,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `books` SET `author_id` = ? WHERE `books`.`id` = ?',
-            $bookQuery->toSql(),
+            $bookQuery->compile(),
         );
 
         $this->assertSame([5, 10], $bookQuery->bindings);
@@ -218,7 +215,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             'UPDATE `chapters` SET `title` = ?, `index` = ? WHERE `id` = ?',
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -291,7 +288,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = 'UPDATE books SET status = ? WHERE published = ? AND (views < ? OR last_accessed < ?)';
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['archived', true, 100, '2023-01-01'], $query->bindings);
     }
 
@@ -314,7 +311,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SQL,
         };
 
-        $this->assertSame($expected, $query->toSql()->toString());
+        $this->assertSame($expected, $query->compile()->toString());
 
         $this->assertSame(['other', 1], $query->bindings);
     }

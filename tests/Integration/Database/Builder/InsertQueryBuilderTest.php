@@ -31,7 +31,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             $expected,
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -56,7 +56,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks(
             $expected,
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -77,7 +77,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = $this->buildExpectedInsert('INSERT INTO `authors` (`name`, `type`, `publisher_id`) VALUES (?, ?, ?), (?, ?, ?)');
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);
     }
 
@@ -94,7 +94,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
 
-        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->compile());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[1]);
 
@@ -102,7 +102,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expectedAuthorQuery = $this->buildExpectedInsert('INSERT INTO `authors` (`name`) VALUES (?)');
 
-        $this->assertSameWithoutBackticks($expectedAuthorQuery, $authorQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedAuthorQuery, $authorQuery->compile());
         $this->assertSame('Brent', $authorQuery->bindings[0]);
     }
 
@@ -122,7 +122,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
 
-        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->compile());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
     }
@@ -194,7 +194,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             SQL,
         };
 
-        $this->assertSame($expected, $query->toSql()->toString());
+        $this->assertSame($expected, $query->compile()->toString());
         $this->assertSame(['test'], $query->bindings);
     }
 }
