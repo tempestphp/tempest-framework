@@ -135,11 +135,7 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private function getDefaultForeignKeyName(): string
     {
-        return str($this->model->getName())
-            ->afterLast('\\')
-            ->lower()
-            ->append('_', $this->model->getPrimaryKey())
-            ->toString();
+        return Intl\singularize($this->model->getTableName()) . '_' . $this->model->getPrimaryKey();
     }
 
     private function convertObjectToArray(object $object, array $excludeProperties = []): array
