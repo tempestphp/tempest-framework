@@ -13,7 +13,7 @@ use function Tempest\Support\str;
 /**
  * @template TModel of object
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
- * @uses \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
+ * @use \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
 {

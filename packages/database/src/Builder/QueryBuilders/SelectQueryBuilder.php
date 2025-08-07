@@ -32,7 +32,7 @@ use function Tempest\map;
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
+ * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
