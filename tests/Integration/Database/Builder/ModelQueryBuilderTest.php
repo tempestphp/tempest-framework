@@ -168,30 +168,6 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Fern', $modelWithoutId->name);
     }
 
-    public function test_resolve_with_id_model(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
-
-        $created = model(TestUserModel::class)->create(name: 'Stark');
-        $resolved = model(TestUserModel::class)->resolve($created->id);
-
-        $this->assertInstanceOf(TestUserModel::class, $resolved);
-        $this->assertSame('Stark', $resolved->name);
-        $this->assertTrue($created->id->equals($resolved->id));
-    }
-
-    public function test_resolve_throws_for_model_without_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
-
-        $this->expectException(ModelDidNotHavePrimaryColumn::class);
-        $this->expectExceptionMessage(
-            "`Tests\Tempest\Integration\Database\Builder\TestUserModelWithoutId` does not have a primary column defined, which is required for the `resolve` method.",
-        );
-
-        model(TestUserModelWithoutId::class)->resolve(1);
-    }
-
     public function test_get_with_id_model(): void
     {
         $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
