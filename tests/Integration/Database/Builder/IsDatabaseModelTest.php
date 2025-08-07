@@ -658,7 +658,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(PrimaryKey::class, $user->id);
 
         $posts = TestPost::select()
-            ->where('testuser_id', $user->id->value)
+            ->where('test_user_id', $user->id->value)
             ->all();
 
         $this->assertCount(2, $posts);
@@ -666,6 +666,29 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('world', $posts[0]->body);
         $this->assertSame('foo', $posts[1]->title);
         $this->assertSame('bar', $posts[1]->body);
+    }
+
+    public function test_model_update_with_only_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTestUserMigration::class,
+            CreateTestPostMigration::class,
+        );
+
+        $user = TestUser::create(name: 'Frieren');
+        $user->update(posts: [
+            new TestPost('hello', 'world'),
+        ]);
+
+        $posts = TestPost::select()
+            ->where('test_user_id', $user->id->value)
+            ->all();
+
+        $this->assertCount(1, $posts);
+        $this->assertSame('hello', $posts[0]->title);
+        $this->assertSame('world', $posts[0]->body);
+        $this->assertSame('Frieren', $user->name); // Ensure name wasn't changed
     }
 }
 
@@ -1048,7 +1071,7 @@ final class CreateTestUserMigration implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(TestUser::class)
+        return new CreateTableStatement('test_users')
             ->primary()
             ->text('name');
     }
@@ -1065,9 +1088,9 @@ final class CreateTestPostMigration implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(TestPost::class)
+        return new CreateTableStatement('test_posts')
             ->primary()
-            ->belongsTo('test_posts.testuser_id', 'test_users.id')
+            ->foreignId('test_user_id', constrainedOn: 'test_users')
             ->string('title')
             ->text('body');
     }

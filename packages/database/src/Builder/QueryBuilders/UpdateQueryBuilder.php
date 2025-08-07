@@ -63,7 +63,14 @@ final class UpdateQueryBuilder implements BuildsQuery
      */
     public function execute(mixed ...$bindings): ?PrimaryKey
     {
-        $result = $this->build()->execute(...$bindings);
+        // For relation-only updates, we need to resolve values to set up
+        // callbacks but we won't actually execute an UPDATE statement.
+        if ($this->hasOnlyRelationUpdates()) {
+            $this->resolveValuesToUpdate();
+            $result = $this->primaryKeyForRelations;
+        } else {
+            $result = $this->build()->execute(...$bindings);
+        }
 
         // Execute after callbacks for relation updates
         if ($this->model->hasPrimaryKey() && $this->after !== [] && $this->primaryKeyForRelations !== null) {
@@ -121,7 +128,7 @@ final class UpdateQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        $values = $this->resolveValues();
+        $values = $this->resolveValuesToUpdate();
 
         if ($this->model->hasPrimaryKey()) {
             unset($values[$this->model->getPrimaryKey()]);
@@ -148,7 +155,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return new Query($this->update, $allBindings)->onDatabase($this->onDatabase);
     }
 
-    private function resolveValues(): ImmutableArray
+    private function resolveValuesToUpdate(): ImmutableArray
     {
         if ($this->hasRelationUpdates()) {
             $this->validateRelationUpdateConstraints();
@@ -525,6 +532,21 @@ final class UpdateQueryBuilder implements BuildsQuery
         $this->bind(...$condition['bindings']);
 
         return $this;
+    }
+
+    private function hasOnlyRelationUpdates(): bool
+    {
+        if (! $this->hasRelationUpdates()) {
+            return false;
+        }
+
+        foreach (array_keys($this->values) as $field) {
+            if (! $this->isRelationField($field)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function hasRelationUpdates(): bool

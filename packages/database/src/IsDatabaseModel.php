@@ -205,7 +205,7 @@ trait IsDatabaseModel
     }
 
     /**
-     * Saves the model to the database.
+     * Saves the model to the database. If the model has no primary key, this method always inserts.
      */
     public function save(): self
     {
@@ -250,16 +250,22 @@ trait IsDatabaseModel
      */
     public function update(mixed ...$params): self
     {
-        inspect(self::class)->validate(...$params);
+        $model = inspect($this);
+
+        if (! $model->hasPrimaryKey()) {
+            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'update');
+        }
+
+        $model->validate(...$params);
+
+        query($this)
+            ->update(...$params)
+            ->where($model->getPrimaryKey(), $model->getPrimaryKeyValue())
+            ->execute();
 
         foreach ($params as $key => $value) {
             $this->{$key} = $value;
         }
-
-        query($this)
-            ->update(...$params)
-            ->build()
-            ->execute();
 
         return $this;
     }
