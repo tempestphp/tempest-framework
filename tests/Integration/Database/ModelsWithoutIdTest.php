@@ -135,9 +135,9 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
-        $this->expectExceptionMessage('does not have a primary column defined, which is required for the `resolve` method');
+        $this->expectExceptionMessage('does not have a primary column defined, which is required for the `findById` method');
 
-        model(LogEntry::class)->resolve(id: 1);
+        model(LogEntry::class)->findById(id: 1);
     }
 
     public function test_get_method_throws_for_models_without_id(): void

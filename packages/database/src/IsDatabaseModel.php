@@ -63,14 +63,6 @@ trait IsDatabaseModel
     }
 
     /**
-     * Finds a model instance by its ID.
-     */
-    public static function resolve(string|int|PrimaryKey $id): static
-    {
-        return model(self::class)->resolve($id);
-    }
-
-    /**
      * Gets a model instance by its ID, optionally loading the given relationships.
      */
     public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
