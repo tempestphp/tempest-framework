@@ -6,11 +6,14 @@ namespace Tempest\Auth\Install;
 
 use BackedEnum;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use UnitEnum;
 
 final class Permission
 {
     use IsDatabaseModel;
+
+    public PrimaryKey $id;
 
     public function __construct(
         public string $name,

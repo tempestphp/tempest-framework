@@ -33,17 +33,7 @@ final class SelectStatementTest extends TestCase
             offset: 100,
         );
 
-        $expectedMysql = <<<SQL
-        SELECT `a`, `b`, `c`, `bar`.`d` AS `d_alias`
-        FROM `foo` AS `bar`
-        INNER JOIN foo ON bar.id = foo.id
-        WHERE `foo` = "bar"
-        GROUP BY `foo`
-        HAVING `foo` = "bar"
-        ORDER BY `foo` DESC
-        LIMIT 10
-        OFFSET 100
-        SQL;
+        $expectedMysql = 'SELECT `a`, `b`, `c`, `bar`.`d` AS `d_alias` FROM `foo` AS `bar` INNER JOIN foo ON bar.id = foo.id WHERE `foo` = "bar" GROUP BY `foo` HAVING `foo` = "bar" ORDER BY `foo` DESC LIMIT 10 OFFSET 100';
 
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
     }

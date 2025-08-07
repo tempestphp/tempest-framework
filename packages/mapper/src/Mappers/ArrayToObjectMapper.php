@@ -28,9 +28,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         try {
-            $class = new ClassReflector($to);
-
-            return $class->isInstantiable();
+            return new ClassReflector($to)->isInstantiable();
         } catch (Throwable) {
             return false;
         }
@@ -39,17 +37,12 @@ final readonly class ArrayToObjectMapper implements Mapper
     public function map(mixed $from, mixed $to): object
     {
         $class = new ClassReflector($to);
-
         $object = $this->resolveObject($to);
+        $from = arr($from)->undot()->toArray();
+        $isStrictClass = $class->hasAttribute(Strict::class);
 
         $missingValues = [];
-
-        /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
-
-        $from = arr($from)->undot()->toArray();
-
-        $isStrictClass = $class->hasAttribute(Strict::class);
 
         foreach ($class->getPublicProperties() as $property) {
             if ($property->isVirtual()) {
@@ -59,23 +52,17 @@ final readonly class ArrayToObjectMapper implements Mapper
             $propertyName = $this->resolvePropertyName($property, $from);
 
             if (! array_key_exists($propertyName, $from)) {
-                $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
-
-                if ($property->hasDefaultValue()) {
-                    continue;
-                }
-
-                if ($isStrictProperty) {
-                    $missingValues[] = $propertyName;
-                } else {
-                    $unsetProperties[] = $property;
-                }
-
+                $this->handleMissingProperty(
+                    property: $property,
+                    propertyName: $propertyName,
+                    isStrictClass: $isStrictClass,
+                    missingValues: $missingValues,
+                    unsetProperties: $unsetProperties,
+                );
                 continue;
             }
 
             $value = $this->resolveValue($property, $from[$propertyName]);
-
             $property->setValue($object, $value);
         }
 
@@ -85,8 +72,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $this->setParentRelations($object, $class);
 
-        // Non-strict properties that weren't passed are unset,
-        // which means that they can now be accessed via `__get`
         foreach ($unsetProperties as $property) {
             if ($property->isVirtual()) {
                 continue;
@@ -98,15 +83,15 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    /**
-     * @param array<mixed> $from
-     */
     private function resolvePropertyName(PropertyReflector $property, array $from): string
     {
         $mapFrom = $property->getAttribute(MapFrom::class);
 
         if ($mapFrom !== null) {
-            return arr($from)->keys()->intersect($mapFrom->names)->first() ?? $property->getName();
+            return arr($from)
+                ->keys()
+                ->intersect($mapFrom->names)
+                ->first(default: $property->getName());
         }
 
         return $property->getName();
@@ -121,16 +106,10 @@ final readonly class ArrayToObjectMapper implements Mapper
         return new ClassReflector($objectOrClass)->newInstanceWithoutConstructor();
     }
 
-    private function setParentRelations(
-        object $parent,
-        ClassReflector $parentClass,
-    ): void {
+    private function setParentRelations(object $parent, ClassReflector $parentClass): void
+    {
         foreach ($parentClass->getPublicProperties() as $property) {
-            if (! $property->isInitialized($parent)) {
-                continue;
-            }
-
-            if ($property->isVirtual()) {
+            if (! $property->isInitialized($parent) || $property->isVirtual()) {
                 continue;
             }
 
@@ -146,52 +125,71 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $childClass = $type->asClass();
+            $this->setChildParentRelation($parent, $child, $type->asClass());
+        }
+    }
 
-            foreach ($childClass->getPublicProperties() as $childProperty) {
-                // Determine the value to set in the child property
-                if ($childProperty->getType()->equals($parent::class)) {
-                    $valueToSet = $parent;
-                } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
-                    $valueToSet = [$parent];
-                } else {
-                    continue;
-                }
+    private function setChildParentRelation(object $parent, mixed $child, ClassReflector $childClass): void
+    {
+        foreach ($childClass->getPublicProperties() as $childProperty) {
+            if ($childProperty->getType()->equals($parent::class)) {
+                $valueToSet = $parent;
+            } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
+                $valueToSet = [$parent];
+            } else {
+                continue;
+            }
 
-                if (is_array($child)) {
-                    // Set the value for each child element if the child is an array
-                    foreach ($child as $childItem) {
-                        $childProperty->setValue($childItem, $valueToSet);
-                    }
-                } else {
-                    // Set the value directly on the child element if it's an object
-                    $childProperty->setValue($child, $valueToSet);
+            if (is_array($child)) {
+                foreach ($child as $childItem) {
+                    $childProperty->setValue($childItem, $valueToSet);
                 }
+            } else {
+                $childProperty->setValue($child, $valueToSet);
             }
         }
     }
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        // If this isn't a property with iterable type defined, and the type accepts the value, we don't have to cast it
-        // We need to check the iterable type, because otherwise raw array input might incorrectly be seen as "accepted by the property's array type",
-        // which isn't sufficient a check.
-        // Oh how we long for the day that PHP gets generics…
-        if ($property->getIterableType() === null && $property->getType()->accepts($value)) {
+        $caster = $this->casterFactory->forProperty($property);
+
+        if ($caster === null) {
             return $value;
         }
 
-        // If there is an iterable type, and it accepts the value within the array given, we don't have to cast it either
-        if ($property->getIterableType()?->accepts(arr($value)->first())) {
-            return $value;
-        }
-
-        // If there's a caster, we'll cast the value
-        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
+        if ($property->getIterableType() !== null) {
             return $caster->cast($value);
         }
 
-        // Otherwise we'll return the value as-is
-        return $value;
+        if (! $property->getType()->accepts($value)) {
+            return $caster->cast($value);
+        }
+
+        if (is_object($value) && $property->getType()->matches($value::class)) {
+            return $value;
+        }
+
+        return $caster->cast($value);
+    }
+
+    private function handleMissingProperty(
+        PropertyReflector $property,
+        string $propertyName,
+        bool $isStrictClass,
+        array &$missingValues,
+        array &$unsetProperties,
+    ): void {
+        if ($property->hasDefaultValue()) {
+            return;
+        }
+
+        $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
+
+        if ($isStrictProperty) {
+            $missingValues[] = $propertyName;
+        } else {
+            $unsetProperties[] = $property;
+        }
     }
 }

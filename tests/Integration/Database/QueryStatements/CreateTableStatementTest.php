@@ -18,7 +18,6 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropEnumTypeStatement;
-use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -128,8 +127,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 public function up(): QueryStatement
                 {
                     return new CompoundStatement(
-                        new DropEnumTypeStatement(EnumForCreateTable::class),
-                        new CreateEnumTypeStatement(EnumForCreateTable::class),
+                        new DropEnumTypeStatement(CreateTableStatementTestEnumForCreateTable::class),
+                        new CreateEnumTypeStatement(CreateTableStatementTestEnumForCreateTable::class),
                     );
                 }
 
@@ -150,8 +149,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return new CreateTableStatement('test_table')
                     ->enum(
                         name: 'enum',
-                        enumClass: EnumForCreateTable::class,
-                        default: EnumForCreateTable::BAR,
+                        enumClass: CreateTableStatementTestEnumForCreateTable::class,
+                        default: CreateTableStatementTestEnumForCreateTable::BAR,
                     );
             }
 
@@ -281,4 +280,73 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame($varcharStatement, $stringStatement);
     }
+
+    public function test_object_field(): void
+    {
+        $migration = new class() implements DatabaseMigration {
+            private(set) string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('test_table')
+                    ->object('object_data');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(CreateMigrationsTable::class, $migration);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_object_field_with_default(): void
+    {
+        $migration = new class() implements DatabaseMigration {
+            private(set) string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('test_table')
+                    ->object('object_data', default: '{"name": "Frieren", "age": 1000}');
+            }
+
+            public function down(): ?QueryStatement
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(CreateMigrationsTable::class, $migration);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_object_method_produces_same_sql_as_json_and_dto(): void
+    {
+        $jsonStatement = new CreateTableStatement('test_table')
+            ->json('data')
+            ->compile(DatabaseDialect::MYSQL);
+
+        $dtoStatement = new CreateTableStatement('test_table')
+            ->dto('data')
+            ->compile(DatabaseDialect::MYSQL);
+
+        $objectStatement = new CreateTableStatement('test_table')
+            ->object('data')
+            ->compile(DatabaseDialect::MYSQL);
+
+        $this->assertSame($jsonStatement, $dtoStatement);
+        $this->assertSame($jsonStatement, $objectStatement);
+        $this->assertSame($dtoStatement, $objectStatement);
+    }
+}
+
+enum CreateTableStatementTestEnumForCreateTable: string
+{
+    case FOO = 'foo';
+    case BAR = 'bar';
 }

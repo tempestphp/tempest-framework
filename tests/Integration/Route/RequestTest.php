@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Route;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Cryptography\Encryption\Encrypter;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\RequestFactory;
@@ -143,8 +143,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
             ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
-        $book = Book::get(new Id(1));
-        $this->assertSame(1, $book->id->id);
+        $book = Book::get(new PrimaryKey(1));
+        $this->assertSame(1, $book->id->value);
         $this->assertSame('a', $book->title);
     }
 
@@ -172,8 +172,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
             ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
-        $book = Book::get(new Id(1), relations: ['author']);
-        $this->assertSame(1, $book->id->id);
+        $book = Book::get(new PrimaryKey(1), relations: ['author']);
+        $this->assertSame(1, $book->id->value);
         $this->assertSame('a', $book->title);
         $this->assertSame('b', $book->author->name);
     }

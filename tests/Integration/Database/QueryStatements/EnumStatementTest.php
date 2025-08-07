@@ -4,7 +4,6 @@ namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\EnumStatement;
-use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class EnumStatementTest extends FrameworkIntegrationTestCase
@@ -13,7 +12,7 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
     {
         $enumStatement = new EnumStatement(
             name: 'enum',
-            enumClass: EnumForCreateTable::class,
+            enumClass: EnumStatementTestEnumForCreateTable::class,
         );
 
         $this->assertSame(
@@ -26,7 +25,7 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
     {
         $enumStatement = new EnumStatement(
             name: 'enum',
-            enumClass: EnumForCreateTable::class,
+            enumClass: EnumStatementTestEnumForCreateTable::class,
         );
 
         $this->assertSame(
@@ -39,12 +38,18 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
     {
         $enumStatement = new EnumStatement(
             name: 'enum',
-            enumClass: EnumForCreateTable::class,
+            enumClass: EnumStatementTestEnumForCreateTable::class,
         );
 
         $this->assertSame(
-            '"enum" "Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable"  NOT NULL',
+            '"enum" "Tests\Tempest\Integration\Database\QueryStatements\EnumStatementTestEnumForCreateTable"  NOT NULL',
             $enumStatement->compile(DatabaseDialect::POSTGRESQL),
         );
     }
+}
+
+enum EnumStatementTestEnumForCreateTable: string
+{
+    case FOO = 'foo';
+    case BAR = 'bar';
 }

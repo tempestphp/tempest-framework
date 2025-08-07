@@ -21,18 +21,12 @@ final class InsertStatementTest extends TestCase
             arr(['foo' => 3, 'bar' => 4]),
         ]));
 
-        $expected = <<<SQL
-        INSERT INTO `foo` AS `bar` (`foo`, `bar`)
-        VALUES (?, ?), (?, ?)
-        SQL;
+        $expected = 'INSERT INTO `foo` AS `bar` (`foo`, `bar`) VALUES (?, ?), (?, ?)';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
 
-        $expectedPostgres = <<<PSQL
-        INSERT INTO `foo` AS `bar` (`foo`, `bar`)
-        VALUES (?, ?), (?, ?) RETURNING *
-        PSQL;
+        $expectedPostgres = 'INSERT INTO `foo` AS `bar` (`foo`, `bar`) VALUES (?, ?), (?, ?) RETURNING *';
 
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }

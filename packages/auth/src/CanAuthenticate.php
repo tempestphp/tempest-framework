@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 
 interface CanAuthenticate
 {
-    public ?Id $id {
+    public ?PrimaryKey $id {
         get;
     }
 }

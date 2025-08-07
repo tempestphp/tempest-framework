@@ -24,11 +24,7 @@ final class UpdateStatementTest extends TestCase
             where: arr([new WhereStatement('`bar` = ?')]),
         );
 
-        $expected = <<<SQL
-        UPDATE `foo`
-        SET `bar` = ?, `baz` = ?
-        WHERE `bar` = ?
-        SQL;
+        $expected = 'UPDATE `foo` SET `bar` = ?, `baz` = ? WHERE `bar` = ?';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
@@ -68,10 +64,7 @@ final class UpdateStatementTest extends TestCase
             allowAll: true,
         );
 
-        $expected = <<<SQL
-        UPDATE `foo`
-        SET `bar` = ?, `baz` = ?
-        SQL;
+        $expected = 'UPDATE `foo` SET `bar` = ?, `baz` = ?';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }

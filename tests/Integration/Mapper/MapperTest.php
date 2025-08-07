@@ -46,7 +46,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ]);
 
         $this->assertSame('test', $author->name);
-        $this->assertSame(1, $author->id->id);
+        $this->assertSame(1, $author->id->value);
     }
 
     public function test_make_collection(): void
@@ -62,7 +62,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $authors);
         $this->assertSame('test', $authors[0]->name);
-        $this->assertSame(1, $authors[0]->id->id);
+        $this->assertSame(1, $authors[0]->id->value);
     }
 
     public function test_make_object_from_existing_object(): void
@@ -78,7 +78,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ]);
 
         $this->assertSame('other', $author->name);
-        $this->assertSame(1, $author->id->id);
+        $this->assertSame(1, $author->id->value);
     }
 
     public function test_make_object_with_map_to(): void
@@ -94,7 +94,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ->to($author);
 
         $this->assertSame('other', $author->name);
-        $this->assertSame(1, $author->id->id);
+        $this->assertSame(1, $author->id->value);
     }
 
     public function test_make_object_with_has_many_relation(): void

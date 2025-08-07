@@ -8,17 +8,18 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 
 /**
- * @template TModelClass of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModelClass>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModelClass>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private DeleteStatement $delete;
 
@@ -27,20 +28,27 @@ final class DeleteQueryBuilder implements BuildsQuery
     private ModelInspector $model;
 
     /**
-     * @param class-string<TModelClass>|string|TModelClass $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(string|object $model)
     {
-        $this->model = model($model);
+        $this->model = inspect($model);
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
     }
 
+    /**
+     * Executes the delete query, removing matching records from the database.
+     */
     public function execute(): void
     {
         $this->build()->execute();
     }
 
-    /** @return self<TModelClass> */
+    /**
+     * Allows the delete operation to proceed without WHERE conditions, deleting all records.
+     *
+     * @return self<TModel>
+     */
     public function allowAll(): self
     {
         $this->delete->allowAll = true;
@@ -48,7 +56,11 @@ final class DeleteQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<TModelClass> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<TModel>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -56,18 +68,30 @@ final class DeleteQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function toSql(): string
+    /**
+     * Compile the query to a SQL statement without the bindings.
+     */
+    public function compile(): ImmutableString
     {
-        return $this->build()->toSql();
+        return $this->build()->compile();
+    }
+
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
+    public function toRawSql(): ImmutableString
+    {
+        return $this->build()->toRawSql();
     }
 
     public function build(mixed ...$bindings): Query
     {
-        if ($this->model->isObjectModel() && is_object($this->model->instance)) {
-            $this->whereField(
-                $this->model->getPrimaryKey(),
-                $this->model->getPrimaryKeyValue()->id,
-            );
+        if ($this->model->isObjectModel() && is_object($this->model->instance) && $this->model->hasPrimaryKey()) {
+            $primaryKeyValue = $this->model->getPrimaryKeyValue();
+
+            if ($primaryKeyValue !== null) {
+                $this->where($this->model->getPrimaryKey(), $primaryKeyValue->value);
+            }
         }
 
         return new Query($this->delete, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);

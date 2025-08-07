@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration;
 
 use Closure;
 use InvalidArgumentException;
+use Stringable;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -180,7 +181,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->assertSame($expected, $actual);
     }
 
-    protected function assertSameWithoutBackticks(string $expected, string $actual): void
+    protected function assertSameWithoutBackticks(Stringable|string $expected, Stringable|string $actual): void
     {
         $clean = function (string $string): string {
             return \Tempest\Support\str($string)
@@ -190,8 +191,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         };
 
         $this->assertSame(
-            $clean($expected),
-            $clean($actual),
+            $clean((string) $expected),
+            $clean((string) $actual),
         );
     }
 

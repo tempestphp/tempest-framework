@@ -4,10 +4,8 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
-use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -26,20 +24,14 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_insert_on_plain_table(): void
     {
         $query = query('chapters')
-            ->insert(
-                title: 'Chapter 01',
-                index: 1,
-            )
+            ->insert(title: 'Chapter 01', index: 1)
             ->build();
 
-        $expected = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `chapters` (`title`, `index`)
-        VALUES (?, ?)
-        SQL);
+        $expected = $this->buildExpectedInsert('INSERT INTO `chapters` (`title`, `index`) VALUES (?, ?)');
 
         $this->assertSameWithoutBackticks(
             $expected,
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -60,14 +52,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             ->insert(...$arrayOfStuff)
             ->build();
 
-        $expected = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `chapters` (`chapter`, `index`)
-        VALUES (?, ?), (?, ?), (?, ?)
-        SQL);
+        $expected = $this->buildExpectedInsert('INSERT INTO `chapters` (`chapter`, `index`) VALUES (?, ?), (?, ?), (?, ?)');
 
         $this->assertSameWithoutBackticks(
             $expected,
-            $query->toSql(),
+            $query->compile(),
         );
 
         $this->assertSame(
@@ -78,24 +67,17 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_insert_on_model_table(): void
     {
-        $author = new Author(
-            name: 'brent',
-            type: AuthorType::A,
-        );
-
+        $author = new Author(name: 'brent', type: AuthorType::A);
         $query = query(Author::class)
             ->insert(
                 $author,
-                ['name' => 'other name', 'type' => AuthorType::B->value, 'publisher_id' => null],
+                ['name' => 'other name', 'type' => AuthorType::B, 'publisher_id' => null],
             )
             ->build();
 
-        $expected = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `authors` (`name`, `type`, `publisher_id`)
-        VALUES (?, ?, ?), (?, ?, ?)
-        SQL);
+        $expected = $this->buildExpectedInsert('INSERT INTO `authors` (`name`, `type`, `publisher_id`) VALUES (?, ?, ?), (?, ?, ?)');
 
-        $this->assertSameWithoutBackticks($expected, $query->toSql());
+        $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);
     }
 
@@ -103,34 +85,24 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $book = Book::new(
             title: 'Timeline Taxi',
-            author: Author::new(
-                name: 'Brent',
-            ),
+            author: Author::new(name: 'Brent'),
         );
 
         $bookQuery = query(Book::class)
-            ->insert(
-                $book,
-            )
+            ->insert($book)
             ->build();
 
-        $expectedBookQuery = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `books` (`title`, `author_id`)
-        VALUES (?, ?)
-        SQL);
+        $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
 
-        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->compile());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[1]);
 
         $authorQuery = $bookQuery->bindings[1];
 
-        $expectedAuthorQuery = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `authors` (`name`)
-        VALUES (?)
-        SQL);
+        $expectedAuthorQuery = $this->buildExpectedInsert('INSERT INTO `authors` (`name`) VALUES (?)');
 
-        $this->assertSameWithoutBackticks($expectedAuthorQuery, $authorQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedAuthorQuery, $authorQuery->compile());
         $this->assertSame('Brent', $authorQuery->bindings[0]);
     }
 
@@ -139,49 +111,20 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $book = Book::new(
             title: 'Timeline Taxi',
             author: Author::new(
-                id: new Id(10),
+                id: new PrimaryKey(10),
                 name: 'Brent',
             ),
         );
 
         $bookQuery = query(Book::class)
-            ->insert(
-                $book,
-            )
+            ->insert($book)
             ->build();
 
-        $expectedBookQuery = $this->buildExpectedInsert(<<<SQL
-        INSERT INTO `books` (`title`, `author_id`)
-        VALUES (?, ?)
-        SQL);
+        $expectedBookQuery = $this->buildExpectedInsert('INSERT INTO `books` (`title`, `author_id`) VALUES (?, ?)');
 
-        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->toSql());
+        $this->assertSameWithoutBackticks($expectedBookQuery, $bookQuery->compile());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
-    }
-
-    public function test_inserting_has_many_via_parent_model_throws_exception(): void
-    {
-        $this->assertException(HasManyRelationCouldNotBeInsterted::class, function (): void {
-            query(Book::class)
-                ->insert(
-                    title: 'Timeline Taxi',
-                    chapters: ['title' => 'Chapter 01'],
-                )
-                ->build();
-        });
-    }
-
-    public function test_inserting_has_one_via_parent_model_throws_exception(): void
-    {
-        $this->assertException(HasOneRelationCouldNotBeInserted::class, function (): void {
-            query(Book::class)
-                ->insert(
-                    title: 'Timeline Taxi',
-                    isbn: ['value' => '979-8344313764'],
-                )
-                ->build();
-        });
     }
 
     public function test_then_method(): void
@@ -191,11 +134,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
             ->then(
-                fn (Id $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 01', 'book_id' => $id],
                     ['title' => 'Chapter 02', 'book_id' => $id],
                 ),
-                fn (Id $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 03', 'book_id' => $id],
                 ),
             )
@@ -230,5 +173,28 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         }
 
         return $query;
+    }
+
+    public function test_insert_mapping(): void
+    {
+        $author = Author::new(name: 'test');
+
+        $query = query(Author::class)
+            ->insert($author)
+            ->build();
+
+        $dialect = $this->container->get(Database::class)->dialect;
+
+        $expected = match ($dialect) {
+            DatabaseDialect::POSTGRESQL => <<<'SQL'
+            INSERT INTO authors (name) VALUES (?) RETURNING *
+            SQL,
+            default => <<<'SQL'
+            INSERT INTO `authors` (`name`) VALUES (?)
+            SQL,
+        };
+
+        $this->assertSame($expected, $query->compile()->toString());
+        $this->assertSame(['test'], $query->bindings);
     }
 }
