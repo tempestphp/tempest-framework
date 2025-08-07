@@ -31,7 +31,7 @@ use function Tempest\Database\inspect;
  */
 final class UpdateQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private UpdateStatement $update;
 

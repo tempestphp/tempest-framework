@@ -29,7 +29,7 @@ use function Tempest\Support\str;
  */
 final class InsertQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase;
+    use HasConditions, OnDatabase, TransformsQueryBuilder;
 
     private InsertStatement $insert;
 

@@ -39,11 +39,11 @@ namespace Tempest\Support {
      * @template T
      *
      * @param T $value
-     * @param (Closure(T): void) $callback
+     * @param (callable(T): void) $callback
      *
      * @return T
      */
-    function tap(mixed $value, Closure $callback): mixed
+    function tap(mixed $value, callable $callback): mixed
     {
         $callback($value);
 

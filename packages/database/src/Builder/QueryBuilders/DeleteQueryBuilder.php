@@ -19,7 +19,7 @@ use function Tempest\Database\inspect;
  */
 final class DeleteQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private DeleteStatement $delete;
 

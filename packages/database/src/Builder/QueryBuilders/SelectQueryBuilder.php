@@ -36,7 +36,7 @@ use function Tempest\map;
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private ModelInspector $model;
 
