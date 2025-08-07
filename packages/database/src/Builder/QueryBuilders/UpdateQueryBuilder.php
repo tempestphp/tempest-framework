@@ -348,11 +348,11 @@ final class UpdateQueryBuilder implements BuildsQuery
             ? $this->removeTablePrefix($hasMany->ownerJoin)
             : $this->getDefaultForeignKeyName();
 
-        $this->executeQuery(
-            sql: 'DELETE FROM %s WHERE %s = ?',
-            params: [$relatedModel->getTableName(), $foreignKey],
-            bindings: [$parentId->value],
-        );
+        new DeleteQueryBuilder($relatedModel->getName())
+            ->where($foreignKey, $parentId->value)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->execute();
     }
 
     private function deleteExistingHasOneRelation($hasOne, PrimaryKey $parentId): void
@@ -375,29 +375,29 @@ final class UpdateQueryBuilder implements BuildsQuery
 
         $foreignKeyColumn = $hasOne->relationJoin ?? $this->removeTablePrefix($hasOne->ownerJoin);
 
-        $result = $this->executeQuery(
-            sql: 'SELECT %s FROM %s WHERE %s = ?',
-            params: [$foreignKeyColumn, $ownerModel->getTableName(), $ownerModel->getPrimaryKey()],
-            bindings: [$parentId->value],
-        );
+        $result = new SelectQueryBuilder($ownerModel->getName(), new ImmutableArray([$foreignKeyColumn]))
+            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->fetchFirst();
 
-        if (! $result || ! isset($result[0][$foreignKeyColumn])) {
+        if (! $result || ! isset($result[$foreignKeyColumn])) {
             return;
         }
 
-        $relatedId = $result[0][$foreignKeyColumn];
+        $relatedId = $result[$foreignKeyColumn];
 
-        $this->executeQuery(
-            sql: 'DELETE FROM %s WHERE %s = ?',
-            params: [$relatedModel->getTableName(), $relatedModel->getPrimaryKey()],
-            bindings: [$relatedId],
-        );
+        new DeleteQueryBuilder($relatedModel->getName())
+            ->where($relatedModel->getPrimaryKey(), $relatedId)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->execute();
 
-        $this->executeQuery(
-            sql: 'UPDATE %s SET %s = NULL WHERE %s = ?',
-            params: [$ownerModel->getTableName(), $foreignKeyColumn, $ownerModel->getPrimaryKey()],
-            bindings: [$parentId->value],
-        );
+        new UpdateQueryBuilder($ownerModel->getName(), [$foreignKeyColumn => null], $this->serializerFactory)
+            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->execute();
     }
 
     private function deleteStandardHasOneRelation($hasOne, PrimaryKey $parentId): void
@@ -409,17 +409,11 @@ final class UpdateQueryBuilder implements BuildsQuery
 
         $foreignKeyColumn = Intl\singularize($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
 
-        $this->executeQuery(
-            sql: 'DELETE FROM %s WHERE %s = ?',
-            params: [$relatedModel->getTableName(), $foreignKeyColumn],
-            bindings: [$parentId->value],
-        );
-    }
-
-    private function executeQuery(string $sql, array $params, array $bindings): mixed
-    {
-        $query = new Query(sprintf($sql, ...$params), $bindings);
-        return $query->onDatabase($this->onDatabase)->execute();
+        new DeleteQueryBuilder($relatedModel->getName())
+            ->where($foreignKeyColumn, $parentId->value)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->execute();
     }
 
     private function handleCustomHasOneRelation($hasOne, object|array $relation, PrimaryKey $parentId): null
@@ -435,11 +429,11 @@ final class UpdateQueryBuilder implements BuildsQuery
 
         $foreignKeyColumn = $hasOne->relationJoin ?? $this->removeTablePrefix($hasOne->ownerJoin);
 
-        $this->executeQuery(
-            sql: 'UPDATE %s SET %s = ? WHERE %s = ?',
-            params: [$ownerModel->getTableName(), $foreignKeyColumn, $ownerModel->getPrimaryKey()],
-            bindings: [$relatedModelId->value, $parentId->value],
-        );
+        new UpdateQueryBuilder($ownerModel->getName(), [$foreignKeyColumn => $relatedModelId->value], $this->serializerFactory)
+            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->build()
+            ->onDatabase($this->onDatabase)
+            ->execute();
 
         return null;
     }
