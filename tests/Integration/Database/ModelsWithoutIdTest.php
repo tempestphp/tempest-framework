@@ -16,7 +16,6 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
 use function Tempest\Database\query;
 
 /**
@@ -35,7 +34,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('INFO', $savedLog->level);
         $this->assertSame('Frieren discovered ancient magic', $savedLog->message);
 
-        $allLogs = model(LogEntry::class)->all();
+        $allLogs = query(LogEntry::class)->all();
         $this->assertCount(1, $allLogs);
         $this->assertSame('INFO', $allLogs[0]->level);
     }
@@ -51,7 +50,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $log->message = 'Modified message';
         $log->save();
 
-        $allLogs = model(LogEntry::class)->all();
+        $allLogs = query(LogEntry::class)->all();
         $this->assertCount(2, $allLogs);
         $this->assertSame('Original message', $allLogs[0]->message);
         $this->assertSame('Modified message', $allLogs[1]->message);
@@ -61,7 +60,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
-        model(LogEntry::class)->create(
+        query(LogEntry::class)->create(
             level: 'INFO',
             message: 'Himmel was here',
             context: 'memory',
@@ -72,7 +71,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
             ->where('context', 'memory')
             ->execute();
 
-        $updatedLog = model(LogEntry::class)
+        $updatedLog = query(LogEntry::class)
             ->find(context: 'memory')
             ->first();
 
@@ -84,26 +83,26 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
-        model(LogEntry::class)->create(
+        query(LogEntry::class)->create(
             level: 'TEMP',
             message: 'Temporary debug info',
             context: 'debug',
         );
 
-        model(LogEntry::class)->create(
+        query(LogEntry::class)->create(
             level: 'IMPORTANT',
             message: 'Frieren awakens',
             context: 'story',
         );
 
-        $this->assertCount(2, model(LogEntry::class)->all());
+        $this->assertCount(2, query(LogEntry::class)->all());
 
         query(LogEntry::class)
             ->delete()
             ->where('level', 'TEMP')
             ->execute();
 
-        $remaining = model(LogEntry::class)->all();
+        $remaining = query(LogEntry::class)->all();
         $this->assertCount(1, $remaining);
         $this->assertSame('IMPORTANT', $remaining[0]->level);
     }
@@ -112,7 +111,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateCacheEntryMigration::class);
 
-        model(CacheEntry::class)->create(
+        query(CacheEntry::class)->create(
             cache_key: 'spell_fire',
             cache_value: 'flame_magic_data',
             ttl: 3600,
@@ -123,7 +122,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
             ->where('cache_key', 'spell_fire')
             ->execute();
 
-        $updatedData = model(CacheEntry::class)
+        $updatedData = query(CacheEntry::class)
             ->find(cache_key: 'spell_fire')
             ->first();
 
@@ -137,7 +136,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `findById` method');
 
-        model(LogEntry::class)->findById(id: 1);
+        query(LogEntry::class)->findById(id: 1);
     }
 
     public function test_get_method_throws_for_models_without_id(): void
@@ -147,7 +146,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `get` method');
 
-        model(LogEntry::class)->get(id: 1);
+        query(LogEntry::class)->get(id: 1);
     }
 
     public function test_update_or_create_throws_for_models_without_id(): void
@@ -157,7 +156,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `updateOrCreate` method');
 
-        model(LogEntry::class)->updateOrCreate(
+        query(LogEntry::class)->updateOrCreate(
             find: ['level' => 'INFO'],
             update: ['message' => 'test'],
         );
@@ -177,7 +176,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(PrimaryKey::class, $mixed->id);
         $this->assertSame('test', $mixed->regular_field);
 
-        $all = model(MixedModel::class)->all();
+        $all = query(MixedModel::class)->all();
         $this->assertCount(1, $all);
         $this->assertInstanceOf(PrimaryKey::class, $all[0]->id);
         $this->assertSame('test', $all[0]->regular_field);
@@ -219,7 +218,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
 
-        $mixed = model(MixedModel::class)->create(
+        $mixed = query(MixedModel::class)->create(
             regular_field: 'original',
             another_field: 'data',
         );
@@ -239,7 +238,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
 
-        $mixed = model(MixedModel::class)->create(regular_field: 'test', another_field: 'data');
+        $mixed = query(MixedModel::class)->create(regular_field: 'test', another_field: 'data');
         $result = $mixed->load();
 
         $this->assertSame($mixed, $result);
@@ -254,12 +253,12 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
             CreateTestProfileMigration::class,
         );
 
-        $user = model(TestUser::class)->create(
+        $user = query(TestUser::class)->create(
             name: 'Frieren',
             email: 'frieren@magic.elf',
         );
 
-        model(TestProfile::class)->create(
+        query(TestProfile::class)->create(
             user: $user,
             bio: 'Ancient elf mage who loves magic and collecting spells',
             age: 1000,

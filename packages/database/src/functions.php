@@ -2,7 +2,6 @@
 
 namespace Tempest\Database {
     use Tempest\Database\Builder\ModelInspector;
-    use Tempest\Database\Builder\ModelQueryBuilder;
     use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 
     /**
@@ -15,18 +14,6 @@ namespace Tempest\Database {
     function query(string|object $model): QueryBuilder
     {
         return new QueryBuilder($model);
-    }
-
-    /**
-     * Provides model-related convenient query methods.
-     *
-     * @template TModel of object
-     * @param class-string<TModel> $modelClass
-     * @return ModelQueryBuilder<TModel>
-     */
-    function model(string $modelClass): ModelQueryBuilder
-    {
-        return new ModelQueryBuilder($modelClass);
     }
 
     /**

@@ -12,7 +12,7 @@ use Tempest\Database\Table;
 use Tempest\Mapper\SerializeAs;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\model;
+use function Tempest\Database\query;
 
 final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
 {
@@ -35,13 +35,13 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
             }
         });
 
-        $user = model(UserWithDtoSettings::class)
+        $user = query(UserWithDtoSettings::class)
             ->create(
                 name: 'John',
                 settings: new DtoSettings(DtoTheme::LIGHT),
             );
 
-        model(UserWithDtoSettings::class)
+        query(UserWithDtoSettings::class)
             ->update(
                 name: 'Jane',
                 settings: new DtoSettings(DtoTheme::DARK),
@@ -49,7 +49,7 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
             ->where('id', $user->id)
             ->execute();
 
-        $updatedUser = model(UserWithDtoSettings::class)->get($user->id);
+        $updatedUser = query(UserWithDtoSettings::class)->get($user->id);
 
         $this->assertSame('Jane', $updatedUser->name);
         $this->assertInstanceOf(DtoSettings::class, $updatedUser->settings);

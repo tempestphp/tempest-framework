@@ -11,7 +11,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\inspect;
-use function Tempest\Database\model;
+use function Tempest\Database\query;
 
 final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 {
@@ -19,14 +19,14 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
-        $frieren = model(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+        $frieren = query(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
         $this->assertInstanceOf(CustomPrimaryKeyUserModel::class, $frieren);
         $this->assertInstanceOf(PrimaryKey::class, $frieren->uuid);
         $this->assertSame('Frieren', $frieren->name);
         $this->assertSame('Time Magic', $frieren->magic);
 
-        $retrieved = model(CustomPrimaryKeyUserModel::class)->get($frieren->uuid);
+        $retrieved = query(CustomPrimaryKeyUserModel::class)->get($frieren->uuid);
         $this->assertNotNull($retrieved);
         $this->assertSame('Frieren', $retrieved->name);
         $this->assertTrue($frieren->uuid->equals($retrieved->uuid));
@@ -36,9 +36,9 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
-        $frieren = model(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
+        $frieren = query(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
-        $updated = model(CustomPrimaryKeyUserModel::class)->updateOrCreate(
+        $updated = query(CustomPrimaryKeyUserModel::class)->updateOrCreate(
             find: ['name' => 'Frieren'],
             update: ['magic' => 'Advanced Time Magic'],
         );
@@ -61,7 +61,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateModelWithoutIdMigration::class);
 
-        $model = model(ModelWithoutId::class)->new(name: 'Test');
+        $model = query(ModelWithoutId::class)->new(name: 'Test');
         $this->assertInstanceOf(ModelWithoutId::class, $model);
         $this->assertSame('Test', $model->name);
     }

@@ -22,9 +22,7 @@ final class QueryWasInvalid extends Exception implements HasContext
         $this->pdoException = $previous;
 
         $message = $previous->getMessage();
-
-        $message .= PHP_EOL . PHP_EOL . $query->toRawSql() . PHP_EOL;
-        $message .= PHP_EOL . 'bindings: ' . Json\encode($bindings, pretty: true);
+        $message .= PHP_EOL . PHP_EOL . $query->toRawSql();
 
         parent::__construct(
             message: $message,
