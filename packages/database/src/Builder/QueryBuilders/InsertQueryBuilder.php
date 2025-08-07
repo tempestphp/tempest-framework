@@ -140,17 +140,17 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private function convertObjectToArray(object $object, array $excludeProperties = []): array
     {
-        $reflection = new \ReflectionClass($object);
+        $reflection = new ClassReflector($object);
         $data = [];
 
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($reflection->getPublicProperties() as $property) {
             if (! $property->isInitialized($object)) {
                 continue;
             }
 
             $propertyName = $property->getName();
 
-            if (! in_array($propertyName, $excludeProperties, true)) {
+            if (! in_array($propertyName, $excludeProperties, strict: true)) {
                 $data[$propertyName] = $property->getValue($object);
             }
         }
