@@ -9,6 +9,5 @@ interface HasWhereStatements
     /** @var ImmutableArray<WhereStatement> */
     public ImmutableArray $where {
         get;
-        set;
     }
 }
