@@ -435,12 +435,16 @@ final class ModelInspector
             return null;
         }
 
-        $primaryKey = $this->getPrimaryKey();
+        $primaryKeyProperty = $this->getPrimaryKeyProperty();
 
-        if ($primaryKey === null) {
+        if ($primaryKeyProperty === null) {
             return null;
         }
 
-        return $this->instance->{$primaryKey};
+        if (! $primaryKeyProperty->isInitialized($this->instance)) {
+            return null;
+        }
+
+        return $primaryKeyProperty->getValue($this->instance);
     }
 }

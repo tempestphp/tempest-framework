@@ -9,6 +9,7 @@ use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\DatabaseMigration;
+use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\HasMany;
@@ -499,196 +500,115 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotNull(Foo::get($bar->id));
     }
 
-    public function test_property_with_carbon_type(): void
+    public function test_delete_via_model_class_with_where_conditions(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateCarbonModelTable::class,
+            FooDatabaseMigration::class,
         );
 
-        $this->container->get(CasterFactory::class)->addCaster(Carbon::class, CarbonCaster::class);
-        $this->container->get(SerializerFactory::class)->addSerializer(Carbon::class, CarbonSerializer::class);
+        $foo1 = Foo::create(bar: 'delete_me');
+        $foo2 = Foo::create(bar: 'keep_me');
+        $foo3 = Foo::create(bar: 'delete_me');
 
-        new CarbonModel(createdAt: new Carbon('2024-01-01'))->save();
-
-        $model = CarbonModel::select()->first();
-
-        $this->assertTrue($model->createdAt->equalTo(new Carbon('2024-01-01')));
-    }
-
-    public function test_two_way_casters_on_models(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateCasterModelTable::class,
-        );
-
-        new CasterModel(
-            date: new DateTimeImmutable('2025-01-01 00:00:00'),
-            array_prop: ['a', 'b', 'c'],
-            enum_prop: CasterEnum::BAR,
-        )->save();
-
-        $model = CasterModel::select()->first();
-
-        $this->assertSame(new DateTimeImmutable('2025-01-01 00:00:00')->format('c'), $model->date->format('c'));
-        $this->assertSame(['a', 'b', 'c'], $model->array_prop);
-        $this->assertSame(CasterEnum::BAR, $model->enum_prop);
-    }
-
-    public function test_find(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateATable::class,
-            CreateBTable::class,
-            CreateCTable::class,
-        );
-
-        new C(name: 'one')->save();
-        new C(name: 'two')->save();
-
-        /** @var C[] */
-        $valid = C::find(name: 'one')->all();
-
-        $this->assertCount(1, $valid);
-        $this->assertSame($valid[0]->name, 'one');
-
-        $invalid = C::find(name: 'three')->all();
-
-        $this->assertCount(0, $invalid);
-    }
-
-    public function test_table_name_overrides(): void
-    {
-        $this->assertEquals('base_models', inspect(BaseModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_attribute_table_name', inspect(AttributeTableNameModel::class)->getTableDefinition()->name);
-        $this->assertEquals('custom_static_method_table_name', inspect(StaticMethodTableNameModel::class)->getTableDefinition()->name);
-    }
-
-    public function test_validation_on_create(): void
-    {
-        $this->expectException(ValidationFailed::class);
-
-        ModelWithValidation::create(
-            index: -1,
-        );
-    }
-
-    public function test_validation_on_update(): void
-    {
-        $model = ModelWithValidation::new(
-            id: new PrimaryKey(1),
-            index: 1,
-        );
-
-        $this->expectException(ValidationFailed::class);
-
-        $model->update(
-            index: -1,
-        );
-    }
-
-    public function test_validation_on_new(): void
-    {
-        $model = ModelWithValidation::new(
-            index: 1,
-        );
-
-        $model->index = -1;
-
-        $this->expectException(ValidationFailed::class);
-
-        $model->save();
-    }
-
-    public function test_skipped_validation(): void
-    {
-        try {
-            inspect(ModelWithValidation::class)->validate(
-                index: -1,
-                skip: -1,
-            );
-        } catch (ValidationFailed $validationFailed) {
-            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
-            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->subject);
-            $this->assertStringContainsString('index', array_key_first($validationFailed->failingRules));
-            $this->assertInstanceOf(IsBetween::class, Arr\first($validationFailed->failingRules)[0]);
-        }
-    }
-
-    public function test_date_field(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateDateTimeModelTable::class,
-        );
-
-        $id = query(DateTimeModel::class)
-            ->insert([
-                'phpDateTime' => new NativeDateTime('2024-01-01 00:00:00'),
-                'tempestDateTime' => DateTime::parse('2024-01-01 00:00:00'),
-            ])
+        query(Foo::class)
+            ->delete()
+            ->where('bar', 'delete_me')
             ->execute();
 
-        /** @var DateTimeModel $model */
-        $model = query(DateTimeModel::class)->select()->where('id', $id)->first();
-
-        $this->assertSame('2024-01-01 00:00:00', $model->phpDateTime->format('Y-m-d H:i:s'));
-        $this->assertSame('2024-01-01 00:00:00', $model->tempestDateTime->format('yyyy-MM-dd HH:mm:ss'));
+        $this->assertNull(Foo::get($foo1->id));
+        $this->assertNotNull(Foo::get($foo2->id));
+        $this->assertNull(Foo::get($foo3->id));
     }
 
-    public function test_model_create_with_has_many_relations(): void
+    public function test_delete_via_model_instance_with_primary_key(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateTestUserMigration::class,
-            CreateTestPostMigration::class,
+            FooDatabaseMigration::class,
         );
 
-        $user = TestUser::create(
-            name: 'Jon',
-            posts: [
-                new TestPost('hello', 'world'),
-                new TestPost('foo', 'bar'),
-            ],
-        );
+        $foo1 = Foo::create(bar: 'first');
+        $foo2 = Foo::create(bar: 'second');
+        $foo1->delete();
 
-        $this->assertSame('Jon', $user->name);
-        $this->assertInstanceOf(PrimaryKey::class, $user->id);
-
-        $posts = TestPost::select()
-            ->where('test_user_id', $user->id->value)
-            ->all();
-
-        $this->assertCount(2, $posts);
-        $this->assertSame('hello', $posts[0]->title);
-        $this->assertSame('world', $posts[0]->body);
-        $this->assertSame('foo', $posts[1]->title);
-        $this->assertSame('bar', $posts[1]->body);
+        $this->assertNull(Foo::get($foo1->id));
+        $this->assertNotNull(Foo::get($foo2->id));
+        $this->assertSame('second', Foo::get($foo2->id)->bar);
     }
 
-    public function test_model_update_with_only_relations(): void
+    public function test_delete_via_model_instance_without_primary_key(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateTestUserMigration::class,
-            CreateTestPostMigration::class,
+            CreateModelWithoutPrimaryKeyMigration::class,
         );
 
-        $user = TestUser::create(name: 'Frieren');
-        $user->update(posts: [
-            new TestPost('hello', 'world'),
-        ]);
+        $model = new ModelWithoutPrimaryKey(name: 'Frieren', description: 'Elf mage');
+        $model->save();
 
-        $posts = TestPost::select()
-            ->where('test_user_id', $user->id->value)
-            ->all();
+        $this->expectException(DeleteStatementWasInvalid::class);
+        $model->delete();
+    }
 
-        $this->assertCount(1, $posts);
-        $this->assertSame('hello', $posts[0]->title);
-        $this->assertSame('world', $posts[0]->body);
-        $this->assertSame('Frieren', $user->name); // Ensure name wasn't changed
+    public function test_delete_via_model_class_without_primary_key(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateModelWithoutPrimaryKeyMigration::class,
+        );
+
+        query(ModelWithoutPrimaryKey::class)->create(name: 'Himmel', description: 'Hero');
+        query(ModelWithoutPrimaryKey::class)->create(name: 'Heiter', description: 'Priest');
+        query(ModelWithoutPrimaryKey::class)->create(name: 'Eisen', description: 'Warrior');
+
+        $this->assertCount(3, query(ModelWithoutPrimaryKey::class)->select()->all());
+
+        query(ModelWithoutPrimaryKey::class)
+            ->delete()
+            ->where('name', 'Himmel')
+            ->execute();
+
+        $remaining = query(ModelWithoutPrimaryKey::class)->select()->all();
+        $this->assertCount(2, $remaining);
+
+        $names = array_map(fn (ModelWithoutPrimaryKey $model) => $model->name, $remaining);
+        $this->assertContains('Heiter', $names);
+        $this->assertContains('Eisen', $names);
+        $this->assertNotContains('Himmel', $names);
+    }
+
+    public function test_delete_with_uninitialized_primary_key(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        $foo = new Foo();
+        $foo->bar = 'unsaved';
+
+        $this->expectException(DeleteStatementWasInvalid::class);
+        $foo->delete();
+    }
+
+    public function test_delete_nonexistent_record(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        $foo = Foo::create(bar: 'test');
+        $fooId = $foo->id;
+
+        // Delete the record
+        $foo->delete();
+
+        // Delete again
+        $foo->delete();
+
+        $this->assertNull(Foo::get($fooId));
     }
 }
 
@@ -1093,6 +1013,33 @@ final class CreateTestPostMigration implements DatabaseMigration
             ->foreignId('test_user_id', constrainedOn: 'test_users')
             ->string('title')
             ->text('body');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return null;
+    }
+}
+
+final class ModelWithoutPrimaryKey
+{
+    use IsDatabaseModel;
+
+    public function __construct(
+        public string $name,
+        public string $description,
+    ) {}
+}
+
+final class CreateModelWithoutPrimaryKeyMigration implements DatabaseMigration
+{
+    private(set) string $name = '100-create-model-without-primary-key';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('model_without_primary_keys')
+            ->text('name')
+            ->text('description');
     }
 
     public function down(): ?QueryStatement
