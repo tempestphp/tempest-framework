@@ -157,7 +157,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereRaw('author_id = ?', 1)
             ->whereRaw('OR author_id = ?', 2)
             ->whereRaw('AND author_id <> NULL')
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE title = ? AND author_id = ? OR author_id = ? AND author_id <> NULL';
 
@@ -170,7 +170,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->count()
             ->where('title', 'a')
             ->where('author_id', 1)
-            ->toSql();
+            ->compile();
 
         $expected = 'SELECT COUNT(*) AS `count` FROM `books` WHERE books.title = ? AND books.author_id = ?';
 

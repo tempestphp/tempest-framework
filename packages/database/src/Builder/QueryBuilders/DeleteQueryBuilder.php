@@ -69,9 +69,9 @@ final class DeleteQueryBuilder implements BuildsQuery
     }
 
     /**
-     * Returns the SQL statement without the bindings.
+     * Compile the query to a SQL statement without the bindings.
      */
-    public function toSql(): ImmutableString
+    public function compile(): ImmutableString
     {
         return $this->build()->compile();
     }
