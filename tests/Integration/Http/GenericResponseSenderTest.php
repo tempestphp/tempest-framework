@@ -82,6 +82,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new File(path: $path);
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $content = ob_get_clean();
 
         $this->assertSame(file_get_contents($path), $content);
@@ -94,6 +95,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new Download(path: $path);
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $content = ob_get_clean();
 
         $this->assertSame(file_get_contents($path), $content);
@@ -109,6 +111,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
 
         $this->assertSame('{"key":"value"}', $output);
@@ -129,6 +132,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
 
         $this->assertSame('{"key":"value"}', $output);
@@ -145,6 +149,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Hello Brent!', $output);
@@ -156,6 +161,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new EventStream(fn () => yield 'hello');
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
         ob_start();
 
@@ -172,6 +178,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
         ob_start();
 
@@ -190,6 +197,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
         ob_start();
 
@@ -208,6 +216,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
         ob_start();
 
@@ -223,13 +232,17 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new EventStream(function () {
             yield new class implements ServerSentEvent {
                 public ?int $id = 1;
+
                 public null|Duration|int $retryAfter = null;
+
                 public ?string $event = 'custom';
+
                 public JsonSerializable|Stringable|string|iterable $data = ['foo', 'bar'];
             };
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
         ob_start();
 
