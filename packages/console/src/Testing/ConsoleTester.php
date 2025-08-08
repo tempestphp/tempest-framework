@@ -320,4 +320,11 @@ final class ConsoleTester
 
         return $this;
     }
+
+    public function dump(): self
+    {
+        lw($this->output->asUnformattedString());
+
+        return $this;
+    }
 }
