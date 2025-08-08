@@ -7,7 +7,7 @@ namespace Tempest\Console\Scheduler;
 use DateTime;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
-use Tempest\Core\ShellExecutor;
+use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Filesystem;
 
 use function Tempest\event;
@@ -18,7 +18,7 @@ final readonly class GenericScheduler implements Scheduler
     public function __construct(
         private SchedulerConfig $config,
         private ConsoleArgumentBag $argumentBag,
-        private ShellExecutor $executor,
+        private ProcessExecutor $executor,
     ) {}
 
     public static function getCachePath(): string
@@ -43,7 +43,7 @@ final readonly class GenericScheduler implements Scheduler
     {
         $command = $this->compileInvocation($invocation);
 
-        $this->executor->execute($command);
+        $this->executor->run($command);
     }
 
     private function compileInvocation(ScheduledInvocation $invocation): string

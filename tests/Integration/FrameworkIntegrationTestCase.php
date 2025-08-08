@@ -13,8 +13,6 @@ use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\Application;
-use Tempest\Core\ShellExecutor;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
@@ -52,7 +50,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         // Console
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
 
         $this->console = new ConsoleTester($this->container);
 
