@@ -5,9 +5,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/container": "1.6.0",
-        "tempest/support": "1.6.0",
-        "tempest/clock": "1.6.0"
+        "tempest/container": "dev-main",
+        "tempest/support": "dev-main",
+        "tempest/clock": "dev-main"
     },
     "autoload": {
         "psr-4": {
