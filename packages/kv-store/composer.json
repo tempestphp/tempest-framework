@@ -5,8 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/support": "dev-main",
-        "tempest/event-bus": "dev-main"
+        "tempest/support": "1.6.0",
+        "tempest/event-bus": "1.6.0"
     },
     "require-dev": {
         "predis/predis": "^3.0.0"
