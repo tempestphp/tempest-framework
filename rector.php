@@ -19,6 +19,7 @@ use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 use Rector\Php82\Rector\Param\AddSensitiveParameterAttributeRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
+use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
 use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
 use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;
@@ -56,6 +57,7 @@ return RectorConfig::configure()
         ClosureReturnTypeRector::class,
         EncapsedStringsToSprintfRector::class,
         AddArrowFunctionReturnTypeRector::class,
+        PrivatizeFinalClassMethodRector::class,
     ])
     ->withParallel(300, 10, 10)
     ->withPreparedSets(

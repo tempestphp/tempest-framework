@@ -9,9 +9,10 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Tempest\Container\Container;
 use Tempest\Core\Composer;
-use Tempest\Core\ComposerNamespace;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Support\Arr;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 
 use function Tempest\Support\arr;
@@ -39,13 +40,8 @@ final class InstallerTester
             ->setNamespaces($namespace)
             ->setShellExecutor($this->executor);
 
-        if (! is_dir($this->root)) {
-            mkdir($this->root, recursive: true);
-        }
-
-        if (! is_dir($namespace->path)) {
-            mkdir($namespace->path, recursive: true);
-        }
+        Filesystem\ensure_directory_exists($this->root);
+        Filesystem\ensure_directory_exists($namespace->path);
 
         return $this;
     }
@@ -66,20 +62,14 @@ final class InstallerTester
     {
         $path = $this->path($path);
 
-        $dir = dirname($path);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
-        }
-
-        file_put_contents($path, $contents);
+        Filesystem\write_file($path, $contents);
 
         return $this;
     }
 
     public function get(string $path): string
     {
-        return file_get_contents($this->path($path));
+        return Filesystem\read_file($this->path($path));
     }
 
     public function assertFileExists(string $path, ?string $content = null): self
@@ -96,13 +86,27 @@ final class InstallerTester
         return $this;
     }
 
-    public function assertFileContains(string $path, string $search): self
+    public function assertDirectoryExists(string $path): self
     {
-        Assert::assertStringContainsString(
-            needle: $search,
-            haystack: $this->get($path),
-            message: sprintf("File %s does not contain:\n %s", $path, $search),
+        Assert::assertDirectoryExists(
+            directory: $this->path($path),
+            message: sprintf('Directory "%s" does not exist', $path),
         );
+
+        return $this;
+    }
+
+    public function assertFileContains(string $path, string|iterable $search): self
+    {
+        $content = $this->get($path);
+
+        foreach (Arr\wrap($search) as $item) {
+            Assert::assertStringContainsString(
+                needle: $item,
+                haystack: $content,
+                message: sprintf("File %s does not contain:\n %s", $path, $item),
+            );
+        }
 
         return $this;
     }
@@ -130,17 +134,6 @@ final class InstallerTester
 
     public function clean(): void
     {
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->root, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST,
-        );
-
-        foreach ($files as $file) {
-            $file->isDir()
-                ? @rmdir($file->getRealPath())
-                : @unlink($file->getRealPath());
-        }
-
-        @rmdir($this->root);
+        Filesystem\delete_directory($this->root);
     }
 }
