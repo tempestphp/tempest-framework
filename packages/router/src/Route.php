@@ -20,4 +20,9 @@ interface Route
     public array $middleware {
         get;
     }
+
+    /** @var class-string<HttpMiddleware>[]  */
+    public array $without {
+        get;
+    }
 }

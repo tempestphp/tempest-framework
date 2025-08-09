@@ -91,6 +91,12 @@ final readonly class TestController
         return new Ok();
     }
 
+    #[Get(uri: '/without-middleware', without: [TestMiddleware::class])]
+    public function withoutMiddleware(): Response
+    {
+        return new Ok();
+    }
+
     #[Get('/view-model-with-response-data')]
     public function viewWithResponseData(): Response
     {
