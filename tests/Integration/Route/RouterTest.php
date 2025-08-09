@@ -21,6 +21,7 @@ use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -159,6 +160,17 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals(['from-dependency'], $response->getHeader('middleware')->values);
         $this->assertEquals(['yes'], $response->getHeader('global-middleware')->values);
+    }
+
+    public function test_skip_middleware(): void
+    {
+        $this
+            ->container->get(RouteConfig::class)
+            ->middleware->add(TestMiddleware::class);
+
+        $this->http
+            ->get('/without-middleware')
+            ->assertDoesNotHaveHeader('middleware');
     }
 
     public function test_trailing_slash(): void

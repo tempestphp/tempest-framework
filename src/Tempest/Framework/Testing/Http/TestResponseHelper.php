@@ -53,6 +53,17 @@ final class TestResponseHelper
         return $this;
     }
 
+    public function assertDoesNotHaveHeader(string $name): self
+    {
+        Assert::assertArrayNotHasKey(
+            $name,
+            $this->response->headers,
+            sprintf('Failed to assert that response does not contain header [%s].', $name),
+        );
+
+        return $this;
+    }
+
     /**
      * Asserts that the given header contains the given value.
      */
