@@ -12,6 +12,7 @@ use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Database\Virtual;
 use Tempest\Intl;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
@@ -390,6 +391,11 @@ final class InsertQueryBuilder implements BuildsQuery
             }
 
             $propertyName = $property->getName();
+
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
             $value = $property->getValue($model);
 
             if ($definition->getHasMany($propertyName)) {

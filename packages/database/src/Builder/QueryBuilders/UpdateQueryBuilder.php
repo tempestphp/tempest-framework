@@ -14,6 +14,7 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Database\Virtual;
 use Tempest\Intl;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
@@ -473,6 +474,10 @@ final class UpdateQueryBuilder implements BuildsQuery
         $reflection = new ClassReflector($object);
 
         foreach ($reflection->getPublicProperties() as $property) {
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
             if ($property->isInitialized($object)) {
                 $result[$property->getName()] = $property->getValue($object);
             }

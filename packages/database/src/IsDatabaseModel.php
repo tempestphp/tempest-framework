@@ -9,6 +9,7 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
+use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -175,6 +176,10 @@ trait IsDatabaseModel
         $refreshed = self::find(id: $primaryKeyValue)->first();
 
         foreach (new ClassReflector($refreshed)->getPublicProperties() as $property) {
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
             $property->setValue($this, $property->getValue($refreshed));
         }
 
@@ -198,6 +203,10 @@ trait IsDatabaseModel
         $new = self::get($primaryKeyValue, $relations);
 
         foreach (new ClassReflector($new)->getPublicProperties() as $property) {
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
             $property->setValue($this, $property->getValue($new));
         }
 

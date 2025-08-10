@@ -433,7 +433,25 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull(A::select()->first());
     }
 
-    public function test_virtual_property(): void
+    public function test_create_with_virtual_property(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        $a = AWithVirtual::create(
+            b: new B(
+                c: new C(name: 'test'),
+            ),
+        );
+
+        $this->assertSame(-$a->id->value, $a->fake);
+    }
+
+    public function test_select_virtual_property(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -451,6 +469,36 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $a = AWithVirtual::select()->first();
 
         $this->assertSame(-$a->id->value, $a->fake);
+    }
+
+    public function test_update_with_virtual_property(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        $a = AWithVirtual::create(
+            b: new B(
+                c: new C(name: 'test'),
+            ),
+        );
+
+        $a->update(
+            b: new B(
+                c: new C(name: 'updated'),
+            ),
+        );
+
+        $updatedA = AWithVirtual::select()
+            ->with('b.c')
+            ->where('id', $a->id)
+            ->first();
+
+        $this->assertSame(-$updatedA->id->value, $updatedA->fake);
+        $this->assertSame('updated', $updatedA->b->c->name);
     }
 
     public function test_update_or_create(): void
