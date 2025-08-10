@@ -8,10 +8,10 @@ use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\Exceptions\DefaultValueWasInvalid;
 use Tempest\Database\Exceptions\ValueWasInvalid;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CompoundStatement;
@@ -27,7 +27,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0000_test_migration';
 
             public function up(): QueryStatement
@@ -45,11 +45,6 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->index('integer')
                     ->unique('date', 'datetime');
             }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
-            }
         };
 
         $this->migrate(
@@ -62,18 +57,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_set_statement(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->set('set', values: ['foo', 'bar'], default: 'foo');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -93,18 +83,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_array_statement(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             public string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->array('test_array', default: ['foo', 'bar']);
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -121,7 +106,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->migrate(CreateMigrationsTable::class);
 
         if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
-            $enumTypeMigration = new class() implements DatabaseMigration {
+            $enumTypeMigration = new class() implements MigratesUp {
                 public string $name = '0';
 
                 public function up(): QueryStatement
@@ -131,17 +116,12 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                         new CreateEnumTypeStatement(CreateTableStatementTestEnumForCreateTable::class),
                     );
                 }
-
-                public function down(): ?QueryStatement
-                {
-                    return null;
-                }
             };
 
             $this->migrate($enumTypeMigration);
         }
 
-        $tableMigration = new class() implements DatabaseMigration {
+        $tableMigration = new class() implements MigratesUp {
             public string $name = '0';
 
             public function up(): QueryStatement
@@ -153,11 +133,6 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                         default: CreateTableStatementTestEnumForCreateTable::BAR,
                     );
             }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
-            }
         };
 
         $this->migrate($tableMigration);
@@ -167,18 +142,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_json_default(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->json('json', default: '{default: "invalid json"}');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -193,18 +163,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_dto_field(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->dto('dto');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -218,18 +183,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_set_values(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->set('set', values: []);
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -244,7 +204,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_string_method_integration(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
@@ -253,11 +213,6 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->string('name', length: 100, nullable: false, default: 'Frieren')
                     ->string('type', nullable: true);
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -283,18 +238,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_object_field(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->object('object_data');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 
@@ -305,18 +255,13 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_object_field_with_default(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
                 return new CreateTableStatement('test_table')
                     ->object('object_data', default: '{"name": "Frieren", "age": 1000}');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
 

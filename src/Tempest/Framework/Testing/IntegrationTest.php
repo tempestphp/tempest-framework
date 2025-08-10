@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing;
 
 use Closure;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
@@ -220,11 +221,8 @@ abstract class IntegrationTest extends TestCase
         unset($this->http);
     }
 
-    protected function assertException(
-        string $expectedExceptionClass,
-        Closure $handler,
-        ?Closure $assertException = null,
-    ): void {
+    protected function assertException(string $expectedExceptionClass, Closure $handler, ?Closure $assertException = null, ?string $message = null): void
+    {
         try {
             $handler();
         } catch (Throwable $throwable) {
@@ -237,6 +235,6 @@ abstract class IntegrationTest extends TestCase
             return;
         }
 
-        $this->fail("Expected exception {$expectedExceptionClass} was not thrown");
+        Assert::fail($message ?? "Expected exception {$expectedExceptionClass} was not thrown");
     }
 }

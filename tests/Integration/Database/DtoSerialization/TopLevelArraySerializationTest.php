@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -20,7 +20,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_top_level_array_of_simple_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_array_containers';
 
             public function up(): QueryStatement
@@ -29,11 +29,6 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -67,7 +62,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_top_level_array_of_nested_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_array_containers_nested';
 
             public function up(): QueryStatement
@@ -76,11 +71,6 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -115,7 +105,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_empty_top_level_array(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_array_containers_empty';
 
             public function up(): QueryStatement
@@ -124,11 +114,6 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 

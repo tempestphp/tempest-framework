@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -20,7 +20,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_deeply_nested_dtos(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_structure';
 
             public function up(): QueryStatement
@@ -29,11 +29,6 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('structure');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -87,7 +82,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_nested_dtos_with_mixed_types(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_grimoire';
 
             public function up(): QueryStatement
@@ -96,11 +91,6 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('title')
                     ->json('metadata');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 

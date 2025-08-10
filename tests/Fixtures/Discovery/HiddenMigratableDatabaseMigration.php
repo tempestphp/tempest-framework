@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Discovery;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\MigrationDiscovery;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery(except: [MigrationDiscovery::class])]
-final class HiddenMigratableDatabaseMigration implements DatabaseMigration
+final class HiddenMigratableDatabaseMigration implements MigratesUp
 {
     private(set) string $name = 'hidden-migratable-migration';
 
-    public function up(): ?QueryStatement
+    public function up(): QueryStatement
     {
-        return null;
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
+        return new CreateTableStatement('hidden')
+            ->primary();
     }
 }
