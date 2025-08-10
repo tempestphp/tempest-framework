@@ -8,13 +8,13 @@ use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use Tempest\Database\BelongsTo;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -669,7 +669,7 @@ final class Foo
     public string $bar;
 }
 
-final class FooDatabaseMigration implements DatabaseMigration
+final class FooDatabaseMigration implements MigratesUp
 {
     private(set) string $name = 'foos';
 
@@ -683,14 +683,9 @@ final class FooDatabaseMigration implements DatabaseMigration
             ],
         );
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateATable implements DatabaseMigration
+final class CreateATable implements MigratesUp
 {
     private(set) string $name = '100-create-a';
 
@@ -704,14 +699,9 @@ final class CreateATable implements DatabaseMigration
             ],
         );
     }
-
-    public function down(): QueryStatement
-    {
-        return new DropTableStatement('a');
-    }
 }
 
-final class CreateBTable implements DatabaseMigration
+final class CreateBTable implements MigratesUp
 {
     private(set) string $name = '100-create-b';
 
@@ -725,14 +715,9 @@ final class CreateBTable implements DatabaseMigration
             ],
         );
     }
-
-    public function down(): QueryStatement
-    {
-        return new DropTableStatement('b');
-    }
 }
 
-final class CreateCTable implements DatabaseMigration
+final class CreateCTable implements MigratesUp
 {
     private(set) string $name = '100-create-c';
 
@@ -743,14 +728,9 @@ final class CreateCTable implements DatabaseMigration
             new TextStatement('name'),
         ]);
     }
-
-    public function down(): QueryStatement
-    {
-        return new DropTableStatement('c');
-    }
 }
 
-final class CreateCarbonModelTable implements DatabaseMigration
+final class CreateCarbonModelTable implements MigratesUp
 {
     public string $name = '2024-12-17_create_users_table';
 
@@ -760,14 +740,9 @@ final class CreateCarbonModelTable implements DatabaseMigration
             ->primary()
             ->datetime('createdAt');
     }
-
-    public function down(): QueryStatement
-    {
-        return DropTableStatement::forModel(CarbonModel::class);
-    }
 }
 
-final class CreateCasterModelTable implements DatabaseMigration
+final class CreateCasterModelTable implements MigratesUp
 {
     public string $name = '0000_create_caster_model_table';
 
@@ -783,14 +758,9 @@ final class CreateCasterModelTable implements DatabaseMigration
                 ->enum('enum_prop', CasterEnum::class),
         );
     }
-
-    public function down(): QueryStatement
-    {
-        return DropTableStatement::forModel(CasterModel::class);
-    }
 }
 
-final class CreateDateTimeModelTable implements DatabaseMigration
+final class CreateDateTimeModelTable implements MigratesUp
 {
     public string $name = '0001_datetime_model_table';
 
@@ -801,14 +771,9 @@ final class CreateDateTimeModelTable implements DatabaseMigration
             ->datetime('phpDateTime')
             ->datetime('tempestDateTime');
     }
-
-    public function down(): null
-    {
-        return null;
-    }
 }
 
-final class CreateHasManyChildTable implements DatabaseMigration
+final class CreateHasManyChildTable implements MigratesUp
 {
     private(set) string $name = '100-create-has-many-child';
 
@@ -818,14 +783,9 @@ final class CreateHasManyChildTable implements DatabaseMigration
             ->primary()
             ->varchar('name');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateHasManyParentTable implements DatabaseMigration
+final class CreateHasManyParentTable implements MigratesUp
 {
     private(set) string $name = '100-create-has-many-parent';
 
@@ -835,14 +795,9 @@ final class CreateHasManyParentTable implements DatabaseMigration
             ->primary()
             ->varchar('name');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateHasManyThroughTable implements DatabaseMigration
+final class CreateHasManyThroughTable implements MigratesUp
 {
     private(set) string $name = '100-create-has-many-through';
 
@@ -853,11 +808,6 @@ final class CreateHasManyThroughTable implements DatabaseMigration
             ->belongsTo('through.parent_id', 'parent.id')
             ->belongsTo('through.child_id', 'child.id')
             ->belongsTo('through.child2_id', 'child.id', nullable: true);
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
 
@@ -1033,7 +983,7 @@ final class TestPost
     ) {}
 }
 
-final class CreateTestUserMigration implements DatabaseMigration
+final class CreateTestUserMigration implements MigratesUp
 {
     public string $name = '010_create_test_users';
 
@@ -1043,14 +993,9 @@ final class CreateTestUserMigration implements DatabaseMigration
             ->primary()
             ->text('name');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateTestPostMigration implements DatabaseMigration
+final class CreateTestPostMigration implements MigratesUp
 {
     public string $name = '011_create_test_posts';
 
@@ -1061,11 +1006,6 @@ final class CreateTestPostMigration implements DatabaseMigration
             ->foreignId('test_user_id', constrainedOn: 'test_users')
             ->string('title')
             ->text('body');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
 
@@ -1079,7 +1019,7 @@ final class ModelWithoutPrimaryKey
     ) {}
 }
 
-final class CreateModelWithoutPrimaryKeyMigration implements DatabaseMigration
+final class CreateModelWithoutPrimaryKeyMigration implements MigratesUp
 {
     private(set) string $name = '100-create-model-without-primary-key';
 
@@ -1088,10 +1028,5 @@ final class CreateModelWithoutPrimaryKeyMigration implements DatabaseMigration
         return new CreateTableStatement('model_without_primary_keys')
             ->text('name')
             ->text('description');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

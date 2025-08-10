@@ -3,11 +3,11 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\BelongsTo;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -404,7 +404,7 @@ final class Adventurer
     ) {}
 }
 
-final class CreateMageTable implements DatabaseMigration
+final class CreateMageTable implements MigratesUp
 {
     private(set) string $name = '100-create-mage';
 
@@ -415,14 +415,9 @@ final class CreateMageTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('element');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateSpellTable implements DatabaseMigration
+final class CreateSpellTable implements MigratesUp
 {
     private(set) string $name = '101-create-spell';
 
@@ -434,14 +429,9 @@ final class CreateSpellTable implements DatabaseMigration
             ->varchar('type')
             ->belongsTo('spells.creator_uuid', 'mages.mage_uuid', nullable: true);
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreatePartyTable implements DatabaseMigration
+final class CreatePartyTable implements MigratesUp
 {
     private(set) string $name = '102-create-party';
 
@@ -452,14 +442,9 @@ final class CreatePartyTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('quest_type');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateAdventurerTable implements DatabaseMigration
+final class CreateAdventurerTable implements MigratesUp
 {
     private(set) string $name = '103-create-adventurer';
 
@@ -470,10 +455,5 @@ final class CreateAdventurerTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('class')
             ->belongsTo('adventurers.party_uuid', 'parties.party_id', nullable: true);
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

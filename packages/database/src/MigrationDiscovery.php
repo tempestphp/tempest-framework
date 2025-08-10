@@ -23,7 +23,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(DatabaseMigration::class)) {
+        if (! $class->implements(MigratesUp::class) && ! $class->implements(MigratesDown::class)) {
             return;
         }
 
@@ -64,19 +64,17 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function apply(): void
     {
-        /** @var DatabaseMigration[] $resolved */
+        /** @var array<MigratesUp|MigratesDown> $resolved */
         $resolved = [];
+
         foreach ($this->discoveryItems as $discoveryItem) {
             if (is_string($discoveryItem)) {
                 $resolved[] = $this->container->get($discoveryItem);
-            } elseif ($discoveryItem instanceof DatabaseMigration) {
+            } elseif ($discoveryItem instanceof MigratesUp || $discoveryItem instanceof MigratesDown) {
                 $resolved[] = $discoveryItem;
             }
         }
 
-        $this->container->singleton(
-            RunnableMigrations::class,
-            new RunnableMigrations($resolved),
-        );
+        $this->container->singleton(RunnableMigrations::class, new RunnableMigrations($resolved));
     }
 }

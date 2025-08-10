@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Install;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesDown;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final class CreatePermissionsTable implements DatabaseMigration
+final class CreatePermissionsTable implements MigratesUp, MigratesDown
 {
     private(set) string $name = '0000-00-01_create_permissions_table';
 
@@ -23,6 +24,6 @@ final class CreatePermissionsTable implements DatabaseMigration
 
     public function down(): DropTableStatement
     {
-        return DropTableStatement::forModel(Permission::class);
+        return new DropTableStatement('permissions');
     }
 }
