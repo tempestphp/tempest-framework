@@ -53,9 +53,13 @@ We welcome contributions of any size! Feel free to submit a pull request, even i
 
 To contribute to Tempest's documentation, please:
 
-- Head over to the [Tempest docs repository](https://github.com/tempestphp/tempest-docs) to fork the project.
+- [Set up Tempest locally](#setting-up-tempest-locally) and head to `/docs`.
 - Add or edit any relevant documentation in a manner consistent with the rest of the documentation.
 - Re-read what you wrote and run it through a spell checker.
+- Optionally,
+  - Head over to the [Tempest docs repository](https://github.com/tempestphp/tempest-docs) to fork the project.
+  - Run `tempest docs:symlink` to link the `/docs` of your local Tempest clone to the documentation website.
+  - Preview your changes by running `bun run dev`.
 - Open a pull request with your changes.
 
 Once a pull request has been opened, the Tempest team will:
