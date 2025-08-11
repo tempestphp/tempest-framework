@@ -1,6 +1,8 @@
 name: Deploy documentation
 on:
   push:
+    paths:
+      - "docs/**"
     branches:
       - main
       - 2.x
@@ -10,11 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger documentation deployment
-        uses: octokit/request-action@v2.0.0
+        uses: diekotto/repository-dispatch@v1
         with:
-          route: POST /repos/:owner/:repo/dispatches
-          owner: tempestphp
-          repo: tempest-docs
-          event_type: deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DOCS_DEPLOY_TRIGGER_PAT }}
+          repository: tempestphp/tempest-docs
+          event-type: deploy
