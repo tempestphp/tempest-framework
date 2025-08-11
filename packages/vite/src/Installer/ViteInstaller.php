@@ -29,7 +29,7 @@ final class ViteInstaller implements Installer
 
     private function shouldInstallTailwind(): bool
     {
-        $argument = $this->consoleArgumentBag->get('tailwind');
+        $argument = $this->consoleArgumentBag->get('tailwindcss');
 
         if ($argument === null || ! is_bool($argument->value)) {
             return $this->console->confirm('Install Tailwind CSS as well?', default: true);
@@ -42,8 +42,8 @@ final class ViteInstaller implements Installer
     {
         $shouldInstallTailwind = $this->shouldInstallTailwind();
         $templateDirectory = $shouldInstallTailwind
-            ? 'Tailwind'
-            : 'Vanilla';
+            ? 'tailwindcss'
+            : 'vanilla';
 
         // Installs the dependencies
         $this->javascript->installDependencies(
@@ -63,7 +63,12 @@ final class ViteInstaller implements Installer
             ? $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.entrypoint.css'))
             : null;
 
-        // Install package.json scripts
+        // Adds `package.json` if it does not exist
+        if (! is_file(root_path('package.json'))) {
+            $this->publish(__DIR__ . '/package.json', root_path('package.json'));
+        }
+
+        // Installs package.json scripts
         $this->updateJson(root_path('package.json'), function (array $json) {
             $json['type'] = 'module';
             $json['scripts'] ??= [];
@@ -104,12 +109,13 @@ final class ViteInstaller implements Installer
                 ? '<strong>Vite and Tailwind CSS are now installed in your project</strong>!'
                 : '<strong>Vite is now installed in your project</strong>!',
             PHP_EOL,
+            'Add <code><x-vite-tags /></code> to the <code><head></code> of your template',
             "Run <code>{$packageManager->getRunCommand('dev')}</code> to start the <strong>development server</strong>",
             $mainTs || $mainCss
                 ? 'Update <code>*.entrypoint.{ts,css}</code> files and observe changes in your browser'
                 : 'Create a <code>src/main.entrypoint.ts</code> file to get started with front-end code',
             PHP_EOL,
-            // '<style="fg-green">→</style> Read the <href="https://tempestphp.com/main/framework/vite">documentation</href>', // TODO: update when we have Vite docs
+            '<style="fg-green">→</style> Read the <href="https://tempestphp.com/docs/features/asset-bundling">documentation</href>',
             '<style="fg-green">→</style> Join the <href="https://tempestphp.com/discord">Discord server</href>',
         ]);
     }

@@ -41,7 +41,7 @@ final readonly class DependencyInstaller
     /**
      * Installs dependencies without interacting with the console.
      */
-    public function silentlyInstallDependencies(string $cwd, string|array $dependencies, bool $dev = false, ?PackageManager $defaultPackageManager = null): void
+    public function silentlyInstallDependencies(string $cwd, string|array $dependencies, bool $dev = false, PackageManager $defaultPackageManager = PackageManager::NPM): void
     {
         $install = $this->getInstallProcess(
             packageManager: PackageManager::detect($cwd) ?? $defaultPackageManager,
