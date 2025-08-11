@@ -13,11 +13,11 @@ use UnitEnum;
 
 use function Tempest\Support\arr;
 
-final class PolicyBasedAccessControl implements AccessControl
+final readonly class PolicyBasedAccessControl implements AccessControl
 {
     public function __construct(
-        private readonly Container $container,
-        private readonly AuthConfig $authConfig,
+        private Container $container,
+        private AuthConfig $authConfig,
     ) {}
 
     public function denyAccessUnlessGranted(UnitEnum|string $action, object|string $resource, ?object $subject = null): void

@@ -2,15 +2,15 @@
 
 namespace Tempest\Auth\AccessControl;
 
-final class AccessDecision
+final readonly class AccessDecision
 {
     /**
      * @param bool $granted Whether access is granted.
      * @param null|string $message An optional message or translation key explaining the decision.
      */
     public function __construct(
-        public readonly bool $granted,
-        public readonly ?string $message = null,
+        public bool $granted,
+        public ?string $message = null,
     ) {}
 
     /**
@@ -25,7 +25,7 @@ final class AccessDecision
         return new self(granted: (bool) $decision);
     }
 
-    /** 
+    /**
      * Grants access to the resource.
      */
     public static function granted(): self
@@ -35,7 +35,7 @@ final class AccessDecision
 
     /**
      * Denies access to the resource with an optional message.
-     * 
+     *
      * @param null|string $message An optional message or translation key explaining the decision.
      */
     public static function denied(?string $message = null): self

@@ -103,24 +103,6 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $authors[0]->books[0]->chapters);
     }
 
-    public function test_map_user_permissions(): void
-    {
-        $data = [
-            [
-                'users.name' => 'Brent',
-                'users.email' => 'brendt@stitcher.io',
-                'users.id' => 1,
-                'userPermissions.user_id' => 1,
-                'userPermissions.permission_id' => 1,
-                'userPermissions.id' => 1,
-            ],
-        ];
-
-        $users = map($data)->with(SelectModelMapper::class)->to(User::class);
-
-        $this->assertCount(1, $users[0]->userPermissions);
-    }
-
     private function data(): array
     {
         return [

@@ -10,11 +10,11 @@ use Tempest\Database\Database;
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 
-final class DatabaseAuthenticatableResolver implements AuthenticatableResolver
+final readonly class DatabaseAuthenticatableResolver implements AuthenticatableResolver
 {
     public function __construct(
-        private readonly AuthConfig $authConfig,
-        private readonly Database $database,
+        private AuthConfig $authConfig,
+        private Database $database,
     ) {}
 
     public function resolve(int|string $id): ?CanAuthenticate
