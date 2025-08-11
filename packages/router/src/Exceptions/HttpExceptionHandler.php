@@ -2,6 +2,7 @@
 
 namespace Tempest\Router\Exceptions;
 
+use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
@@ -34,6 +35,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
             $response = match (true) {
                 $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
+                $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
                 $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
                 $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
                 default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),

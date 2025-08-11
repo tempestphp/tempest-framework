@@ -19,7 +19,7 @@ final class AuthenticationInstaller implements Installer
     {
         $publishFiles = [
             __DIR__ . '/basic-user/StubUserModel.php' => src_path('Authentication/User.php'),
-            __DIR__ . '/basic-user/StubCreateUsersTableMigration.php' => src_path('Authentication/StubCreateUsersTableMigration.php'),
+            __DIR__ . '/basic-user/StubCreateUsersTableMigration.php' => src_path('Authentication/CreateUsersTable.php'),
         ];
 
         foreach ($publishFiles as $source => $destination) {
