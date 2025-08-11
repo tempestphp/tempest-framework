@@ -269,7 +269,7 @@ trait IsDatabaseModel
 
         query($this)
             ->update(...$params)
-            ->where($model->getPrimaryKey(), $model->getPrimaryKeyValue())
+            ->whereField($model->getPrimaryKey(), $model->getPrimaryKeyValue())
             ->execute();
 
         foreach ($params as $key => $value) {

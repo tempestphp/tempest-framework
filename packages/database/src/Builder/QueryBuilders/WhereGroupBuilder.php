@@ -7,6 +7,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\QueryStatements\WhereGroupStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Support\Str;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -30,11 +31,30 @@ final class WhereGroupBuilder
     ) {}
 
     /**
+     * Adds a SQL `WHERE` condition to the query. If the `$statement` looks like raw SQL, the method will assume it is and call `whereRaw`. Otherwise, `whereField` will be called.
+     *
+     * **Example**
+     * ```php
+     * ->where('price > ?', $value); // calls `whereRaw`
+     * ->where('price', $value); // calls `whereField`
+     * ```
+     * @return self<TModel>
+     */
+    public function where(string $statement, mixed ...$bindings): self
+    {
+        if ($this->looksLikeWhereRawStatement($statement, $bindings)) {
+            return $this->whereRaw($statement, ...$bindings);
+        }
+
+        return $this->whereField($statement, value: $bindings[0], operator: $bindings[1] ?? WhereOperator::EQUALS);
+    }
+
+    /**
      * Adds a `WHERE` condition to the group.
      *
      * @return self<TModel>
      */
-    public function where(string $field, mixed $value = null, string|WhereOperator $operator = WhereOperator::EQUALS): self
+    public function whereField(string $field, mixed $value = null, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
         return $this->andWhere($field, $value, WhereOperator::fromOperator($operator));
     }

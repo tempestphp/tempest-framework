@@ -7,6 +7,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Support\Str;
 
 use function Tempest\Support\str;
 
@@ -24,11 +25,30 @@ trait HasWhereQueryBuilderMethods
     abstract private function getStatementForWhere(): HasWhereStatements;
 
     /**
+     * Adds a SQL `WHERE` condition to the query. If the `$statement` looks like raw SQL, the method will assume it is and call `whereRaw`. Otherwise, `whereField` will be called.
+     *
+     * **Example**
+     * ```php
+     * ->where('price > ?', $value); // calls `whereRaw`
+     * ->where('price', $value); // calls `whereField`
+     * ```
+     * @return self<TModel>
+     */
+    public function where(string $statement, mixed ...$bindings): self
+    {
+        if ($this->looksLikeWhereRawStatement($statement, $bindings)) {
+            return $this->whereRaw($statement, ...$bindings);
+        }
+
+        return $this->whereField($statement, value: $bindings[0], operator: $bindings[1] ?? WhereOperator::EQUALS);
+    }
+
+    /**
      * Adds a where condition to the query.
      *
      * @return self<TModel>
      */
-    public function where(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
+    public function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
         $operator = WhereOperator::fromOperator($operator);
         $fieldDefinition = $this->getModel()->getFieldDefinition($field);
@@ -83,13 +103,13 @@ trait HasWhereQueryBuilderMethods
      *
      * @return self<TModel>
      */
-    public function whereRaw(string $rawCondition, mixed ...$bindings): self
+    public function whereRaw(string $statement, mixed ...$bindings): self
     {
-        if ($this->getStatementForWhere()->where->isNotEmpty() && ! str($rawCondition)->trim()->startsWith(['AND', 'OR'])) {
-            return $this->andWhereRaw($rawCondition, ...$bindings);
+        if ($this->getStatementForWhere()->where->isNotEmpty() && ! str($statement)->trim()->startsWith(['AND', 'OR'])) {
+            return $this->andWhereRaw($statement, ...$bindings);
         }
 
-        $this->getStatementForWhere()->where[] = new WhereStatement($rawCondition);
+        $this->getStatementForWhere()->where[] = new WhereStatement($statement);
         $this->bind(...$bindings);
 
         return $this;

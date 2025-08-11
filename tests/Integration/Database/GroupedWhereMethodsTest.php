@@ -80,7 +80,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
             ->where('category', 'electronics')
             ->andWhereGroup(function ($query): void {
                 $query
-                    ->where('price', 100.0, WhereOperator::GREATER_THAN)
+                    ->whereField('price', 100.0, WhereOperator::GREATER_THAN)
                     ->where('in_stock', true);
             })
             ->all();
@@ -99,7 +99,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
             ->where('category', 'furniture')
             ->orWhereGroup(function ($query): void {
                 $query
-                    ->where('price', 500.0, WhereOperator::GREATER_THAN)
+                    ->whereField('price', 500.0, WhereOperator::GREATER_THAN)
                     ->where('brand', 'TechCorp');
             })
             ->all();
@@ -131,7 +131,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
                     ->orWhereGroup(function ($subQuery): void {
                         $subQuery
                             ->where('category', 'furniture')
-                            ->where('price', 200.0, WhereOperator::LESS_THAN);
+                            ->whereField('price', 200.0, WhereOperator::LESS_THAN);
                     });
             })
             ->where('in_stock', true)
@@ -309,7 +309,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
                             ->where('category', 'furniture')
                             ->andWhereGroup(function ($deepQuery): void {
                                 $deepQuery
-                                    ->where('price', 150.0, WhereOperator::GREATER_THAN)
+                                    ->whereField('price', 150.0, WhereOperator::GREATER_THAN)
                                     ->orWhere('brand', 'LightUp');
                             });
                     });

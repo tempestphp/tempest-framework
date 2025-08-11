@@ -8,6 +8,7 @@ use Countable;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Support\Str;
 use UnitEnum;
 
 /**
@@ -97,6 +98,19 @@ trait HasConvenientWhereMethods
         ];
     }
 
+    private function looksLikeWhereRawStatement(string $statement, array $bindings): bool
+    {
+        if (count($bindings) === 2 && $bindings[1] instanceof WhereOperator) {
+            return false;
+        }
+
+        if (! Str\contains($statement, [' ', ...array_map(fn (WhereOperator $op) => $op->value, WhereOperator::cases())])) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Adds a `WHERE IN` condition.
      *
@@ -106,7 +120,7 @@ trait HasConvenientWhereMethods
      */
     public function whereIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
-        return $this->where($field, $values, WhereOperator::IN);
+        return $this->whereField($field, $values, WhereOperator::IN);
     }
 
     /**
@@ -118,7 +132,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNotIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
     {
-        return $this->where($field, $values, WhereOperator::NOT_IN);
+        return $this->whereField($field, $values, WhereOperator::NOT_IN);
     }
 
     /**
@@ -128,7 +142,7 @@ trait HasConvenientWhereMethods
      */
     public function whereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
-        return $this->where($field, [$min, $max], WhereOperator::BETWEEN);
+        return $this->whereField($field, [$min, $max], WhereOperator::BETWEEN);
     }
 
     /**
@@ -138,7 +152,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): self
     {
-        return $this->where($field, [$min, $max], WhereOperator::NOT_BETWEEN);
+        return $this->whereField($field, [$min, $max], WhereOperator::NOT_BETWEEN);
     }
 
     /**
@@ -148,7 +162,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNull(string $field): self
     {
-        return $this->where($field, null, WhereOperator::IS_NULL);
+        return $this->whereField($field, null, WhereOperator::IS_NULL);
     }
 
     /**
@@ -158,7 +172,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNotNull(string $field): self
     {
-        return $this->where($field, null, WhereOperator::IS_NOT_NULL);
+        return $this->whereField($field, null, WhereOperator::IS_NOT_NULL);
     }
 
     /**
@@ -168,7 +182,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNot(string $field, mixed $value): self
     {
-        return $this->where($field, $value, WhereOperator::NOT_EQUALS);
+        return $this->whereField($field, $value, WhereOperator::NOT_EQUALS);
     }
 
     /**
@@ -178,7 +192,7 @@ trait HasConvenientWhereMethods
      */
     public function whereLike(string $field, string $value): self
     {
-        return $this->where($field, $value, WhereOperator::LIKE);
+        return $this->whereField($field, $value, WhereOperator::LIKE);
     }
 
     /**
@@ -188,7 +202,7 @@ trait HasConvenientWhereMethods
      */
     public function whereNotLike(string $field, string $value): self
     {
-        return $this->where($field, $value, WhereOperator::NOT_LIKE);
+        return $this->whereField($field, $value, WhereOperator::NOT_LIKE);
     }
 
     /**
@@ -388,7 +402,7 @@ trait HasConvenientWhereMethods
      */
     public function whereAfter(string $field, DateTimeInterface|string $date): self
     {
-        return $this->where($field, DateTime::parse($date), WhereOperator::GREATER_THAN);
+        return $this->whereField($field, DateTime::parse($date), WhereOperator::GREATER_THAN);
     }
 
     /**
@@ -398,7 +412,7 @@ trait HasConvenientWhereMethods
      */
     public function whereBefore(string $field, DateTimeInterface|string $date): self
     {
-        return $this->where($field, DateTime::parse($date), WhereOperator::LESS_THAN);
+        return $this->whereField($field, DateTime::parse($date), WhereOperator::LESS_THAN);
     }
 
     /**
@@ -486,7 +500,7 @@ trait HasConvenientWhereMethods
      *
      * @return self<TModel>
      */
-    abstract public function where(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self;
+    abstract public function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self;
 
     /**
      * Abstract method that must be implemented by classes using this trait.

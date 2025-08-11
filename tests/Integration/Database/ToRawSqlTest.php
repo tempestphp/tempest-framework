@@ -57,8 +57,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
             expected: "SELECT * FROM books WHERE published_date > '2020-01-01' AND rating >= 4.5",
             actual: query('books')
                 ->select()
-                ->whereRaw('published_date > ?', '2020-01-01')
-                ->whereRaw('rating >= ?', 4.5)
+                ->where('published_date > ?', '2020-01-01')
+                ->where('rating >= ?', 4.5)
                 ->toRawSql()
                 ->toString(),
         );
@@ -330,7 +330,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
     {
         $rawSql = query('books')
             ->select()
-            ->whereRaw('author_id IN (SELECT id FROM authors WHERE type = ?)', 'a')
+            ->where('author_id IN (SELECT id FROM authors WHERE type = ?)', 'a')
             ->toRawSql()
             ->toString();
 

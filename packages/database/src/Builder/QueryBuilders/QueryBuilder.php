@@ -233,7 +233,7 @@ final readonly class QueryBuilder
         $query = $this->select();
 
         foreach ($conditions as $field => $value) {
-            $query->where($field, $value);
+            $query->whereField($field, $value);
         }
 
         return $query;
@@ -290,7 +290,7 @@ final readonly class QueryBuilder
         $existing = $this->select();
 
         foreach ($find as $key => $value) {
-            $existing = $existing->where($key, $value);
+            $existing = $existing->whereField($key, $value);
         }
 
         $model = $existing->first() ?? $this->new(...$find);

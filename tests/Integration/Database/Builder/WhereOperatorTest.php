@@ -12,6 +12,84 @@ use function Tempest\Database\query;
 
 final class WhereOperatorTest extends FrameworkIntegrationTestCase
 {
+    public function test_hybrid_where_equals(): void
+    {
+        $query = query('books')
+            ->select()
+            ->where('`title` = ?', 'Timeline Taxi')
+            ->build();
+
+        $expected = 'SELECT * FROM `books` WHERE `title` = ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['Timeline Taxi'], $query->bindings);
+    }
+
+    public function test_hybrid_where_superior(): void
+    {
+        $query = query('books')
+            ->select()
+            ->where('`price` > ?', 20)
+            ->build();
+
+        $expected = 'SELECT * FROM `books` WHERE `price` > ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame([20], $query->bindings);
+    }
+
+    public function test_hybrid_where_field(): void
+    {
+        $query = query('books')
+            ->select()
+            ->where('title', 'Timeline Taxi')
+            ->build();
+
+        $expected = 'SELECT * FROM `books` WHERE `books.title` = ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['Timeline Taxi'], $query->bindings);
+    }
+
+    public function test_hybrid_where_with_operator(): void
+    {
+        $query = query('books')
+            ->select()
+            ->where('rating', 4.0, WhereOperator::GREATER_THAN)
+            ->build();
+
+        $expected = 'SELECT * FROM `books` WHERE `books.rating` > ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame([4.0], $query->bindings);
+    }
+
+    public function test_where_field(): void
+    {
+        $query = query('books')
+            ->select()
+            ->whereField('title', 'Timeline Taxi')
+            ->build();
+
+        $expected = 'SELECT * FROM `books` WHERE `books.title` = ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['Timeline Taxi'], $query->bindings);
+    }
+
+    public function test_where_field_explicit_operator(): void
+    {
+        $query = query('books')
+            ->select()
+            ->whereField('rating', 4.0, WhereOperator::GREATER_THAN)
+            ->build();
+
+        $expected = 'SELECT * FROM books WHERE books.rating > ?';
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame([4.0], $query->bindings);
+    }
+
     public function test_basic_where_with_field_and_value(): void
     {
         $query = query('books')
@@ -25,24 +103,11 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Test Book'], $query->bindings);
     }
 
-    public function test_where_with_explicit_operator(): void
-    {
-        $query = query('books')
-            ->select()
-            ->where('rating', 4.0, WhereOperator::GREATER_THAN)
-            ->build();
-
-        $expected = 'SELECT * FROM books WHERE books.rating > ?';
-
-        $this->assertSameWithoutBackticks($expected, $query->compile());
-        $this->assertSame([4.0], $query->bindings);
-    }
-
     public function test_where_with_string_operator(): void
     {
         $query = query('books')
             ->select()
-            ->where('title', '%fantasy%', 'like')
+            ->whereField('title', '%fantasy%', 'like')
             ->build();
 
         $expected = 'SELECT * FROM books WHERE books.title LIKE ?';
@@ -55,7 +120,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
     {
         $query = query('books')
             ->select()
-            ->where('category', ['fiction', 'mystery', 'thriller'], WhereOperator::IN)
+            ->whereField('category', ['fiction', 'mystery', 'thriller'], WhereOperator::IN)
             ->build();
 
         $expected = 'SELECT * FROM books WHERE books.category IN (?,?,?)';
@@ -68,7 +133,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
     {
         $query = query('books')
             ->select()
-            ->where('publication_year', [2020, 2024], WhereOperator::BETWEEN)
+            ->whereField('publication_year', [2020, 2024], WhereOperator::BETWEEN)
             ->build();
 
         $expected = 'SELECT * FROM books WHERE books.publication_year BETWEEN ? AND ?';
@@ -81,7 +146,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
     {
         $query = query('books')
             ->select()
-            ->where('deleted_at', null, WhereOperator::IS_NULL)
+            ->whereField('deleted_at', null, WhereOperator::IS_NULL)
             ->build();
 
         $expected = 'SELECT * FROM books WHERE books.deleted_at IS NULL';
@@ -144,7 +209,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
             ->where('status', 'published')
             ->andWhereGroup(function ($group): void {
                 $group
-                    ->where('category', ['fiction', 'mystery'], WhereOperator::IN)
+                    ->whereField('category', ['fiction', 'mystery'], WhereOperator::IN)
                     ->orWhereRaw('custom_field IS NOT NULL');
             })
             ->build();
@@ -162,7 +227,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         query('books')
             ->select()
-            ->where('category', 'fiction', WhereOperator::IN)
+            ->whereField('category', 'fiction', WhereOperator::IN)
             ->build();
     }
 
@@ -173,7 +238,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
 
         query('books')
             ->select()
-            ->where('year', [2020, 2021, 2022], WhereOperator::BETWEEN)
+            ->whereField('year', [2020, 2021, 2022], WhereOperator::BETWEEN)
             ->build();
     }
 }

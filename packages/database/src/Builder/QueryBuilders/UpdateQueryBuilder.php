@@ -350,7 +350,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             : $this->getDefaultForeignKeyName();
 
         new DeleteQueryBuilder($relatedModel->getName())
-            ->where($foreignKey, $parentId->value)
+            ->whereField($foreignKey, $parentId->value)
             ->build()
             ->onDatabase($this->onDatabase)
             ->execute();
@@ -377,7 +377,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $foreignKeyColumn = $hasOne->relationJoin ?? $this->removeTablePrefix($hasOne->ownerJoin);
 
         $result = new SelectQueryBuilder($ownerModel->getName(), new ImmutableArray([$foreignKeyColumn]))
-            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->whereField($ownerModel->getPrimaryKey(), $parentId->value)
             ->build()
             ->onDatabase($this->onDatabase)
             ->fetchFirst();
@@ -389,13 +389,13 @@ final class UpdateQueryBuilder implements BuildsQuery
         $relatedId = $result[$foreignKeyColumn];
 
         new DeleteQueryBuilder($relatedModel->getName())
-            ->where($relatedModel->getPrimaryKey(), $relatedId)
+            ->whereField($relatedModel->getPrimaryKey(), $relatedId)
             ->build()
             ->onDatabase($this->onDatabase)
             ->execute();
 
         new UpdateQueryBuilder($ownerModel->getName(), [$foreignKeyColumn => null], $this->serializerFactory)
-            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->whereField($ownerModel->getPrimaryKey(), $parentId->value)
             ->build()
             ->onDatabase($this->onDatabase)
             ->execute();
@@ -411,7 +411,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $foreignKeyColumn = Intl\singularize($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
 
         new DeleteQueryBuilder($relatedModel->getName())
-            ->where($foreignKeyColumn, $parentId->value)
+            ->whereField($foreignKeyColumn, $parentId->value)
             ->build()
             ->onDatabase($this->onDatabase)
             ->execute();
@@ -431,7 +431,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $foreignKeyColumn = $hasOne->relationJoin ?? $this->removeTablePrefix($hasOne->ownerJoin);
 
         new UpdateQueryBuilder($ownerModel->getName(), [$foreignKeyColumn => $relatedModelId->value], $this->serializerFactory)
-            ->where($ownerModel->getPrimaryKey(), $parentId->value)
+            ->whereField($ownerModel->getPrimaryKey(), $parentId->value)
             ->build()
             ->onDatabase($this->onDatabase)
             ->execute();
@@ -510,7 +510,7 @@ final class UpdateQueryBuilder implements BuildsQuery
      *
      * @return self<TModel>
      */
-    public function where(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
+    public function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
         $operator = WhereOperator::fromOperator($operator);
 
@@ -586,7 +586,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         }
 
         if ($primaryKeyValue = $this->model->getPrimaryKeyValue()) {
-            $this->where($this->model->getPrimaryKey(), $primaryKeyValue->value);
+            $this->whereField($this->model->getPrimaryKey(), $primaryKeyValue->value);
         }
     }
 }

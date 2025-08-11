@@ -119,7 +119,7 @@ final class SelectQueryBuilder implements BuildsQuery
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model->getName(), 'get');
         }
 
-        return $this->where($this->model->getPrimaryKey(), $id)->first();
+        return $this->whereField($this->model->getPrimaryKey(), $id)->first();
     }
 
     /**

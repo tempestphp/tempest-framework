@@ -379,7 +379,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         query(User::class)
             ->select()
-            ->where('age', [25], WhereOperator::BETWEEN)
+            ->whereField('age', [25], WhereOperator::BETWEEN)
             ->all();
     }
 
@@ -390,7 +390,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
         query(User::class)
             ->select()
-            ->where('age', [25, 30, 35], WhereOperator::BETWEEN)
+            ->whereField('age', [25, 30, 35], WhereOperator::BETWEEN)
             ->all();
     }
 }
