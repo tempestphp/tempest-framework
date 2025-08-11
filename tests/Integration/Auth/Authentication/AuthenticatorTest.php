@@ -10,6 +10,8 @@ use Tempest\Auth\Authentication\SessionAuthenticator;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticator;
+use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class AuthenticatorTest extends FrameworkIntegrationTestCase
@@ -27,34 +29,5 @@ final class AuthenticatorTest extends FrameworkIntegrationTestCase
         $this->container->addInitializer(InMemoryAuthenticatorInitializer::class);
 
         $this->assertInstanceOf(InMemoryAuthenticator::class, $this->container->get(Authenticator::class));
-    }
-}
-
-final class InMemoryAuthenticator implements Authenticator
-{
-    private ?CanAuthenticate $authenticatable = null;
-
-    public function authenticate(CanAuthenticate $authenticatable): void
-    {
-        $this->authenticatable = $authenticatable;
-    }
-
-    public function deauthenticate(): void
-    {
-        $this->authenticatable = null;
-    }
-
-    public function current(): ?CanAuthenticate
-    {
-        return $this->authenticatable;
-    }
-}
-
-final readonly class InMemoryAuthenticatorInitializer implements Initializer
-{
-    #[Singleton]
-    public function initialize(Container $container): Authenticator
-    {
-        return new InMemoryAuthenticator();
     }
 }

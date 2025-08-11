@@ -8,7 +8,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 
 final class StubCreateUsersTableMigration implements MigratesUp
 {
-    public string $name = '0000-create-users-table';
+    public string $name = '0000-00-00_create_users_table';
 
     public function up(): QueryStatement
     {
