@@ -29,5 +29,5 @@ interface PasswordHasher
     /**
      * Returns informations about the given hash, such as the algorithm used and its options.
      */
-    public function analyze(#[\SensitiveParameter] string $hash): Hash;
+    public function analyze(#[\SensitiveParameter] string $hash): ?Hash;
 }
