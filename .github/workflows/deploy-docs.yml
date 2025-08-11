@@ -1,0 +1,20 @@
+name: Deploy documentation
+on:
+  push:
+    branches:
+      - main
+      - 2.x
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger documentation deployment
+        uses: octokit/request-action@v2.0.0
+        with:
+          route: POST /repos/:owner/:repo/dispatches
+          owner: tempestphp
+          repo: tempest-docs
+          event_type: deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
