@@ -457,7 +457,7 @@ final class PolicyWithoutActionNames
     #[PolicyFor(Post::class)]
     public function canMarkAsPublished(?Post $post, ?User $user): bool
     {
-        if (! $user) {
+        if ($user === null) {
             return false;
         }
 
@@ -467,7 +467,7 @@ final class PolicyWithoutActionNames
     #[PolicyFor(Post::class)]
     public function approveForPublication(?Post $post, ?User $user): bool
     {
-        if (! $user) {
+        if ($user === null) {
             return false;
         }
 
