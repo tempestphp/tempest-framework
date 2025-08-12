@@ -7,22 +7,23 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessControl;
 use Tempest\Auth\AccessControl\AccessDecision;
-use Tempest\Auth\AccessControl\Policy;
-use Tempest\Auth\AuthConfig;
+use Tempest\Auth\AccessControl\PolicyFor;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
 use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use UnitEnum;
 
-final class AccessControlIntegrationTest extends FrameworkIntegrationTestCase
+final class AccessControlTest extends FrameworkIntegrationTestCase
 {
+    use HasPolicyTests;
+
     #[Test]
     public function complete_access_control_workflow(): void
     {
-        $this->container->config(new AuthConfig(policies: [ArticlePolicy::class, CommentPolicy::class]));
+        $this->registerPoliciesFrom(ArticlePolicy::class);
+        $this->registerPoliciesFrom(CommentPolicy::class);
 
         $admin = new TestUser(userId: 1, role: 'admin');
         $author = new TestUser(userId: 2, role: 'author');
@@ -52,7 +53,7 @@ final class AccessControlIntegrationTest extends FrameworkIntegrationTestCase
     #[Test]
     public function authentication_integration(): void
     {
-        $this->container->config(new AuthConfig(policies: [ArticlePolicy::class]));
+        $this->registerPoliciesFrom(ArticlePolicy::class);
 
         $this->container->removeInitializer(AuthenticatorInitializer::class);
         $this->container->addInitializer(InMemoryAuthenticatorInitializer::class);
@@ -122,36 +123,28 @@ final class ArticleComment
     ) {}
 }
 
-final class ArticlePolicy implements Policy
+final class ArticlePolicy
 {
-    public string $model = Article::class;
-
-    public function check(UnitEnum|string $action, ?object $resource, ?object $subject): bool|AccessDecision
+    #[PolicyFor(Article::class, action: 'view')]
+    public function view(): bool
     {
-        /** @var Article $resource */
-        $actionString = ($action instanceof \BackedEnum) ? $action->value : ((string) $action);
-
-        return match ($actionString) {
-            'view' => true, // Anyone can view
-            'edit' => $this->canEdit($resource, $subject),
-            'delete' => $this->canDelete($resource, $subject),
-            'manage' => $this->canManage($subject),
-            default => false,
-        };
+        return true;
     }
 
-    private function canEdit(Article $article, ?object $subject): bool
+    #[PolicyFor(Article::class, action: 'edit')]
+    public function edit(Article $article, ?TestUser $subject): bool
     {
-        if (! ($subject instanceof TestUser)) {
+        if ($subject === null) {
             return false;
         }
 
         return $subject->role === 'admin' || $subject->role === 'author' && $article->authorId === $subject->id->value;
     }
 
-    private function canDelete(Article $article, ?object $subject): bool|AccessDecision
+    #[PolicyFor(Article::class, action: 'delete')]
+    public function delete(Article $article, ?TestUser $subject): bool|AccessDecision
     {
-        if (! ($subject instanceof TestUser)) {
+        if ($subject === null) {
             return AccessDecision::denied('Authentication required');
         }
 
@@ -166,30 +159,34 @@ final class ArticlePolicy implements Policy
         return AccessDecision::denied('Insufficient permissions for this action');
     }
 
-    private function canManage(?object $subject): bool
+    #[PolicyFor(Article::class, action: 'manage')]
+    public function manage(?Article $_, ?TestUser $subject): bool
     {
-        return $subject instanceof TestUser && $subject->role === 'admin';
+        return $subject?->role === 'admin';
     }
 }
 
-final class CommentPolicy implements Policy
+final class CommentPolicy
 {
-    public string $model = ArticleComment::class;
-
-    public function check(UnitEnum|string $action, ?object $resource, ?object $subject): bool|AccessDecision
+    #[PolicyFor(ArticleComment::class, action: 'view')]
+    public function view(): bool
     {
-        if (! ($subject instanceof TestUser)) {
+        return true;
+    }
+
+    #[PolicyFor(ArticleComment::class, action: 'edit')]
+    public function edit(ArticleComment $comment, ?TestUser $subject): bool
+    {
+        if ($subject === null) {
             return false;
         }
 
-        /** @var ArticleComment $resource */
-        $actionString = ($action instanceof \BackedEnum) ? $action->value : ((string) $action);
+        return $comment->authorId === $subject->id->value || $subject->role === 'admin';
+    }
 
-        return match ($actionString) {
-            'view' => true,
-            'edit' => $resource->authorId === $subject->id->value || $subject->role === 'admin',
-            'delete' => $subject->role === 'admin',
-            default => false,
-        };
+    #[PolicyFor(ArticleComment::class, action: 'delete')]
+    public function delete(ArticleComment $_, ?TestUser $subject): bool
+    {
+        return $subject?->role === 'admin';
     }
 }

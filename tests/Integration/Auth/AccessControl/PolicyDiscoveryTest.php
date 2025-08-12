@@ -6,36 +6,107 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessDecision;
-use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\PolicyDiscovery;
+use Tempest\Auth\AccessControl\PolicyFor;
 use Tempest\Auth\AuthConfig;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Reflection\ClassReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use UnitEnum;
 
 final class PolicyDiscoveryTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function can_discover_policy_classes(): void
+    public function discovers_policy_methods(): void
     {
-        $authConfig = new AuthConfig();
-        $discovery = new PolicyDiscovery($authConfig);
-        $discovery->setItems(new DiscoveryItems());
-        $discovery->discover(new DiscoveryLocation('test', __DIR__), new ClassReflector(TestPolicy::class));
+        $config = new AuthConfig();
+
+        $discovery = new PolicyDiscovery($config);
+        $discovery->setItems(new DiscoveryItems([]));
+        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(TestPolicyClass::class));
         $discovery->apply();
 
-        $this->assertContains(TestPolicy::class, $authConfig->policies);
+        $this->assertArrayHasKey(TestModel::class, $config->policies);
+        $this->assertArrayHasKey('view', $config->policies[TestModel::class]);
+        $this->assertArrayHasKey('edit', $config->policies[TestModel::class]);
+        $this->assertCount(1, $config->policies[TestModel::class]['view']);
+        $this->assertCount(1, $config->policies[TestModel::class]['edit']);
+    }
+
+    #[Test]
+    public function discovers_policy_methods_with_multiple_actions(): void
+    {
+        $config = new AuthConfig();
+
+        $discovery = new PolicyDiscovery($config);
+        $discovery->setItems(new DiscoveryItems([]));
+        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(TestPolicyWithMultipleActions::class));
+        $discovery->apply();
+
+        $this->assertArrayHasKey(TestModel::class, $config->policies);
+        $this->assertArrayHasKey('create', $config->policies[TestModel::class]);
+        $this->assertArrayHasKey('update', $config->policies[TestModel::class]);
+        $this->assertCount(1, $config->policies[TestModel::class]['create']);
+        $this->assertCount(1, $config->policies[TestModel::class]['update']);
+    }
+
+    #[Test]
+    public function discovers_policy_methods_with_enum_actions(): void
+    {
+        $config = new AuthConfig();
+
+        $discovery = new PolicyDiscovery($config);
+        $discovery->setItems(new DiscoveryItems([]));
+        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(TestPolicyWithEnumActions::class));
+        $discovery->apply();
+
+        $this->assertArrayHasKey(TestModel::class, $config->policies);
+        $this->assertArrayHasKey('delete', $config->policies[TestModel::class]);
+        $this->assertCount(1, $config->policies[TestModel::class]['delete']);
     }
 }
 
-final class TestPolicy implements Policy
+final class TestModel
 {
-    public string $model = '';
+    public function __construct(
+        public string $name,
+    ) {}
+}
 
-    public function check(UnitEnum|string $action, ?object $resource, ?object $subject): bool|AccessDecision
+enum TestAction: string
+{
+    case DELETE = 'delete';
+}
+
+final class TestPolicyClass
+{
+    #[PolicyFor(TestModel::class, action: 'view')]
+    public function canView(): bool
     {
         return true;
+    }
+
+    #[PolicyFor(TestModel::class, action: 'edit')]
+    public function canEdit(): bool|AccessDecision
+    {
+        return AccessDecision::granted();
+    }
+}
+
+final class TestPolicyWithMultipleActions
+{
+    #[PolicyFor(TestModel::class, action: ['create', 'update'])]
+    public function canCreateOrUpdate(): bool
+    {
+        return true;
+    }
+}
+
+final class TestPolicyWithEnumActions
+{
+    #[PolicyFor(TestModel::class, action: TestAction::DELETE)]
+    public function canDelete(): bool
+    {
+        return false;
     }
 }

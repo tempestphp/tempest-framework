@@ -6,6 +6,7 @@ namespace Tempest\Reflection;
 
 use Generator;
 use ReflectionMethod as PHPReflectionMethod;
+use ReflectionParameter;
 
 final class MethodReflector implements Reflector
 {
@@ -33,15 +34,18 @@ final class MethodReflector implements Reflector
         }
     }
 
-    public function getParameter(string $name): ?ParameterReflector
+    public function getParameter(int|string $key): ?ParameterReflector
     {
-        foreach ($this->getParameters() as $parameter) {
-            if ($parameter->getName() === $name) {
-                return $parameter;
-            }
+        $parameter = array_find(
+            array: $this->reflectionMethod->getParameters(),
+            callback: fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
+        );
+
+        if ($parameter === null) {
+            return null;
         }
 
-        return null;
+        return new ParameterReflector($parameter);
     }
 
     public function invokeArgs(?object $object, array $args = []): mixed

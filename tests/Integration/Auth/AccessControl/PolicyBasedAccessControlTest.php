@@ -7,21 +7,23 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessControl;
 use Tempest\Auth\AccessControl\AccessDecision;
-use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\PolicyBasedAccessControl;
+use Tempest\Auth\AccessControl\PolicyFor;
 use Tempest\Auth\AuthConfig;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
 use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Auth\Exceptions\NoPolicyWereFoundForResource;
+use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
 use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use UnitEnum;
 
 final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
 {
+    use HasPolicyTests;
+
     #[Test]
     public function returns_policy_based_access_control_instance_by_default(): void
     {
@@ -31,7 +33,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_grant_access_when_policy_returns_true(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -45,7 +47,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_deny_access_when_policy_returns_false(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -59,7 +61,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_grant_access_when_policy_returns_access_decision(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -73,7 +75,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_deny_access_when_policy_returns_denied_access_decision(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -88,7 +90,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_work_with_enum_actions(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -102,7 +104,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function can_work_with_class_strings(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $user = new User(userId: 1);
@@ -115,7 +117,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function uses_current_authenticated_user_when_no_subject_provided(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $this->container->removeInitializer(AuthenticatorInitializer::class);
         $this->container->addInitializer(InMemoryAuthenticatorInitializer::class);
@@ -133,7 +135,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function handles_no_authenticated_model_gracefully(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -144,7 +146,8 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function throws_exception_when_no_policies_found(): void
     {
-        $this->container->config(new AuthConfig(policies: []));
+        $authConfig = new AuthConfig();
+        $this->container->config($authConfig);
 
         $accessControl = $this->container->get(AccessControl::class);
         $comment = new Comment(content: 'Test comment');
@@ -158,7 +161,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function deny_access_unless_granted_throws_when_access_denied(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -173,7 +176,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function deny_access_unless_granted_passes_when_access_granted(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $post = new Post(title: 'Test post', authorId: 1);
@@ -188,7 +191,8 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function multiple_policies_all_must_grant_access(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class, UserPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
+        $this->registerPoliciesFrom(UserPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $user = new User(userId: 1);
@@ -201,7 +205,8 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function multiple_policies_any_denial_blocks_access(): void
     {
-        $this->container->config(new AuthConfig(policies: [PostPolicy::class, UserPolicy::class]));
+        $this->registerPoliciesFrom(PostPolicy::class);
+        $this->registerPoliciesFrom(UserPolicy::class);
 
         $accessControl = $this->container->get(AccessControl::class);
         $user = new User(userId: 1);
@@ -210,6 +215,84 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
         $result = $accessControl->isGranted('manage', resource: $user, subject: $otherUser);
 
         $this->assertFalse($result->granted);
+    }
+
+    #[Test]
+    public function policy_for_can_accept_multiple_actions(): void
+    {
+        $this->registerPoliciesFrom(MultiActionPolicy::class);
+
+        $accessControl = $this->container->get(AccessControl::class);
+        $document = new Document(title: 'Test Document', authorId: 1);
+        $author = new User(userId: 1);
+        $otherUser = new User(userId: 2);
+
+        // Test that both 'read' and 'download' actions work with the same policy method for the author
+        $readResultAuthor = $accessControl->isGranted('read', $document, $author);
+        $downloadResultAuthor = $accessControl->isGranted('download', $document, $author);
+
+        $this->assertTrue($readResultAuthor->granted);
+        $this->assertTrue($downloadResultAuthor->granted);
+
+        // Test that both actions are denied for a different user
+        $readResultOther = $accessControl->isGranted('read', $document, $otherUser);
+        $downloadResultOther = $accessControl->isGranted('download', $document, $otherUser);
+
+        $this->assertFalse($readResultOther->granted);
+        $this->assertFalse($downloadResultOther->granted);
+    }
+
+    #[Test]
+    public function throws_exception_when_policy_resource_parameter_type_is_invalid(): void
+    {
+        $this->registerPoliciesFrom(InvalidResourceTypePolicy::class);
+
+        $accessControl = $this->container->get(AccessControl::class);
+        $post = new Post(title: 'Test post', authorId: 1);
+        $user = new User(userId: 1);
+
+        $this->expectException(PolicyMethodIsInvalid::class);
+        $this->expectExceptionMessageMatches('/The type of the resource parameter of the `.*::invalidResourceType` policy does not match the expected type `.*User`/');
+
+        $accessControl->isGranted('view', $post, $user);
+    }
+
+    #[Test]
+    public function throws_exception_when_policy_subject_parameter_type_is_invalid(): void
+    {
+        $this->registerPoliciesFrom(InvalidSubjectTypePolicy::class);
+
+        $accessControl = $this->container->get(AccessControl::class);
+        $post = new Post(title: 'Test post', authorId: 1);
+        $user = new User(userId: 1);
+
+        $this->expectException(PolicyMethodIsInvalid::class);
+        $this->expectExceptionMessageMatches('/The type of the subject parameter of the `.*::invalidSubjectType` policy does not match the expected type `.*Document`/');
+
+        $accessControl->isGranted('edit', $post, $user);
+    }
+
+    #[Test]
+    public function policy_for_infers_action_based_on_method_name(): void
+    {
+        $this->registerPoliciesFrom(PolicyWithoutActionNames::class);
+
+        $accessControl = $this->container->get(AccessControl::class);
+        $post = new Post(title: 'Test post', authorId: 1);
+        $author = new User(userId: 1);
+        $otherUser = new User(userId: 2);
+
+        $resultAuthor = $accessControl->isGranted('can-mark-as-published', $post, $author);
+        $resultOther = $accessControl->isGranted('can-mark-as-published', $post, $otherUser);
+
+        $this->assertTrue($resultAuthor->granted);
+        $this->assertFalse($resultOther->granted);
+
+        $resultAuthorApprove = $accessControl->isGranted('approve-for-publication', $post, $author);
+        $resultOtherApprove = $accessControl->isGranted('approve-for-publication', $post, $otherUser);
+
+        $this->assertTrue($resultAuthorApprove->granted);
+        $this->assertFalse($resultOtherApprove->granted);
     }
 }
 
@@ -248,43 +331,146 @@ final class Comment
     ) {}
 }
 
-final class PostPolicy implements Policy
+final class PostPolicy
 {
-    public string $model = Post::class;
+    #[PolicyFor(Post::class, action: 'view')]
+    public function view(): bool
+    {
+        return true;
+    }
 
-    /** @param null|Post $resource */
-    public function check(UnitEnum|string $action, ?object $resource, ?object $subject): bool|AccessDecision
+    #[PolicyFor(Post::class, action: PostAction::VIEW)]
+    public function viewEnum(): bool
+    {
+        return true;
+    }
+
+    #[PolicyFor(Post::class, action: 'edit')]
+    public function edit(?Post $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
             return false;
         }
 
-        return match ($action) {
-            PostAction::VIEW, 'view' => true, // Anyone can view
-            PostAction::EDIT, 'edit' => $resource?->authorId === $subject->id->value,
-            PostAction::DELETE, 'delete' => $resource?->authorId === $subject->id->value
-                ? AccessDecision::granted()
-                : AccessDecision::denied('Only the author can delete their post'),
-            'create' => true,
-            default => false,
-        };
+        return $resource?->authorId === $subject->id->value;
+    }
+
+    #[PolicyFor(Post::class, action: PostAction::EDIT)]
+    public function editEnum(?Post $resource, ?User $subject): bool
+    {
+        if (! ($subject instanceof User)) {
+            return false;
+        }
+
+        return $resource?->authorId === $subject->id->value;
+    }
+
+    #[PolicyFor(Post::class, action: 'delete')]
+    public function delete(?Post $resource, ?User $subject): bool|AccessDecision
+    {
+        if (! ($subject instanceof User)) {
+            return false;
+        }
+
+        return $resource?->authorId === $subject->id->value
+            ? AccessDecision::granted()
+            : AccessDecision::denied('Only the author can delete their post');
+    }
+
+    #[PolicyFor(Post::class, action: PostAction::DELETE)]
+    public function deleteEnum(?Post $resource, ?User $subject): bool|AccessDecision
+    {
+        if (! ($subject instanceof User)) {
+            return false;
+        }
+
+        return $resource?->authorId === $subject->id->value
+            ? AccessDecision::granted()
+            : AccessDecision::denied('Only the author can delete their post');
+    }
+
+    #[PolicyFor(Post::class, action: 'create')]
+    public function create(): bool
+    {
+        return true;
     }
 }
 
-final class UserPolicy implements Policy
+final class UserPolicy
 {
-    public string $model = User::class;
-
-    /** @param null|User $resource */
-    public function check(UnitEnum|string $action, ?object $resource, ?object $subject): bool|AccessDecision
+    #[PolicyFor(User::class, action: 'manage')]
+    public function manage(?User $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
             return false;
         }
 
-        return match ($action) {
-            'manage' => $resource?->id->value === $subject->id->value,
-            default => false,
-        };
+        return $resource?->id->value === $subject->id->value;
+    }
+}
+
+final class Document
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $title,
+        public int $authorId,
+    ) {}
+}
+
+final class MultiActionPolicy
+{
+    #[PolicyFor(Document::class, action: ['read', 'download'])]
+    public function readAndDownload(?Document $resource, ?User $subject): bool
+    {
+        if (! ($subject instanceof User)) {
+            return false;
+        }
+
+        return $resource?->authorId === $subject->id->value;
+    }
+}
+
+final class InvalidResourceTypePolicy
+{
+    // expects a User as resource but will receive a Post
+    #[PolicyFor(Post::class, action: 'view')]
+    public function invalidResourceType(User $_resource, ?User $_subject): bool
+    {
+        return true;
+    }
+}
+
+final class InvalidSubjectTypePolicy
+{
+    // expects a Document as subject but will receive a User
+    #[PolicyFor(Post::class, action: 'edit')]
+    public function invalidSubjectType(?Post $_resource, Document $_subject): bool
+    {
+        return true;
+    }
+}
+
+final class PolicyWithoutActionNames
+{
+    #[PolicyFor(Post::class)]
+    public function canMarkAsPublished(?Post $post, ?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $post?->authorId === $user->id->value;
+    }
+
+    #[PolicyFor(Post::class)]
+    public function approveForPublication(?Post $post, ?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $post?->authorId === $user->id->value;
     }
 }
