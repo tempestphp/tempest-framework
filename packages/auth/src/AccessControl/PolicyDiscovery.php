@@ -19,15 +19,21 @@ final class PolicyDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->implements(Policy::class)) {
-            $this->discoveryItems->add($location, $class->getName());
+        foreach ($class->getPublicMethods() as $method) {
+            $policy = $method->getAttribute(PolicyFor::class);
+
+            if (! $policy) {
+                continue;
+            }
+
+            $this->discoveryItems->add($location, [$method, $policy]);
         }
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as $discoveryItem) {
-            $this->authConfig->policies[] = $discoveryItem;
+        foreach ($this->discoveryItems as [$method, $policy]) {
+            $this->authConfig->registerPolicy($method, $policy);
         }
     }
 }
