@@ -18,8 +18,6 @@ final class DoesNotStartWithTest extends TestCase
     {
         $rule = new DoesNotStartWith($needle);
 
-        $this->assertSame('Value should not start with ' . $needle, $rule->message());
-
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 

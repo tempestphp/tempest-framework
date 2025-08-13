@@ -135,8 +135,10 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
     public function test_with_different_dialects(): void
     {
+        $this->expectNotToPerformAssertions();
+
         if ($this->container->get(Database::class)->dialect !== DatabaseDialect::MYSQL) {
-            $this->markTestSkipped('We only test this in the MySQL test action');
+            return;
         }
 
         $this->container->config(new SQLiteConfig(
@@ -152,8 +154,6 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $migrationManager->onDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
         $migrationManager->onDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
-
-        $this->expectNotToPerformAssertions();
     }
 
     public function test_fails_with_unknown_connection(): void

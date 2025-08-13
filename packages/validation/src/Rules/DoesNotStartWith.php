@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value does not start with a specified string.
+ */
 #[Attribute]
-final readonly class DoesNotStartWith implements Rule
+final readonly class DoesNotStartWith implements Rule, HasTranslationVariables
 {
     public function __construct(
         private string $needle,
@@ -19,8 +23,10 @@ final readonly class DoesNotStartWith implements Rule
         return ! str_starts_with($value, $this->needle);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value should not start with {$this->needle}";
+        return [
+            'needle' => $this->needle,
+        ];
     }
 }

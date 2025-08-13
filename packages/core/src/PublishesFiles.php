@@ -21,7 +21,7 @@ use Tempest\Support\Filesystem;
 use Tempest\Support\Json;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Validation\Rules\EndsWith;
-use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\IsNotEmptyString;
 use Throwable;
 
 use function strlen;
@@ -174,7 +174,7 @@ trait PublishesFiles
         $targetPath = $this->console->ask(
             question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
             default: to_relative_path(root_path(), $suggestedPath),
-            validation: $rules ?? [new NotEmpty(), new EndsWith('.php')],
+            validation: $rules ?? [new IsNotEmptyString(), new EndsWith('.php')],
         );
 
         return to_absolute_path(root_path(), $targetPath);

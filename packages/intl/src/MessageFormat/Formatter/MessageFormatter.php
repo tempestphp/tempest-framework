@@ -82,14 +82,27 @@ final class MessageFormatter
                     $variableName = $expression->variable->name->name;
 
                     if (! array_key_exists($variableName, $this->variables)) {
-                        throw new FormattingException("Required input variable `{$variableName}` not provided.");
+                        if ($declaration->optional) {
+                            $parameters = $this->evaluateOptions($expression->function?->options ?? []);
+
+                            $this->variables[$variableName] = new LocalVariable(
+                                identifier: $variableName,
+                                value: $parameters['default'],
+                                selector: $this->getSelectorFunction((string) $expression->function?->identifier),
+                                formatter: $this->getFormattingFunction((string) $expression->function?->identifier),
+                                parameters: $parameters,
+                            );
+                        } else {
+                            throw new FormattingException("Required input variable `{$variableName}` not provided.");
+                        }
                     }
 
                     if ($expression->function instanceof FunctionCall) {
                         $this->variables[$variableName] = new LocalVariable(
                             identifier: $variableName,
                             value: $this->variables[$variableName]->value,
-                            function: $this->getSelectorFunction((string) $expression->function->identifier),
+                            selector: $this->getSelectorFunction((string) $expression->function->identifier),
+                            formatter: $this->getFormattingFunction((string) $expression->function?->identifier),
                             parameters: $this->evaluateOptions($expression->function->options),
                         );
                     }
@@ -99,7 +112,8 @@ final class MessageFormatter
                     $localVariables[$variableName] = new LocalVariable(
                         identifier: $variableName,
                         value: $this->evaluateExpression($declaration->expression)->value,
-                        function: $this->getSelectorFunction($declaration->expression->function?->identifier),
+                        selector: $this->getSelectorFunction($declaration->expression->function?->identifier),
+                        formatter: $this->getFormattingFunction($declaration->expression->function?->identifier),
                         parameters: $declaration->expression->attributes,
                     );
                 }
@@ -177,8 +191,8 @@ final class MessageFormatter
                 $variantKey = $keyNode->value;
                 $isMatch = false;
 
-                if ($variable->function) {
-                    $isMatch = $variable->function->match($variantKey, $variable->value, $variable->parameters);
+                if ($variable->selector) {
+                    $isMatch = $variable->selector->match($variantKey, $variable->value, $variable->parameters);
                 } else {
                     $isMatch = $variable->value === $variantKey;
                 }
@@ -248,6 +262,8 @@ final class MessageFormatter
     private function evaluateExpression(Expression $expression): FormattedValue
     {
         $value = null;
+        $formattingFunction = null;
+        $parameters = [];
 
         if ($expression instanceof LiteralExpression) {
             $value = $expression->literal->value;
@@ -259,26 +275,31 @@ final class MessageFormatter
             }
 
             $value = $this->variables[$variableName]->value;
+            $formattingFunction = $this->variables[$variableName]->formatter;
+            $parameters = $this->variables[$variableName]->parameters;
         } elseif ($expression instanceof FunctionExpression) {
             $value = null; // Function-only expressions start with null
         }
 
         if ($expression->function !== null) {
             $functionName = (string) $expression->function->identifier;
-            $options = $this->evaluateOptions($expression->function->options);
+            $parameters = $this->evaluateOptions($expression->function->options);
 
-            if ($function = $this->getFormattingFunction($functionName)) {
-                return $function->format($value, $options);
-            } else {
+            if (is_null($formattingFunction = $this->getFormattingFunction($functionName))) {
                 throw new FormattingException("Unknown function `{$functionName}`.");
             }
         }
 
-        $formatted = $value !== null ? ((string) $value) : '';
+        if ($formattingFunction) {
+            return $formattingFunction->format($value, $parameters);
+        }
 
-        return new FormattedValue($value, $formatted);
+        return new FormattedValue($value, $value !== null ? ((string) $value) : '');
     }
 
+    /**
+     * @param array<Option> $options
+     */
     private function evaluateOptions(array $options): array
     {
         $result = [];

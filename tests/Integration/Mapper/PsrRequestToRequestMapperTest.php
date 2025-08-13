@@ -109,8 +109,6 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
             to: GenericRequest::class,
         );
 
-        $this->assertSame([
-            'body' => 'text',
-        ], $request->body);
+        $this->assertSame(['body' => 'text'], $request->body);
     }
 }

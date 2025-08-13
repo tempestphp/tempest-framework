@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
-use Tempest\Validation\Rule;
 
 final class ValueWasInvalid extends Exception
 {

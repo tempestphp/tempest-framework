@@ -14,7 +14,9 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\DateTime\DateTime;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Support\Arr;
 use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\Rules\IsBetween;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -611,9 +613,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
                 skip: -1,
             );
         } catch (ValidationFailed $validationFailed) {
-            $this->assertStringContainsString('index', $validationFailed->getMessage());
             $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->getMessage());
-            $this->assertStringNotContainsString('skip', $validationFailed->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationFailed->subject);
+            $this->assertStringContainsString('index', array_key_first($validationFailed->failingRules));
+            $this->assertInstanceOf(IsBetween::class, Arr\first($validationFailed->failingRules)[0]);
         }
     }
 

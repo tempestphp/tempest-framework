@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value is an integer.
+ */
 #[Attribute]
-final readonly class IsInteger implements Rule
+final readonly class IsInteger implements Rule, HasTranslationVariables
 {
     public function __construct(
         private bool $orNull = false,
@@ -28,8 +32,10 @@ final readonly class IsInteger implements Rule
         return is_int($value) || intval($value) == $value;
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return 'Value should be an integer';
+        return [
+            'or_null' => $this->orNull,
+        ];
     }
 }

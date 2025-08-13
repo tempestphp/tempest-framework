@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 
+/**
+ * Validates that the value starts with a specified string.
+ */
 #[Attribute]
-final readonly class StartsWith implements Rule
+final readonly class StartsWith implements Rule, HasTranslationVariables
 {
     public function __construct(
         private string $needle,
@@ -19,8 +23,10 @@ final readonly class StartsWith implements Rule
         return str_starts_with($value, $this->needle);
     }
 
-    public function message(): string
+    public function getTranslationVariables(): array
     {
-        return "Value should start with {$this->needle}";
+        return [
+            'needle' => $this->needle,
+        ];
     }
 }
