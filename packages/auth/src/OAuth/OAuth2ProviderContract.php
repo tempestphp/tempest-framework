@@ -37,6 +37,13 @@ interface OAuth2ProviderContract
     }
 
     /**
+     * Return the query string parameters required for authorization endpoint.
+     *
+     * @return array<string, mixed>
+     */
+    public function getAuthorizationParameters(): array;
+
+    /**
      * Return headers used in access token endpoint
      *
      * @param string $code The code verifier from OAuth redirection

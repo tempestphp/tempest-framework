@@ -18,6 +18,12 @@ final readonly class AccessToken
         public string $tokenType,
 
         public string $scope,
+
+        #[MapFrom('expires_in')]
+        public ?int $expiresIn = null,
+
+        #[MapFrom('refresh_token')]
+        public ?string $refreshToken = null,
     ) {}
 
     public static function from(array $data): self
