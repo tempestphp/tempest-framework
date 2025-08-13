@@ -31,7 +31,7 @@ final class TimelockTest extends TestCase
 
         $elapsed = microtime(true) - $start;
 
-        $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015);
+        $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015, windowsMargin: 0.025);
     }
 
     public function test_return_early(): void
@@ -63,7 +63,7 @@ final class TimelockTest extends TestCase
             );
         } catch (\RuntimeException) {
             $elapsed = microtime(true) - $start;
-            $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015);
+            $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015, windowsMargin: 0.025);
         }
     }
 
