@@ -2,6 +2,8 @@
 
 namespace Tempest\Support\Tests\Filesystem;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Filesystem;
@@ -17,12 +19,11 @@ final class UnixFunctionsTest extends TestCase
 {
     private string $fixtures = __DIR__ . '/Fixtures';
 
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
         if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
+            $this->markTestSkipped('This test is only for Unix-like systems.');
         }
 
         Filesystem\ensure_directory_empty($this->fixtures);
@@ -30,9 +31,12 @@ final class UnixFunctionsTest extends TestCase
         $this->assertTrue(is_dir($this->fixtures));
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
-        parent::tearDown();
+        if (PHP_OS_FAMILY === 'Windows') {
+            return;
+        }
 
         Filesystem\delete_directory($this->fixtures);
 
