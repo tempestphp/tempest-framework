@@ -26,6 +26,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
             if ($response->status->isServerError() || $response->status->isClientError()) {
                 throw new HttpRequestFailed(
+                    request: $request,
                     status: $response->status,
                     cause: $response,
                 );
