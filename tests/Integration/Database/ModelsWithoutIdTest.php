@@ -234,6 +234,55 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('data', $mixed->another_field);
     }
 
+    public function test_refresh_works_for_models_with_unloaded_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTestUserMigration::class,
+            CreateTestProfileMigration::class,
+        );
+
+        $user = query(TestUser::class)->create(
+            name: 'Frieren',
+            email: 'frieren@magic.elf',
+        );
+
+        query(TestProfile::class)->create(
+            user: $user,
+            bio: 'Ancient elf mage',
+            age: 1000,
+        );
+
+        // Get user without loading the profile relation
+        $userWithoutProfile = query(TestUser::class)->findById($user->id);
+
+        $this->assertNull($userWithoutProfile->profile);
+
+        // Update the user's name in the database
+        query(TestUser::class)
+            ->update(name: 'Frieren the Mage')
+            ->where('id', $user->id->value)
+            ->execute();
+
+        // Refresh should work even with unloaded relations
+        $userWithoutProfile->refresh();
+
+        $this->assertSame('Frieren the Mage', $userWithoutProfile->name);
+        $this->assertSame('frieren@magic.elf', $userWithoutProfile->email);
+        $this->assertNull($userWithoutProfile->profile); // Relation should still be unloaded
+
+        // Load the relation
+        $userWithoutProfile->load('profile');
+
+        $this->assertInstanceOf(TestProfile::class, $userWithoutProfile->profile);
+        $this->assertSame('Ancient elf mage', $userWithoutProfile->profile->bio);
+        $this->assertSame(1000, $userWithoutProfile->profile->age);
+
+        $userWithoutProfile->refresh();
+
+        $this->assertInstanceOf(TestProfile::class, $userWithoutProfile->profile);
+    }
+
     public function test_load_works_for_models_with_id(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
@@ -271,6 +320,43 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(TestProfile::class, $user->profile);
         $this->assertSame('Ancient elf mage who loves magic and collecting spells', $user->profile->bio);
         $this->assertSame(1000, $user->profile->age);
+    }
+
+    // this may be a bug, but I'm adding a test just to be sure we don't break the behavior by mistake.
+    // I believe ->load should just load the specified relations, but it also reloads all properties
+    public function test_load_method_refreshes_all_properties_not_just_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTestUserMigration::class,
+            CreateTestProfileMigration::class,
+        );
+
+        $user = query(TestUser::class)->create(
+            name: 'Frieren',
+            email: 'frieren@magic.elf',
+        );
+
+        query(TestProfile::class)->create(
+            user: $user,
+            bio: 'Ancient elf mage',
+            age: 1000,
+        );
+
+        $userInstance = query(TestUser::class)->findById($user->id);
+        $userInstance->name = 'Fern';
+
+        query(TestUser::class)
+            ->update(email: 'updated@magic.elf')
+            ->where('id', $user->id->value)
+            ->execute();
+
+        $userInstance->load('profile');
+
+        $this->assertSame('Frieren', $userInstance->name); // "Fern" was discarded here
+        $this->assertSame('updated@magic.elf', $userInstance->email);
+        $this->assertInstanceOf(TestProfile::class, $userInstance->profile);
+        $this->assertNotNull($userInstance->profile->bio);
     }
 }
 

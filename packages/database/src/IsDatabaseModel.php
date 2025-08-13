@@ -170,18 +170,19 @@ trait IsDatabaseModel
             throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'refresh');
         }
 
-        $primaryKeyProperty = $model->getPrimaryKeyProperty();
-        $primaryKeyValue = $primaryKeyProperty->getValue($this);
+        $relations = [];
 
-        $refreshed = self::find(id: $primaryKeyValue)->first();
-
-        foreach (new ClassReflector($refreshed)->getPublicProperties() as $property) {
-            if ($property->hasAttribute(Virtual::class)) {
+        foreach (new ClassReflector($this)->getPublicProperties() as $property) {
+            if (! $property->getValue($this)) {
                 continue;
             }
 
-            $property->setValue($this, $property->getValue($refreshed));
+            if ($model->isRelation($property->getName())) {
+                $relations[] = $property->getName();
+            }
         }
+
+        $this->load(...$relations);
 
         return $this;
     }
