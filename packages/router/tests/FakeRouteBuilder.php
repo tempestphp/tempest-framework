@@ -21,6 +21,7 @@ final readonly class FakeRouteBuilder implements Route
         public string $uri = '/',
         /** @var class-string<HttpMiddleware>[] */
         public array $middleware = [],
+        public array $without = [],
     ) {
         $this->handler = new MethodReflector(new ReflectionMethod($this, 'handler'));
     }
