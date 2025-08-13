@@ -69,6 +69,7 @@ final readonly class Validator
      * Validates the specified `$values` for the corresponding public properties on the specified `$class`, using built-in PHP types and attribute rules.
      *
      * @param ClassReflector|class-string $class
+     * @return Rule[]
      */
     public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
     {
@@ -118,6 +119,8 @@ final readonly class Validator
 
     /**
      * Validates `$value` against the specified `$property`, using built-in PHP types and attribute rules.
+     *
+     * @return Rule[]
      */
     public function validateValueForProperty(PropertyReflector $property, mixed $value): array
     {
@@ -147,8 +150,7 @@ final readonly class Validator
      * Validates the specified `$value` against the specified set of `$rules`. If a rule is a closure, it may return a string as a validation error.
      *
      * @param Rule|array<Rule|(Closure(mixed $value):string|false)>|(Closure(mixed $value):string|false) $rules
-     *
-     * @return array<Rule>
+     * @return Rule[]
      */
     public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
@@ -176,6 +178,8 @@ final readonly class Validator
      *
      * @param array<string,mixed> $values
      * @param array<string,Rule|(Closure(mixed $value):string|false)> $rules
+     *
+     * @return Rule[]
      */
     public function validateValues(iterable $values, array $rules): array
     {
