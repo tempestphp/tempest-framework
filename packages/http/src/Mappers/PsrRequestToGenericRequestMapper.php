@@ -56,8 +56,6 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'query' => $query,
             'files' => $uploads,
             'cookies' => Arr\map_iterable($_COOKIE, static fn (string $value, string $key) => new Cookie($key, $value)),
-            ...$data,
-            ...$uploads,
         ])
             ->to(GenericRequest::class);
     }
