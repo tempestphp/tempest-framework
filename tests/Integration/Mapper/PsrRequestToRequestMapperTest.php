@@ -10,6 +10,7 @@ use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
+use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -89,5 +90,27 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(UPLOAD_ERR_OK, $upload->getError());
         $this->assertSame('hello', $upload->getClientFilename());
         $this->assertSame('application/octet-stream', $upload->getClientMediaType());
+    }
+
+    public function test_body_field_in_body(): void
+    {
+        $psrRequest = $this->http->makePsrRequest(
+            '/',
+            Method::POST,
+            body: [
+                'body' => 'text',
+            ],
+        );
+
+        $mapper = new PsrRequestToGenericRequestMapper();
+
+        $request = $mapper->map($psrRequest, GenericRequest::class);
+
+        $this->assertSame(
+            [
+                'body' => 'text',
+            ],
+            $request->body,
+        );
     }
 }
