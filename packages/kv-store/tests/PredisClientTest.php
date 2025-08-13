@@ -2,19 +2,20 @@
 
 namespace Tempest\KeyValue\Tests;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\TestCase;
 use Predis;
-use Tempest\KeyValue\Redis\PhpRedisClient;
 use Tempest\KeyValue\Redis\PredisClient;
+use Throwable;
 
 final class PredisClientTest extends TestCase
 {
     private PredisClient $redis;
 
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
         if (! class_exists(Predis\Client::class)) {
             $this->markTestSkipped('The `predis/predis` package is not installed.');
         }
@@ -34,17 +35,17 @@ final class PredisClientTest extends TestCase
 
         try {
             $this->redis->connect();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->markTestSkipped('Could not connect to Redis.');
         }
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         try {
             $this->redis->flush();
-        } finally {
-            parent::tearDown();
+        } catch (Throwable) {
         }
     }
 

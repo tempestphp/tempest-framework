@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.4",
         "tempest/support": "dev-main",
+        "tempest/datetime": "dev-main",
         "tempest/event-bus": "dev-main"
     },
     "require-dev": {

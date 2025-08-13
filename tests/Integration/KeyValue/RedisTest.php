@@ -2,19 +2,21 @@
 
 namespace Tests\Tempest\Integration\KeyValue;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\Redis;
 use Tempest\KeyValue\Redis\RedisCommandExecuted;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Throwable;
 
 final class RedisTest extends FrameworkIntegrationTestCase
 {
     private Redis $redis;
 
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
         $this->eventBus->preventEventHandling();
 
         $this->container->config(new RedisConfig(
@@ -32,12 +34,12 @@ final class RedisTest extends FrameworkIntegrationTestCase
         }
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         try {
             $this->redis->flush();
-        } finally {
-            parent::tearDown();
+        } catch (Throwable) {
         }
     }
 

@@ -2,22 +2,22 @@
 
 namespace Tempest\KeyValue\Tests;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\PhpRedisClient;
+use Throwable;
 
+#[RequiresPhpExtension('redis')]
 final class PhpRedisClientTest extends TestCase
 {
     private PhpRedisClient $redis;
 
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
-        if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
-            $this->markTestSkipped('The `redis` extension is not loaded.');
-        }
-
         $this->redis = new PhpRedisClient(
             client: new \Redis(),
             config: new RedisConfig(
@@ -29,17 +29,17 @@ final class PhpRedisClientTest extends TestCase
 
         try {
             $this->redis->connect();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->markTestSkipped('Could not connect to Redis.');
         }
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         try {
             $this->redis->flush();
-        } finally {
-            parent::tearDown();
+        } catch (Throwable) {
         }
     }
 

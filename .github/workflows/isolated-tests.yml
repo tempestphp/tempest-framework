@@ -61,6 +61,10 @@ jobs:
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, intl
           coverage: pcov
 
+      - name: Setup Redis
+        if: ${{ matrix.os != 'windows-latest' && matrix.package.name == 'kv-store' }}
+        uses: supercharge/redis-github-action@1.7.0
+
       - name: Install PHPUnit
         run: composer global require phpunit/phpunit:^12.2.3
 
