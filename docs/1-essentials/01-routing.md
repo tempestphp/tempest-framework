@@ -374,7 +374,7 @@ Note that priority is defined using an integer. You can however use one of the b
 
 ### Middleware discovery
 
-Global middleware classes are discovered and sorted based on their priority. You can make a middleware class non-global by adding the `#[SkipDiscovery]` attribute:
+Global middleware classes are discovered and sorted based on their priority. You can make a middleware class non-global by adding the {b`#[Tempest\Discovery\SkipDiscovery]`} attribute:
 
 ```php
 use Tempest\Discovery\SkipDiscovery;
@@ -382,6 +382,48 @@ use Tempest\Discovery\SkipDiscovery;
 #[SkipDiscovery]
 final readonly class ValidateWebhook implements HttpMiddleware
 { /* … */ }
+```
+
+### Excluding route middleware
+
+Some routes may not require specific global middleware to be applied. For instance, API routes do not need CSRF protection. You may skip specific middleware by using the `without` argument of the route attribute.
+
+```php app/Slack/ReceiveInteractionController.php
+use Tempest\Router\Post;
+use Tempest\Http\Response;
+
+final readonly class ReceiveInteractionController
+{
+    #[Post('/slack/interaction', without: [VerifyCsrfMiddleware::class, SetCookieMiddleware::class])]
+    public function __invoke(): Response
+    {
+        // …
+    }
+}
+```
+
+### Group middleware
+
+While Tempest does not provide a way to group middleware, you can easily create your own route attribute that applies or excludes a set of middleware to a route.
+
+```php Api.php
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
+final readonly class Api implements Route
+{
+    public function __construct(
+        public Method $method,
+        public string $uri,
+        public array $middleware = [],
+        public array $without = [],
+    ) {
+        $this->uri = "/api/{$uri}";
+        $this->without[] = [
+            ...$without,
+            VerifyCsrfMiddleware::class,
+            SetCookieMiddleware::class
+        ];
+    }
+}
 ```
 
 ## Responses
