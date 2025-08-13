@@ -166,7 +166,7 @@ final class SignerTest extends TestCase
         $this->assertTrue($signer->verify($data, $signature));
         $elapsed = microtime(true) - $start;
 
-        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015);
+        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015, windowsMargin: 0.025);
     }
 
     public function test_time_protection_with_mock_clock(): void

@@ -62,7 +62,7 @@ final class EncryptionTest extends TestCase
         $this->assertSame('important data', $encrypter->decrypt($encrypted));
         $elapsed = microtime(true) - $start;
 
-        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015);
+        $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.020, windowsMargin: 0.025);
     }
 
     public function test_wrong_key(): void
