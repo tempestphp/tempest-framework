@@ -11,13 +11,10 @@ While validation and [data mapping](./01-mapper) often work together, the two ar
 
 ## Validating against objects
 
-When you have raw data and an associated model or data transfer object, you may use the `validateValuesForClass` method on the {b`\Tempest\Validation\Validator`}.
+When you have raw data and an associated model or data transfer object, you may use the `validateValuesForClass()` method on the {b`\Tempest\Validation\Validator`}. Note that the validator needs to be [resolved from the container](../1-essentials/05-container.md#injecting-dependencies).
 
 ```php
-use Tempest\Validation\Validator;
-
-$validator = new Validator();
-$failingRules = $validator->validateValuesForClass(Book::class,  [
+$failingRules = $this->validator->validateValuesForClass(Book::class,  [
     'title' => 'Timeline Taxi',
     'description' => 'My sci-fi novel',
     'publishedAt' => '2024-10-01',
@@ -50,18 +47,20 @@ use Tempest\Validation\Rules;
 
 final class Book
 {
-    #[Rules\Length(min: 5, max: 50)]
+    #[Rules\HasLength(min: 5, max: 50)]
     public string $title;
 
-    #[Rules\NotEmpty]
+    #[Rules\IsNotEmptyString]
     public string $description;
 
-    #[Rules\DateTimeFormat('Y-m-d')]
+    #[Rules\HasDateTimeFormat('Y-m-d')]
     public ?DateTime $publishedAt = null;
 }
 ```
 
+:::info
 A list of all available validation rules can be found on [GitHub](https://github.com/tempestphp/tempest-framework/tree/main/packages/validation/src/Rules).
+:::
 
 ### Skipping validation
 
@@ -79,54 +78,70 @@ final class Book
 
 ## Validating against specific rules
 
-If you don't have a model or data transfer object to validate data against, you may alternatively use the `validateValues` and provide an array of rules.
+If you don't have a model or data transfer object to validate data against, you may alternatively use the `validateValues()` and provide an array of rules.
 
 ```php
-$validator->validateValues([
+$this->validator->validateValues([
     'name' => 'Jon Doe',
     'email' => 'jon@doe.co',
     'age' => 25,
 ], [
-    'name' => [new IsString(), new NotNull()],
-    'email' => [new Email()],
-    'age' => [new IsInteger(), new NotNull()],
+    'name' => [new IsString(), new IsNotNull()],
+    'email' => [new IsEmail()],
+    'age' => [new IsInteger(), new IsNotNull()],
 ]);
 ```
 
 If validation fails, `validateValues()` returns a list of fields and their respective failing rules.
 
+:::info
 A list of all available validation rules can be found on [GitHub](https://github.com/tempestphp/tempest-framework/tree/main/packages/validation/src/Rules).
+:::
 
 ## Validating a single value
 
-You may validate a single value against a set of rules using the `validateValue` method.
+You may validate a single value against a set of rules using the `validateValue()` method.
 
 ```php
-$validator->validateValue('jon@doe.co', [new Email()]);
+$this->validator->validateValue('jon@doe.co', [new IsEmail()]);
 ```
 
 Alternatively, you may provide a closure for validation. The closure should return `true` if validation passes, or `false` otherwise. You may also return a string to specify the validation failure message.
 
 ```php
-$validator->validateValue('jon@doe.co', function (mixed $value) {
+$this->validator->validateValue('jon@doe.co', function (mixed $value) {
     return str_contains($value, '@');
 });
 ```
 
 ## Accessing error messages
 
-When validation fails, a list of fields and their respective failing rules is returned. You may call the `message` method on any rule to get a validation message.
+When validation fails, a list of fields and their respective failing rules is returned. You may call the `getErrorMessage` method on the validator to get a [localized](./11-localization.md) validation message.
 
 ```php
 use Tempest\Support\Arr;
 
 // Validate some value
-$failures = $validator->validateValue('jon@doe.co', new Email());
+$failures = $this->validator->validateValue('jon@doe.co', new Email());
 
 // Map failures to their message
-$errors = Arr\map($failures, fn (Rule $failure) => $failure->message());
+$errors = Arr\map($failures, fn (Rule $failure) => $this->validator->getErrorMessage($failure));
 ```
 
-:::info
-Note that we expect to improve the way validation messages work in the future. See [this conversation](https://discord.com/channels/1236153076688359495/1294321824498323547/1294321824498323547) on our [Discord server](https://tempestphp.com/discord).
-:::
+You may also specify the field name of the validation failure to get a localized message for that field.
+
+```php
+$this->validator->getErrorMessage($failure, 'email');
+// => 'Email must be a valid email address'
+```
+
+## Overriding translation messages
+
+You may override the default validation messages by adding a [translation file](../2-features/11-localization.md#defining-translation-messages) anywhere in your codebase. Note that Tempest uses the [MessageFormat 2.0](https://messageformat.unicode.org/) format for localization.
+
+```php app/Localization/validation.en.yml
+validation_error:
+  is_email: |
+    .input {$field :string}
+    {$field} must be a valid email address.
+```
