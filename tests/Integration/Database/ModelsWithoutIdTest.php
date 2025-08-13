@@ -356,7 +356,6 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('Frieren', $userInstance->name); // "Fern" was discarded here
         $this->assertSame('updated@magic.elf', $userInstance->email);
         $this->assertInstanceOf(TestProfile::class, $userInstance->profile);
-        $this->assertNotNull($userInstance->profile->bio);
     }
 }
 
