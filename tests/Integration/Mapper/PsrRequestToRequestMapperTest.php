@@ -99,23 +99,18 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
     public function test_body_field_in_body(): void
     {
-        $psrRequest = $this->http->makePsrRequest(
-            '/',
-            Method::POST,
-            body: [
-                'body' => 'text',
-            ],
+        $request = new PsrRequestToGenericRequestMapper($this->encrypter)->map(
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                body: [
+                    'body' => 'text',
+                ],
+            ),
+            to: GenericRequest::class,
         );
 
-        $mapper = new PsrRequestToGenericRequestMapper();
-
-        $request = $mapper->map($psrRequest, GenericRequest::class);
-
-        $this->assertSame(
-            [
-                'body' => 'text',
-            ],
-            $request->body,
-        );
+        $this->assertSame([
+            'body' => 'text',
+        ], $request->body);
     }
 }
