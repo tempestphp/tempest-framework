@@ -13,11 +13,13 @@ final readonly class Head implements Route
     public Method $method;
 
     /**
-     * @param class-string<HttpMiddleware>[] $middleware
+     * @param class-string<HttpMiddleware>[] $middleware Middleware specific to this route.
+     * @param class-string<HttpMiddleware>[] $without Middleware to remove from this route.
      */
     public function __construct(
         public string $uri,
         public array $middleware = [],
+        public array $without = [],
     ) {
         $this->method = Method::HEAD;
     }

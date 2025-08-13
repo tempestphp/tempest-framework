@@ -77,6 +77,15 @@ final readonly class GenericRouter implements Router
 
         foreach ($middlewareStack->unwrap() as $middlewareClass) {
             $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
+                // We skip this middleware if it's ignored by the route
+                if ($this->container->has(MatchedRoute::class)) {
+                    $matchedRoute = $this->container->get(MatchedRoute::class);
+
+                    if (in_array($middlewareClass->getName(), $matchedRoute->route->without, strict: true)) {
+                        return $callable($request);
+                    }
+                }
+
                 /** @var HttpMiddleware $middleware */
                 $middleware = $this->container->get($middlewareClass->getName());
 
