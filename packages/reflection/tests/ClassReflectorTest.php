@@ -60,4 +60,14 @@ final class ClassReflectorTest extends TestCase
         $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
         $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
     }
+
+    public function test_serialize(): void
+    {
+        $reflector = new ClassReflector(TestClassA::class);
+
+        $serialized = serialize($reflector);
+        $unserialized = unserialize($serialized);
+
+        $this->assertEquals($reflector, $unserialized);
+    }
 }

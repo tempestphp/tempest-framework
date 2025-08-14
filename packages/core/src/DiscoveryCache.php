@@ -68,7 +68,11 @@ final class DiscoveryCache
             ->getItem($location->key)
             ->set($cachedForLocation);
 
-        $this->pool->save($item);
+        $saved = $this->pool->save($item);
+
+        if (! $saved) {
+            throw new CouldNotStoreDiscoveryCache($location);
+        }
     }
 
     public function clear(): void
