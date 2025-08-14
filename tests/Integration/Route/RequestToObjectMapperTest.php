@@ -140,7 +140,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         try {
             map($request)->to(RequestWithEnum::class);
         } catch (ValidationFailed $validationFailed) {
-            $this->assertInstanceOf(NotNull::class, $validationFailed->failingRules['enumParam'][0]);
+            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['enumParam'][0]);
         }
     }
 }
