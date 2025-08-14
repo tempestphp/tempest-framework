@@ -6,6 +6,8 @@ namespace Tempest\Auth\OAuth;
 
 use Tempest\Auth\OAuth\DataObjects\AccessToken;
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
+use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 use Tempest\HttpClient\HttpClient;
 
 use function json_encode;
@@ -16,10 +18,13 @@ final readonly class OAuthManager
 {
     private HttpClient $httpClient;
 
+    private Session $session;
+
     public function __construct(
         private OAuth2ProviderContract $provider,
     ) {
         $this->httpClient = get(HttpClient::class);
+        $this->session = get(Session::class);
     }
 
     public function generateAuthorizationUrl(
@@ -31,9 +36,10 @@ final readonly class OAuthManager
         $scopes ??= $this->provider->scopes;
 
         if (! $isStateless) {
-            $parameters['state'] = $this->generateState();
+            $state = $this->generateState();
 
-            // TODO : Store the state in the session for later validation
+            $parameters['state'] = $state;
+            $this->session->flash('oauth-state', $state);
         }
 
         $queryString = http_build_query(array_filter($parameters), arg_separator: '&');
