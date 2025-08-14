@@ -18,8 +18,6 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Core\ShellExecutor;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\DateTime\DateTimeInterface;
@@ -127,7 +125,6 @@ abstract class IntegrationTest extends TestCase
         $this->console = new ConsoleTester($this->container);
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
 
         return $this;
     }
