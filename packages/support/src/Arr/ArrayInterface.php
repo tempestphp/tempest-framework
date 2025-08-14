@@ -7,7 +7,6 @@ namespace Tempest\Support\Arr;
 use ArrayAccess;
 use Countable;
 use Iterator;
-use Serializable;
 
 /**
  * @template TKey of array-key
@@ -18,7 +17,7 @@ use Serializable;
  *
  * @internal This interface is not meant to be used in userland.
  */
-interface ArrayInterface extends Iterator, ArrayAccess, Serializable, Countable
+interface ArrayInterface extends Iterator, ArrayAccess, Countable
 {
     /**
      * Returns the underlying array of the instance.

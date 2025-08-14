@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Process\ProcessExecutor;
+use Tempest\Support\Arr;
 use Tempest\Support\Filesystem;
-use Tempest\Support\Json;
 use Tempest\Support\Namespace\Psr4Namespace;
+use Tempest\Support\Path;
+use Tempest\Support\Str;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\Arr\wrap;
-use function Tempest\Support\Path\normalize;
-use function Tempest\Support\Str\ensure_ends_with;
-use function Tempest\Support\Str\starts_with;
 
 final class Composer
 {
@@ -27,12 +26,12 @@ final class Composer
 
     public function __construct(
         private readonly string $root,
-        private ShellExecutor $executor,
+        private ProcessExecutor $executor,
     ) {}
 
     public function load(): self
     {
-        $this->composerPath = normalize($this->root, 'composer.json');
+        $this->composerPath = Path\normalize($this->root, 'composer.json');
         $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
             ->get('autoload.psr-4', default: arr())
@@ -42,7 +41,7 @@ final class Composer
             ->toArray();
 
         foreach ($this->namespaces as $namespace) {
-            if (starts_with(ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
+            if (Str\starts_with(Str\ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
                 $this->mainNamespace = $namespace;
 
                 break;
@@ -73,12 +72,12 @@ final class Composer
 
     public function setNamespaces(Psr4Namespace|array $namespaces): self
     {
-        $this->namespaces = wrap($namespaces);
+        $this->namespaces = Arr\wrap($namespaces);
 
         return $this;
     }
 
-    public function setShellExecutor(ShellExecutor $executor): self
+    public function setProcessExecutor(ProcessExecutor $executor): self
     {
         $this->executor = $executor;
 
@@ -103,7 +102,7 @@ final class Composer
 
     public function executeUpdate(): self
     {
-        $this->executor->execute('composer up');
+        $this->executor->run('composer up');
 
         return $this;
     }

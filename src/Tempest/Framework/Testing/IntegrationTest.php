@@ -18,8 +18,6 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Core\ShellExecutor;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\DateTime\DateTimeInterface;
@@ -32,6 +30,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\Process\Testing\ProcessTester;
 use Tempest\Storage\Testing\StorageTester;
 use Throwable;
 
@@ -69,6 +68,8 @@ abstract class IntegrationTest extends TestCase
     protected CacheTester $cache;
 
     protected ExceptionTester $exceptions;
+
+    protected ProcessTester $process;
 
     protected function setUp(): void
     {
@@ -124,7 +125,6 @@ abstract class IntegrationTest extends TestCase
         $this->console = new ConsoleTester($this->container);
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
 
         return $this;
     }
@@ -139,6 +139,9 @@ abstract class IntegrationTest extends TestCase
         $this->mailer = new MailTester(new TestingMailer(
             eventBus: $this->container->get(EventBus::class),
         ));
+
+        $this->process = $this->container->get(ProcessTester::class);
+        $this->process->disableProcessExecution();
 
         $this->exceptions = $this->container->get(ExceptionTester::class);
         $this->exceptions->preventReporting();
