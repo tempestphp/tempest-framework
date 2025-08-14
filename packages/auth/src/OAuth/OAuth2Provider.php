@@ -6,7 +6,7 @@ namespace Tempest\Auth\OAuth;
 
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 
-interface OAuth2ProviderContract
+interface OAuth2Provider
 {
     /**
      * @var array<string> The default scopes for the OAuth2 provider.
