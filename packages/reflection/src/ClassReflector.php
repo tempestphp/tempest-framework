@@ -178,4 +178,14 @@ final class ClassReflector implements Reflector
 
         return $this->memoize[$key];
     }
+
+    public function __serialize(): array
+    {
+        return ['name' => $this->getName()];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->reflectionClass = new PHPReflectionClass($data['name']);
+    }
 }

@@ -31,6 +31,12 @@ final class DiscoveryItems implements IteratorAggregate, Countable
         return $this->items[$location->path] ?? [];
     }
 
+    /**
+     * Add items to discover.
+     * Whatever input you add here should be serializable,
+     * otherwise that input cannot be cached,
+     * and you'll run into errors when discovery cache is enabled
+     */
     public function add(DiscoveryLocation $location, mixed $value): self
     {
         $this->items[$location->path] ??= [];
