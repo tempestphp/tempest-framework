@@ -16,7 +16,7 @@ use function Tempest\Support\str;
 
 final class OAuthManager
 {
-    public private(set) string $stateSessionSlug = 'oauth-state';
+    public string $stateSessionSlug = 'oauth-state';
 
     public function __construct(
         private readonly OAuth2Provider $provider,
