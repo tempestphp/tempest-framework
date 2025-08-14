@@ -13,6 +13,7 @@ final class LogExceptionProcessor implements ExceptionProcessor
     public function process(Throwable $throwable): Throwable
     {
         $items = [
+            'class' => $throwable::class,
             'exception' => $throwable->getMessage(),
             'context' => ($throwable instanceof HasContext)
                 ? $throwable->context()

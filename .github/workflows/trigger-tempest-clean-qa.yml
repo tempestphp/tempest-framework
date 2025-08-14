@@ -3,6 +3,9 @@ name: Trigger tempest/clean QA
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
 
 jobs:
   trigger:

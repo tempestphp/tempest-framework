@@ -2,7 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.5.1](https://github.com/tempestphp/tempest-framework/compare/v1.5.0..1.5.1)  —  2025-07-29
+## [1.6.0](https://github.com/tempestphp/tempest-framework/compare/v1.5.1..1.6.0)  —  2025-08-08
+
+### 🚀 Features
+
+- **core**: improved exceptions for unwriteable internal storage (#1468) ([948f800](https://github.com/tempestphp/tempest-framework/commit/948f8003b689488761cd3f160f6d2fdb78059a46))
+- **cryptography**: introduce cryptography component (#1346) ([439b49e](https://github.com/tempestphp/tempest-framework/commit/439b49eabecdbf2e65b4a652f5e9140189bcece6))
+- **database**: add `string` method on `CreateTableStatement` (#1454) ([9c78fd6](https://github.com/tempestphp/tempest-framework/commit/9c78fd645a55d5e8a309fc2b12e4968b0f1609f6))
+- **datetime**: add convenience comparison and manipulation methods (#1450) ([4aab9ed](https://github.com/tempestphp/tempest-framework/commit/4aab9ed744ce0aac02a7f657acb55de76a340ca9))
+- **http**: offer more control over server sent events format (#1459) ([6623850](https://github.com/tempestphp/tempest-framework/commit/6623850b1a90574fe782d5a351f0999ed07fa747))
+- **mapper**: implement serialization mapping for DTOs (#1449) ([900898a](https://github.com/tempestphp/tempest-framework/commit/900898a05113d0c7629cbdb9f72896d5edfead48))
+- **testing**: add assert response json assertions (#1433) ([754a657](https://github.com/tempestphp/tempest-framework/commit/754a65734a4cf1bfecebbf0cc8194d80aac66c8c))
+- **vite**: support passing configuration to containerized environments (#1426) ([acace86](https://github.com/tempestphp/tempest-framework/commit/acace86ee39afefd81a4199f6c50831601d71624))
+
+### 🐛 Bug fixes
+
+- **router**: do not discover controller stub (#1453) ([2246f72](https://github.com/tempestphp/tempest-framework/commit/2246f7250d3e187f8f0f105aeba90badbace308c))
+- **view**: set doctype in `x-base` (#1451) ([e7ea095](https://github.com/tempestphp/tempest-framework/commit/e7ea095574940fb36242a906eaa42698b016652d))
+- **view**: pass scoped variables down view components (#1467) ([c911989](https://github.com/tempestphp/tempest-framework/commit/c911989bbfd04b4238fc74a742bd6c44e84d6345))
+- add json-serializable to `TestResponseHelper` $body (#1455) ([3d459fd](https://github.com/tempestphp/tempest-framework/commit/3d459fdb885c46d44419cadca47760c0870fa02b))
+
+### 🧪 Tests
+
+- **cache**: skip redis cache tests when connection fails (#1457) ([cf504ad](https://github.com/tempestphp/tempest-framework/commit/cf504ad0e1d10b81a9f0a45d036107a92aa20120))
+- reduce flakiness of time sensitive tests (#1460) ([167d3f5](https://github.com/tempestphp/tempest-framework/commit/167d3f5ef71a5366e20e7e62224085c6f0659a25))
+
+
+## [1.5.1](https://github.com/tempestphp/tempest-framework/compare/v1.5.0..v1.5.1)  —  2025-07-29
 
 ### 🚀 Features
 

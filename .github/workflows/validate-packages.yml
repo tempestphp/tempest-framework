@@ -1,7 +1,10 @@
-name: Validate Packages
+name: Validate packages
 
 on:
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
   workflow_dispatch:
 
 jobs:

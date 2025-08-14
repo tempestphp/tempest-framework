@@ -960,4 +960,23 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('test', $html);
     }
+
+    public function test_capture_outer_scope_view_component_variables(): void
+    {
+        $this->registerViewComponent('x-a', '<x-slot />');
+        $this->registerViewComponent('x-b', '<x-slot />');
+
+        $html = $this->render(
+            <<<'HTML'
+            <x-a :foreach="$items as $item">
+                <x-b> 
+                    {{ $item }}
+                </x-b>
+            </x-a>
+            HTML,
+            items: ['a', 'b'],
+        );
+
+        $this->assertSnippetsMatch('a b', $html);
+    }
 }

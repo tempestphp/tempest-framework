@@ -2,6 +2,9 @@ name: Isolated tests
 
 on:
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"

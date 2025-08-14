@@ -1,0 +1,19 @@
+name: Deploy documentation
+on:
+  push:
+    paths:
+      - "docs/**"
+    branches:
+      - main
+      - 2.x
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger documentation deployment
+        uses: diekotto/repository-dispatch@v1
+        with:
+          token: ${{ secrets.DOCS_DEPLOY_TRIGGER_PAT }}
+          repository: tempestphp/tempest-docs
+          event-type: deploy

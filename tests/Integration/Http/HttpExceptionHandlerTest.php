@@ -9,18 +9,20 @@ use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
+use Tempest\Http\Method;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
-use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Router\ResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionWithContext;
 use Tests\Tempest\Integration\Http\Fixtures\NullExceptionProcessor;
+use Throwable;
 
 final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 {
@@ -125,7 +127,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new HttpRequestFailed($status));
+            $handler->handle(new HttpRequestFailed(new GenericRequest(Method::GET, '/test'), $status));
         });
 
         $this->assertSame($status, $this->response->status);
@@ -164,7 +166,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         try {
             $callback();
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->assertSame('Shutdown.', $throwable->getMessage());
         }
     }
