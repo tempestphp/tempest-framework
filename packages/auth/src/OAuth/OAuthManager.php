@@ -14,12 +14,14 @@ use function json_encode;
 use function Tempest\get;
 use function Tempest\Support\str;
 
-final readonly class OAuthManager
+final class OAuthManager
 {
+    public private(set) string $stateSessionSlug = 'oauth-state';
+
     public function __construct(
-        private OAuth2Provider $provider,
-        private HttpClient $httpClient,
-        private Session $session,
+        private readonly OAuth2Provider $provider,
+        private readonly HttpClient $httpClient,
+        private readonly Session $session,
     ) {}
 
     public function generateAuthorizationUrl(
@@ -34,7 +36,7 @@ final readonly class OAuthManager
             $state = $this->generateState();
 
             $parameters['state'] = $state;
-            $this->session->flash('oauth-state', $state);
+            $this->session->flash($this->stateSessionSlug, $state);
         }
 
         $queryString = http_build_query(array_filter($parameters), arg_separator: '&');
