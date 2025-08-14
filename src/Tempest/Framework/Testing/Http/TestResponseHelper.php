@@ -142,8 +142,8 @@ final class TestResponseHelper
             actual: $this->status,
             message: sprintf(
                 'Failed asserting status [%s] matched expected status of [%s].',
-                $expected->value,
                 $this->status->value,
+                $expected->value,
             ),
         );
 
