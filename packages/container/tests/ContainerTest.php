@@ -12,6 +12,7 @@ use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
 use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Container\GenericContainer;
+use Tempest\Container\Tests\Fixtures\AutowireWithEnumTags;
 use Tempest\Container\Tests\Fixtures\BuiltinArrayClass;
 use Tempest\Container\Tests\Fixtures\BuiltinDependencyArrayInitializer;
 use Tempest\Container\Tests\Fixtures\BuiltinDependencyBoolInitializer;
@@ -608,5 +609,27 @@ final class ContainerTest extends TestCase
 
         $this->assertSame('A', $container->get(HasTagObject::class, 'tagA')->name);
         $this->assertSame('B', $container->get(HasTagObject::class, 'tagB')->name);
+    }
+
+    public function test_tag_attribute_with_enum(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('foo'),
+            tag: EnumTag::FOO,
+        );
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('bar'),
+            tag: EnumTag::BAR,
+        );
+
+        $dependency = $container->get(AutowireWithEnumTags::class);
+
+        $this->assertSame('foo', $dependency->foo->name);
+        $this->assertSame('bar', $dependency->bar->name);
     }
 }

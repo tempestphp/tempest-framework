@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Exceptions;
 
+use BackedEnum;
 use Exception;
 use Tempest\Container\Dependency;
 use Tempest\Container\DependencyChain;
+use UnitEnum;
 
 final class TaggedDependencyCouldNotBeResolved extends Exception implements ContainerException
 {
-    public function __construct(DependencyChain $chain, Dependency $brokenDependency, string $tag)
+    public function __construct(DependencyChain $chain, Dependency $brokenDependency, string|UnitEnum $tag)
     {
         $stack = $chain->all();
         $stack[] = $brokenDependency;
+
+        $tag = match (true) {
+            is_string($tag) => $tag,
+            $tag instanceof BackedEnum => (string) $tag->value,
+            $tag instanceof UnitEnum => $tag->name,
+        };
 
         $message = PHP_EOL . PHP_EOL . "Could not resolve tagged dependency {$brokenDependency->getName()}#{$tag}, did you forget to define an initializer for it?" . PHP_EOL;
 

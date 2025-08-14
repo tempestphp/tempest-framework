@@ -14,7 +14,7 @@ final class DiscoveryCacheTest extends FrameworkIntegrationTestCase
 {
     public function test_exception_with_unserializable_discovery_items(): void
     {
-        $this->assertException(CouldNotStoreDiscoveryCache::class, function () {
+        $this->assertException(CouldNotStoreDiscoveryCache::class, function (): void {
             $discoveryCache = $this->container->get(DiscoveryCache::class);
 
             $location = new DiscoveryLocation('Test\\', '.');
