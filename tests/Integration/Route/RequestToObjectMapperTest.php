@@ -132,4 +132,15 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
             },
         );
     }
+
+    public function test_missing_enum_value(): void
+    {
+        $request = new GenericRequest(method: Method::POST, uri: '/', body: []);
+
+        try {
+            map($request)->to(RequestWithEnum::class);
+        } catch (ValidationFailed $validationFailed) {
+            $this->assertInstanceOf(NotNull::class, $validationFailed->failingRules['enumParam'][0]);
+        }
+    }
 }
