@@ -16,16 +16,11 @@ use function Tempest\Support\str;
 
 final readonly class OAuthManager
 {
-    private HttpClient $httpClient;
-
-    private Session $session;
-
     public function __construct(
         private OAuth2Provider $provider,
-    ) {
-        $this->httpClient = get(HttpClient::class);
-        $this->session = get(Session::class);
-    }
+        private HttpClient $httpClient,
+        private Session $session,
+    ) {}
 
     public function generateAuthorizationUrl(
         ?array $parameters = null,
