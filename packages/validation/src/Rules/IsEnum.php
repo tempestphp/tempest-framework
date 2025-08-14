@@ -82,6 +82,10 @@ final readonly class IsEnum implements Rule
 
     private function retrieveEnumValue(mixed $value): mixed
     {
+        if ($value === null) {
+            return null;
+        }
+
         if (method_exists($this->enum, 'tryFrom')) {
             return $this->enum::tryFrom($value);
         }
