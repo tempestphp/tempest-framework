@@ -12,55 +12,120 @@ Testing utilities specific to components are documented in their respective chap
 
 ## Running tests
 
-If you created a Tempest application through the [recommended installation process](../0-getting-started/02-installation.md), you already have access to `tests/IntegrationTestCase`, which your application tests can inherit from.
+Any test class that wants to interact with Tempest should extend from [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php). Next, any test class should end with the suffix `Test`.
 
-In this case, you may use the `composer phpunit` command to run your test suite.
+Running the test suite is done by running `composer phpunit`.
 
 ```sh
 composer phpunit
 ```
 
-## Creating new test files
-
-By default, PHPUnit is configured to look for test files that end in `*Test.php` in the root `tests` directory. You may create a such a file and make it extend `IntegrationTestCase`.
-
-```php tests/HomeControllerTest.php
-use Tests\IntegrationTestCase;
-
-final class HomeControllerTest extends IntegrationTestCase
-{
-    public function test_index(): void
-    {
-        $this->http
-            ->get('/')
-            ->assertOk();
-    }
-}
-```
-
 ## Test-specific discovery locations
 
-Tempest does not discover files outside of the namespaces defined in the `require` object of `composer.json`. If you need Tempest to discover test-specific fixture files, you may specify paths using the `discoveryLocations` property of the provided `IntegrationTestCase` class.
+Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTestCase` class. 
 
-For instance, you may create a `tests/config` directory that contains test-specific configuration files, and instruct Tempest to discover them:
+On top of that, Tempest _will_ look for files in the `tests/Fixtures` directory and discover them by default. You can override this behavior by providing your own implementation of `discoverTestLocations()`, where you can return an array of `DiscoveryLocation` objects (or nothing).
 
-```php tests/IntegrationTestCase.php
+```php tests/HomeControllerTest.php
 use Tempest\Core\DiscoveryLocation;
+use Tempest\Framework\Testing\IntegrationTest;
 
-final class IntegrationTestCase extends TestCase
+final class HomeControllerTest extends IntegrationTest
 {
-    protected string $root = __DIR__ . '/../';
-
-    protected function setUp(): void
+    protected function discoverTestLocations(): array
     {
-        $this->discoveryLocations = [
-            new DiscoveryLocation(namespace: 'Tests\\Config', path: __DIR__ . '/config'),
+        return [
+            new DiscoveryLocation('Tests\\OtherFixtures', __DIR__ . '/OtherFixtures'),
         ];
-
-        parent::setUp();
     }
 }
 ```
+
+## Using the database
+
+If you want to test code that interacts with the database, your test class can call the `setupDatabase()` method. This method will create and migrate a clean database for you on the fly.
+
+```php
+class TodoControllerTest extends IntegrationTestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setupDatabase();
+    }
+}
+```
+
+Most likely, you'll want to use a test-specific database connection. You can create a `database.config.php` file anywhere within test-specific discovery locations, and Tempest will use that connection instead of the project's default. For example, you can create a file `tests/Fixtures/database.config.php` like so:
+
+```php tests/Fixtures/database.config.php
+<?php
+
+use Tempest\Database\Config\SQLiteConfig;
+
+return new SQLiteConfig(
+    path: __DIR__ . '/database-testing.sqlite'
+);
+```
+
+By default, no tables will be migrated. You can choose to provide a list of migrations that will be run for every test that calls `setupDatabase()`, or you can run specific migrations on a per-test basis.
+
+```php
+class TodoControllerTest extends IntegrationTestCase
+{
+    protected function migrateDatabase(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTodosTable::class,
+        );
+    }
+}
+```
+
+```php
+class TodoControllerTest extends IntegrationTestCase
+{
+    public function test_create_todo(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateTodosTable::class,
+        );
+        
+        // …
+    }
+}
+```
+
+## Tester utilities
+
+The `IntegrationTestCase` provides several utilities to make testing easier. You can read the details about each tester utility on the documentation page of its respective component. For example, there's the [http tester](../1-essentials/01-routing.md#testing) that helps you test HTTP requests:
+
+```php
+$this->http
+    ->get('/account/profile')
+    ->assertOk()
+    ->assertSee('My Profile');
+```
+
+There's the [console tester](../1-essentials/04-console-commands.md#testing):
+
+```php tests/ExportUsersCommandTest.php
+$this->console
+    ->call(ExportUsersCommand::class)
+    ->assertSuccess()
+    ->assertSee('12 users exported');
+
+$this->console
+    ->call(WipeDatabaseCommand::class)
+    ->assertSee('caution')
+    ->submit()
+    ->assertSuccess();
+```
+
+And many, many more.
 
 ## Changing the location of tests
 
