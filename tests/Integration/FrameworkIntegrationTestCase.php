@@ -21,6 +21,7 @@ use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
+
 use function Tempest\Support\str;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
