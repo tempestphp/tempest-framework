@@ -81,6 +81,7 @@ final class TimelockTest extends TestCase
 
         $elapsed = $clock->timestamp()->getMilliseconds() - $ms;
 
-        $this->assertSame(300, $elapsed);
+        // Even if we mock the clock, there's a `microtime` call that may be off by a few ms on Windows
+        $this->assertEqualsToMoreOrLess(300, $elapsed, margin: 0, windowsMargin: 2);
     }
 }
