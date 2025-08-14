@@ -21,7 +21,7 @@ final readonly class OAuthManager
     private Session $session;
 
     public function __construct(
-        private OAuth2ProviderContract $provider,
+        private OAuth2Provider $provider,
     ) {
         $this->httpClient = get(HttpClient::class);
         $this->session = get(Session::class);

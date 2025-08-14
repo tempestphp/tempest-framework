@@ -6,9 +6,9 @@ namespace Tempest\Auth\OAuth\Providers;
 
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 use Tempest\Auth\OAuth\IsOAuth2Provider;
-use Tempest\Auth\OAuth\OAuth2ProviderContract;
+use Tempest\Auth\OAuth\OAuth2Provider;
 
-final class GithubOAuthProvider implements OAuth2ProviderContract
+final class GithubOAuthProvider implements OAuth2Provider
 {
     use IsOAuth2Provider;
 
