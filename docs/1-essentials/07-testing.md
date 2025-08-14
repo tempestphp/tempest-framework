@@ -22,7 +22,7 @@ composer phpunit
 
 ## Test-specific discovery locations
 
-Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTestCase` class. 
+Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTest` class. 
 
 On top of that, Tempest _will_ look for files in the `tests/Fixtures` directory and discover them by default. You can override this behavior by providing your own implementation of `discoverTestLocations()`, where you can return an array of `DiscoveryLocation` objects (or nothing).
 
@@ -46,7 +46,7 @@ final class HomeControllerTest extends IntegrationTest
 If you want to test code that interacts with the database, your test class can call the `setupDatabase()` method. This method will create and migrate a clean database for you on the fly.
 
 ```php
-class TodoControllerTest extends IntegrationTestCase
+class TodoControllerTest extends IntegrationTest
 {
     protected function setUp(): void
     {
@@ -72,7 +72,7 @@ return new SQLiteConfig(
 By default, no tables will be migrated. You can choose to provide a list of migrations that will be run for every test that calls `setupDatabase()`, or you can run specific migrations on a per-test basis.
 
 ```php
-class TodoControllerTest extends IntegrationTestCase
+class TodoControllerTest extends IntegrationTest
 {
     protected function migrateDatabase(): void
     {
@@ -85,7 +85,7 @@ class TodoControllerTest extends IntegrationTestCase
 ```
 
 ```php
-class TodoControllerTest extends IntegrationTestCase
+class TodoControllerTest extends IntegrationTest
 {
     public function test_create_todo(): void
     {
@@ -101,7 +101,7 @@ class TodoControllerTest extends IntegrationTestCase
 
 ## Tester utilities
 
-The `IntegrationTestCase` provides several utilities to make testing easier. You can read the details about each tester utility on the documentation page of its respective component. For example, there's the [http tester](../1-essentials/01-routing.md#testing) that helps you test HTTP requests:
+The `IntegrationTest` provides several utilities to make testing easier. You can read the details about each tester utility on the documentation page of its respective component. For example, there's the [http tester](../1-essentials/01-routing.md#testing) that helps you test HTTP requests:
 
 ```php
 $this->http
@@ -157,7 +157,7 @@ The next step is to create a `tests/Pest.php` file, which will instruct Pest how
 
 ```php tests/Pest.php
 pest()
-    ->extend(Tests\IntegrationTestCase::class)
+    ->extend(Tests\IntegrationTest::class)
     ->in(__DIR__);
 ```
 

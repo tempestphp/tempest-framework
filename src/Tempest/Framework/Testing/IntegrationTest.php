@@ -161,7 +161,7 @@ abstract class IntegrationTest extends TestCase
 
     protected function setupDatabase(): self
     {
-        $migrationManager = $this->get(MigrationManager::class);
+        $migrationManager = $this->container->get(MigrationManager::class);
 
         $migrationManager->dropAll();
 
@@ -234,7 +234,6 @@ abstract class IntegrationTest extends TestCase
             return;
         }
 
-        /* @phpstan-ignore-next-line */
         $this->fail("Expected exception {$expectedExceptionClass} was not thrown");
     }
 }
