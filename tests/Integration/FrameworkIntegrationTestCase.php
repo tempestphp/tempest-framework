@@ -4,23 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
-use Closure;
 use InvalidArgumentException;
-use Tempest\Console\ConsoleApplication;
-use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Console\Output\MemoryOutputBuffer;
-use Tempest\Console\Output\StdoutOutputBuffer;
-use Tempest\Console\OutputBuffer;
-use Tempest\Console\Testing\ConsoleTester;
-use Tempest\Core\Application;
-use Tempest\Core\ShellExecutor;
-use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\HttpApplication;
 use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
@@ -32,29 +21,22 @@ use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
-use Throwable;
 
-use function Tempest\Support\Path\normalize;
+use function Tempest\Support\str;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
-    protected function setUp(): void
+    protected function discoverTestLocations(): array
     {
-        // We force forward slashes for consistency even on Windows.
-        $this->root = normalize(realpath(__DIR__ . '/../../'));
-        $this->discoveryLocations = [
+        return [
             new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
             new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
         ];
+    }
 
+    protected function setUp(): void
+    {
         parent::setUp();
-
-        // Console
-        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
-
-        $this->console = new ConsoleTester($this->container);
 
         // Database
         $this->container
@@ -70,29 +52,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->config(require $databaseConfigPath);
 
         $this->rollbackDatabase();
-    }
-
-    protected function actAsConsoleApplication(string $command = ''): Application
-    {
-        $application = new ConsoleApplication(
-            container: $this->container,
-            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
-        );
-
-        $this->container->singleton(Application::class, fn () => $application);
-
-        return $application;
-    }
-
-    protected function actAsHttpApplication(): HttpApplication
-    {
-        $application = new HttpApplication(
-            $this->container,
-        );
-
-        $this->container->singleton(Application::class, fn () => $application);
-
-        return $application;
     }
 
     protected function render(string|View $view, mixed ...$params): string
@@ -183,7 +142,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function assertSameWithoutBackticks(string $expected, string $actual): void
     {
         $clean = function (string $string): string {
-            return \Tempest\Support\str($string)
+            return str($string)
                 ->replace('`', '')
                 ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
                 ->toString();
@@ -193,27 +152,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             $clean($expected),
             $clean($actual),
         );
-    }
-
-    protected function assertException(
-        string $expectedExceptionClass,
-        Closure $handler,
-        ?Closure $assertException = null,
-    ): void {
-        try {
-            $handler();
-        } catch (Throwable $throwable) {
-            $this->assertInstanceOf($expectedExceptionClass, $throwable);
-
-            if ($assertException !== null) {
-                $assertException($throwable);
-            }
-
-            return;
-        }
-
-        /* @phpstan-ignore-next-line */
-        $this->assertTrue(false, "Expected exception {$expectedExceptionClass} was not thrown");
     }
 
     protected function skipWindows(string $reason): void
