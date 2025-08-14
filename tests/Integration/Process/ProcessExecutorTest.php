@@ -15,7 +15,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
 
     public function test_run(): void
     {
-        $this->process->mock('echo *', "Hello\n");
+        $this->process->mockProcessResult('echo *', "Hello\n");
 
         $result = $this->executor->run('echo "Hello"');
 

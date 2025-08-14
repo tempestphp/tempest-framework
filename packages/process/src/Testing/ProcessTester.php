@@ -41,7 +41,7 @@ final class ProcessTester
     /**
      * Sets up the specified command or pattern to return the specified result. The command accepts `*` as a placeholder.
      */
-    public function mock(string $command = '*', string|ProcessResult $result = ''): self
+    public function mockProcessResult(string $command = '*', string|ProcessResult $result = ''): self
     {
         $this->recordProcessExecutions();
 
