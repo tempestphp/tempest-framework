@@ -83,14 +83,14 @@ final readonly class UserController()
 The asynchronous commands implementation of Tempest is currently experimental. Although you can use it, please note that it is not covered by our backwards compatibility promise.
 :::
 
-A common use case for Tempest's command bus is to dispatch asynchronous commands: commands that are executed by their handler in the background, outside the main PHP process. Making a command asynchronous is done by adding the `#[AsyncCommand]` to your command object:
+A common use case for Tempest's command bus is to dispatch asynchronous commands: commands that are executed by their handler in the background, outside the main PHP process. Making a command asynchronous is done by adding the `#[Async]` to your command object:
 
 ```php
 // app/SendMail.php
 
-use Tempest\CommandBus\AsyncCommand;
+use Tempest\CommandBus\Async;
 
-#[AsyncCommand]
+#[Async]
 final readonly class SendMail
 {
     public function __construct(
@@ -100,7 +100,7 @@ final readonly class SendMail
 }
 ```
 
-Besides adding the `#[AsyncCommand]` attribute, the flow remains exactly the same as if you were dispatching synchronous commands:
+Besides adding the `#[Async]` attribute, the flow remains exactly the same as if you were dispatching synchronous commands:
 
 ```php
 use function Tempest\command;
