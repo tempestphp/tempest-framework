@@ -53,7 +53,7 @@ final class ProcessTester
     /**
      * Sets up the specified commands or patterns to return the specified results.
      *
-     * @var array<string,string|ProcessResult|InvokedProcessDescription> $results
+     * @param array<string,string|ProcessResult|InvokedProcessDescription> $results
      */
     public function mockProcessResults(array $results): self
     {
