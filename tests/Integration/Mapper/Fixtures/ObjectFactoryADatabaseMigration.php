@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
 
-final class ObjectFactoryADatabaseMigration implements DatabaseMigration
+final class ObjectFactoryADatabaseMigration implements MigratesUp
 {
     private(set) string $name = 'object-a';
 
@@ -23,10 +23,5 @@ final class ObjectFactoryADatabaseMigration implements DatabaseMigration
                 new TextStatement('prop'),
             ],
         );
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

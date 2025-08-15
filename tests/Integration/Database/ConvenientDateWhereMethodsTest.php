@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Clock\MockClock;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -364,7 +364,7 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class CreateEventTable implements DatabaseMigration
+final class CreateEventTable implements MigratesUp
 {
     private(set) string $name = '0000-00-10_create_events_table';
 
@@ -375,11 +375,6 @@ final class CreateEventTable implements DatabaseMigration
             ->text('name')
             ->datetime('created_at')
             ->datetime('event_date');
-    }
-
-    public function down(): QueryStatement
-    {
-        return DropTableStatement::forModel(Event::class);
     }
 }
 

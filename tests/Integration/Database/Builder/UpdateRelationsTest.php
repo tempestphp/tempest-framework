@@ -3,13 +3,13 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\BelongsTo;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -551,7 +551,7 @@ final class UpdateAdventurer
     ) {}
 }
 
-final class CreateUpdateMageTable implements DatabaseMigration
+final class CreateUpdateMageTable implements MigratesUp
 {
     private(set) string $name = '100-create-update-mage';
 
@@ -562,14 +562,9 @@ final class CreateUpdateMageTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('element');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateUpdateSpellTable implements DatabaseMigration
+final class CreateUpdateSpellTable implements MigratesUp
 {
     private(set) string $name = '101-create-update-spell';
 
@@ -581,14 +576,9 @@ final class CreateUpdateSpellTable implements DatabaseMigration
             ->varchar('type')
             ->belongsTo('spells.creator_uuid', 'mages.mage_uuid', nullable: true);
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateUpdatePartyTable implements DatabaseMigration
+final class CreateUpdatePartyTable implements MigratesUp
 {
     private(set) string $name = '102-create-update-party';
 
@@ -599,14 +589,9 @@ final class CreateUpdatePartyTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('quest_type');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateUpdateAdventurerTable implements DatabaseMigration
+final class CreateUpdateAdventurerTable implements MigratesUp
 {
     private(set) string $name = '103-create-update-adventurer';
 
@@ -617,11 +602,6 @@ final class CreateUpdateAdventurerTable implements DatabaseMigration
             ->varchar('name')
             ->varchar('class')
             ->belongsTo('adventurers.party_uuid', 'parties.party_id', nullable: true);
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
 
@@ -637,7 +617,7 @@ final class SimpleModelWithoutPrimaryKey
     ) {}
 }
 
-final class CreateSimpleModelWithoutPrimaryKeyTable implements DatabaseMigration
+final class CreateSimpleModelWithoutPrimaryKeyTable implements MigratesUp
 {
     private(set) string $name = '106-create-simple-no-pk-table';
 
@@ -645,10 +625,5 @@ final class CreateSimpleModelWithoutPrimaryKeyTable implements DatabaseMigration
     {
         return new CreateTableStatement('simple_no_pk')
             ->varchar('name');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -18,7 +18,7 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
 {
     public function test_update_with_serialize_as_dto(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_create_users_table_for_dto_update';
 
             public function up(): QueryStatement
@@ -27,11 +27,6 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->string('name')
                     ->dto('settings');
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         });
 

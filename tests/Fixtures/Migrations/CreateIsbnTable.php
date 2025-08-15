@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Migrations;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesDown;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 
-final class CreateIsbnTable implements DatabaseMigration
+final class CreateIsbnTable implements MigratesUp, MigratesDown
 {
     private(set) string $name = '0000-00-04_create_isbns_table';
 

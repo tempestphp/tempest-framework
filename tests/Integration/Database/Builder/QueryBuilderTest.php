@@ -440,11 +440,11 @@ final class TestUserModelWithoutId
     ) {}
 }
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 
-final class TestModelWrapperMigration implements DatabaseMigration
+final class TestModelWrapperMigration implements MigratesUp
 {
     public string $name = '000_test_model_wrapper';
 
@@ -454,14 +454,9 @@ final class TestModelWrapperMigration implements DatabaseMigration
             ->primary()
             ->text('name');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class TestModelWithoutIdMigration implements DatabaseMigration
+final class TestModelWithoutIdMigration implements MigratesUp
 {
     public string $name = '001_test_model_without_id';
 
@@ -469,11 +464,6 @@ final class TestModelWithoutIdMigration implements DatabaseMigration
     {
         return CreateTableStatement::forModel(TestUserModelWithoutId::class)
             ->text('name');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
 
@@ -486,7 +476,7 @@ final class TestUserModelWithCustomPrimaryKey
     ) {}
 }
 
-final class TestModelWithCustomPrimaryKeyMigration implements DatabaseMigration
+final class TestModelWithCustomPrimaryKeyMigration implements MigratesUp
 {
     public string $name = '002_test_model_with_custom_primary_key';
 
@@ -495,10 +485,5 @@ final class TestModelWithCustomPrimaryKeyMigration implements DatabaseMigration
         return CreateTableStatement::forModel(TestUserModelWithCustomPrimaryKey::class)
             ->primary(name: 'uuid')
             ->text('name');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
