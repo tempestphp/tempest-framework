@@ -79,6 +79,9 @@ validation_error:
     .input {$field :string}
     .input {$needle :string}
     {$field} must end with "{$needle}"
+  exists: |
+    .input {$field :string}
+    {$field} could not be found
   is_even_number: |
     .input {$field :string}
     {$field} must be even
