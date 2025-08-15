@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Casters;
 
+use Tempest\Cryptography\Encryption\EncryptedData;
 use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Cryptography\Encryption\Exceptions\EncryptionException;
 use Tempest\Mapper\Caster;
+use Tempest\Support\Json\Exception\JsonException;
 
 final readonly class EncryptedCaster implements Caster
 {
@@ -19,6 +22,10 @@ final readonly class EncryptedCaster implements Caster
             return null;
         }
 
-        return $this->encrypter->decrypt($input);
+        try {
+            return $this->encrypter->decrypt($input);
+        } catch (EncryptionException|JsonException) {
+            return $input;
+        }
     }
 }
