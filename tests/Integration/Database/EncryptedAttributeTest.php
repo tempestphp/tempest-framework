@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Encrypted;
@@ -13,20 +14,23 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\Table;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Database\query;
+
 final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
 {
     private Encrypter $encrypter {
         get => $this->container->get(Encrypter::class);
     }
 
-    public function test_encrypted_attribute_encrypts_value_on_insert(): void
+    #[Test]
+    public function encrypts_value_on_insert(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
-        $user = new UserWithEncryptedData(
+        $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
             secret: 'sensitive information', // @mago-expect security/no-literal-password
-        )->save()->refresh();
+        );
 
         $this->assertSame('sensitive information', $user->secret);
 
@@ -35,14 +39,15 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
         $this->assertNotSame('sensitive information', $encrypted['secret']);
     }
 
-    public function test_encrypted_attribute_encrypts_value_on_update(): void
+    #[Test]
+    public function encrypts_value_on_update(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
-        $user = new UserWithEncryptedData(
+        $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
             secret: 'original secret', // @mago-expect security/no-literal-password
-        )->save()->refresh();
+        );
 
         $user->update(secret: 'new secret')->refresh(); // @mago-expect security/no-literal-password
 
@@ -54,40 +59,41 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
         $this->assertNotSame('new secret', $encrypted['secret']);
     }
 
-    public function test_encrypted_attribute_does_not_re_encrypt_already_encrypted_values(): void
+    #[Test]
+    public function does_not_re_encrypt_already_encrypted_values(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
-        $alreadyEncrypted = $this->encrypter->encrypt('sensitive data');
-
-        $user = new UserWithEncryptedData(
+        $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
-            secret: $alreadyEncrypted,
-        )->save()->refresh();
+            secret: $this->encrypter->encrypt('sensitive data'),
+        );
 
         $this->assertSame('sensitive data', $user->secret);
     }
 
-    public function test_encrypted_attribute_handles_null_values(): void
+    #[Test]
+    public function handles_null_values(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithNullableEncryptedDataTable::class);
 
-        $user = new UserWithNullableEncryptedData(
+        $user = query(UserWithNullableEncryptedData::class)->create(
             email: 'test@example.com',
             secret: null,
-        )->save()->refresh();
+        );
 
         $this->assertNull($user->secret);
     }
 
-    public function test_encrypted_attribute_handles_empty_strings(): void
+    #[Test]
+    public function handles_empty_strings(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
-        $user = new UserWithEncryptedData(
+        $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
             secret: '',
-        )->save()->refresh();
+        );
 
         $this->assertSame('', $user->secret);
     }
