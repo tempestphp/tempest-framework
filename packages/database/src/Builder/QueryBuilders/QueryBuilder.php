@@ -152,7 +152,7 @@ final readonly class QueryBuilder
      *
      * @return TModel
      */
-    public function findById(string|int|PrimaryKey $id): object
+    public function findById(string|int|PrimaryKey $id): ?object
     {
         if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'findById');

@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Validator;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Database\PrimaryKey;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Rules;
@@ -205,6 +206,16 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: $this->formatWithField('%s must end with "foo"', $field),
             actual: $this->translate(new Rules\EndsWith(needle: 'foo'), field: $field),
+        );
+    }
+
+    #[TestWith([null])]
+    #[TestWith(['Input'])]
+    public function test_exists(?string $field = null): void
+    {
+        $this->assertSame(
+            expected: $this->formatWithField('%s could not be found', $field),
+            actual: $this->translate(new Rules\Exists(table: 'non-existing-table', column: 'non-existing-column'), field: $field),
         );
     }
 
