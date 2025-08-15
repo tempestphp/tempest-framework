@@ -6,9 +6,11 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
-use Tempest\Database\Id;
+use Tempest\Database\Direction;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\GroupByStatement;
@@ -22,18 +24,19 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Paginator\PaginatedData;
 use Tempest\Support\Paginator\Paginator;
+use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\map;
 
 /**
- * @template T of object
- * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<T>
- * @uses \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<T>
+ * @template TModel of object
+ * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods;
+    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private ModelInspector $model;
 
@@ -46,11 +49,11 @@ final class SelectQueryBuilder implements BuildsQuery
     private array $bindings = [];
 
     /**
-     * @param class-string<T>|string|T $model
+     * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
-        $this->model = model($model);
+        $this->model = inspect($model);
 
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
@@ -60,7 +63,11 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return T|null */
+    /**
+     * Returns the first record matching the query.
+     *
+     * @return TModel|null
+     */
     public function first(mixed ...$bindings): mixed
     {
         $query = $this->build(...$bindings);
@@ -80,7 +87,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $result[array_key_first($result)];
     }
 
-    /** @return PaginatedData<T> */
+    /**
+     * Returnd length-aware paginated data for the current query.
+     *
+     * @return PaginatedData<TModel>
+     */
     public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
     {
         $total = new CountQueryBuilder($this->model->model)->execute();
@@ -97,13 +108,25 @@ final class SelectQueryBuilder implements BuildsQuery
         );
     }
 
-    /** @return T|null */
-    public function get(Id $id): mixed
+    /**
+     * Returns the first record matching the given primary key.
+     *
+     * @return TModel|null
+     */
+    public function get(PrimaryKey $id): mixed
     {
-        return $this->whereField('id', $id)->first();
+        if (! $this->model->hasPrimaryKey()) {
+            throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model->getName(), 'get');
+        }
+
+        return $this->whereField($this->model->getPrimaryKey(), $id)->first();
     }
 
-    /** @return T[] */
+    /**
+     * Returns all records matching the query.
+     *
+     * @return TModel[]
+     */
     public function all(mixed ...$bindings): array
     {
         $query = $this->build(...$bindings);
@@ -118,7 +141,9 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /**
-     * @param Closure(T[] $models): void $closure
+     * Performs multiple queries in chunks, passing each chunk to the provided closure.
+     *
+     * @param Closure(TModel[]): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
@@ -136,15 +161,35 @@ final class SelectQueryBuilder implements BuildsQuery
         } while ($data !== []);
     }
 
-    /** @return self<T> */
-    public function orderBy(string $statement): self
+    /**
+     * Orders the results of the query by the given field name and direction.
+     *
+     * @return self<TModel>
+     */
+    public function orderBy(string $field, Direction $direction = Direction::ASC): self
+    {
+        $this->select->orderBy[] = new OrderByStatement("`{$field}` {$direction->value}");
+
+        return $this;
+    }
+
+    /**
+     * Orders the results of the query by the given raw SQL statement.
+     *
+     * @return self<TModel>
+     */
+    public function orderByRaw(string $statement): self
     {
         $this->select->orderBy[] = new OrderByStatement($statement);
 
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Groups the results of the query by the given raw SQL statement.
+     *
+     * @return self<TModel>
+     */
     public function groupBy(string $statement): self
     {
         $this->select->groupBy[] = new GroupByStatement($statement);
@@ -152,7 +197,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Adds a `HAVING` clause to the query with the given raw SQL statement.
+     *
+     * @return self<TModel>
+     */
     public function having(string $statement, mixed ...$bindings): self
     {
         $this->select->having[] = new HavingStatement($statement);
@@ -162,7 +211,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Limits the number of results returned by the query by the specified amount.
+     *
+     * @return self<TModel>
+     */
     public function limit(int $limit): self
     {
         $this->select->limit = $limit;
@@ -170,7 +223,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Sets the offset for the query, allowing you to skip a number of results.
+     *
+     * @return self<TModel>
+     */
     public function offset(int $offset): self
     {
         $this->select->offset = $offset;
@@ -178,7 +235,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Joins the specified tables to the query using raw SQL statements, allowing for complex queries across multiple tables.
+     *
+     * @return self<TModel>
+     */
     public function join(string ...$joins): self
     {
         $this->joins = [...$this->joins, ...$joins];
@@ -186,7 +247,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Includes the specified relationships in the query, allowing for eager loading.
+     *
+     * @return self<TModel>
+     */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
@@ -194,7 +259,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Adds a raw SQL statement to the query.
+     *
+     * @return self<TModel>
+     */
     public function raw(string $raw): self
     {
         $this->select->raw[] = new RawStatement($raw);
@@ -202,7 +271,11 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    /** @return self<T> */
+    /**
+     * Binds the provided values to the query, allowing for parameterized queries.
+     *
+     * @return self<TModel>
+     */
     public function bind(mixed ...$bindings): self
     {
         $this->bindings = [...$this->bindings, ...$bindings];
@@ -210,9 +283,20 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    public function toSql(): string
+    /**
+     * Compile the query to a SQL statement without the bindings.
+     */
+    public function compile(): ImmutableString
     {
-        return $this->build()->toSql();
+        return $this->build()->compile();
+    }
+
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
+    public function toRawSql(): ImmutableString
+    {
+        return $this->build()->toRawSql();
     }
 
     public function build(mixed ...$bindings): Query
@@ -240,7 +324,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return \Tempest\Database\Relation[] */
     private function getIncludedRelations(): array
     {
-        $definition = model($this->model->getName());
+        $definition = inspect($this->model->getName());
 
         if (! $definition->isObjectModel()) {
             return [];

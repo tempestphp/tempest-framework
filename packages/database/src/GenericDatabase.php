@@ -44,8 +44,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $statement = $this->connection->prepare($query->toSql());
-
+            $statement = $this->connection->prepare($query->compile()->toString());
             $statement->execute($bindings);
 
             $this->lastStatement = $statement;
@@ -55,23 +54,29 @@ final class GenericDatabase implements Database
         }
     }
 
-    public function getLastInsertId(): ?Id
+    public function getLastInsertId(): ?PrimaryKey
     {
-        $sql = $this->lastQuery->toSql();
+        $sql = $this->lastQuery->compile();
 
-        // TODO: properly determine whether a query is an insert or not
-        if (! str_starts_with($sql, 'INSERT')) {
+        if (! $sql->trim()->startsWith('INSERT')) {
             return null;
         }
 
         if ($this->dialect === DatabaseDialect::POSTGRESQL) {
             $data = $this->lastStatement->fetch(PDO::FETCH_ASSOC);
-            $lastInsertId = $data['id'] ?? null;
-        } else {
-            $lastInsertId = $this->connection->lastInsertId();
+
+            if (! $data) {
+                return null;
+            }
+
+            if ($this->lastQuery->primaryKeyColumn && isset($data[$this->lastQuery->primaryKeyColumn])) {
+                return PrimaryKey::tryFrom($data[$this->lastQuery->primaryKeyColumn]);
+            }
+
+            return null;
         }
 
-        return Id::tryFrom($lastInsertId);
+        return PrimaryKey::tryFrom($this->connection->lastInsertId());
     }
 
     public function fetch(BuildsQuery|Query $query): array
@@ -83,8 +88,7 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $pdoQuery = $this->connection->prepare($query->toSql());
-
+            $pdoQuery = $this->connection->prepare($query->compile()->toString());
             $pdoQuery->execute($bindings);
 
             return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
@@ -124,6 +128,14 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
+            // Database handle booleans differently. We might need a database-aware serializer at some point.
+            if (is_bool($value)) {
+                $value = match ($this->dialect) {
+                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
+                    default => $value ? '1' : '0',
+                };
+            }
+
             if ($value instanceof Query) {
                 $value = $value->execute();
             } elseif ($serializer = $this->serializerFactory->forValue($value)) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Stringable;
-use Tempest\Reflection\ClassReflector;
 
 final readonly class TableDefinition implements Stringable
 {

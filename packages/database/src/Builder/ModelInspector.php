@@ -6,9 +6,11 @@ use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
-use Tempest\Database\Id;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
@@ -21,7 +23,7 @@ use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -292,7 +294,7 @@ final class ModelInspector
 
         unset($relationNames[0]);
 
-        $relationModel = model($currentRelation);
+        $relationModel = inspect($currentRelation);
 
         $newRelationString = implode('.', $relationNames);
         $currentRelation->setParent($parent);
@@ -334,7 +336,7 @@ final class ModelInspector
                 $currentRelationName,
             ), '.');
 
-            foreach (model($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
+            foreach (inspect($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
                 $relations[$name] = $nestedEagerRelation;
             }
         }
@@ -354,6 +356,10 @@ final class ModelInspector
             $property = $this->reflector->getProperty($key);
 
             if ($property->hasAttribute(SkipValidation::class)) {
+                continue;
+            }
+
+            if ($property->getType()->getName() === PrimaryKey::class) {
                 continue;
             }
 
@@ -381,17 +387,45 @@ final class ModelInspector
         return $this->instance;
     }
 
-    public function getPrimaryFieldName(): string
+    public function getQualifiedPrimaryKey(): ?string
     {
-        return $this->getTableDefinition()->name . '.' . $this->getPrimaryKey();
+        $primaryKey = $this->getPrimaryKey();
+
+        return $primaryKey !== null
+            ? ($this->getTableDefinition()->name . '.' . $primaryKey)
+            : null;
     }
 
-    public function getPrimaryKey(): string
+    public function getPrimaryKey(): ?string
     {
-        return 'id';
+        return $this->getPrimaryKeyProperty()?->getName();
     }
 
-    public function getPrimaryKeyValue(): ?Id
+    public function hasPrimaryKey(): bool
+    {
+        return $this->getPrimaryKeyProperty() !== null;
+    }
+
+    public function getPrimaryKeyProperty(): ?PropertyReflector
+    {
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        $primaryKeys = arr($this->reflector->getProperties())
+            ->filter(fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
+
+        return match ($primaryKeys->count()) {
+            0 => null,
+            1 => $primaryKeys->first(),
+            default => throw ModelHadMultiplePrimaryColumns::found(
+                model: $this->model,
+                properties: $primaryKeys->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
+            ),
+        };
+    }
+
+    public function getPrimaryKeyValue(): ?PrimaryKey
     {
         if (! $this->isObjectModel()) {
             return null;
@@ -401,6 +435,16 @@ final class ModelInspector
             return null;
         }
 
-        return $this->instance->{$this->getPrimaryKey()};
+        $primaryKeyProperty = $this->getPrimaryKeyProperty();
+
+        if ($primaryKeyProperty === null) {
+            return null;
+        }
+
+        if (! $primaryKeyProperty->isInitialized($this->instance)) {
+            return null;
+        }
+
+        return $primaryKeyProperty->getValue($this->instance);
     }
 }

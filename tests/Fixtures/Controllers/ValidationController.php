@@ -36,10 +36,10 @@ final readonly class ValidationController
         $book->load('author');
 
         return new Json([
-            'id' => $book->id->id,
+            'id' => $book->id->value,
             'title' => $book->title,
             'author' => [
-                'id' => $book->author->id->id,
+                'id' => $book->author->id->value,
                 'name' => $book->author->name,
             ],
         ]);
@@ -53,10 +53,10 @@ final readonly class ValidationController
         $book->update(title: $request->get('title'));
 
         return new Json([
-            'id' => $book->id->id,
+            'id' => $book->id->value,
             'title' => $book->title,
             'author' => [
-                'id' => $book->author->id->id,
+                'id' => $book->author->id->value,
                 'name' => $book->author->name,
             ],
             'chapters' => $book->chapters,

@@ -72,14 +72,14 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
     public function test_query_was_invalid_exception_is_thrown_on_fetch(): void
     {
         $this->assertException(QueryWasInvalid::class, function (): void {
-            query('books')->select()->orderBy('title DES')->first();
+            query('books')->select()->orderByRaw('title DES')->first();
         });
     }
 
     public function test_query_was_invalid_exception_is_thrown_on_execute(): void
     {
         $this->assertException(QueryWasInvalid::class, function (): void {
-            query('books')->update(title: 'Timeline Taxi')->where('title = ?')->execute();
+            query('books')->update(title: 'Timeline Taxi')->whereRaw('title = ?')->execute();
         });
     }
 }

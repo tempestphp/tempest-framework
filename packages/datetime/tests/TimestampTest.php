@@ -571,8 +571,8 @@ final class TimestampTest extends TestCase
     public function test_future_past_comprehensive(): void
     {
         $now = Timestamp::monotonic();
-        $future = $now->plusMilliseconds(15);
-        $past = $now->minusMilliseconds(15);
+        $future = $now->plusMilliseconds(30);
+        $past = $now->minusMilliseconds(30);
 
         $this->assertTrue($future->isFuture());
         $this->assertFalse($future->isPast());

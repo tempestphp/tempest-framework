@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\get;
 
@@ -25,9 +26,10 @@ final class Query
         public array $bindings = [],
         /** @var \Closure[] $executeAfter */
         public array $executeAfter = [],
+        public ?string $primaryKeyColumn = null,
     ) {}
 
-    public function execute(mixed ...$bindings): ?Id
+    public function execute(mixed ...$bindings): ?PrimaryKey
     {
         $this->bindings = [...$this->bindings, ...$bindings];
 
@@ -39,8 +41,12 @@ final class Query
 
         // TODO: add support for "after" queries to attach hasMany relations
 
-        return isset($query->bindings['id'])
-            ? new Id($query->bindings['id'])
+        if (! $this->primaryKeyColumn) {
+            return null;
+        }
+
+        return isset($query->bindings[$this->primaryKeyColumn])
+            ? new PrimaryKey($query->bindings[$this->primaryKeyColumn])
             : $database->getLastInsertId();
     }
 
@@ -54,10 +60,12 @@ final class Query
         return $this->database->fetchFirst($this->withBindings($bindings));
     }
 
-    public function toSql(): string
+    /**
+     * Compile the query to a SQL statement without the bindings.
+     */
+    public function compile(): ImmutableString
     {
         $sql = $this->sql;
-
         $dialect = $this->dialect;
 
         if ($sql instanceof QueryStatement) {
@@ -68,7 +76,15 @@ final class Query
             $sql = str_replace('`', '', $sql);
         }
 
-        return $sql;
+        return new ImmutableString($sql);
+    }
+
+    /**
+     * Returns the SQL statement with bindings. This method may generate syntax errors, it is not recommended to use it other than for debugging.
+     */
+    public function toRawSql(): ImmutableString
+    {
+        return new RawSql($this->dialect, (string) $this->compile(), $this->bindings)->toImmutableString();
     }
 
     public function append(string $append): self

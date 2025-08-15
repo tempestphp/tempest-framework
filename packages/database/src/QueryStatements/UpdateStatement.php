@@ -40,10 +40,11 @@ final class UpdateStatement implements QueryStatement, HasWhereStatements
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(fn (WhereStatement $where) => $where->compile($dialect))
-                ->implode(PHP_EOL);
+                ->map(fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
+                ->filter(fn (string $compiled) => $compiled !== '')
+                ->implode(' ');
         }
 
-        return $query->implode(PHP_EOL);
+        return $query->implode(' ');
     }
 }

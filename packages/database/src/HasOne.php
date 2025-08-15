@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
@@ -38,7 +39,7 @@ final class HasOne implements Relation
 
     public function getSelectFields(): ImmutableArray
     {
-        $relationModel = model($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getType()->asClass());
 
         return $relationModel
             ->getSelectFields()
@@ -53,8 +54,8 @@ final class HasOne implements Relation
 
     public function getJoinStatement(): JoinStatement
     {
-        $ownerModel = model($this->property->getType()->asClass());
-        $relationModel = model($this->property->getClass());
+        $ownerModel = inspect($this->property->getType()->asClass());
+        $relationModel = inspect($this->property->getClass());
 
         $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
         $relationJoin = $this->getRelationJoin($relationModel);
@@ -83,10 +84,16 @@ final class HasOne implements Relation
             return $ownerJoin;
         }
 
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasOne');
+        }
+
         return sprintf(
             '%s.%s',
             $ownerModel->getTableName(),
-            str($relationModel->getTableName())->singularizeLastWord() . '_' . $relationModel->getPrimaryKey(),
+            str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
         );
     }
 
@@ -106,10 +113,16 @@ final class HasOne implements Relation
             return $relationJoin;
         }
 
+        $primaryKey = $relationModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasOne');
+        }
+
         return sprintf(
             '%s.%s',
             $relationModel->getTableName(),
-            $relationModel->getPrimaryKey(),
+            $primaryKey,
         );
     }
 }

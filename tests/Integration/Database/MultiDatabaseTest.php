@@ -2,24 +2,26 @@
 
 namespace Tests\Tempest\Integration\Database;
 
-use PDOException;
 use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
-use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Database\PrimaryKey;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\ShouldMigrate;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
-use Tests\Tempest\Integration\Database\Fixtures\MigrationForBackup;
-use Tests\Tempest\Integration\Database\Fixtures\MigrationForMain;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
@@ -39,8 +41,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $files = [
-            __DIR__ . '/Fixtures/main.sqlite',
-            __DIR__ . '/Fixtures/backup.sqlite',
+            __DIR__ . '/db-main.sqlite',
+            __DIR__ . '/db-backup.sqlite',
         ];
 
         foreach ($files as $file) {
@@ -55,12 +57,12 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->container->addInitializer(DatabaseInitializer::class);
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/main.sqlite',
+            path: __DIR__ . '/db-main.sqlite',
             tag: 'main',
         ));
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/backup.sqlite',
+            path: __DIR__ . '/db-backup.sqlite',
             tag: 'backup',
         ));
     }
@@ -76,7 +78,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(1),
+                id: new PrimaryKey(1),
                 name: 'Main 1',
                 description: 'Description Main 1',
             )
@@ -85,7 +87,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(2),
+                id: new PrimaryKey(2),
                 name: 'Main 2',
                 description: 'Description Main 2',
             )
@@ -94,7 +96,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(1),
+                id: new PrimaryKey(1),
                 name: 'Backup 1',
                 description: 'Description Backup 1',
             )
@@ -103,7 +105,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         query(Publisher::class)
             ->insert(
-                id: new Id(2),
+                id: new PrimaryKey(2),
                 name: 'Backup 2',
                 description: 'Description Backup 2',
             )
@@ -121,13 +123,26 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame('Backup 1', $publishersBackup[0]->name);
         $this->assertSame('Backup 2', $publishersBackup[1]->name);
 
-        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->onDatabase('main')->execute();
-        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->onDatabase('backup')->execute();
+        query(Publisher::class)
+            ->update(name: 'Updated Main 1')
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('main')
+            ->execute();
 
-        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('main')->first()->name);
-        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->onDatabase('backup')->first()->name);
+        query(Publisher::class)
+            ->update(name: 'Updated Backup 1')
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('backup')
+            ->execute();
 
-        query(Publisher::class)->delete()->where('id = ?', 1)->onDatabase('main')->execute();
+        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->whereRaw('id = ?', 1)->onDatabase('main')->first()->name);
+        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->whereRaw('id = ?', 1)->onDatabase('backup')->first()->name);
+
+        query(Publisher::class)
+            ->delete()
+            ->whereRaw('id = ?', 1)
+            ->onDatabase('main')
+            ->execute();
 
         $this->assertSame(1, query(Publisher::class)->count()->onDatabase('main')->execute());
         $this->assertSame(2, query(Publisher::class)->count()->onDatabase('backup')->execute());
@@ -142,7 +157,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/Fixtures/main.sqlite',
+            path: __DIR__ . '/db-main.sqlite',
             tag: 'sqlite-main',
         ));
 
@@ -251,25 +266,25 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager->onDatabase('main')->executeUp(new CreateMigrationsTable());
         $migrationManager->onDatabase('backup')->executeUp(new CreateMigrationsTable());
 
-        $migrationManager->onDatabase('main')->executeUp(new MigrationForMain());
-        $migrationManager->onDatabase('main')->executeUp(new MigrationForBackup());
+        $migrationManager->onDatabase('main')->executeUp(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('main')->executeUp(new MultiDatabaseTestMigrationForBackup());
 
         $this->assertTableExists('main_table', 'main');
         $this->assertTableDoesNotExist('backup_table', 'main');
 
-        $migrationManager->onDatabase('backup')->executeUp(new MigrationForMain());
-        $migrationManager->onDatabase('backup')->executeUp(new MigrationForBackup());
+        $migrationManager->onDatabase('backup')->executeUp(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('backup')->executeUp(new MultiDatabaseTestMigrationForBackup());
 
         $this->assertTableExists('backup_table', 'backup');
         $this->assertTableDoesNotExist('main_table', 'backup');
 
-        $migrationManager->onDatabase('main')->executeDown(new MigrationForMain());
-        $migrationManager->onDatabase('main')->executeDown(new MigrationForBackup());
+        $migrationManager->onDatabase('main')->executeDown(new MultiDatabaseTestMigrationForMain());
+        $migrationManager->onDatabase('main')->executeDown(new MultiDatabaseTestMigrationForBackup());
         $this->assertTableDoesNotExist('main_table', 'main');
         $this->assertTableDoesNotExist('backup_table', 'main');
 
-        $migrationManager->onDatabase('backup')->executeDown(new MigrationForBackup());
-        $migrationManager->onDatabase('backup')->executeDown(new MigrationForMain());
+        $migrationManager->onDatabase('backup')->executeDown(new MultiDatabaseTestMigrationForBackup());
+        $migrationManager->onDatabase('backup')->executeDown(new MultiDatabaseTestMigrationForMain());
         $this->assertTableDoesNotExist('backup_table', 'backup');
         $this->assertTableDoesNotExist('main_table', 'backup');
     }
@@ -347,5 +362,45 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             QueryWasInvalid::class,
             fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
         );
+    }
+}
+
+final class MultiDatabaseTestMigrationForMain implements DatabaseMigration, ShouldMigrate
+{
+    public string $name = '000_main';
+
+    public function shouldMigrate(Database $database): bool
+    {
+        return $database->tag === 'main';
+    }
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('main_table')->primary();
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('main_table');
+    }
+}
+
+final class MultiDatabaseTestMigrationForBackup implements DatabaseMigration, ShouldMigrate
+{
+    public string $name = '000_backup';
+
+    public function shouldMigrate(Database $database): bool
+    {
+        return $database->tag === 'backup';
+    }
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('backup_table')->primary();
+    }
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('backup_table');
     }
 }

@@ -5,12 +5,12 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Query;
 
 /**
- * @template TModelClass
+ * @template TModel
  */
 interface BuildsQuery
 {
     public function build(mixed ...$bindings): Query;
 
-    /** @return self<TModelClass> */
+    /** @return self<TModel> */
     public function bind(mixed ...$bindings): self;
 }

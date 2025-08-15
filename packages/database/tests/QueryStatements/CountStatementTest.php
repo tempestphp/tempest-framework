@@ -18,10 +18,7 @@ final class CountStatementTest extends TestCase
             column: null,
         );
 
-        $expected = <<<SQL
-        SELECT COUNT(*) AS `count`
-        FROM `foo`
-        SQL;
+        $expected = 'SELECT COUNT(*) AS `count` FROM `foo`';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }
@@ -35,10 +32,7 @@ final class CountStatementTest extends TestCase
             column: 'foobar',
         );
 
-        $expected = <<<SQL
-        SELECT COUNT(`foobar`) AS `count`
-        FROM `foo`
-        SQL;
+        $expected = 'SELECT COUNT(`foobar`) AS `count` FROM `foo`';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }
@@ -54,10 +48,7 @@ final class CountStatementTest extends TestCase
 
         $statement->distinct = true;
 
-        $expected = <<<SQL
-        SELECT COUNT(DISTINCT `foobar`) AS `count`
-        FROM `foo`
-        SQL;
+        $expected = 'SELECT COUNT(DISTINCT `foobar`) AS `count` FROM `foo`';
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }

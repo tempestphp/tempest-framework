@@ -82,10 +82,10 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(2, query(Book::class)->count()->execute());
 
-        $book = Book::select()->whereField('title', 'Timeline Taxi')->first();
+        $book = Book::select()->where('title', 'Timeline Taxi')->first();
         $this->assertNotNull($book);
 
-        $book = Book::select()->whereField('title', 'Timeline Taxi 2')->first();
+        $book = Book::select()->where('title', 'Timeline Taxi 2')->first();
         $this->assertNotNull($book);
     }
 

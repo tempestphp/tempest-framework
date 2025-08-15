@@ -5,13 +5,14 @@ namespace Tempest\Database\Mappers;
 use Exception;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr\MutableArray;
 
-use function Tempest\Database\model;
+use function Tempest\Database\inspect;
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -25,12 +26,12 @@ final class SelectModelMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array
     {
-        $model = model($to);
+        $model = inspect($to);
 
-        $idField = $model->getPrimaryFieldName();
+        $idField = $model->getQualifiedPrimaryKey();
 
         $parsed = arr($from)
-            ->groupBy(fn (array $data, int $i) => $data[$idField] ?? $i)
+            ->groupBy(fn (array $data, int $i) => $idField !== null ? ($data[$idField] ?? $i) : $i)
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 
@@ -58,7 +59,7 @@ final class SelectModelMapper implements Mapper
             }
 
             $mapped = [];
-            $relationModel = model($relation);
+            $relationModel = inspect($relation);
 
             foreach ($value as $item) {
                 $mapped[] = $this->values($relationModel, $item);
@@ -115,7 +116,7 @@ final class SelectModelMapper implements Mapper
                     break;
                 }
 
-                $currentModel = model($relation);
+                $currentModel = inspect($relation);
             }
 
             if ($key) {
