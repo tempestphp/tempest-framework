@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Password\PasswordHasher;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Hashed;
@@ -11,33 +12,43 @@ use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Database\query;
+
 final class HashedAttributeTest extends FrameworkIntegrationTestCase
 {
     private PasswordHasher $hasher {
         get => $this->container->get(PasswordHasher::class);
     }
 
-    public function test_hashed_attribute_hashes_value_on_insert(): void
+    #[Test]
+    public function hashes_value_on_insert(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = new UserWithHash(
+        $user = query(UserWithHash::class)->create(
             email: 'test@example.com',
             password: 'plaintext-password', // @mago-expect security/no-literal-password
-        )->save()->refresh();
+        );
+
+        // The current behavior when creating a model is to not refresh it.
+        // In this case, it might be a potential security issue?
+        $this->assertSame('plaintext-password', $user->password);
+
+        $user->refresh();
 
         $this->assertNotSame('plaintext-password', $user->password);
         $this->assertTrue($this->hasher->verify('plaintext-password', $user->password));
     }
 
-    public function test_hashed_attribute_hashes_value_on_update(): void
+    #[Test]
+    public function hashes_value_on_update(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = new UserWithHash(
+        $user = query(UserWithHash::class)->create(
             email: 'test@example.com',
             password: 'original-password', // @mago-expect security/no-literal-password
-        )->save()->refresh();
+        )->refresh();
 
         $originalHash = $user->password;
 
@@ -50,29 +61,29 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
         $this->assertFalse($this->hasher->verify('original-password', $user->password));
     }
 
-    public function test_hashed_attribute_does_not_rehash_already_hashed_values(): void
+    #[Test]
+    public function does_not_rehash_already_hashed_values(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $alreadyHashed = $this->hasher->hash('plaintext-password');
-
-        $user = new UserWithHash(
+        $user = query(UserWithHash::class)->create(
             email: 'test@example.com',
-            password: $alreadyHashed,
-        )->save()->refresh();
+            password: $alreadyHashed = $this->hasher->hash('plaintext-password'),
+        )->refresh();
 
         $this->assertSame($alreadyHashed, $user->password);
         $this->assertTrue($this->hasher->verify('plaintext-password', $user->password));
     }
 
-    public function test_hashed_attribute_handles_null_values(): void
+    #[Test]
+    public function handles_null_values(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithNullablePasswordTable::class);
 
-        $user = new UserWithNullablePassword(
+        $user = query(UserWithNullablePassword::class)->create(
             email: 'test@example.com',
             password: null,
-        )->save()->refresh();
+        )->refresh();
 
         $this->assertNull($user->password);
     }
