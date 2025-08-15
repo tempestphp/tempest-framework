@@ -2,10 +2,12 @@
 
 namespace Tempest\Process;
 
-use Tempest\Support\Arr\ArrayInterface;
+use ArrayAccess;
+use Countable;
+use Iterator;
 use Tempest\Support\Arr\ImmutableArray;
 
-final class ProcessPoolResults implements ArrayInterface
+final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
 {
     public function __construct(
         /** @var ImmutableArray<ProcessResult> */
