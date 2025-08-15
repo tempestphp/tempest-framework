@@ -215,7 +215,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s could not be found', $field),
-            actual: $this->translate(new Rules\Exists(table: ModelForExistsRule::class), field: $field),
+            actual: $this->translate(new Rules\Exists(table: 'non-existing-table', column: 'non-existing-column'), field: $field),
         );
     }
 
@@ -717,9 +717,4 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
             actual: $this->translate(new Rules\IsUuid(), field: $field),
         );
     }
-}
-
-final class ModelForExistsRule
-{
-    public PrimaryKey $id;
 }
