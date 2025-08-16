@@ -31,7 +31,7 @@ final class SelectModelMapper implements Mapper
         $idField = $model->getQualifiedPrimaryKey();
 
         $parsed = arr($from)
-            ->groupBy(fn (array $data, int $i) => $idField !== null ? ($data[$idField] ?? $i) : $i)
+            ->groupBy(fn (array $data, int|string $i) => $idField !== null ? ($data[$idField] ?? $i) : $i)
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 
