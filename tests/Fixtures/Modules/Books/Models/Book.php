@@ -7,6 +7,7 @@ namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
+use Tempest\Database\Virtual;
 use Tempest\Router\Bindable;
 use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\SkipValidation;
@@ -29,6 +30,7 @@ final class Book implements Bindable
     #[HasOne]
     public ?Isbn $isbn = null;
 
+    #[Virtual]
     public int|string $bindingValue {
         get => $this->id->value;
     }
