@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Database\Mappers;
+namespace Tests\Tempest\Integration\Database\Mappers;
 
 use Tempest\Auth\Install\User;
 use Tempest\Database\Mappers\SelectModelMapper;
@@ -271,7 +271,7 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
 
 final class ObjectWithArrayEnumProperty
 {
-    /** @var Integration\Database\Mappers\EnumToBeMappedToArray[] */
+    /** @var \Tests\Tempest\Integration\Database\Mappers\EnumToBeMappedToArray[] */
     public array $roles;
 }
 
