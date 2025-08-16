@@ -121,6 +121,17 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, $users[0]->userPermissions);
     }
 
+    public function test_array_of_serialized_enums(): void
+    {
+        $users = map([['id' => 1, 'roles' => json_encode(['admin', 'user'])]])
+            ->with(SelectModelMapper::class)
+            ->to(ObjectWithArrayEnumProperty::class);
+
+        $this->assertCount(2, $users[0]->roles);
+        $this->assertSame(EnumToBeMappedToArray::ADMIN, $users[0]->roles[0]);
+        $this->assertSame(EnumToBeMappedToArray::USER, $users[0]->roles[1]);
+    }
+
     private function data(): array
     {
         return [
@@ -256,4 +267,16 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
             ],
         ];
     }
+}
+
+final class ObjectWithArrayEnumProperty
+{
+    /** @var Integration\Database\Mappers\EnumToBeMappedToArray[] */
+    public array $roles;
+}
+
+enum EnumToBeMappedToArray: string
+{
+    case ADMIN = 'admin';
+    case USER = 'user';
 }

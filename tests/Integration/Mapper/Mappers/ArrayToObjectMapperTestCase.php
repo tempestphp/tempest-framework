@@ -149,4 +149,33 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 
         $this->assertSame('magic', $object->a);
     }
+
+    public function test_map_array_of_enums(): void
+    {
+        $object = map(['roles' => ['admin', 'user']])->to(ObjectWithArrayEnumProperty::class);
+
+        $this->assertCount(2, $object->roles);
+        $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+        $this->assertSame(EnumToBeMappedToArray::USER, $object->roles[1]);
+    }
+
+    public function test_map_array_of_serialized_enums(): void
+    {
+        $object = map(['roles' => json_encode(['admin'])])->to(ObjectWithArrayEnumProperty::class);
+
+        $this->assertCount(1, $object->roles);
+        $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+    }
+}
+
+final class ObjectWithArrayEnumProperty
+{
+    /** @var \Tests\Tempest\Integration\Mapper\Mappers\EnumToBeMappedToArray[] */
+    public array $roles;
+}
+
+enum EnumToBeMappedToArray: string
+{
+    case ADMIN = 'admin';
+    case USER = 'user';
 }
