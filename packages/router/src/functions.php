@@ -2,47 +2,71 @@
 
 declare(strict_types=1);
 
-namespace Tempest {
-    use Tempest\Reflection\MethodReflector;
-    use Tempest\Router\Router;
+namespace Tempest;
 
-    /**
-     * Creates a valid URI to the given controller `$action`.
-     */
-    function uri(array|string|MethodReflector $action, mixed ...$params): string
-    {
-        if ($action instanceof MethodReflector) {
-            $action = [
-                $action->getDeclaringClass()->getName(),
-                $action->getName(),
-            ];
-        }
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\Duration;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Router\UriGenerator;
 
-        $router = get(Router::class);
+use function Tempest\get;
 
-        return $router->toUri(
-            $action,
-            ...$params,
-        );
-    }
+/**
+ * Creates a valid URI to the given `$action`.
+ *
+ * `$action` is one of :
+ * - Controller FQCN and its method as a tuple
+ * - Invokable controller FQCN
+ * - URI string starting with `/`
+ *
+ * @param MethodReflector|array{class-string,string}|class-string|string $action
+ */
+function uri(array|string|MethodReflector $action, mixed ...$params): string
+{
+    return get(UriGenerator::class)->createUri($action, ...$params);
+}
 
-    /**
-     * Checks whether the given controller action matches the current URI.
-     */
-    function is_current_uri(array|string|MethodReflector $action, mixed ...$params): bool
-    {
-        if ($action instanceof MethodReflector) {
-            $action = [
-                $action->getDeclaringClass()->getName(),
-                $action->getName(),
-            ];
-        }
+/**
+ * Creates a URI that is signed with a secret key, ensuring that it cannot be tampered with.
+ *
+ * `$action` is one of :
+ * - Controller FQCN and its method as a tuple
+ * - Invokable controller FQCN
+ * - URI string starting with `/`
+ *
+ * @param MethodReflector|array{class-string,string}|class-string|string $action
+ */
+function signed_uri(array|string|MethodReflector $action, mixed ...$params): string
+{
+    return get(UriGenerator::class)->createSignedUri($action, ...$params);
+}
 
-        $router = get(Router::class);
+/**
+ * Creates an absolute URI that is signed with a secret key and will expire after the specified duration.
+ *
+ * `$action` is one of :
+ * - Controller FQCN and its method as a tuple
+ * - Invokable controller FQCN
+ * - URI string starting with `/`
+ *
+ * @param MethodReflector|array{class-string,string}|class-string|string $action
+ */
+function temporary_signed_uri(array|string|MethodReflector $action, DateTime|Duration|int $duration, mixed ...$params): string
+{
+    return get(UriGenerator::class)->createTemporarySignedUri($action, $duration, ...$params);
+}
 
-        return $router->isCurrentUri(
-            $action,
-            ...$params,
-        );
-    }
+/**
+ * Checks if the URI to the given `$action` would match the current route.
+ *
+ * `$action` is one of :
+ * - Controller FQCN and its method as a tuple
+ * - Invokable controller FQCN
+ * - URI string starting with `/`
+ *
+ * @param MethodReflector|array{class-string,string}|class-string|string $action
+ */
+function is_current_uri(array|string|MethodReflector $action, mixed ...$params): bool
+{
+    return get(UriGenerator::class)->isCurrentUri($action, ...$params);
 }
