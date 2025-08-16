@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest;
+namespace Tempest\Router;
 
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;

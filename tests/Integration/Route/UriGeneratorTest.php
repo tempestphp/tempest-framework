@@ -16,7 +16,7 @@ use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 final class UriGeneratorTest extends FrameworkIntegrationTestCase
 {

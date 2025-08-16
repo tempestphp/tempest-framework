@@ -34,9 +34,9 @@ use Tempest\View\ViewRenderer;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Throwable;
 
+use function Tempest\Router\uri;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
-use function Tempest\uri;
 
 final class StaticGenerateCommand
 {

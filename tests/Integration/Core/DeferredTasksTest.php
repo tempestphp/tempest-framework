@@ -11,7 +11,7 @@ use Tests\Tempest\Fixtures\Controllers\DeferController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\defer;
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 /**
  * @internal

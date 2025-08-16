@@ -22,7 +22,7 @@ use Tests\Tempest\Fixtures\Controllers\AdminController;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 /**
  * @internal

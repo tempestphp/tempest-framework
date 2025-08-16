@@ -13,7 +13,7 @@ use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\View;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 use function Tempest\view;
 
 final readonly class StaticPageController

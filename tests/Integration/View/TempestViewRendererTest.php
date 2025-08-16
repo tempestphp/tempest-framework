@@ -10,7 +10,7 @@ use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 use function Tempest\view;
 
 /**
@@ -560,7 +560,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         </head> 
         <body class="flex justify-center items-center">
 
-        <h1 class="text-5xl font-bold text-[#4f95d1]">Tempest</h1>
+        <h1 class="font-bold text-[#4f95d1] text-5xl">Tempest</h1>
         </body> 
         </html>
         HTML;
@@ -773,7 +773,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
                 <x-input
                     name="test"
                     type="text"
-                    class="py-2.5 sm:py-3 px-4 block w-full border-gray-500 border-1 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="This is placeholder" />
+                    class="block dark:bg-neutral-900 disabled:opacity-50 px-4 py-2.5 sm:py-3 border-1 border-gray-500 dark:border-neutral-700 focus:border-blue-500 rounded-lg focus:ring-blue-500 dark:focus:ring-neutral-600 w-full dark:text-neutral-400 sm:text-sm disabled:pointer-events-none dark:placeholder-neutral-500" placeholder="This is placeholder" />
                 <!-- end -->
             </div>
             --}}
