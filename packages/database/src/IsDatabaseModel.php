@@ -9,13 +9,9 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
-use Tempest\Database\Virtual;
-use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-
 use Tempest\Validation\SkipValidation;
-use function Tempest\Database\query;
 
 trait IsDatabaseModel
 {
