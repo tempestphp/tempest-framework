@@ -24,7 +24,7 @@ final class CurrentAuthenticatableTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateServiceAccountTableMigration::class);
 
-        $this->container->config(new AuthConfig(authenticatable: ServiceAccount::class));
+        $this->container->config(new AuthConfig(authenticatables: [ServiceAccount::class]));
     }
 
     #[Test]

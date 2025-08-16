@@ -21,14 +21,21 @@ final class AuthenticatableDiscoveryTest extends FrameworkIntegrationTestCase
 
         $discovery = new AuthenticatableDiscovery($config);
         $discovery->setItems(new DiscoveryItems([]));
-        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(Device::class));
+        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(AuthenticatableDevice::class));
+        $discovery->discover(new DiscoveryLocation('', ''), new ClassReflector(AuthenticatableUser::class));
         $discovery->apply();
 
-        $this->assertSame(Device::class, $config->authenticatable);
+        $this->assertContains(AuthenticatableDevice::class, $config->authenticatables);
+        $this->assertContains(AuthenticatableUser::class, $config->authenticatables);
     }
 }
 
-final class Device implements CanAuthenticate
+final class AuthenticatableDevice implements CanAuthenticate
+{
+    public PrimaryKey $id;
+}
+
+final class AuthenticatableUser implements CanAuthenticate
 {
     public PrimaryKey $id;
 }

@@ -9,7 +9,8 @@ use Tempest\Http\Session\Session;
 
 final readonly class SessionAuthenticator implements Authenticator
 {
-    public const string AUTHENTICATABLE_KEY = '#authenticatable';
+    public const string AUTHENTICATABLE_KEY = '#authenticatable:id';
+    public const string AUTHENTICATABLE_CLASS = '#authenticatable:class';
 
     public function __construct(
         private AuthConfig $authConfig,
@@ -19,6 +20,11 @@ final readonly class SessionAuthenticator implements Authenticator
 
     public function authenticate(CanAuthenticate $authenticatable): void
     {
+        $this->session->set(
+            key: self::AUTHENTICATABLE_CLASS,
+            value: $authenticatable::class,
+        );
+
         $this->session->set(
             key: self::AUTHENTICATABLE_KEY,
             value: $this->authenticatableResolver->resolveId($authenticatable),
@@ -34,11 +40,12 @@ final readonly class SessionAuthenticator implements Authenticator
     public function current(): ?CanAuthenticate
     {
         $id = $this->session->get(self::AUTHENTICATABLE_KEY);
+        $class = $this->session->get(self::AUTHENTICATABLE_CLASS);
 
-        if (! $id) {
+        if (! $id || ! $class) {
             return null;
         }
 
-        return $this->authenticatableResolver->resolve($id);
+        return $this->authenticatableResolver->resolve($id, $class);
     }
 }

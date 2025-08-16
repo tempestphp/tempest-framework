@@ -15,11 +15,11 @@ use UnitEnum;
 final class AuthConfig
 {
     /**
-     * @param null|class-string<CanAuthenticate> $authenticatable
+     * @param array<class-string<CanAuthenticate>> $authenticatables
      * @param array<class-string,array<string,MethodReflector[]>> $policies
      */
     public function __construct(
-        public ?string $authenticatable = null,
+        public array $authenticatables = [],
         public array $policies = [],
     ) {}
 
