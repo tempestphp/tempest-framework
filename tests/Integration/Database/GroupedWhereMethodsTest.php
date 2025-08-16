@@ -352,8 +352,6 @@ final class Product
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public string $name,
         public string $category,

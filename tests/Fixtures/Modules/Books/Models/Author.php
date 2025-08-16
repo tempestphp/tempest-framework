@@ -14,9 +14,6 @@ final class Author implements Bindable
 {
     use IsDatabaseModel;
 
-    #[SkipValidation]
-    public PrimaryKey $id;
-
     public function __construct(
         public string $name,
         public ?AuthorType $type = AuthorType::A,
@@ -25,9 +22,4 @@ final class Author implements Bindable
         public array $books = [],
         public ?Publisher $publisher = null,
     ) {}
-
-    #[Virtual]
-    public int|string $bindingValue {
-        get => $this->id->value;
-    }
 }

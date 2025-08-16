@@ -664,8 +664,6 @@ final class Foo
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public string $bar;
 }
 
@@ -865,15 +863,11 @@ final class CreateHasManyThroughTable implements DatabaseMigration
 final class AttributeTableNameModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
 
 final class BaseModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
 
 final readonly class CarbonCaster implements Caster
@@ -887,8 +881,6 @@ final readonly class CarbonCaster implements Caster
 final class CarbonModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public Carbon $createdAt,
@@ -917,8 +909,6 @@ final class CasterModel
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public DateTimeImmutable $date,
         public array $array_prop,
@@ -930,8 +920,6 @@ final class CasterModel
 final class ChildModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     #[HasOne]
     public ThroughModel $through;
@@ -959,8 +947,6 @@ final class ModelWithValidation
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[IsBetween(min: 1, max: 10)]
     public int $index;
 
@@ -972,8 +958,6 @@ final class ModelWithValidation
 final class ParentModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public string $name,
@@ -988,15 +972,12 @@ final class StaticMethodTableNameModel
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-}
+
 
 #[Table('through')]
 final class ThroughModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public ParentModel $parent,
@@ -1010,8 +991,6 @@ final class TestUser
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     /** @var \Tests\Tempest\Integration\Database\Builder\TestPost[] */
     #[HasMany]
     public array $posts = [];
@@ -1024,8 +1003,6 @@ final class TestUser
 final class TestPost
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public string $title,

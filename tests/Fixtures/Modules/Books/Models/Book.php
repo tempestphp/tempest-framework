@@ -16,9 +16,6 @@ final class Book implements Bindable
 {
     use IsDatabaseModel;
 
-    #[SkipValidation]
-    public PrimaryKey $id;
-
     #[HasLength(min: 1, max: 120)]
     public string $title;
 
@@ -29,9 +26,4 @@ final class Book implements Bindable
 
     #[HasOne]
     public ?Isbn $isbn = null;
-
-    #[Virtual]
-    public int|string $bindingValue {
-        get => $this->id->value;
-    }
 }

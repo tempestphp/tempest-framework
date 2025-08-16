@@ -10,13 +10,23 @@ use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\Virtual;
+use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
+use Tempest\Validation\SkipValidation;
 use function Tempest\Database\query;
 
 trait IsDatabaseModel
 {
+    #[SkipValidation]
+    public PrimaryKey $id;
+
+    #[Virtual]
+    public int|string $bindingValue {
+        get => $this->id->value;
+    }
+
     /**
      * Returns a builder for selecting records using this model's table.
      *

@@ -12,8 +12,6 @@ final class ObjectFactoryA
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[CastWith(ObjectFactoryACaster::class)]
     public string $prop;
 }

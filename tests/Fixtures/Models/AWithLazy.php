@@ -14,8 +14,6 @@ final class AWithLazy
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         #[Lazy]
         public B $b,

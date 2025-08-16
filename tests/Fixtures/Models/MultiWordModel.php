@@ -10,6 +10,4 @@ use Tempest\Database\PrimaryKey;
 final class MultiWordModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
