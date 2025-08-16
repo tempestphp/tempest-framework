@@ -19,7 +19,7 @@ use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 final class UriGeneratorTest extends FrameworkIntegrationTestCase
 {

@@ -2,7 +2,7 @@
 
 use Tests\Tempest\Fixtures\Modules\Home\HomeController;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 ?>
 

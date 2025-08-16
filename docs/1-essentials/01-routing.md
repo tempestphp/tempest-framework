@@ -165,7 +165,7 @@ public function docsRedirect(string $path): Redirect
 Tempest provides a `\Tempest\uri` function that can be used to generate a URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
 
 ```php
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 // Invokable classes can be referenced directly:
 uri(HomeController::class);
@@ -191,7 +191,7 @@ A signed URI may be used to ensure that the URI was not modified after it was cr
 To create a signed URI, you may use the `signed_uri` function. This function accepts the same arguments as `uri`, and returns the URI with a `signature` parameter:
 
 ```php
-use function Tempest\signed_uri;
+use function Tempest\Router\signed_uri;
 
 signed_uri(
     action: [MailingListController::class, 'unsubscribe'],
@@ -202,7 +202,7 @@ signed_uri(
 Alternatively, you may use `temporary_signed_uri` to provide a duration after which the signed URI will expire, providing an extra layer of security.
 
 ```php
-use function Tempest\temporary_signed_uri;
+use function Tempest\Router\temporary_signed_uri;
 
 temporary_signed_uri(
     action: PasswordlessAuthenticationController::class,
@@ -236,7 +236,7 @@ final class PasswordlessAuthenticationController
 To determine whether the current request matches a specific controller action, Tempest provides the `is_current_uri` function. This function accepts the same arguments as `uri`, and returns a boolean.
 
 ```php
-use function Tempest\is_current_uri;
+use function Tempest\Router\is_current_uri;
 
 // Current URI is: /aircraft/1
 
@@ -290,7 +290,7 @@ Once you have created a request class, you may simply inject it into a controlle
 use Tempest\Router\Post;
 use Tempest\Http\Responses\Redirect;
 use function Tempest\map;
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 final readonly class AirportController
 {
