@@ -13,8 +13,6 @@ final class A
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public B $b,
     ) {}

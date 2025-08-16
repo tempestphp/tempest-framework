@@ -11,8 +11,6 @@ final class Chapter
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public string $title;
 
     public ?string $contents;

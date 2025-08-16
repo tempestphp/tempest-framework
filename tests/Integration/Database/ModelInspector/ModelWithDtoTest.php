@@ -65,7 +65,5 @@ final class ModelWithDtoTestModelWithSerializedDto
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public ModelWithDtoTestDtoForModelWithSerializer $dto;
 }

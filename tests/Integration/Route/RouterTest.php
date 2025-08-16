@@ -11,6 +11,7 @@ use Laminas\Diactoros\Uri;
 use ReflectionException;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
@@ -26,6 +27,7 @@ use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -211,6 +213,30 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '/with-enum/bar',
             uri(ControllerWithEnumBinding::class, input: EnumForController::BAR),
+        );
+    }
+
+    public function test_generate_uri_with_bindable_model(): void
+    {
+        $book = Book::new(
+            id: new PrimaryKey('abc'),
+        );
+
+        $this->assertSame(
+            '/books/abc',
+            uri([BookController::class, 'show'], book: $book),
+        );
+    }
+
+    public function test_generate_uri_with_primary_key(): void
+    {
+        $book = Book::new(
+            id: new PrimaryKey('abc'),
+        );
+
+        $this->assertSame(
+            '/books/abc',
+            uri([BookController::class, 'show'], book: $book->id),
         );
     }
 

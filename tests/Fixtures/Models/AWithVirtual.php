@@ -15,8 +15,6 @@ final class AWithVirtual
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[Virtual]
     public int $fake {
         get => -$this->id->value;

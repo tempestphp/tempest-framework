@@ -9,14 +9,20 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
-use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-
-use function Tempest\Database\query;
+use Tempest\Validation\SkipValidation;
 
 trait IsDatabaseModel
 {
+    #[SkipValidation]
+    public PrimaryKey $id;
+
+    #[Virtual]
+    public int|string $bindingValue {
+        get => $this->id->value;
+    }
+
     /**
      * Returns a builder for selecting records using this model's table.
      *
@@ -58,7 +64,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): static
+    public static function findById(string|int|PrimaryKey $id): self
     {
         return self::get($id);
     }
@@ -66,7 +72,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function resolve(string|int|PrimaryKey $id): static
+    public static function resolve(string|int|PrimaryKey $id): self
     {
         return query(self::class)->resolve($id);
     }
@@ -173,13 +179,15 @@ trait IsDatabaseModel
         $relations = [];
 
         foreach (new ClassReflector($this)->getPublicProperties() as $property) {
-            if (! $property->getValue($this)) {
+            if (! $property->isInitialized($this) || ! $property->getValue($this)) {
                 continue;
             }
 
-            if ($model->isRelation($property->getName())) {
-                $relations[] = $property->getName();
+            if (! $model->isRelation($property->getName())) {
+                continue;
             }
+
+            $relations[] = $property->getName();
         }
 
         $this->load(...$relations);

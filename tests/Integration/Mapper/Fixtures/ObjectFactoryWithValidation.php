@@ -12,8 +12,6 @@ final class ObjectFactoryWithValidation
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[HasLength(min: 2)]
     public string $prop;
 }

@@ -24,7 +24,7 @@ final readonly class DiscoveredRoute implements Route
             self::getRouteParams($route->uri),
             $route->middleware,
             $methodReflector,
-            $route->without,
+            $route->without ?? [],
         );
     }
 

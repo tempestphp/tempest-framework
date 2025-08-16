@@ -8,6 +8,7 @@ use BackedEnum;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Database\PrimaryKey;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -126,6 +127,8 @@ final readonly class GenericRouter implements Router
 
             if ($value instanceof BackedEnum) {
                 $value = $value->value;
+            } elseif ($value instanceof Bindable) {
+                $value = $value->bindingValue;
             }
 
             $uri = $uri->replaceRegex(

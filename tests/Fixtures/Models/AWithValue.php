@@ -14,8 +14,6 @@ final class AWithValue
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public string $name,
     ) {}

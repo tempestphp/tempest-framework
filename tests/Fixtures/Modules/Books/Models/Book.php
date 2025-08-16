@@ -7,6 +7,7 @@ namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
+use Tempest\Database\Virtual;
 use Tempest\Router\Bindable;
 use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\SkipValidation;
@@ -14,9 +15,6 @@ use Tempest\Validation\SkipValidation;
 final class Book implements Bindable
 {
     use IsDatabaseModel;
-
-    #[SkipValidation]
-    public PrimaryKey $id;
 
     #[HasLength(min: 1, max: 120)]
     public string $title;

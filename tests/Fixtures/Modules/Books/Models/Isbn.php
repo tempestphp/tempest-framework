@@ -9,8 +9,6 @@ final class Isbn
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public string $value;
 
     public Book $book;

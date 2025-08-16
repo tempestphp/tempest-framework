@@ -68,8 +68,6 @@ final class UserWithDtoSettings
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public string $name,
         public DtoSettings $settings,
