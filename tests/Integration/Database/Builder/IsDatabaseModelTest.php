@@ -971,6 +971,7 @@ final class ParentModel
 final class StaticMethodTableNameModel
 {
     use IsDatabaseModel;
+}
 
 
 
