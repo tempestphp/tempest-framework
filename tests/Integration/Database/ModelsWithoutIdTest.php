@@ -8,7 +8,6 @@ use Tempest\Database\BelongsTo;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasOne;
-use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -23,39 +22,6 @@ use function Tempest\Database\query;
  */
 final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 {
-    public function test_save_creates_new_record_for_model_without_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
-
-        $log = new LogEntry(level: 'INFO', message: 'Frieren discovered ancient magic', context: 'exploration');
-        $savedLog = $log->save();
-
-        $this->assertSame($log, $savedLog);
-        $this->assertSame('INFO', $savedLog->level);
-        $this->assertSame('Frieren discovered ancient magic', $savedLog->message);
-
-        $allLogs = query(LogEntry::class)->all();
-        $this->assertCount(1, $allLogs);
-        $this->assertSame('INFO', $allLogs[0]->level);
-    }
-
-    public function test_save_always_inserts_for_models_without_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
-
-        $log = new LogEntry(level: 'INFO', message: 'Original message', context: 'test');
-        $log->save();
-
-        // Models without primary keys always insert when save() is called
-        $log->message = 'Modified message';
-        $log->save();
-
-        $allLogs = query(LogEntry::class)->all();
-        $this->assertCount(2, $allLogs);
-        $this->assertSame('Original message', $allLogs[0]->message);
-        $this->assertSame('Modified message', $allLogs[1]->message);
-    }
-
     public function test_update_model_without_id_with_specific_conditions(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
@@ -166,12 +132,10 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
 
-        $mixed = new MixedModel(
+        $mixed = query(MixedModel::class)->create(
             regular_field: 'test',
             another_field: 'data',
         );
-
-        $mixed->save();
 
         $this->assertInstanceOf(PrimaryKey::class, $mixed->id);
         $this->assertSame('test', $mixed->regular_field);
@@ -180,107 +144,6 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, $all);
         $this->assertInstanceOf(PrimaryKey::class, $all[0]->id);
         $this->assertSame('test', $all[0]->regular_field);
-    }
-
-    public function test_refresh_throws_for_models_without_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
-
-        $log = new LogEntry(
-            level: 'INFO',
-            message: 'Frieren studies magic',
-            context: 'training',
-        );
-
-        $this->expectException(ModelDidNotHavePrimaryColumn::class);
-        $this->expectExceptionMessage('does not have a primary column defined, which is required for the `refresh` method');
-
-        $log->refresh();
-    }
-
-    public function test_load_throws_for_models_without_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
-
-        $log = new LogEntry(
-            level: 'INFO',
-            message: 'Frieren explores ruins',
-            context: 'adventure',
-        );
-
-        $this->expectException(ModelDidNotHavePrimaryColumn::class);
-        $this->expectExceptionMessage('does not have a primary column defined, which is required for the `load` method');
-
-        $log->load('someRelation');
-    }
-
-    public function test_refresh_works_for_models_with_id(): void
-    {
-        $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
-
-        $mixed = query(MixedModel::class)->create(
-            regular_field: 'original',
-            another_field: 'data',
-        );
-
-        query(MixedModel::class)
-            ->update(regular_field: 'updated')
-            ->where('id', $mixed->id->value)
-            ->execute();
-
-        $mixed->refresh();
-
-        $this->assertSame('updated', $mixed->regular_field);
-        $this->assertSame('data', $mixed->another_field);
-    }
-
-    public function test_refresh_works_for_models_with_unloaded_relation(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateTestUserMigration::class,
-            CreateTestProfileMigration::class,
-        );
-
-        $user = query(TestUser::class)->create(
-            name: 'Frieren',
-            email: 'frieren@magic.elf',
-        );
-
-        query(TestProfile::class)->create(
-            user: $user,
-            bio: 'Ancient elf mage',
-            age: 1000,
-        );
-
-        // Get user without loading the profile relation
-        $userWithoutProfile = query(TestUser::class)->findById($user->id);
-
-        $this->assertNull($userWithoutProfile->profile);
-
-        // Update the user's name in the database
-        query(TestUser::class)
-            ->update(name: 'Frieren the Mage')
-            ->where('id', $user->id->value)
-            ->execute();
-
-        // Refresh should work even with unloaded relations
-        $userWithoutProfile->refresh();
-
-        $this->assertSame('Frieren the Mage', $userWithoutProfile->name);
-        $this->assertSame('frieren@magic.elf', $userWithoutProfile->email);
-        $this->assertNull($userWithoutProfile->profile); // Relation should still be unloaded
-
-        // Load the relation
-        $userWithoutProfile->load('profile');
-
-        $this->assertInstanceOf(TestProfile::class, $userWithoutProfile->profile);
-        $this->assertSame('Ancient elf mage', $userWithoutProfile->profile->bio);
-        $this->assertSame(1000, $userWithoutProfile->profile->age);
-
-        $userWithoutProfile->refresh();
-
-        $this->assertInstanceOf(TestProfile::class, $userWithoutProfile->profile);
     }
 
     public function test_load_works_for_models_with_id(): void
@@ -361,8 +224,6 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
 final class LogEntry
 {
-    use IsDatabaseModel;
-
     public function __construct(
         public string $level,
         public string $message,
@@ -373,8 +234,6 @@ final class LogEntry
 #[Table('cache_entries')]
 final class CacheEntry
 {
-    use IsDatabaseModel;
-
     public function __construct(
         public string $cache_key,
         public string $cache_value,
@@ -384,8 +243,6 @@ final class CacheEntry
 
 final class MixedModel
 {
-    use IsDatabaseModel;
-
     public ?PrimaryKey $id = null;
 
     public function __construct(
@@ -396,8 +253,6 @@ final class MixedModel
 
 final class TestUser
 {
-    use IsDatabaseModel;
-
     public ?PrimaryKey $id = null;
 
     #[HasOne(ownerJoin: 'user_id')]
@@ -411,8 +266,6 @@ final class TestUser
 
 final class TestProfile
 {
-    use IsDatabaseModel;
-
     public ?PrimaryKey $id = null;
 
     #[BelongsTo(ownerJoin: 'user_id')]

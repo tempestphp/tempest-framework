@@ -179,13 +179,15 @@ trait IsDatabaseModel
         $relations = [];
 
         foreach (new ClassReflector($this)->getPublicProperties() as $property) {
-            if (! $property->getValue($this)) {
+            if (! $property->isInitialized($this) || ! $property->getValue($this)) {
                 continue;
             }
 
-            if ($model->isRelation($property->getName())) {
-                $relations[] = $property->getName();
+            if (! $model->isRelation($property->getName())) {
+                continue;
             }
+
+            $relations[] = $property->getName();
         }
 
         $this->load(...$relations);
