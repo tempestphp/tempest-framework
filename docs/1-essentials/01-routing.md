@@ -162,7 +162,7 @@ public function docsRedirect(string $path): Redirect
 
 ## Generating URIs
 
-Tempest provides a `\Tempest\uri` function that can be used to generate an URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
+Tempest provides a `\Tempest\uri` function that can be used to generate a URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
 
 ```php
 use function Tempest\uri;
@@ -181,12 +181,59 @@ uri([AircraftController::class, 'show'], id: $aircraft->id);
 ```
 
 :::info
-Note that Tempest does not have named routes, and currently doesn't plan on adding them. However, if you have an argument for them, feel free to hop on our [Discord server](/discord){:ssg-ignore="true"} to discuss it.
+URI-related methods are also available by injecting the {b`Tempest\Router\UriGenerator`} class into your controller.
 :::
 
-## Matching the current URI
+### Signed URIs
 
-To determine whether the current request matches a specific controller action, Tempest provides the `\Tempest\is_current_uri` function. This function accepts the same arguments as `uri`, and returns a boolean.
+A signed URI may be used to ensure that the URI was not modified after it was created. This is useful for implementing login links, or other endpoints that need protection against tampering.
+
+To create a signed URI, you may use the `signed_uri` function. This function accepts the same arguments as `uri`, and returns the URI with a `signature` parameter:
+
+```php
+use function Tempest\signed_uri;
+
+signed_uri(
+    action: [MailingListController::class, 'unsubscribe'],
+    email: $email
+);
+```
+
+Alternatively, you may use `temporary_signed_uri` to provide a duration after which the signed URI will expire, providing an extra layer of security.
+
+```php
+use function Tempest\temporary_signed_uri;
+
+temporary_signed_uri(
+    action: PasswordlessAuthenticationController::class,
+    duration: Duration::minutes(10),
+    userId: $userId
+);
+```
+
+To ensure the validity of a signed URL, you should call the `hasValidSignature` method on the {`Tempest\Router\UriGenerator`} class.
+
+```php
+final class PasswordlessAuthenticationController
+{
+    public function __construct(
+        private readonly UriGenerator $uri,
+    ) {}
+
+    public function __invoke(Request $request): Response
+    {
+        if (! $this->uri->hasValidSignature($request)) {
+            return new Invalid();
+        }
+
+        // ...
+    }
+}
+```
+
+### Matching the current URI
+
+To determine whether the current request matches a specific controller action, Tempest provides the `is_current_uri` function. This function accepts the same arguments as `uri`, and returns a boolean.
 
 ```php
 use function Tempest\is_current_uri;
