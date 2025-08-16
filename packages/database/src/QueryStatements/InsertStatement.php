@@ -46,12 +46,19 @@ final class InsertStatement implements QueryStatement
             })
             ->implode(', ');
 
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES %s',
-            $this->table,
-            $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
-            $entryPlaceholders,
-        );
+        if ($columns->isEmpty()) {
+            $sql = match ($dialect) {
+                DatabaseDialect::MYSQL => sprintf('INSERT INTO %s () VALUES ()', $this->table),
+                default => sprintf('INSERT INTO %s DEFAULT VALUES', $this->table),
+            };
+        } else {
+            $sql = sprintf(
+                'INSERT INTO %s (%s) VALUES %s',
+                $this->table,
+                $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
+                $entryPlaceholders,
+            );
+        }
 
         if ($dialect === DatabaseDialect::POSTGRESQL) {
             $sql .= ' RETURNING *';

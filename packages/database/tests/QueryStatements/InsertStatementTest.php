@@ -31,6 +31,16 @@ final class InsertStatementTest extends TestCase
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
+    public function test_insert_empty_row(): void
+    {
+        $tableDefinition = new TableDefinition('foo', 'bar');
+        $statement = new InsertStatement($tableDefinition);
+
+        $this->assertSame('INSERT INTO `foo` AS `bar` () VALUES ()', $statement->compile(DatabaseDialect::MYSQL));
+        $this->assertSame('INSERT INTO `foo` AS `bar` DEFAULT VALUES', $statement->compile(DatabaseDialect::SQLITE));
+        $this->assertSame('INSERT INTO `foo` AS `bar` DEFAULT VALUES RETURNING *', $statement->compile(DatabaseDialect::POSTGRESQL));
+    }
+
     public function test_exception_on_column_mismatch(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
