@@ -28,4 +28,8 @@ final class Book implements Bindable
 
     #[HasOne]
     public ?Isbn $isbn = null;
+
+    public int|string $bindingValue {
+        get => $this->id->value;
+    }
 }

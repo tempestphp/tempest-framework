@@ -24,4 +24,8 @@ final class Author implements Bindable
         public array $books = [],
         public ?Publisher $publisher = null,
     ) {}
+
+    public int|string $bindingValue {
+        get => $this->id->value;
+    }
 }

@@ -58,7 +58,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): static
+    public static function findById(string|int|PrimaryKey $id): self
     {
         return self::get($id);
     }
@@ -66,7 +66,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function resolve(string|int|PrimaryKey $id): static
+    public static function resolve(string|int|PrimaryKey $id): self
     {
         return query(self::class)->resolve($id);
     }
