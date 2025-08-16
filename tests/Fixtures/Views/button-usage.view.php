@@ -2,7 +2,7 @@
 
 use Tests\Tempest\Fixtures\Controllers\DocsController;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 ?>
 

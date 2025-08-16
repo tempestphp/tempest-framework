@@ -14,7 +14,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Requests\BookRequest;
 use Tests\Tempest\Fixtures\Requests\ValidationRequest;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 final readonly class ValidationController
 {

@@ -9,7 +9,7 @@ use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 use function Tempest\view;
 
 /**
