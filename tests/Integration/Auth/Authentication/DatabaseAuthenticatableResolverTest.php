@@ -23,12 +23,12 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
     {
         $this->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
 
-        $this->container->config(new AuthConfig(authenticatable: ApiToken::class));
+        $this->container->config(new AuthConfig(authenticatables: [ApiToken::class]));
 
         $authenticatable = query(ApiToken::class)->create();
 
         $authenticatableResolver = $this->container->get(AuthenticatableResolver::class);
-        $resolved = $authenticatableResolver->resolve($authenticatable->id);
+        $resolved = $authenticatableResolver->resolve($authenticatable->id, ApiToken::class);
 
         $this->assertEquals($authenticatable->id, $resolved->id);
     }
@@ -38,7 +38,7 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
     {
         $this->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
 
-        $this->container->config(new AuthConfig(authenticatable: ApiToken::class));
+        $this->container->config(new AuthConfig(authenticatables: [ApiToken::class]));
 
         $authenticatable = query(ApiToken::class)->create(id: 10);
 

@@ -243,6 +243,20 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function policy_with_multiple_authenticatables(): void
+    {
+        $this->registerPoliciesFrom(MultiAuthenticatablePolicy::class);
+
+        $accessControl = $this->container->get(AccessControl::class);
+        $document = new Document(title: 'Test Document', authorId: 1);
+        $user = new User(userId: 1);
+        $serviceAccount = new ServiceAccount(accountId: 1);
+
+        $this->assertTrue($accessControl->isGranted('view', $document, $user)->granted);
+        $this->assertTrue($accessControl->isGranted('view', $document, $serviceAccount)->granted);
+    }
+
+    #[Test]
     public function throws_exception_when_policy_resource_parameter_type_is_invalid(): void
     {
         $this->registerPoliciesFrom(InvalidResourceTypePolicy::class);
@@ -321,6 +335,17 @@ final class User implements CanAuthenticate
         int $userId,
     ) {
         $this->id = new PrimaryKey($userId);
+    }
+}
+
+final class ServiceAccount implements CanAuthenticate
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        int $accountId,
+    ) {
+        $this->id = new PrimaryKey($accountId);
     }
 }
 
@@ -429,6 +454,19 @@ final class MultiActionPolicy
         }
 
         return $resource?->authorId === $subject->id->value;
+    }
+}
+
+final class MultiAuthenticatablePolicy
+{
+    #[PolicyFor(Document::class)]
+    public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
+    {
+        if (! ($subject instanceof CanAuthenticate)) {
+            return false;
+        }
+
+        return true;
     }
 }
 

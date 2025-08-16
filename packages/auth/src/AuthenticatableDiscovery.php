@@ -26,7 +26,7 @@ final class AuthenticatableDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as $discoveryItem) {
-            $this->authConfig->authenticatable = $discoveryItem;
+            $this->authConfig->authenticatables[] = $discoveryItem;
         }
     }
 }
