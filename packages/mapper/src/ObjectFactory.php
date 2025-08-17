@@ -13,6 +13,7 @@ use Tempest\Mapper\Mappers\JsonToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToJsonMapper;
 use Tempest\Reflection\FunctionReflector;
+use Tempest\Support\Arr;
 use Tempest\Support\Json;
 
 /** @template ClassType */
@@ -47,7 +48,7 @@ final class ObjectFactory
     {
         $this->from = $data;
 
-        return $this;
+        return clone $this;
     }
 
     /**
@@ -124,7 +125,14 @@ final class ObjectFactory
         }
 
         if (is_array($this->from)) {
-            return $this->from;
+            if (! $this->isCollection) {
+                return $this->from;
+            }
+
+            return Arr\map_with_keys(
+                array: $this->from,
+                map: fn (mixed $item, mixed $key) => yield $key => $this->withData($item)->toArray(),
+            );
         }
 
         if (Json\is_valid($this->from)) {

@@ -18,6 +18,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
@@ -354,6 +355,28 @@ final class MapperTest extends FrameworkIntegrationTestCase
                 ['name' => 'a'],
                 ['name' => 'b'],
             ],
+        ], $array);
+    }
+
+    public function test_array_of_objects_to_array(): void
+    {
+        $objects = [
+            new ObjectA('a', 'b'),
+            new ObjectA('c', 'd'),
+            new NestedObjectA(
+                items: [
+                    new NestedObjectB('a'),
+                    new NestedObjectB('b'),
+                ],
+            ),
+        ];
+
+        $array = map($objects)->collection()->toArray();
+
+        $this->assertSame([
+            ['a' => 'a', 'b' => 'b'],
+            ['a' => 'c', 'b' => 'd'],
+            ['items' => [['name' => 'a'], ['name' => 'b']]],
         ], $array);
     }
 }
