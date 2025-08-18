@@ -6,8 +6,6 @@ use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
-use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
-use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\PrimaryKey;
@@ -311,7 +309,7 @@ final class ModelInspector
             return false;
         }
 
-        if (! $relation instanceof Relation) {
+        if (! ($relation instanceof Relation)) {
             $relation = $this->getRelation($relation);
         }
 
@@ -327,7 +325,7 @@ final class ModelInspector
             return false;
         }
 
-        return  true;
+        return true;
     }
 
     public function getSelectFields(): ImmutableArray
@@ -337,6 +335,10 @@ final class ModelInspector
         }
 
         $selectFields = arr();
+
+        if ($primaryKey = $this->getPrimaryKeyProperty()) {
+            $selectFields[] = $primaryKey->getName();
+        }
 
         foreach ($this->reflector->getPublicProperties() as $property) {
             $relation = $this->getRelation($property->getName());
@@ -358,10 +360,6 @@ final class ModelInspector
             } else {
                 $selectFields[] = $property->getName();
             }
-        }
-
-        if ($primaryKey = $this->getPrimaryKeyProperty()) {
-            $selectFields[] = $primaryKey->getName();
         }
 
         return $selectFields;
@@ -509,10 +507,6 @@ final class ModelInspector
         return match ($primaryKeys->count()) {
             0 => null,
             default => $primaryKeys->first(),
-//            default => throw ModelHadMultiplePrimaryColumns::found(
-//                model: $this->model,
-//                properties: $primaryKeys->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
-//            ),
         };
     }
 

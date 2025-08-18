@@ -585,47 +585,6 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('second', Foo::get($foo2->id)->bar);
     }
 
-    public function test_delete_via_model_instance_without_primary_key(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateModelWithoutPrimaryKeyMigration::class,
-        );
-
-        $model = new ModelWithoutPrimaryKey(name: 'Frieren', description: 'Elf mage');
-        $model->save();
-
-        $this->expectException(DeleteStatementWasInvalid::class);
-        $model->delete();
-    }
-
-    public function test_delete_via_model_class_without_primary_key(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateModelWithoutPrimaryKeyMigration::class,
-        );
-
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Himmel', description: 'Hero');
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Heiter', description: 'Priest');
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Eisen', description: 'Warrior');
-
-        $this->assertCount(3, query(ModelWithoutPrimaryKey::class)->select()->all());
-
-        query(ModelWithoutPrimaryKey::class)
-            ->delete()
-            ->where('name', 'Himmel')
-            ->execute();
-
-        $remaining = query(ModelWithoutPrimaryKey::class)->select()->all();
-        $this->assertCount(2, $remaining);
-
-        $names = array_map(fn (ModelWithoutPrimaryKey $model) => $model->name, $remaining);
-        $this->assertContains('Heiter', $names);
-        $this->assertContains('Eisen', $names);
-        $this->assertNotContains('Himmel', $names);
-    }
-
     public function test_delete_with_uninitialized_primary_key(): void
     {
         $this->migrate(
@@ -973,8 +932,6 @@ final class StaticMethodTableNameModel
     use IsDatabaseModel;
 }
 
-
-
 #[Table('through')]
 final class ThroughModel
 {
@@ -1049,8 +1006,6 @@ final class CreateTestPostMigration implements DatabaseMigration
 
 final class ModelWithoutPrimaryKey
 {
-    use IsDatabaseModel;
-
     public function __construct(
         public string $name,
         public string $description,

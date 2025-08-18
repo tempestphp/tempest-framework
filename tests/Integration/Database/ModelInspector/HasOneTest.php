@@ -103,6 +103,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
 #[Table('relation')]
 final class HasOneTestRelationModel
 {
+    public PrimaryKey $id;
+
     #[HasOne]
     public HasOneTestOwnerModel $owner;
 
