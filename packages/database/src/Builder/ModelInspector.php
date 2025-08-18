@@ -108,6 +108,14 @@ final class ModelInspector
         $values = [];
 
         foreach ($this->reflector->getProperties() as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
             if (! $property->isInitialized($this->instance)) {
                 continue;
             }
@@ -247,6 +255,81 @@ final class ModelInspector
         return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
     }
 
+    /**
+     * @return \Tempest\Support\Arr\ImmutableArray<array-key, Relation>
+     */
+    public function getRelations(): ImmutableArray
+    {
+        if (! $this->isObjectModel()) {
+            return arr();
+        }
+
+        $relationFields = arr();
+
+        foreach ($this->reflector->getPublicProperties() as $property) {
+            if ($relation = $this->getRelation($property->getName())) {
+                $relationFields[] = $relation;
+            }
+        }
+
+        return $relationFields;
+    }
+
+    /**
+     * @return \Tempest\Support\Arr\ImmutableArray<array-key, PropertyReflector>
+     */
+    public function getValueFields(): ImmutableArray
+    {
+        if (! $this->isObjectModel()) {
+            return arr();
+        }
+
+        $valueFields = arr();
+
+        foreach ($this->reflector->getPublicProperties() as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
+            if ($this->isRelation($property->getName())) {
+                continue;
+            }
+
+            $valueFields[] = $property;
+        }
+
+        return $valueFields;
+    }
+
+    public function isRelationLoaded(string|PropertyReflector|Relation $relation): bool
+    {
+        if (! $this->isObjectModel()) {
+            return false;
+        }
+
+        if (! $relation instanceof Relation) {
+            $relation = $this->getRelation($relation);
+        }
+
+        if (! $relation) {
+            return false;
+        }
+
+        if (! $relation->property->isInitialized($this->instance)) {
+            return false;
+        }
+
+        if ($relation->property->getValue($this->instance) === null) {
+            return false;
+        }
+
+        return  true;
+    }
+
     public function getSelectFields(): ImmutableArray
     {
         if (! $this->isObjectModel()) {
@@ -266,11 +349,19 @@ final class ModelInspector
                 continue;
             }
 
+            if ($property->getType()->equals(PrimaryKey::class)) {
+                continue;
+            }
+
             if ($relation instanceof BelongsTo) {
                 $selectFields[] = $relation->getOwnerFieldName();
             } else {
                 $selectFields[] = $property->getName();
             }
+        }
+
+        if ($primaryKey = $this->getPrimaryKeyProperty()) {
+            $selectFields[] = $primaryKey->getName();
         }
 
         return $selectFields;
@@ -417,11 +508,11 @@ final class ModelInspector
 
         return match ($primaryKeys->count()) {
             0 => null,
-            1 => $primaryKeys->first(),
-            default => throw ModelHadMultiplePrimaryColumns::found(
-                model: $this->model,
-                properties: $primaryKeys->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
-            ),
+            default => $primaryKeys->first(),
+//            default => throw ModelHadMultiplePrimaryColumns::found(
+//                model: $this->model,
+//                properties: $primaryKeys->map(fn (PropertyReflector $property) => $property->getName())->toArray(),
+//            ),
         };
     }
 

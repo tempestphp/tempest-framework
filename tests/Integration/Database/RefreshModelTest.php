@@ -32,7 +32,7 @@ final class RefreshModelTest extends FrameworkIntegrationTestCase
         // Get user without loading the profile relation
         $book = Book::get($book->id);
 
-        $this->assertNull($book->author);
+        $this->assertFalse(isset($book->author));
 
         // Update the user's name in the database
         query(Book::class)
@@ -46,15 +46,52 @@ final class RefreshModelTest extends FrameworkIntegrationTestCase
         $book->refresh();
 
         $this->assertSame('Timeline Taxi 2', $book->title);
-        $this->assertNull($book->author); // Relation should still be unloaded
+        $this->assertFalse(isset($book->author)); // Relation should still be unloaded
 
         // Load the relation
         $book->load('author');
 
-        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertTrue(isset($book->author));
 
         $book->refresh();
 
-        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertTrue(isset($book->author));
+    }
+
+    public function test_load_method_only_refreshes_relations_and_nothing_else(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateAuthorTable::class,
+        );
+
+        $author = Author::create(
+            name: 'Brent Roose',
+        );
+
+        $book = Book::create(
+            title: 'Timeline Taxi',
+            author: $author,
+        );
+
+        // Get user without loading the profile relation
+        $book = Book::get($book->id);
+
+        $this->assertFalse(isset($book->author));
+
+        // Update the user's name in the database
+        query(Book::class)
+            ->update(
+                title: 'Timeline Taxi 2',
+            )
+            ->where('id', $book->id)
+            ->execute();
+
+        // Load the relation
+        $book->load('author');
+
+        // The updated value from the database is ignored
+        $this->assertSame('Timeline Taxi', $book->title);
     }
 }

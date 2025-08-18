@@ -158,7 +158,6 @@ trait IsDatabaseModel
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return TModel
      */
     public static function updateOrCreate(array $find, array $update): self
     {
@@ -176,21 +175,29 @@ trait IsDatabaseModel
             throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'refresh');
         }
 
-        $relations = [];
+        $loadedRelations = $model->getRelations()
+            ->filter(fn (Relation $relation) => $model->isRelationLoaded($relation));
 
-        foreach (new ClassReflector($this)->getPublicProperties() as $property) {
-            if (! $property->isInitialized($this) || ! $property->getValue($this)) {
-                continue;
-            }
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+        $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-            if (! $model->isRelation($property->getName())) {
-                continue;
-            }
+        $new = self::select()
+            ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
+            ->get($primaryKeyValue);
 
-            $relations[] = $property->getName();
+        foreach ($loadedRelations as $relation) {
+            $relation->property->setValue(
+                object: $this,
+                value: $relation->property->getValue($new),
+            );
         }
 
-        $this->load(...$relations);
+        foreach ($model->getValueFields() as  $property) {
+            $property->setValue(
+                object: $this,
+                value: $property->getValue($new),
+            );
+        }
 
         return $this;
     }
@@ -212,7 +219,7 @@ trait IsDatabaseModel
         $new = self::get($primaryKeyValue, $relations);
 
         foreach (new ClassReflector($new)->getPublicProperties() as $property) {
-            if ($property->hasAttribute(Virtual::class)) {
+            if (! in_array($property->getName(), $relations, strict: true)) {
                 continue;
             }
 

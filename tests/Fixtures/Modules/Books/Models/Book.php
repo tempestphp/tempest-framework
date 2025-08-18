@@ -19,11 +19,11 @@ final class Book implements Bindable
     #[HasLength(min: 1, max: 120)]
     public string $title;
 
-    public ?Author $author = null;
+    public Author $author;
 
     /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Chapter[] */
-    public array $chapters = [];
+    public array $chapters;
 
     #[HasOne]
-    public ?Isbn $isbn = null;
+    public Isbn $isbn;
 }
