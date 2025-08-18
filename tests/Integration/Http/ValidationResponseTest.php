@@ -9,6 +9,7 @@ use Tempest\Http\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -57,6 +58,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
+            CreateChapterTable::class,
         );
 
         $book = Book::create(
