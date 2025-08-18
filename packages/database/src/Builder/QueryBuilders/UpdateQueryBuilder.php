@@ -474,6 +474,10 @@ final class UpdateQueryBuilder implements BuildsQuery
         $reflection = new ClassReflector($object);
 
         foreach ($reflection->getPublicProperties() as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
             if ($property->hasAttribute(Virtual::class)) {
                 continue;
             }
