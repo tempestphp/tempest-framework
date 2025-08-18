@@ -120,6 +120,35 @@ final class ViewComponentElement implements Element, WithToken
                         }
                     }
 
+                    foreach (['class', 'style', 'id'] as $attributeName) {
+                        if (! isset($this->expressionAttributes[$attributeName])) {
+                            continue;
+                        }
+
+                        $exprKey = ':' . $attributeName;
+                        $exprValue = $this->expressionAttributes[$attributeName];
+
+                        if ($attributeName === 'id') {
+                            // For id, expression takes precedence over static
+                            unset($attributes['id']);
+                            $attributes[$exprKey] = new MutableString($exprValue);
+                            continue;
+                        }
+
+                        // For class and style, merge with existing expressions if present
+                        if (isset($attributes[$exprKey])) {
+                            $existingExpr = $attributes[$exprKey]->trim()->toString();
+
+                            // Combine expressions into an array if they're different
+                            // Combine both expressions using implode to handle arrays properly
+                            if ($existingExpr !== $exprValue) {
+                                $attributes[$exprKey] = new MutableString(sprintf("implode(' ', array_filter([%s, %s]))", $existingExpr, $exprValue));
+                            }
+                        } else {
+                            $attributes[$exprKey] = new MutableString($exprValue);
+                        }
+                    }
+
                     return sprintf(
                         '<%s%s>',
                         $matches['tag'],
@@ -137,30 +166,43 @@ final class ViewComponentElement implements Element, WithToken
             );
 
         // Add scoped variables
+        // Merge all attribute keys to avoid duplicate parameters
+        $allAttributeKeys = arr()
+            ->merge($this->dataAttributes->keys())
+            ->merge($this->expressionAttributes->keys())
+            ->unique();
+
         $compiled = $compiled
             ->prepend(
                 // Open the current scope
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
-                    $this->dataAttributes->isNotEmpty() ? (', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
-                    $this->expressionAttributes->isNotEmpty() ? (', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
-                    $this->scopedVariables->isNotEmpty() ? (', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ')) : '',
+                    '<?php (function ($attributes, $slots, $scopedVariables %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    $allAttributeKeys->isNotEmpty() ? (', ' . $allAttributeKeys->map(fn (string $key) => "\${$key}")->implode(', ')) : '',
                 ),
             )
             ->append(
                 // Close and call the current scope
                 sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s) ?>',
+                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s) ?>',
                     ViewObjectExporter::export($this->viewComponentAttributes),
                     ViewObjectExporter::export($slots),
                     $this->scopedVariables->isNotEmpty()
                         ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
                         : '',
-                    $this->dataAttributes->isNotEmpty()
-                        ? (', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', '))
-                        : '',
-                    $this->expressionAttributes->isNotEmpty()
-                        ? (', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', '))
+                    // Merge data and expression attributes, with expression taking precedence to avoid duplicates
+                    $this->dataAttributes
+                        ->merge($this->expressionAttributes->mapWithKeys(fn ($value, $key) => yield $key => $value))
+                        ->isNotEmpty()
+                        ? (
+                            ', ' .
+                            $this->dataAttributes
+                                ->filter(fn ($_value, $key) => ! isset($this->expressionAttributes[$key]))
+                                ->merge($this->expressionAttributes)
+                                ->map(fn (mixed $value, string $key) => isset($this->expressionAttributes[$key])
+                                    ? "{$key}: {$value}"
+                                    : ("{$key}: " . ViewObjectExporter::exportValue($value)))
+                                ->implode(', ')
+                        )
                         : '',
                 ),
             );
