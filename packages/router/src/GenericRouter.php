@@ -6,6 +6,7 @@ namespace Tempest\Router;
 
 use BackedEnum;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Database\PrimaryKey;
@@ -128,7 +129,14 @@ final readonly class GenericRouter implements Router
             if ($value instanceof BackedEnum) {
                 $value = $value->value;
             } elseif ($value instanceof Bindable) {
-                $value = $value->bindingValue;
+                foreach (new ClassReflector($value)->getPublicProperties() as $property) {
+                    if (! $property->hasAttribute(IsBindingValue::class)) {
+                        continue;
+                    }
+
+                    $value = $property->getValue($value);
+                    break;
+                }
             }
 
             $uri = $uri->replaceRegex(
