@@ -149,6 +149,14 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            if ($property->isUninitialized($object)) {
+                continue;
+            }
+
             $propertyName = $property->getName();
 
             if (! in_array($propertyName, $excludeProperties, strict: true)) {

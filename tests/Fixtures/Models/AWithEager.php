@@ -14,8 +14,6 @@ final class AWithEager
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         #[Eager]
         public BWithEager $b,

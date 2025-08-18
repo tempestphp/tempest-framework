@@ -3,14 +3,12 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\DatabaseMigration;
-use Tempest\Database\Exceptions\ModelHadMultiplePrimaryColumns;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 
 final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
@@ -45,16 +43,6 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 
         $this->assertTrue($frieren->uuid->equals($updated->uuid));
         $this->assertSame('Advanced Time Magic', $updated->magic);
-    }
-
-    public function test_model_with_multiple_id_properties_throws_exception(): void
-    {
-        $this->expectException(ModelHadMultiplePrimaryColumns::class);
-        $this->expectExceptionMessage(
-            '`Tests\Tempest\Integration\Database\Builder\ModelWithMultipleIds` has multiple `Id` properties (uuid and external_id). Only one `Id` property is allowed per model.',
-        );
-
-        inspect(ModelWithMultipleIds::class)->getPrimaryKey();
     }
 
     public function test_model_without_id_property_still_works(): void

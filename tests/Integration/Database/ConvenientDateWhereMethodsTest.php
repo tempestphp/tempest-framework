@@ -387,8 +387,6 @@ final class Event
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public string $name,
         public DateTime $created_at,

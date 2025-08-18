@@ -469,8 +469,6 @@ final class TestModelWithRelations
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[HasMany]
     public array $items = [];
 

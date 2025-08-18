@@ -103,6 +103,24 @@ final class Aircraft implements Bindable
 }
 ```
 
+By default, `Bindable` objects will be cast to strings when they are passed into the `uri()` function as a route parameter. You can override this default behaviour by tagging a public property on the object with the {b`\Tempest\Router\IsBindingValue`} attribute:
+
+```php
+use Tempest\Router\Bindable;
+use Tempest\Router\IsBindingValue;
+
+final class Aircraft implements Bindable
+{
+    #[IsBindingValue]
+    public string $callSign;
+
+    public function resolve(string $input): self
+    {
+        return self::find(id: $input);
+    }
+}
+```
+
 ### Backed enum binding
 
 You may inject string-backed enumerations to controller actions. Tempest will try to map the corresponding parameter from the URI to an instance of that enum using the [`tryFrom`](https://www.php.net/manual/en/backedenum.tryfrom.php) enum method.

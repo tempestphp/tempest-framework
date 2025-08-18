@@ -11,8 +11,6 @@ final class User
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public string $name;
 
     public string $email;

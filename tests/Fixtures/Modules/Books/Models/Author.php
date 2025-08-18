@@ -6,15 +6,13 @@ namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
+use Tempest\Database\Virtual;
 use Tempest\Router\Bindable;
 use Tempest\Validation\SkipValidation;
 
 final class Author implements Bindable
 {
     use IsDatabaseModel;
-
-    #[SkipValidation]
-    public PrimaryKey $id;
 
     public function __construct(
         public string $name,

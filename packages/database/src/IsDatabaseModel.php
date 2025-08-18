@@ -9,14 +9,19 @@ use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
-use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Router\IsBindingValue;
+use Tempest\Validation\SkipValidation;
 
-use function Tempest\Database\query;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 trait IsDatabaseModel
 {
+    #[IsBindingValue, SkipValidation]
+    public PrimaryKey $id;
+
     /**
      * Returns a builder for selecting records using this model's table.
      *
@@ -58,7 +63,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): static
+    public static function findById(string|int|PrimaryKey $id): self
     {
         return self::get($id);
     }
@@ -66,7 +71,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID.
      */
-    public static function resolve(string|int|PrimaryKey $id): static
+    public static function resolve(string|int|PrimaryKey $id): self
     {
         return query(self::class)->resolve($id);
     }
@@ -152,7 +157,6 @@ trait IsDatabaseModel
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return TModel
      */
     public static function updateOrCreate(array $find, array $update): self
     {
@@ -166,23 +170,30 @@ trait IsDatabaseModel
     {
         $model = inspect($this);
 
-        if (! $model->hasPrimaryKey()) {
-            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'refresh');
+        $loadedRelations = $model
+            ->getRelations()
+            ->filter(fn (Relation $relation) => $model->isRelationLoaded($relation));
+
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+        $primaryKeyValue = $primaryKeyProperty->getValue($this);
+
+        $new = self::select()
+            ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
+            ->get($primaryKeyValue);
+
+        foreach ($loadedRelations as $relation) {
+            $relation->property->setValue(
+                object: $this,
+                value: $relation->property->getValue($new),
+            );
         }
 
-        $relations = [];
-
-        foreach (new ClassReflector($this)->getPublicProperties() as $property) {
-            if (! $property->getValue($this)) {
-                continue;
-            }
-
-            if ($model->isRelation($property->getName())) {
-                $relations[] = $property->getName();
-            }
+        foreach ($model->getValueFields() as $property) {
+            $property->setValue(
+                object: $this,
+                value: $property->getValue($new),
+            );
         }
-
-        $this->load(...$relations);
 
         return $this;
     }
@@ -194,21 +205,17 @@ trait IsDatabaseModel
     {
         $model = inspect($this);
 
-        if (! $model->hasPrimaryKey()) {
-            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'load');
-        }
-
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
         $new = self::get($primaryKeyValue, $relations);
 
-        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
-            if ($property->hasAttribute(Virtual::class)) {
-                continue;
-            }
+        $fieldsToUpdate = arr($relations)
+            ->map(fn (string $relation) => str($relation)->before('.')->toString())
+            ->unique();
 
-            $property->setValue($this, $property->getValue($new));
+        foreach ($fieldsToUpdate as $fieldToUpdate) {
+            $this->{$fieldToUpdate} = $new->{$fieldToUpdate};
         }
 
         return $this;
@@ -261,10 +268,6 @@ trait IsDatabaseModel
     public function update(mixed ...$params): self
     {
         $model = inspect($this);
-
-        if (! $model->hasPrimaryKey()) {
-            throw Exceptions\ModelDidNotHavePrimaryColumn::neededForMethod($this, 'update');
-        }
 
         $model->validate(...$params);
 

@@ -585,47 +585,6 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('second', Foo::get($foo2->id)->bar);
     }
 
-    public function test_delete_via_model_instance_without_primary_key(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateModelWithoutPrimaryKeyMigration::class,
-        );
-
-        $model = new ModelWithoutPrimaryKey(name: 'Frieren', description: 'Elf mage');
-        $model->save();
-
-        $this->expectException(DeleteStatementWasInvalid::class);
-        $model->delete();
-    }
-
-    public function test_delete_via_model_class_without_primary_key(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateModelWithoutPrimaryKeyMigration::class,
-        );
-
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Himmel', description: 'Hero');
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Heiter', description: 'Priest');
-        query(ModelWithoutPrimaryKey::class)->create(name: 'Eisen', description: 'Warrior');
-
-        $this->assertCount(3, query(ModelWithoutPrimaryKey::class)->select()->all());
-
-        query(ModelWithoutPrimaryKey::class)
-            ->delete()
-            ->where('name', 'Himmel')
-            ->execute();
-
-        $remaining = query(ModelWithoutPrimaryKey::class)->select()->all();
-        $this->assertCount(2, $remaining);
-
-        $names = array_map(fn (ModelWithoutPrimaryKey $model) => $model->name, $remaining);
-        $this->assertContains('Heiter', $names);
-        $this->assertContains('Eisen', $names);
-        $this->assertNotContains('Himmel', $names);
-    }
-
     public function test_delete_with_uninitialized_primary_key(): void
     {
         $this->migrate(
@@ -663,8 +622,6 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 final class Foo
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public string $bar;
 }
@@ -865,15 +822,11 @@ final class CreateHasManyThroughTable implements DatabaseMigration
 final class AttributeTableNameModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
 
 final class BaseModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
 
 final readonly class CarbonCaster implements Caster
@@ -887,8 +840,6 @@ final readonly class CarbonCaster implements Caster
 final class CarbonModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public Carbon $createdAt,
@@ -917,8 +868,6 @@ final class CasterModel
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     public function __construct(
         public DateTimeImmutable $date,
         public array $array_prop,
@@ -930,8 +879,6 @@ final class CasterModel
 final class ChildModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     #[HasOne]
     public ThroughModel $through;
@@ -959,8 +906,6 @@ final class ModelWithValidation
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     #[IsBetween(min: 1, max: 10)]
     public int $index;
 
@@ -972,8 +917,6 @@ final class ModelWithValidation
 final class ParentModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public string $name,
@@ -987,16 +930,12 @@ final class ParentModel
 final class StaticMethodTableNameModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 }
 
 #[Table('through')]
 final class ThroughModel
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public ParentModel $parent,
@@ -1010,8 +949,6 @@ final class TestUser
 {
     use IsDatabaseModel;
 
-    public PrimaryKey $id;
-
     /** @var \Tests\Tempest\Integration\Database\Builder\TestPost[] */
     #[HasMany]
     public array $posts = [];
@@ -1024,8 +961,6 @@ final class TestUser
 final class TestPost
 {
     use IsDatabaseModel;
-
-    public PrimaryKey $id;
 
     public function __construct(
         public string $title,
@@ -1071,8 +1006,6 @@ final class CreateTestPostMigration implements DatabaseMigration
 
 final class ModelWithoutPrimaryKey
 {
-    use IsDatabaseModel;
-
     public function __construct(
         public string $name,
         public string $description,
