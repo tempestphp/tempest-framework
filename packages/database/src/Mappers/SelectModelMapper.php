@@ -97,7 +97,7 @@ final class SelectModelMapper implements Mapper
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
                 } elseif ($relation instanceof HasMany || $relation instanceof BelongsToMany) {
-                    $relationId = ($relation instanceof HasMany || $relation instanceof BelongsToMany) ? $relation->idField() : null;
+                    $relationId = $relation instanceof HasMany || $relation instanceof BelongsToMany ? $relation->idField() : null;
                     $hasManyId = $data->get($key . $relationId) ?? $row[$originalKey . $relationId] ?? null;
 
                     $originalKey .= $relation->name . '.';
