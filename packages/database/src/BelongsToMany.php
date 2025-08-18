@@ -12,10 +12,11 @@ use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class HasMany implements Relation
+final class BelongsToMany implements Relation
 {
     public PropertyReflector $property;
 
@@ -26,12 +27,10 @@ final class HasMany implements Relation
     private ?string $parent = null;
 
     public function __construct(
-        public ?string $ownerJoin = null,
-        public ?string $relationJoin = null,
-        public ?string $pivotTable = null,
-        public ?string $pivotCurrentKey = null,
-        public ?string $pivotRelatedKey = null,
-        public array $pivotFields = [],
+        private readonly ?string $pivotTable = null,
+        private readonly ?string $pivotCurrentKey = null,
+        private readonly ?string $pivotRelatedKey = null,
+        private readonly array $pivotFields = [],
     ) {}
 
     public function setParent(string $name): self
@@ -43,22 +42,22 @@ final class HasMany implements Relation
 
     public function getSelectFields(): ImmutableArray
     {
-        $relationModel = inspect($this->property->getIterableType()->asClass());
+        $relatedModel = inspect($this->property->getIterableType()->asClass());
 
-        $fields = $relationModel
+        $fields = $relatedModel
             ->getSelectFields()
             ->map(fn ($field) => new FieldStatement(
-                $relationModel->getTableName() . '.' . $field,
+                $relatedModel->getTableName() . '.' . $field,
             )
                 ->withAlias(
                     sprintf('%s.%s', $this->property->getName(), $field),
                 )
                 ->withAliasPrefix($this->parent));
 
-        if ($this->pivotTable !== null && $this->pivotFields) {
+        if ($this->pivotFields) {
             $pivotTable = $this->getPivotTableName(
                 inspect($this->property->getClass()),
-                $relationModel,
+                $relatedModel,
             );
 
             foreach ($this->pivotFields as $pivotField) {
@@ -72,16 +71,16 @@ final class HasMany implements Relation
             }
         }
 
-        return $fields;
+        return arr($fields);
     }
 
     public function primaryKey(): string
     {
-        $relationModel = inspect($this->property->getIterableType()->asClass());
-        $primaryKey = $relationModel->getPrimaryKey();
+        $relatedModel = inspect($this->property->getIterableType()->asClass());
+        $primaryKey = $relatedModel->getPrimaryKey();
 
         if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relatedModel->getName(), 'BelongsToMany');
         }
 
         return $primaryKey;
@@ -89,100 +88,14 @@ final class HasMany implements Relation
 
     public function idField(): string
     {
-        $relationModel = inspect($this->property->getIterableType()->asClass());
-        $primaryKey = $relationModel->getPrimaryKey();
-
-        if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
-        }
-
         return sprintf(
             '%s.%s',
             $this->property->getName(),
-            $primaryKey,
+            $this->primaryKey(),
         );
     }
 
     public function getJoinStatement(): JoinStatement
-    {
-        if ($this->pivotTable !== null) {
-            return $this->getManyToManyJoinStatement();
-        }
-
-        // Otherwise, use the standard one-to-many join
-        $ownerModel = inspect($this->property->getIterableType()->asClass());
-        $relationModel = inspect($this->property->getClass());
-
-        $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
-        $relationJoin = $this->getRelationJoin($relationModel);
-
-        return new JoinStatement(sprintf(
-            'LEFT JOIN %s ON %s = %s',
-            $ownerModel->getTableName(),
-            $ownerJoin,
-            $relationJoin,
-        ));
-    }
-
-    private function getOwnerJoin(ModelInspector $ownerModel, ModelInspector $relationModel): string
-    {
-        $ownerJoin = $this->ownerJoin;
-
-        if ($ownerJoin && ! strpos($ownerJoin, '.')) {
-            $ownerJoin = sprintf(
-                '%s.%s',
-                $ownerModel->getTableName(),
-                $ownerJoin,
-            );
-        }
-
-        if ($ownerJoin) {
-            return $ownerJoin;
-        }
-
-        $primaryKey = $relationModel->getPrimaryKey();
-
-        if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
-        }
-
-        return sprintf(
-            '%s.%s',
-            $ownerModel->getTableName(),
-            str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
-        );
-    }
-
-    private function getRelationJoin(ModelInspector $relationModel): string
-    {
-        $relationJoin = $this->relationJoin;
-
-        if ($relationJoin && ! strpos($relationJoin, '.')) {
-            $relationJoin = sprintf(
-                '%s.%s',
-                $relationModel->getTableName(),
-                $relationJoin,
-            );
-        }
-
-        if ($relationJoin) {
-            return $relationJoin;
-        }
-
-        $primaryKey = $relationModel->getPrimaryKey();
-
-        if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'HasMany');
-        }
-
-        return sprintf(
-            '%s.%s',
-            $relationModel->getTableName(),
-            $primaryKey,
-        );
-    }
-
-    private function getManyToManyJoinStatement(): JoinStatement
     {
         $currentModel = inspect($this->property->getClass());
         $relatedModel = inspect($this->property->getIterableType()->asClass());
@@ -191,12 +104,12 @@ final class HasMany implements Relation
 
         $currentPrimaryKey = $currentModel->getPrimaryKey();
         if ($currentPrimaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($currentModel->getName(), 'HasMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($currentModel->getName(), 'BelongsToMany');
         }
 
         $relatedPrimaryKey = $relatedModel->getPrimaryKey();
         if ($relatedPrimaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relatedModel->getName(), 'HasMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relatedModel->getName(), 'BelongsToMany');
         }
 
         $pivotCurrentKey = $this->getPivotCurrentKey($currentModel, $pivotTable);
@@ -241,7 +154,7 @@ final class HasMany implements Relation
 
         $primaryKey = $currentModel->getPrimaryKey();
         if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($currentModel->getName(), 'HasMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($currentModel->getName(), 'BelongsToMany');
         }
 
         return str($currentModel->getTableName())->singularizeLastWord() . '_' . $primaryKey;
@@ -255,7 +168,7 @@ final class HasMany implements Relation
 
         $primaryKey = $relatedModel->getPrimaryKey();
         if ($primaryKey === null) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($relatedModel->getName(), 'HasMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($relatedModel->getName(), 'BelongsToMany');
         }
 
         return str($relatedModel->getTableName())->singularizeLastWord() . '_' . $primaryKey;

@@ -22,6 +22,9 @@ trait IsDatabaseModel
     #[IsBindingValue, SkipValidation]
     public PrimaryKey $id;
 
+    #[Virtual, SkipValidation]
+    public array $pivot = [];
+
     /**
      * Returns a builder for selecting records using this model's table.
      *
@@ -292,6 +295,28 @@ trait IsDatabaseModel
             ->delete()
             ->build()
             ->execute();
+    }
+
+    /**
+     * Get pivot table data for many-to-many relationships.
+     *
+     * @param string ...$fields Optional specific fields to retrieve. If empty, returns all pivot fields.
+     * @return array Array containing the requested pivot fields.
+     */
+    public function pivot(string ...$fields): array
+    {
+        if (empty($fields)) {
+            return $this->pivot;
+        }
+
+        $result = [];
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $this->pivot)) {
+                $result[$field] = $this->pivot[$field];
+            }
+        }
+
+        return $result;
     }
 
     public function __get(string $name): mixed

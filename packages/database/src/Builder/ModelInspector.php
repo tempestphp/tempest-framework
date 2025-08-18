@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder;
 
 use ReflectionException;
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
@@ -40,6 +41,9 @@ final class ModelInspector
         private(set) object|string $model,
     ) {
         if ($model instanceof HasMany) {
+            $model = $model->property->getIterableType()->asClass();
+            $this->reflector = $model;
+        } elseif ($model instanceof BelongsToMany) {
             $model = $model->property->getIterableType()->asClass();
             $this->reflector = $model;
         } elseif ($model instanceof BelongsTo || $model instanceof HasOne) {
@@ -118,7 +122,7 @@ final class ModelInspector
                 continue;
             }
 
-            if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName())) {
+            if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName()) || $this->getBelongsToMany($property->getName())) {
                 continue;
             }
 
@@ -229,6 +233,10 @@ final class ModelInspector
             return null;
         }
 
+        if ($property->hasAttribute(BelongsToMany::class)) {
+            return null;
+        }
+
         if (! $property->getIterableType()?->isRelation()) {
             return null;
         }
@@ -239,18 +247,44 @@ final class ModelInspector
         return $hasMany;
     }
 
+    public function getBelongsToMany(string $name): ?BelongsToMany
+    {
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        $name = str($name)->camel();
+
+        if (! $this->reflector->hasProperty($name)) {
+            return null;
+        }
+
+        $property = $this->reflector->getProperty($name);
+
+        if ($property->hasAttribute(Virtual::class)) {
+            return null;
+        }
+
+        if ($belongsToMany = $property->getAttribute(BelongsToMany::class)) {
+            $belongsToMany->property = $property;
+            return $belongsToMany;
+        }
+
+        return null;
+    }
+
     public function isRelation(string|PropertyReflector $name): bool
     {
         $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
 
-        return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
+        return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getBelongsToMany($name) !== null || $this->getHasMany($name) !== null;
     }
 
     public function getRelation(string|PropertyReflector $name): ?Relation
     {
         $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
 
-        return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
+        return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getBelongsToMany($name) ?? $this->getHasMany($name);
     }
 
     /**
@@ -343,7 +377,7 @@ final class ModelInspector
         foreach ($this->reflector->getPublicProperties() as $property) {
             $relation = $this->getRelation($property->getName());
 
-            if ($relation instanceof HasMany || $relation instanceof HasOne) {
+            if ($relation instanceof HasMany || $relation instanceof HasOne || $relation instanceof BelongsToMany) {
                 continue;
             }
 

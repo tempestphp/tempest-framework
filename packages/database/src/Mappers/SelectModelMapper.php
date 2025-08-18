@@ -2,10 +2,9 @@
 
 namespace Tempest\Database\Mappers;
 
-use Exception;
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\ModelInspector;
-use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
@@ -54,7 +53,7 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if (! ($relation instanceof HasMany)) {
+            if (! ($relation instanceof HasMany || $relation instanceof BelongsToMany)) {
                 continue;
             }
 
@@ -97,8 +96,9 @@ final class SelectModelMapper implements Mapper
                 if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
-                } elseif ($relation instanceof HasMany) {
-                    $hasManyId = $data->get($key . $relation->idField()) ?? $row[$originalKey . $relation->idField()] ?? null;
+                } elseif ($relation instanceof HasMany || $relation instanceof BelongsToMany) {
+                    $relationId = ($relation instanceof HasMany || $relation instanceof BelongsToMany) ? $relation->idField() : null;
+                    $hasManyId = $data->get($key . $relationId) ?? $row[$originalKey . $relationId] ?? null;
 
                     $originalKey .= $relation->name . '.';
 
@@ -112,7 +112,11 @@ final class SelectModelMapper implements Mapper
 
                     $key .= $relation->name . '.' . $hasManyId . '.';
                 } else {
-                    $key .= $part;
+                    if ($part === 'pivot') {
+                        $key .= 'pivot.';
+                    } else {
+                        $key .= $part;
+                    }
                     break;
                 }
 
