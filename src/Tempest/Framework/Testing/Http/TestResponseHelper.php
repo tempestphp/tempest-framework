@@ -22,7 +22,6 @@ use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
-use function Tempest\get;
 use function Tempest\Support\arr;
 
 final class TestResponseHelper
@@ -211,6 +210,10 @@ final class TestResponseHelper
         $session = $this->container->get(Session::class);
         $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
+        if (! empty($validationErrors) && isset($validationErrors[Session::DEFAULT_ERROR_BAG])) {
+            $validationErrors = $validationErrors[Session::DEFAULT_ERROR_BAG];
+        }
+
         Assert::assertArrayHasKey(
             key: $key,
             array: $validationErrors,
@@ -232,6 +235,20 @@ final class TestResponseHelper
     {
         $session = $this->container->get(Session::class);
         $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+
+        if (! empty($validationErrors)) {
+            $firstKey = array_key_first($validationErrors);
+            if (is_string($firstKey) && is_array($validationErrors[$firstKey])) {
+                $allErrors = [];
+                foreach ($validationErrors as $bag => $errors) {
+                    foreach ($errors as $field => $rules) {
+                        $allErrors[$bag . '.' . $field] = $rules;
+                    }
+                }
+
+                $validationErrors = $allErrors;
+            }
+        }
 
         Assert::assertEmpty(
             actual: $validationErrors,
@@ -494,14 +511,25 @@ final class TestResponseHelper
 
         $session = $this->container->get(Session::class);
         $validator = $this->container->get(Validator::class);
-        $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
+
+        $errorBagName = $this->response->getHeader('x-validation-bag') ?? Session::DEFAULT_ERROR_BAG;
+        $validationRules = arr($session->getAllErrors($errorBagName))->dot();
 
         arr($expectedErrors)
             ->dot()
-            ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
-                expected: $expectedErrorValue,
-                actual: $validator->getErrorMessage($validationRules->get($expectedErrorKey)),
-            ));
+            ->each(function ($expectedErrorValue, $expectedErrorKey) use ($validator, $validationRules): void {
+                $rules = $validationRules->get($expectedErrorKey);
+                if ($rules && is_array($rules)) {
+                    $rule = $rules[0] ?? null;
+                } else {
+                    $rule = $rules;
+                }
+
+                Assert::assertEquals(
+                    expected: $expectedErrorValue,
+                    actual: $rule ? $validator->getErrorMessage($rule) : null,
+                );
+            });
 
         return $this;
     }

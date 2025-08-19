@@ -35,8 +35,13 @@ final class InvalidTest extends FrameworkIntegrationTestCase
 
         $session = $this->container->get(Session::class);
 
-        $this->assertArrayHasKey('foo', $session->get(Session::VALIDATION_ERRORS));
-        $this->assertArrayHasKey('foo', $session->get(Session::ORIGINAL_VALUES));
+        $errors = $session->get(Session::VALIDATION_ERRORS);
+        $originals = $session->get(Session::ORIGINAL_VALUES);
+
+        $this->assertArrayHasKey('default', $errors);
+        $this->assertArrayHasKey('foo', $errors['default']);
+        $this->assertArrayHasKey('default', $originals);
+        $this->assertArrayHasKey('foo', $originals['default']);
     }
 
     public function test_invalid_with_request(): void
@@ -62,7 +67,12 @@ final class InvalidTest extends FrameworkIntegrationTestCase
 
         $session = $this->container->get(Session::class);
 
-        $this->assertArrayHasKey('foo', $session->get(Session::VALIDATION_ERRORS));
-        $this->assertArrayHasKey('foo', $session->get(Session::ORIGINAL_VALUES));
+        $errors = $session->get(Session::VALIDATION_ERRORS);
+        $originals = $session->get(Session::ORIGINAL_VALUES);
+
+        $this->assertArrayHasKey('default', $errors);
+        $this->assertArrayHasKey('foo', $errors['default']);
+        $this->assertArrayHasKey('default', $originals);
+        $this->assertArrayHasKey('foo', $originals['default']);
     }
 }

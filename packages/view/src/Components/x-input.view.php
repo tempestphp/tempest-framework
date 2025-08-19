@@ -5,6 +5,7 @@
  * @var string|null $id
  * @var string|null $type
  * @var string|null $default
+ * @var string|null $bag
  */
 
 use Tempest\Http\Session\Session;
@@ -23,9 +24,10 @@ $label ??= str($name)->title();
 $id ??= $name;
 $type ??= 'text';
 $default ??= null;
+$bag ??= null;
 
-$errors = $session->getErrorsFor($name);
-$original = $session->getOriginalValueFor($name, $default);
+$errors = $session->getErrorsFor($name, $bag);
+$original = $session->getOriginalValueFor($name, $default, $bag);
 ?>
 
 <div>

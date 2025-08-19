@@ -47,7 +47,8 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')
             ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data) use ($values): void {
-                $this->assertEquals($values, $data);
+                $this->assertArrayHasKey('default', $data);
+                $this->assertEquals($values, $data['default']);
             });
     }
 
