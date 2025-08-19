@@ -10,7 +10,6 @@ use Tempest\Http\Method;
 $action ??= null;
 $method ??= Method::POST;
 
-$originalMethod = $method;
 if ($method instanceof Method) {
     $method = $method->value;
 }
