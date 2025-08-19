@@ -174,9 +174,6 @@ By extending {`Tempest\Framework\Testing\IntegrationTest`} from your test case, 
 These utilities include a way to replace the event bus with a testing implementation, as well as a few assertion methods to ensure that events have been dispatched or are being listened to.
 
 ```php
-// Prevents events from being handled
-$this->eventBus->preventEventHandling();
-
 // Assert that an event has been dispatched
 $this->eventBus->assertDispatched(AircraftRegistered::class);
 
@@ -197,14 +194,24 @@ $this->eventBus->assertNotDispatched(AircraftRegistered::class);
 $this->eventBus->assertListeningTo(AircraftRegistered::class);
 ```
 
-### Preventing event handling
+**Note:** Event assertions now work automatically without calling `preventEventHandling()`. Events are tracked while still executing their handlers, allowing you to test both event dispatching and their side effects together.
 
-When testing code that dispatches events, you may want to prevent Tempest from handling them. This can be useful when the event’s handlers are tested separately, or when the side-effects of these handlers are not desired for this test case.
+### Preventing event handling (optional)
 
-To disable event handling, the event bus instance must be replaced with a testing implementation in the container. This may be achieved by calling the `preventEventHandling()` method on the `eventBus` property.
+While event assertions now work without preventing handler execution, you may still want to prevent event handlers from running in certain test scenarios. This can be useful when:
+- The event handlers are tested separately
+- The side-effects of handlers are not desired for the test
+- You want to isolate the event dispatching logic from handler execution
+
+To disable event handling, call the `preventEventHandling()` method on the `eventBus` property:
 
 ```php tests/MyServiceTest.php
+// Optionally prevent handlers from executing
 $this->eventBus->preventEventHandling();
+
+// Events will still be tracked for assertions,
+// but their handlers won't be executed
+$this->eventBus->assertDispatched(AircraftRegistered::class);
 ```
 
 ### Testing a method-based handler

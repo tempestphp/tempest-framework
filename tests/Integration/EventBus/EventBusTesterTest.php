@@ -25,8 +25,31 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assertion_on_real_event_bus(): void
     {
+        $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
+
+        $this->eventBus->assertDispatched('event-bus-fake-event');
+    }
+
+    public function test_tracked_event_bus_executes_handlers(): void
+    {
+        $called = false;
+
+        $this->container
+            ->get(EventBus::class)
+            ->listen(function () use (&$called): void {
+                $called = true;
+            }, FakeEvent::class);
+
+        $this->container->get(EventBus::class)->dispatch(new FakeEvent('foo'));
+
+        $this->assertTrue($called);
+        $this->eventBus->assertDispatched(FakeEvent::class);
+    }
+
+    public function test_assert_dispatched_without_count_and_no_event_failure(): void
+    {
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Asserting against the event bus require the `preventEventHandling()` method to be called first.');
+        $this->expectExceptionMessage('The event was not dispatched');
 
         $this->eventBus->assertDispatched('event-bus-fake-event');
     }

@@ -5,8 +5,6 @@ namespace Tempest\EventBus\Testing;
 use BackedEnum;
 use Closure;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\GeneratorNotSupportedException;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
@@ -14,11 +12,14 @@ use UnitEnum;
 
 final class EventBusTester
 {
-    private FakeEventBus $fakeEventBus;
+    private ?FakeEventBus $fakeEventBus = null;
+    private ?TrackedEventBus $trackedEventBus = null;
 
     public function __construct(
         private readonly Container $container,
-    ) {}
+    ) {
+        $this->installTrackedBus();
+    }
 
     /**
      * Prevents the registered event handlers from being called.
@@ -31,6 +32,43 @@ final class EventBusTester
         return $this;
     }
 
+    private function installTrackedBus(): void
+    {
+        $current = $this->container->get(EventBus::class);
+
+        if ($current instanceof FakeEventBus) {
+            $this->fakeEventBus = $current;
+
+            return;
+        }
+
+        if ($current instanceof TrackedEventBus) {
+            $this->trackedEventBus = $current;
+
+            return;
+        }
+
+        $this->trackedEventBus = new TrackedEventBus(
+            inner: $current,
+            eventBusConfig: $this->container->get(EventBusConfig::class),
+        );
+
+        $this->container->singleton(EventBus::class, $this->trackedEventBus);
+    }
+
+    private function getInspectionBus(): FakeEventBus|TrackedEventBus
+    {
+        if ($this->fakeEventBus !== null) {
+            return $this->fakeEventBus;
+        }
+
+        if ($this->trackedEventBus === null) {
+            $this->installTrackedBus();
+        }
+
+        return $this->trackedEventBus;
+    }
+
     /**
      * Asserts that the given `$event` has been dispatched.
      *
@@ -39,12 +77,9 @@ final class EventBusTester
      */
     public function assertDispatched(string|object $event, ?Closure $callback = null, ?int $count = null): self
     {
-        $this->assertFaked();
+        $dispatches = $this->findDispatches($event);
 
-        Assert::assertNotNull(
-            actual: $dispatches = $this->findDispatches($event),
-            message: 'The event was not dispatched.',
-        );
+        Assert::assertNotEmpty($dispatches, 'The event was not dispatched.');
 
         if ($count !== null) {
             Assert::assertCount($count, $dispatches, 'The number of dispatches does not match.');
@@ -64,8 +99,6 @@ final class EventBusTester
      */
     public function assertNotDispatched(string|object $event): self
     {
-        $this->assertFaked();
-
         Assert::assertEmpty($this->findDispatches($event), 'The event was dispatched.');
 
         return $this;
@@ -78,8 +111,6 @@ final class EventBusTester
      */
     public function assertListeningTo(string $event, ?int $count = null): self
     {
-        $this->assertFaked();
-
         Assert::assertNotEmpty(
             actual: $handlers = $this->findHandlersFor($event),
             message: 'The event is not being listened to.',
@@ -94,7 +125,19 @@ final class EventBusTester
 
     private function findDispatches(string|object $event): array
     {
-        return array_filter($this->fakeEventBus->dispatched, function (string|object $dispatched) use ($event) {
+        // Collect dispatched events from both buses
+        // This handles the case where components hold references to the old EventBus and continue dispatching to it
+        $allDispatched = [];
+
+        if ($this->trackedEventBus !== null) {
+            $allDispatched = array_merge($allDispatched, $this->trackedEventBus->dispatched);
+        }
+
+        if ($this->fakeEventBus !== null) {
+            $allDispatched = array_merge($allDispatched, $this->fakeEventBus->dispatched);
+        }
+
+        return array_filter($allDispatched, function (string|object $dispatched) use ($event) {
             if ($dispatched === $event) {
                 return true;
             }
@@ -117,13 +160,8 @@ final class EventBusTester
             default => $event::class,
         };
 
-        return $this->fakeEventBus->eventBusConfig->handlers[$eventName] ?? [];
-    }
+        $inspectionBus = $this->getInspectionBus();
 
-    private function assertFaked(): self
-    {
-        Assert::assertTrue(isset($this->fakeEventBus), 'Asserting against the event bus require the `preventEventHandling()` method to be called first.');
-
-        return $this;
+        return $inspectionBus->eventBusConfig->handlers[$eventName] ?? [];
     }
 }
