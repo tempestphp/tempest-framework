@@ -24,6 +24,8 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
+        $request = $this->applyMethodSpoofing($request);
+
         $matchedRoute = $this->routeMatcher->match($request);
 
         if ($matchedRoute === null && $request->method === Method::HEAD && $request instanceof GenericRequest) {
@@ -69,5 +71,41 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         }
 
         return $request;
+    }
+
+    private function applyMethodSpoofing(Request $request): Request
+    {
+        if ($request->method !== Method::POST) {
+            return $request;
+        }
+
+        if (! ($request instanceof GenericRequest)) {
+            return $request;
+        }
+
+        if (! $request->hasBody('_method')) {
+            return $request;
+        }
+
+        $spoofedMethod = $request->get('_method');
+        $spoofedEnum = ($spoofedMethod instanceof Method)
+            ? $spoofedMethod
+            : Method::tryFrom(strtoupper((string) $spoofedMethod));
+
+        if ($spoofedEnum === null) {
+            return $request;
+        }
+
+        $allowedMethods = [
+            Method::PUT,
+            Method::PATCH,
+            Method::DELETE,
+        ];
+
+        if (! in_array($spoofedEnum, $allowedMethods, true)) {
+            return $request;
+        }
+
+        return $request->withMethod($spoofedEnum);
     }
 }
