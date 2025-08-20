@@ -1,0 +1,20 @@
+{
+    "name": "tempest/upgrade",
+    "description": "A collection of Rector rules for upgrading Tempest",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "rector/rector": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Upgrade\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Upgrade\\Tests\\": "tests"
+        }
+    }
+}
