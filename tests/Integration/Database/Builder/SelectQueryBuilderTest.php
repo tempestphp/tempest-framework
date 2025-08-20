@@ -195,6 +195,24 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('A', $book->title);
     }
 
+    public function test_order_by_raw_shorthand(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
+
+        $book = Book::select()->orderBy('title DESC')->first();
+        $this->assertSame('D', $book->title);
+    }
+
     public function test_order_by_sql_generation(): void
     {
         $this->assertSameWithoutBackticks(

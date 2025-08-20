@@ -168,6 +168,10 @@ final class SelectQueryBuilder implements BuildsQuery
      */
     public function orderBy(string $field, Direction $direction = Direction::ASC): self
     {
+        if (str_contains($field, ' ')) {
+            return $this->orderByRaw($field);
+        }
+
         $this->select->orderBy[] = new OrderByStatement("`{$field}` {$direction->value}");
 
         return $this;
