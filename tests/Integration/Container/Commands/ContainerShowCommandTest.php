@@ -77,6 +77,13 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
 
                     return $this;
                 }
+
+                public function addDecorator(mixed $decoratorClass, mixed $decoratedClass): self
+                {
+                    $this->container->addDecorator($decoratorClass, $decoratedClass);
+
+                    return $this;
+                }
             },
         );
 
