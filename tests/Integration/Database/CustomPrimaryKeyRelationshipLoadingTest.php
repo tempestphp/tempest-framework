@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\BelongsTo;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -361,7 +361,7 @@ final class ArtifactWithUuid
     ) {}
 }
 
-final class CreateMageWithUuidMigration implements DatabaseMigration
+final class CreateMageWithUuidMigration implements MigratesUp
 {
     public string $name = '001_create_mages_with_uuid';
 
@@ -372,14 +372,9 @@ final class CreateMageWithUuidMigration implements DatabaseMigration
             ->text('name')
             ->text('element');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateGrimoireWithUuidMigration implements DatabaseMigration
+final class CreateGrimoireWithUuidMigration implements MigratesUp
 {
     public string $name = '002_create_grimoires_with_uuid';
 
@@ -391,14 +386,9 @@ final class CreateGrimoireWithUuidMigration implements DatabaseMigration
             ->text('title')
             ->integer('spells_count');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateSpellWithUuidMigration implements DatabaseMigration
+final class CreateSpellWithUuidMigration implements MigratesUp
 {
     public string $name = '003_create_spells_with_uuid';
 
@@ -411,14 +401,9 @@ final class CreateSpellWithUuidMigration implements DatabaseMigration
             ->integer('power_level')
             ->integer('mana_cost');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateArtifactWithUuidMigration implements DatabaseMigration
+final class CreateArtifactWithUuidMigration implements MigratesUp
 {
     public string $name = '004_create_artifacts_with_uuid';
 
@@ -430,11 +415,6 @@ final class CreateArtifactWithUuidMigration implements DatabaseMigration
             ->text('name')
             ->text('rarity')
             ->integer('enchantment_level');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
 
@@ -472,7 +452,7 @@ final class SpellSimple
     ) {}
 }
 
-final class CreateMageSimpleMigration implements DatabaseMigration
+final class CreateMageSimpleMigration implements MigratesUp
 {
     public string $name = '005_create_mages_simple';
 
@@ -483,14 +463,9 @@ final class CreateMageSimpleMigration implements DatabaseMigration
             ->text('name')
             ->text('element');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateSpellSimpleMigration implements DatabaseMigration
+final class CreateSpellSimpleMigration implements MigratesUp
 {
     public string $name = '006_create_spells_simple';
 
@@ -501,10 +476,5 @@ final class CreateSpellSimpleMigration implements DatabaseMigration
             ->belongsTo('spells.mage_uuid', 'mages.uuid')
             ->text('name')
             ->integer('power_level');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

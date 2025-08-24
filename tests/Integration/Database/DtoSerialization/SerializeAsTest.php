@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
@@ -22,7 +22,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_library';
 
             public function up(): QueryStatement
@@ -31,11 +31,6 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('spell_data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -70,7 +65,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config->serializeAs(MageProfile::class, 'mage-profile');
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_mage_profiles';
 
             public function up(): QueryStatement
@@ -79,11 +74,6 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('name')
                     ->json('profile_data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -123,7 +113,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config->serializeAs(SpellCollection::class, 'spell-collection');
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_collections';
 
             public function up(): QueryStatement
@@ -132,11 +122,6 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('title')
                     ->json('collection_data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 
@@ -181,7 +166,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(MagicItem::class, 'magic-item');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '004_inventory';
 
             public function up(): QueryStatement
@@ -190,11 +175,6 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
                     ->primary()
                     ->text('owner')
                     ->json('item_data');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         });
 

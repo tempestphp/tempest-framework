@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Assert;
 use Stringable;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;

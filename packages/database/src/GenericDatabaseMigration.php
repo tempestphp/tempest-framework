@@ -6,7 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\QueryStatements\RawStatement;
 
-final class GenericDatabaseMigration implements DatabaseMigration
+final class GenericDatabaseMigration implements MigratesUp
 {
     public string $name;
 
@@ -20,10 +20,5 @@ final class GenericDatabaseMigration implements DatabaseMigration
     public function up(): QueryStatement
     {
         return new RawStatement($this->content);
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

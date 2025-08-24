@@ -2,7 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -83,7 +83,7 @@ final class ModelWithoutId
     ) {}
 }
 
-final class CreateCustomPrimaryKeyUserModelTable implements DatabaseMigration
+final class CreateCustomPrimaryKeyUserModelTable implements MigratesUp
 {
     public string $name = '001_create_user_model';
 
@@ -94,14 +94,9 @@ final class CreateCustomPrimaryKeyUserModelTable implements DatabaseMigration
             ->text('name')
             ->text('magic');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateModelWithoutIdMigration implements DatabaseMigration
+final class CreateModelWithoutIdMigration implements MigratesUp
 {
     public string $name = '002_create_model_without_id';
 
@@ -109,10 +104,5 @@ final class CreateModelWithoutIdMigration implements DatabaseMigration
     {
         return CreateTableStatement::forModel(ModelWithoutId::class)
             ->text('name');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }
