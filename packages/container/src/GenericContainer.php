@@ -7,6 +7,7 @@ namespace Tempest\Container;
 use ArrayIterator;
 use Closure;
 use ReflectionFunction;
+use Tempest\Container\Exceptions\DecoratorDIdNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
@@ -35,6 +36,9 @@ final class GenericContainer implements Container
 
         /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
         private ArrayIterator $dynamicInitializers = new ArrayIterator(),
+
+        /** @var ArrayIterator<array-key, class-string[]> $decorators */
+        private ArrayIterator $decorators = new ArrayIterator(),
         private ?DependencyChain $chain = null,
     ) {}
 
@@ -62,6 +66,13 @@ final class GenericContainer implements Container
     public function setDynamicInitializers(array $dynamicInitializers): self
     {
         $this->dynamicInitializers = new ArrayIterator($dynamicInitializers);
+
+        return $this;
+    }
+
+    public function setDecorators(array $decorators): self
+    {
+        $this->decorators = new ArrayIterator($decorators);
 
         return $this;
     }
@@ -97,6 +108,11 @@ final class GenericContainer implements Container
     public function getDynamicInitializers(): array
     {
         return $this->dynamicInitializers->getArrayCopy();
+    }
+
+    public function getDecorators(): array
+    {
+        return $this->decorators->getArrayCopy();
     }
 
     public function register(string $className, callable $definition): self
@@ -299,7 +315,28 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    public function addDecorator(ClassReflector|string $decoratorClass, ClassReflector|string $decoratedClass): Container
+    {
+        $decoratorClass = is_string($decoratorClass) ? $decoratorClass : $decoratorClass->getName();
+        $decoratedClass = is_string($decoratedClass) ? $decoratedClass : $decoratedClass->getName();
+
+        $this->decorators[$decoratedClass][] = $decoratorClass;
+
+        return $this;
+    }
+
     private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    {
+        $instance = $this->resolveDependency($className, $tag, ...$params);
+
+        if ($this->decorators[$className] ?? null) {
+            $instance = $this->resolveDecorator($className, $instance, $tag, ...$params);
+        }
+
+        return $instance;
+    }
+
+    private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
     {
         $class = new ClassReflector($className);
 
@@ -601,5 +638,36 @@ final class GenericContainer implements Container
         return $tag
             ? "{$className}#{$tag}"
             : $className;
+    }
+
+    private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    {
+        foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
+            $decoratorClassReflector = new ClassReflector($decoratorClass);
+            $constructor = $decoratorClassReflector->getConstructor();
+            $parameters = $constructor?->getParameters();
+
+            // we look for parameter holding decorated instance
+            foreach ($parameters ?? [] as $parameter) {
+                if ($parameter->getType()->matches($className) === false) {
+                    continue;
+                }
+
+                // we bind the decorated instance to the parameter, so container won't try to resolve it (it would end up as circular dependency)
+                $params[$parameter->getName()] = $instance;
+
+                break;
+            }
+
+            $decorator = $this->resolveDependency($decoratorClass, $tag, ...$params);
+
+            if (! ($decorator instanceof $className)) {
+                throw new DecoratorDIdNotImplementInterface($className, $decoratorClass, $className);
+            }
+
+            $instance = $decorator;
+        }
+
+        return $instance;
     }
 }
