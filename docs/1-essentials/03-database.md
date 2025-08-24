@@ -270,6 +270,40 @@ final class Book
 }
 ```
 
+### Hashed properties
+
+The {`#[Tempest\Database\Hashed]`} attribute will hash the model's property during serialization. If the property was already hashed, Tempest will detect that and avoid re-hashing it.
+
+```php
+final class User
+{
+    public PrimaryKey $id;
+
+    public string $email;
+
+    #[Hashed]
+    public ?string $password;
+}
+```
+
+Hashing requires the `SIGNING_KEY` environment variable to be set, as it's used as the hashing key.
+
+### Encrypted properties
+
+The {`#[Tempest\Database\Encrypted]`} attribute will encrypt the model's property during serialization and decrypt it during deserialization. If the property was already encrypted, Tempest will detect that and avoid re-encrypting it.
+
+```php
+final class User
+{
+    // ...
+
+    #[Encrypted]
+    public ?string $accessToken;
+}
+```
+
+The encryption key is taken from the `SIGNING_KEY` environment variable.
+
 ### DTO properties
 
 Sometimes, you might want to store data objects as-is in a table, without there needing to be a relation to another table. To do so, it's enough to add a serializer and caster to the data object's class, and Tempest will know that these objects aren't meant to be treated as database models. Next, you can store the object's data as a json field on the table (see [migrations](#migrations) for more info).
