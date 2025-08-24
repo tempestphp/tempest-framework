@@ -4,9 +4,9 @@ namespace Tests\Tempest\Integration\Database;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Encryption\Encrypter;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Encrypted;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
@@ -127,7 +127,7 @@ final class UserWithNullableEncryptedData
     ) {}
 }
 
-final class CreateUserWithEncryptedDataTable implements DatabaseMigration
+final class CreateUserWithEncryptedDataTable implements MigratesUp
 {
     public string $name = '2024_create_users_with_encrypted_data_table';
 
@@ -138,14 +138,9 @@ final class CreateUserWithEncryptedDataTable implements DatabaseMigration
             ->string('email')
             ->text('secret');
     }
-
-    public function down(): null
-    {
-        return null;
-    }
 }
 
-final class CreateUserWithNullableEncryptedDataTable implements DatabaseMigration
+final class CreateUserWithNullableEncryptedDataTable implements MigratesUp
 {
     public string $name = '2024_create_users_with_nullable_encrypted_data_table';
 
@@ -155,10 +150,5 @@ final class CreateUserWithNullableEncryptedDataTable implements DatabaseMigratio
             ->primary()
             ->string('email')
             ->text('secret', nullable: true);
-    }
-
-    public function down(): null
-    {
-        return null;
     }
 }

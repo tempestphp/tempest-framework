@@ -4,9 +4,9 @@ namespace Tests\Tempest\Integration\Database;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Password\PasswordHasher;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Hashed;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -115,7 +115,7 @@ final class UserWithNullablePassword
     ) {}
 }
 
-final class CreateUserWithHashTable implements DatabaseMigration
+final class CreateUserWithHashTable implements MigratesUp
 {
     public string $name = '2024_create_users_table';
 
@@ -126,14 +126,9 @@ final class CreateUserWithHashTable implements DatabaseMigration
             ->varchar('email')
             ->text('password');
     }
-
-    public function down(): null
-    {
-        return null;
-    }
 }
 
-final class CreateUserWithNullablePasswordTable implements DatabaseMigration
+final class CreateUserWithNullablePasswordTable implements MigratesUp
 {
     public string $name = '2024_create_users_with_nullable_password_table';
 
@@ -143,10 +138,5 @@ final class CreateUserWithNullablePasswordTable implements DatabaseMigration
             ->primary()
             ->varchar('email')
             ->text('password', nullable: true);
-    }
-
-    public function down(): null
-    {
-        return null;
     }
 }
