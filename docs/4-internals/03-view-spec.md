@@ -103,7 +103,7 @@ Tempest will merge all imports at the top of the compiled view, meaning that eac
 ```html
 <?php
 use App\PostController;
-use function Tempest\uri;
+use function Tempest\Router\uri;
 ?>
 
 {{ uri([PostController::class, 'show'], post: $post->id) }}
@@ -608,7 +608,7 @@ Referencing a symbol within a view will automatically import it at the top of th
 ```html
 <?php
 use App\PostController;
-use function Tempest\uri;
+use function Tempest\Router\uri;
 ?>
 
 {{ uri([PostController::class, 'show'], post: $post->id) }}
