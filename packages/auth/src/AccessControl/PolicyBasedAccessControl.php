@@ -15,6 +15,11 @@ use Tempest\Reflection\ParameterReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
+/**
+ * @template Subject of object
+ * @template Resource of object
+ * @implements AccessControl<Subject, Resource>
+ */
 final readonly class PolicyBasedAccessControl implements AccessControl
 {
     public function __construct(

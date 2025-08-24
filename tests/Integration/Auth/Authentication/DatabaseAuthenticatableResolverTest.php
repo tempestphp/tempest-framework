@@ -30,6 +30,7 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
         $authenticatableResolver = $this->container->get(AuthenticatableResolver::class);
         $resolved = $authenticatableResolver->resolve($authenticatable->id, ApiToken::class);
 
+        // @phpstan-ignore property.notFound
         $this->assertEquals($authenticatable->id, $resolved->id);
     }
 

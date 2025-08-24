@@ -14,7 +14,7 @@ final class PolicyFor
 {
     /**
      * @param class-string $resource A resource class that this policy applies to.
-     * @param null|UnitEnum|string $action An optional action that this policy applies to. If null, the policy applies to all actions for the resource.
+     * @param null|UnitEnum|string|iterable<string|UnitEnum|null> $action An optional action that this policy applies to. If null, the policy applies to all actions for the resource.
      */
     public function __construct(
         public string $resource,

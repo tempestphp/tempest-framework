@@ -7,7 +7,7 @@ use Tempest\Auth\AuthConfig;
 use Tempest\Reflection\ClassReflector;
 
 /**
- * @extends \Tests\Tempest\Integration\FrameworkIntegrationTestCase
+ * @phpstan-require-extends \Tests\Tempest\Integration\FrameworkIntegrationTestCase
  */
 trait HasPolicyTests
 {

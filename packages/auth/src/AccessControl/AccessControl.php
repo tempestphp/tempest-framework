@@ -4,6 +4,10 @@ namespace Tempest\Auth\AccessControl;
 
 use UnitEnum;
 
+/**
+ * @template Subject of object
+ * @template Resource of object
+ */
 interface AccessControl
 {
     /**

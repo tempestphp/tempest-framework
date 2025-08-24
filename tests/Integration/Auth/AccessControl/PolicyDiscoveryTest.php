@@ -87,7 +87,7 @@ final class TestPolicyClass
     }
 
     #[PolicyFor(TestModel::class, action: 'edit')]
-    public function canEdit(): bool|AccessDecision
+    public function canEdit(): AccessDecision
     {
         return AccessDecision::granted();
     }
