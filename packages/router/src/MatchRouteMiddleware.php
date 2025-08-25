@@ -87,12 +87,9 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
             return $request;
         }
 
-        $spoofedMethod = $request->get('_method');
-        $spoofedEnum = ($spoofedMethod instanceof Method)
-            ? $spoofedMethod
-            : Method::tryFrom(strtoupper((string) $spoofedMethod));
+        $spoofedMethod = Method::tryFrom(strtoupper((string) $request->get('_method')));
 
-        if ($spoofedEnum === null) {
+        if ($spoofedMethod === null) {
             return $request;
         }
 
@@ -102,10 +99,10 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
             Method::DELETE,
         ];
 
-        if (! in_array($spoofedEnum, $allowedMethods, true)) {
+        if (! in_array($spoofedMethod, $allowedMethods, strict: true)) {
             return $request;
         }
 
-        return $request->withMethod($spoofedEnum);
+        return $request->withMethod($spoofedMethod);
     }
 }
