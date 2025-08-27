@@ -16,6 +16,7 @@ final readonly class OAuthUserData
         public string $name,
         public string $email,
         public string $avatar,
+        public array $rawData = [],
     ) {}
 
     public static function from(array $data): self
