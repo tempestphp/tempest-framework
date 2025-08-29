@@ -39,7 +39,7 @@ final class RedisTest extends FrameworkIntegrationTestCase
     {
         try {
             $this->redis->flush();
-        } catch (Throwable) {
+        } catch (Throwable) { // @mago-expect best-practices/no-empty-catch-clause
         }
     }
 
