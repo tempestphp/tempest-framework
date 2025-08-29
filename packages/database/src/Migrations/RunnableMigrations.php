@@ -19,7 +19,7 @@ final class RunnableMigrations implements IteratorAggregate
     public function __construct(
         private array $migrations = [],
     ) {
-        usort($this->migrations, static fn (MigratesUp $a, MigratesUp $b) => $a->name <=> $b->name);
+        usort($this->migrations, static fn (MigratesUp $a, MigratesUp $b) => strnatcmp($a->name, $b->name));
     }
 
     public function getIterator(): Traversable
