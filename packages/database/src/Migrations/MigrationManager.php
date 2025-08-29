@@ -306,7 +306,7 @@ final class MigrationManager
         );
     }
 
-    private function getMigrationHash(MigratesUp $migration): string
+    private function getMigrationHash(MigratesUp|MigratesDown $migration): string
     {
         $sql = '';
 
