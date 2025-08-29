@@ -166,7 +166,6 @@ abstract class IntegrationTest extends TestCase
     protected function setupDatabase(): self
     {
         $migrationManager = $this->container->get(MigrationManager::class);
-
         $migrationManager->dropAll();
 
         $this->migrateDatabase();
@@ -174,13 +173,17 @@ abstract class IntegrationTest extends TestCase
         return $this;
     }
 
+    /**
+     * Creates the migration table. You may override this method to provide more migrations to run for every tests in this file.
+     */
     protected function migrateDatabase(): void
     {
-        $this->migrate(
-            CreateMigrationsTable::class,
-        );
+        $this->migrate(CreateMigrationsTable::class);
     }
 
+    /**
+     * Migrates the specified migration classes.
+     */
     protected function migrate(string|object ...$migrationClasses): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
