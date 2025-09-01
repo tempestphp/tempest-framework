@@ -419,13 +419,15 @@ final class GenericContainer implements Container
         }
 
         foreach ($classReflector->getProperties() as $property) {
-            if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
+            $inject = $property->getAttribute(Inject::class);
+
+            if ($inject && ! $property->isInitialized($instance)) {
                 if ($property->hasAttribute(Proxy::class)) {
                     $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
-                        fn () => $this->get($property->getType()->getName()),
+                        fn () => $this->get($property->getType()->getName(), $inject->tag),
                     ));
                 } else {
-                    $property->set($instance, $this->get($property->getType()->getName()));
+                    $property->set($instance, $this->get($property->getType()->getName(), $inject->tag));
                 }
             }
         }

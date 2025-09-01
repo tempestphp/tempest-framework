@@ -9,4 +9,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final readonly class Inject
 {
+    public function __construct(
+        public ?string $tag = null,
+    ) {}
 }

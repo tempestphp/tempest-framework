@@ -427,11 +427,13 @@ final class ContainerTest extends TestCase
     public function test_inject(): void
     {
         $container = new GenericContainer();
+        $container->singleton(InjectB::class, $bTagged = new InjectB(), 'tagged');
 
         /** @var InjectA $a */
         $a = $container->get(InjectA::class);
 
         $this->assertInstanceOf(InjectB::class, $a->getB());
+        $this->assertSame($bTagged, $a->getBTagged());
     }
 
     public function test_unregister(): void
