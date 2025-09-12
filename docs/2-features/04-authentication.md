@@ -1,6 +1,7 @@
 ---
 title: Authentication
 description: "Learn how to authenticate models, implement access control, and secure your application with Tempest's flexible authentication system."
+keywords: "Experimental"
 ---
 
 ## Overview
