@@ -86,6 +86,10 @@ final class SerializerFactory
             return get($serializeWith->className);
         }
 
+        if ($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) {
+            return get($serializerAttribute->serializer);
+        }
+
         // Resolve serializer from manual additions
         foreach ($this->serializers as [$for, $serializerClass]) {
             if (! $this->serializerMatches($for, $type)) {

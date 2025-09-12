@@ -23,13 +23,13 @@ final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call(MigrateDownCommand::class, ['force' => true])
             ->assertContains('create_migrations_table')
-            ->assertContains('Rolled back');
+            ->assertContains('ROLLED BACK');
     }
 
     public function test_errors_when_no_migrations_to_rollback(): void
     {
         $this->console
             ->call(MigrateDownCommand::class)
-            ->assertContains(new TableWasNotFound()->getMessage());
+            ->assertContains('There is no migration to roll back.');
     }
 }

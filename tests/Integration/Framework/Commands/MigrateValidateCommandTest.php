@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\PreCondition;
 use Tempest\Console\ExitCode;
+use Tempest\Database\MigratesDown;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Database\Migrations\RunnableMigrations;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Framework\Commands\MigrateFreshCommand;
 use Tempest\Framework\Commands\MigrateValidateCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -15,6 +20,20 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
 {
+    #[PreCondition]
+    protected function configure(): void
+    {
+        $this->container->singleton(
+            className: RunnableMigrations::class,
+            definition: new RunnableMigrations(
+                migrations: [
+                    ...iterator_to_array($this->container->get(RunnableMigrations::class)->getIterator()),
+                    new DownMigrationForRehash(),
+                ],
+            ),
+        );
+    }
+
     public function test_migration_validate_command_verifies_valid_migrations(): void
     {
         $this->console
@@ -51,5 +70,15 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
             ->call(MigrateValidateCommand::class)
             ->assertContains('MISSING FILE')
             ->assertExitCode(ExitCode::ERROR);
+    }
+}
+
+final class DownMigrationForRehash implements MigratesDown
+{
+    private(set) string $name = '2025-10-12_down_migration_for_rehash_test';
+
+    public function down(): QueryStatement
+    {
+        return new RawStatement('SELECT 1');
     }
 }

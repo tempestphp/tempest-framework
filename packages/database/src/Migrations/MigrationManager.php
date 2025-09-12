@@ -7,11 +7,11 @@ namespace Tempest\Database\Migrations;
 use Tempest\Container\Container;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\DatabaseMigration as MigrationInterface;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\HasLeadingStatements;
 use Tempest\Database\HasTrailingStatements;
+use Tempest\Database\MigratesDown;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
@@ -61,7 +61,7 @@ final class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->migrations as $migration) {
+        foreach ($this->migrations->up() as $migration) {
             if (in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
             }
@@ -92,7 +92,7 @@ final class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->migrations as $migration) {
+        foreach ($this->migrations->down() as $migration) {
             /* If the migration is not in the existing migrations, it means it has not been executed */
             if (! in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
@@ -143,7 +143,7 @@ final class MigrationManager
              */
             $databaseMigration = array_find(
                 iterator_to_array($this->migrations),
-                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+                static fn (MigratesUp|MigratesDown $migration) => $migration->name === $existingMigration->name,
             );
 
             if ($databaseMigration === null) {
@@ -169,7 +169,7 @@ final class MigrationManager
         foreach ($existingMigrations as $existingMigration) {
             $databaseMigration = array_find(
                 iterator_to_array($this->migrations),
-                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+                static fn (MigratesUp|MigratesDown $migration) => $migration->name === $existingMigration->name,
             );
 
             if ($databaseMigration === null) {
@@ -186,7 +186,7 @@ final class MigrationManager
         }
     }
 
-    public function executeUp(MigrationInterface $migration): void
+    public function executeUp(MigratesUp $migration): void
     {
         if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
             return;
@@ -239,7 +239,7 @@ final class MigrationManager
         event(new MigrationMigrated($migration->name));
     }
 
-    public function executeDown(MigrationInterface $migration): void
+    public function executeDown(MigratesDown $migration): void
     {
         if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
             return;
@@ -306,12 +306,19 @@ final class MigrationManager
         );
     }
 
-    private function getMigrationHash(DatabaseMigration $migration): string
+    private function getMigrationHash(MigratesUp|MigratesDown $migration): string
     {
-        $minifiedDownSql = $this->getMinifiedSqlFromStatement($migration->down());
-        $minifiedUpSql = $this->getMinifiedSqlFromStatement($migration->up());
+        $sql = '';
 
-        return hash('xxh128', $minifiedDownSql . $minifiedUpSql);
+        if ($migration instanceof MigratesUp) {
+            $sql .= $this->getMinifiedSqlFromStatement($migration->up());
+        }
+
+        if ($migration instanceof MigratesDown) {
+            $sql .= $this->getMinifiedSqlFromStatement($migration->down());
+        }
+
+        return hash('xxh128', $sql);
     }
 
     private function getMinifiedSqlFromStatement(?QueryStatement $statement): string

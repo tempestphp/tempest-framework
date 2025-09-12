@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing;
 
 use Closure;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
@@ -165,7 +166,6 @@ abstract class IntegrationTest extends TestCase
     protected function setupDatabase(): self
     {
         $migrationManager = $this->container->get(MigrationManager::class);
-
         $migrationManager->dropAll();
 
         $this->migrateDatabase();
@@ -173,13 +173,17 @@ abstract class IntegrationTest extends TestCase
         return $this;
     }
 
+    /**
+     * Creates the migration table. You may override this method to provide more migrations to run for every tests in this file.
+     */
     protected function migrateDatabase(): void
     {
-        $this->migrate(
-            CreateMigrationsTable::class,
-        );
+        $this->migrate(CreateMigrationsTable::class);
     }
 
+    /**
+     * Migrates the specified migration classes.
+     */
     protected function migrate(string|object ...$migrationClasses): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
@@ -220,11 +224,8 @@ abstract class IntegrationTest extends TestCase
         unset($this->http);
     }
 
-    protected function assertException(
-        string $expectedExceptionClass,
-        Closure $handler,
-        ?Closure $assertException = null,
-    ): void {
+    protected function assertException(string $expectedExceptionClass, Closure $handler, ?Closure $assertException = null, ?string $message = null): void
+    {
         try {
             $handler();
         } catch (Throwable $throwable) {
@@ -237,6 +238,6 @@ abstract class IntegrationTest extends TestCase
             return;
         }
 
-        $this->fail("Expected exception {$expectedExceptionClass} was not thrown");
+        Assert::fail($message ?? "Expected exception {$expectedExceptionClass} was not thrown");
     }
 }

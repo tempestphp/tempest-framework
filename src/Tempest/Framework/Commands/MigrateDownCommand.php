@@ -12,7 +12,7 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
-use Tempest\EventBus\EventHandler;
+use Tempest\EventBus\EventBus;
 
 #[Singleton]
 final class MigrateDownCommand
@@ -22,6 +22,7 @@ final class MigrateDownCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
+        private readonly EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand(
@@ -33,15 +34,19 @@ final class MigrateDownCommand
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
     ): void {
+        $this->eventBus->listen(function (MigrationRolledBack $event): void {
+            $this->count += 1;
+            $this->console->keyValue(
+                key: "<style='fg-gray'>{$event->name}</style>",
+                value: "<style='fg-green'>ROLLED BACK</style>",
+            );
+        });
+
+        $this->console->header('Migrating');
         $this->migrationManager->onDatabase($database)->down();
 
-        $this->console->success(sprintf('Rolled back %s migrations', $this->count));
-    }
-
-    #[EventHandler]
-    public function onMigrationRolledBack(MigrationRolledBack $event): void
-    {
-        $this->console->writeln("- Rollback {$event->name}");
-        $this->count += 1;
+        if ($this->count === 0) {
+            $this->console->info('There is no migration to roll back.');
+        }
     }
 }

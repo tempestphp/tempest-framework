@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Database\PrimaryKey;
@@ -72,20 +72,15 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame('test@example.com', $user->email);
     }
 
-    private function getAlterTableMigration(): DatabaseMigration
+    private function getAlterTableMigration(): MigratesUp
     {
-        return new class() implements DatabaseMigration {
+        return new class() implements MigratesUp {
             private(set) string $name = '0000-01-02_add_email_to_user_table';
 
             public function up(): QueryStatement
             {
                 return AlterTableStatement::forModel(User::class)
                     ->add(new VarcharStatement('email'));
-            }
-
-            public function down(): ?QueryStatement
-            {
-                return null;
             }
         };
     }
