@@ -5,6 +5,7 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Tempest\Upgrade\Tempest2\MigrationRector;
+use Tempest\Upgrade\Tempest2\RemoveDatabaseMigrationImportRector;
 use Tempest\Upgrade\Tempest2\RemoveIdImportRector;
 
 return static function (RectorConfig $config) : void {
@@ -63,4 +64,5 @@ return static function (RectorConfig $config) : void {
     ]);
 
     $config->rule(RemoveIdImportRector::class);
+    $config->rule(RemoveDatabaseMigrationImportRector::class);
 };
