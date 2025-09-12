@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessControl;
 use Tempest\Auth\AccessControl\AccessDecision;
-use Tempest\Auth\AccessControl\PolicyFor;
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
 use Tempest\Auth\Authentication\CanAuthenticate;
@@ -125,13 +125,13 @@ final class ArticleComment
 
 final class ArticlePolicy
 {
-    #[PolicyFor(Article::class, action: 'view')]
+    #[Policy(Article::class, action: 'view')]
     public function view(): bool
     {
         return true;
     }
 
-    #[PolicyFor(Article::class, action: 'edit')]
+    #[Policy(Article::class, action: 'edit')]
     public function edit(Article $article, ?TestUser $subject): bool
     {
         if ($subject === null) {
@@ -141,7 +141,7 @@ final class ArticlePolicy
         return $subject->role === 'admin' || $subject->role === 'author' && $article->authorId === $subject->id->value;
     }
 
-    #[PolicyFor(Article::class, action: 'delete')]
+    #[Policy(Article::class, action: 'delete')]
     public function delete(Article $article, ?TestUser $subject): bool|AccessDecision
     {
         if ($subject === null) {
@@ -159,7 +159,7 @@ final class ArticlePolicy
         return AccessDecision::denied('Insufficient permissions for this action');
     }
 
-    #[PolicyFor(Article::class, action: 'manage')]
+    #[Policy(Article::class, action: 'manage')]
     public function manage(?Article $_, ?TestUser $subject): bool
     {
         return $subject?->role === 'admin';
@@ -168,13 +168,13 @@ final class ArticlePolicy
 
 final class CommentPolicy
 {
-    #[PolicyFor(ArticleComment::class, action: 'view')]
+    #[Policy(ArticleComment::class, action: 'view')]
     public function view(): bool
     {
         return true;
     }
 
-    #[PolicyFor(ArticleComment::class, action: 'edit')]
+    #[Policy(ArticleComment::class, action: 'edit')]
     public function edit(ArticleComment $comment, ?TestUser $subject): bool
     {
         if ($subject === null) {
@@ -184,7 +184,7 @@ final class CommentPolicy
         return $comment->authorId === $subject->id->value || $subject->role === 'admin';
     }
 
-    #[PolicyFor(ArticleComment::class, action: 'delete')]
+    #[Policy(ArticleComment::class, action: 'delete')]
     public function delete(ArticleComment $_, ?TestUser $subject): bool
     {
         return $subject?->role === 'admin';

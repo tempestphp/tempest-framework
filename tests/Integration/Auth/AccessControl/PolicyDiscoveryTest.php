@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessDecision;
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\PolicyDiscovery;
-use Tempest\Auth\AccessControl\PolicyFor;
 use Tempest\Auth\AuthConfig;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
@@ -80,13 +80,13 @@ enum TestAction: string
 
 final class TestPolicyClass
 {
-    #[PolicyFor(TestModel::class, action: 'view')]
+    #[Policy(TestModel::class, action: 'view')]
     public function canView(): bool
     {
         return true;
     }
 
-    #[PolicyFor(TestModel::class, action: 'edit')]
+    #[Policy(TestModel::class, action: 'edit')]
     public function canEdit(): AccessDecision
     {
         return AccessDecision::granted();
@@ -95,7 +95,7 @@ final class TestPolicyClass
 
 final class TestPolicyWithMultipleActions
 {
-    #[PolicyFor(TestModel::class, action: ['create', 'update'])]
+    #[Policy(TestModel::class, action: ['create', 'update'])]
     public function canCreateOrUpdate(): bool
     {
         return true;
@@ -104,7 +104,7 @@ final class TestPolicyWithMultipleActions
 
 final class TestPolicyWithEnumActions
 {
-    #[PolicyFor(TestModel::class, action: TestAction::DELETE)]
+    #[Policy(TestModel::class, action: TestAction::DELETE)]
     public function canDelete(): bool
     {
         return false;

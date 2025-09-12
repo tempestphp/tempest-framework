@@ -236,17 +236,23 @@ This paradigm is known as [policy-based access control](https://en.wikipedia.org
 
 ### Defining policies
 
-To create a policy, you may define a method in any class and annotate it with the {b`#[Tempest\Auth\AccessControl\PolicyFor]`} attribute. Typically, this is done in a dedicated policy class.
+To create a policy, you may define a method in any class and annotate it with the {b`#[Tempest\Auth\AccessControl\Policy]`} attribute. Typically, this is done in a dedicated policy class.
 
-The attribute expects the class name of the resource as its first parameter, and an optional action name as the second parameter. If the action name is not provided, the kebab-cased method name is used instead.
+The attribute expects the class name of the resource as its first parameter, and the action name as the second parameter. If the resource is not specified, it will be inferred by the method's first parameter. Similarly, if the action name is not provided, the kebab-cased method name is used instead.
 
 ```php app/PostPolicy.php
-use Tempest\Auth\AccessControl\PolicyFor;
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\AccessDecision;
 
 final class PostPolicy
 {
-    #[PolicyFor(Post::class)]
+    #[Policy(Post::class)]
+    public function create(): bool
+    {
+        return true;
+    }
+
+    #[Policy]
     public function view(Post $post): bool
     {
         if (! $post->published) {
@@ -256,7 +262,7 @@ final class PostPolicy
         return true;
     }
 
-    #[PolicyFor(Post::class, action: ['edit', 'update'])]
+    #[Policy(action: ['edit', 'update'])]
     public function edit(Post $post, ?User $user): bool
     {
         if ($user === null) {

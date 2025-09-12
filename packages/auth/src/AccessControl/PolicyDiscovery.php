@@ -20,7 +20,7 @@ final class PolicyDiscovery implements Discovery
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $policy = $method->getAttribute(PolicyFor::class);
+            $policy = $method->getAttribute(Policy::class);
 
             if (! $policy) {
                 continue;

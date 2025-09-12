@@ -7,14 +7,15 @@ namespace Tests\Tempest\Integration\Auth\AccessControl;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessControl;
 use Tempest\Auth\AccessControl\AccessDecision;
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\PolicyBasedAccessControl;
-use Tempest\Auth\AccessControl\PolicyFor;
 use Tempest\Auth\AuthConfig;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
 use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Auth\Exceptions\NoPolicyWereFoundForResource;
+use Tempest\Auth\Exceptions\PolicyIsInvalid;
 use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
 use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
@@ -272,6 +273,17 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function throws_exception_when_policy_resource_is_not_specified_anywhere(): void
+    {
+        $this->expectException(PolicyIsInvalid::class);
+        $this->expectExceptionMessageMatches(
+            "/The resource for policy `.*::missingResourceType` could not be inferred because it is missing from the method's parameters\. You must specify it in the attribute instead\./",
+        );
+
+        $this->registerPoliciesFrom(MissingResourceTypePolicy::class);
+    }
+
+    #[Test]
     public function throws_exception_when_policy_subject_parameter_type_is_invalid(): void
     {
         $this->registerPoliciesFrom(InvalidSubjectTypePolicy::class);
@@ -358,19 +370,19 @@ final class Comment
 
 final class PostPolicy
 {
-    #[PolicyFor(Post::class, action: 'view')]
+    #[Policy(Post::class, action: 'view')]
     public function view(): bool
     {
         return true;
     }
 
-    #[PolicyFor(Post::class, action: PostAction::VIEW)]
+    #[Policy(Post::class, action: PostAction::VIEW)]
     public function viewEnum(): bool
     {
         return true;
     }
 
-    #[PolicyFor(Post::class, action: 'edit')]
+    #[Policy(action: 'edit')]
     public function edit(?Post $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
@@ -380,7 +392,7 @@ final class PostPolicy
         return $resource?->authorId === $subject->id->value;
     }
 
-    #[PolicyFor(Post::class, action: PostAction::EDIT)]
+    #[Policy(action: PostAction::EDIT)]
     public function editEnum(?Post $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
@@ -390,7 +402,7 @@ final class PostPolicy
         return $resource?->authorId === $subject->id->value;
     }
 
-    #[PolicyFor(Post::class, action: 'delete')]
+    #[Policy(action: 'delete')]
     public function delete(?Post $resource, ?User $subject): bool|AccessDecision
     {
         if (! ($subject instanceof User)) {
@@ -402,7 +414,7 @@ final class PostPolicy
             : AccessDecision::denied('Only the author can delete their post');
     }
 
-    #[PolicyFor(Post::class, action: PostAction::DELETE)]
+    #[Policy(action: PostAction::DELETE)]
     public function deleteEnum(?Post $resource, ?User $subject): bool|AccessDecision
     {
         if (! ($subject instanceof User)) {
@@ -414,7 +426,7 @@ final class PostPolicy
             : AccessDecision::denied('Only the author can delete their post');
     }
 
-    #[PolicyFor(Post::class, action: 'create')]
+    #[Policy(Post::class, action: 'create')]
     public function create(): bool
     {
         return true;
@@ -423,7 +435,7 @@ final class PostPolicy
 
 final class UserPolicy
 {
-    #[PolicyFor(User::class, action: 'manage')]
+    #[Policy(action: 'manage')]
     public function manage(?User $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
@@ -446,7 +458,7 @@ final class Document
 
 final class MultiActionPolicy
 {
-    #[PolicyFor(Document::class, action: ['read', 'download'])]
+    #[Policy(action: ['read', 'download'])]
     public function readAndDownload(?Document $resource, ?User $subject): bool
     {
         if (! ($subject instanceof User)) {
@@ -459,7 +471,7 @@ final class MultiActionPolicy
 
 final class MultiAuthenticatablePolicy
 {
-    #[PolicyFor(Document::class)]
+    #[Policy]
     public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
     {
         if (! ($subject instanceof CanAuthenticate)) {
@@ -470,10 +482,20 @@ final class MultiAuthenticatablePolicy
     }
 }
 
+final class MissingResourceTypePolicy
+{
+    // no resource is specified
+    #[Policy]
+    public function missingResourceType(): bool
+    {
+        return true;
+    }
+}
+
 final class InvalidResourceTypePolicy
 {
     // expects a User as resource but will receive a Post
-    #[PolicyFor(Post::class, action: 'view')]
+    #[Policy(Post::class, action: 'view')]
     public function invalidResourceType(User $_resource, ?User $_subject): bool
     {
         return true;
@@ -483,7 +505,7 @@ final class InvalidResourceTypePolicy
 final class InvalidSubjectTypePolicy
 {
     // expects a Document as subject but will receive a User
-    #[PolicyFor(Post::class, action: 'edit')]
+    #[Policy(Post::class, action: 'edit')]
     public function invalidSubjectType(?Post $_resource, Document $_subject): bool
     {
         return true;
@@ -492,7 +514,7 @@ final class InvalidSubjectTypePolicy
 
 final class PolicyWithoutActionNames
 {
-    #[PolicyFor(Post::class)]
+    #[Policy(Post::class)]
     public function canMarkAsPublished(?Post $post, ?User $user): bool
     {
         if ($user === null) {
@@ -502,7 +524,7 @@ final class PolicyWithoutActionNames
         return $post?->authorId === $user->id->value;
     }
 
-    #[PolicyFor(Post::class)]
+    #[Policy(Post::class)]
     public function approveForPublication(?Post $post, ?User $user): bool
     {
         if ($user === null) {

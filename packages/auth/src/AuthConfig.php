@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Auth;
 
 use BackedEnum;
-use Tempest\Auth\AccessControl\PolicyFor;
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Exceptions\PolicyIsInvalid;
+use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Str;
@@ -23,8 +25,18 @@ final class AuthConfig
         public array $policies = [],
     ) {}
 
-    public function registerPolicy(MethodReflector $handler, PolicyFor $policy): self
+    public function registerPolicy(MethodReflector $handler, Policy $policy): self
     {
+        if (! $policy->resource) {
+            $policy->resource = $handler->getParameter(key: 0)?->getType()?->getName();
+        }
+
+        if (! $policy->resource) {
+            throw PolicyIsInvalid::resourceCouldNotBeInferred(
+                policyName: sprintf('%s::%s', $handler->getDeclaringClass()->getName(), $handler->getName()),
+            );
+        }
+
         $this->policies[$policy->resource] ??= [];
 
         if ($policy->action === null) {
