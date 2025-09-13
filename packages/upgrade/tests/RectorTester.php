@@ -52,6 +52,13 @@ final class RectorTester
         return $this;
     }
 
+    public function assertNotContains(string $needle): self
+    {
+        Assert::assertStringNotContainsString($needle, $this->actual);
+
+        return $this;
+    }
+
     private function getActual(string $fixturePath): string
     {
         $command = "vendor/bin/rector process {$fixturePath} --config {$this->configPath} --dry-run --output-format=json";

@@ -24,6 +24,18 @@ final class Tempest2RectorTest extends TestCase
             ->runFixture(__DIR__ . '/Fixtures/MigrateUpAndDownMigration.input.php')
             ->assertContains('implements \Tempest\Database\MigratesUp, \Tempest\Database\MigratesDown')
             ->assertContains('return new DropTableStatement(\'table\')')
+            ->assertNotContains('Tempest\Database\DatabaseMigration')
             ->assertContains('public function down(): QueryStatement');
+    }
+
+    public function test_database_id_rename(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/Model.input.php')
+            ->assertContains('public PrimaryKey $id')
+            ->assertContains('return $this->id->value;')
+            ->assertContains('Tempest\Database\PrimaryKey')
+            ->assertNotContains('Id')
+            ->assertNotContains('Tempest\Database\Id');
     }
 }
