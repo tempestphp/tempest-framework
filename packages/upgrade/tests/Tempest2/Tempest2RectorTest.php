@@ -2,7 +2,7 @@
 
 namespace Tempest\Upgrade\Tests\Tempest2;
 
-use Tempest\Generation\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
 final class Tempest2RectorTest extends TestCase
