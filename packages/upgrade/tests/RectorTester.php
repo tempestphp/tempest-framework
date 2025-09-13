@@ -61,7 +61,7 @@ final class RectorTester
 
     private function getActual(string $fixturePath): string
     {
-        $command = "vendor/bin/rector process {$fixturePath} --config {$this->configPath} --dry-run --output-format=json";
+        $command = "./vendor/bin/rector process {$fixturePath} --config {$this->configPath} --dry-run --output-format=json";
 
         $output = json_decode(shell_exec($command), associative: true);
 
