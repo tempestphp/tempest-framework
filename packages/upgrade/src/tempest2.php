@@ -8,7 +8,7 @@ use Tempest\Upgrade\Tempest2\MigrationRector;
 use Tempest\Upgrade\Tempest2\RemoveDatabaseMigrationImportRector;
 use Tempest\Upgrade\Tempest2\RemoveIdImportRector;
 
-return static function (RectorConfig $config) : void {
+return static function (RectorConfig $config): void {
     $config->importNames();
     $config->importShortClasses();
 
@@ -59,8 +59,8 @@ return static function (RectorConfig $config) : void {
         new RenameProperty(
             type: 'Tempest\Database\PrimaryKey',
             oldProperty: 'id',
-            newProperty: 'value'
-        )
+            newProperty: 'value',
+        ),
     ]);
 
     $config->rule(RemoveIdImportRector::class);

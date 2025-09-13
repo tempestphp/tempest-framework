@@ -6,7 +6,8 @@ final class Model
 {
     public Id $id;
 
-    public function test() {
+    public function test()
+    {
         return $this->id->id;
     }
 }

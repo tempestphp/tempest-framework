@@ -11,13 +11,13 @@ final class RemoveDatabaseMigrationImportRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\UseItem::class
+            Node\UseItem::class,
         ];
     }
 
     public function refactor(Node $node): ?int
     {
-        if (! $node instanceof Node\UseItem) {
+        if (! ($node instanceof Node\UseItem)) {
             return null;
         }
 

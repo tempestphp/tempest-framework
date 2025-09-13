@@ -81,5 +81,4 @@ final class RectorTester
 
         return trim($diff);
     }
-
 }
