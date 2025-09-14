@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\Tests;
+namespace Tempest\Http\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
@@ -10,7 +10,6 @@ use Tempest\Container\GenericContainer;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use Tempest\Router\HttpMiddlewareCallable;
@@ -19,7 +18,7 @@ use Tempest\Router\MatchRouteMiddleware;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
 
-final class MatchRouteMiddlewareTest extends TestCase
+final class MethodSpoofingTest extends TestCase
 {
     private Container $container;
     private RouteConfig $routeConfig;
