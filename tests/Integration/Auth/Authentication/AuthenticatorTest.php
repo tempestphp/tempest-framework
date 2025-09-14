@@ -3,9 +3,9 @@
 namespace Tests\Tempest\Integration\Auth\Authentication;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Authentication\SessionAuthenticator;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;

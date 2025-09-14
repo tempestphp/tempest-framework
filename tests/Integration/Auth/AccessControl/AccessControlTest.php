@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AccessControl\AccessControl;
 use Tempest\Auth\AccessControl\AccessDecision;
 use Tempest\Auth\AccessControl\Policy;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -90,7 +90,7 @@ enum ArticleAction: string
     case MANAGE = 'manage';
 }
 
-final class TestUser implements CanAuthenticate
+final class TestUser implements Authenticatable
 {
     public PrimaryKey $id;
 

@@ -2,13 +2,13 @@
 
 namespace Tempest\Auth\Installer;
 
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Database\Hashed;
 use Tempest\Database\PrimaryKey;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final class StubUserModel implements CanAuthenticate
+final class StubUserModel implements Authenticatable
 {
     public PrimaryKey $id;
 

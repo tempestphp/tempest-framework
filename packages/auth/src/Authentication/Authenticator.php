@@ -9,7 +9,7 @@ interface Authenticator
     /**
      * Authenticates the given model.
      */
-    public function authenticate(CanAuthenticate $authenticatable): void;
+    public function authenticate(Authenticatable $authenticatable): void;
 
     /**
      * Deauthenticates the currently authenticated model.
@@ -19,5 +19,5 @@ interface Authenticator
     /**
      * Retrieves the currently authenticated model.
      */
-    public function current(): ?CanAuthenticate;
+    public function current(): ?Authenticatable;
 }

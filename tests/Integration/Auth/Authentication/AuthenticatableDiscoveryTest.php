@@ -5,7 +5,7 @@ namespace Tests\Tempest\Integration\Auth\Authentication;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AuthConfig;
 use Tempest\Auth\AuthenticatableDiscovery;
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
@@ -30,12 +30,12 @@ final class AuthenticatableDiscoveryTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class AuthenticatableDevice implements CanAuthenticate
+final class AuthenticatableDevice implements Authenticatable
 {
     public PrimaryKey $id;
 }
 
-final class AuthenticatableUser implements CanAuthenticate
+final class AuthenticatableUser implements Authenticatable
 {
     public PrimaryKey $id;
 }

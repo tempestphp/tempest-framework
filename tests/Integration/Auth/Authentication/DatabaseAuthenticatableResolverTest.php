@@ -4,8 +4,8 @@ namespace Tests\Tempest\Integration\Auth\Authentication;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AuthConfig;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\AuthenticatableResolver;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Exceptions\AuthenticatableModelWasInvalid;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -64,11 +64,11 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
         $this->expectException(AuthenticatableModelWasInvalid::class);
 
         $authenticatableResolver = $this->container->get(AuthenticatableResolver::class);
-        $authenticatableResolver->resolveId(new class implements CanAuthenticate {});
+        $authenticatableResolver->resolveId(new class implements Authenticatable {});
     }
 }
 
-final class ApiToken implements CanAuthenticate
+final class ApiToken implements Authenticatable
 {
     public PrimaryKey $id;
 }

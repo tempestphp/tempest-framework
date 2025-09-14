@@ -18,7 +18,7 @@ final readonly class SessionAuthenticator implements Authenticator
         private AuthenticatableResolver $authenticatableResolver,
     ) {}
 
-    public function authenticate(CanAuthenticate $authenticatable): void
+    public function authenticate(Authenticatable $authenticatable): void
     {
         $this->session->set(
             key: self::AUTHENTICATABLE_CLASS,
@@ -37,7 +37,7 @@ final readonly class SessionAuthenticator implements Authenticator
         $this->session->destroy();
     }
 
-    public function current(): ?CanAuthenticate
+    public function current(): ?Authenticatable
     {
         $id = $this->session->get(self::AUTHENTICATABLE_KEY);
         $class = $this->session->get(self::AUTHENTICATABLE_CLASS);

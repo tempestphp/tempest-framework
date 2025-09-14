@@ -2,14 +2,14 @@
 
 namespace Tests\Tempest\Integration\Auth\Fixtures;
 
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
-use Tempest\Auth\Authentication\CanAuthenticate;
 
 final class InMemoryAuthenticator implements Authenticator
 {
-    private ?CanAuthenticate $authenticatable = null;
+    private ?Authenticatable $authenticatable = null;
 
-    public function authenticate(CanAuthenticate $authenticatable): void
+    public function authenticate(Authenticatable $authenticatable): void
     {
         $this->authenticatable = $authenticatable;
     }
@@ -19,7 +19,7 @@ final class InMemoryAuthenticator implements Authenticator
         $this->authenticatable = null;
     }
 
-    public function current(): ?CanAuthenticate
+    public function current(): ?Authenticatable
     {
         return $this->authenticatable;
     }

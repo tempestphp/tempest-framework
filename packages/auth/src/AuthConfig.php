@@ -6,7 +6,7 @@ namespace Tempest\Auth;
 
 use BackedEnum;
 use Tempest\Auth\AccessControl\Policy;
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Exceptions\PolicyIsInvalid;
 use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
 use Tempest\Reflection\MethodReflector;
@@ -17,7 +17,7 @@ use UnitEnum;
 final class AuthConfig
 {
     /**
-     * @param array<class-string<CanAuthenticate>> $authenticatables
+     * @param array<class-string<Authenticatable>> $authenticatables
      * @param array<class-string,array<string,MethodReflector[]>> $policies
      */
     public function __construct(

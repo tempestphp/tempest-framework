@@ -10,9 +10,9 @@ use Tempest\Auth\AccessControl\AccessDecision;
 use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AccessControl\PolicyBasedAccessControl;
 use Tempest\Auth\AuthConfig;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Auth\Exceptions\NoPolicyWereFoundForResource;
 use Tempest\Auth\Exceptions\PolicyIsInvalid;
@@ -339,7 +339,7 @@ final class Post
     ) {}
 }
 
-final class User implements CanAuthenticate
+final class User implements Authenticatable
 {
     public PrimaryKey $id;
 
@@ -350,7 +350,7 @@ final class User implements CanAuthenticate
     }
 }
 
-final class ServiceAccount implements CanAuthenticate
+final class ServiceAccount implements Authenticatable
 {
     public PrimaryKey $id;
 
@@ -474,7 +474,7 @@ final class MultiAuthenticatablePolicy
     #[Policy]
     public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
     {
-        if (! ($subject instanceof CanAuthenticate)) {
+        if (! ($subject instanceof Authenticatable)) {
             return false;
         }
 

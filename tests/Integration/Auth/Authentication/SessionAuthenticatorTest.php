@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AuthConfig;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Authentication\SessionAuthenticator;
 use Tempest\Auth\Exceptions\AuthenticatableWasMissing;
 use Tempest\Clock\Clock;
@@ -128,13 +128,13 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 final class ServiceWithAuthenticatable
 {
     // TODO: User|ApiKey should work, but it currently yields a circular dependency error.
-    public function __invoke(CanAuthenticate $authenticatable): object
+    public function __invoke(Authenticatable $authenticatable): object
     {
         return $authenticatable;
     }
 }
 
-final class User implements CanAuthenticate
+final class User implements Authenticatable
 {
     public PrimaryKey $id;
 
@@ -155,7 +155,7 @@ final class CreateUsersTableMigration implements MigratesUp
     }
 }
 
-final class ApiKey implements CanAuthenticate
+final class ApiKey implements Authenticatable
 {
     public PrimaryKey $id;
 

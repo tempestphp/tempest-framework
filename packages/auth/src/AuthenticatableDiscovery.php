@@ -2,7 +2,7 @@
 
 namespace Tempest\Auth;
 
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
@@ -18,7 +18,7 @@ final class AuthenticatableDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->implements(CanAuthenticate::class)) {
+        if ($class->implements(Authenticatable::class)) {
             $this->discoveryItems->add($location, $class->getName());
         }
     }

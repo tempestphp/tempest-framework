@@ -15,16 +15,16 @@ final readonly class DatabaseAuthenticatableResolver implements AuthenticatableR
         private Database $database,
     ) {}
 
-    public function resolve(int|string $id, string $class): ?CanAuthenticate
+    public function resolve(int|string $id, string $class): ?Authenticatable
     {
-        if (! is_a($class, CanAuthenticate::class, allow_string: true)) {
+        if (! is_a($class, Authenticatable::class, allow_string: true)) {
             throw new ModelIsNotAuthenticatable($class);
         }
 
         return query($class)->findById($id);
     }
 
-    public function resolveId(CanAuthenticate $authenticatable): int|string
+    public function resolveId(Authenticatable $authenticatable): int|string
     {
         $inspector = inspect($authenticatable);
 

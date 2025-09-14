@@ -5,8 +5,8 @@ namespace Tests\Tempest\Integration\Auth\Authentication;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Auth\AuthConfig;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
-use Tempest\Auth\Authentication\CanAuthenticate;
 use Tempest\Auth\Exceptions\AuthenticatableWasMissing;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -51,7 +51,7 @@ final class CurrentAuthenticatableTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class ServiceAccount implements CanAuthenticate
+final class ServiceAccount implements Authenticatable
 {
     public PrimaryKey $id;
 }

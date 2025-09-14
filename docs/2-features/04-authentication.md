@@ -24,14 +24,14 @@ After publishing, you may run `./tempest migrate`. You now have the building blo
 
 Tempest's authentication is flexible enough not to assume that an authenticatable model is a user. If your application uses a different system for authentication, such as an API key or a service account, you have the ability to create such a model while preserving the correct nomenclature.
 
-To register an authenticatable model, you may create a class that implements the {b`Tempest\Auth\Authentication\CanAuthenticate`} interface. This interface is automatically discovered by Tempest.
+To register an authenticatable model, you may create a class that implements the {b`Tempest\Auth\Authentication\Authenticatable`} interface. This interface is automatically discovered by Tempest.
 
 ```php app/Authentication/User.php
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Hashed;
 
-final class User implements CanAuthenticate
+final class User implements Authenticatable
 {
     public PrimaryKey $id;
 
@@ -113,7 +113,7 @@ final readonly class ProfileController
 }
 ```
 
-Alternatively, you may also inject the model directly. For instance, if you have a `User` model implementing `CanAuthenticate`, it can be injected as a dependency:
+Alternatively, you may also inject the model directly. For instance, if you have a `User` model implementing `Authenticatable`, it can be injected as a dependency:
 
 ```php app/ProfileController.php
 final readonly class ProfileController
@@ -142,7 +142,7 @@ Tempest provides a {b`Tempest\Auth\Authentication\DatabaseAuthenticatableResolve
 
 ```php app/Authentication/LdapAuthenticatableResolver.php
 use Tempest\Auth\Authentication\AuthenticatableResolver;
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 use App\Authentication\User;
 
 final readonly class LdapAuthenticatableResolver implements AuthenticatableResolver
@@ -151,7 +151,7 @@ final readonly class LdapAuthenticatableResolver implements AuthenticatableResol
         private LdapClient $ldap,
     ) {}
 
-    public function resolve(int|string $id): ?CanAuthenticate
+    public function resolve(int|string $id): ?Authenticatable
     {
         $attributes = $this->ldap->findUserByIdentifier($id);
 
@@ -166,7 +166,7 @@ final readonly class LdapAuthenticatableResolver implements AuthenticatableResol
         );
     }
 
-    public function resolveId(CanAuthenticate $authenticatable): int|string
+    public function resolveId(Authenticatable $authenticatable): int|string
     {
         return $authenticatable->email;
     }
@@ -198,14 +198,14 @@ However, you may provide your own authenticator by implementing the {b`Tempest\A
 
 ```php app/Authentication/RequestAuthenticator.php
 use Tempest\Auth\Authentication\Authenticator;
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 
 #[Autowire]
 final class RequestAuthenticator implements Authenticator
 {
-    private ?CanAuthenticate $current = null;
+    private ?Authenticatable $current = null;
 
-    public function authenticate(CanAuthenticate $authenticatable): void
+    public function authenticate(Authenticatable $authenticatable): void
     {
         $this->current = $authenticatable;
     }
@@ -215,7 +215,7 @@ final class RequestAuthenticator implements Authenticator
         $this->current = null;
     }
 
-    public function current(): ?CanAuthenticate
+    public function current(): ?Authenticatable
     {
         return $this->current;
     }

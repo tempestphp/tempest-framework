@@ -17,7 +17,7 @@ final readonly class CurrentAuthenticatableInitializer implements DynamicInitial
 {
     public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
-        return $class->implements(CanAuthenticate::class) || $class->is(CanAuthenticate::class);
+        return $class->implements(Authenticatable::class) || $class->is(Authenticatable::class);
     }
 
     public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object

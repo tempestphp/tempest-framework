@@ -3,7 +3,7 @@
 namespace Tempest\Auth\Exceptions;
 
 use Exception;
-use Tempest\Auth\Authentication\CanAuthenticate;
+use Tempest\Auth\Authentication\Authenticatable;
 
 final class ModelIsNotAuthenticatable extends Exception implements AuthenticationException
 {
@@ -11,7 +11,7 @@ final class ModelIsNotAuthenticatable extends Exception implements Authenticatio
         private readonly string $class,
     ) {
         parent::__construct(
-            sprintf('`%s` must be an instance of `%s`', $class, CanAuthenticate::class),
+            sprintf('`%s` must be an instance of `%s`', $class, Authenticatable::class),
         );
     }
 }
