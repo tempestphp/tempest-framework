@@ -20,7 +20,7 @@ interface AccessControl
      *
      * @throws AccessWasDenied
      */
-    public function denyAccessUnlessGranted(UnitEnum|string $action, object|string $resource, ?object $subject = null): void;
+    public function ensureGranted(UnitEnum|string $action, object|string $resource, ?object $subject = null): void;
 
     /**
      * Checks if the action is granted for the given resource and subject.

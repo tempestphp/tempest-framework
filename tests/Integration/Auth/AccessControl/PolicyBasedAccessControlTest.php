@@ -171,7 +171,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
         $this->expectException(AccessWasDenied::class);
         $this->expectExceptionMessage('Only the author can delete their post');
 
-        $accessControl->denyAccessUnlessGranted('delete', $post, $user);
+        $accessControl->ensureGranted('delete', $post, $user);
     }
 
     #[Test]
@@ -184,7 +184,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
         $user = new User(userId: 1);
 
         // Should not throw
-        $accessControl->denyAccessUnlessGranted('view', $post, $user);
+        $accessControl->ensureGranted('view', $post, $user);
 
         $this->expectNotToPerformAssertions();
     }

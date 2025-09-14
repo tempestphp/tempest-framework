@@ -284,7 +284,7 @@ return AccessDecision::denied('You must be authenticated to perform this action.
 
 ### Checking for permissions
 
-You may inject the {b`Tempest\Auth\AccessControl\AccessControl`} interface to check if a specific action is granted for a resource and subject. Typically, the `denyAccessUnlessGranted()` method is called in a controller.
+You may inject the {b`Tempest\Auth\AccessControl\AccessControl`} interface to check if a specific action is granted for a resource and subject. Typically, the `ensureGranted()` method is called in a controller.
 
 ```php app/Controllers/PostController.php
 use Tempest\Auth\AccessControl\AccessControl;
@@ -298,7 +298,7 @@ final readonly class PostController
     #[Delete('/posts/{post}')]
     public function delete(Post $post): Redirect
     {
-        $this->accessControl->denyAccessUnlessGranted('delete', $post);
+        $this->accessControl->ensureGranted('delete', $post);
 
         // Proceed with deletion...
         

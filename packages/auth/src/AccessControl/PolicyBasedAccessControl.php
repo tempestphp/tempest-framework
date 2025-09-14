@@ -27,7 +27,7 @@ final readonly class PolicyBasedAccessControl implements AccessControl
         private AuthConfig $authConfig,
     ) {}
 
-    public function denyAccessUnlessGranted(UnitEnum|string $action, object|string $resource, ?object $subject = null): void
+    public function ensureGranted(UnitEnum|string $action, object|string $resource, ?object $subject = null): void
     {
         $result = $this->isGranted($action, $resource, $subject);
 
