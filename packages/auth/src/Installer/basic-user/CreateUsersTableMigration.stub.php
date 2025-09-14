@@ -8,7 +8,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final class StubCreateUsersTableMigration implements MigratesUp
+final class CreateUsersTableMigration implements MigratesUp
 {
     public string $name = '0000-00-00_create_users_table';
 

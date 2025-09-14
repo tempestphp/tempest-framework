@@ -8,7 +8,7 @@ use Tempest\Database\PrimaryKey;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final class StubUserModel implements Authenticatable
+final class UserModel implements Authenticatable
 {
     public PrimaryKey $id;
 

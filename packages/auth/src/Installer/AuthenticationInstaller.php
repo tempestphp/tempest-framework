@@ -30,8 +30,8 @@ final class AuthenticationInstaller implements Installer
 
     public function install(): void
     {
-        $migration = $this->publish(__DIR__ . '/basic-user/StubCreateUsersTableMigration.php', src_path('Authentication/CreateUsersTable.php'));
-        $this->publish(__DIR__ . '/basic-user/StubUserModel.php', src_path('Authentication/User.php'));
+        $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
+        $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
         $this->publishImports();
 
         if ($migration && $this->shouldMigrate()) {
