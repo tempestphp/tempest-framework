@@ -15,8 +15,8 @@ use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Authentication\AuthenticatorInitializer;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Auth\Exceptions\NoPolicyWereFoundForResource;
-use Tempest\Auth\Exceptions\PolicyIsInvalid;
-use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
+use Tempest\Auth\Exceptions\PolicyMethodWasInvalid;
+use Tempest\Auth\Exceptions\PolicyWasInvalid;
 use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Integration\Auth\Fixtures\InMemoryAuthenticatorInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -266,7 +266,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
         $post = new Post(title: 'Test post', authorId: 1);
         $user = new User(userId: 1);
 
-        $this->expectException(PolicyMethodIsInvalid::class);
+        $this->expectException(PolicyMethodWasInvalid::class);
         $this->expectExceptionMessageMatches('/The type of the resource parameter of the `.*::invalidResourceType` policy does not match the expected type `.*User`/');
 
         $accessControl->isGranted('view', $post, $user);
@@ -275,7 +275,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
     #[Test]
     public function throws_exception_when_policy_resource_is_not_specified_anywhere(): void
     {
-        $this->expectException(PolicyIsInvalid::class);
+        $this->expectException(PolicyWasInvalid::class);
         $this->expectExceptionMessageMatches(
             "/The resource for policy `.*::missingResourceType` could not be inferred because it is missing from the method's parameters\. You must specify it in the attribute instead\./",
         );
@@ -292,7 +292,7 @@ final class PolicyBasedAccessControlTest extends FrameworkIntegrationTestCase
         $post = new Post(title: 'Test post', authorId: 1);
         $user = new User(userId: 1);
 
-        $this->expectException(PolicyMethodIsInvalid::class);
+        $this->expectException(PolicyMethodWasInvalid::class);
         $this->expectExceptionMessageMatches('/The type of the subject parameter of the `.*::invalidSubjectType` policy does not match the expected type `.*Document`/');
 
         $accessControl->isGranted('edit', $post, $user);

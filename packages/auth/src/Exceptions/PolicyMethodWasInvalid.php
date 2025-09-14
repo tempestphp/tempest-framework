@@ -4,7 +4,7 @@ namespace Tempest\Auth\Exceptions;
 
 use Exception;
 
-final class PolicyMethodIsInvalid extends Exception implements AuthenticationException
+final class PolicyMethodWasInvalid extends Exception implements AuthenticationException
 {
     public static function resourceParameterIsInvalid(string $policyName, string $expectedType): self
     {

@@ -8,7 +8,7 @@ use Tempest\Auth\AuthConfig;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Auth\Exceptions\NoPolicyWereFoundForResource;
-use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
+use Tempest\Auth\Exceptions\PolicyMethodWasInvalid;
 use Tempest\Container\Container;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
@@ -100,13 +100,13 @@ final readonly class PolicyBasedAccessControl implements AccessControl
         $this->ensureParameterAcceptsInput(
             reflector: $policy->getParameter(key: 0),
             input: $resource,
-            throw: fn (string $expected) => throw PolicyMethodIsInvalid::resourceParameterIsInvalid($policyName, $expected),
+            throw: fn (string $expected) => throw PolicyMethodWasInvalid::resourceParameterIsInvalid($policyName, $expected),
         );
 
         $this->ensureParameterAcceptsInput(
             reflector: $policy->getParameter(key: 1),
             input: $subject,
-            throw: fn (string $expected) => throw PolicyMethodIsInvalid::subjectParameterIsInvalid($policyName, $expected),
+            throw: fn (string $expected) => throw PolicyMethodWasInvalid::subjectParameterIsInvalid($policyName, $expected),
         );
 
         $decision = $policy->invokeArgs(

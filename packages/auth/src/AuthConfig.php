@@ -7,8 +7,8 @@ namespace Tempest\Auth;
 use BackedEnum;
 use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\Authentication\Authenticatable;
-use Tempest\Auth\Exceptions\PolicyIsInvalid;
-use Tempest\Auth\Exceptions\PolicyMethodIsInvalid;
+use Tempest\Auth\Exceptions\PolicyMethodWasInvalid;
+use Tempest\Auth\Exceptions\PolicyWasInvalid;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Str;
@@ -32,7 +32,7 @@ final class AuthConfig
         }
 
         if (! $policy->resource) {
-            throw PolicyIsInvalid::resourceCouldNotBeInferred(
+            throw PolicyWasInvalid::resourceCouldNotBeInferred(
                 policyName: sprintf('%s::%s', $handler->getDeclaringClass()->getName(), $handler->getName()),
             );
         }

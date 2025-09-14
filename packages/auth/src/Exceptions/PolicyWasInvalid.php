@@ -4,7 +4,7 @@ namespace Tempest\Auth\Exceptions;
 
 use Exception;
 
-final class PolicyIsInvalid extends Exception implements AuthenticationException
+final class PolicyWasInvalid extends Exception implements AuthenticationException
 {
     public static function resourceCouldNotBeInferred(string $policyName): self
     {

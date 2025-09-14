@@ -5,7 +5,7 @@ namespace Tempest\Auth\Exceptions;
 use Exception;
 use Tempest\Auth\Authentication\Authenticatable;
 
-final class ModelIsNotAuthenticatable extends Exception implements AuthenticationException
+final class ModelWasNotAuthenticatable extends Exception implements AuthenticationException
 {
     public function __construct(
         private readonly string $class,
