@@ -68,6 +68,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_from_factory(): void
     {
+        $_COOKIE = [];
+
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
         $_SERVER['HTTP_X-TEST'] = 'test';
@@ -84,7 +86,6 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $request->getUri()->getPath());
         $this->assertEquals(['test' => 'test'], $request->getParsedBody());
         $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
-
         $this->assertCount(1, $request->getCookieParams());
         $this->assertArrayHasKey('test', $request->getCookieParams());
         $this->assertSame('test', $this->container->get(Encrypter::class)->decrypt($request->getCookieParams()['test']));
