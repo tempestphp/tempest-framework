@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Mapper;
+namespace Integration\Route;
 
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
@@ -19,7 +19,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
+final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTestCase
 {
     private Encrypter $encrypter {
         get => $this->container->get(Encrypter::class);
