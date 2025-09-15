@@ -11,6 +11,8 @@ excludes = [
 	"./vendor/composer",
 	"**/.cache",
 	"**/*.stub.php",
+	"**/*.input.php",
+	"**/*.expected.php",
 ]
 
 [format]
