@@ -15,8 +15,8 @@ use Tempest\Http\RequestHeaders;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
-
 use Throwable;
+
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -35,7 +35,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
     public function map(mixed $from, mixed $to): GenericRequest
     {
         /** @var PsrRequest $from */
-        $data = (array)$from->getParsedBody();
+        $data = (array) $from->getParsedBody();
         $raw = $from->getBody()->getContents();
 
         if (arr($from->getHeader('content-type'))->hasValue('application/json') && json_validate($raw)) {
@@ -56,7 +56,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
 
         return map([
             'method' => Method::from($from->getMethod()),
-            'uri' => (string)$from->getUri(),
+            'uri' => (string) $from->getUri(),
             'raw' => $raw,
             'body' => $data,
             'headers' => RequestHeaders::normalizeFromArray($headersAsString),
@@ -78,6 +78,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
                     }
                 },
             )),
-        ])->to(GenericRequest::class);
+        ])
+            ->to(GenericRequest::class);
     }
 }

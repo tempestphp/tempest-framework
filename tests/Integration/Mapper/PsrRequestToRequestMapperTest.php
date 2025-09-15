@@ -125,12 +125,11 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
                     'body' => 'text',
                 ],
                 cookies: [
-                    'foo' => 'bar'
-                ]
+                    'foo' => 'bar',
+                ],
             ),
             to: GenericRequest::class,
         );
-
 
         $this->assertSame([], $request->cookies);
 
