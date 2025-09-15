@@ -45,7 +45,6 @@ final class Tempest2RectorTest extends TestCase
             ->runFixture(__DIR__ . '/Fixtures/UriNamespaceChange.input.php')
             ->assertContains('use function Tempest\Router\uri;')
             ->assertNotContains('use function Tempest\uri;');
-
     }
 
     public function test_is_current_uri_namespace_change(): void
@@ -54,6 +53,5 @@ final class Tempest2RectorTest extends TestCase
             ->runFixture(__DIR__ . '/Fixtures/IsCurrentUriNamespaceChange.input.php')
             ->assertContains('use function Tempest\Router\is_current_uri;')
             ->assertNotContains('use function Tempest\is_current_uri;');
-
     }
 }
