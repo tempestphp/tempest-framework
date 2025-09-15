@@ -3,10 +3,9 @@
 namespace Tempest\Upgrade\Tempest2;
 
 use PhpParser\Node;
-use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
 
-final class RemoveUriImportsRector extends AbstractRector
+final class UpdateUriImportsRector extends AbstractRector
 {
     public function getNodeTypes(): array
     {
@@ -21,8 +20,12 @@ final class RemoveUriImportsRector extends AbstractRector
             return null;
         }
 
-        if ($node->name->toString() === 'Tempest\uri' || $node->name->toString() === 'Tempest\is_current_uri') {
-            return NodeVisitor::REMOVE_NODE;
+        if ($node->name->toString() === 'Tempest\uri') {
+            $node->name = new Node\Name('Tempest\Router\uri');
+        }
+
+        if ($node->name->toString() === 'Tempest\is_current_uri') {
+            $node->name = new Node\Name('Tempest\Router\is_current_uri');
         }
 
         return null;
