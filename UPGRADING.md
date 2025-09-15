@@ -32,7 +32,7 @@ Finally, carefully review and test your project, and make sure to read through t
 - **`Tempest\CommandBus\AsyncCommand` is now called `Tempest\CommandBus\Async`** (https://github.com/tempestphp/tempest-framework/pull/1507)
 - **You cannot longer declare view components via the `<x-component name="x-my-component">` tag. All files using this syntax must remove the wrapping `<x-component` tag and instead rename the filename to `x-my-component.view.php` (https://github.com/tempestphp/tempest-framework/pull/1439)**
 - **Validation rule names were updated** (https://github.com/tempestphp/tempest-framework/pull/1444)
-- **Migration interface** was split into two** (https://github.com/tempestphp/tempest-framework/pull/1513)
+- **The `DatabaseMigration` interface was split into two** (https://github.com/tempestphp/tempest-framework/pull/1513)
 - **`\Tempest\uri` and `\Tempest\is_current_uri` are both moved to the `\Tempest\Router` namespace**
 - Cookies are now encrypted by default (https://github.com/tempestphp/tempest-framework/pull/1447) and developers must run `tempest key:generate` once per environment
 - Changes in view component variable scoping rules might affect view files (https://github.com/tempestphp/tempest-framework/pull/1435)
