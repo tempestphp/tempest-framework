@@ -82,9 +82,9 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             ->to(GenericRequest::class);
     }
 
-    private function requestMethod(mixed $from, array $data): Method
+    private function requestMethod(PsrRequest $request, array $data): Method
     {
-        $originalMethod = Method::from($from->getMethod());
+        $originalMethod = Method::from($request->getMethod());
         if ($originalMethod !== Method::POST) {
             return $originalMethod;
         }

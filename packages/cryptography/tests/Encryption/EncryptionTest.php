@@ -12,31 +12,15 @@ use Tempest\Cryptography\Encryption\Exceptions\SignatureMismatched;
 use Tempest\Cryptography\Encryption\GenericEncrypter;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
+use Tempest\Cryptography\Tests\CreatesEncrypter;
 use Tempest\Cryptography\Tests\CreatesSigner;
 use Tempest\Cryptography\Tests\HasMoreIntegerAssertions;
 use Tempest\DateTime\Duration;
 
 final class EncryptionTest extends TestCase
 {
-    use CreatesSigner;
+    use CreatesEncrypter;
     use HasMoreIntegerAssertions;
-
-    private function createEncrypter(?string $key = null, false|Duration $minimumExecutionDuration = false): GenericEncrypter
-    {
-        $key ??= EncryptionKey::generate(EncryptionAlgorithm::AES_256_GCM)->toString();
-
-        return new GenericEncrypter(
-            signer: $this->createSigner(new SigningConfig(
-                algorithm: SigningAlgorithm::SHA256,
-                key: $key,
-                minimumExecutionDuration: $minimumExecutionDuration,
-            )),
-            config: new EncryptionConfig(
-                algorithm: EncryptionAlgorithm::AES_256_GCM,
-                key: $key,
-            ),
-        );
-    }
 
     #[TestWith([''])]
     #[TestWith(['sensitive data'])]

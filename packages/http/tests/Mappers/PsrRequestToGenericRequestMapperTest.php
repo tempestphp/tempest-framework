@@ -11,24 +11,22 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
-use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Cryptography\Tests\CreatesEncrypter;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
 
 final class PsrRequestToGenericRequestMapperTest extends TestCase
 {
+    use CreatesEncrypter;
+
     private PsrRequestToGenericRequestMapper $mapper;
-    private Encrypter $encrypter;
     private ReflectionMethod $requestMethod;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->encrypter = $this->createMock(Encrypter::class);
-        $this->encrypter->method('decrypt')->willReturnArgument(0);
-
-        $this->mapper = new PsrRequestToGenericRequestMapper($this->encrypter);
+        $this->mapper = new PsrRequestToGenericRequestMapper($this->createEncrypter());
 
         $reflection = new ReflectionClass($this->mapper);
         $this->requestMethod = $reflection->getMethod('requestMethod');
