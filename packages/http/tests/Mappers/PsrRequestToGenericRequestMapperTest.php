@@ -11,7 +11,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionMethod;
+use Tempest\Clock\GenericClock;
+use Tempest\Core\AppConfig;
 use Tempest\Cryptography\Tests\CreatesEncrypter;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
 
@@ -26,7 +29,13 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
     {
         parent::setUp();
 
-        $this->mapper = new PsrRequestToGenericRequestMapper($this->createEncrypter());
+        $this->mapper = new PsrRequestToGenericRequestMapper(
+            $this->createEncrypter(),
+            new CookieManager(
+                new AppConfig(baseUri: 'https://test.com'),
+                new GenericClock(),
+            ),
+        );
 
         $reflection = new ReflectionClass($this->mapper);
         $this->requestMethod = $reflection->getMethod('requestMethod');
