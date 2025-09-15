@@ -15,4 +15,12 @@ enum Method: string
     case OPTIONS = 'OPTIONS';
     case TRACE = 'TRACE';
     case PATCH = 'PATCH';
+
+    public function isSpoofable(): bool
+    {
+        return match ($this) {
+            Method::PUT, Method::PATCH, Method::DELETE => true,
+            default => false,
+        };
+    }
 }

@@ -98,14 +98,8 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             return $originalMethod;
         }
 
-        $allowedMethods = [
-            Method::PUT,
-            Method::PATCH,
-            Method::DELETE,
-        ];
-
-        return ! in_array($spoofedMethod, $allowedMethods, strict: true)
-            ? $originalMethod
-            : $spoofedMethod;
+        return $spoofedMethod->isSpoofable()
+            ? $spoofedMethod
+            : $originalMethod;
     }
 }
