@@ -9,9 +9,9 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
-use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -25,11 +25,17 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         get => $this->container->get(Encrypter::class);
     }
 
+    private CookieManager $cookies {
+        get => $this->container->get(CookieManager::class);
+    }
+
+    private PsrRequestToGenericRequestMapper $mapper {
+        get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies);
+    }
+
     public function test_generic_request_is_used_when_interface_is_passed(): void
     {
-        $mapper = new PsrRequestToGenericRequestMapper($this->encrypter);
-
-        $request = $mapper->map(
+        $request = $this->mapper->map(
             from: $this->http->makePsrRequest('/'),
             to: Request::class,
         );
@@ -45,7 +51,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         $_COOKIE['test'] = $this->encrypter->encrypt('cookie-value')->serialize();
 
-        $request = new PsrRequestToGenericRequestMapper($this->encrypter)->map(new ServerRequest(
+        $request = $this->mapper->map(new ServerRequest(
             uri: new Uri('/json-endpoint'),
             method: 'POST',
             body: $stream,
@@ -65,10 +71,8 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         copy(__DIR__ . '/Fixtures/upload.txt', $currentPath);
 
-        $mapper = new PsrRequestToGenericRequestMapper($this->encrypter);
-
         /** @var GenericRequest $request */
-        $request = $mapper->map(
+        $request = $this->mapper->map(
             from: $this->http->makePsrRequest('/', files: [new UploadedFile(
                 streamOrFile: $currentPath,
                 size: 1,
@@ -99,7 +103,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
     public function test_body_field_in_body(): void
     {
-        $request = new PsrRequestToGenericRequestMapper($this->encrypter)->map(
+        $request = $this->mapper->map(
             from: $this->http->makePsrRequest(
                 uri: '/',
                 body: [
@@ -110,5 +114,23 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(['body' => 'text'], $request->body);
+    }
+
+    public function test_unencrypted_cookies_are_discarded(): void
+    {
+        $request = $this->mapper->map(
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                body: [
+                    'body' => 'text',
+                ],
+                cookies: [
+                    'foo' => 'bar'
+                ]
+            ),
+            to: GenericRequest::class,
+        );
+
+        $this->assertSame([], $request->cookies);
     }
 }

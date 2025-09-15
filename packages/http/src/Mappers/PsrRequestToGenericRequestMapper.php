@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Psr\Http\Message\UploadedFileInterface;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\RequestHeaders;
@@ -15,6 +16,7 @@ use Tempest\Http\Upload;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 
+use Throwable;
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -22,6 +24,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
 {
     public function __construct(
         private Encrypter $encrypter,
+        private CookieManager $cookies,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -32,7 +35,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
     public function map(mixed $from, mixed $to): GenericRequest
     {
         /** @var PsrRequest $from */
-        $data = (array) $from->getParsedBody();
+        $data = (array)$from->getParsedBody();
         $raw = $from->getBody()->getContents();
 
         if (arr($from->getHeader('content-type'))->hasValue('application/json') && json_validate($raw)) {
@@ -53,21 +56,28 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
 
         return map([
             'method' => Method::from($from->getMethod()),
-            'uri' => (string) $from->getUri(),
+            'uri' => (string)$from->getUri(),
             'raw' => $raw,
             'body' => $data,
             'headers' => RequestHeaders::normalizeFromArray($headersAsString),
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            'cookies' => Arr\map_iterable(
+            'cookies' => Arr\filter(Arr\map_iterable(
                 array: $_COOKIE,
-                map: fn (string $value, string $key) => new Cookie(
-                    key: $key,
-                    value: $this->encrypter->decrypt($value),
-                ),
-            ),
-        ])
-            ->to(GenericRequest::class);
+                map: function (string $value, string $key) {
+                    try {
+                        return new Cookie(
+                            key: $key,
+                            value: $this->encrypter->decrypt($value),
+                        );
+                    } catch (Throwable) {
+                        $this->cookies->remove($key);
+
+                        return null;
+                    }
+                },
+            )),
+        ])->to(GenericRequest::class);
     }
 }
