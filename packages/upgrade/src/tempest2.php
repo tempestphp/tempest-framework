@@ -1,18 +1,21 @@
 <?php
 
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Tempest\Upgrade\Tempest2\MigrationRector;
 use Tempest\Upgrade\Tempest2\RemoveDatabaseMigrationImportRector;
 use Tempest\Upgrade\Tempest2\RemoveIdImportRector;
+use Tempest\Upgrade\Tempest2\UpdateUriImportsRector;
 
 return static function (RectorConfig $config): void {
     $config->importNames();
     $config->importShortClasses();
 
     $config->rule(MigrationRector::class);
+    $config->rule(UpdateUriImportsRector::class);
 
     $config->ruleWithConfiguration(RenameClassRector::class, [
         'Tempest\Database\Id' => 'Tempest\Database\PrimaryKey',
