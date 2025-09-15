@@ -38,4 +38,13 @@ final class Tempest2RectorTest extends TestCase
             ->assertNotContains('Id')
             ->assertNotContains('Tempest\Database\Id');
     }
+
+    public function test_uri_namespace_change(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/UriNamespaceChange.input.php')
+            ->assertContains('use function Tempest\Router\uri;')
+            ->assertNotContains('use function Tempest\uri;');
+
+    }
 }

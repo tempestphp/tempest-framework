@@ -74,6 +74,7 @@ final class RectorTester
             isDryRun: true,
             shouldClearCache: true,
             showDiffs: true,
+
         );
 
         $processer = $container->make(ApplicationFileProcessor::class);
