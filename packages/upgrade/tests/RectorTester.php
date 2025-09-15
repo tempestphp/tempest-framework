@@ -5,7 +5,6 @@ namespace Tempest\Upgrade\Tests;
 use Closure;
 use PHPUnit\Framework\Assert;
 use Rector\Application\ApplicationFileProcessor;
-use Rector\Bootstrap\RectorConfigsResolver;
 use Rector\DependencyInjection\RectorContainerFactory;
 use Rector\ValueObject\Bootstrap\BootstrapConfigs;
 use Rector\ValueObject\Configuration;
@@ -42,10 +41,11 @@ final class RectorTester
     public function assertMatchesExpected(): self
     {
         $expected = file_get_contents(str_replace('.input.php', '.expected.php', $this->fixturePath));
-        $expected = preg_replace('/^<\?php\n/', '', $expected);
+        [$expected, $actual] = preg_replace('/^<\?php\s*/', '', [$expected, $this->actual]);
         $expected = trim($expected);
+        $actual = trim($actual);
 
-        Assert::assertSame($expected, $this->actual);
+        Assert::assertSame($expected, $actual);
 
         return $this;
     }
