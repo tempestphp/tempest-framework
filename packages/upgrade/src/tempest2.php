@@ -8,7 +8,7 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Tempest\Upgrade\Tempest2\MigrationRector;
 use Tempest\Upgrade\Tempest2\RemoveDatabaseMigrationImportRector;
 use Tempest\Upgrade\Tempest2\RemoveIdImportRector;
-use Tempest\Upgrade\Tempest2\RemoveUriImportRector;
+use Tempest\Upgrade\Tempest2\RemoveUriImportsRector;
 
 return static function (RectorConfig $config): void {
     $config->importNames();
@@ -18,6 +18,7 @@ return static function (RectorConfig $config): void {
 
     $config->ruleWithConfiguration(RenameFunctionRector::class, [
         'Tempest\uri' => 'Tempest\Router\uri',
+        'Tempest\is_current_uri' => 'Tempest\Router\is_current_uri',
     ]);
 
     $config->ruleWithConfiguration(RenameClassRector::class, [
@@ -71,5 +72,5 @@ return static function (RectorConfig $config): void {
 
     $config->rule(RemoveIdImportRector::class);
     $config->rule(RemoveDatabaseMigrationImportRector::class);
-    $config->rule(RemoveUriImportRector::class);
+    $config->rule(RemoveUriImportsRector::class);
 };

@@ -6,7 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
 
-final class RemoveUriImportRector extends AbstractRector
+final class RemoveUriImportsRector extends AbstractRector
 {
     public function getNodeTypes(): array
     {
@@ -21,7 +21,7 @@ final class RemoveUriImportRector extends AbstractRector
             return null;
         }
 
-        if ($node->name->toString() === 'Tempest\uri') {
+        if ($node->name->toString() === 'Tempest\uri' || $node->name->toString() === 'Tempest\is_current_uri') {
             return NodeVisitor::REMOVE_NODE;
         }
 
