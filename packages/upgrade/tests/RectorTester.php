@@ -4,6 +4,11 @@ namespace Tempest\Upgrade\Tests;
 
 use Closure;
 use PHPUnit\Framework\Assert;
+use Rector\Application\ApplicationFileProcessor;
+use Rector\Bootstrap\RectorConfigsResolver;
+use Rector\DependencyInjection\RectorContainerFactory;
+use Rector\ValueObject\Bootstrap\BootstrapConfigs;
+use Rector\ValueObject\Configuration;
 
 final class RectorTester
 {
@@ -61,11 +66,21 @@ final class RectorTester
 
     private function getActual(string $fixturePath): string
     {
-        $command = "./vendor/bin/rector process {$fixturePath} --config {$this->configPath} --dry-run --output-format=json";
+        $rectorContainerFactory = new RectorContainerFactory();
+        $bootstrapConfigs = new BootstrapConfigs($this->configPath, []);
+        $container = $rectorContainerFactory->createFromBootstrapConfigs($bootstrapConfigs);
 
-        $output = json_decode(shell_exec($command), associative: true);
+        $config = new Configuration(
+            isDryRun: true,
+            shouldClearCache: true,
+            showDiffs: true,
+        );
 
-        return $this->cleanDiff($output['file_diffs'][0]['diff'] ?? '');
+        $processer = $container->make(ApplicationFileProcessor::class);
+
+        $diff = $processer->processFiles([$fixturePath], $config)->getFileDiffs()[0] ?? null;
+
+        return $this->cleanDiff($diff?->getDiff() ?? '');
     }
 
     private function cleanDiff(string $diff): string
