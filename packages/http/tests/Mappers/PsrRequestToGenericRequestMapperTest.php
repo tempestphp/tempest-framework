@@ -13,15 +13,19 @@ use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Clock\GenericClock;
 use Tempest\Core\AppConfig;
-use Tempest\Cryptography\Tests\CreatesEncrypter;
+use Tempest\Cryptography\Encryption\EncryptionAlgorithm;
+use Tempest\Cryptography\Encryption\EncryptionConfig;
+use Tempest\Cryptography\Encryption\GenericEncrypter;
+use Tempest\Cryptography\Signing\GenericSigner;
+use Tempest\Cryptography\Signing\SigningAlgorithm;
+use Tempest\Cryptography\Signing\SigningConfig;
+use Tempest\Cryptography\Timelock;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
 
 final class PsrRequestToGenericRequestMapperTest extends TestCase
 {
-    use CreatesEncrypter;
-
     private PsrRequestToGenericRequestMapper $mapper;
     private ReflectionMethod $requestMethod;
 
@@ -115,11 +119,29 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
         ];
     }
 
+    private function createEncrypter(): GenericEncrypter
+    {
+        return new GenericEncrypter(
+            signer: new GenericSigner(
+                config: new SigningConfig(
+                    algorithm: SigningAlgorithm::SHA256,
+                    key: 'my_secret_key',
+                    minimumExecutionDuration: false,
+                ),
+                timelock: new Timelock(new GenericClock()),
+            ),
+            config: new EncryptionConfig(
+                algorithm: EncryptionAlgorithm::AES_256_GCM,
+                key: 'my_secret_key',
+            ),
+        );
+    }
+
     private function createServerRequest(string $method, array $body = []): ServerRequestInterface
     {
         $request = new ServerRequest([], [], '/', $method);
 
-        if (! empty($body)) {
+        if ($body !== []) {
             $request = $request->withParsedBody($body);
         }
 
