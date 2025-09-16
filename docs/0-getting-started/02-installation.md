@@ -18,6 +18,7 @@ To get started with a new Tempest project, you may use {`tempest/app`} as the st
 ```sh
 {:hl-keyword:composer:} create-project tempest/app {:hl-type:my-app:}
 {:hl-keyword:cd:} {:hl-type:my-app:}
+{:hl-keyword:php:} tempest key:generate
 ```
 
 If you have a dedicated development environment, you may then access your application by opening `{txt}https://my-app.test` in your browser. Otherwise, you may use PHP's built-in server:
