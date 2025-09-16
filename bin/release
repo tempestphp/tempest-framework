@@ -186,6 +186,7 @@ function updateBranchProtection(bool $enabled): void
     );
 
     if (! $response->status->isSuccessful()) {
+        lw($response->body);
         throw new Exception('Failed to update branch ruleset.');
     }
 }
