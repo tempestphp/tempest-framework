@@ -55,7 +55,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         );
 
         return map([
-            'method' => Method::from($from->getMethod()),
+            'method' => $this->requestMethod($from, $data),
             'uri' => (string) $from->getUri(),
             'raw' => $raw,
             'body' => $data,
@@ -80,5 +80,19 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             )),
         ])
             ->to(GenericRequest::class);
+    }
+
+    private function requestMethod(PsrRequest $request, array $data): Method
+    {
+        $originalMethod = Method::from($request->getMethod());
+        if ($originalMethod !== Method::POST) {
+            return $originalMethod;
+        }
+
+        if (! isset($data['_method'])) {
+            return $originalMethod;
+        }
+
+        return Method::trySpoofingFrom($data['_method']) ?? $originalMethod;
     }
 }
