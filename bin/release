@@ -391,7 +391,10 @@ try {
     );
 
     // Disable protection
-    updateBranchProtection(enabled: false);
+    $console->task(
+        label: 'Disabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: false),
+    );
 
     // Push tags
     $console->task(
@@ -415,7 +418,12 @@ try {
         },
     );
 
-    updateBranchProtection(enabled: true);
+    // Enable branch protection
+    $console->task(
+        label: 'Enabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: true),
+    );
+
     triggerSubsplit();
 
     $console->success(sprintf(
