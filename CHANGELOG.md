@@ -2,7 +2,61 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.6.0](https://github.com/tempestphp/tempest-framework/compare/v1.5.1..1.6.0)  —  2025-08-08
+## [2.0.0](https://github.com/tempestphp/tempest-framework/compare/v1.6.0..2.0.0)  —  2025-09-16
+
+### 🚨 Breaking changes
+
+- **auth**: [**breaking**] overhaul authentication and access control (#1516) ([16aacc7](https://github.com/tempestphp/tempest-framework/commit/16aacc74ab2399d9be52a03c6fee29ed563f934a))
+- **commandbus**: [**breaking**] rename AsyncCommand to Async (#1507) ([9745b28](https://github.com/tempestphp/tempest-framework/commit/9745b28d5e7e28824a8256256ffa9428d712b977))
+- **core**: [**breaking**] update exception processors to no longer return a throwable (#1342) ([7000028](https://github.com/tempestphp/tempest-framework/commit/70000286d5089d7d9f18ab3f60e5d3b4f297f9c0))
+- **database**: [**breaking**] improve orm experience (#1458) ([c6302f3](https://github.com/tempestphp/tempest-framework/commit/c6302f347fcfa0d86308d50fdbeb8ebd56e206d7))
+- **http**: [**breaking**] automatically encrypt cookies (#1447) ([6615751](https://github.com/tempestphp/tempest-framework/commit/6615751e22f84db99c80a279ad61eb41e306081c))
+- **router**: [**breaking**] support signed URIs (#1520) ([9d0fc5f](https://github.com/tempestphp/tempest-framework/commit/9d0fc5f02c9bf8b1ad15f1f3a19ae26184c75831))
+- **validator**: [**breaking**] add localization support for validation error messages (#1444) ([38217ee](https://github.com/tempestphp/tempest-framework/commit/38217eee3b51535de12f9347c95aba7fdb519edf))
+
+### 🚀 Features
+
+- **container**: allow to inject tagged singletons (#1544) ([b1459db](https://github.com/tempestphp/tempest-framework/commit/b1459dbc1cd91ac05530d5cddafb60efcfca18a3))
+- **core**: add trace to exception logger (#1508) ([af512b0](https://github.com/tempestphp/tempest-framework/commit/af512b07cc1cc484dd652c209eec6f3136b6acd5))
+- **core**: improve base testing class (#1509) ([830e27b](https://github.com/tempestphp/tempest-framework/commit/830e27bb28a584400528ef0d98f5b010ea123069))
+- **database**: primary key improvements (#1517) ([b33204f](https://github.com/tempestphp/tempest-framework/commit/b33204fecdaa62a09d535496b5ffa4e7ffed275c))
+- **database**: dissociate down migrations from up migrations (#1513) ([de2334b](https://github.com/tempestphp/tempest-framework/commit/de2334bd5eaff0d697cbbb4d498212623960cdf5))
+- **database**: add `#[Hashed]` and `#[Encrypted]` attributes (#1514) ([aca1f9a](https://github.com/tempestphp/tempest-framework/commit/aca1f9a5a6c81e8a04da525998ccc8417568d581))
+- **http**: improve context for failed http requests (#1484) ([01287b6](https://github.com/tempestphp/tempest-framework/commit/01287b6631259227d352d8977254f031a9d0a824))
+- **mapper**: support mapping array of serialized enums (#1521) ([122d7a3](https://github.com/tempestphp/tempest-framework/commit/122d7a34e134adc5fc7f0caf3151849a7339b5ec))
+- **mapper**: support converting array of objects to array (#1523) ([accab81](https://github.com/tempestphp/tempest-framework/commit/accab8183cc50f854588e988d86d49c4cffba7b6))
+- **process**: introduce process component (#1326) ([70bc5f8](https://github.com/tempestphp/tempest-framework/commit/70bc5f8b388df750ec3d65617dc69003be5b5850))
+- **router**: add ability to skip middleware per route (#1472) ([ba2ef8a](https://github.com/tempestphp/tempest-framework/commit/ba2ef8ab140128034e4b45798b788c275afd3883))
+- **router**: add method spoofing support for HTML forms (#1536) ([fee4da0](https://github.com/tempestphp/tempest-framework/commit/fee4da0c2ce31dc705b6e439346fbefa079b4bc8))
+- **upgrade**: add upgrade package (#1534) ([97ceda7](https://github.com/tempestphp/tempest-framework/commit/97ceda71847f31ebf7306eeb67c5e581695165e5))
+- **upgrade**: upgrade router specific namespace changes (#1550) ([a416f94](https://github.com/tempestphp/tempest-framework/commit/a416f94c69e03b7835d765c6259e559980297588))
+- **validation**: add `Exists` validation rule (#1462) ([a28c943](https://github.com/tempestphp/tempest-framework/commit/a28c94370f21ee200f70881d597d31463b7cf551))
+- **vite**: mention `<x-vite-tags />` and documentation link in post-install instructions (#1473) ([477dfa9](https://github.com/tempestphp/tempest-framework/commit/477dfa9698444fbcdb0ad26ff181635990d680e2))
+
+### 🐛 Bug fixes
+
+- **container**: allow enums in the #[Tag] attribute (#1506) ([fd0912a](https://github.com/tempestphp/tempest-framework/commit/fd0912a5d68488e5d0af8f7ae9eaf0650dab9621))
+- **core**: properly handle unserializable discovery items when caching discovery (#1503) ([e8c60ea](https://github.com/tempestphp/tempest-framework/commit/e8c60ea99f166da7eedc5ec9f1aaf19189b7bbd8))
+- **core**: discover vendor directory first on all platforms (#1535) ([b7dc71e](https://github.com/tempestphp/tempest-framework/commit/b7dc71eb8c5eca9e18716c3005bd45ba5294661c))
+- **database**: support inserting empty rows (#1515) ([5c2a500](https://github.com/tempestphp/tempest-framework/commit/5c2a500c62feed6c859e88da495ebd991c2b4dc8))
+- **database**: ensure natural ordering for migrations (#1541) ([1d50336](https://github.com/tempestphp/tempest-framework/commit/1d50336415e4105b94b031fd0527d9c2de26fdc6))
+- **http**: null for enums values in request bodies (#1498) ([0f7fc94](https://github.com/tempestphp/tempest-framework/commit/0f7fc9476a44dfd17a81e150c1a3e28808ce2d21))
+- **http**: fix assertStatus mixing up expected and actual results (#1499) ([43dcf58](https://github.com/tempestphp/tempest-framework/commit/43dcf585ac5b364688437195a6d9674b3c53e1d4))
+- **http**: discard unencrypted cookies (#1551) ([a061e46](https://github.com/tempestphp/tempest-framework/commit/a061e46ff5594d71781de06fc67d9a93524b1111))
+- **mapper**: don't overwrite request fields (#1487) ([a280f56](https://github.com/tempestphp/tempest-framework/commit/a280f567e8026f27f7e238d376d43f2394aff0f9))
+
+### 📚 Documentation
+
+- **process**: document `tempest/process` usage (#1511) ([62d2c1a](https://github.com/tempestphp/tempest-framework/commit/62d2c1aef5c99f5e82a0630a5166669d21e2a20e))
+- update documentation contribution guide (#1479) ([a5b4212](https://github.com/tempestphp/tempest-framework/commit/a5b4212d9e23362009b77ee615491e13b721d19d))
+
+### 🧪 Tests
+
+- **cryptography**: account for time flakiness on windows (#1502) ([8da558f](https://github.com/tempestphp/tempest-framework/commit/8da558fa910b806c95b09f244f421b34f0596347))
+- **database**: cover down migration hashing (#1542) ([e7278d3](https://github.com/tempestphp/tempest-framework/commit/e7278d319b4f04d6147ddadd468996ffaa75f158))
+
+
+## [1.6.0](https://github.com/tempestphp/tempest-framework/compare/v1.5.1..v1.6.0)  —  2025-08-08
 
 ### 🚀 Features
 
