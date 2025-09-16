@@ -1313,6 +1313,11 @@ namespace Tempest\Support\Arr {
     /**
      * Wraps the specified `$input` into an array. If the `$input` is already an array, it is returned.
      * As opposed to {@see \Tempest\Support\Arr\to_array}, this function does not convert {@see Traversable} and {@see Countable} instances to arrays.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     * @param null|array<TKey,TValue>|ArrayInterface<TKey,TValue>|TValue $input
+     * @return array<TKey,TValue>
      */
     function wrap(mixed $input = []): array
     {

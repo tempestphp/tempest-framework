@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Casters;
 
-use Tempest\Cryptography\Encryption\EncryptedData;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Cryptography\Encryption\Exceptions\EncryptionException;
 use Tempest\Mapper\Caster;
