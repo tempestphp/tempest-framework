@@ -186,6 +186,7 @@ function updateBranchProtection(bool $enabled): void
     );
 
     if (! $response->status->isSuccessful()) {
+        lw($response->body);
         throw new Exception('Failed to update branch ruleset.');
     }
 }
@@ -391,7 +392,10 @@ try {
     );
 
     // Disable protection
-    updateBranchProtection(enabled: false);
+    $console->task(
+        label: 'Disabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: false),
+    );
 
     // Push tags
     $console->task(
@@ -415,7 +419,12 @@ try {
         },
     );
 
-    updateBranchProtection(enabled: true);
+    // Enable branch protection
+    $console->task(
+        label: 'Enabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: true),
+    );
+
     triggerSubsplit();
 
     $console->success(sprintf(
