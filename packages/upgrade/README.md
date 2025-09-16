@@ -9,7 +9,9 @@
 ```php
 return RectorConfig::configure()
     // …
-    ->withSets([__DIR__ . '/vendor/tempest/framework/packages/upgrade/src/tempest2.php']);
+    ->withSets([
+        TempestSetList::TEMPEST_20,
+    ]);
 ```
 
 3. Run `vendor/bin/rector`
