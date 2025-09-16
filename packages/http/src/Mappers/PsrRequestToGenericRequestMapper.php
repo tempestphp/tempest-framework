@@ -93,13 +93,6 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             return $originalMethod;
         }
 
-        $spoofedMethod = Method::tryFrom(strtoupper($data['_method']));
-        if ($spoofedMethod === null) {
-            return $originalMethod;
-        }
-
-        return $spoofedMethod->isSpoofable()
-            ? $spoofedMethod
-            : $originalMethod;
+        return Method::trySpoofingFrom($data['_method']) ?? $originalMethod;
     }
 }

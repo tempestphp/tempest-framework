@@ -16,11 +16,13 @@ enum Method: string
     case TRACE = 'TRACE';
     case PATCH = 'PATCH';
 
-    public function isSpoofable(): bool
+    public static function trySpoofingFrom(string $method): ?Method
     {
-        return match ($this) {
-            Method::PUT, Method::PATCH, Method::DELETE => true,
-            default => false,
+        $method = Method::tryFrom(strtoupper($method));
+
+        return match ($method) {
+            self::DELETE, self::PATCH, self::PUT => $method,
+            default => null,
         };
     }
 }

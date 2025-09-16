@@ -14,7 +14,7 @@ if ($method instanceof Method) {
     $method = $method->value;
 }
 
-$needsSpoofing = in_array(strtoupper($method), ['PUT', 'PATCH', 'DELETE'], true);
+$needsSpoofing = Method::trySpoofingFrom($method) !== null;
 $formMethod = $needsSpoofing ? 'POST' : $method;
 ?>
 
