@@ -529,7 +529,7 @@ final class TestResponseHelper
      */
     public function dd(): void
     {
-        dd($this->response);
+        dd($this->response); // @phpstan-ignore disallowed.function
     }
 
     private function assertHasContainer(): void
