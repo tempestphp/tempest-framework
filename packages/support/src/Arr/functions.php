@@ -31,7 +31,7 @@ namespace Tempest\Support\Arr {
         $array = to_array($array);
 
         if (! $value instanceof Closure) {
-            $search = array_search($value, $array, $strict); // @mago-expect strictness/require-strict-behavior
+            $search = array_search($value, $array, $strict);
 
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
@@ -418,7 +418,7 @@ namespace Tempest\Support\Arr {
                 continue;
             }
 
-            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) { // @mago-expect strictness/require-strict-behavior
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
                 continue;
             }
 

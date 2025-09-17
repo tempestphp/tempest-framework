@@ -42,8 +42,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     function format_rfc3339(Timestamp $timestamp, ?SecondsStyle $secondsStyle = null, bool $useZ = false, ?Timezone $timezone = null): string
     {
@@ -145,9 +143,6 @@ namespace Tempest\DateTime {
      * @return array{int, int}
      *
      * @internal
-     *
-     * @mago-expect best-practices/no-boolean-literal-comparison
-     * @mago-expect best-practices/no-else-clause
      */
     function high_resolution_time(): array
     {
@@ -192,8 +187,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-boolean-literal-comparison
      */
     function intl_parse(
         string $rawString,
@@ -277,8 +270,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     function create_intl_calendar_from_date_time(
         Timezone $timezone,

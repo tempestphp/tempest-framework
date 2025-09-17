@@ -409,7 +409,7 @@ trait DateTimeConvenienceMethods
 
         if ($target_month > MONTHS_PER_YEAR) {
             $plus_years++;
-            $target_month = $target_month - MONTHS_PER_YEAR;
+            $target_month -= MONTHS_PER_YEAR;
         }
 
         $target_month_enum = Month::from($target_month);

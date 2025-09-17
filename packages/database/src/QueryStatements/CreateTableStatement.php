@@ -92,7 +92,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         }
 
         if (! str_contains($constrainedOn, '.')) {
-            $constrainedOn = $constrainedOn . '.id';
+            $constrainedOn .= '.id';
         }
 
         return $this->belongsTo($local, $constrainedOn, $onDelete, $onUpdate, $nullable);

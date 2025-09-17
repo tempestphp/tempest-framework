@@ -31,114 +31,36 @@ preserve-breaking-attribute-list = true
 preserve-breaking-conditional-expression = true
 empty-line-after-opening-tag = false
 
-# [linter]
-# default-plugins = true
-# plugins = ["symfony", "php-unit"]
+[linter]
+integrations = ["php-unit", "tempest"]
 
-# # MAINTENABILITY
-# [[linter.rules]]
-# name = "maintainability/too-many-enum-cases"
-# level = "off"
+[linter.rules]
+interface-name = { psr = false }
+trait-name = { psr = false }
+class-name = { psr = false }
+literal-named-argument = { enabled = false } # todo
+no-error-control-operator = { enabled = false }
+no-boolean-literal-comparison = { enabled = false }
+too-many-methods = { enabled = false }
+kan-defect = { enabled = false }
+cyclomatic-complexity = { enabled = false }
+return-type = { ignore-arrow-function = true, ignore-closure = true }
+parameter-type = { ignore-arrow-function = true, ignore-closure = true }
+too-many-enum-cases = { enabled = false }
+no-redundant-file = { enabled = false }
+assertion-style = { style = "this" }
+strict-assertions = { enabled = false }
+no-else-clause = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }
+no-shorthand-ternary = { enabled = false }
+no-assign-in-condition = { enabled = false }
+strict-types = { enabled = false } # https://github.com/carthage-software/mago/issues/146
+tagged-todo = { enabled = false } # CONSIDER ENABLING
+excessive-parameter-list = { enabled = false } # https://github.com/carthage-software/mago/issues/206
+halstead = { enabled = false }
+prefer-arrow-function = { enabled = false } # enable when references are fixed
+prefer-first-class-callable = { enabled = false } # enable when arguments are fixed
+strict-behavior = { allow-loose-behavior = true }
 
-# [[linter.rules]]
-# name = "maintainability/excessive-parameter-list"
-# level = "off"
-
-# [[linter.rules]]
-# name = "maintainability/halstead"
-# level = "off"
-
-# [[linter.rules]]
-# name = "maintainability/too-many-methods"
-# level = "off"
-
-# [[linter.rules]]
-# name = "maintainability/kan-defect"
-# level = "off"
-
-# [[linter.rules]]
-# name = "maintainability/cyclomatic-complexity"
-# level = "off"
-
-# # STRICTNESS
-# [[linter.rules]]
-# name = "strictness/require-return-type"
-# ignore-arrow-function = true
-# ignore-closure = true
-
-# # https://github.com/carthage-software/mago/issues/206
-# [[linter.rules]]
-# name = "best-practices/literal-named-argument"
-# level = "off"
-
-# # https://github.com/carthage-software/mago/issues/146
-# [[linter.rules]]
-# name = "strictness/require-strict-types"
-# level = "off"
-
-# [[linter.rules]]
-# name = "strictness/require-parameter-type"
-# ignore-arrow-function = true
-# ignore-closure = true
-
-# [[linter.rules]]
-# name = "strictness/no-shorthand-ternary"
-# level = "off"
-
-# [[linter.rules]]
-# name = "strictness/no-assignment-in-condition"
-# level = "off"
-
-# # BEST PRACTICES
-# [[linter.rules]]
-# name = "best-practices/no-else-clause"
-# level = "off"
-
-# [[linter.rules]]
-# name = "best-practices/no-boolean-literal-comparison"
-# level = "off"
-
-# [[linter.rules]]
-# name = "best-practices/no-boolean-flag-parameter"
-# level = "off"
-
-# # SAFETY
-# [[linter.rules]]
-# name = "safety/no-error-control-operator"
-# level = "off"
-
-# # PHPUNIT
-# [[linter.rules]]
-# name = "php-unit/assertions-style"
-# style = "this"
-
-# [[linter.rules]]
-# name = "php-unit/strict-assertions"
-# level = "off"
-
-# # NAMING
-# [[linter.rules]]
-# name = "naming/interface"
-# psr = false
-
-# [[linter.rules]]
-# name = "naming/trait"
-# psr = false
-
-# [[linter.rules]]
-# name = "naming/class"
-# psr = false
-
-# # HELP
-# [[linter.rules]]
-# name = "redundancy/redundant-file"
-# level = "off"
-
-# # CONSIDER ENABLING
-# [[linter.rules]]
-# name = "analysis/override-attribute"
-# level = "off"
-
-# [[linter.rules]]
-# name = "comment/no-untagged-todo"
-# level = "off"
+# [analyzer]
+# override-attribute = { enabled = false } # CONSIDER ENABLING

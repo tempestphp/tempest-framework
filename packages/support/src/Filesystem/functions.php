@@ -145,8 +145,6 @@ function ensure_directory_exists(string $directory): void
 
 /**
  * Creates the directory specified by $directory.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
  */
 function create_directory(string $directory, int $permissions = 0o777): void
 {
@@ -180,9 +178,6 @@ function create_directory_for_file(string $filename, int $permissions = 0o777): 
 
 /**
  * Creates the file specified by $filename.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
- * @mago-expect best-practices/no-else-clause
  */
 function create_file(string $filename, ?int $time = null, ?int $accessTime = null): void
 {
@@ -234,8 +229,6 @@ function delete(string $path, bool $recursive = true): void
 
 /**
  * Deletes the specified `$file`.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
  */
 function delete_file(string $file): void
 {
@@ -274,8 +267,6 @@ function delete_file(string $file): void
 
 /**
  * Gets the permissions of the file or directory at the specified `$path`.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
  */
 function get_permissions(string $path): int
 {
@@ -320,9 +311,6 @@ function ensure_directory_empty(string $directory): void
 
 /**
  * Deletes the specified $directory.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
- * @mago-expect best-practices/no-else-clause
  */
 function delete_directory(string $directory, bool $recursive = true): void
 {
@@ -492,8 +480,6 @@ function list_directory(string $directory): array
 
 /**
  * Returns the target of a symbolic link.
- *
- * @mago-expect best-practices/no-boolean-literal-comparison
  */
 function read_symbolic_link(string $path): string
 {

@@ -10,9 +10,9 @@ final readonly class CompletionTestCommand
 {
     #[ConsoleCommand('completion:test')]
     public function __invoke(
-        string $value, // @mago-expect best-practices/no-unused-parameter
-        bool $flag = false, // @mago-expect best-practices/no-unused-parameter
-        array $items = [], // @mago-expect best-practices/no-unused-parameter
+        string $value,
+        bool $flag = false,
+        array $items = [],
     ): void {
     }
 }

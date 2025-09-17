@@ -7,8 +7,7 @@ use Serializable;
 final class SerializableObject implements Serializable
 {
     /*
-     * @phpstan-ignore-next-line
-     * @mago-expect strictness/require-return-type
+     * @mago-expect lint:return-type
      */
     public function serialize()
     {

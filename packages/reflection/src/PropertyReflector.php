@@ -131,7 +131,7 @@ final class PropertyReflector implements Reflector
     {
         try {
             return $this->reflectionProperty->getValue($object) ?? $default;
-        } catch (Error $error) { // @mago-expect best-practices/dont-catch-error
+        } catch (Error $error) {
             return $default ?? throw $error;
         }
     }

@@ -46,7 +46,7 @@ return static function (RectorConfig $config): void {
         'Tempest\Validation\Rules\NotNull' => 'Tempest\Validation\Rules\IsNotNull',
         'Tempest\Validation\Rules\Numeric' => 'Tempest\Validation\Rules\IsNumeric',
         'Tempest\Validation\Rules\Odd' => 'Tempest\Validation\Rules\IsOddNumber',
-        'Tempest\Validation\Rules\Password' => 'Tempest\Validation\Rules\IsPassword', // @mago-expect security/no-literal-password
+        'Tempest\Validation\Rules\Password' => 'Tempest\Validation\Rules\IsPassword', // @mago-expect lint:no-literal-password
         'Tempest\Validation\Rules\PhoneNumber' => 'Tempest\Validation\Rules\IsPhoneNumber',
         'Tempest\Validation\Rules\RegEx' => 'Tempest\Validation\Rules\MatchesRegEx',
         'Tempest\Validation\Rules\Time' => 'Tempest\Validation\Rules\IsTime',

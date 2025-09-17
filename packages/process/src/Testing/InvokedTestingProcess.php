@@ -22,7 +22,7 @@ final class InvokedTestingProcess implements InvokedProcess
             $this->invokeOutputHandlerWithNextLineOfOutput();
 
             if ($this->remainingRunIterations === 0) {
-                // @mago-expect best-practices/no-empty-loop
+                // @mago-expect lint:no-empty-loop
                 while ($this->invokeOutputHandlerWithNextLineOfOutput()) {
                 }
 
@@ -134,7 +134,7 @@ final class InvokedTestingProcess implements InvokedProcess
             return $this->getProcessResult();
         }
 
-        // @mago-expect best-practices/no-empty-loop
+        // @mago-expect lint:no-empty-loop
         while ($this->invokeOutputHandlerWithNextLineOfOutput()) {
         }
 

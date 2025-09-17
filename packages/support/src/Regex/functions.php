@@ -22,7 +22,6 @@ namespace Tempest\Support\Regex {
      *
      * @param non-empty-string $pattern The pattern to match against.
      * @param 0|2|256|512|768 $flags
-     * @mago-expect best-practices/no-unused-parameter
      */
     function get_matches(Stringable|string $subject, Stringable|string $pattern, bool $global = false, int $flags = 0, int $offset = 0): array
     {
@@ -72,7 +71,7 @@ namespace Tempest\Support\Regex {
         $result = get_matches($subject, $pattern, true, PREG_SET_ORDER, $offset);
 
         return arr($result)
-            ->map(fn (array $result) => filter($result, fn ($_, string|int $key) => in_array($key, wrap($matches), strict: false))) // @mago-expect strictness/require-strict-behavior
+            ->map(fn (array $result) => filter($result, fn ($_, string|int $key) => in_array($key, wrap($matches), strict: false)))
             ->toArray();
     }
 
@@ -98,7 +97,7 @@ namespace Tempest\Support\Regex {
 
         if (is_array($match)) {
             return arr($result)
-                ->filter(fn ($_, string|int $key) => in_array($key, $match, strict: false)) // @mago-expect strictness/require-strict-behavior
+                ->filter(fn ($_, string|int $key) => in_array($key, $match, strict: false))
                 ->mapWithKeys(fn (array $matches, string|int $key) => yield $key => first($matches))
                 ->toArray();
         }

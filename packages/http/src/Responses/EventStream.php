@@ -33,7 +33,7 @@ final class EventStream implements Response
         $this->sleep = is_int($sleep) ? Duration::milliseconds($sleep) : $sleep;
     }
 
-    public function createGeneratorFromCallback($callback): Generator
+    public function createGeneratorFromCallback(Closure $callback): Generator
     {
         yield from $callback();
     }

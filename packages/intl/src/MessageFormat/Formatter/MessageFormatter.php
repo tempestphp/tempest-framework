@@ -83,7 +83,7 @@ final class MessageFormatter
 
                     if (! array_key_exists($variableName, $this->variables)) {
                         if ($declaration->optional) {
-                            $parameters = $this->evaluateOptions($expression->function?->options ?? []);
+                            $parameters = $this->evaluateOptions($expression->function->options ?? []);
 
                             $this->variables[$variableName] = new LocalVariable(
                                 identifier: $variableName,

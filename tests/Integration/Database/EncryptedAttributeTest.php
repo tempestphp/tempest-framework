@@ -29,7 +29,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
-            secret: 'sensitive information', // @mago-expect security/no-literal-password
+            secret: 'sensitive information', // @mago-expect lint:no-literal-password
         );
 
         $this->assertSame('sensitive information', $user->secret);
@@ -46,10 +46,10 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
-            secret: 'original secret', // @mago-expect security/no-literal-password
+            secret: 'original secret', // @mago-expect lint:no-literal-password
         );
 
-        $user->update(secret: 'new secret')->refresh(); // @mago-expect security/no-literal-password
+        $user->update(secret: 'new secret')->refresh(); // @mago-expect lint:no-literal-password
 
         $this->assertSame('new secret', $user->secret);
 

@@ -43,8 +43,6 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      * Returns an instance representing the specified number of hours (and
      * optionally minutes, seconds, nanoseconds). Due to normalization, the
      * actual values in the returned instance may differ from the provided ones.
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     public static function fromParts(int $hours, int $minutes = 0, int $seconds = 0, int $nanoseconds = 0): self
     {

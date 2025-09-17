@@ -91,7 +91,7 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
         ];
     }
 
-    private function isDesirable($value): bool
+    private function isDesirable(mixed $value): bool
     {
         return match (true) {
             $this->only !== [] => in_array(needle: $value, haystack: $this->only, strict: true),

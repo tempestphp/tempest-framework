@@ -28,7 +28,7 @@ final readonly class IsFloat implements Rule, HasTranslationVariables
             return false;
         }
 
-        // @mago-expect strictness/require-identity-comparison
+        // @mago-expect lint:identity-comparison
         return is_float($value) || floatval($value) == $value;
     }
 

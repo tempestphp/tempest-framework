@@ -229,7 +229,8 @@
         "phpunit": "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "fmt": "vendor/bin/mago fmt",
-        "lint": "vendor/bin/mago lint --fix --format-after-fix --potentially-unsafe --minimum-level=note",
+        "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
+        "lint": "vendor/bin/mago lint --potentially-unsafe --minimum-fail-level=note",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
@@ -240,6 +241,7 @@
         ],
         "qa": [
             "composer fmt",
+            "composer lint:fix",
             "composer lint",
             "composer merge",
             "composer rector",

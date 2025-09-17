@@ -25,7 +25,7 @@ final class DiscoveryStub implements Discovery
     }
 
     /**
-     * @mago-expect best-practices/no-empty-loop
+     * @mago-expect lint:no-empty-loop
      */
     public function apply(): void
     {

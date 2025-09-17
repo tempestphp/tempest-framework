@@ -19,7 +19,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
     {
-        ini_set('intl.default_locale', 'en-US');
+        ini_set('intl.default_locale', 'en-US'); // @mago-expect lint:no-ini-set
 
         parent::setUp();
 

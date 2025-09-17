@@ -104,10 +104,12 @@ final class ProcessTester
 
     /**
      * Stops the process and dumps the recorded process executions.
+     *
+     * @mago-expect lint:no-debug-symbols
      */
     public function debugExecutedProcesses(): void
     {
-        dd($this->executor->executions); // @mago-expect best-practices/no-debug-symbols
+        dd($this->executor->executions);
     }
 
     /**
@@ -249,7 +251,7 @@ final class ProcessTester
                     }
                 }
             }
-        } else {
+        } else { // @mago-expects linter:no-else-clause
             $count = count($this->findExecutionsByPattern($command));
         }
 
