@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest2\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest20\Fixtures;
 
 use function Tempest\is_current_uri;
 

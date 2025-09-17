@@ -1,8 +1,9 @@
 <?php
 
 use Rector\Config\RectorConfig;
+use Tempest\Upgrade\Set\TempestSetList;
 
 return RectorConfig::configure()
     ->withSets([
-        __DIR__ . '/../../src/tempest2.php',
+        TempestSetList::TEMPEST_20,
     ]);
