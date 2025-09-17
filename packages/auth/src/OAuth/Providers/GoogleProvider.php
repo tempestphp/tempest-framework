@@ -17,9 +17,8 @@ final class GoogleProvider implements OAuthProvider
         string $clientSecret,
         string $redirectUri,
         ?array $defaultScopes = null,
-        string $stateSessionSlug = 'oauth-state'
-    ): self
-    {
+        string $stateSessionSlug = 'oauth-state',
+    ): self {
         $this->defaultScopes = $defaultScopes ??= ['openid', 'email', 'profile'];
         $this->authorizeEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
         $this->accessTokenEndpoint = 'https://oauth2.googleapis.com/token';
@@ -33,7 +32,7 @@ final class GoogleProvider implements OAuthProvider
             authorizeEndpoint: $this->authorizeEndpoint,
             accessTokenEndpoint: $this->accessTokenEndpoint,
             userDataEndpoint: $this->userDataEndpoint,
-            stateSessionSlug: $stateSessionSlug
+            stateSessionSlug: $stateSessionSlug,
         );
     }
 
@@ -48,7 +47,7 @@ final class GoogleProvider implements OAuthProvider
             name: $userData['family_name'] ?? null,
             email: $userData['email'] ?? null,
             avatar: $userData['picture'] ?? null,
-            rawData: $userData
+            rawData: $userData,
         );
     }
 }

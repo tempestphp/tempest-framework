@@ -15,6 +15,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Reflection\ClassReflector;
 use TypeError;
 use UnitEnum;
+
 use function \Tempest\env;
 
 final class BuiltInOAuthProviderInitializer implements DynamicInitializer
@@ -27,29 +28,30 @@ final class BuiltInOAuthProviderInitializer implements DynamicInitializer
     public function initialize(ClassReflector $class, UnitEnum|string|null $tag, Container $container): OAuthProvider
     {
         try {
-            $providerType = BuiltInOAuthProvider::fromProviderClass($class->getName()) ?? throw new OAuthException(sprintf('No built-in OAuth2 provider found for class: "%s"', $class->getName()));
+            $providerType = BuiltInOAuthProvider::fromProviderClass($class->getName()) ??
+            throw new OAuthException(sprintf('No built-in OAuth2 provider found for class: "%s"', $class->getName()));
 
             return match ($providerType) {
                 BuiltInOAuthProvider::GOOGLE => new GoogleProvider(
-                        session: $container->get(Session::class),
-                    )->configure(
-                        clientId: env('GOOGLE_CLIENT_ID'),
-                        clientSecret: env('GOOGLE_CLIENT_SECRET'),
-                        redirectUri: env('GOOGLE_REDIRECT_URI')
-                    ),
+                    session: $container->get(Session::class),
+                )->configure(
+                    clientId: env('GOOGLE_CLIENT_ID'),
+                    clientSecret: env('GOOGLE_CLIENT_SECRET'),
+                    redirectUri: env('GOOGLE_REDIRECT_URI'),
+                ),
                 BuiltInOAuthProvider::GITHUB => new GithubProvider(
-                        session: $container->get(Session::class),
-                    )->configure(
-                        clientId: env('GITHUB_CLIENT_ID'),
-                        clientSecret: env('GITHUB_CLIENT_SECRET'),
-                        redirectUri: env('GITHUB_REDIRECT_URI')
-                    ),
-                default => throw new OAuthException(sprintf('Cannot initialize "%s" built-in OAuth2 provider', $providerType->name))
+                    session: $container->get(Session::class),
+                )->configure(
+                    clientId: env('GITHUB_CLIENT_ID'),
+                    clientSecret: env('GITHUB_CLIENT_SECRET'),
+                    redirectUri: env('GITHUB_REDIRECT_URI'),
+                ),
+                default => throw new OAuthException(sprintf('Cannot initialize "%s" built-in OAuth2 provider', $providerType->name)),
             };
         } catch (TypeError $exception) {
             throw new OAuthException(
                 sprintf('Failed to initialize OAuth2 provider for "%s". Ensure that the environment variables are set correctly.', $class->getName()),
-                previous: $exception
+                previous: $exception,
             );
         }
     }

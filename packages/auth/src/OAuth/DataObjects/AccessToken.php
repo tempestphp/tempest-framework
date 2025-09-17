@@ -43,7 +43,7 @@ final readonly class AccessToken
             tokenType: $accessToken->getValues()['token_type'] ?? 'Bearer',
             scope: $accessToken->getValues()['scope'] ?? '',
             expiresIn: $accessToken->getExpires()
-                ? $accessToken->getExpires() - time()
+                ? ($accessToken->getExpires() - time())
                 : null,
             refreshToken: $accessToken->getRefreshToken(),
             additionalInformations: $accessToken->getValues() ?: null,
@@ -56,7 +56,7 @@ final readonly class AccessToken
             'access_token' => $this->accessToken,
             'refresh_token' => $this->refreshToken,
             'expires_in' => $this->expiresIn,
-            ...$this->additionalInformations
+            ...$this->additionalInformations,
         ]);
     }
 }

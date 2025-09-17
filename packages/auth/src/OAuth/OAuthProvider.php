@@ -61,6 +61,6 @@ interface OAuthProvider
      * Fetches user data from the OAuth2 provider using the provided access token.
      */
     public function fetchUserDataFromToken(
-        AccessToken $accessToken
+        AccessToken $accessToken,
     ): OAuthUserData;
 }

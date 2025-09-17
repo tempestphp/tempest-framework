@@ -6,4 +6,6 @@ namespace Tempest\Auth\OAuth\Exceptions;
 
 use RuntimeException;
 
-class OAuthException extends RuntimeException {}
+class OAuthException extends RuntimeException
+{
+}

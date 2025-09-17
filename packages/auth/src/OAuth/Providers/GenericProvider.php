@@ -14,16 +14,15 @@ class GenericProvider
      * @param array<string> $defaultScopes
      */
     public function configure(
-       string $clientId,
-       string $clientSecret,
-       array $defaultScopes,
-       string $redirectUri,
-       string $authorizeEndpoint,
-       string $accessTokenEndpoint,
-       string $userDataEndpoint,
-       string $stateSessionSlug = 'oauth-state',
-    ): self
-    {
+        string $clientId,
+        string $clientSecret,
+        array $defaultScopes,
+        string $redirectUri,
+        string $authorizeEndpoint,
+        string $accessTokenEndpoint,
+        string $userDataEndpoint,
+        string $stateSessionSlug = 'oauth-state',
+    ): self {
         return $this->configureInternalProvider(
             clientId: $clientId,
             clientSecret: $clientSecret,
@@ -32,7 +31,7 @@ class GenericProvider
             authorizeEndpoint: $authorizeEndpoint,
             accessTokenEndpoint: $accessTokenEndpoint,
             userDataEndpoint: $userDataEndpoint,
-            stateSessionSlug: $stateSessionSlug
+            stateSessionSlug: $stateSessionSlug,
         );
     }
 }

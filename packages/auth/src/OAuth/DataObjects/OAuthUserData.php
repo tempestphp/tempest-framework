@@ -30,9 +30,9 @@ final readonly class OAuthUserData
     public static function from(array $rawData): self
     {
         return map([
-                'rawData' => $rawData,
-                ...$rawData
-            ])
+            'rawData' => $rawData,
+            ...$rawData,
+        ])
             ->to(self::class);
     }
 }

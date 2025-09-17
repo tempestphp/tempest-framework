@@ -11,13 +11,14 @@ use Tempest\Auth\OAuth\DataObjects\AccessToken;
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 use Tempest\Auth\OAuth\Exceptions\OAuthException;
 use Tempest\Http\Session\Session;
+
 use function Tempest\Support\str;
 
 trait IsOauthProvider
 {
     // TODO : Should be #[Inject] property, but can't resolve chain in Initializers yet
     public function __construct(
-        private readonly Session $session
+        private readonly Session $session,
     ) {}
 
     private GenericProvider $internalProvider;
@@ -43,8 +44,7 @@ trait IsOauthProvider
         string $accessTokenEndpoint,
         string $userDataEndpoint,
         string $stateSessionSlug = 'oauth-state',
-    ): static
-    {
+    ): static {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->defaultScopes = $defaultScopes;
@@ -55,11 +55,11 @@ trait IsOauthProvider
         $this->stateSessionSlug = $stateSessionSlug;
 
         $this->internalProvider = new GenericProvider([
-            'clientId'                => $this->clientId,
-            'clientSecret'            => $this->clientSecret,
-            'redirectUri'             => $this->redirectUri,
-            'urlAuthorize'            => $this->authorizeEndpoint,
-            'urlAccessToken'          => $this->accessTokenEndpoint,
+            'clientId' => $this->clientId,
+            'clientSecret' => $this->clientSecret,
+            'redirectUri' => $this->redirectUri,
+            'urlAuthorize' => $this->authorizeEndpoint,
+            'urlAccessToken' => $this->accessTokenEndpoint,
             'urlResourceOwnerDetails' => $this->userDataEndpoint,
         ]);
 
@@ -76,8 +76,7 @@ trait IsOauthProvider
         ?array $scopes = null,
         ?string $state = null,
         ?string $scopeSeparator = ' ',
-    ): string
-    {
+    ): string {
         $scopes ??= $this->defaultScopes;
         $state ??= $this->generateState();
 
@@ -86,7 +85,7 @@ trait IsOauthProvider
         return $this->internalProvider->getAuthorizationUrl([
             'scope' => implode($scopeSeparator, $scopes),
             'state' => $state,
-            ...$additionalParameters
+            ...$additionalParameters,
         ]);
     }
 
@@ -96,15 +95,14 @@ trait IsOauthProvider
     public function generateAccessToken(
         string $code,
         array $additionalParameters = [],
-    ): AccessToken
-    {
+    ): AccessToken {
         try {
             $token = $this->internalProvider->getAccessToken(
                 grant: 'authorization_code',
                 options: [
                     'code' => $code,
-                    ...$additionalParameters
-                ]
+                    ...$additionalParameters,
+                ],
             );
 
             return AccessToken::fromLeagueAccessToken($token);
@@ -114,12 +112,11 @@ trait IsOauthProvider
     }
 
     public function fetchUserDataFromToken(
-        AccessToken $accessToken
-    ): OAuthUserData
-    {
+        AccessToken $accessToken,
+    ): OAuthUserData {
         try {
             return $this->createUserDataFromResponse(
-                $this->internalProvider->getResourceOwner($accessToken->toLeagueAccessToken())->toArray()
+                $this->internalProvider->getResourceOwner($accessToken->toLeagueAccessToken())->toArray(),
             );
         } catch (GuzzleException|IdentityProviderException $e) {
             throw new OAuthException('Failed to get user data: ' . $e->getMessage(), previous: $e);

@@ -17,9 +17,8 @@ final class GithubProvider implements OAuthProvider
         string $clientSecret,
         string $redirectUri,
         ?array $defaultScopes = null,
-        string $stateSessionSlug = 'oauth-state'
-    ): self
-    {
+        string $stateSessionSlug = 'oauth-state',
+    ): self {
         $this->defaultScopes = $defaultScopes ??= ['user:email'];
         $this->authorizeEndpoint = 'https://github.com/login/oauth/authorize';
         $this->accessTokenEndpoint = 'https://github.com/login/oauth/access_token';
@@ -33,7 +32,7 @@ final class GithubProvider implements OAuthProvider
             authorizeEndpoint: $this->authorizeEndpoint,
             accessTokenEndpoint: $this->accessTokenEndpoint,
             userDataEndpoint: $this->userDataEndpoint,
-            stateSessionSlug: $stateSessionSlug
+            stateSessionSlug: $stateSessionSlug,
         );
     }
 
@@ -48,7 +47,7 @@ final class GithubProvider implements OAuthProvider
             name: $userData['name'] ?? null,
             email: $userData['email'] ?? null,
             avatar: $userData['avatar_url'] ?? null,
-            rawData: $userData
+            rawData: $userData,
         );
     }
 }
