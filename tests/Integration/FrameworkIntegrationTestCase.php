@@ -165,6 +165,15 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->markTestSkipped($reason);
     }
 
+    protected function skipCI(string $reason): void
+    {
+        if (getenv('CI') !== 'true') {
+            return;
+        }
+
+        $this->markTestSkipped($reason);
+    }
+
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
