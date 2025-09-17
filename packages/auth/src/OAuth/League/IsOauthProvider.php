@@ -12,12 +12,15 @@ use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 use Tempest\Auth\OAuth\Exceptions\OAuthException;
 use Tempest\Container\Inject;
 use Tempest\Http\Session\Session;
+use function Tempest\map;
 use function Tempest\Support\str;
 
 trait IsOauthProvider
 {
-    #[Inject]
-    private readonly Session $session;
+    // TODO : Should be #[Inject] property, but can't resolve chain in Initializers yet
+    public function __construct(
+        private readonly Session $session
+    ) {}
 
     private GenericProvider $internalProvider;
 
@@ -42,7 +45,7 @@ trait IsOauthProvider
         string $accessTokenEndpoint,
         string $userDataEndpoint,
         string $stateSessionSlug = 'oauth-state',
-    ): self
+    ): static
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -117,14 +120,8 @@ trait IsOauthProvider
     ): OAuthUserData
     {
         try {
-            // TODO : Find a way to map common fields to this if possible
-            return new OAuthUserData(
-                id: '',
-                nickname: '',
-                name: '',
-                email: '',
-                avatar: '',
-                rawData: $this->internalProvider->getResourceOwner($accessToken->toLeagueAccessToken())->toArray()
+            return $this->createUserDataFromResponse(
+                $this->internalProvider->getResourceOwner($accessToken->toLeagueAccessToken())->toArray()
             );
         } catch (GuzzleException|IdentityProviderException $e) {
             throw new OAuthException('Failed to get user data: ' . $e->getMessage(), previous: $e);
@@ -134,5 +131,13 @@ trait IsOauthProvider
     protected function generateState(): string
     {
         return str()->random(40)->toString();
+    }
+
+    /**
+     * @param array<string, mixed> $userData The raw user data array returned by the OAuth provider.
+     */
+    protected function createUserDataFromResponse(array $userData): OAuthUserData
+    {
+        return OAuthUserData::from($userData);
     }
 }

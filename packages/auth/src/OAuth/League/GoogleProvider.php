@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth\League;
 
+use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
+
 final class GoogleProvider
 {
     use IsOauthProvider;
@@ -30,6 +32,21 @@ final class GoogleProvider
             accessTokenEndpoint: $this->accessTokenEndpoint,
             userDataEndpoint: $this->userDataEndpoint,
             stateSessionSlug: $stateSessionSlug
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createUserDataFromResponse(array $userData): OAuthUserData
+    {
+        return new OAuthUserData(
+            id: $userData['sub'] ?? null,
+            nickname: $userData['given_name'] ?? null,
+            name: $userData['family_name'] ?? null,
+            email: $userData['email'] ?? null,
+            avatar: $userData['picture'] ?? null,
+            rawData: $userData
         );
     }
 }
