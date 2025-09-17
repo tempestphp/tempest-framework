@@ -328,10 +328,13 @@ final class ManipulatesStringTest extends TestCase
 
     public function test_match_all(): void
     {
-        $this->assertSame([
-            ['Hello'],
-            ['Hello'],
-        ], str('Hello world, Hello universe')->matchAll('/Hello/')->toArray());
+        $this->assertSame(
+            expected: [
+                ['Hello'],
+                ['Hello'],
+            ],
+            actual: str('Hello world, Hello universe')->matchAll('/Hello/')->toArray(),
+        );
 
         $this->assertSame(
             [

@@ -27,7 +27,7 @@ final class UserCacheInsightsProvider implements InsightsProvider
 
     public function getInsights(): array
     {
-        if (! ($this->container instanceof GenericContainer)) {
+        if (! $this->container instanceof GenericContainer) {
             return [];
         }
 
@@ -40,7 +40,7 @@ final class UserCacheInsightsProvider implements InsightsProvider
     /** @var Insight[] */
     private function getInsight(Cache $cache): array
     {
-        $type = ($cache instanceof GenericCache)
+        $type = $cache instanceof GenericCache
             ? match (get_class($cache->adapter)) {
                 FilesystemAdapter::class => new Insight('Filesystem'),
                 PhpFilesAdapter::class => new Insight('PHP'),
@@ -59,7 +59,7 @@ final class UserCacheInsightsProvider implements InsightsProvider
 
     private function getCacheName(Cache $cache): string
     {
-        if (! ($cache instanceof GenericCache)) {
+        if (! $cache instanceof GenericCache) {
             return $cache::class;
         }
 

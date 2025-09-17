@@ -80,7 +80,7 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
     {
         $values = arr($this->enum::cases())
             ->filter(fn (UnitEnum $case) => $this->isDesirable($case))
-            ->map(static fn (UnitEnum $enum) => ($enum instanceof BackedEnum) ? $enum->value : $enum->name)
+            ->map(static fn (UnitEnum $enum) => $enum instanceof BackedEnum ? $enum->value : $enum->name)
             ->toArray();
 
         return [

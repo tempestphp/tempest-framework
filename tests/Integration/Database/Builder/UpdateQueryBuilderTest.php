@@ -228,14 +228,19 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
-        query('authors')->insert(
-            ['id' => 1, 'name' => 'Brent'],
-            ['id' => 2, 'name' => 'Other'],
-        )->execute();
+        query('authors')
+            ->insert(
+                ['id' => 1, 'name' => 'Brent'],
+                ['id' => 2, 'name' => 'Other'],
+            )
+            ->execute();
 
-        query('authors')->update(
-            name: 'Brendt',
-        )->whereRaw('id = ?', 1)->execute();
+        query('authors')
+            ->update(
+                name: 'Brendt',
+            )
+            ->whereRaw('id = ?', 1)
+            ->execute();
 
         $count = query('authors')->count()->whereRaw('name = ?', 'Brendt')->execute();
 

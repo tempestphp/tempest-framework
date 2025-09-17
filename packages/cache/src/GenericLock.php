@@ -23,7 +23,7 @@ final class GenericLock implements Lock
             return $this->cache->has($this->key);
         }
 
-        return $this->cache->get($this->key) === ((string) $by);
+        return $this->cache->get($this->key) === (string) $by;
     }
 
     public function acquire(): bool
@@ -44,7 +44,7 @@ final class GenericLock implements Lock
     public function execute(Closure $callback, null|DateTimeInterface|Duration $wait = null): mixed
     {
         $wait ??= Datetime::now();
-        $waitUntil = ($wait instanceof Duration)
+        $waitUntil = $wait instanceof Duration
             ? DateTime::now()->plus($wait)
             : $wait;
 

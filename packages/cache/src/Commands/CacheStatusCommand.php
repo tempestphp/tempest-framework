@@ -37,7 +37,7 @@ final readonly class CacheStatusCommand
     #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
     public function __invoke(bool $internal = true): void
     {
-        if (! ($this->container instanceof GenericContainer)) {
+        if (! $this->container instanceof GenericContainer) {
             $this->console->error('Clearing caches is only available when using the default container.');
             return;
         }
@@ -95,7 +95,7 @@ final readonly class CacheStatusCommand
 
     private function getCacheName(Cache $cache): string
     {
-        if (! ($cache instanceof GenericCache)) {
+        if (! $cache instanceof GenericCache) {
             return $cache::class;
         }
 

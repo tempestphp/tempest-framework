@@ -45,10 +45,12 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = query(UserWithHash::class)->create(
-            email: 'test@example.com',
-            password: 'original-password', // @mago-expect security/no-literal-password
-        )->refresh();
+        $user = query(UserWithHash::class)
+            ->create(
+                email: 'test@example.com',
+                password: 'original-password', // @mago-expect security/no-literal-password
+            )
+            ->refresh();
 
         $originalHash = $user->password;
 
@@ -66,10 +68,12 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = query(UserWithHash::class)->create(
-            email: 'test@example.com',
-            password: $alreadyHashed = $this->hasher->hash('plaintext-password'),
-        )->refresh();
+        $user = query(UserWithHash::class)
+            ->create(
+                email: 'test@example.com',
+                password: $alreadyHashed = $this->hasher->hash('plaintext-password'),
+            )
+            ->refresh();
 
         $this->assertSame($alreadyHashed, $user->password);
         $this->assertTrue($this->hasher->verify('plaintext-password', $user->password));
@@ -80,10 +84,12 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithNullablePasswordTable::class);
 
-        $user = query(UserWithNullablePassword::class)->create(
-            email: 'test@example.com',
-            password: null,
-        )->refresh();
+        $user = query(UserWithNullablePassword::class)
+            ->create(
+                email: 'test@example.com',
+                password: null,
+            )
+            ->refresh();
 
         $this->assertNull($user->password);
     }

@@ -114,7 +114,7 @@ final class StaticGenerateCommand
 
                 $fileName = $uri === '/'
                     ? 'index.html'
-                    : ($uri . '/index.html');
+                    : $uri . '/index.html';
 
                 if ($filter !== null && $uri !== $filter) {
                     continue;
@@ -136,7 +136,7 @@ final class StaticGenerateCommand
 
                     $body = $response->body;
 
-                    $content = ($body instanceof View)
+                    $content = $body instanceof View
                         ? $this->viewRenderer->render($body)
                         : $body;
 

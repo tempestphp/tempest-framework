@@ -24,7 +24,7 @@ namespace Tempest\Support\Path {
     function to_relative_path(null|Stringable|string $from, Stringable|string ...$parts): string
     {
         $path = namespace\normalize(...$parts);
-        $from = $from === null ? '' : ((string) $from);
+        $from = $from === null ? '' : (string) $from;
 
         if (is_relative_path($path)) {
             return $path;
@@ -117,7 +117,7 @@ namespace Tempest\Support\Path {
         }
 
         $paths = array_map(
-            fn (null|Stringable|string $path) => $path === null ? '' : ((string) $path),
+            fn (null|Stringable|string $path) => $path === null ? '' : (string) $path,
             $paths,
         );
 

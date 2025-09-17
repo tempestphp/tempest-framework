@@ -12,7 +12,7 @@ final class StringSerializer implements Serializer
 {
     public function serialize(mixed $input): string
     {
-        if (! is_string($input) && ! ($input instanceof Stringable)) {
+        if (! is_string($input) && ! $input instanceof Stringable) {
             throw new ValueCouldNotBeSerialized('string');
         }
 

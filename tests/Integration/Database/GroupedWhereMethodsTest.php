@@ -44,15 +44,17 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($products as $productData) {
-            query(Product::class)->insert(
-                name: $productData['name'],
-                category: $productData['category'],
-                price: $productData['price'],
-                in_stock: $productData['in_stock'],
-                rating: $productData['rating'],
-                brand: $productData['brand'],
-                created_at: DateTime::now(),
-            )->execute();
+            query(Product::class)
+                ->insert(
+                    name: $productData['name'],
+                    category: $productData['category'],
+                    price: $productData['price'],
+                    in_stock: $productData['in_stock'],
+                    rating: $productData['rating'],
+                    brand: $productData['brand'],
+                    created_at: DateTime::now(),
+                )
+                ->execute();
         }
     }
 

@@ -38,80 +38,102 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $now = $this->clock->now();
 
-        query(Event::class)->insert(
-            name: 'Today event 1',
-            created_at: $now->withTime(10, 0),
-            event_date: $now->withTime(14, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Today event 1',
+                created_at: $now->withTime(10, 0),
+                event_date: $now->withTime(14, 0),
+            )
+            ->execute();
 
-        query(Event::class)->insert(
-            name: 'Today event 2',
-            created_at: $now->withTime(11, 0),
-            event_date: $now->withTime(16, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Today event 2',
+                created_at: $now->withTime(11, 0),
+                event_date: $now->withTime(16, 0),
+            )
+            ->execute();
 
         $yesterday = $now->minusDay();
-        query(Event::class)->insert(
-            name: 'Yesterday event',
-            created_at: $yesterday->withTime(9, 0),
-            event_date: $yesterday->withTime(13, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Yesterday event',
+                created_at: $yesterday->withTime(9, 0),
+                event_date: $yesterday->withTime(13, 0),
+            )
+            ->execute();
 
         $thisWeekSunday = DateTime::parse('2025-08-03 17:00:00');
-        query(Event::class)->insert(
-            name: 'This week Sunday event',
-            created_at: $thisWeekSunday->withTime(8, 0),
-            event_date: $thisWeekSunday,
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'This week Sunday event',
+                created_at: $thisWeekSunday->withTime(8, 0),
+                event_date: $thisWeekSunday,
+            )
+            ->execute();
 
         $lastWeekTuesday = DateTime::parse('2025-07-22 15:00:00');
-        query(Event::class)->insert(
-            name: 'Last week event 1',
-            created_at: $lastWeekTuesday->withTime(10, 0),
-            event_date: $lastWeekTuesday,
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Last week event 1',
+                created_at: $lastWeekTuesday->withTime(10, 0),
+                event_date: $lastWeekTuesday,
+            )
+            ->execute();
 
         $lastWeekWednesday = DateTime::parse('2025-07-23 16:00:00');
-        query(Event::class)->insert(
-            name: 'Last week event 2',
-            created_at: $lastWeekWednesday->withTime(11, 0),
-            event_date: $lastWeekWednesday,
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Last week event 2',
+                created_at: $lastWeekWednesday->withTime(11, 0),
+                event_date: $lastWeekWednesday,
+            )
+            ->execute();
 
         $thisMonthDay = DateTime::parse('2025-08-10 10:00:00');
-        query(Event::class)->insert(
-            name: 'This month event',
-            created_at: $thisMonthDay,
-            event_date: $thisMonthDay->withTime(14, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'This month event',
+                created_at: $thisMonthDay,
+                event_date: $thisMonthDay->withTime(14, 0),
+            )
+            ->execute();
 
         $lastMonth = DateTime::parse('2025-07-15 10:00:00');
-        query(Event::class)->insert(
-            name: 'Last month event',
-            created_at: $lastMonth,
-            event_date: $lastMonth->withTime(16, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Last month event',
+                created_at: $lastMonth,
+                event_date: $lastMonth->withTime(16, 0),
+            )
+            ->execute();
 
         $thisYearDay = DateTime::parse('2025-03-15 10:00:00');
-        query(Event::class)->insert(
-            name: 'This year event',
-            created_at: $thisYearDay,
-            event_date: $thisYearDay->withTime(11, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'This year event',
+                created_at: $thisYearDay,
+                event_date: $thisYearDay->withTime(11, 0),
+            )
+            ->execute();
 
         $lastYear = DateTime::parse('2024-08-02 10:00:00');
-        query(Event::class)->insert(
-            name: 'Last year event',
-            created_at: $lastYear,
-            event_date: $lastYear->withTime(14, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Last year event',
+                created_at: $lastYear,
+                event_date: $lastYear->withTime(14, 0),
+            )
+            ->execute();
 
         $future = $now->plusDays(30);
-        query(Event::class)->insert(
-            name: 'Future event',
-            created_at: $now,
-            event_date: $future->withTime(10, 0),
-        )->execute();
+        query(Event::class)
+            ->insert(
+                name: 'Future event',
+                created_at: $now,
+                event_date: $future->withTime(10, 0),
+            )
+            ->execute();
     }
 
     public function test_where_today(): void

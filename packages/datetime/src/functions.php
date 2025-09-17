@@ -210,7 +210,7 @@ namespace Tempest\DateTime {
         if ($timestamp === false) {
             // Only show pattern in the exception if it was provided.
             if (null !== $pattern) {
-                $formatter_pattern = ($pattern instanceof FormatPattern) ? $pattern->value : $pattern;
+                $formatter_pattern = $pattern instanceof FormatPattern ? $pattern->value : $pattern;
 
                 throw new ParserException(sprintf(
                     "Unable to interpret '%s' as a valid date/time using pattern '%s'.",
@@ -236,7 +236,7 @@ namespace Tempest\DateTime {
 
         $parts = explode(' ', $time);
         $seconds = (int) $parts[1];
-        $nanoseconds = (int) (((float) $parts[0]) * ((float) NANOSECONDS_PER_SECOND));
+        $nanoseconds = (int) ((float) $parts[0] * (float) NANOSECONDS_PER_SECOND);
 
         return [$seconds, $nanoseconds];
     }

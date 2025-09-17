@@ -24,12 +24,12 @@ final readonly class PrimaryKey implements Stringable
 
     public function __construct(string|int|self $value)
     {
-        $value = ($value instanceof self)
+        $value = $value instanceof self
             ? $value->value
             : $value;
 
         $this->value = is_numeric($value)
-            ? ((int) $value)
+            ? (int) $value
             : $value;
     }
 

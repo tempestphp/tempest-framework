@@ -31,7 +31,7 @@ final readonly class NativeDateTimeSerializer implements Serializer
 
     public function serialize(mixed $input): string
     {
-        if (! ($input instanceof DateTimeInterface)) {
+        if (! $input instanceof DateTimeInterface) {
             throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 

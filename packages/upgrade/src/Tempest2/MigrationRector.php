@@ -18,7 +18,7 @@ final class MigrationRector extends AbstractRector
 
     public function refactor(Node $node): void
     {
-        if (! ($node instanceof Node\Stmt\Class_)) {
+        if (! $node instanceof Node\Stmt\Class_) {
             return;
         }
 
@@ -47,11 +47,11 @@ final class MigrationRector extends AbstractRector
         $migratesDown = true;
 
         foreach ($downStatements as $statement) {
-            if (! ($statement instanceof Node\Stmt\Return_)) {
+            if (! $statement instanceof Node\Stmt\Return_) {
                 continue;
             }
 
-            if (! ($statement->expr instanceof Node\Expr\ConstFetch)) {
+            if (! $statement->expr instanceof Node\Expr\ConstFetch) {
                 continue;
             }
 
@@ -69,7 +69,7 @@ final class MigrationRector extends AbstractRector
             $statements = $node->stmts;
 
             foreach ($node->stmts as $key => $statement) {
-                if (! ($statement instanceof ClassMethod)) {
+                if (! $statement instanceof ClassMethod) {
                     continue;
                 }
 

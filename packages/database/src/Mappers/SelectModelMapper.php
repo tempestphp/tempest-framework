@@ -31,7 +31,7 @@ final class SelectModelMapper implements Mapper
         $idField = $model->getQualifiedPrimaryKey();
 
         $parsed = arr($from)
-            ->groupBy(fn (array $data, int|string $i) => $idField !== null ? ($data[$idField] ?? $i) : $i)
+            ->groupBy(fn (array $data, int|string $i) => $idField !== null ? $data[$idField] ?? $i : $i)
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 
@@ -54,7 +54,7 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if (! ($relation instanceof HasMany)) {
+            if (! $relation instanceof HasMany) {
                 continue;
             }
 

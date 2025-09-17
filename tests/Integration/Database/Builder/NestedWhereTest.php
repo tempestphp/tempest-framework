@@ -100,16 +100,19 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $expected = 'SELECT * FROM books WHERE status = ? AND ((category = ? AND rating > ?) OR (category = ? AND author_id IN (?, ?, ?))) AND created_at > ?';
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
-        $this->assertSame([
-            'published',
-            'fiction',
-            4.0,
-            'non-fiction',
-            1,
-            2,
-            3,
-            '2024-01-01',
-        ], $query->bindings);
+        $this->assertSame(
+            expected: [
+                'published',
+                'fiction',
+                4.0,
+                'non-fiction',
+                1,
+                2,
+                3,
+                '2024-01-01',
+            ],
+            actual: $query->bindings,
+        );
     }
 
     public function test_where_group_without_existing_conditions(): void

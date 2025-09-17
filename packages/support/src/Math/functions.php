@@ -415,7 +415,7 @@ namespace Tempest\Support\Math {
         $mean = 0.0;
 
         foreach ($numbers as $number) {
-            $mean += ((float) $number) / $count;
+            $mean += (float) $number / $count;
         }
 
         return $mean;

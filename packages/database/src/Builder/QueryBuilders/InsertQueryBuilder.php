@@ -452,7 +452,7 @@ final class InsertQueryBuilder implements BuildsQuery
         $belongsTo = $definition->getBelongsTo($property->getName());
         $column = $belongsTo
             ? $belongsTo->getOwnerFieldName()
-            : ($property->getName() . '_' . $primaryKey);
+            : $property->getName() . '_' . $primaryKey;
 
         $resolvedValue = match (true) {
             $value === null => null,

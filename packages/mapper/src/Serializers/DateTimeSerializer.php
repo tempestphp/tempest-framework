@@ -37,7 +37,7 @@ final readonly class DateTimeSerializer implements Serializer
             $input = DateTime::parse($input);
         }
 
-        if (! ($input instanceof DateTimeInterface)) {
+        if (! $input instanceof DateTimeInterface) {
             throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 

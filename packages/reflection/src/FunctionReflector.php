@@ -16,7 +16,7 @@ final readonly class FunctionReflector implements Reflector
 
     public function __construct(PHPReflectionFunction|Closure $function)
     {
-        $this->reflectionFunction = ($function instanceof Closure)
+        $this->reflectionFunction = $function instanceof Closure
             ? new PHPReflectionFunction($function)
             : $function;
     }

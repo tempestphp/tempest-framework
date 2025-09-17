@@ -28,7 +28,7 @@ final readonly class KeyValueRenderer
             ? $this->getTerminalWidth()
             : self::MAX_WIDTH;
 
-        $dotsWidth = ($maximumWidth - $key->stripTags()->length()) - $value->stripTags()->length();
+        $dotsWidth = $maximumWidth - $key->stripTags()->length() - $value->stripTags()->length();
 
         return str()
             ->append($key)
@@ -45,7 +45,7 @@ final readonly class KeyValueRenderer
             return self::MAX_WIDTH;
         }
 
-        return ((int) $width) - 5;
+        return (int) $width - 5;
     }
 
     private function cleanText(null|Stringable|string $text): ImmutableString

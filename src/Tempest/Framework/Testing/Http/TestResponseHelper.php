@@ -345,7 +345,7 @@ final class TestResponseHelper
      */
     public function assertView(string $view): self
     {
-        if (! ($this->body instanceof View)) {
+        if (! $this->body instanceof View) {
             Assert::fail(sprintf('Response is not a %s', View::class));
         }
 

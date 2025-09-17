@@ -183,7 +183,7 @@ final class MessageFormatter
                     continue;
                 }
 
-                if (! ($keyNode instanceof Literal)) {
+                if (! $keyNode instanceof Literal) {
                     $matches = false;
                     break;
                 }
@@ -294,7 +294,7 @@ final class MessageFormatter
             return $formattingFunction->format($value, $parameters);
         }
 
-        return new FormattedValue($value, $value !== null ? ((string) $value) : '');
+        return new FormattedValue($value, $value !== null ? (string) $value : '');
     }
 
     /**

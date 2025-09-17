@@ -97,11 +97,11 @@ final class TextInputRenderer
 
     public function getCursorPosition(Terminal $terminal, TextBuffer $buffer): Point
     {
-        $position = $buffer->getRelativeCursorPosition(((($terminal->width - self::MARGIN_X) - 1) - self::PADDING_X) - self::MARGIN_X);
+        $position = $buffer->getRelativeCursorPosition($terminal->width - self::MARGIN_X - 1 - self::PADDING_X - self::MARGIN_X);
 
         return new Point(
             x: $position->x + self::MARGIN_X + 1 + self::PADDING_X, // +1 is the border width
-            y: ($position->y - $this->scrollOffset) + self::MARGIN_TOP + $this->offsetY, // subtract scroll offset
+            y: $position->y - $this->scrollOffset + self::MARGIN_TOP + $this->offsetY, // subtract scroll offset
         );
     }
 }

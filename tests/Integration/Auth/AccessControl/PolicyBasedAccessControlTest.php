@@ -385,7 +385,7 @@ final class PostPolicy
     #[Policy(action: 'edit')]
     public function edit(?Post $resource, ?User $subject): bool
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -395,7 +395,7 @@ final class PostPolicy
     #[Policy(action: PostAction::EDIT)]
     public function editEnum(?Post $resource, ?User $subject): bool
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -405,7 +405,7 @@ final class PostPolicy
     #[Policy(action: 'delete')]
     public function delete(?Post $resource, ?User $subject): bool|AccessDecision
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -417,7 +417,7 @@ final class PostPolicy
     #[Policy(action: PostAction::DELETE)]
     public function deleteEnum(?Post $resource, ?User $subject): bool|AccessDecision
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -438,7 +438,7 @@ final class UserPolicy
     #[Policy(action: 'manage')]
     public function manage(?User $resource, ?User $subject): bool
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -461,7 +461,7 @@ final class MultiActionPolicy
     #[Policy(action: ['read', 'download'])]
     public function readAndDownload(?Document $resource, ?User $subject): bool
     {
-        if (! ($subject instanceof User)) {
+        if (! $subject instanceof User) {
             return false;
         }
 
@@ -474,7 +474,7 @@ final class MultiAuthenticatablePolicy
     #[Policy]
     public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
     {
-        if (! ($subject instanceof Authenticatable)) {
+        if (! $subject instanceof Authenticatable) {
             return false;
         }
 

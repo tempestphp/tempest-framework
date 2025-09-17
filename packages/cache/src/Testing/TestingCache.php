@@ -37,7 +37,7 @@ final class TestingCache implements Cache
     {
         return new TestingLock(new GenericLock(
             key: (string) $key,
-            owner: $owner ? ((string) $owner) : Random\secure_string(length: 10),
+            owner: $owner ? (string) $owner : Random\secure_string(length: 10),
             cache: $this->cache,
             expiration: $expiration,
         ));

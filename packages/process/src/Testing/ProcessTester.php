@@ -256,7 +256,7 @@ final class ProcessTester
         Assert::assertSame(
             expected: $times,
             actual: $count,
-            message: ($command instanceof Closure)
+            message: $command instanceof Closure
                 ? sprintf('Expected command matching callback to be executed %d times, but it was executed %d times.', $times, $count)
                 : sprintf('Expected command "%s" to be executed %d times, but it was executed %d times.', $command, $times, $count),
         );
