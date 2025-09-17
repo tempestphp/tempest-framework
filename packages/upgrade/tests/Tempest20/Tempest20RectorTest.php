@@ -1,14 +1,14 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest2;
+namespace Tempest\Upgrade\Tests\Tempest20;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
-final class Tempest2RectorTest extends TestCase
+final class Tempest20RectorTest extends TestCase
 {
     private RectorTester $rector {
-        get => new RectorTester(__DIR__ . '/tempest2_rector.php');
+        get => new RectorTester(__DIR__ . '/tempest20_rector.php');
     }
 
     public function test_migration_with_only_up(): void

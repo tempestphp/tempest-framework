@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest2\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest20\Fixtures;
 
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
