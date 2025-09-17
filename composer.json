@@ -47,7 +47,7 @@
     "require-dev": {
         "aws/aws-sdk-php": "^3.338.0",
         "azure-oss/storage-blob-flysystem": "^1.2",
-        "carthage-software/mago": "^1.0.0-beta.15",
+        "carthage-software/mago": "^1.0.0-beta.16",
         "guzzlehttp/psr7": "^2.6.1",
         "league/flysystem-aws-s3-v3": "^3.25.1",
         "league/flysystem-ftp": "^3.25.1",
