@@ -70,7 +70,7 @@ final class DirectoryListing extends FlysystemDirectoryListing
      */
     public function toArray(): array
     {
-        return ($this->listing instanceof Traversable)
+        return $this->listing instanceof Traversable
             ? iterator_to_array($this->listing, false)
             : $this->listing;
     }

@@ -20,20 +20,23 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('<html', TokenType::OPEN_TAG_START),
-            new Token('>', TokenType::OPEN_TAG_END),
-            new Token('<body', TokenType::OPEN_TAG_START),
-            new Token(' class=', TokenType::ATTRIBUTE_NAME),
-            new Token('"hello"', TokenType::ATTRIBUTE_VALUE),
-            new Token('>', TokenType::OPEN_TAG_END),
-            new Token('hello', TokenType::CONTENT),
-            new Token('<x-slot/>', TokenType::SELF_CLOSING_TAG),
-            new Token('</body>', TokenType::CLOSING_TAG),
-            new Token("<?= 'hi' ?>", TokenType::PHP),
-            new Token('<!-- test -->', TokenType::COMMENT),
-            new Token('</html>', TokenType::CLOSING_TAG),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<html', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('<body', TokenType::OPEN_TAG_START),
+                new Token(' class=', TokenType::ATTRIBUTE_NAME),
+                new Token('"hello"', TokenType::ATTRIBUTE_VALUE),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('hello', TokenType::CONTENT),
+                new Token('<x-slot/>', TokenType::SELF_CLOSING_TAG),
+                new Token('</body>', TokenType::CLOSING_TAG),
+                new Token("<?= 'hi' ?>", TokenType::PHP),
+                new Token('<!-- test -->', TokenType::COMMENT),
+                new Token('</html>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_lex_php(): void
@@ -42,9 +45,12 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($code)->lex();
 
-        $this->assertTokens([
-            new Token($code, TokenType::PHP),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token($code, TokenType::PHP),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_lex_comment(): void
@@ -53,9 +59,12 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($code)->lex();
 
-        $this->assertTokens([
-            new Token($code, TokenType::COMMENT),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token($code, TokenType::COMMENT),
+            ],
+            actual: $tokens,
+        );
     }
 
     #[TestWith(['<x-foo />'])]
@@ -63,31 +72,40 @@ final class TempestViewLexerTest extends TestCase
     #[TestWith(['<x-foo    />'])]
     public function test_self_closing_tag_with_and_without_space(string $tag): void
     {
-        $this->assertTokens([
-            new Token($tag, TokenType::SELF_CLOSING_TAG),
-        ], new TempestViewLexer($tag)->lex());
+        $this->assertTokens(
+            expected: [
+                new Token($tag, TokenType::SELF_CLOSING_TAG),
+            ],
+            actual: new TempestViewLexer($tag)->lex(),
+        );
     }
 
     public function test_self_closing_tag_with_attributes(): void
     {
         $tokens = new TempestViewLexer('<x-foo x-bar="bar" x-baz="baz" />')->lex();
 
-        $this->assertTokens([
-            new Token('<x-foo', TokenType::OPEN_TAG_START),
-            new Token(' x-bar=', TokenType::ATTRIBUTE_NAME),
-            new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
-            new Token(' x-baz=', TokenType::ATTRIBUTE_NAME),
-            new Token('"baz"', TokenType::ATTRIBUTE_VALUE),
-            new Token(' />', TokenType::SELF_CLOSING_TAG_END),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<x-foo', TokenType::OPEN_TAG_START),
+                new Token(' x-bar=', TokenType::ATTRIBUTE_NAME),
+                new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+                new Token(' x-baz=', TokenType::ATTRIBUTE_NAME),
+                new Token('"baz"', TokenType::ATTRIBUTE_VALUE),
+                new Token(' />', TokenType::SELF_CLOSING_TAG_END),
+            ],
+            actual: $tokens,
+        );
     }
 
     #[TestWith(['</x-foo>'])]
     public function test_closing_tag(string $tag): void
     {
-        $this->assertTokens([
-            new Token($tag, TokenType::CLOSING_TAG),
-        ], new TempestViewLexer($tag)->lex());
+        $this->assertTokens(
+            expected: [
+                new Token($tag, TokenType::CLOSING_TAG),
+            ],
+            actual: new TempestViewLexer($tag)->lex(),
+        );
     }
 
     public function test_multiline_attributes(): void
@@ -105,25 +123,28 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('<div', TokenType::OPEN_TAG_START),
-            new Token('
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token('
     class=', TokenType::ATTRIBUTE_NAME),
-            new Token('"abc"', TokenType::ATTRIBUTE_VALUE),
-            new Token('
+                new Token('"abc"', TokenType::ATTRIBUTE_VALUE),
+                new Token('
     foo=', TokenType::ATTRIBUTE_NAME),
-            new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
-            new Token('
+                new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+                new Token('
     x-foo
 ', TokenType::ATTRIBUTE_NAME),
-            new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
-            new Token('"true"', TokenType::ATTRIBUTE_VALUE),
-            new Token("\n>", TokenType::OPEN_TAG_END),
-            new Token('
+                new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
+                new Token('"true"', TokenType::ATTRIBUTE_VALUE),
+                new Token("\n>", TokenType::OPEN_TAG_END),
+                new Token('
 
 ', TokenType::CONTENT),
-            new Token('</div>', TokenType::CLOSING_TAG),
-        ], $tokens);
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_lexer_with_falsy_values(): void
@@ -134,9 +155,12 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('a0a', TokenType::CONTENT),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('a0a', TokenType::CONTENT),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_lexer_attribute_values(): void
@@ -144,7 +168,7 @@ final class TempestViewLexerTest extends TestCase
         $tokens = new TempestViewLexer('<div x-foo="<?= $foo ?>" x-bar class="bar" x-foos>')->lex();
 
         $this->assertTokens(
-            [
+            expected: [
                 new Token('<div', TokenType::OPEN_TAG_START),
                 new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
                 new Token('"<?= $foo ?>"', TokenType::ATTRIBUTE_VALUE),
@@ -154,7 +178,7 @@ final class TempestViewLexerTest extends TestCase
                 new Token(' x-foos', TokenType::ATTRIBUTE_NAME),
                 new Token('>', TokenType::OPEN_TAG_END),
             ],
-            $tokens,
+            actual: $tokens,
         );
     }
 
@@ -166,15 +190,18 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('<div', TokenType::OPEN_TAG_START),
-            new Token(' <?php if (true) { ?>', TokenType::PHP),
-            new Token(' class=', TokenType::ATTRIBUTE_NAME),
-            new Token('"foo"', TokenType::ATTRIBUTE_VALUE),
-            new Token(' <?php } ?>', TokenType::PHP),
-            new Token('>', TokenType::OPEN_TAG_END),
-            new Token('</div>', TokenType::CLOSING_TAG),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' <?php if (true) { ?>', TokenType::PHP),
+                new Token(' class=', TokenType::ATTRIBUTE_NAME),
+                new Token('"foo"', TokenType::ATTRIBUTE_VALUE),
+                new Token(' <?php } ?>', TokenType::PHP),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_doctype(): void
@@ -185,12 +212,15 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('<!DOCTYPE html>', TokenType::DOCTYPE),
-            new Token('<html', TokenType::OPEN_TAG_START),
-            new Token('>', TokenType::OPEN_TAG_END),
-            new Token('</html>', TokenType::CLOSING_TAG),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<!DOCTYPE html>', TokenType::DOCTYPE),
+                new Token('<html', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</html>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
 
         $html = <<<'HTML'
         <!doctype html><html></html>
@@ -198,12 +228,15 @@ final class TempestViewLexerTest extends TestCase
 
         $tokens = new TempestViewLexer($html)->lex();
 
-        $this->assertTokens([
-            new Token('<!doctype html>', TokenType::DOCTYPE),
-            new Token('<html', TokenType::OPEN_TAG_START),
-            new Token('>', TokenType::OPEN_TAG_END),
-            new Token('</html>', TokenType::CLOSING_TAG),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<!doctype html>', TokenType::DOCTYPE),
+                new Token('<html', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</html>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_attribute_with_new_line(): void
@@ -211,31 +244,40 @@ final class TempestViewLexerTest extends TestCase
         $tokens = new TempestViewLexer('<div x-foo="bar"
 ></div>')->lex();
 
-        $this->assertTokens([
-            new Token('<div', TokenType::OPEN_TAG_START),
-            new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
-            new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
-            new Token("\n>", TokenType::OPEN_TAG_END),
-            new Token('</div>', TokenType::CLOSING_TAG),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
+                new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+                new Token("\n>", TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_unclosed_php_tag(): void
     {
         $tokens = new TempestViewLexer('<?php echo "hi";')->lex();
 
-        $this->assertTokens([
-            new Token('<?php echo "hi";', TokenType::PHP),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<?php echo "hi";', TokenType::PHP),
+            ],
+            actual: $tokens,
+        );
     }
 
     public function test_unclosed_comment_tag(): void
     {
         $tokens = new TempestViewLexer('<!-- comment')->lex();
 
-        $this->assertTokens([
-            new Token('<!-- comment', TokenType::COMMENT),
-        ], $tokens);
+        $this->assertTokens(
+            expected: [
+                new Token('<!-- comment', TokenType::COMMENT),
+            ],
+            actual: $tokens,
+        );
     }
 
     private function assertTokens(array $expected, TokenCollection $actual): void

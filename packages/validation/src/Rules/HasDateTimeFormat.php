@@ -54,7 +54,7 @@ final readonly class HasDateTimeFormat implements Rule, HasTranslationVariables
     public function getTranslationVariables(): array
     {
         return [
-            'format' => ($this->format instanceof FormatPattern)
+            'format' => $this->format instanceof FormatPattern
                 ? $this->format->value
                 : $this->format,
         ];

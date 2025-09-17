@@ -241,14 +241,14 @@ final class ModelInspector
 
     public function isRelation(string|PropertyReflector $name): bool
     {
-        $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
+        $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
         return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
     }
 
     public function getRelation(string|PropertyReflector $name): ?Relation
     {
-        $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
+        $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
         return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
     }
@@ -309,7 +309,7 @@ final class ModelInspector
             return false;
         }
 
-        if (! ($relation instanceof Relation)) {
+        if (! $relation instanceof Relation) {
             $relation = $this->getRelation($relation);
         }
 
@@ -481,7 +481,7 @@ final class ModelInspector
         $primaryKey = $this->getPrimaryKey();
 
         return $primaryKey !== null
-            ? ($this->getTableDefinition()->name . '.' . $primaryKey)
+            ? $this->getTableDefinition()->name . '.' . $primaryKey
             : null;
     }
 

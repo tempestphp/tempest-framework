@@ -559,7 +559,7 @@ trait TemporalConvenienceMethods
      * Stops the execution and dumps the current state of this temporal object.
      *
      * @phpstan-ignore disallowed.function
-     * @mago-expect best-practices/no-debug-symbols
+     * @mago-expect lint:no-debug-symbols
      */
     public function dd(): void
     {

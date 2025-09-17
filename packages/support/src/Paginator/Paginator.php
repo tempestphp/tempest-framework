@@ -52,11 +52,11 @@ final class Paginator
     }
 
     public ?int $nextPage {
-        get => $this->hasNext ? ($this->currentPage + 1) : null;
+        get => $this->hasNext ? $this->currentPage + 1 : null;
     }
 
     public ?int $previousPage {
-        get => $this->hasPrevious ? ($this->currentPage - 1) : null;
+        get => $this->hasPrevious ? $this->currentPage - 1 : null;
     }
 
     public ?int $firstPage {
@@ -136,10 +136,10 @@ final class Paginator
 
         $half = (int) floor($this->maxLinks / 2);
         $start = max(1, $this->currentPage - $half);
-        $end = min($this->totalPages, ($start + $this->maxLinks) - 1);
+        $end = min($this->totalPages, $start + $this->maxLinks - 1);
 
-        if ((($end - $start) + 1) < $this->maxLinks) {
-            $start = max(1, ($end - $this->maxLinks) + 1);
+        if (($end - $start + 1) < $this->maxLinks) {
+            $start = max(1, $end - $this->maxLinks + 1);
         }
 
         return range($start, $end);

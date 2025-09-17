@@ -23,9 +23,6 @@ use Tempest\Intl\Locale;
 use function Tempest\DateTime\create_intl_date_formatter;
 use function time;
 
-/**
- * @mago-expect php-unit/strict-assertions
- */
 final class DateTimeTest extends TestCase
 {
     use DateTimeTestTrait;

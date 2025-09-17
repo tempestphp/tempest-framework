@@ -195,7 +195,7 @@ final readonly class DateTime implements DateTimeInterface
             throw Exception\UnexpectedValueException::forYear($year, $calendar->get(IntlCalendar::FIELD_YEAR));
         }
 
-        $timestamp_in_seconds = (int) ($calendar->getTime() / ((float) MILLISECONDS_PER_SECOND));
+        $timestamp_in_seconds = (int) ($calendar->getTime() / (float) MILLISECONDS_PER_SECOND);
         $timestamp = Timestamp::fromParts($timestamp_in_seconds, $nanoseconds);
 
         return new self($timezone, $timestamp, $year, $month, $day, $hours, $minutes, $seconds, $nanoseconds);

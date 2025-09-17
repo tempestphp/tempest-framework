@@ -97,7 +97,7 @@ final class Terminal
             ->setErrors($validationErrors)
             ->render($this);
 
-        if (! ($rendered instanceof Generator)) {
+        if (! $rendered instanceof Generator) {
             $rendered = (function (string $content): Generator {
                 yield $content;
 
@@ -223,8 +223,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = $this->supportsTty ? ((int) exec('tput cols')) : 80;
-        $this->height = $this->supportsTty ? ((int) exec('tput lines')) : 25;
+        $this->width = $this->supportsTty ? (int) exec('tput cols') : 80;
+        $this->height = $this->supportsTty ? (int) exec('tput lines') : 25;
 
         return $this;
     }

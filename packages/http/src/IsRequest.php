@@ -128,7 +128,7 @@ trait IsRequest
             return has_key($this->body, $key);
         }
 
-        return count($this->body) || ((bool) $this->raw);
+        return count($this->body) || (bool) $this->raw;
     }
 
     public function hasQuery(string $key): bool

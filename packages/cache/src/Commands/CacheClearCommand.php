@@ -42,7 +42,7 @@ final readonly class CacheClearCommand
         #[ConsoleCommand(description: 'Whether to clear internal caches')]
         bool $internal = false,
     ): void {
-        if (! ($this->container instanceof GenericContainer)) {
+        if (! $this->container instanceof GenericContainer) {
             $this->console->error('Clearing caches is only available when using the default container.');
             return;
         }

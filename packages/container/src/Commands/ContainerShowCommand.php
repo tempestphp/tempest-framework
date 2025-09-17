@@ -28,7 +28,7 @@ final readonly class ContainerShowCommand
     #[ConsoleCommand(description: 'Shows the container bindings')]
     public function __invoke(): ExitCode
     {
-        if (! ($this->container instanceof GenericContainer)) {
+        if (! $this->container instanceof GenericContainer) {
             $this->console->error('The registered container instance does not expose its bindings.');
 
             return ExitCode::ERROR;

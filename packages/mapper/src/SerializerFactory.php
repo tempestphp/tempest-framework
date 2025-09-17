@@ -35,7 +35,7 @@ final class SerializerFactory
         if (is_callable($for)) {
             try {
                 return $for($input);
-            } catch (TypeError) { // @mago-expect best-practices/dont-catch-error
+            } catch (TypeError) {
                 return false;
             }
         }
@@ -59,7 +59,7 @@ final class SerializerFactory
 
         try {
             return $serializerClass($input);
-        } catch (TypeError) { // @mago-expect best-practices/dont-catch-error
+        } catch (TypeError) {
             return null;
         }
     }

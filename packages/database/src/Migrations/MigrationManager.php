@@ -279,7 +279,7 @@ final class MigrationManager
                     ['name' => $migration->name],
                 ),
             );
-        } catch (QueryWasInvalid) { // @mago-expect best-practices/no-empty-catch-clause
+        } catch (QueryWasInvalid) { // @mago-expect lint:no-empty-catch-clause
             /**
              * If the migration was executed successfully but the entry in the migrations table could not be deleted,
              * we should not throw an exception as the migration was successfully rolled back.

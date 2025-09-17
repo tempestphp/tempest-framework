@@ -38,7 +38,9 @@ use Throwable;
 use function Tempest\Support\Path\normalize;
 use function Tempest\Support\Path\to_absolute_path;
 
-/** @mago-expect maintainability/too-many-properties */
+/**
+ * @mago-expect lint:too-many-properties
+ */
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;

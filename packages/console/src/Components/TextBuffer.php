@@ -289,7 +289,7 @@ final class TextBuffer
         foreach ($linePositions as $index => $startPosition) {
             $nextPosition = ($index + 1) < count($linePositions)
                 ? $linePositions[$index + 1]
-                : (mb_strlen($this->text) + 1);
+                : mb_strlen($this->text) + 1;
 
             if ($this->cursor >= $startPosition && $this->cursor < $nextPosition) {
                 return $index;

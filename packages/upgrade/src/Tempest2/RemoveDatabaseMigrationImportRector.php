@@ -17,7 +17,7 @@ final class RemoveDatabaseMigrationImportRector extends AbstractRector
 
     public function refactor(Node $node): ?int
     {
-        if (! ($node instanceof Node\UseItem)) {
+        if (! $node instanceof Node\UseItem) {
             return null;
         }
 

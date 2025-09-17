@@ -30,8 +30,8 @@ namespace Tempest\Support\Arr {
     {
         $array = to_array($array);
 
-        if (! ($value instanceof Closure)) {
-            $search = array_search($value, $array, $strict); // @mago-expect strictness/require-strict-behavior
+        if (! $value instanceof Closure) {
+            $search = array_search($value, $array, $strict);
 
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
@@ -403,7 +403,7 @@ namespace Tempest\Support\Arr {
 
         foreach ($array as $item) {
             // Ensure we don't check raw values with key filter
-            if (! is_null($key) && ! is_array($item) && ! ($key instanceof Closure)) {
+            if (! is_null($key) && ! is_array($item) && ! $key instanceof Closure) {
                 continue;
             }
 
@@ -418,7 +418,7 @@ namespace Tempest\Support\Arr {
                 continue;
             }
 
-            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) { // @mago-expect strictness/require-strict-behavior
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
                 continue;
             }
 
@@ -763,7 +763,7 @@ namespace Tempest\Support\Arr {
             $generator = $map($value, $key);
 
             // @phpstan-ignore instanceof.alwaysTrue
-            if (! ($generator instanceof Generator)) {
+            if (! $generator instanceof Generator) {
                 throw new MapWithKeysDidNotUseAGenerator();
             }
 
@@ -843,7 +843,7 @@ namespace Tempest\Support\Arr {
      */
     function contains(iterable $array, mixed $search): bool
     {
-        $search = ($search instanceof Closure)
+        $search = $search instanceof Closure
             ? $search
             : static fn (mixed $value) => $value === $search;
 
@@ -1234,7 +1234,7 @@ namespace Tempest\Support\Arr {
      */
     function range(int|float $start, int|float $end, int|float|null $step = null): array
     {
-        if (((float) $start) === ((float) $end)) {
+        if ((float) $start === (float) $end) {
             return [$start];
         }
 

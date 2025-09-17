@@ -58,10 +58,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
                 public static function boot(string $root, array $discoveryLocations = [], ?Container $container = null): self
                 {
-                    // This is just to make static analysis pass, this is never called.
-                    // @mago-expect analysis/undefined-function-or-method
-                    // @phpstan-ignore-next-line
-                    return Kernel::boot($root, $discoveryLocations, $container);
+                    return Kernel::boot($root, $discoveryLocations, $container); // @phpstan-ignore-line
                 }
 
                 public function shutdown(int|string $status = ''): never

@@ -43,15 +43,17 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($users as $userData) {
-            query(User::class)->insert(
-                name: $userData['name'],
-                email: $userData['email'],
-                age: $userData['age'],
-                status: $userData['status'],
-                role: $userData['role'],
-                score: $userData['score'],
-                created_at: DateTime::now(),
-            )->execute();
+            query(User::class)
+                ->insert(
+                    name: $userData['name'],
+                    email: $userData['email'],
+                    age: $userData['age'],
+                    status: $userData['status'],
+                    role: $userData['role'],
+                    score: $userData['score'],
+                    created_at: DateTime::now(),
+                )
+                ->execute();
         }
     }
 

@@ -21,7 +21,7 @@ final readonly class NativeDateTimeSerializer implements Serializer
     public static function fromReflector(PropertyReflector|TypeReflector $property): self
     {
         if ($property instanceof PropertyReflector) {
-            $format = $property->getAttribute(HasDateTimeFormat::class)?->format ?? 'Y-m-d H:i:s';
+            $format = $property->getAttribute(HasDateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
         } else {
             $format = 'Y-m-d H:i:s';
         }
@@ -31,7 +31,7 @@ final readonly class NativeDateTimeSerializer implements Serializer
 
     public function serialize(mixed $input): string
     {
-        if (! ($input instanceof DateTimeInterface)) {
+        if (! $input instanceof DateTimeInterface) {
             throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 

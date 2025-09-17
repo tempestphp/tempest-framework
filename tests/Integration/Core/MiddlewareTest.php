@@ -27,11 +27,14 @@ final class MiddlewareTest extends TestCase
 
         $middlewareAsArray = iterator_to_array($middleware);
 
-        $this->assertSame([
-            MiddlewareA::class,
-            MiddlewareB::class,
-            MiddlewareC::class,
-        ], array_keys($middlewareAsArray));
+        $this->assertSame(
+            expected: [
+                MiddlewareA::class,
+                MiddlewareB::class,
+                MiddlewareC::class,
+            ],
+            actual: array_keys($middlewareAsArray),
+        );
 
         $this->assertInstanceOf(ClassReflector::class, $middlewareAsArray[MiddlewareA::class]);
         $this->assertSame(MiddlewareA::class, $middlewareAsArray[MiddlewareA::class]->getName());
@@ -47,11 +50,14 @@ final class MiddlewareTest extends TestCase
     {
         $middleware = new Middleware(MiddlewareA::class, MiddlewareC::class)->add(MiddlewareB::class);
 
-        $this->assertSame([
-            MiddlewareA::class,
-            MiddlewareC::class,
-            MiddlewareB::class,
-        ], array_keys(iterator_to_array($middleware)));
+        $this->assertSame(
+            expected: [
+                MiddlewareA::class,
+                MiddlewareC::class,
+                MiddlewareB::class,
+            ],
+            actual: array_keys(iterator_to_array($middleware)),
+        );
     }
 
     public function test_remove_middleware(): void
@@ -62,10 +68,13 @@ final class MiddlewareTest extends TestCase
             MiddlewareC::class,
         )->remove(MiddlewareB::class);
 
-        $this->assertSame([
-            MiddlewareA::class,
-            MiddlewareC::class,
-        ], array_keys(iterator_to_array($middleware)));
+        $this->assertSame(
+            expected: [
+                MiddlewareA::class,
+                MiddlewareC::class,
+            ],
+            actual: array_keys(iterator_to_array($middleware)),
+        );
     }
 
     public function test_sort_with_additions(): void
@@ -82,17 +91,20 @@ final class MiddlewareTest extends TestCase
             MiddlewareFramework::class,
         );
 
-        $this->assertSame([
-            MiddlewareFramework::class,
-            MiddlewareHighest::class,
-            MiddlewareHigh::class,
-            MiddlewareC::class,
-            MiddlewareA::class,
-            MiddlewareB::class,
-            MiddlewareNormal::class,
-            MiddlewareLow::class,
-            MiddlewareLowest::class,
-        ], array_keys(iterator_to_array($middleware)));
+        $this->assertSame(
+            expected: [
+                MiddlewareFramework::class,
+                MiddlewareHighest::class,
+                MiddlewareHigh::class,
+                MiddlewareC::class,
+                MiddlewareA::class,
+                MiddlewareB::class,
+                MiddlewareNormal::class,
+                MiddlewareLow::class,
+                MiddlewareLowest::class,
+            ],
+            actual: array_keys(iterator_to_array($middleware)),
+        );
     }
 
     public function test_sort_with_removals_(): void
@@ -109,14 +121,17 @@ final class MiddlewareTest extends TestCase
             MiddlewareFramework::class,
         )->remove(MiddlewareLowest::class, MiddlewareFramework::class, MiddlewareA::class);
 
-        $this->assertSame([
-            MiddlewareHighest::class,
-            MiddlewareHigh::class,
-            MiddlewareC::class,
-            MiddlewareB::class,
-            MiddlewareNormal::class,
-            MiddlewareLow::class,
-        ], array_keys(iterator_to_array($middleware)));
+        $this->assertSame(
+            expected: [
+                MiddlewareHighest::class,
+                MiddlewareHigh::class,
+                MiddlewareC::class,
+                MiddlewareB::class,
+                MiddlewareNormal::class,
+                MiddlewareLow::class,
+            ],
+            actual: array_keys(iterator_to_array($middleware)),
+        );
     }
 
     public function test_unwrap(): void
@@ -133,17 +148,20 @@ final class MiddlewareTest extends TestCase
             MiddlewareFramework::class,
         );
 
-        $this->assertSame(array_reverse([
-            MiddlewareFramework::class,
-            MiddlewareHighest::class,
-            MiddlewareHigh::class,
-            MiddlewareC::class,
-            MiddlewareA::class,
-            MiddlewareB::class,
-            MiddlewareNormal::class,
-            MiddlewareLow::class,
-            MiddlewareLowest::class,
-        ]), array_keys(iterator_to_array($middleware->unwrap())));
+        $this->assertSame(
+            array_reverse([
+                MiddlewareFramework::class,
+                MiddlewareHighest::class,
+                MiddlewareHigh::class,
+                MiddlewareC::class,
+                MiddlewareA::class,
+                MiddlewareB::class,
+                MiddlewareNormal::class,
+                MiddlewareLow::class,
+                MiddlewareLowest::class,
+            ]),
+            actual: array_keys(iterator_to_array($middleware->unwrap())),
+        );
     }
 
     public function test_serialize(): void
@@ -158,10 +176,13 @@ final class MiddlewareTest extends TestCase
 
         $middlewareAsArray = iterator_to_array($middleware);
 
-        $this->assertSame([
-            MiddlewareB::class,
-            MiddlewareA::class,
-            MiddlewareC::class,
-        ], array_keys($middlewareAsArray));
+        $this->assertSame(
+            expected: [
+                MiddlewareB::class,
+                MiddlewareA::class,
+                MiddlewareC::class,
+            ],
+            actual: array_keys($middlewareAsArray),
+        );
     }
 }

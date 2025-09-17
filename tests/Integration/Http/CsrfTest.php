@@ -26,7 +26,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
 
         $this->http
             ->get('/test')
-            ->assertHasCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY, fn (string $value) => $value === $token); // @mago-expect security/no-insecure-comparison
+            ->assertHasCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY, fn (string $value) => $value === $token); // @mago-expect lint:no-insecure-comparison
     }
 
     #[TestWith([Method::POST])]

@@ -221,7 +221,7 @@ final class MockClient implements ClientInterface
                 continue;
             }
 
-            return ($fakedResponse instanceof ResponseBag)
+            return $fakedResponse instanceof ResponseBag
                 ? $fakedResponse->getNextResponse()
                 : $fakedResponse;
         }
@@ -238,7 +238,7 @@ final class MockClient implements ClientInterface
                 continue;
             }
 
-            return ($fakedWildcardResponse instanceof ResponseBag)
+            return $fakedWildcardResponse instanceof ResponseBag
                 ? $fakedWildcardResponse->getNextResponse()
                 : $fakedWildcardResponse;
         }

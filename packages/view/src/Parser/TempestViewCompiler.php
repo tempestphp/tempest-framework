@@ -73,7 +73,7 @@ final readonly class TempestViewCompiler
 
     private function retrieveTemplate(string|View $view): string
     {
-        $path = ($view instanceof View) ? $view->path : $view;
+        $path = $view instanceof View ? $view->path : $view;
 
         if (! str_ends_with($path, '.php')) {
             return $path;

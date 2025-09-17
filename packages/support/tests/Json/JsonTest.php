@@ -19,13 +19,16 @@ final class JsonTest extends TestCase
             "license": "MIT"
         }');
 
-        $this->assertSame([
-            'name' => 'azjezz/psl',
-            'type' => 'library',
-            'description' => 'PHP Standard Library.',
-            'keywords' => ['php', 'std', 'stdlib', 'utility', 'psl'],
-            'license' => 'MIT',
-        ], $actual);
+        $this->assertSame(
+            expected: [
+                'name' => 'azjezz/psl',
+                'type' => 'library',
+                'description' => 'PHP Standard Library.',
+                'keywords' => ['php', 'std', 'stdlib', 'utility', 'psl'],
+                'license' => 'MIT',
+            ],
+            actual: $actual,
+        );
     }
 
     public function test_decode_throws_for_invalid_syntax(): void

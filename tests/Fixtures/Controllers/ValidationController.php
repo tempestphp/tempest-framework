@@ -25,7 +25,7 @@ final readonly class ValidationController
     }
 
     #[Post('/test-validation-responses')]
-    public function store(ValidationRequest $request): Response // @mago-expect best-practices/no-unused-parameter
+    public function store(ValidationRequest $request): Response
     {
         return new Redirect(uri([self::class, 'get']));
     }

@@ -210,11 +210,14 @@ final class MapperTest extends FrameworkIntegrationTestCase
             last_name: 'my last name',
         ))->toArray();
 
-        $this->assertSame([
-            'name' => 'my first name',
-            'full_name' => 'my name',
-            'last_name' => 'my last name',
-        ], $array);
+        $this->assertSame(
+            expected: [
+                'name' => 'my first name',
+                'full_name' => 'my name',
+                'last_name' => 'my last name',
+            ],
+            actual: $array,
+        );
     }
 
     public function test_map_to_array_with_json_serializable(): void
@@ -225,10 +228,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
             last_name: 'my last name',
         ))->toArray();
 
-        $this->assertSame([
-            'first_name' => 'my first name',
-            'name' => 'my name',
-        ], $array);
+        $this->assertSame(
+            expected: [
+                'first_name' => 'my first name',
+                'name' => 'my name',
+            ],
+            actual: $array,
+        );
     }
 
     public function test_nested_value_object_mapping(): void
@@ -276,12 +282,15 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $array = map($object)->toArray();
         $json = map($object)->toJson();
 
-        $this->assertSame([
-            'name' => 'Guillaume',
-            'nativeDate' => '2025-03-02',
-            'date' => '2024-01-01',
-            'enum' => 'foo',
-        ], $array);
+        $this->assertSame(
+            expected: [
+                'name' => 'Guillaume',
+                'nativeDate' => '2025-03-02',
+                'date' => '2024-01-01',
+                'enum' => 'foo',
+            ],
+            actual: $array,
+        );
 
         $this->assertSame('{"name":"Guillaume","nativeDate":"2025-03-02","date":"2024-01-01","enum":"foo"}', $json);
 
@@ -350,12 +359,15 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
         $array = map($object)->toArray();
 
-        $this->assertSame([
-            'items' => [
-                ['name' => 'a'],
-                ['name' => 'b'],
+        $this->assertSame(
+            expected: [
+                'items' => [
+                    ['name' => 'a'],
+                    ['name' => 'b'],
+                ],
             ],
-        ], $array);
+            actual: $array,
+        );
     }
 
     public function test_array_of_objects_to_array(): void
@@ -373,10 +385,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
         $array = map($objects)->collection()->toArray();
 
-        $this->assertSame([
-            ['a' => 'a', 'b' => 'b'],
-            ['a' => 'c', 'b' => 'd'],
-            ['items' => [['name' => 'a'], ['name' => 'b']]],
-        ], $array);
+        $this->assertSame(
+            expected: [
+                ['a' => 'a', 'b' => 'b'],
+                ['a' => 'c', 'b' => 'd'],
+                ['items' => [['name' => 'a'], ['name' => 'b']]],
+            ],
+            actual: $array,
+        );
     }
 }

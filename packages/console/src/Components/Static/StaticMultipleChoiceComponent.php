@@ -93,11 +93,11 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
                             return true;
                         }
 
-                        if ($this->options->getOptions()->isList() && $answer === ((string) $index)) {
+                        if ($this->options->getOptions()->isList() && $answer === (string) $index) {
                             return true;
                         }
 
-                        if ($this->options->getOptions()->isList() && $answer === ((string) $option->key)) {
+                        if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
                             return true;
                         }
 

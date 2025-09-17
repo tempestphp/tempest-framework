@@ -29,7 +29,7 @@ final class ClassReflector implements Reflector
             $reflectionClass = new PHPReflectionClass($reflectionClass);
         } elseif ($reflectionClass instanceof self) {
             $reflectionClass = $reflectionClass->getReflection();
-        } elseif (! ($reflectionClass instanceof PHPReflectionClass)) {
+        } elseif (! $reflectionClass instanceof PHPReflectionClass) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
         }
 

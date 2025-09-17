@@ -1361,18 +1361,22 @@ final class ManipulatesArrayTest extends TestCase
         );
 
         $this->assertSame(
-            ['a', 'b', 'c'],
-            $array->sortByCallback(
-                callback: fn ($a, $b) => $a <=> $b,
-                preserveKeys: false,
-            )->toArray(),
+            expected: ['a', 'b', 'c'],
+            actual: $array
+                ->sortByCallback(
+                    callback: fn ($a, $b) => $a <=> $b,
+                    preserveKeys: false,
+                )
+                ->toArray(),
         );
         $this->assertSame(
-            [2 => 'a', 3 => 'b', 1 => 'c'],
-            $array->sortByCallback(
-                callback: fn ($a, $b) => $a <=> $b,
-                preserveKeys: true,
-            )->toArray(),
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array
+                ->sortByCallback(
+                    callback: fn ($a, $b) => $a <=> $b,
+                    preserveKeys: true,
+                )
+                ->toArray(),
         );
     }
 

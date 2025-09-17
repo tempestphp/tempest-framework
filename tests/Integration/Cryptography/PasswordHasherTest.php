@@ -19,7 +19,7 @@ final class PasswordHasherTest extends FrameworkIntegrationTestCase
     {
         $hasher = $this->container->get(PasswordHasher::class);
 
-        $password = 'my_secure_password'; // @mago-expect security/no-literal-password
+        $password = 'my_secure_password'; // @mago-expect lint:no-literal-password
         $hash = $hasher->hash($password);
 
         $this->assertTrue($hasher->verify($password, $hash));

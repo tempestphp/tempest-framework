@@ -588,7 +588,7 @@ namespace Tempest\Support\Str {
 
         $from = max(0, $from - 1);
         $to = min($to - 1, count($lines));
-        $lines = array_slice($lines, offset: $from, length: ($to - $from) + 1, preserve_keys: true);
+        $lines = array_slice($lines, offset: $from, length: $to - $from + 1, preserve_keys: true);
 
         if ($asArray) {
             return arr($lines)
@@ -723,7 +723,7 @@ namespace Tempest\Support\Str {
         $textLength = length($text);
         $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
         $leftPadding = (int) floor(($actualWidth - $textLength) / 2);
-        $rightPadding = ($actualWidth - $leftPadding) - $textLength;
+        $rightPadding = $actualWidth - $leftPadding - $textLength;
 
         return str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $rightPadding);
     }
@@ -736,7 +736,7 @@ namespace Tempest\Support\Str {
         $text = trim((string) $string);
         $textLength = length($text);
         $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
-        $leftPadding = ($actualWidth - $textLength) - $padding;
+        $leftPadding = $actualWidth - $textLength - $padding;
 
         return str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $padding);
     }
@@ -749,7 +749,7 @@ namespace Tempest\Support\Str {
         $text = trim((string) $string);
         $textLength = length($text);
         $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
-        $rightPadding = ($actualWidth - $textLength) - $padding;
+        $rightPadding = $actualWidth - $textLength - $padding;
 
         return str_repeat(' ', $padding) . $text . str_repeat(' ', $rightPadding);
     }
@@ -871,7 +871,7 @@ namespace Tempest\Support\Str {
      */
     function is_empty(Stringable|string $string): bool
     {
-        return ((string) $string) === '';
+        return (string) $string === '';
     }
 
     /**
@@ -879,7 +879,7 @@ namespace Tempest\Support\Str {
      */
     function equals(Stringable|string $string, string|Stringable $other): bool
     {
-        return ((string) $string) === ((string) $other);
+        return (string) $string === (string) $other;
     }
 
     /**

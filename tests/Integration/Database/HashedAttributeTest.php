@@ -27,7 +27,7 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
 
         $user = query(UserWithHash::class)->create(
             email: 'test@example.com',
-            password: 'plaintext-password', // @mago-expect security/no-literal-password
+            password: 'plaintext-password', // @mago-expect lint:no-literal-password
         );
 
         // The current behavior when creating a model is to not refresh it.
@@ -45,14 +45,16 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = query(UserWithHash::class)->create(
-            email: 'test@example.com',
-            password: 'original-password', // @mago-expect security/no-literal-password
-        )->refresh();
+        $user = query(UserWithHash::class)
+            ->create(
+                email: 'test@example.com',
+                password: 'original-password', // @mago-expect lint:no-literal-password
+            )
+            ->refresh();
 
         $originalHash = $user->password;
 
-        $user->update(password: 'new-password')->refresh(); // @mago-expect security/no-literal-password
+        $user->update(password: 'new-password')->refresh(); // @mago-expect lint:no-literal-password
 
         $this->assertNotSame('new-password', $user->password);
         $this->assertNotSame($originalHash, $user->password);
@@ -66,10 +68,12 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
-        $user = query(UserWithHash::class)->create(
-            email: 'test@example.com',
-            password: $alreadyHashed = $this->hasher->hash('plaintext-password'),
-        )->refresh();
+        $user = query(UserWithHash::class)
+            ->create(
+                email: 'test@example.com',
+                password: $alreadyHashed = $this->hasher->hash('plaintext-password'),
+            )
+            ->refresh();
 
         $this->assertSame($alreadyHashed, $user->password);
         $this->assertTrue($this->hasher->verify('plaintext-password', $user->password));
@@ -80,10 +84,12 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateUserWithNullablePasswordTable::class);
 
-        $user = query(UserWithNullablePassword::class)->create(
-            email: 'test@example.com',
-            password: null,
-        )->refresh();
+        $user = query(UserWithNullablePassword::class)
+            ->create(
+                email: 'test@example.com',
+                password: null,
+            )
+            ->refresh();
 
         $this->assertNull($user->password);
     }

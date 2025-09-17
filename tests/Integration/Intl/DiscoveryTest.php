@@ -42,9 +42,12 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
 
         $config = $this->container->get(IntlConfig::class);
 
-        $this->assertSame([
-            'fr' => [__DIR__ . '/Fixtures/messages.fr.yaml'],
-            'en_US' => [__DIR__ . '/Fixtures/messages.en_US.json'],
-        ], $config->translationMessagePaths);
+        $this->assertSame(
+            expected: [
+                'fr' => [__DIR__ . '/Fixtures/messages.fr.yaml'],
+                'en_US' => [__DIR__ . '/Fixtures/messages.en_US.json'],
+            ],
+            actual: $config->translationMessagePaths,
+        );
     }
 }

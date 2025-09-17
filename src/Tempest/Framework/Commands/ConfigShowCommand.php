@@ -132,7 +132,7 @@ final readonly class ConfigShowCommand
             return;
         }
 
-        $this->console->writeln(var_export($configs, true)); // @mago-expect best-practices/no-debug-symbols
+        $this->console->writeln(var_export($configs, true));
     }
 
     /**

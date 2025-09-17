@@ -17,7 +17,7 @@ abstract class TestCase extends PHPUnitTestCase
         assertMatchesSnapshot as baseAssertMatchesSnapshot;
     }
 
-    public function assertMatchesSnapshot($actual, ?Driver $driver = null): void
+    public function assertMatchesSnapshot(mixed $actual, ?Driver $driver = null): void
     {
         if ($this->isWindows()) {
             $this->markTestSkipped('Snapshots are not supported on Windows.');

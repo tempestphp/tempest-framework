@@ -94,10 +94,12 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
-        query('authors')->insert(
-            ['id' => 1, 'name' => 'Brent'],
-            ['id' => 2, 'name' => 'Other'],
-        )->execute();
+        query('authors')
+            ->insert(
+                ['id' => 1, 'name' => 'Brent'],
+                ['id' => 2, 'name' => 'Other'],
+            )
+            ->execute();
 
         query('authors')->delete()->whereRaw('id = ?', 1)->execute();
 

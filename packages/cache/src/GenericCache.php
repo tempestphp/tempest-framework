@@ -31,7 +31,7 @@ final class GenericCache implements Cache
 
         return new GenericLock(
             key: (string) $key,
-            owner: $owner ? ((string) $owner) : Random\secure_string(length: 10),
+            owner: $owner ? (string) $owner : Random\secure_string(length: 10),
             cache: $this,
             expiration: $expiration,
         );
@@ -90,7 +90,7 @@ final class GenericCache implements Cache
         } elseif (! is_numeric($item->get())) {
             throw new CacheKeyCouldNotBeIncremented((string) $key);
         } else {
-            $item->set(((int) $item->get()) + $by);
+            $item->set((int) $item->get() + $by);
         }
 
         $this->adapter->save($item);
@@ -111,7 +111,7 @@ final class GenericCache implements Cache
         } elseif (! is_numeric($item->get())) {
             throw new CacheKeyCouldNotBeIncremented((string) $key);
         } else {
-            $item->set(((int) $item->get()) - $by);
+            $item->set((int) $item->get() - $by);
         }
 
         $this->adapter->save($item);

@@ -23,7 +23,7 @@ final readonly class DateTimeSerializer implements Serializer
     public static function fromReflector(PropertyReflector|TypeReflector $reflector): self
     {
         if ($reflector instanceof PropertyReflector) {
-            $format = $reflector->getAttribute(HasDateTimeFormat::class)?->format ?? FormatPattern::SQL_DATE_TIME;
+            $format = $reflector->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::SQL_DATE_TIME;
         } else {
             $format = FormatPattern::SQL_DATE_TIME;
         }
@@ -37,7 +37,7 @@ final readonly class DateTimeSerializer implements Serializer
             $input = DateTime::parse($input);
         }
 
-        if (! ($input instanceof DateTimeInterface)) {
+        if (! $input instanceof DateTimeInterface) {
             throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 

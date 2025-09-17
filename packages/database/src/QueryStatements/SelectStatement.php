@@ -29,7 +29,7 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
             ? '*'
             : $this->fields
                 ->map(function (string|Stringable|FieldStatement $field) use ($dialect) {
-                    if (! ($field instanceof FieldStatement)) {
+                    if (! $field instanceof FieldStatement) {
                         $field = new FieldStatement($field);
                     }
 

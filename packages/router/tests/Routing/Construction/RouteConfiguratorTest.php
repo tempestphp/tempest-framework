@@ -49,30 +49,33 @@ final class RouteConfiguratorTest extends TestCase
 
         $config = $this->subject->toRouteConfig();
 
-        $this->assertEquals([
-            'GET' => [
-                '/1' => $routes[0],
-                '/1/' => $routes[0],
-                '/3' => $routes[2],
-                '/3/' => $routes[2],
+        $this->assertEquals(
+            expected: [
+                'GET' => [
+                    '/1' => $routes[0],
+                    '/1/' => $routes[0],
+                    '/3' => $routes[2],
+                    '/3/' => $routes[2],
+                ],
+                'POST' => [
+                    '/2' => $routes[1],
+                    '/2/' => $routes[1],
+                ],
+                'DELETE' => [
+                    '/4' => $routes[3],
+                    '/4/' => $routes[3],
+                ],
+                'PUT' => [
+                    '/5' => $routes[4],
+                    '/5/' => $routes[4],
+                ],
+                'PATCH' => [
+                    '/6' => $routes[5],
+                    '/6/' => $routes[5],
+                ],
             ],
-            'POST' => [
-                '/2' => $routes[1],
-                '/2/' => $routes[1],
-            ],
-            'DELETE' => [
-                '/4' => $routes[3],
-                '/4/' => $routes[3],
-            ],
-            'PUT' => [
-                '/5' => $routes[4],
-                '/5/' => $routes[4],
-            ],
-            'PATCH' => [
-                '/6' => $routes[5],
-                '/6/' => $routes[5],
-            ],
-        ], $config->staticRoutes);
+            actual: $config->staticRoutes,
+        );
         $this->assertEquals([], $config->dynamicRoutes);
         $this->assertEquals([], $config->matchingRegexes);
     }
@@ -97,36 +100,42 @@ final class RouteConfiguratorTest extends TestCase
         $config = $this->subject->toRouteConfig();
 
         $this->assertEquals([], $config->staticRoutes);
-        $this->assertEquals([
-            'GET' => [
-                'b' => $routes[0],
-                'd' => $routes[2],
-                'e' => $routes[3],
+        $this->assertEquals(
+            expected: [
+                'GET' => [
+                    'b' => $routes[0],
+                    'd' => $routes[2],
+                    'e' => $routes[3],
+                ],
+                'DELETE' => [
+                    'f' => $routes[4],
+                ],
+                'PUT' => [
+                    'g' => $routes[5],
+                ],
+                'PATCH' => [
+                    'c' => $routes[1],
+                ],
             ],
-            'DELETE' => [
-                'f' => $routes[4],
-            ],
-            'PUT' => [
-                'g' => $routes[5],
-            ],
-            'PATCH' => [
-                'c' => $routes[1],
-            ],
-        ], $config->dynamicRoutes);
+            actual: $config->dynamicRoutes,
+        );
 
-        $this->assertEquals([
-            'GET' => new MatchingRegex([
-                '#^(?|/dynamic(?|/([^/]++)(?|\/?$(*MARK:b)|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e))))))#',
-            ]),
-            'DELETE' => new MatchingRegex([
-                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
-            ]),
-            'PUT' => new MatchingRegex([
-                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:g)))#',
-            ]),
-            'PATCH' => new MatchingRegex([
-                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
-            ]),
-        ], $config->matchingRegexes);
+        $this->assertEquals(
+            expected: [
+                'GET' => new MatchingRegex([
+                    '#^(?|/dynamic(?|/([^/]++)(?|\/?$(*MARK:b)|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e))))))#',
+                ]),
+                'DELETE' => new MatchingRegex([
+                    '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
+                ]),
+                'PUT' => new MatchingRegex([
+                    '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:g)))#',
+                ]),
+                'PATCH' => new MatchingRegex([
+                    '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+                ]),
+            ],
+            actual: $config->matchingRegexes,
+        );
     }
 }

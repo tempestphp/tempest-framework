@@ -55,16 +55,14 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
                 'css' => $this->getStyleSheet(),
                 'status' => $status->value,
                 'title' => $status->description(),
-                'message' =>
-                    $exception?->getMessage() ?: match ($status) {
-                        Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                        Status::NOT_FOUND => 'This page could not be found on the server',
-                        Status::FORBIDDEN => 'You do not have permission to access this page',
-                        Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                        Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                        default => null,
-                    }
-                ,
+                'message' => $exception?->getMessage() ?: match ($status) {
+                    Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
+                    Status::NOT_FOUND => 'This page could not be found on the server',
+                    Status::FORBIDDEN => 'You do not have permission to access this page',
+                    Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
+                    Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
+                    default => null,
+                },
             ]),
         );
     }

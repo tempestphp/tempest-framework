@@ -10,7 +10,7 @@ final class PrimaryKeySerializer implements Serializer
 {
     public function serialize(mixed $input): array|string
     {
-        if (! ($input instanceof PrimaryKey)) {
+        if (! $input instanceof PrimaryKey) {
             throw new ValueCouldNotBeSerialized(PrimaryKey::class);
         }
 

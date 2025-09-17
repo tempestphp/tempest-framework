@@ -18,9 +18,8 @@ final class ListFrameworks
         description: 'List all available frameworks.',
         aliases: ['f:l'],
     )]
-    public function handle(
-        bool $sortByBest = false, // @mago-expect best-practices/no-unused-parameter
-    ): void {
+    public function handle(bool $sortByBest = false): void
+    {
         $this->console->write('list');
     }
 }
