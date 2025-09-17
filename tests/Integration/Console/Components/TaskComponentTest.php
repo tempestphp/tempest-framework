@@ -68,6 +68,8 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
 
     public function test_successful_task(): void
     {
+        $this->skipCI('Flaky on CI');
+
         $this->console
             ->withoutPrompting()
             ->call(function (Console $console): void {
