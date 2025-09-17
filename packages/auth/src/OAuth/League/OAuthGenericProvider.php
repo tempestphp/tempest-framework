@@ -42,7 +42,8 @@ final class OAuthGenericProvider
        string $accessTokenEndpoint,
        string $userDataEndpoint,
        string $stateSessionSlug = 'oauth-state',
-    ) {
+    ): void
+    {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->defaultScopes = $defaultScopes;
