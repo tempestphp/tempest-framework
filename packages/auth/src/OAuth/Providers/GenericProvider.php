@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\OAuth\League;
+namespace Tempest\Auth\OAuth\Providers;
 
-class OAuthGenericProvider
+use Tempest\Auth\OAuth\IsOauthProvider;
+
+class GenericProvider
 {
     use IsOauthProvider;
 

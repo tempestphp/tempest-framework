@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\OAuth\League;
+namespace Tempest\Auth\OAuth;
 
 use GuzzleHttp\Exception\GuzzleException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -10,9 +10,7 @@ use League\OAuth2\Client\Provider\GenericProvider;
 use Tempest\Auth\OAuth\DataObjects\AccessToken;
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
 use Tempest\Auth\OAuth\Exceptions\OAuthException;
-use Tempest\Container\Inject;
 use Tempest\Http\Session\Session;
-use function Tempest\map;
 use function Tempest\Support\str;
 
 trait IsOauthProvider

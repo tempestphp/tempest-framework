@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\OAuth\League;
+namespace Tempest\Auth\OAuth\Providers;
 
 use Tempest\Auth\OAuth\DataObjects\OAuthUserData;
+use Tempest\Auth\OAuth\IsOauthProvider;
+use Tempest\Auth\OAuth\OAuthProvider;
 
-final class GithubProvider
+final class GithubProvider implements OAuthProvider
 {
     use IsOauthProvider;
 
