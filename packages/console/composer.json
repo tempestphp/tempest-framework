@@ -12,6 +12,7 @@
         "tempest/generation": "dev-main",
         "tempest/highlight": "^2.11.4",
         "tempest/log": "dev-main",
+        "tempest/process": "dev-main",
         "tempest/reflection": "dev-main",
         "tempest/support": "dev-main",
         "tempest/validation": "dev-main",
