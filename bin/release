@@ -209,7 +209,7 @@ function triggerSubsplit(): void
     );
 
     if (! $response->status->isSuccessful()) {
-        throw new Exception('Failed to update branch ruleset.');
+        throw new Exception('Failed to trigger subsplit.');
     }
 }
 
@@ -425,7 +425,10 @@ try {
         handler: fn () => updateBranchProtection(enabled: true),
     );
 
-    triggerSubsplit();
+    $console->task(
+            label: 'Trigger subsplit',
+            handler: fn () => triggerSubsplit(),
+    );
 
     $console->success(sprintf(
         'Released <em>%1$s</em>. The <href="https://github.com/tempestphp/tempest-framework/releases/tag/%1$s">GitHub release</href> will be created automatically in a few seconds.',
