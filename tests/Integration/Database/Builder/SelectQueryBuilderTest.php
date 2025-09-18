@@ -303,6 +303,27 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(3, $results);
     }
 
+    public function test_chunk_with_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::new(name: 'Brent')->save();
+
+        Book::new(title: 'A', author: $author)->save();
+        Book::new(title: 'B', author: $author)->save();
+
+        $results = [];
+        Book::select()->with('author')->chunk(function (array $chunk) use (&$results): void {
+            $results = [...$results, ...$chunk];
+        }, 1);
+        $this->assertCount(2, $results);
+    }
+
     public function test_raw(): void
     {
         $this->migrate(

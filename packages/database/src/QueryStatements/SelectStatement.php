@@ -23,6 +23,24 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         public ImmutableArray $raw = new ImmutableArray(),
     ) {}
 
+    public function withJoin(JoinStatement $join): self
+    {
+        $clone = clone $this;
+
+        $clone->join[] = $join;
+
+        return $clone;
+    }
+
+    public function withFields(ImmutableArray $fields): self
+    {
+        $clone = clone $this;
+
+        $clone->fields = $this->fields->append(...$fields);
+
+        return $clone;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $columns = $this->fields->isEmpty()
@@ -90,5 +108,17 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         $compiled = $query->implode(' ');
 
         return $compiled;
+    }
+
+    public function __clone(): void
+    {
+        $this->table = clone $this->table;
+        $this->fields = clone $this->fields;
+        $this->join = clone $this->join;
+        $this->where = clone $this->where;
+        $this->orderBy = clone $this->orderBy;
+        $this->groupBy = clone $this->groupBy;
+        $this->having = clone $this->having;
+        $this->raw = clone $this->raw;
     }
 }
