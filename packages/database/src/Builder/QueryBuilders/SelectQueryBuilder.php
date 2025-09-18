@@ -305,19 +305,19 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
+        $select = clone $this->select;
+
         foreach ($this->joins as $join) {
-            $this->select->join[] = new JoinStatement($join);
+            $select = $select->withJoin(new JoinStatement($join));
         }
 
         foreach ($this->getIncludedRelations() as $relation) {
-            $this->select->fields = $this->select->fields->append(
-                ...$relation->getSelectFields(),
-            );
-
-            $this->select->join[] = $relation->getJoinStatement();
+            $select = $select
+                ->withFields($relation->getSelectFields())
+                ->withJoin($relation->getJoinStatement());
         }
 
-        return new Query($this->select, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
+        return new Query($select, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 
     private function clone(): self
