@@ -25,8 +25,8 @@ trait IsOauthProvider
 
     public protected(set) string $clientId;
     public protected(set) string $clientSecret;
-    public protected(set) array $defaultScopes;
     public protected(set) string $redirectUri;
+    public protected(set) array $defaultScopes;
     public protected(set) string $authorizeEndpoint;
     public protected(set) string $accessTokenEndpoint;
     public protected(set) string $userDataEndpoint;
@@ -38,8 +38,8 @@ trait IsOauthProvider
     protected function configureInternalProvider(
         string $clientId,
         string $clientSecret,
-        array $defaultScopes,
         string $redirectUri,
+        array $defaultScopes,
         string $authorizeEndpoint,
         string $accessTokenEndpoint,
         string $userDataEndpoint,
@@ -47,8 +47,8 @@ trait IsOauthProvider
     ): static {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->defaultScopes = $defaultScopes;
         $this->redirectUri = $redirectUri;
+        $this->defaultScopes = $defaultScopes;
         $this->authorizeEndpoint = $authorizeEndpoint;
         $this->accessTokenEndpoint = $accessTokenEndpoint;
         $this->userDataEndpoint = $userDataEndpoint;

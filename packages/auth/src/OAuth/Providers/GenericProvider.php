@@ -16,8 +16,8 @@ class GenericProvider
     public function configure(
         string $clientId,
         string $clientSecret,
-        array $defaultScopes,
         string $redirectUri,
+        array $defaultScopes,
         string $authorizeEndpoint,
         string $accessTokenEndpoint,
         string $userDataEndpoint,
@@ -26,8 +26,8 @@ class GenericProvider
         return $this->configureInternalProvider(
             clientId: $clientId,
             clientSecret: $clientSecret,
-            defaultScopes: $defaultScopes,
             redirectUri: $redirectUri,
+            defaultScopes: $defaultScopes,
             authorizeEndpoint: $authorizeEndpoint,
             accessTokenEndpoint: $accessTokenEndpoint,
             userDataEndpoint: $userDataEndpoint,
