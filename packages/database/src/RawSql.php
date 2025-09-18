@@ -2,8 +2,10 @@
 
 namespace Tempest\Database;
 
+use BackedEnum;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Support\Str\ImmutableString;
+use UnitEnum;
 
 final class RawSql
 {
@@ -102,6 +104,14 @@ final class RawSql
 
         if (is_numeric($value)) {
             return (string) $value;
+        }
+
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        if ($value instanceof UnitEnum) {
+            return $value->name;
         }
 
         return "'" . str_replace("'", "''", (string) $value) . "'";
