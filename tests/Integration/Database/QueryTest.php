@@ -10,6 +10,8 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Validator\BackedEnumFixture;
+use Tests\Tempest\Integration\Validator\UnitEnumFixture;
 
 /**
  * @internal
@@ -30,5 +32,11 @@ final class QueryTest extends FrameworkIntegrationTestCase
 
         new Query('DELETE FROM authors WHERE name = :name')->execute(name: 'A');
         $this->assertCount(0, new Query('SELECT * FROM authors WHERE name = ?')->fetch('A'));
+    }
+    
+    public function test_raw_sql_enum_value(): void
+    {
+        $this->assertTrue(new Query('?', [UnitEnumFixture::FOO])->toRawSql()->equals(UnitEnumFixture::FOO->name));
+        $this->assertTrue(new Query('?', [BackedEnumFixture::FOO])->toRawSql()->equals(BackedEnumFixture::FOO->value));
     }
 }
