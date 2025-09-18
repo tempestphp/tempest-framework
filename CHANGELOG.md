@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.0.1](https://github.com/tempestphp/tempest-framework/compare/v2.0.0..2.0.1)  —  2025-09-18
+## [2.0.2](https://github.com/tempestphp/tempest-framework/compare/v2.0.1..2.0.2)  —  2025-09-18
+
+### 🐛 Bug fixes
+
+- **database**: combining chunk and with in the select querybuilder (#1567) ([62743e5](https://github.com/tempestphp/tempest-framework/commit/62743e592206d98054d40bbb2dbcb9c149e41b65))
+
+
+## [2.0.1](https://github.com/tempestphp/tempest-framework/compare/v2.0.0..v2.0.1)  —  2025-09-18
 
 ### 🐛 Bug fixes
 
