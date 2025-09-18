@@ -33,10 +33,18 @@ final class QueryTest extends FrameworkIntegrationTestCase
         new Query('DELETE FROM authors WHERE name = :name')->execute(name: 'A');
         $this->assertCount(0, new Query('SELECT * FROM authors WHERE name = ?')->fetch('A'));
     }
-    
+
     public function test_raw_sql_enum_value(): void
     {
-        $this->assertTrue(new Query('?', [UnitEnumFixture::FOO])->toRawSql()->equals(UnitEnumFixture::FOO->name));
-        $this->assertTrue(new Query('?', [BackedEnumFixture::FOO])->toRawSql()->equals(BackedEnumFixture::FOO->value));
+        $this->assertTrue(
+            new Query('?', [UnitEnumFixture::FOO])
+                ->toRawSql()
+                ->equals(UnitEnumFixture::FOO->name),
+        );
+        $this->assertTrue(
+            new Query('?', [BackedEnumFixture::FOO])
+                ->toRawSql()
+                ->equals(BackedEnumFixture::FOO->value),
+        );
     }
 }
