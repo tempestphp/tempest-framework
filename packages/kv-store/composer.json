@@ -5,9 +5,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/support": "2.0.3",
-        "tempest/datetime": "2.0.3",
-        "tempest/event-bus": "2.0.3"
+        "tempest/support": "dev-main",
+        "tempest/datetime": "dev-main",
+        "tempest/event-bus": "dev-main"
     },
     "require-dev": {
         "predis/predis": "^3.0.0"
