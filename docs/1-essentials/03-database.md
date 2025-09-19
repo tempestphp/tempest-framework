@@ -452,17 +452,16 @@ When you're persisting objects to the database, you'll need table to store its d
 
 Thanks to [discovery](../4-internals/02-discovery), `.sql` files and classes implementing the {b`Tempest\Database\DatabaseMigration`} interface are automatically registered as migrations, which means they can be stored anywhere.
 
-```php app/CreateBookTable.php
-use Tempest\Database\DatabaseMigration;
+```php
+use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Database\QueryStatements\DropTableStatement;
 
-final class CreateBookTable implements DatabaseMigration
+final class CreateBookTable implements MigratesUp
 {
     public string $name = '2024-08-12_create_book_table';
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement('books')
             ->primary()
@@ -470,11 +469,6 @@ final class CreateBookTable implements DatabaseMigration
             ->datetime('created_at')
             ->datetime('published_at', nullable: true)
             ->belongsTo('books.author_id', 'authors.id');
-    }
-
-    public function down(): QueryStatement|null
-    {
-        return new DropTableStatement('books');
     }
 }
 ```
@@ -493,6 +487,26 @@ The file name of `{txt}.sql` migrations and the `{txt}{:hl-type:$name:}` propert
 
 Note that when using migration classes combined with query statements, Tempest will take care of the SQL dialect for you, there's support for MySQL, Postgresql, and SQLite. When using raw sql files, you'll have to pick a hard-coded SQL dialect, depending on your database requirements.
 
+### Up- and down migrations
+
+Tempest's recommendation is to only use up-migrations, which move the database's schema forward. There is also the option to create down-migrations, migrations that can roll back the schema of the database to a previous state. Dealing with down migrations is tricky, though, especially in production environments. That's why you need to explicitly implement another interface to do so: {`Tempest\Database\MigratesDown`}.
+
+```php
+use Tempest\Database\MigratesDown;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+
+final class CreateBookTable implements MigratesDown
+{
+    public string $name = '2024-08-12_drop_book_table';
+
+    public function down(): QueryStatement
+    {
+        return new DropTableStatement('books');
+    }
+}
+```
+
 ### Applying migrations
 
 A few [console commands](../3-console/02-building-console-commands) are provided to work with migrations. They are used to apply, rollback, or erase and re-apply them. When deploying your application to production, you should use the `php tempest migrate:up` to apply the latest migrations.
@@ -501,7 +515,7 @@ A few [console commands](../3-console/02-building-console-commands) are provided
 {:hl-comment:# Applies migrations that have not been run in the current environment:}
 ./tempest migrate:up
 
-{:hl-comment:# Rolls back every migration:}
+{:hl-comment:# Execute the down migrations:}
 ./tempest migrate:down
 
 {:hl-comment:# Drops all tables and rerun migrate:up:}
