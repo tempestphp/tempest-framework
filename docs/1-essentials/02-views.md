@@ -243,7 +243,7 @@ To create a view component, create a `.view.php` file that starts with `x-`. The
 
 ### Using view components
 
-All views may include a views components. In order to do so, you may simply use a component's name as a tag, including the `x-` prefix:
+All views may include a view component. In order to do so, you may simply use a component's name as a tag, including the `x-` prefix:
 
 ```html app/home.view.php
 <x-base :title="$this->post->title">
@@ -253,7 +253,7 @@ All views may include a views components. In order to do so, you may simply use 
 </x-base>
 ```
 
-The example above demonstrates how to pass data to a component using an [expression attribute](#expression-attributes), as well as how pass elements as children if that component where the `<x-slot />` tag is used.
+The example above demonstrates how to pass data to a component using an [expression attribute](#expression-attributes), as well as how to pass elements as children if that component where the `<x-slot />` tag is used.
 
 ### Attributes in components
 
@@ -301,7 +301,7 @@ Similarly, the `id` attribute will always replace an existing `id` attribute on 
 
 An `$attributes` variable is accessible within view components. This variable is an array that contains all attributes passed to the component, except expression attributes.
 
-Note that attributes names use `{txt}kebab-case`.
+Note that attribute names use `{txt}kebab-case`.
 
 ```html x-badge.view.php
 <span class="px-2 py-1 rounded-md text-sm bg-gray-100 text-gray-900">
@@ -348,7 +348,7 @@ A view component's slot can define a default value, which will be used when a vi
 
 ### Named slots
 
-When a single slot is not enough, names can be attached to them. When using a component with named slot, you may use the `<x-slot>` tag with a `name` attribute to render content in a named outlet:
+When a single slot is not enough, names can be attached to them. When using a component with a named slot, you may use the `<x-slot>` tag with a `name` attribute to render content in a named outlet:
 
 ```html x-base.view.php
 <html lang="en">
@@ -544,7 +544,7 @@ Iconify has a large collection of icon sets, which you may browse using the [Ic√
 
 Tempest has built-in support for [Vite](https://vite.dev/), the most popular front-end development server and build tool. You may read more about [asset bundling](../2-features/05-asset-bundling.md) in the dedicated documentation.
 
-This component simply inject registered entrypoints where it is called.
+This component simply injects registered entrypoints where it is called.
 
 ```html x-base.view.php
 <html lang="en">
