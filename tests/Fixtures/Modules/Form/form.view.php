@@ -11,6 +11,7 @@ use function Tempest\Router\uri;
 
 <x-base title="Form">
 <!--    --><?php //if ($this->hasErrors()) {
+
 ?>
 <!--        ERROR!-->
 <!--    --><?php //}
