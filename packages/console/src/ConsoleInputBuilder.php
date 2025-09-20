@@ -26,6 +26,18 @@ final readonly class ConsoleInputBuilder
         $argumentDefinitions = $this->command->getArgumentDefinitions();
 
         foreach ($argumentDefinitions as $argumentDefinition) {
+            if ($argumentDefinition->isVariadic) {
+                $arguments = $this->argumentBag->findForVariadicArgument($argumentDefinition);
+
+                if ($arguments === []) {
+                    $invalidArguments[] = $argumentDefinition;
+                } else {
+                    $validArguments = [...$validArguments, ...$arguments];
+                }
+
+                continue;
+            }
+
             $argument = $argumentDefinition->type === 'array'
                 ? $this->argumentBag->findArrayFor($argumentDefinition)
                 : $this->argumentBag->findFor($argumentDefinition);
