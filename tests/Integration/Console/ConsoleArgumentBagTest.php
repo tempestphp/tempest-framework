@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Exceptions\InvalidEnumArgument;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
-use Tempest\Console\Input\ConsoleInputArgument;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -194,25 +193,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
 
     public function test_variadic_argument(): void
     {
-        $argv = [
-            'tempest',
-            'command-with-variadic-argument',
-            'foo',
-            'bar',
-            '--input=baz',
-        ];
-
-        $bag = new ConsoleArgumentBag($argv);
-
-        $definition = new ConsoleArgumentDefinition(
-            name: 'input2',
-            type: 'bool',
-            default: null,
-            hasDefault: false,
-            position: 0,
-            isVariadic: true,
-        );
-
-        $this->assertSame(['foo', 'bar', 'baz'], array_map(static fn (ConsoleInputArgument $argument): string => $argument->value, $bag->findForVariadicArgument($definition)));
+        $this->console
+            ->call('command-with-variadic-argument foo bar --input=baz')
+            ->assertSee('["foo","bar","baz"]');
     }
 }
