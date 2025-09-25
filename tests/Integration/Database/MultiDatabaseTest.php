@@ -318,7 +318,6 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
 
         /** @var Book $book */
-        /** @phpstan-ignore-next-line */
         $book = query(Book::class)->select()->onDatabase('backup')->where('title', 'Timeline Taxi')->first();
 
         $this->assertSame(
