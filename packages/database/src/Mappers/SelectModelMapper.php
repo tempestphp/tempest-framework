@@ -54,18 +54,24 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if (! $relation instanceof HasMany) {
+            if ($relation instanceof BelongsTo) {
+                if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
+                    $data[$relation->name] = null;
+                }
+
                 continue;
             }
 
-            $mapped = [];
-            $relationModel = inspect($relation);
+            if ($relation instanceof HasMany) {
+                $mapped = [];
+                $relationModel = inspect($relation);
 
-            foreach ($value as $item) {
-                $mapped[] = $this->values($relationModel, $item);
+                foreach ($value as $item) {
+                    $mapped[] = $this->values($relationModel, $item);
+                }
+
+                $data[$key] = $mapped;
             }
-
-            $data[$key] = $mapped;
         }
 
         return $data;

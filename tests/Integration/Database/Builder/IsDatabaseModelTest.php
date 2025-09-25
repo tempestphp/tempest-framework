@@ -617,6 +617,21 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertNull(Foo::get($fooId));
     }
+
+    public function test_nullable_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        $a = ANullableModel::create();
+
+        $a->load('b');
+
+        $this->assertNull($a->b);
+    }
 }
 
 final class Foo
@@ -962,4 +977,44 @@ final class CreateModelWithoutPrimaryKeyMigration implements MigratesUp
             ->text('name')
             ->text('description');
     }
+}
+
+final class CreateANullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-a-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('a')
+            ->primary()
+            ->belongsTo('a.b_id', 'b.id', nullable: true);
+    }
+}
+
+final class CreateBNullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-b-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('b')
+            ->primary()
+            ->string('name');
+    }
+}
+
+#[Table('a')]
+final class ANullableModel
+{
+    use IsDatabaseModel;
+
+    public ?BNullableModel $b = null;
+}
+
+#[Table('b')]
+final class BNullableModel
+{
+    use IsDatabaseModel;
+
+    public string $name;
 }
