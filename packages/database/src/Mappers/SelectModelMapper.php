@@ -55,9 +55,7 @@ final class SelectModelMapper implements Mapper
             $relation = $model->getRelation($key);
 
             if ($relation instanceof BelongsTo) {
-                $relationModel = inspect($relation);
-
-                if (($data[$relation->name][$relationModel->getPrimaryKeyProperty()->getName()] ?? null) === null) {
+                if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
                     $data[$relation->name] = null;
                 }
 
