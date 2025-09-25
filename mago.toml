@@ -35,6 +35,7 @@ empty-line-after-opening-tag = false
 integrations = ["php-unit", "tempest"]
 
 [linter.rules]
+yoda-conditions = { enabled = false }
 interface-name = { psr = false }
 trait-name = { psr = false }
 class-name = { psr = false }

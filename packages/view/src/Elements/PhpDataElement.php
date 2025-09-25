@@ -42,7 +42,6 @@ final class PhpDataElement implements Element, WrapsElement
             $localVariableName,
             $localVariableName,
             $isExpression
-                // @mago-expect lint:no-nested-ternary
                 ? ($value ?: 'null')
                 : var_export($value, return: true),
         );

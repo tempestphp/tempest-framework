@@ -63,6 +63,7 @@ namespace Tempest\Support\Str {
 
         $string = preg_replace('/(?<=\p{Ll}|\p{N})(\p{Lu})/u', $delimiter . '$1', $string);
         $string = preg_replace('/(?<=\p{Lu})(\p{Lu}\p{Ll})/u', $delimiter . '$1', $string);
+        // @mago-expect lint:require-preg-quote-delimiter
         $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
