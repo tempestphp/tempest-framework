@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.4](https://github.com/tempestphp/tempest-framework/compare/v2.0.3..2.0.4)  —  2025-09-25
+
+### 🐛 Bug fixes
+
+- **database**: nullable belongsto relations (#1575) ([fc77327](https://github.com/tempestphp/tempest-framework/commit/fc77327b6fba77ad972b83cf9ec1f26550208ab0))
+
+
 ## [2.0.2](https://github.com/tempestphp/tempest-framework/compare/v2.0.1..v2.0.2)  —  2025-09-18
 
 ### 🐛 Bug fixes
@@ -557,7 +564,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
 
 ### 🚨 Breaking changes
 
