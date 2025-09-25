@@ -622,8 +622,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateANullableTable::class,
             CreateBNullableTable::class,
+            CreateANullableTable::class,
         );
 
         $a = ANullableModel::create();
