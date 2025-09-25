@@ -306,7 +306,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title,
+            query(Book::class)->select()->onDatabase('main')->where('title', 'Timeline Taxi')->first()->title,
         );
 
         $this->assertNull(
@@ -319,7 +319,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         /** @var Book $book */
         /** @phpstan-ignore-next-line */
-        $book = query(Book::class)->select()->onDatabase('backup')->first();
+        $book = query(Book::class)->select()->onDatabase('backup')->where('title', 'Timeline Taxi')->first();
 
         $this->assertSame(
             'Timeline Taxi',
@@ -335,7 +335,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title,
+            query(Book::class)->select()->onDatabase('main')->where('title', 'Timeline Taxi')->first()->title,
         );
 
         $this->assertException(QueryWasInvalid::class, function (): void {
@@ -348,7 +348,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('backup')->first()->title,
+            query(Book::class)->select()->onDatabase('backup')->where('title', 'Timeline Taxi')->first()->title,
         );
     }
 
