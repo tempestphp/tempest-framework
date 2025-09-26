@@ -7,6 +7,7 @@ namespace Tempest\Framework\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\OAuth\Testing\OAuthTester;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
@@ -73,6 +74,8 @@ abstract class IntegrationTest extends TestCase
     protected ExceptionTester $exceptions;
 
     protected ProcessTester $process;
+
+    protected OAuthTester $oauth;
 
     protected function setUp(): void
     {
@@ -153,6 +156,8 @@ abstract class IntegrationTest extends TestCase
         $this->vite->preventTagResolution();
         $this->vite->clearCaches();
 
+        $this->oauth = new OAuthTester($this->container);
+
         return $this;
     }
 
@@ -224,6 +229,8 @@ abstract class IntegrationTest extends TestCase
         unset($this->console);
         /** @phpstan-ignore-next-line */
         unset($this->http);
+        /** @phpstan-ignore-next-line */
+        unset($this->oauth);
     }
 
     protected function assertException(string $expectedExceptionClass, Closure $handler, ?Closure $assertException = null, ?string $message = null): void
