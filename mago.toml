@@ -35,7 +35,6 @@ empty-line-after-opening-tag = false
 integrations = ["php-unit", "tempest"]
 
 [linter.rules]
-yoda-conditions = { enabled = false }
 interface-name = { psr = false }
 trait-name = { psr = false }
 class-name = { psr = false }
@@ -63,6 +62,3 @@ prefer-arrow-function = { enabled = false } # enable when references are fixed
 prefer-first-class-callable = { enabled = false } # enable when arguments are fixed
 strict-behavior = { allow-loose-behavior = true }
 yoda-conditions = { enabled = false }
-
-# [analyzer]
-# override-attribute = { enabled = false } # CONSIDER ENABLING
