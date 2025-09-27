@@ -42,7 +42,8 @@
         "symfony/yaml": "^7.3",
         "tempest/highlight": "^2.11.4",
         "vlucas/phpdotenv": "^5.6.1",
-        "voku/portable-ascii": "^2.0.3"
+        "voku/portable-ascii": "^2.0.3",
+        "league/oauth2-client": "^2.8"
     },
     "require-dev": {
         "aws/aws-sdk-php": "^3.338.0",
