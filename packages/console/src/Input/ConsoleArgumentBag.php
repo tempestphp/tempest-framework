@@ -129,6 +129,26 @@ final class ConsoleArgumentBag
         );
     }
 
+    /**
+     * @return list<ConsoleInputArgument>
+     */
+    public function findForVariadicArgument(ConsoleArgumentDefinition $argumentDefinition): array
+    {
+        $arguments = [];
+
+        foreach ($this->arguments as $argument) {
+            if ($argument->position >= $argumentDefinition->position) {
+                $arguments[] = new ConsoleInputArgument(
+                    name: $argumentDefinition->name,
+                    position: $argument->position,
+                    value: $this->resolveArgumentValue($argumentDefinition, $argument)->value,
+                );
+            }
+        }
+
+        return $arguments;
+    }
+
     public function add(ConsoleInputArgument $argument): self
     {
         $this->arguments[] = $argument;
