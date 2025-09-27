@@ -335,7 +335,7 @@ final readonly class BookController
 
 While constructor injection is almost always the preferred way to go, Tempest also offers the ability to inject values straight into properties, without them being requested by the constructor.
 
-You may mark any property—public, protected, or private—with the `#[Inject]` attribute. Whenever a class instance is resolved via the container, its properties marked for injection will be provided the right value.
+You may mark any property—public, protected, or private—with the `#[Inject]` attribute. Whenever a class instance is resolved via the container, its properties marked for injection will be provided the right value. Tagged singletons may also be injected using the optional `tag` parameter of the `#[Inject]` attribute.
 
 ```php Tempest/Console/src/HasConsole.php
 use Tempest\Container\Inject;
