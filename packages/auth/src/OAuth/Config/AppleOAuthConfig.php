@@ -40,7 +40,7 @@ final class AppleOAuthConfig implements OAuthConfig
         /**
          * The redirect URI for the OAuth flow.
          */
-        public string|array $redirectUri,
+        public string|array $redirectTo,
 
         /**
          * The scopes to request from Apple.

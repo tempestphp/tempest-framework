@@ -30,7 +30,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
             tag: $tag,
         ));
 
@@ -46,7 +46,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
         ));
 
         $this->container->config(new AppConfig(
@@ -73,7 +73,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
         ));
 
         $client = $this->oauth->fake(new OAuthUser(
@@ -106,7 +106,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
         ));
 
         $client = $this->oauth
@@ -122,7 +122,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
         ));
 
         $client = $this->oauth
@@ -138,7 +138,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
         ));
 
         $client = $this->oauth
@@ -154,7 +154,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
             clientSecret: 'bar', // @mago-expect lint:no-literal-password
-            redirectUri: '/oauth/github',
+            redirectTo: '/oauth/github',
             tag: 'github',
         ));
 

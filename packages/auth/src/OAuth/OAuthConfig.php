@@ -35,9 +35,9 @@ interface OAuthConfig extends HasTag
     }
 
     /**
-     * The application URI to redirect to after authorization.
+     * The controller action to redirect to after the user authorizes the application.
      */
-    public string|array $redirectUri {
+    public string|array $redirectTo {
         get;
     }
 

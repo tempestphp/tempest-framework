@@ -28,7 +28,7 @@ final class TestingOAuthClient implements OAuthClient
      * The application URI to redirect to after authorization.
      */
     public string $redirectUri {
-        get => $this->uri->createUri($this->redirectUri ?? $this->config->redirectUri);
+        get => $this->uri->createUri($this->redirectUri ?? $this->config->redirectTo);
     }
 
     /**

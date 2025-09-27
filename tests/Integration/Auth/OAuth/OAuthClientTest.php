@@ -28,7 +28,7 @@ final class OAuthClientTest extends FrameworkIntegrationTestCase
 
             public array $scopes = [];
 
-            public string $redirectUri = '';
+            public string $redirectTo = '';
 
             public string $clientId = '';
 

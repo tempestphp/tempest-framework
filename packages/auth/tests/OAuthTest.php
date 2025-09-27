@@ -42,7 +42,7 @@ final class OAuthTest extends TestCase
         $config = new GitHubOAuthConfig(
             clientId: 'github-123',
             clientSecret: 'github-secret', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://app.com/auth/github/callback',
+            redirectTo: 'https://app.com/auth/github/callback',
             scopes: ['user', 'user:email'],
         );
 
@@ -60,7 +60,7 @@ final class OAuthTest extends TestCase
         $config = new GoogleOAuthConfig(
             clientId: 'google-123',
             clientSecret: 'google-secret', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://app.com/auth/google/callback',
+            redirectTo: 'https://app.com/auth/google/callback',
         );
 
         $provider = $config->createProvider();
@@ -78,7 +78,7 @@ final class OAuthTest extends TestCase
         $config = new FacebookOAuthConfig(
             clientId: 'facebook-123',
             clientSecret: 'facebook-secret', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://app.com/auth/facebook/callback',
+            redirectTo: 'https://app.com/auth/facebook/callback',
             scopes: ['email', 'public_profile'],
         );
 
@@ -96,7 +96,7 @@ final class OAuthTest extends TestCase
         $config = new InstagramOAuthConfig(
             clientId: 'instagram-123',
             clientSecret: 'instagram-secret', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://app.com/auth/instagram/callback',
+            redirectTo: 'https://app.com/auth/instagram/callback',
             scopes: ['user_profile', 'user_media'],
         );
 
@@ -114,7 +114,7 @@ final class OAuthTest extends TestCase
         $config = new LinkedInOAuthConfig(
             clientId: 'linkedin-123',
             clientSecret: 'linkedin-secret', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://app.com/auth/linkedin/callback',
+            redirectTo: 'https://app.com/auth/linkedin/callback',
             scopes: ['r_liteprofile', 'r_emailaddress'],
         );
 
@@ -132,7 +132,7 @@ final class OAuthTest extends TestCase
         $config = new DiscordOAuthConfig(
             clientId: 'discord-123',
             clientSecret: 'discord-secret', // @mago-expect lint:no-literal-password
-            redirectUri: '/auth/discord/callback',
+            redirectTo: '/auth/discord/callback',
             scopes: ['identify', 'email'],
         );
 
@@ -177,7 +177,7 @@ final class OAuthTest extends TestCase
         $config = new GenericOAuthConfig(
             clientId: 'client-123',
             clientSecret: 'secret-456', // @mago-expect lint:no-literal-password
-            redirectUri: 'https://example.com/callback',
+            redirectTo: 'https://example.com/callback',
             urlAuthorize: 'https://provider.com/authorize',
             urlAccessToken: 'https://provider.com/token', // @mago-expect lint:no-literal-password
             urlResourceOwnerDetails: 'https://provider.com/user',

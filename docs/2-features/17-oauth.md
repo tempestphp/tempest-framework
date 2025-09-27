@@ -1,6 +1,6 @@
 ---
 title: OAuth
-description: "Tempest's OAuth provides a way to authenticate users with many different OAuth providers, such as GitHub, Google, Discord, and many others."
+description: "Learn how to implement OAuth to authenticate users with many different providers, such as GitHub, Google, Discord, and many others."
 keywords: "Experimental"
 ---
 
@@ -8,19 +8,19 @@ keywords: "Experimental"
 
 Tempest provides the ability to authenticate users with many OAuth providers, such as GitHub, Google, Discord, and many others, using the same interface.
 
-This implementation is built on top of [OAuth 2.0 Client](https://github.com/thephpleague/oauth2-client)—a reliable, battle-tested OAuth 2.0 client library.
+This implementation is built on top of the PHP league's [OAuth client](https://github.com/thephpleague/oauth2-client)—a reliable, battle-tested OAuth 2.0 client library.
 
 ## Getting started
 
 To get started with OAuth, you will first need to create a configuration file for your desired OAuth provider.
 
-Tempest provides a different configuration object for each provider. For instance, if you wish to authenticate users with GitHub, you may create a `github.config.php` file returning an instance of {b`Tempest\Auth\OAuth\Config\GitHubOAuthConfig`}:
+Tempest provides a [different configuration object for each provider](#available-providers). For instance, if you wish to authenticate users with GitHub, you may create a `github.config.php` file returning an instance of {b`Tempest\Auth\OAuth\Config\GitHubOAuthConfig`}:
 
 ```php app/Auth/github.config.php
 return new GitHubOAuthConfig(
     clientId: env('GITHUB_CLIENT_ID'),
     clientSecret: env('GITHUB_CLIENT_SECRET'),
-    redirectUri: [GitHubOAuthController::class, 'callback'],
+    redirectTo: [GitHubOAuthController::class, 'callback'],
     scopes: ['user:email'],
 );
 ```
@@ -31,14 +31,17 @@ Once your OAuth provider is configured, you may interact with it by using the {`
 
 ## Implementing the OAuth flow
 
-To implement a complete OAuth flow for your application, you will need to use the {b`Tempest\Auth\OAuth\OAuthClient`} interface to redirect the user to the OAuth provider's authorization page, and fetch the user's information in the controller action to which the OAuth provider redirects back.
+To implement a complete OAuth flow for your application, you will need two routes.
 
-The following is an example of a full OAuth flow, including CSRF protection, saving or updating the user, and authenticating them against the application:
+- The first one will redirect the user to the OAuth provider's authorization page,
+- The second one, which will be redirected to once the user authorizes your application, will fetch the user's information thanks to the code provided by the OAuth provider.
 
-```php app/Auth/GitHubOAuthController.php
+The {b`Tempest\Auth\OAuth\OAuthClient`} interface has the necessary methods to handle both parts of the flow. The following is an example of a complete OAuth flow, including CSRF protection, creating or updating the user, and authenticating them against the application:
+
+```php app/Auth/DiscordOAuthController.php
 use Tempest\Auth\OAuth\OAuthClient;
 
-final readonly class GitHubOAuthController
+final readonly class DiscordOAuthController
 {
     public function __construct(
         private OAuthClient $oauth,
@@ -46,31 +49,37 @@ final readonly class GitHubOAuthController
         private Authenticator $authenticator,
     ) {}
 
-    #[Get('/auth/github')]
+    #[Get('/auth/discord')]
     public function redirect(): Redirect
     {
-        $this->session->set('github:oauth', $this->oauth->getState());
+        // Saves a unique token in the user's session
+        $this->session->set('discord:oauth', $this->oauth->getState());
 
+        // Redirects to the OAuth provider's authorization page
         return new Redirect($this->oauth->getAuthorizationUrl());
     }
 
-    #[Get('/auth/github/callback')]
+    #[Get('/auth/discord/callback')]
     public function callback(Request $request): Redirect
     {
-        if ($this->session->get('github:oauth') !== $request->get('state')) {
+        // Validates the saved session token to prevent CSRF attacks
+        if ($this->session->get('discord:oauth') !== $request->get('state')) {
             return new Redirect('/?error=invalid_state');
         }
 
-        $githubUser = $this->oauth->fetchUser($request->get('code'));
+        // Fetches the user information from the OAuth provider
+        $discordUser = $this->oauth->fetchUser($request->get('code'));
 
+        // Creates or updates the user in the database
         $user = query(User::class)->updateOrCreate([
-            'discord_id' => $githubUser->id,
+            'discord_id' => $discordUser->id,
         ], [
-            'discord_id' => $githubUser->id,
-            'username' => $githubUser->nickname,
-            'email' => $githubUser->email,
+            'discord_id' => $discordUser->id,
+            'username' => $discordUser->nickname,
+            'email' => $discordUser->email,
         ]);
 
+        // Finally, authenticates the user in the application
         $this->authenticator->authenticate($user);
 
         return new Redirect('/');
@@ -78,11 +87,11 @@ final readonly class GitHubOAuthController
 }
 ```
 
-Of course, this example assumes that an [authenticatable model](../2-features/04-authentication.md#authentication) is configured.
+Of course, this example assumes that the database and an [authenticatable model](../2-features/04-authentication.md#authentication) are configured.
 
 ### Working with the OAuth user
 
-When an OAuth flow is completed, you will receive an {b`Tempest\Auth\OAuth\OAuthUser`} object containing the user's information from the OAuth provider:
+When an OAuth flow is completed and you call `fetchUser`, you will receive an {b`Tempest\Auth\OAuth\OAuthUser`} object containing the user's information from the OAuth provider:
 
 ```php
 $user = $this->oauth->fetchUser($code);
@@ -100,18 +109,18 @@ As seen in the example above, you can use this information to create or update a
 
 ## Configuring a provider
 
-Most providers require only a `clientId`, `clientSecret` and `redirectUri`, but some might need other parameters. A typical configuration looks like the following:
+Most providers require only a `clientId`, `clientSecret` and `redirectTo`, but some might need other parameters. A typical configuration looks like the following:
 
 ```php app/Auth/github.config.php
 return new GitHubOAuthConfig(
     clientId: env('GITHUB_CLIENT_ID'),
     clientSecret: env('GITHUB_CLIENT_SECRET'),
-    redirectUri: [GitHubOAuthController::class, 'callback'],
+    redirectTo: [GitHubOAuthController::class, 'callback'],
     scopes: ['user:email'],
 );
 ```
 
-Note that the `redirectUri` accepts a tuple of a controller class and a method name, which will be resolved to the full URL of the route handled by that method. You may also provide an URI path if you prefer.
+Note that the `redirectTo` accepts a tuple of a controller class and a method name, which will be resolved to the full URL of the route handled by that method. You may also provide an URI path if you prefer.
 
 ### Supporting multiple providers
 
@@ -133,7 +142,7 @@ return new GitHubOAuthConfig(
     tag: Provider::GITHUB,
     clientId: env('GITHUB_CLIENT_ID'),
     clientSecret: env('GITHUB_CLIENT_SECRET'),
-    redirectUri: [OAuthController::class, 'handleGitHubCallback'],
+    redirectTo: [OAuthController::class, 'handleGitHubCallback'],
     scopes: ['user:email'],
 );
 ```
@@ -143,7 +152,7 @@ return new GoogleOAuthConfig(
     tag: Provider::GOOGLE,
     clientId: env('GOOGLE_CLIENT_ID'),
     clientSecret: env('GOOGLE_CLIENT_SECRET'),
-    redirectUri: [GoogleOAuthController::class, 'handleGoogleCallback'],
+    redirectTo: [GoogleOAuthController::class, 'handleGoogleCallback'],
 );
 ```
 
@@ -189,7 +198,7 @@ If you need to implement OAuth with a provider that Tempest doesn't have a speci
 return new GenericOAuthConfig(
     clientId: env('CUSTOM_CLIENT_ID'),
     clientSecret: env('CUSTOM_CLIENT_SECRET'),
-    redirectUri: [OAuthController::class, 'handleCallback'],
+    redirectTo: [OAuthController::class, 'handleCallback'],
     urlAuthorize: 'https://provider.com/oauth/authorize',
     urlAccessToken: 'https://provider.com/oauth/token',
     urlResourceOwnerDetails: 'https://provider.com/api/user',
@@ -266,7 +275,7 @@ final class OAuthControllerTest extends IntegrationTestCase
         // with the same fake code we provided before
         $oauth->assertUserFetched(code: 'some-fake-code');
 
-        // Finally, we ensure an user was created with the
+        // Finally, we ensure a user was created with the
         // credentials we specified in the fake OAuth user
         $user = query(User::class)
             ->find(discord_id: 'jon')

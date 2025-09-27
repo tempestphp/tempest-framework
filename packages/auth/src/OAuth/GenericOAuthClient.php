@@ -29,7 +29,7 @@ final readonly class GenericOAuthClient implements OAuthClient
     {
         return $this->provider->getAuthorizationUrl([
             'scope' => $scopes ?? $this->config->scopes,
-            'redirect_uri' => $this->uri->createUri($this->config->redirectUri),
+            'redirect_uri' => $this->uri->createUri($this->config->redirectTo),
             ...$options,
         ]);
     }
@@ -44,7 +44,7 @@ final readonly class GenericOAuthClient implements OAuthClient
         try {
             return $this->provider->getAccessToken('authorization_code', [
                 'code' => $code,
-                'redirect_uri' => $this->uri->createUri($this->config->redirectUri),
+                'redirect_uri' => $this->uri->createUri($this->config->redirectTo),
             ]);
         } catch (IdentityProviderException $exception) {
             throw OAuthTokenCouldNotBeRetrieved::fromProviderException($exception);

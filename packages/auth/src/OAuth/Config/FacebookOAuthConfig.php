@@ -28,9 +28,9 @@ final class FacebookOAuthConfig implements OAuthConfig
         public string $clientSecret,
 
         /**
-         * The redirect URI for the OAuth flow.
+         * The controller action to redirect to after the user authorizes the application.
          */
-        public string|array $redirectUri,
+        public string|array $redirectTo,
 
         /**
          * The scopes to request from Facebook.
