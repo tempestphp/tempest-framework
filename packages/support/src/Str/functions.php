@@ -51,6 +51,8 @@ namespace Tempest\Support\Str {
 
     /**
      * Converts the given string to snake case.
+     *
+     * @mago-expect lint:require-preg-quote-delimiter
      */
     function to_snake_case(Stringable|string $string, Stringable|string $delimiter = '_'): string
     {
