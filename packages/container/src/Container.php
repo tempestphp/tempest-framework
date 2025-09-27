@@ -36,4 +36,6 @@ interface Container
      * @param ClassReflector<T>|class-string<T>|class-string<U> $initializerClass
      */
     public function addInitializer(ClassReflector|string $initializerClass): self;
+
+    public function addDecorator(ClassReflector|string $decoratorClass, ClassReflector|string $decoratedClass): self;
 }
