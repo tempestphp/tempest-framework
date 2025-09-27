@@ -28,6 +28,13 @@ interface OAuthConfig extends HasTag
     }
 
     /**
+     * The client ID for the OAuth provider.
+     */
+    public string $clientId {
+        get;
+    }
+
+    /**
      * The application URI to redirect to after authorization.
      */
     public string|array $redirectUri {

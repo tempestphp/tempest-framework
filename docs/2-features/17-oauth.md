@@ -250,7 +250,7 @@ final class OAuthControllerTest extends IntegrationTestCase
         // that redirects to the provider
         $this->http
             ->get('/oauth/discord')
-            ->assertRedirect();
+            ->assertRedirect($oauth->lastAuthorizationUrl);
 
         // We check that the authorization URL was generated,
         // optionally specifying scopes and options
@@ -260,7 +260,7 @@ final class OAuthControllerTest extends IntegrationTestCase
         // with a fake code and the expected state
         $this->http
             ->get("/oauth/discord/callback?code=some-fake-code&state={$oauth->getState()}")
-            ->assertRedirect();
+            ->assertRedirect('/');
 
         // We assert that an access token was retrieved
         // with the same fake code we provided before

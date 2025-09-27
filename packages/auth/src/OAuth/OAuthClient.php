@@ -14,22 +14,22 @@ interface OAuthClient
     public function getAuthorizationUrl(array $scopes = [], array $options = []): string;
 
     /**
-     * Get the state parameter for CSRF protection.
+     * Gets the state parameter for CSRF protection.
      */
     public function getState(): ?string;
 
     /**
-     * Exchange an authorization code for an access token.
+     * Exchanges an authorization code for an access token.
      */
     public function getAccessToken(string $code): AccessToken;
 
     /**
-     * Get user information from an OAuth provider using an access token.
+     * Gets user information from an OAuth provider using an access token.
      */
     public function getUser(AccessToken $token): OAuthUser;
 
     /**
-     * Complete OAuth flow with code and get user information.
+     * Completes OAuth flow with code and get user information.
      */
     public function fetchUser(string $code): OAuthUser;
 }

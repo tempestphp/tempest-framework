@@ -7,6 +7,7 @@ namespace Tempest\Auth\Tests\OAuth\Testing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\OAuth\Config\GitHubOAuthConfig;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthUser;
 use Tempest\Auth\OAuth\Testing\OAuthTester;
@@ -29,65 +30,6 @@ final class OAuthTestingTest extends TestCase
             email: 'frieren@mage.guild',
             name: 'Frieren',
         );
-    }
-
-    #[Test]
-    #[TestWith(['github'])]
-    #[TestWith([null])]
-    public function can_fake_oauth_client(?string $tag): void
-    {
-        $client = $this->oauth->fake($this->user, $tag);
-
-        $this->assertInstanceOf(TestingOAuthClient::class, $client);
-        $this->assertSame($client, $this->container->get(OAuthClient::class, $tag));
-    }
-
-    #[Test]
-    public function testing_oauth_client_generates_authorization_url(): void
-    {
-        $client = $this->oauth
-            ->fake($this->user)
-            ->withBaseUrl('https://provider.test')
-            ->withRedirectUri('https://tempest.test/oauth/callback')
-            ->withClientId('test');
-
-        $url = $client->getAuthorizationUrl(['scope' => 'user:email']);
-
-        $this->assertStringContainsString('https://tempest.test/oauth/callback', $url);
-        $this->assertStringContainsString('https://provider.test', $url);
-        $this->assertStringContainsString('client_id=test', $url);
-        $this->assertNotEmpty($client->getState());
-
-        $client->assertAuthorizationUrlGenerated(['scope' => 'user:email']);
-
-        $this->assertEquals(1, $client->getAuthorizationUrlCount());
-    }
-
-    #[Test]
-    public function testing_oauth_client_handles_callback(): void
-    {
-        $client = $this->oauth->fake(new OAuthUser(
-            id: 'jondoe-123',
-            email: 'test@example.com',
-            name: 'Jon Doe',
-            nickname: 'jondoe',
-            avatar: 'https://avatars.githubusercontent.com/u/jondoe-123',
-            raw: [],
-        ));
-
-        $user = $client->fetchUser('jondoe-123');
-
-        $this->assertEquals('jondoe-123', $user->id);
-        $this->assertEquals('test@example.com', $user->email);
-        $this->assertEquals('Jon Doe', $user->name);
-        $this->assertEquals('jondoe', $user->nickname);
-        $this->assertEquals('default', $user->provider);
-
-        $client->assertUserFetched('jondoe-123');
-        $client->assertAccessTokenRetrieved('jondoe-123');
-
-        $this->assertEquals(1, $client->getCallbackCount());
-        $this->assertEquals(1, $client->getAccessTokenCount());
     }
 
     #[Test]

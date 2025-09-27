@@ -30,6 +30,8 @@ final class OAuthClientTest extends FrameworkIntegrationTestCase
 
             public string $redirectUri = '';
 
+            public string $clientId = '';
+
             public null|string|UnitEnum $tag = null;
 
             public function createProvider(): AbstractProvider
