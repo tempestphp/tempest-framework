@@ -179,6 +179,7 @@
             "packages/support/src/Regex/functions.php",
             "packages/support/src/Str/constants.php",
             "packages/support/src/Str/functions.php",
+            "packages/support/src/Uri/functions.php",
             "packages/support/src/functions.php",
             "packages/view/src/functions.php",
             "packages/vite/src/functions.php"
