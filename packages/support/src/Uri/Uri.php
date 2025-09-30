@@ -229,7 +229,7 @@ final class Uri
             password: $password ?? $this->password,
             host: $host ?? $this->host,
             port: $port ?? $this->port,
-            path: Str\ensure_starts_with($path ?? $this->path, '/'),
+            path: $path ?? $this->path,
             queryString: match (true) {
                 $queryString !== null => $queryString,
                 $query !== [] => $this->buildQueryString($query),
@@ -302,7 +302,13 @@ final class Uri
         }
 
         if ($this->path !== null) {
-            $uri .= $this->path;
+            $path = $this->path;
+
+            if ($this->host !== null) {
+                $path = Str\ensure_starts_with($path, '/');
+            }
+
+            $uri .= $path;
         }
 
         if ($this->queryString !== null && $this->queryString !== '') {

@@ -39,6 +39,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['https://example.com', ['foo'], 'https://example.com?foo'])]
     #[TestWith(['https://example.com', ['foo' => true], 'https://example.com?foo=true'])]
     #[TestWith(['https://example.com', ['foo' => false], 'https://example.com?foo=false'])]
+    #[TestWith(['https://example.com', ['foo' => ['bar' => 'baz']], 'https://example.com?foo%5Bbar%5D=baz'])]
     public function set_query(string $uri, array $query, string $expected): void
     {
         $this->assertSame($expected, set_query($uri, ...$query));
@@ -79,7 +80,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['https://example.com', 'flamme.org', 'https://flamme.org'])]
     #[TestWith(['https://old.com/path', 'neue.com', 'https://neue.com/path'])]
     #[TestWith(['http://user:pass@old.com:8080', 'serie.com', 'http://user:pass@serie.com:8080'])]
-    #[TestWith(['malformed-uri', 'domain.com', '//domain.commalformed-uri'])]
+    #[TestWith(['malformed-uri', 'domain.com', '//domain.com/malformed-uri'])]
     public function set_host(string $uri, string $host, string $expected): void
     {
         $this->assertSame($expected, set_host($uri, $host));

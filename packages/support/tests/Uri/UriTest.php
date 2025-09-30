@@ -103,18 +103,9 @@ final class UriTest extends TestCase
 
         $clone = $uri->withPath('foo/bar');
         $this->assertSame('https://example.com/foo/bar', $clone->toString());
-        $this->assertSame('/foo/bar', $clone->path);
+        $this->assertSame('foo/bar', $clone->path);
 
         $this->assertNull($uri->path);
-    }
-
-    #[Test]
-    #[TestWith(['/foo/bar', '/foo/bar'])]
-    #[TestWith(['foo/bar', '/foo/bar'])]
-    #[TestWith(['foo-bar', '/foo-bar'])]
-    public function path_prefix(string $path, string $expected): void
-    {
-        $this->assertSame($expected, Uri::from('https://example.com')->withPath($path)->path);
     }
 
     #[Test]
