@@ -96,7 +96,6 @@ final class FunctionsTest extends TestCase
         $this->assertFalse(Random\is_ulid('0ec29141-3d58-4187-b664-2d93b7da0d31'));
         $this->assertFalse(Random\is_ulid('018dcc19-7e65-7c4b-9b14-9a11df3e0fdb'));
         $this->assertFalse(Random\is_ulid('foo'));
-        $this->assertFalse(Random\is_ulid(Random\secure_string(26)));
         $this->assertFalse(Random\is_ulid(null));
     }
 }

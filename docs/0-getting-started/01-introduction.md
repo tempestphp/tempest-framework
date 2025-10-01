@@ -26,15 +26,13 @@ The benefit of starting from scratch like Tempest did is having a clean slate. T
 Just to name a couple of examples, Tempest uses property hooks:
 
 ```php
-interface DatabaseMigration
+interface MigratesUp
 {
     public string $name {
         get;
     }
 
-    public function up(): ?QueryStatement;
-
-    public function down(): ?QueryStatement;
+    public function up(): QueryStatement;
 }
 ```
 

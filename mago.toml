@@ -61,6 +61,4 @@ halstead = { enabled = false }
 prefer-arrow-function = { enabled = false } # enable when references are fixed
 prefer-first-class-callable = { enabled = false } # enable when arguments are fixed
 strict-behavior = { allow-loose-behavior = true }
-
-# [analyzer]
-# override-attribute = { enabled = false } # CONSIDER ENABLING
+yoda-conditions = { enabled = false }

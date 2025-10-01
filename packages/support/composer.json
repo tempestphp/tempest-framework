@@ -27,7 +27,8 @@
             "src/Math/constants.php",
             "src/Math/functions.php",
             "src/Json/functions.php",
-            "src/Filesystem/functions.php"
+            "src/Filesystem/functions.php",
+            "src/Uri/functions.php"
         ]
     },
     "autoload-dev": {

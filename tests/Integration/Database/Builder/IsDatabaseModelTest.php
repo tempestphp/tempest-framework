@@ -617,6 +617,47 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertNull(Foo::get($fooId));
     }
+
+    public function test_nullable_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        $a = ANullableModel::create(
+            name: 'a',
+        );
+
+        $a->load('b');
+
+        $this->assertNull($a->b);
+    }
+
+    public function test_nullable_relation_save(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        ANullableModel::create(
+            name: 'a',
+            b: BNullableModel::new(
+                name: 'b',
+            ),
+        );
+
+        $a = ANullableModel::select()->first();
+        $a->save();
+
+        $a = ANullableModel::select()->with('b')->first();
+
+        $this->assertNotNull($a->b);
+        $this->assertSame('b', $a->b->name);
+    }
 }
 
 final class Foo
@@ -962,4 +1003,47 @@ final class CreateModelWithoutPrimaryKeyMigration implements MigratesUp
             ->text('name')
             ->text('description');
     }
+}
+
+final class CreateANullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-a-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('a')
+            ->primary()
+            ->string('name')
+            ->belongsTo('a.b_id', 'b.id', nullable: true);
+    }
+}
+
+final class CreateBNullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-b-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('b')
+            ->primary()
+            ->string('name');
+    }
+}
+
+#[Table('a')]
+final class ANullableModel
+{
+    use IsDatabaseModel;
+
+    public ?BNullableModel $b = null;
+
+    public string $name;
+}
+
+#[Table('b')]
+final class BNullableModel
+{
+    use IsDatabaseModel;
+
+    public string $name;
 }

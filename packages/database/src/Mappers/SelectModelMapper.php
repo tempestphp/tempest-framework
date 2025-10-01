@@ -2,10 +2,8 @@
 
 namespace Tempest\Database\Mappers;
 
-use Exception;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
-use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
@@ -35,7 +33,31 @@ final class SelectModelMapper implements Mapper
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 
-        return map($parsed->toArray())->collection()->to($to);
+        $objects = map($parsed->toArray())->collection()->to($to);
+
+        foreach ($objects as $i => $object) {
+            foreach ($model->getRelations() as $relation) {
+                // When a nullable BelongsTo relation wasn't loaded, we need to make sure to unset it if it has a default value.
+                // If we wouldn't do this, the default value would overwrite the "unloaded" value on the next time saving the model
+                if (! $relation instanceof BelongsTo) {
+                    continue;
+                }
+
+                if (! $relation->property->isNullable()) {
+                    continue;
+                }
+
+                if (! $relation->property->hasDefaultValue()) {
+                    continue;
+                }
+
+                if (! array_key_exists($relation->name, $parsed[$i] ?? [])) {
+                    $relation->property->unset($object);
+                }
+            }
+        }
+
+        return $objects;
     }
 
     private function normalizeFields(ModelInspector $model, array $rows): array
@@ -54,18 +76,24 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if (! $relation instanceof HasMany) {
+            if ($relation instanceof BelongsTo) {
+                if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
+                    $data[$relation->name] = null;
+                }
+
                 continue;
             }
 
-            $mapped = [];
-            $relationModel = inspect($relation);
+            if ($relation instanceof HasMany) {
+                $mapped = [];
+                $relationModel = inspect($relation);
 
-            foreach ($value as $item) {
-                $mapped[] = $this->values($relationModel, $item);
+                foreach ($value as $item) {
+                    $mapped[] = $this->values($relationModel, $item);
+                }
+
+                $data[$key] = $mapped;
             }
-
-            $data[$key] = $mapped;
         }
 
         return $data;
