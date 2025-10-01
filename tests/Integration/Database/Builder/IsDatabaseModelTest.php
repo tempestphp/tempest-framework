@@ -626,11 +626,37 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateANullableTable::class,
         );
 
-        $a = ANullableModel::create();
+        $a = ANullableModel::create(
+            name: 'a',
+        );
 
         $a->load('b');
 
         $this->assertNull($a->b);
+    }
+
+    public function test_nullable_relation_save(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        ANullableModel::create(
+            name: 'a',
+            b: BNullableModel::new(
+                name: 'b',
+            ),
+        );
+
+        $a = ANullableModel::select()->first();
+        $a->save();
+
+        $a = ANullableModel::select()->with('b')->first();
+
+        $this->assertNotNull($a->b);
+        $this->assertSame('b', $a->b->name);
     }
 }
 
@@ -987,6 +1013,7 @@ final class CreateANullableTable implements MigratesUp
     {
         return new CreateTableStatement('a')
             ->primary()
+            ->string('name')
             ->belongsTo('a.b_id', 'b.id', nullable: true);
     }
 }
@@ -1009,6 +1036,8 @@ final class ANullableModel
     use IsDatabaseModel;
 
     public ?BNullableModel $b = null;
+
+    public string $name;
 }
 
 #[Table('b')]
