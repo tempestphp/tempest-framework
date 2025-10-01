@@ -53,15 +53,12 @@ final readonly class TypeReflector implements Reflector
 
     private bool $isNullable;
 
-    public bool $isVariadic;
-
     public function __construct(
         private PHPReflector|PHPReflectionType|string $reflector,
     ) {
         $this->definition = $this->resolveDefinition($this->reflector);
         $this->isNullable = $this->resolveIsNullable($this->reflector);
         $this->cleanDefinition = str_replace('?', '', $this->definition);
-        $this->isVariadic = $this->reflector instanceof PHPReflectionParameter && $this->reflector->isVariadic();
     }
 
     public function asClass(): ClassReflector

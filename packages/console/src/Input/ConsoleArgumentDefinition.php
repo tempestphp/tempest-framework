@@ -37,7 +37,7 @@ final readonly class ConsoleArgumentDefinition
             default: $default,
             hasDefault: $parameter->isDefaultValueAvailable(),
             position: $parameter->getPosition(),
-            isVariadic: $type->isVariadic,
+            isVariadic: $parameter->isVariadic(),
             description: $attribute?->description,
             aliases: $attribute->aliases ?? [],
             help: $attribute?->help,
