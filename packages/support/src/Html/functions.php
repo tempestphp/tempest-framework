@@ -42,8 +42,8 @@ namespace Tempest\Support\Html {
     function is_html_tag(Stringable|string $tag): bool
     {
         return (
-            is_void_tag($tag) ||
-            in_array(
+            is_void_tag($tag)
+            || in_array(
                 (string) $tag,
                 [
                     'a',
@@ -181,7 +181,7 @@ namespace Tempest\Support\Html {
     {
         return $attributes = arr($attributes)
             ->filter(fn (mixed $value) => ! in_array($value, [false, null], strict: true))
-            ->map(fn (mixed $value, int|string $key) => $value === true ? $key : ($key . '="' . $value . '"'))
+            ->map(fn (mixed $value, int|string $key) => $value === true ? $key : $key . '="' . $value . '"')
             ->values()
             ->implode(' ')
             ->when(

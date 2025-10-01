@@ -4,15 +4,56 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Auth\Install\User;
+use BackedEnum;
+use Tempest\Auth\AccessControl\Policy;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Exceptions\PolicyMethodWasInvalid;
+use Tempest\Auth\Exceptions\PolicyWasInvalid;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Support\Arr;
+use Tempest\Support\Str;
+use UnitEnum;
 
 final class AuthConfig
 {
+    /**
+     * @param array<class-string<Authenticatable>> $authenticatables
+     * @param array<class-string,array<string,MethodReflector[]>> $policies
+     */
     public function __construct(
-        /** @var class-string<\Tempest\Auth\Authenticator> */
-        public string $authenticatorClass = SessionAuthenticator::class,
-
-        /** @var class-string */
-        public string $userModelClass = User::class,
+        public array $authenticatables = [],
+        public array $policies = [],
     ) {}
+
+    public function registerPolicy(MethodReflector $handler, Policy $policy): self
+    {
+        if (! $policy->resource) {
+            $policy->resource = $handler->getParameter(key: 0)?->getType()?->getName();
+        }
+
+        if (! $policy->resource) {
+            throw PolicyWasInvalid::resourceCouldNotBeInferred(
+                policyName: sprintf('%s::%s', $handler->getDeclaringClass()->getName(), $handler->getName()),
+            );
+        }
+
+        $this->policies[$policy->resource] ??= [];
+
+        if ($policy->action === null) {
+            $policy->action = Str\to_kebab_case($handler->getName());
+        }
+
+        foreach (Arr\wrap($policy->action) as $action) {
+            $action = match (true) {
+                $action instanceof BackedEnum => $action->value,
+                $action instanceof UnitEnum => $action->name,
+                default => $action,
+            };
+
+            $this->policies[$policy->resource][$action] ??= [];
+            $this->policies[$policy->resource][$action][] = $handler;
+        }
+
+        return $this;
+    }
 }

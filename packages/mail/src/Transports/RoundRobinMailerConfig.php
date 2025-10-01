@@ -35,7 +35,7 @@ final class RoundRobinMailerConfig implements MailerConfig
     {
         return new RoundRobinTransport(
             transports: $this->buildTransports(),
-            retryPeriod: ($this->waitTimeBeforeRetrying instanceof Duration)
+            retryPeriod: $this->waitTimeBeforeRetrying instanceof Duration
                 ? $this->waitTimeBeforeRetrying->getTotalSeconds()
                 : $this->waitTimeBeforeRetrying,
         );

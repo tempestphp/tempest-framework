@@ -40,7 +40,7 @@ final class ViewObjectExporter
                 })->implode(', '),
             ),
             is_string($value) => "<<<'STRING'" . PHP_EOL . $value . PHP_EOL . 'STRING',
-            default => var_export($value, true), // @mago-expect best-practices/no-debug-symbols
+            default => var_export($value, return: true),
         };
     }
 }

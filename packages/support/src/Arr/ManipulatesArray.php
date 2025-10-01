@@ -43,7 +43,7 @@ trait ManipulatesArray
             return new static([(string) $string]);
         }
 
-        if (((string) $string) === '') {
+        if ((string) $string === '') {
             return new static();
         }
 

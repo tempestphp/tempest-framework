@@ -16,7 +16,7 @@ final readonly class ElseAttribute implements Attribute, ShouldBeRemoved
     {
         $previous = $element->getPrevious()?->unwrap(PhpIfElement::class);
 
-        if (! ($previous instanceof PhpIfElement)) {
+        if (! $previous instanceof PhpIfElement) {
             throw new ElementWasInvalid('There needs to be an if or elseif element before an else element.');
         }
 

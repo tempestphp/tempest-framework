@@ -49,6 +49,10 @@ final class CasterFactory
             return get($castWith->className);
         }
 
+        if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
+            return get($casterAttribute->caster);
+        }
+
         // Resolve caster from manual additions
         foreach ($this->casters as [$for, $casterClass]) {
             if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {

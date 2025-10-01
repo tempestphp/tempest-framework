@@ -16,7 +16,7 @@ final class LogExceptionProcessor implements ExceptionProcessor
             'class' => $throwable::class,
             'exception' => $throwable->getMessage(),
             'trace' => $throwable->getTraceAsString(),
-            'context' => ($throwable instanceof HasContext)
+            'context' => $throwable instanceof HasContext
                 ? $throwable->context()
                 : [],
         ];

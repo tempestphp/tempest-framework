@@ -104,10 +104,12 @@ final class ProcessTester
 
     /**
      * Stops the process and dumps the recorded process executions.
+     *
+     * @mago-expect lint:no-debug-symbols
      */
     public function debugExecutedProcesses(): void
     {
-        dd($this->executor->executions); // @mago-expect best-practices/no-debug-symbols
+        dd($this->executor->executions);
     }
 
     /**
@@ -249,14 +251,14 @@ final class ProcessTester
                     }
                 }
             }
-        } else {
+        } else { // @mago-expects linter:no-else-clause
             $count = count($this->findExecutionsByPattern($command));
         }
 
         Assert::assertSame(
             expected: $times,
             actual: $count,
-            message: ($command instanceof Closure)
+            message: $command instanceof Closure
                 ? sprintf('Expected command matching callback to be executed %d times, but it was executed %d times.', $times, $count)
                 : sprintf('Expected command "%s" to be executed %d times, but it was executed %d times.', $command, $times, $count),
         );

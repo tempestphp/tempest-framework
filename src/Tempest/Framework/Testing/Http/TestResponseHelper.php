@@ -75,7 +75,7 @@ final class TestResponseHelper
         $this->assertHasHeader($name);
 
         $header = $this->response->getHeader($name);
-        $headerString = var_export($header, return: true); // @mago-expect best-practices/no-debug-symbols
+        $headerString = var_export($header, return: true);
 
         Assert::assertContains(
             $value,
@@ -94,14 +94,14 @@ final class TestResponseHelper
         $this->assertHasHeader($name);
 
         $header = $this->response->getHeader($name);
-        $headerString = var_export($header, return: true); // @mago-expect best-practices/no-debug-symbols
+        $headerString = var_export($header, return: true);
 
         foreach ($header->values as $value) {
             try {
                 Assert::assertStringMatchesFormat($format, $value);
 
                 return $this;
-            } catch (ExpectationFailedException) { // @mago-expect best-practices/no-empty-catch-clause
+            } catch (ExpectationFailedException) { // @mago-expect lint:no-empty-catch-clause
             }
         }
 
@@ -345,7 +345,7 @@ final class TestResponseHelper
      */
     public function assertView(string $view): self
     {
-        if (! ($this->body instanceof View)) {
+        if (! $this->body instanceof View) {
             Assert::fail(sprintf('Response is not a %s', View::class));
         }
 
@@ -524,13 +524,12 @@ final class TestResponseHelper
         return $this;
     }
 
+    /**
+     * @mago-expect lint:no-debug-symbols
+     */
     public function dd(): void
     {
-        /**
-         * @noinspection ForgottenDebugOutputInspection
-         * @phpstan-ignore disallowed.function
-         */
-        dd($this->response); // @mago-expect best-practices/no-debug-symbols
+        dd($this->response); // @phpstan-ignore disallowed.function
     }
 
     private function assertHasContainer(): void

@@ -10,8 +10,8 @@ final readonly class BrokenCommandHandler
 {
     #[CommandHandler]
     public function __invoke(
-        MyBrokenCommand $command, // @mago-expect best-practices/no-unused-parameter
-        string $something, // @mago-expect best-practices/no-unused-parameter
+        MyBrokenCommand $command,
+        string $something,
     ): void {
         return;
     }

@@ -42,9 +42,11 @@ final class Invalid implements Response
         $this->addHeader(
             'x-validation',
             Json\encode(
-                arr($failingRules)->map(fn (array $failingRulesForField) => arr($failingRulesForField)->map(
-                    fn (Rule $rule) => $this->validator->getErrorMessage($rule),
-                )->toArray())->toArray(),
+                arr($failingRules)->map(
+                    fn (array $failingRulesForField) => arr($failingRulesForField)->map(
+                        fn (Rule $rule) => $this->validator->getErrorMessage($rule),
+                    )->toArray(),
+                )->toArray(),
             ),
         );
     }

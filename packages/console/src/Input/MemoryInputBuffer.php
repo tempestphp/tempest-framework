@@ -20,9 +20,9 @@ final class MemoryInputBuffer implements InputBuffer
     public function add(int|string|Key ...$input): void
     {
         foreach ($input as $line) {
-            $this->buffer[] = ($line instanceof Key)
+            $this->buffer[] = $line instanceof Key
                 ? $line->value
-                : ((string) $line);
+                : (string) $line;
         }
 
         $this->fiber?->resume();

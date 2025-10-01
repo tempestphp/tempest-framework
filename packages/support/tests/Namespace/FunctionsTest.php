@@ -9,6 +9,7 @@ use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
 
 use function Tempest\Support\Namespace\to_base_class_name;
+use function Tempest\Support\Namespace\to_fqcn;
 use function Tempest\Support\Namespace\to_namespace;
 use function Tempest\Support\Namespace\to_psr4_namespace;
 
@@ -22,7 +23,8 @@ final class FunctionsTest extends TestCase
     #[TestWith(['/home/project-name/app/Foo/Bar.php', '/home/project-name', 'App\\Foo'])]
     #[TestWith(['/home/project-name/app/Foo/Bar.php', '/home/project-name/', 'App\\Foo'])]
     #[TestWith(['/home/project-name/app/Foo/Bar.php', null, 'Home\ProjectName\App\Foo'])] // we don't support skill issues
-    public function test_to_namespace(string $path, ?string $root, string $expected): void
+    #[Test]
+    public function to_namespace(string $path, ?string $root, string $expected): void
     {
         $this->assertSame($expected, to_namespace($path, $root));
     }
@@ -30,7 +32,8 @@ final class FunctionsTest extends TestCase
     #[TestWith(['src/Tempest/Auth/src/SomeNewClass.php', 'Tempest\\Auth'])]
     #[TestWith(['src/Tempest/Auth/src/SomeDirectory', 'Tempest\\Auth\\SomeDirectory'])]
     #[TestWith(['/foo/bar/src/Tempest/Auth/src/SomeDirectory', 'Tempest\\Auth\\SomeDirectory', '/foo/bar'])]
-    public function test_to_composer_namespace(string $path, string $expected, ?string $root = null): void
+    #[Test]
+    public function to_composer_namespace(string $path, string $expected, ?string $root = null): void
     {
         $namespace = new Psr4Namespace('Tempest\\Auth\\', './src/Tempest/Auth/src');
 
@@ -51,7 +54,8 @@ final class FunctionsTest extends TestCase
     #[TestWith(['Foo', 'Tempest\\Auth\\Foo'])]
     #[TestWith(['Foo/Bar.php', 'Tempest\\Auth\\Foo'])]
     #[TestWith(['/foo/baz/Foo/Bar.php', 'Tempest\\Auth\\Foo', '/foo/bar'])]
-    public function test_to_composer_namespace_exceptions(string $path, string $expected, ?string $root = null): void
+    #[Test]
+    public function to_composer_namespace_exceptions(string $path, string $expected, ?string $root = null): void
     {
         $this->expectException(PathCouldNotBeMappedToNamespace::class);
 
@@ -69,8 +73,23 @@ final class FunctionsTest extends TestCase
     #[TestWith(['Vite.php', 'Vite'])]
     #[TestWith(['Vite', 'Vite'])]
     #[TestWith([\Tempest\Vite\Vite::class, 'Vite'])]
-    public function test_to_base_class_name(string $path, string $expected): void
+    #[Test]
+    public function to_base_class_name(string $path, string $expected): void
     {
         $this->assertSame($expected, to_base_class_name($path));
+    }
+
+    #[TestWith(['app/SomeNewClass.php', null, 'App\\SomeNewClass'])]
+    #[TestWith(['app/Foo/Bar/SomeNewClass.php', null, 'App\\Foo\\Bar\\SomeNewClass'])]
+    #[TestWith(['app/Foo/Bar/Baz', null, 'App\\Foo\\Bar\\Baz'])]
+    #[TestWith(['app\\FooBar\\', null, 'App\\FooBar'])]
+    #[TestWith(['app\\FooBar\\File.php', null, 'App\\FooBar\\File'])]
+    #[TestWith(['/home/project-name/app/Foo/Bar.php', '/home/project-name', 'App\\Foo\\Bar'])]
+    #[TestWith(['/home/project-name/app/Foo/Bar.php', '/home/project-name/', 'App\\Foo\\Bar'])]
+    #[TestWith(['/home/project-name/app/Foo/Bar.php', null, 'Home\ProjectName\App\Foo\Bar'])] // we don't support skill issues
+    #[Test]
+    public function to_fqcn(string $path, ?string $root, string $expected): void
+    {
+        $this->assertSame($expected, to_fqcn($path, $root));
     }
 }

@@ -8,8 +8,9 @@ use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryWasInvalid;
+use Tempest\Database\MigratesDown;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
@@ -305,7 +306,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title,
+            query(Book::class)->select()->onDatabase('main')->where('title', 'Timeline Taxi')->first()->title,
         );
 
         $this->assertNull(
@@ -317,8 +318,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
 
         /** @var Book $book */
-        /** @phpstan-ignore-next-line */
-        $book = query(Book::class)->select()->onDatabase('backup')->first();
+        $book = query(Book::class)->select()->onDatabase('backup')->where('title', 'Timeline Taxi')->first();
 
         $this->assertSame(
             'Timeline Taxi',
@@ -334,7 +334,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('main')->first()->title,
+            query(Book::class)->select()->onDatabase('main')->where('title', 'Timeline Taxi')->first()->title,
         );
 
         $this->assertException(QueryWasInvalid::class, function (): void {
@@ -347,7 +347,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             'Timeline Taxi',
-            query(Book::class)->select()->onDatabase('backup')->first()->title,
+            query(Book::class)->select()->onDatabase('backup')->where('title', 'Timeline Taxi')->first()->title,
         );
     }
 
@@ -359,13 +359,14 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     private function assertTableDoesNotExist(string $tableName, string $onDatabase): void
     {
         $this->assertException(
-            QueryWasInvalid::class,
-            fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
+            expectedExceptionClass: QueryWasInvalid::class,
+            handler: fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
+            message: "Table `{$tableName}` exists in database `{$onDatabase}`",
         );
     }
 }
 
-final class MultiDatabaseTestMigrationForMain implements DatabaseMigration, ShouldMigrate
+final class MultiDatabaseTestMigrationForMain implements MigratesUp, ShouldMigrate, MigratesDown
 {
     public string $name = '000_main';
 
@@ -385,7 +386,7 @@ final class MultiDatabaseTestMigrationForMain implements DatabaseMigration, Shou
     }
 }
 
-final class MultiDatabaseTestMigrationForBackup implements DatabaseMigration, ShouldMigrate
+final class MultiDatabaseTestMigrationForBackup implements MigratesUp, ShouldMigrate, MigratesDown
 {
     public string $name = '000_backup';
 

@@ -41,7 +41,7 @@ function secure_string(int $length, ?string $alphabet = null): string
     $ret = '';
     while ($length > 0) {
         /** @var int<0, max> $urandom_length */
-        $urandom_length = (int) ceil(((float) (2 * $length * $bits)) / 8.0);
+        $urandom_length = (int) ceil((float) (2 * $length * $bits) / 8.0);
         $data = random_bytes($urandom_length);
 
         $unpacked_data = 0;

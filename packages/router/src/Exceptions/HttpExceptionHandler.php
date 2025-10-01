@@ -2,6 +2,7 @@
 
 namespace Tempest\Router\Exceptions;
 
+use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
@@ -34,6 +35,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
             $response = match (true) {
                 $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
+                $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
                 $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
                 $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
                 default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),
@@ -53,16 +55,14 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
                 'css' => $this->getStyleSheet(),
                 'status' => $status->value,
                 'title' => $status->description(),
-                'message' =>
-                    $exception?->getMessage() ?: match ($status) {
-                        Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                        Status::NOT_FOUND => 'This page could not be found on the server',
-                        Status::FORBIDDEN => 'You do not have permission to access this page',
-                        Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                        Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                        default => null,
-                    }
-                ,
+                'message' => $exception?->getMessage() ?: match ($status) {
+                    Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
+                    Status::NOT_FOUND => 'This page could not be found on the server',
+                    Status::FORBIDDEN => 'You do not have permission to access this page',
+                    Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
+                    Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
+                    default => null,
+                },
             ]),
         );
     }

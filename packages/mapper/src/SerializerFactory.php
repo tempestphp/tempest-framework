@@ -35,7 +35,7 @@ final class SerializerFactory
         if (is_callable($for)) {
             try {
                 return $for($input);
-            } catch (TypeError) { // @mago-expect best-practices/dont-catch-error
+            } catch (TypeError) {
                 return false;
             }
         }
@@ -59,7 +59,7 @@ final class SerializerFactory
 
         try {
             return $serializerClass($input);
-        } catch (TypeError) { // @mago-expect best-practices/dont-catch-error
+        } catch (TypeError) {
             return null;
         }
     }
@@ -84,6 +84,10 @@ final class SerializerFactory
         if ($serializeWith !== null) {
             // Resolve the serializer from the container
             return get($serializeWith->className);
+        }
+
+        if ($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) {
+            return get($serializerAttribute->serializer);
         }
 
         // Resolve serializer from manual additions

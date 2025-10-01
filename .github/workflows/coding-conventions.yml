@@ -25,8 +25,8 @@ jobs:
 
       - name: Run Mago
         run: |
-          ./vendor/bin/mago fmt --dry-run
-          ./vendor/bin/mago lint --reporting-format=github
+          composer fmt -- --check
+          composer lint -- --reporting-format=github
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

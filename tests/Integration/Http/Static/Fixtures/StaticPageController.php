@@ -13,7 +13,7 @@ use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\View;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 use function Tempest\view;
 
 final readonly class StaticPageController
@@ -28,8 +28,8 @@ final readonly class StaticPageController
     #[Get('/static/http500/{foo}/{bar}')]
     #[StaticPage(StaticDataProvider::class)]
     public function http500(
-        string $foo, // @mago-expect best-practices/no-unused-parameter
-        string $bar, // @mago-expect best-practices/no-unused-parameter
+        string $foo,
+        string $bar,
     ): Response {
         return new ServerError();
     }
@@ -44,8 +44,8 @@ final readonly class StaticPageController
     #[Get('/static/vite/{foo}/{bar}')]
     #[StaticPage(StaticDataProvider::class)]
     public function vite(
-        string $foo, // @mago-expect best-practices/no-unused-parameter
-        string $bar, // @mago-expect best-practices/no-unused-parameter
+        string $foo,
+        string $bar,
     ): void {
         throw new ViewCompilationFailed('view.php', '', new ManifestWasNotFound('fake-manifest.json'));
     }

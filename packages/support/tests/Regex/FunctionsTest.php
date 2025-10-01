@@ -90,16 +90,20 @@ final class FunctionsTest extends TestCase
         $this->assertSame(null, get_match('10-abc', '/\d+-.*/', match: 1));
 
         $this->assertSame(
-            [
+            expected: [
                 'match' => "<href='https://tempestphp.com'>Tempest</href>",
                 'quote' => "'",
                 'href' => 'https://tempestphp.com',
             ],
-            get_match("<href='https://tempestphp.com'>Tempest</href>", '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/g', match: [
-                'match',
-                'quote',
-                'href',
-            ]),
+            actual: get_match(
+                subject: "<href='https://tempestphp.com'>Tempest</href>",
+                pattern: '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/g',
+                match: [
+                    'match',
+                    'quote',
+                    'href',
+                ],
+            ),
         );
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Assert;
 use Stringable;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
@@ -158,6 +159,15 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function skipWindows(string $reason): void
     {
         if (PHP_OS_FAMILY !== 'Windows') {
+            return;
+        }
+
+        $this->markTestSkipped($reason);
+    }
+
+    protected function skipCI(string $reason): void
+    {
+        if (getenv('CI') !== 'true') {
             return;
         }
 

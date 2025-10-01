@@ -64,8 +64,9 @@ final class Session
     public function reflash(): void
     {
         foreach ($this->manager->all($this->id) as $key => $value) {
-            if (! ($value instanceof FlashValue))
+            if (! $value instanceof FlashValue) {
                 continue;
+            }
 
             unset($this->expiredKeys[$key]);
         }

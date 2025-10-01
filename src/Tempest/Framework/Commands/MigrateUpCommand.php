@@ -13,7 +13,7 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
-use Tempest\EventBus\EventHandler;
+use Tempest\EventBus\EventBus;
 
 #[Singleton]
 final class MigrateUpCommand
@@ -23,6 +23,7 @@ final class MigrateUpCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
+        private readonly EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand(
@@ -39,6 +40,14 @@ final class MigrateUpCommand
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
     ): ExitCode {
+        $this->eventBus->listen(function (MigrationMigrated $event): void {
+            $this->count += 1;
+            $this->console->keyValue(
+                key: "<style='fg-gray'>{$event->name}</style>",
+                value: "<style='fg-green'>MIGRATED</style>",
+            );
+        });
+
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
 
@@ -59,15 +68,5 @@ final class MigrateUpCommand
         }
 
         return ExitCode::SUCCESS;
-    }
-
-    #[EventHandler]
-    public function onMigrationMigrated(MigrationMigrated $event): void
-    {
-        $this->count += 1;
-        $this->console->keyValue(
-            key: "<style='fg-gray'>{$event->name}</style>",
-            value: "<style='fg-green'>MIGRATED</style>",
-        );
     }
 }

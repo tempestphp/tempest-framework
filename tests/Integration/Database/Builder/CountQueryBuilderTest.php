@@ -139,10 +139,12 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
-        query('authors')->insert(
-            ['id' => 1, 'name' => 'Brent'],
-            ['id' => 2, 'name' => 'Other'],
-        )->execute();
+        query('authors')
+            ->insert(
+                ['id' => 1, 'name' => 'Brent'],
+                ['id' => 2, 'name' => 'Other'],
+            )
+            ->execute();
 
         $count = query('authors')->count()->execute();
 

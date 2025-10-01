@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Builder\WhereOperator;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -44,15 +44,17 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($products as $productData) {
-            query(Product::class)->insert(
-                name: $productData['name'],
-                category: $productData['category'],
-                price: $productData['price'],
-                in_stock: $productData['in_stock'],
-                rating: $productData['rating'],
-                brand: $productData['brand'],
-                created_at: DateTime::now(),
-            )->execute();
+            query(Product::class)
+                ->insert(
+                    name: $productData['name'],
+                    category: $productData['category'],
+                    price: $productData['price'],
+                    in_stock: $productData['in_stock'],
+                    rating: $productData['rating'],
+                    brand: $productData['brand'],
+                    created_at: DateTime::now(),
+                )
+                ->execute();
         }
     }
 
@@ -325,7 +327,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class CreateProductTable implements DatabaseMigration
+final class CreateProductTable implements MigratesUp
 {
     private(set) string $name = '0000-00-30_create_products_table';
 
@@ -340,11 +342,6 @@ final class CreateProductTable implements DatabaseMigration
             ->float('rating')
             ->text('brand')
             ->datetime('created_at');
-    }
-
-    public function down(): QueryStatement
-    {
-        return DropTableStatement::forModel(Product::class);
     }
 }
 

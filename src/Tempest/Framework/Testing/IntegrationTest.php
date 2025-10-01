@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing;
 
 use Closure;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\OAuth\Testing\OAuthTester;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
@@ -37,7 +39,9 @@ use Throwable;
 use function Tempest\Support\Path\normalize;
 use function Tempest\Support\Path\to_absolute_path;
 
-/** @mago-expect maintainability/too-many-properties */
+/**
+ * @mago-expect lint:too-many-properties
+ */
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;
@@ -70,6 +74,8 @@ abstract class IntegrationTest extends TestCase
     protected ExceptionTester $exceptions;
 
     protected ProcessTester $process;
+
+    protected OAuthTester $oauth;
 
     protected function setUp(): void
     {
@@ -150,6 +156,8 @@ abstract class IntegrationTest extends TestCase
         $this->vite->preventTagResolution();
         $this->vite->clearCaches();
 
+        $this->oauth = new OAuthTester($this->container);
+
         return $this;
     }
 
@@ -165,7 +173,6 @@ abstract class IntegrationTest extends TestCase
     protected function setupDatabase(): self
     {
         $migrationManager = $this->container->get(MigrationManager::class);
-
         $migrationManager->dropAll();
 
         $this->migrateDatabase();
@@ -173,13 +180,17 @@ abstract class IntegrationTest extends TestCase
         return $this;
     }
 
+    /**
+     * Creates the migration table. You may override this method to provide more migrations to run for every tests in this file.
+     */
     protected function migrateDatabase(): void
     {
-        $this->migrate(
-            CreateMigrationsTable::class,
-        );
+        $this->migrate(CreateMigrationsTable::class);
     }
 
+    /**
+     * Migrates the specified migration classes.
+     */
     protected function migrate(string|object ...$migrationClasses): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
@@ -218,13 +229,12 @@ abstract class IntegrationTest extends TestCase
         unset($this->console);
         /** @phpstan-ignore-next-line */
         unset($this->http);
+        /** @phpstan-ignore-next-line */
+        unset($this->oauth);
     }
 
-    protected function assertException(
-        string $expectedExceptionClass,
-        Closure $handler,
-        ?Closure $assertException = null,
-    ): void {
+    protected function assertException(string $expectedExceptionClass, Closure $handler, ?Closure $assertException = null, ?string $message = null): void
+    {
         try {
             $handler();
         } catch (Throwable $throwable) {
@@ -237,6 +247,6 @@ abstract class IntegrationTest extends TestCase
             return;
         }
 
-        $this->fail("Expected exception {$expectedExceptionClass} was not thrown");
+        Assert::fail($message ?? "Expected exception {$expectedExceptionClass} was not thrown");
     }
 }

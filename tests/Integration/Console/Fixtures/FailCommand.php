@@ -14,7 +14,7 @@ final readonly class FailCommand
     public function __invoke(
         string $input = 'default',
         #[ConsoleArgument(aliases: ['-v'])]
-        bool $verbose = false, // @mago-expect best-practices/no-unused-parameter
+        bool $verbose = false,
     ): void {
         failing_function($input);
     }

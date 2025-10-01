@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Builder\WhereOperator;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -43,15 +43,17 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($users as $userData) {
-            query(User::class)->insert(
-                name: $userData['name'],
-                email: $userData['email'],
-                age: $userData['age'],
-                status: $userData['status'],
-                role: $userData['role'],
-                score: $userData['score'],
-                created_at: DateTime::now(),
-            )->execute();
+            query(User::class)
+                ->insert(
+                    name: $userData['name'],
+                    email: $userData['email'],
+                    age: $userData['age'],
+                    status: $userData['status'],
+                    role: $userData['role'],
+                    score: $userData['score'],
+                    created_at: DateTime::now(),
+                )
+                ->execute();
         }
     }
 
@@ -395,7 +397,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class CreateUserTable implements DatabaseMigration
+final class CreateUserTable implements MigratesUp
 {
     private(set) string $name = '0000-00-20_create_users_table';
 
@@ -410,11 +412,6 @@ final class CreateUserTable implements DatabaseMigration
             ->text('role')
             ->float('score')
             ->datetime('created_at');
-    }
-
-    public function down(): QueryStatement
-    {
-        return DropTableStatement::forModel(User::class);
     }
 }
 

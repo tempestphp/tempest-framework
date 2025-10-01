@@ -67,7 +67,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                     ->writeln();
             }
         } finally {
-            $exitCode = ($throwable instanceof HasExitCode)
+            $exitCode = $throwable instanceof HasExitCode
                 ? $throwable->getExitCode()
                 : ExitCode::ERROR;
 
@@ -87,7 +87,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
             ->toString();
 
         $excerptSize = 5;
-        $start = max(0, ($lineNumber - $excerptSize) - 2);
+        $start = max(0, $lineNumber - $excerptSize - 2);
         $lines = array_slice($lines, $start, $excerptSize * 2);
 
         return PHP_EOL . implode(PHP_EOL, $lines);

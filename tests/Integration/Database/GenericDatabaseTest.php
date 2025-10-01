@@ -29,9 +29,11 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $db = $this->container->get(Database::class);
 
         $db->withinTransaction(function (): void {
-            query(Author::class)->insert(
-                name: 'Brent',
-            )->execute();
+            query(Author::class)
+                ->insert(
+                    name: 'Brent',
+                )
+                ->execute();
         });
 
         $this->assertSame(1, query(Author::class)->count()->execute());
@@ -44,9 +46,11 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $db = $this->container->get(Database::class);
 
         $db->withinTransaction(function (): never {
-            query(Author::class)->insert(
-                name: 'Brent',
-            )->execute();
+            query(Author::class)
+                ->insert(
+                    name: 'Brent',
+                )
+                ->execute();
 
             throw new Exception('Test');
         });

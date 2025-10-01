@@ -14,9 +14,6 @@ use Tempest\Support\Json;
 use function serialize;
 use function unserialize;
 
-/**
- * @mago-expect php-unit/strict-assertions
- */
 final class DurationTest extends TestCase
 {
     use DateTimeTestTrait;

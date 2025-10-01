@@ -31,9 +31,9 @@ final class TaskRenderer
             ComponentState::ERROR => '<style="fg-red">An error occurred.</style>',
             ComponentState::CANCELLED => '<style="fg-yellow">Cancelled.</style>',
             ComponentState::DONE => $finishedAt
-                ? ('<style="fg-gray">Done in <style="bold">' . $runtime($finishedAt) . 'ms</style>.</style>')
+                ? '<style="fg-gray">Done in <style="bold">' . $runtime($finishedAt) . 'ms</style>.</style>'
                 : '<style="fg-gray">Done.</style>',
-            default => $hint ?? ($runtime(hrtime(as_number: true)) . 'ms'),
+            default => $hint ?? $runtime(hrtime(as_number: true)) . 'ms',
         };
 
         $this->line(

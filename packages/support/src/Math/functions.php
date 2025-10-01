@@ -191,8 +191,6 @@ namespace Tempest\Support\Math {
      *
      * @throws Exception\ArithmeticException If the $numerator is Math\INT64_MIN and the $denominator is -1.
      * @throws Exception\DivisionByZeroException If the $denominator is 0.
-     *
-     * @mago-expect best-practices/dont-catch-error
      */
     function div(int $numerator, int $denominator): int
     {
@@ -234,8 +232,6 @@ namespace Tempest\Support\Math {
      *
      * @throws Exception\InvalidArgumentException If $number contains an invalid digit in base $from_base
      * @throws Exception\OverflowException In case of an integer overflow
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     function from_base(string $number, int $fromBase): int
     {
@@ -415,7 +411,7 @@ namespace Tempest\Support\Math {
         $mean = 0.0;
 
         foreach ($numbers as $number) {
-            $mean += ((float) $number) / $count;
+            $mean += (float) $number / $count;
         }
 
         return $mean;

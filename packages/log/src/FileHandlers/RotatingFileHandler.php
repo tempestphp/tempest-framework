@@ -16,10 +16,10 @@ final class RotatingFileHandler extends MonoRotatingFileHandler
     {
         if (preg_match('{^[Yy](([/_.-]?m([/_.-]?d)?)|([/_.-]?W))?$}', $dateFormat) === 0) {
             throw new InvalidArgumentException(
-                'Invalid date format - format must be one of ' .
-                    'RotatingFileHandler::FILE_PER_DAY ("Y-m-d"), RotatingFileHandler::FILE_PER_WEEK ("Y-W"), ' .
-                    'RotatingFileHandler::FILE_PER_MONTH ("Y-m") or RotatingFileHandler::FILE_PER_YEAR ("Y"), ' .
-                    'or you can set one of the date formats using slashes, underscores and/or dots instead of dashes.',
+                'Invalid date format - format must be one of '
+                . 'RotatingFileHandler::FILE_PER_DAY ("Y-m-d"), RotatingFileHandler::FILE_PER_WEEK ("Y-W"), '
+                . 'RotatingFileHandler::FILE_PER_MONTH ("Y-m") or RotatingFileHandler::FILE_PER_YEAR ("Y"), '
+                . 'or you can set one of the date formats using slashes, underscores and/or dots instead of dashes.',
             );
         }
 

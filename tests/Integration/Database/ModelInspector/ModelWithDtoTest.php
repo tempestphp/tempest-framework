@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -26,7 +26,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 
     public function test_dto_is_skipped_as_relation(): void
     {
-        $migration = new class implements DatabaseMigration {
+        $migration = new class implements MigratesUp {
             public string $name = '000_model_with_dto';
 
             public function up(): QueryStatement
@@ -34,11 +34,6 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
                 return CreateTableStatement::forModel(ModelWithDtoTestModelWithSerializedDto::class)
                     ->primary()
                     ->dto('dto');
-            }
-
-            public function down(): null
-            {
-                return null;
             }
         };
 

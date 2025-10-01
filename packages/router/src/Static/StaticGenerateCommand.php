@@ -34,9 +34,9 @@ use Tempest\View\ViewRenderer;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Throwable;
 
+use function Tempest\Router\uri;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
-use function Tempest\uri;
 
 final class StaticGenerateCommand
 {
@@ -114,7 +114,7 @@ final class StaticGenerateCommand
 
                 $fileName = $uri === '/'
                     ? 'index.html'
-                    : ($uri . '/index.html');
+                    : $uri . '/index.html';
 
                 if ($filter !== null && $uri !== $filter) {
                     continue;
@@ -136,7 +136,7 @@ final class StaticGenerateCommand
 
                     $body = $response->body;
 
-                    $content = ($body instanceof View)
+                    $content = $body instanceof View
                         ? $this->viewRenderer->render($body)
                         : $body;
 

@@ -3,7 +3,7 @@
 use Tempest\View\GenericView;
 use Tests\Tempest\Fixtures\Modules\Form\FormController;
 
-use function Tempest\uri;
+use function Tempest\Router\uri;
 
 /** @var GenericView $this */
 

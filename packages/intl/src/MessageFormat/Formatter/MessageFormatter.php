@@ -83,7 +83,7 @@ final class MessageFormatter
 
                     if (! array_key_exists($variableName, $this->variables)) {
                         if ($declaration->optional) {
-                            $parameters = $this->evaluateOptions($expression->function?->options ?? []);
+                            $parameters = $this->evaluateOptions($expression->function->options ?? []);
 
                             $this->variables[$variableName] = new LocalVariable(
                                 identifier: $variableName,
@@ -183,7 +183,7 @@ final class MessageFormatter
                     continue;
                 }
 
-                if (! ($keyNode instanceof Literal)) {
+                if (! $keyNode instanceof Literal) {
                     $matches = false;
                     break;
                 }
@@ -294,7 +294,7 @@ final class MessageFormatter
             return $formattingFunction->format($value, $parameters);
         }
 
-        return new FormattedValue($value, $value !== null ? ((string) $value) : '');
+        return new FormattedValue($value, $value !== null ? (string) $value : '');
     }
 
     /**

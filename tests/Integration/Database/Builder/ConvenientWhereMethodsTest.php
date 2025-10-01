@@ -287,26 +287,29 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $expected = 'SELECT * FROM `books` WHERE books.category IN (?) AND books.status NOT IN (?) AND books.rating BETWEEN ? AND ? AND books.price NOT BETWEEN ? AND ? AND books.deleted_at IS NULL AND books.published_at IS NOT NULL AND books.featured != ? AND books.title LIKE ? AND books.description NOT LIKE ? OR books.tags IN (?) OR books.awards NOT IN (?) OR books.pages BETWEEN ? AND ? OR books.weight NOT BETWEEN ? AND ? OR books.special_edition IS NULL OR books.isbn IS NOT NULL OR books.limited_edition != ? OR books.publisher LIKE ? OR books.format NOT LIKE ?';
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
-        $this->assertSame([
-            'fiction',
-            'draft',
-            3.0,
-            5.0,
-            100.0,
-            200.0,
-            false,
-            '%adventure%',
-            '%boring%',
-            'bestseller',
-            'none',
-            200,
-            400,
-            2.0,
-            5.0,
-            true,
-            '%Penguin%',
-            '%digital%',
-        ], $query->bindings);
+        $this->assertSame(
+            expected: [
+                'fiction',
+                'draft',
+                3.0,
+                5.0,
+                100.0,
+                200.0,
+                false,
+                '%adventure%',
+                '%boring%',
+                'bestseller',
+                'none',
+                200,
+                400,
+                2.0,
+                5.0,
+                true,
+                '%Penguin%',
+                '%digital%',
+            ],
+            actual: $query->bindings,
+        );
     }
 
     public function test_where_between_with_tempest_datetime(): void

@@ -36,7 +36,7 @@ final class PasswordHasherTest extends TestCase
     public function test_hash_verify(): void
     {
         $hasher = new GenericPasswordHasher(new ArgonConfig());
-        $password = 'my_secure_password'; // @mago-expect security/no-literal-password
+        $password = 'my_secure_password'; // @mago-expect lint:no-literal-password
         $hash = $hasher->hash($password);
 
         $this->assertTrue($hasher->verify($password, $hash));

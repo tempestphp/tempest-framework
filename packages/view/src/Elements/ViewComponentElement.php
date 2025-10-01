@@ -142,9 +142,9 @@ final class ViewComponentElement implements Element, WithToken
                 // Open the current scope
                 sprintf(
                     '<?php (function ($attributes, $slots, $scopedVariables %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
-                    $this->dataAttributes->isNotEmpty() ? (', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
-                    $this->expressionAttributes->isNotEmpty() ? (', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ')) : '',
-                    $this->scopedVariables->isNotEmpty() ? (', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ')) : '',
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
                 ),
             )
             ->append(
@@ -157,10 +157,10 @@ final class ViewComponentElement implements Element, WithToken
                         ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
                         : '',
                     $this->dataAttributes->isNotEmpty()
-                        ? (', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', '))
+                        ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
                         : '',
                     $this->expressionAttributes->isNotEmpty()
-                        ? (', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', '))
+                        ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
                         : '',
                 ),
             );
@@ -183,7 +183,7 @@ final class ViewComponentElement implements Element, WithToken
 
                     // A slot doesn't have any content, so we'll comment it out.
                     // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                    return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
+                    return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
                 }
 
                 $slotElement = $this->getSlotElement($slot->name);
@@ -211,7 +211,7 @@ final class ViewComponentElement implements Element, WithToken
                 return $childElement;
             }
 
-            if (! ($childElement instanceof SlotElement)) {
+            if (! $childElement instanceof SlotElement) {
                 $defaultElements[] = $childElement;
             }
         }

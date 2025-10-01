@@ -22,7 +22,7 @@ composer phpunit
 
 ## Test-specific discovery locations
 
-Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTest` class. 
+Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTest` class.
 
 On top of that, Tempest _will_ look for files in the `tests/Fixtures` directory and discover them by default. You can override this behavior by providing your own implementation of `discoverTestLocations()`, where you can return an array of `DiscoveryLocation` objects (or nothing).
 
@@ -46,7 +46,7 @@ final class HomeControllerTest extends IntegrationTest
 If you want to test code that interacts with the database, your test class can call the `setupDatabase()` method. This method will create and migrate a clean database for you on the fly.
 
 ```php
-class TodoControllerTest extends IntegrationTest
+final class TodoControllerTest extends IntegrationTest
 {
     protected function setUp(): void
     {
@@ -60,8 +60,6 @@ class TodoControllerTest extends IntegrationTest
 Most likely, you'll want to use a test-specific database connection. You can create a `database.config.php` file anywhere within test-specific discovery locations, and Tempest will use that connection instead of the project's default. For example, you can create a file `tests/Fixtures/database.config.php` like so:
 
 ```php tests/Fixtures/database.config.php
-<?php
-
 use Tempest\Database\Config\SQLiteConfig;
 
 return new SQLiteConfig(
@@ -72,7 +70,7 @@ return new SQLiteConfig(
 By default, no tables will be migrated. You can choose to provide a list of migrations that will be run for every test that calls `setupDatabase()`, or you can run specific migrations on a per-test basis.
 
 ```php
-class TodoControllerTest extends IntegrationTest
+final class TodoControllerTest extends IntegrationTest
 {
     protected function migrateDatabase(): void
     {
@@ -85,7 +83,7 @@ class TodoControllerTest extends IntegrationTest
 ```
 
 ```php
-class TodoControllerTest extends IntegrationTest
+final class TodoControllerTest extends IntegrationTest
 {
     public function test_create_todo(): void
     {

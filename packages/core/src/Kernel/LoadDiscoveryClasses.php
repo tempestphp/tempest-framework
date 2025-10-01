@@ -154,7 +154,7 @@ final class LoadDiscoveryClasses
             if ($location->isVendor()) {
                 try {
                     $input = new ClassReflector($className);
-                } catch (Throwable) { // @mago-expect best-practices/no-empty-catch-clause
+                } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
                 }
             } elseif (class_exists($className)) {
                 $input = new ClassReflector($className);

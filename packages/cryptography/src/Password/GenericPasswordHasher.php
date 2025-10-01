@@ -44,9 +44,14 @@ final class GenericPasswordHasher implements PasswordHasher
         return password_needs_rehash($hash, $this->algorithm->value, $this->config->options);
     }
 
-    public function analyze(#[\SensitiveParameter] string $hash): Hash
+    public function analyze(#[\SensitiveParameter] string $hash): ?Hash
     {
         $info = password_get_info($hash);
+
+        if ($info['algo'] === null) {
+            return null;
+        }
+
         $algorithm = HashingAlgorithm::from($info['algo']);
 
         return new Hash(

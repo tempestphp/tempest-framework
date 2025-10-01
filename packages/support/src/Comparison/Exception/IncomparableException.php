@@ -16,7 +16,7 @@ final class IncomparableException extends PhpInvalidArgumentException
             'Unable to compare "%s" with "%s"%s',
             get_debug_type($a),
             get_debug_type($b),
-            $additionalInfo ? (': ' . $additionalInfo) : '.',
+            $additionalInfo ? ': ' . $additionalInfo : '.',
         ));
     }
 }

@@ -93,7 +93,7 @@ final class ConsoleArgumentBag
             return $argument;
         }
 
-        $resolved = ($argument->value instanceof $argumentDefinition->type)
+        $resolved = $argument->value instanceof $argumentDefinition->type
             ? $argument->value
             : $argumentDefinition->type::tryFrom($argument->value);
 

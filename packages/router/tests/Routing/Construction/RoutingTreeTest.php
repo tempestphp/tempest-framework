@@ -45,11 +45,14 @@ final class RoutingTreeTest extends TestCase
         $subject->add($routeBuilder->withUri('/{greeting}/{name}')->asMarkedRoute('d'));
         $subject->add($routeBuilder->withUri('/{greeting}/brent')->asMarkedRoute('e'));
 
-        $this->assertEquals([
-            'GET' => new MatchingRegex([
-                '#^(?|\/?$(*MARK:a)|/([^/]++)(?|/brent\/?$(*MARK:e)|/hello(?|/brent\/?$(*MARK:c)|/([^/]++)\/?$(*MARK:b))|/([^/]++)\/?$(*MARK:d)))#',
-            ]),
-        ], $subject->toMatchingRegexes());
+        $this->assertEquals(
+            expected: [
+                'GET' => new MatchingRegex([
+                    '#^(?|\/?$(*MARK:a)|/([^/]++)(?|/brent\/?$(*MARK:e)|/hello(?|/brent\/?$(*MARK:c)|/([^/]++)\/?$(*MARK:b))|/([^/]++)\/?$(*MARK:d)))#',
+                ]),
+            ],
+            actual: $subject->toMatchingRegexes(),
+        );
     }
 
     public function test_chunked_routes(): void
@@ -81,9 +84,12 @@ final class RoutingTreeTest extends TestCase
         $subject->add($routeBuilder->asMarkedRoute('a'));
         $subject->add($routeBuilder->withMethod(Method::POST)->asMarkedRoute('b'));
 
-        $this->assertEquals([
-            'GET' => new MatchingRegex(['#^\/?$(*MARK:a)#']),
-            'POST' => new MatchingRegex(['#^\/?$(*MARK:b)#']),
-        ], $subject->toMatchingRegexes());
+        $this->assertEquals(
+            expected: [
+                'GET' => new MatchingRegex(['#^\/?$(*MARK:a)#']),
+                'POST' => new MatchingRegex(['#^\/?$(*MARK:b)#']),
+            ],
+            actual: $subject->toMatchingRegexes(),
+        );
     }
 }

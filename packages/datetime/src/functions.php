@@ -42,8 +42,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     function format_rfc3339(Timestamp $timestamp, ?SecondsStyle $secondsStyle = null, bool $useZ = false, ?Timezone $timezone = null): string
     {
@@ -145,9 +143,6 @@ namespace Tempest\DateTime {
      * @return array{int, int}
      *
      * @internal
-     *
-     * @mago-expect best-practices/no-boolean-literal-comparison
-     * @mago-expect best-practices/no-else-clause
      */
     function high_resolution_time(): array
     {
@@ -192,8 +187,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-boolean-literal-comparison
      */
     function intl_parse(
         string $rawString,
@@ -210,7 +203,7 @@ namespace Tempest\DateTime {
         if ($timestamp === false) {
             // Only show pattern in the exception if it was provided.
             if (null !== $pattern) {
-                $formatter_pattern = ($pattern instanceof FormatPattern) ? $pattern->value : $pattern;
+                $formatter_pattern = $pattern instanceof FormatPattern ? $pattern->value : $pattern;
 
                 throw new ParserException(sprintf(
                     "Unable to interpret '%s' as a valid date/time using pattern '%s'.",
@@ -236,7 +229,7 @@ namespace Tempest\DateTime {
 
         $parts = explode(' ', $time);
         $seconds = (int) $parts[1];
-        $nanoseconds = (int) (((float) $parts[0]) * ((float) NANOSECONDS_PER_SECOND));
+        $nanoseconds = (int) ((float) $parts[0] * (float) NANOSECONDS_PER_SECOND);
 
         return [$seconds, $nanoseconds];
     }
@@ -277,8 +270,6 @@ namespace Tempest\DateTime {
 
     /**
      * @internal
-     *
-     * @mago-expect best-practices/no-else-clause
      */
     function create_intl_calendar_from_date_time(
         Timezone $timezone,

@@ -15,7 +15,7 @@ final class Option
     /** @var T */
     public mixed $displayValue {
         get {
-            if (! ($this->value instanceof UnitEnum)) {
+            if (! $this->value instanceof UnitEnum) {
                 return $this->value;
             }
 

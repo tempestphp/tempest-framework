@@ -39,7 +39,7 @@ final class PhpRedisClientTest extends TestCase
     {
         try {
             $this->redis->flush();
-        } catch (Throwable) {
+        } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
         }
     }
 

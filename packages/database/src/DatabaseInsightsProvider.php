@@ -70,7 +70,7 @@ final class DatabaseInsightsProvider implements InsightsProvider
 
     private function getSQLitePath(): null|Insight|string
     {
-        if (! ($this->databaseConfig instanceof SQLiteConfig)) {
+        if (! $this->databaseConfig instanceof SQLiteConfig) {
             return null;
         }
 

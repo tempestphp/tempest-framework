@@ -35,6 +35,6 @@ final readonly class Schedule
          */
         public bool $runInBackground = true,
     ) {
-        $this->interval = ($interval instanceof Interval) ? $interval : $interval->toInterval();
+        $this->interval = $interval instanceof Interval ? $interval : $interval->toInterval();
     }
 }

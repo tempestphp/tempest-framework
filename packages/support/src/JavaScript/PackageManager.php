@@ -39,15 +39,12 @@ enum PackageManager: string
 
     public function getRunCommand(string $script): string
     {
-        return (
-            $this->getBinaryName() .
-            ' ' . match ($this) {
-                self::BUN => $script,
-                self::NPM => "run {$script}",
-                self::YARN => $script,
-                self::PNPM => $script,
-            }
-        );
+        return $this->getBinaryName() . ' ' . match ($this) {
+            self::BUN => $script,
+            self::NPM => "run {$script}",
+            self::YARN => $script,
+            self::PNPM => $script,
+        };
     }
 
     public function getInstallCommand(): string

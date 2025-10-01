@@ -9,7 +9,7 @@ use Stringable;
 use Tempest\DateTime\DateTime;
 use Tempest\Mapper\SerializeWith;
 
-// @mago-expect maintainability/too-many-properties
+// @mago-expect lint:too-many-properties
 final class ObjectWithSerializerProperties
 {
     public string $stringProp = 'a';

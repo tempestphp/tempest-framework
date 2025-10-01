@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\BelongsTo;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasOne;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
@@ -202,7 +202,7 @@ final class TestProfile
     ) {}
 }
 
-final class CreateLogEntryMigration implements DatabaseMigration
+final class CreateLogEntryMigration implements MigratesUp
 {
     public string $name = '001_create_log_entries';
 
@@ -213,14 +213,9 @@ final class CreateLogEntryMigration implements DatabaseMigration
             ->text('message')
             ->text('context');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateCacheEntryMigration implements DatabaseMigration
+final class CreateCacheEntryMigration implements MigratesUp
 {
     public string $name = '003_create_cache_entries';
 
@@ -232,14 +227,9 @@ final class CreateCacheEntryMigration implements DatabaseMigration
             ->integer('ttl')
             ->unique('cache_key');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateMixedModelMigration implements DatabaseMigration
+final class CreateMixedModelMigration implements MigratesUp
 {
     public string $name = '005_create_mixed_models';
 
@@ -250,14 +240,9 @@ final class CreateMixedModelMigration implements DatabaseMigration
             ->text('regular_field')
             ->text('another_field');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateTestUserMigration implements DatabaseMigration
+final class CreateTestUserMigration implements MigratesUp
 {
     public string $name = '007_create_test_users';
 
@@ -268,14 +253,9 @@ final class CreateTestUserMigration implements DatabaseMigration
             ->text('name')
             ->text('email');
     }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
-    }
 }
 
-final class CreateTestProfileMigration implements DatabaseMigration
+final class CreateTestProfileMigration implements MigratesUp
 {
     public string $name = '009_create_test_profiles';
 
@@ -286,10 +266,5 @@ final class CreateTestProfileMigration implements DatabaseMigration
             ->belongsTo('test_profiles.user_id', 'test_users.id')
             ->text('bio')
             ->integer('age');
-    }
-
-    public function down(): ?QueryStatement
-    {
-        return null;
     }
 }

@@ -265,7 +265,7 @@ final class GenericContainer implements Container
 
     public function addInitializer(ClassReflector|string $initializerClass): Container
     {
-        if (! ($initializerClass instanceof ClassReflector)) {
+        if (! $initializerClass instanceof ClassReflector) {
             $initializerClass = new ClassReflector($initializerClass);
         }
 
@@ -295,7 +295,7 @@ final class GenericContainer implements Container
 
     public function removeInitializer(ClassReflector|string $initializerClass): Container
     {
-        if (! ($initializerClass instanceof ClassReflector)) {
+        if (! $initializerClass instanceof ClassReflector) {
             $initializerClass = new ClassReflector($initializerClass);
         }
 
@@ -438,31 +438,37 @@ final class GenericContainer implements Container
         }
 
         $instance = $constructor === null
-            ? // If there isn't a constructor, don't waste time
             // trying to build it.
-            $classReflector->newInstanceWithoutConstructor()
-            : // Otherwise, use our autowireDependencies helper to automagically
+            // If there isn't a constructor, don't waste time
+            ? $classReflector->newInstanceWithoutConstructor()
             // build up each parameter.
-            $classReflector->newInstanceArgs(
+            // Otherwise, use our autowireDependencies helper to automagically
+            : $classReflector->newInstanceArgs(
                 $this->autowireDependencies($constructor, $params),
             );
 
         if (
-            ! $classReflector->getType()->matches(Initializer::class) &&
-                ! $classReflector->getType()->matches(DynamicInitializer::class) &&
-                $classReflector->hasAttribute(Singleton::class)
+            ! $classReflector->getType()->matches(Initializer::class)
+            && ! $classReflector->getType()->matches(DynamicInitializer::class)
+            && $classReflector->hasAttribute(Singleton::class)
         ) {
             $this->singleton($className, $instance);
         }
 
         foreach ($classReflector->getProperties() as $property) {
-            if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
+            $inject = $property->getAttribute(Inject::class);
+
+            if ($inject && ! $property->isInitialized($instance)) {
                 if ($property->hasAttribute(Proxy::class)) {
-                    $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
-                        fn () => $this->get($property->getType()->getName()),
-                    ));
+                    $property->set($instance, $property
+                        ->getType()
+                        ->asClass()
+                        ->getReflection()
+                        ->newLazyProxy(
+                            fn () => $this->get($property->getType()->getName(), $inject->tag),
+                        ));
                 } else {
-                    $property->set($instance, $this->get($property->getType()->getName()));
+                    $property->set($instance, $this->get($property->getType()->getName(), $inject->tag));
                 }
             }
         }

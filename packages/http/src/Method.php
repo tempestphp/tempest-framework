@@ -15,4 +15,14 @@ enum Method: string
     case OPTIONS = 'OPTIONS';
     case TRACE = 'TRACE';
     case PATCH = 'PATCH';
+
+    public static function trySpoofingFrom(string $method): ?Method
+    {
+        $method = Method::tryFrom(strtoupper($method));
+
+        return match ($method) {
+            self::DELETE, self::PATCH, self::PUT => $method,
+            default => null,
+        };
+    }
 }

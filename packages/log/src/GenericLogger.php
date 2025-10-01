@@ -61,9 +61,9 @@ final class GenericLogger implements Logger
     }
 
     /** @param MonologLogLevel|LogLevel|string $level */
-    public function log($level, Stringable|string $message, array $context = []): void
+    public function log(mixed $level, Stringable|string $message, array $context = []): void
     {
-        if (! ($level instanceof MonologLogLevel)) {
+        if (! $level instanceof MonologLogLevel) {
             $level = match ($level) {
                 LogLevel::EMERGENCY, PsrLogLevel::EMERGENCY => MonologLogLevel::Emergency,
                 LogLevel::ALERT, PsrLogLevel::ALERT => MonologLogLevel::Alert,

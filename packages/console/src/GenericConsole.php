@@ -277,7 +277,7 @@ final class GenericConsole implements Console
         $password = null;
         $passwordConfirm = null;
 
-        while ($password === null || $password !== $passwordConfirm) { // @mago-expect security/no-insecure-comparison
+        while ($password === null || $password !== $passwordConfirm) { // @mago-expect lint:no-insecure-comparison
             if ($password !== null) {
                 $this->error("Passwords don't match");
             }

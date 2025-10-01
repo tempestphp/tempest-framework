@@ -342,7 +342,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         };
     }
 
-    private function deleteExistingHasManyRelations($hasMany, PrimaryKey $parentId): void
+    private function deleteExistingHasManyRelations(mixed $hasMany, PrimaryKey $parentId): void
     {
         $relatedModel = inspect($hasMany->property->getIterableType()->asClass());
         $foreignKey = $hasMany->ownerJoin
@@ -356,7 +356,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             ->execute();
     }
 
-    private function deleteExistingHasOneRelation($hasOne, PrimaryKey $parentId): void
+    private function deleteExistingHasOneRelation(mixed $hasOne, PrimaryKey $parentId): void
     {
         if ($hasOne->ownerJoin) {
             $this->deleteCustomHasOneRelation($hasOne, $parentId);
@@ -366,7 +366,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         $this->deleteStandardHasOneRelation($hasOne, $parentId);
     }
 
-    private function deleteCustomHasOneRelation($hasOne, PrimaryKey $parentId): void
+    private function deleteCustomHasOneRelation(mixed $hasOne, PrimaryKey $parentId): void
     {
         $ownerModel = inspect($this->model->getName());
         $relatedModel = inspect($hasOne->property->getType()->asClass());
@@ -401,7 +401,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             ->execute();
     }
 
-    private function deleteStandardHasOneRelation($hasOne, PrimaryKey $parentId): void
+    private function deleteStandardHasOneRelation(mixed $hasOne, PrimaryKey $parentId): void
     {
         $ownerModel = inspect($this->model->getName());
         $relatedModel = inspect($hasOne->property->getType()->asClass());
@@ -417,7 +417,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             ->execute();
     }
 
-    private function handleCustomHasOneRelation($hasOne, object|array $relation, PrimaryKey $parentId): null
+    private function handleCustomHasOneRelation(mixed $hasOne, object|array $relation, PrimaryKey $parentId): null
     {
         $relatedModelId = new InsertQueryBuilder(
             model: $hasOne->property->getType()->asClass(),
@@ -439,7 +439,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         return null;
     }
 
-    private function handleStandardHasOneRelation($hasOne, object|array $relation, PrimaryKey $parentId): ?PrimaryKey
+    private function handleStandardHasOneRelation(mixed $hasOne, object|array $relation, PrimaryKey $parentId): ?PrimaryKey
     {
         $ownerModel = inspect($this->model->getName());
         $this->ensureModelHasPrimaryKey($ownerModel, 'HasOne');

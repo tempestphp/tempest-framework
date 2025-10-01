@@ -123,7 +123,7 @@ final readonly class GenericResponseSender implements ResponseSender
                 break;
             }
 
-            if (! ($message instanceof ServerSentEvent)) {
+            if (! $message instanceof ServerSentEvent) {
                 $message = new ServerSentMessage(data: $message);
             }
 

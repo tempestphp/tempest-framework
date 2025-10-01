@@ -186,6 +186,7 @@ function updateBranchProtection(bool $enabled): void
     );
 
     if (! $response->status->isSuccessful()) {
+        lw($response->body);
         throw new Exception('Failed to update branch ruleset.');
     }
 }
@@ -208,7 +209,7 @@ function triggerSubsplit(): void
     );
 
     if (! $response->status->isSuccessful()) {
-        throw new Exception('Failed to update branch ruleset.');
+        throw new Exception('Failed to trigger subsplit.');
     }
 }
 
@@ -391,7 +392,10 @@ try {
     );
 
     // Disable protection
-    updateBranchProtection(enabled: false);
+    $console->task(
+        label: 'Disabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: false),
+    );
 
     // Push tags
     $console->task(
@@ -415,8 +419,16 @@ try {
         },
     );
 
-    updateBranchProtection(enabled: true);
-    triggerSubsplit();
+    // Enable branch protection
+    $console->task(
+        label: 'Enabling branch protection',
+        handler: fn () => updateBranchProtection(enabled: true),
+    );
+
+    $console->task(
+            label: 'Trigger subsplit',
+            handler: fn () => triggerSubsplit(),
+    );
 
     $console->success(sprintf(
         'Released <em>%1$s</em>. The <href="https://github.com/tempestphp/tempest-framework/releases/tag/%1$s">GitHub release</href> will be created automatically in a few seconds.',

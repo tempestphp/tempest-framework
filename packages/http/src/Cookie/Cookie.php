@@ -116,15 +116,15 @@ final class Cookie implements Stringable
             }
 
             if ($attributeName === 'max-age') {
-                $cookie['expires'] = time() + ((int) $attributeValue);
+                $cookie['expires'] = time() + (int) $attributeValue;
             }
         }
 
         return new Cookie(
             key: $cookie['name'],
             value: $cookie['value'] ?? null,
-            expiresAt: isset($cookie['expires']) ? ((int) $cookie['expires']) : null,
-            maxAge: isset($cookie['max-age']) ? ((int) $cookie['max-age']) : null,
+            expiresAt: isset($cookie['expires']) ? (int) $cookie['expires'] : null,
+            maxAge: isset($cookie['max-age']) ? (int) $cookie['max-age'] : null,
             domain: $cookie['domain'] ?? null,
             path: $cookie['path'] ?? '/',
             secure: isset($cookie['secure']) && $cookie['secure'] === true,

@@ -87,9 +87,11 @@ final class MockClock implements Clock
         $this->now = $this->now->minus($duration);
     }
 
+    /**
+     * @mago-expect lint:no-debug-symbols
+     */
     public function dd(): void
     {
-        // @phpstan-ignore disallowed.function
-        dd($this->now); // @mago-expect best-practices/no-debug-symbols
+        dd($this->now);
     }
 }

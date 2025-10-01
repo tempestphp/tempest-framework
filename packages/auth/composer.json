@@ -1,15 +1,37 @@
 {
     "name": "tempest/auth",
-    "description": "A flexible authentication package for Tempest, providing user authentication and authorization.",
+    "description": "A flexible authentication package for Tempest, providing authentication and authorization.",
     "require": {
         "php": "^8.4",
         "tempest/core": "dev-main",
         "tempest/router": "dev-main",
-        "tempest/database": "dev-main"
+        "tempest/database": "dev-main",
+        "tempest/mapper": "dev-main",
+        "league/oauth2-client": "^2.8"
+    },
+    "require-dev": {
+        "league/oauth2-github": "^3.1",
+        "league/oauth2-google": "^4.0",
+        "league/oauth2-facebook": "^2.0",
+        "league/oauth2-instagram": "^3.0",
+        "league/oauth2-linkedin": "^5.1",
+        "patrickbussmann/oauth2-apple": "^0.3",
+        "stevenmaguire/oauth2-microsoft": "^2.2",
+        "thenetworg/oauth2-azure": "^2.2",
+        "riskio/oauth2-auth0": "^2.4",
+        "adam-paterson/oauth2-slack": "^1.1",
+        "wohali/oauth2-discord-new": "^1.2",
+        "smolblog/oauth2-twitter": "^1.0",
+        "depotwarehouse/oauth2-twitch": "^1.3"
     },
     "autoload": {
         "psr-4": {
             "Tempest\\Auth\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Auth\\Tests\\": "tests"
         }
     },
     "license": "MIT",
