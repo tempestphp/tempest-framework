@@ -53,7 +53,7 @@ final readonly class DiscordOAuthController
     public function redirect(): Redirect
     {
         // Redirects to the OAuth provider's authorization page
-        return new Redirect($this->oauth->getAuthorizationUrl());
+        return $this->oauth->createRedirect();
     }
 
     #[Get('/auth/discord/callback')]
