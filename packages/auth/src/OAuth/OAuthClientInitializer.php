@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth;
 
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Exceptions\OAuthProviderWasMissing;
 use Tempest\Auth\Exceptions\OAuthWasNotConfigured;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
+use Tempest\Http\Session\Session;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\UriGenerator;
@@ -38,6 +40,8 @@ final class OAuthClientInitializer implements DynamicInitializer
             config: $config,
             uri: $container->get(UriGenerator::class),
             factory: $container->get(ObjectFactory::class),
+            session: $config->get(Session::class),
+            authenticator: $container->get(Authenticator::class),
         );
     }
 }
