@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth;
 
+use Closure;
 use League\OAuth2\Client\Token\AccessToken;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Http\Request;
 
 interface OAuthClient
 {
@@ -32,4 +35,10 @@ interface OAuthClient
      * Completes OAuth flow with code and get user information.
      */
     public function fetchUser(string $code): OAuthUser;
+
+    /**
+     * Authenticates a user based on the given oauth callback request
+     * @param Closure(\Tempest\Auth\OAuth\OAuthUser $user): Authenticatable $authenticate
+     */
+    public function authenticate(Request $request, Closure $authenticate): Authenticatable;
 }

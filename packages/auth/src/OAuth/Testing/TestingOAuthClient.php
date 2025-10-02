@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth\Testing;
 
+use Closure;
 use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\Assert;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
+use Tempest\Http\Request;
 use Tempest\Router\UriGenerator;
 use Tempest\Support\Arr;
 use Tempest\Support\Random;
@@ -46,8 +50,9 @@ final class TestingOAuthClient implements OAuthClient
 
     public function __construct(
         private(set) OAuthUser $user,
-        private(set) OAuthConfig $config,
-        private UriGenerator $uri,
+        private(set) readonly OAuthConfig $config,
+        private readonly Authenticator $authenticator,
+        private readonly UriGenerator $uri,
     ) {}
 
     public function getAuthorizationUrl(array $scopes = [], array $options = []): string
@@ -113,6 +118,15 @@ final class TestingOAuthClient implements OAuthClient
         ];
 
         return $user;
+    }
+
+    public function authenticate(Request $request, Closure $authenticate): Authenticatable
+    {
+        $authenticatable = $authenticate($this->user);
+
+        $this->authenticator->authenticate($authenticatable);
+
+        return $authenticatable;
     }
 
     /**
