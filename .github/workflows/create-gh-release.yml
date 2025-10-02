@@ -44,7 +44,7 @@ jobs:
           RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          processed_body=$(echo "$RELEASE_BODY" | perl -0777 -pe 's/\r\n?/\n/g; s/\n\n### /\n### /g; s/### (.*?)\n\n/### $1\n/gs')
+          processed_body=$(echo "$RELEASE_BODY" | perl -0777 -pe 's/\n*### (\S+) (.+?)\n+/\n### `\1`  \2\n/g')
           final_content=$(printf "%s\n%s" "-# Read the [GitHub release](<${RELEASE_URL}>)." "$processed_body")
           jq -n \
             --arg content "$final_content" \
