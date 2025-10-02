@@ -40,7 +40,7 @@ final class OAuthClientInitializer implements DynamicInitializer
             config: $config,
             uri: $container->get(UriGenerator::class),
             factory: $container->get(ObjectFactory::class),
-            session: $config->get(Session::class),
+            session: $container->get(Session::class),
             authenticator: $container->get(Authenticator::class),
         );
     }
