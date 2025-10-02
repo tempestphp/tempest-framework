@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.1.0](https://github.com/tempestphp/tempest-framework/compare/v2.0.4..2.1.0)  —  2025-10-02
+## [2.2.0](https://github.com/tempestphp/tempest-framework/compare/v2.1.0..2.2.0)  —  2025-10-02
+
+### 🚀 Features
+
+- **auth**: improve OAuth user flow (#1587) ([873fae9](https://github.com/tempestphp/tempest-framework/commit/873fae97cc30372860e0686b4da91ee7705b9cd1))
+
+### 🐛 Bug fixes
+
+- **oauth**: properly set state when creating the redirect URL (#1592) ([885a219](https://github.com/tempestphp/tempest-framework/commit/885a219ace57347130bd64220ce455d48675ffbc))
+
+
+## [2.1.0](https://github.com/tempestphp/tempest-framework/compare/v2.0.4..v2.1.0)  —  2025-10-02
 
 ### 🚨 Breaking changes
 
