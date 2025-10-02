@@ -7,7 +7,7 @@ namespace Tempest\Container\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
-use Tempest\Container\Exceptions\DecoratorDIdNotImplementInterface;
+use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
@@ -674,7 +674,7 @@ final class ContainerTest extends TestCase
         $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
         $container->addDecorator(DecoratorInvalid::class, DecoratedInterface::class);
 
-        $this->expectException(DecoratorDIdNotImplementInterface::class);
+        $this->expectException(DecoratorDidNotImplementInterface::class);
 
         $container->get(DecoratedInterface::class);
     }

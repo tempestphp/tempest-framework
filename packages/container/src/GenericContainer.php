@@ -7,7 +7,7 @@ namespace Tempest\Container;
 use ArrayIterator;
 use Closure;
 use ReflectionFunction;
-use Tempest\Container\Exceptions\DecoratorDIdNotImplementInterface;
+use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
@@ -667,8 +667,8 @@ final class GenericContainer implements Container
 
             $decorator = $this->resolveDependency($decoratorClass, $tag, ...$params);
 
-            if (! ($decorator instanceof $className)) {
-                throw new DecoratorDIdNotImplementInterface($className, $decoratorClass, $className);
+            if (! $decorator instanceof $className) {
+                throw new DecoratorDidNotImplementInterface($className, $decoratorClass);
             }
 
             $instance = $decorator;
