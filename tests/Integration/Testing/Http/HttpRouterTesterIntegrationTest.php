@@ -164,4 +164,18 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->patch('/this-route-does-not-exist')
             ->assertOk();
     }
+
+    public function test_query(): void
+    {
+        $this->assertSame($this->http->get('/test?foo=baz', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->get('/test?jon=doe', query: ['foo' => 'bar'])->request->uri, '/test?jon=doe&foo=bar');
+        $this->assertSame($this->http->get('/test?jon=doe', query: ['foo' => ['bar' => 'baz']])->request->uri, '/test?jon=doe&foo%5Bbar%5D=baz');
+
+        $this->assertSame($this->http->get('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->post('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->put('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->delete('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->patch('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->head('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+    }
 }
