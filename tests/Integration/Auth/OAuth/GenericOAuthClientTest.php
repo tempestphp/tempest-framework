@@ -34,7 +34,7 @@ final class GenericOAuthClientTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function state_is_set_when_redirect_is_created()
+    public function state_is_set_when_redirect_is_created(): void
     {
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'client-id',
