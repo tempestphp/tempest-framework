@@ -8,6 +8,7 @@ use Closure;
 use League\OAuth2\Client\Token\AccessToken;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Http\Request;
+use Tempest\Http\Responses\Redirect;
 
 interface OAuthClient
 {
@@ -35,6 +36,11 @@ interface OAuthClient
      * Completes OAuth flow with code and get user information.
      */
     public function fetchUser(string $code): OAuthUser;
+
+    /**
+     * Creates a redirect response for the OAuth flow.
+     */
+    public function createRedirect(): Redirect;
 
     /**
      * Authenticates a user based on the given oauth callback request

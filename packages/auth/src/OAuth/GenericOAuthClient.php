@@ -15,6 +15,7 @@ use Tempest\Auth\Exceptions\OAuthStateWasInvalid;
 use Tempest\Auth\Exceptions\OAuthTokenCouldNotBeRetrieved;
 use Tempest\Auth\Exceptions\OAuthUserCouldNotBeRetrieved;
 use Tempest\Http\Request;
+use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Session\Session;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Router\UriGenerator;
@@ -31,8 +32,7 @@ final class GenericOAuthClient implements OAuthClient
         private readonly Session $session,
         private readonly Authenticator $authenticator,
         ?AbstractProvider $provider = null,
-    )
-    {
+    ) {
         $this->provider = $provider ?? $this->config->createProvider();
     }
 
@@ -53,8 +53,6 @@ final class GenericOAuthClient implements OAuthClient
 
     public function getAuthorizationUrl(array $scopes = [], array $options = []): string
     {
-        $this->session->set($this->sessionKey, $this->provider->getState());
-
         return $this->provider->getAuthorizationUrl([
             'scope' => $scopes ?? $this->config->scopes,
             'redirect_uri' => $this->uri->createUri($this->config->redirectTo),
@@ -96,6 +94,13 @@ final class GenericOAuthClient implements OAuthClient
         return $this->getUser(
             token: $this->getAccessToken($code),
         );
+    }
+
+    public function createRedirect(): Redirect
+    {
+        $this->session->set($this->sessionKey, $this->provider->getState());
+
+        return new Redirect($this->getAuthorizationUrl());
     }
 
     public function authenticate(Request $request, Closure $authenticate): Authenticatable

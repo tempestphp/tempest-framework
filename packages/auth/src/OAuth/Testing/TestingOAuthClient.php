@@ -13,6 +13,7 @@ use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
 use Tempest\Http\Request;
+use Tempest\Http\Responses\Redirect;
 use Tempest\Router\UriGenerator;
 use Tempest\Support\Arr;
 use Tempest\Support\Random;
@@ -118,6 +119,11 @@ final class TestingOAuthClient implements OAuthClient
         ];
 
         return $user;
+    }
+
+    public function createRedirect(): Redirect
+    {
+        return new Redirect($this->getAuthorizationUrl());
     }
 
     public function authenticate(Request $request, Closure $authenticate): Authenticatable
