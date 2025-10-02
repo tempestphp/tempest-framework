@@ -6,8 +6,12 @@ namespace Tests\Tempest\Integration\Log;
 
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LogLevel as PsrLogLevel;
 use ReflectionClass;
+use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
@@ -16,6 +20,7 @@ use Tempest\Log\GenericLogger;
 use Tempest\Log\LogConfig;
 use Tempest\Log\LogLevel;
 use Tempest\Log\MessageLogged;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -23,7 +28,20 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class GenericLoggerTest extends FrameworkIntegrationTestCase
 {
-    public function test_append_log_channel_works(): void
+    #[PreCondition]
+    protected function configure(): void
+    {
+        Filesystem\ensure_directory_empty(__DIR__ . '/logs');
+    }
+
+    #[PostCondition]
+    protected function cleanup(): void
+    {
+        Filesystem\delete_directory(__DIR__ . '/logs');
+    }
+
+    #[Test]
+    public function append_log_channel(): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
 
@@ -34,29 +52,17 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
-
         $logger->info('test');
 
         $this->assertFileExists($filePath);
-
-        $this->assertStringContainsString('test', file_get_contents($filePath));
+        $this->assertStringContainsString('test', Filesystem\read_file($filePath));
     }
 
-    protected function tearDown(): void
+    #[Test]
+    public function daily_log_channel(): void
     {
-        $files = glob(__DIR__ . '/logs/*.log');
-
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-    }
-
-    public function test_daily_log_channel_works(): void
-    {
+        $clock = $this->clock();
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-m-d') . '.log';
-
         $config = new LogConfig(
             channels: [
                 new DailyLogChannel(__DIR__ . '/logs/tempest.log'),
@@ -64,18 +70,24 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
-
         $logger->info('test');
 
         $this->assertFileExists($filePath);
+        $this->assertStringContainsString('test', Filesystem\read_file($filePath));
 
-        $this->assertStringContainsString('test', file_get_contents($filePath));
+        $clock->plus(Duration::day());
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger->info('test');
+
+        $clock->plus(Duration::days(2));
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger->info('test');
     }
 
-    public function test_weekly_log_channel_works(): void
+    #[Test]
+    public function weekly_log_channel(): void
     {
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-W') . '.log';
-
         $config = new LogConfig(
             channels: [
                 new WeeklyLogChannel(__DIR__ . '/logs/tempest.log'),
@@ -83,15 +95,14 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
-
         $logger->info('test');
 
         $this->assertFileExists($filePath);
-
-        $this->assertStringContainsString('test', file_get_contents($filePath));
+        $this->assertStringContainsString('test', Filesystem\read_file($filePath));
     }
 
-    public function test_multiple_same_log_channels_works(): void
+    #[Test]
+    public function multiple_same_log_channels(): void
     {
         $filePath = __DIR__ . '/logs/multiple-tempest1.log';
         $secondFilePath = __DIR__ . '/logs/multiple-tempest2.log';
@@ -107,16 +118,17 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->info('test');
 
         $this->assertFileExists($filePath);
-        $this->assertStringContainsString('test', file_get_contents($filePath));
+        $this->assertStringContainsString('test', Filesystem\read_file($filePath));
 
         $this->assertFileExists($secondFilePath);
-        $this->assertStringContainsString('test', file_get_contents($secondFilePath));
+        $this->assertStringContainsString('test', Filesystem\read_file($secondFilePath));
     }
 
+    #[Test]
     #[DataProvider('psrLogLevelProvider')]
     #[DataProvider('monologLevelProvider')]
     #[DataProvider('tempestLevelProvider')]
-    public function test_log_levels(mixed $level, string $expected): void
+    public function log_levels(mixed $level, string $expected): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
         $config = new LogConfig(
@@ -130,11 +142,12 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->log($level, 'test');
 
         $this->assertFileExists($filePath);
-        $this->assertStringContainsString('tempest.' . $expected, file_get_contents($filePath));
+        $this->assertStringContainsString('tempest.' . $expected, Filesystem\read_file($filePath));
     }
 
+    #[Test]
     #[DataProvider('tempestLevelProvider')]
-    public function test_message_logged_emitted(LogLevel $level, string $_expected): void
+    public function message_logged_emitted(LogLevel $level, string $_expected): void
     {
         $eventBus = $this->container->get(EventBus::class);
 
@@ -148,7 +161,8 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
-    public function test_different_log_levels_works(): void
+    #[Test]
+    public function different_log_levels(): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
         $config = new LogConfig(
@@ -163,9 +177,8 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->debug('debug');
 
         $this->assertFileExists($filePath);
-        $content = file_get_contents($filePath);
-        $this->assertStringContainsString('critical', $content);
-        $this->assertStringContainsString('debug', $content);
+        $this->assertStringContainsString('critical', Filesystem\read_file($filePath));
+        $this->assertStringContainsString('debug', Filesystem\read_file($filePath));
     }
 
     public static function tempestLevelProvider(): array

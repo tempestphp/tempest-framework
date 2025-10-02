@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Commands;
+namespace Tempest\Log;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
@@ -12,53 +12,41 @@ use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
+use Tempest\Support\Filesystem;
 
-final readonly class TailProjectLogCommand
+final readonly class TailLogsCommand
 {
     public function __construct(
         private Console $console,
-        private LogConfig $logConfig,
+        private LogConfig $config,
         #[Tag('console')]
         private Highlighter $highlighter,
     ) {}
 
-    #[ConsoleCommand('tail:project', description: 'Tails the project log')]
+    #[ConsoleCommand('tail:logs', description: 'Tails the project logs', aliases: ['log:tail', 'logs:tail'])]
     public function __invoke(): void
     {
         $appendLogChannel = null;
 
-        foreach ($this->logConfig->channels as $channel) {
+        foreach ($this->config->channels as $channel) {
             if ($channel instanceof AppendLogChannel) {
                 $appendLogChannel = $channel;
-
                 break;
             }
         }
 
         if ($appendLogChannel === null) {
-            $this->console->error('No AppendLogChannel registered');
-
+            $this->console->error('Tailing logs is only supported when a <code>AppendLogChannel</code> is configured.');
             return;
         }
 
-        $dir = pathinfo($appendLogChannel->getPath(), PATHINFO_DIRNAME);
-
-        if (! is_dir($dir)) {
-            mkdir($dir);
-        }
-
-        if (! file_exists($appendLogChannel->getPath())) {
-            touch($appendLogChannel->getPath());
-        }
+        Filesystem\create_file($appendLogChannel->getPath());
 
         $this->console->header('Tailing project logs', "Reading <file='{$appendLogChannel->getPath()}'/>…");
 
         new TailReader()->tail(
             path: $appendLogChannel->getPath(),
-            format: fn (string $text) => $this->highlighter->parse(
-                $text,
-                new LogLanguage(),
-            ),
+            format: fn (string $text) => $this->highlighter->parse($text, new LogLanguage()),
         );
     }
 }
