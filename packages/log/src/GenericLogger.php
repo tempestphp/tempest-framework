@@ -87,20 +87,8 @@ final class GenericLogger implements Logger
     private function writeLog(MonologLogLevel $level, Stringable|string $message, array $context): void
     {
         foreach ($this->logConfig->channels as $channel) {
-            $this->resolveDriver($channel, $level)->addRecord(
-                level: $level,
-                message: $message,
-                context: $context,
-                datetime: $this->resolveCurrentDateTime(),
-            );
+            $this->resolveDriver($channel, $level)->log($level, $message, $context);
         }
-    }
-
-    private function resolveCurrentDateTime(): JsonSerializableDateTimeImmutable
-    {
-        return new JsonSerializableDateTimeImmutable(useMicroseconds: true)->setTimestamp(
-            timestamp: DateTime::now()->getTimestamp()->getSeconds(),
-        );
     }
 
     private function resolveDriver(LogChannel $channel, MonologLogLevel $level): Monolog
