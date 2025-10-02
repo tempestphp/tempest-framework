@@ -52,35 +52,22 @@ final readonly class DiscordOAuthController
     #[Get('/auth/discord')]
     public function redirect(): Redirect
     {
-        // Saves a unique token in the user's session
-        $this->session->set('discord:oauth', $this->oauth->getState());
-
-        // Redirects to the OAuth provider's authorization page
-        return new Redirect($this->oauth->getAuthorizationUrl());
+        return $this->oauth->createRedirect(scopes: ['identify']);
     }
 
     #[Get('/auth/discord/callback')]
     public function callback(Request $request): Redirect
     {
-        // Validates the saved session token to prevent CSRF attacks
-        if ($this->session->get('discord:oauth') !== $request->get('state')) {
-            return new Redirect('/?error=invalid_state');
-        }
-
-        // Fetches the user information from the OAuth provider
-        $discordUser = $this->oauth->fetchUser($request->get('code'));
-
-        // Creates or updates the user in the database
-        $user = query(User::class)->updateOrCreate([
-            'discord_id' => $discordUser->id,
-        ], [
-            'discord_id' => $discordUser->id,
-            'username' => $discordUser->nickname,
-            'email' => $discordUser->email,
-        ]);
-
-        // Finally, authenticates the user in the application
-        $this->authenticator->authenticate($user);
+        $user = $this->oauth->authenticate(
+            request: $request,
+            map: fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
+                'discord_id' => $user->id,
+            ], [
+                'discord_id' => $user->id,
+                'username' => $user->nickname,
+                'email' => $user->email,
+            ])
+        );
 
         return new Redirect('/');
     }
@@ -245,7 +232,7 @@ Below is an example of a complete testing flow for an OAuth authentication:
 final class OAuthControllerTest extends IntegrationTestCase
 {
     #[Test]
-    public function ensure_oauth(): void
+    public function oauth(): void
     {
         // We create a fake OAuth client that will return
         // the specified user when the OAuth flow is completed
@@ -268,7 +255,7 @@ final class OAuthControllerTest extends IntegrationTestCase
         // We then simulate the callback from the provider
         // with a fake code and the expected state
         $this->http
-            ->get("/oauth/discord/callback?code=some-fake-code&state={$oauth->getState()}")
+            ->get("/oauth/discord/callback", query: ['code' => 'some-fake-code', 'state' => $oauth->getState()])
             ->assertRedirect('/');
 
         // We assert that an access token was retrieved

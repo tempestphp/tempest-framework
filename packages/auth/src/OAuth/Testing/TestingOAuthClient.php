@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth\Testing;
 
+use Closure;
 use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\Assert;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
+use Tempest\Http\Request;
+use Tempest\Http\Responses\Redirect;
 use Tempest\Router\UriGenerator;
 use Tempest\Support\Arr;
 use Tempest\Support\Random;
@@ -38,19 +43,23 @@ final class TestingOAuthClient implements OAuthClient
         get => Arr\last($this->authorizationUrls)['url'] ?? null;
     }
 
+    /** @var array{url: string, scopes: array, options: array, state: string}[] */
     private array $authorizationUrls = [];
 
+    /** @var array{access_token: string, token_type: 'Bearer', expires_in: int, code: string}[] */
     private array $accessTokens = [];
 
-    private array $callbacks = [];
+    /** @var array{token: AccessToken, code: string, user: OAuthUser}[] */
+    private array $users = [];
 
     public function __construct(
         private(set) OAuthUser $user,
-        private(set) OAuthConfig $config,
-        private UriGenerator $uri,
+        private(set) readonly OAuthConfig $config,
+        private readonly Authenticator $authenticator,
+        private readonly UriGenerator $uri,
     ) {}
 
-    public function getAuthorizationUrl(array $scopes = [], array $options = []): string
+    public function buildAuthorizationUrl(array $scopes = [], array $options = []): string
     {
         $this->state = Random\secure_string(16);
 
@@ -80,12 +89,13 @@ final class TestingOAuthClient implements OAuthClient
         return $this->state;
     }
 
-    public function getAccessToken(string $code): AccessToken
+    public function requestAccessToken(string $code): AccessToken
     {
         $token = new AccessToken([
-            'access_token' => 'fat-' . $code,
+            'access_token' => 'tok-' . $code,
             'token_type' => 'Bearer',
             'expires_in' => 3600,
+            'code' => $code,
         ]);
 
         $this->accessTokens[] = [
@@ -96,23 +106,31 @@ final class TestingOAuthClient implements OAuthClient
         return $token;
     }
 
-    public function getUser(AccessToken $token): OAuthUser
+    public function fetchUser(AccessToken $token): OAuthUser
     {
+        $this->users[] = [
+            'token' => $token,
+            'code' => Arr\get_by_key($token->getValues(), 'code'),
+            'user' => $this->user,
+        ];
+
         return $this->user;
     }
 
-    public function fetchUser(string $code): OAuthUser
+    public function createRedirect(array $scopes = [], array $options = []): Redirect
     {
-        $token = $this->getAccessToken($code);
-        $user = $this->getUser($token);
+        return new Redirect($this->buildAuthorizationUrl($scopes, $options));
+    }
 
-        $this->callbacks[] = [
-            'code' => $code,
-            'token' => $token,
-            'user' => $user,
-        ];
+    public function authenticate(Request $request, Closure $map): Authenticatable
+    {
+        $user = $this->fetchUser($this->requestAccessToken($request->get('code')));
 
-        return $user;
+        $authenticatable = $map($user);
+
+        $this->authenticator->authenticate($authenticatable);
+
+        return $authenticatable;
     }
 
     /**
@@ -189,8 +207,8 @@ final class TestingOAuthClient implements OAuthClient
     public function assertUserFetched(string $code): void
     {
         Assert::assertNotEmpty(
-            actual: array_filter($this->callbacks, fn (array $callback) => $callback['code'] === $code),
-            message: sprintf('Callback with code "%s" was not handled.', $code),
+            actual: array_filter($this->users, fn (array $user) => $user['code'] === $code),
+            message: sprintf('User with code "%s" was not handled.', $code),
         );
     }
 
@@ -238,6 +256,6 @@ final class TestingOAuthClient implements OAuthClient
      */
     public function getCallbackCount(): int
     {
-        return count($this->callbacks);
+        return count($this->users);
     }
 }
