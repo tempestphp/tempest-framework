@@ -30,7 +30,7 @@
 		"vite": "^7.0.0"
 	},
 	"dependencies": {
-		"@innocenzi/utils": "^0.3.0",
+		"@innocenzi/utils": "^0.4.0",
 		"picocolors": "^1.1.1"
 	}
 }
