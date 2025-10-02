@@ -22,6 +22,7 @@ use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\EventBus\EventBus;
@@ -77,6 +78,8 @@ abstract class IntegrationTest extends TestCase
 
     protected OAuthTester $oauth;
 
+    protected DatabaseTester $database;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -95,13 +98,10 @@ abstract class IntegrationTest extends TestCase
     {
         $discoveryLocations = [];
 
-        $fixturesPath = to_absolute_path($this->root, 'tests/Fixtures');
+        $testsPath = to_absolute_path($this->root, 'tests');
 
-        if (is_dir($fixturesPath)) {
-            $discoveryLocations[] = new DiscoveryLocation(
-                'Tests\\Fixtures',
-                $fixturesPath,
-            );
+        if (is_dir($testsPath)) {
+            $discoveryLocations[] = new DiscoveryLocation('Tests', $testsPath);
         }
 
         return $discoveryLocations;
@@ -157,6 +157,7 @@ abstract class IntegrationTest extends TestCase
         $this->vite->clearCaches();
 
         $this->oauth = new OAuthTester($this->container);
+        $this->database = new DatabaseTester($this->container);
 
         return $this;
     }
@@ -170,6 +171,11 @@ abstract class IntegrationTest extends TestCase
         return $this;
     }
 
+    /**
+     * Cleans up the database and migrates the migrations using `migrateDatabase`.
+     *
+     * @deprecated Use `$this->database->setup()` instead.
+     */
     protected function setupDatabase(): self
     {
         $migrationManager = $this->container->get(MigrationManager::class);
@@ -182,6 +188,8 @@ abstract class IntegrationTest extends TestCase
 
     /**
      * Creates the migration table. You may override this method to provide more migrations to run for every tests in this file.
+     *
+     * @deprecated Use `$this->database->migrate()` instead.
      */
     protected function migrateDatabase(): void
     {
@@ -190,16 +198,12 @@ abstract class IntegrationTest extends TestCase
 
     /**
      * Migrates the specified migration classes.
+     *
+     * @deprecated Use `$this->database->migrate()` instead.
      */
     protected function migrate(string|object ...$migrationClasses): void
     {
-        $migrationManager = $this->container->get(MigrationManager::class);
-
-        foreach ($migrationClasses as $migrationClass) {
-            $migration = is_string($migrationClass) ? $this->container->get($migrationClass) : $migrationClass;
-
-            $migrationManager->executeUp($migration);
-        }
+        $this->database->migrate(...$migrationClasses);
     }
 
     protected function clock(DateTimeInterface|string $now = 'now'): MockClock
