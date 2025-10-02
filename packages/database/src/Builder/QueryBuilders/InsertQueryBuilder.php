@@ -398,6 +398,10 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
+            if ($property->isVirtual()) {
+                continue;
+            }
+
             $propertyName = $property->getName();
 
             if ($property->hasAttribute(Virtual::class)) {
