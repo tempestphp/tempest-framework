@@ -435,7 +435,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_create_with_virtual_property(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -449,6 +449,27 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(-$a->id->value, $a->fake);
+    }
+
+    public function test_virtual_hooked_property(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateModelWithHookedVirtualPropertyTable::class,
+        );
+
+        $a = ModelWithHookedVirtualProperty::create(
+            name: 'a',
+        );
+
+        $this->assertSame('A', $a->hookedName);
+
+        $a = ModelWithHookedVirtualProperty::select()->first();
+        $this->assertSame('A', $a->hookedName);
+
+        $a->name = 'b';
+        $a->save();
+        $this->assertSame('B', $a->hookedName);
     }
 
     public function test_select_virtual_property(): void
@@ -1046,4 +1067,28 @@ final class BNullableModel
     use IsDatabaseModel;
 
     public string $name;
+}
+
+final class CreateModelWithHookedVirtualPropertyTable implements MigratesUp
+{
+    public string $name = '100-create-model-with-hooked-virtual-property';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('model_with_hooked_virtual_property')
+            ->primary()
+            ->string('name');
+    }
+}
+
+#[Table('model_with_hooked_virtual_property')]
+final class ModelWithHookedVirtualProperty
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    public string $hookedName {
+        get => strtoupper($this->name);
+    }
 }

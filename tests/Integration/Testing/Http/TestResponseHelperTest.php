@@ -8,7 +8,9 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Framework\Testing\Http\TestResponseHelper;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Method;
 use Tempest\Http\Status;
 
 /**
@@ -19,7 +21,7 @@ final class TestResponseHelperTest extends TestCase
     public function test_get_response(): void
     {
         $response = new GenericResponse(status: Status::OK);
-        $helper = new TestResponseHelper($response);
+        $helper = new TestResponseHelper($response, new GenericRequest(Method::GET, '/'));
 
         $this->assertSame($response, $helper->response);
     }
@@ -31,6 +33,7 @@ final class TestResponseHelperTest extends TestCase
                 status: Status::OK,
                 headers: ['Location' => '/new-location'],
             ),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertHasHeader('Location');
@@ -39,9 +42,8 @@ final class TestResponseHelperTest extends TestCase
     public function test_assert_has_header_failure(): void
     {
         $helper = new TestResponseHelper(
-            new GenericResponse(
-                status: Status::OK,
-            ),
+            new GenericResponse(status: Status::OK),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -56,6 +58,7 @@ final class TestResponseHelperTest extends TestCase
                 status: Status::OK,
                 headers: ['Content-Type' => ['application/json']],
             ),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertHeaderContains('Content-Type', 'application/json');
@@ -65,6 +68,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -81,6 +85,7 @@ final class TestResponseHelperTest extends TestCase
                     'Location' => ['/other-location'],
                 ],
             ),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertRedirect();
@@ -90,6 +95,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::FOUND),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -104,6 +110,7 @@ final class TestResponseHelperTest extends TestCase
                 status: Status::OK,
                 headers: ['Location' => '/other-location'],
             ),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -118,6 +125,7 @@ final class TestResponseHelperTest extends TestCase
                 status: Status::FOUND,
                 headers: ['Location' => ['/other-location']],
             ),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertRedirect('/other-location');
@@ -127,6 +135,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertOk();
@@ -136,6 +145,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::INTERNAL_SERVER_ERROR),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -147,6 +157,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::NOT_FOUND),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertNotFound();
@@ -156,6 +167,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $this->expectException(AssertionFailedError::class);
@@ -166,7 +178,7 @@ final class TestResponseHelperTest extends TestCase
     #[DataProvider('provide_assert_status_cases')]
     public function test_assert_status(Status $expectedStatus, GenericResponse $response): void
     {
-        $helper = new TestResponseHelper($response);
+        $helper = new TestResponseHelper($response, new GenericRequest(Method::GET, '/'));
 
         $helper->assertStatus($expectedStatus);
     }
@@ -174,7 +186,7 @@ final class TestResponseHelperTest extends TestCase
     #[DataProvider('provide_assert_status_fails_when_status_does_not_match_cases')]
     public function test_assert_status_fails_when_status_does_not_match(Status $expectedStatus, GenericResponse $response): void
     {
-        $helper = new TestResponseHelper($response);
+        $helper = new TestResponseHelper($response, new GenericRequest(Method::GET, '/'));
 
         $this->expectException(AssertionFailedError::class);
 
@@ -185,6 +197,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertJsonHasKeys('title', 'author.name');
@@ -194,6 +207,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertJsonContains(['title' => 'Timeline Taxi']);
@@ -205,6 +219,7 @@ final class TestResponseHelperTest extends TestCase
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]),
+            new GenericRequest(Method::GET, '/'),
         );
 
         $helper->assertJson(['title' => 'Timeline Taxi', 'author' => ['name' => 'John']]);

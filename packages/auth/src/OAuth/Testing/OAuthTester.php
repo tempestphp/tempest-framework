@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\OAuth\Testing;
 
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -24,10 +25,11 @@ final readonly class OAuthTester
     {
         $config = $this->container->get(OAuthConfig::class, $tag);
         $uri = $this->container->get(UriGenerator::class);
+        $authenticator = $this->container->get(Authenticator::class);
 
         $this->container->singleton(
             className: OAuthClient::class,
-            definition: $client = new TestingOAuthClient($user, $config, $uri),
+            definition: $client = new TestingOAuthClient($user, $config, $authenticator, $uri),
             tag: $tag,
         );
 

@@ -13,7 +13,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
-use Tempest\Validation\Validator;
+use Tempest\Support\Uri;
 
 use function Tempest\map;
 
@@ -25,108 +25,108 @@ final class HttpRouterTester
         private Container $container,
     ) {}
 
-    public function get(string $uri, array $headers = []): TestResponseHelper
+    public function get(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::GET,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: [],
                 headers: $headers,
             ),
         );
     }
 
-    public function head(string $uri, array $headers = []): TestResponseHelper
+    public function head(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::HEAD,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: [],
                 headers: $headers,
             ),
         );
     }
 
-    public function post(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function post(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::POST,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: $body,
                 headers: $headers,
             ),
         );
     }
 
-    public function put(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function put(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::PUT,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: $body,
                 headers: $headers,
             ),
         );
     }
 
-    public function delete(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function delete(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::DELETE,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: $body,
                 headers: $headers,
             ),
         );
     }
 
-    public function connect(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function connect(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::CONNECT,
-                uri: $uri,
-                body: $body,
+                uri: Uri\merge_query($uri, ...$query),
+                body: [],
                 headers: $headers,
             ),
         );
     }
 
-    public function options(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function options(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::OPTIONS,
-                uri: $uri,
-                body: $body,
+                uri: Uri\merge_query($uri, ...$query),
+                body: [],
                 headers: $headers,
             ),
         );
     }
 
-    public function trace(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function trace(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::TRACE,
-                uri: $uri,
-                body: $body,
+                uri: Uri\merge_query($uri, ...$query),
+                body: [],
                 headers: $headers,
             ),
         );
     }
 
-    public function patch(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    public function patch(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::PATCH,
-                uri: $uri,
+                uri: Uri\merge_query($uri, ...$query),
                 body: $body,
                 headers: $headers,
             ),
@@ -142,6 +142,7 @@ final class HttpRouterTester
 
         return new TestResponseHelper(
             response: $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
+            request: $request,
             container: $this->container,
         );
     }
