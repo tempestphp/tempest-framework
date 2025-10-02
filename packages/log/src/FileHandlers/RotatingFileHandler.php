@@ -7,6 +7,7 @@ namespace Tempest\Log\FileHandlers;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Monolog\Handler\RotatingFileHandler as MonoRotatingFileHandler;
+use Tempest\DateTime\DateTime;
 
 final class RotatingFileHandler extends MonoRotatingFileHandler
 {
@@ -28,11 +29,13 @@ final class RotatingFileHandler extends MonoRotatingFileHandler
 
     protected function getNextRotation(): DateTimeImmutable
     {
-        return match (str_replace(['/', '_', '.'], '-', $this->dateFormat)) {
-            self::FILE_PER_WEEK => new DateTimeImmutable('first day of next week')->setTime(0, 0, 0),
-            self::FILE_PER_MONTH => new DateTimeImmutable('first day of next month')->setTime(0, 0, 0),
-            self::FILE_PER_YEAR => new DateTimeImmutable('first day of January next year')->setTime(0, 0, 0),
-            default => new DateTimeImmutable('tomorrow')->setTime(0, 0, 0),
+        $datetime = match (str_replace(['/', '_', '.'], '-', $this->dateFormat)) {
+            self::FILE_PER_WEEK => DateTime::now()->startOfWeek()->plusDays(7),
+            self::FILE_PER_MONTH => DateTime::now()->startOfMonth()->plusMonth(),
+            self::FILE_PER_YEAR => DateTime::now()->startOfYear()->plusYear(),
+            default => DateTime::now()->plusDay()->startOfDay(),
         };
+
+        return $datetime->toNativeDateTime();
     }
 }

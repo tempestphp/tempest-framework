@@ -61,4 +61,26 @@ enum LogLevel: string
             Level::Debug => self::DEBUG,
         };
     }
+
+    public function toMonolog(): Level
+    {
+        return match ($this) {
+            self::EMERGENCY => Level::Emergency,
+            self::ALERT => Level::Alert,
+            self::CRITICAL => Level::Critical,
+            self::ERROR => Level::Error,
+            self::WARNING => Level::Warning,
+            self::NOTICE => Level::Notice,
+            self::INFO => Level::Info,
+            self::DEBUG => Level::Debug,
+        };
+    }
+
+    /**
+     * Determines if this log level is higher than or equal to the given level.
+     */
+    public function includes(self $level): bool
+    {
+        return $this->toMonolog()->includes($level->toMonolog());
+    }
 }
