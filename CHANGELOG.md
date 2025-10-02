@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.0.4](https://github.com/tempestphp/tempest-framework/compare/v2.0.3..2.0.4)  —  2025-09-25
+## [2.1.0](https://github.com/tempestphp/tempest-framework/compare/v2.0.4..2.1.0)  —  2025-10-02
+
+### 🚨 Breaking changes
+
+- **http**: [**breaking**] add `query` parameter to route testing utilities (#1583) ([a819979](https://github.com/tempestphp/tempest-framework/commit/a819979a155d58fcfb5adbf51cab39cc2ee47ca6))
+
+### 🚀 Features
+
+- **auth**: add support for OAuth (#1577) ([742d4fb](https://github.com/tempestphp/tempest-framework/commit/742d4fbd99ca76d93af5e6ca97f99ea74f3a3909))
+- **database**: add testing utilities (#1585) ([cd39b60](https://github.com/tempestphp/tempest-framework/commit/cd39b60a3998708d04838cdb7018ac030fa94692))
+- **database**: support for hooked virtual properties (#1586) ([938c024](https://github.com/tempestphp/tempest-framework/commit/938c024c06a75150ee0e2cbe8aa8fe04ae396b7b))
+- **support**: add `Uri` utils (#1580) ([83320ab](https://github.com/tempestphp/tempest-framework/commit/83320abb6cbd3b73451dffeb76f3319cc2b7d1a4))
+
+### 🐛 Bug fixes
+
+- **database**: saving nullable `BelongsTo` relations (#1584) ([a572b26](https://github.com/tempestphp/tempest-framework/commit/a572b261821e5e26e5d3ac0f61f10e6635d9dcb9))
+
+
+## [2.0.4](https://github.com/tempestphp/tempest-framework/compare/v2.0.3..v2.0.4)  —  2025-09-25
 
 ### 🐛 Bug fixes
 
@@ -564,7 +582,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
 
 ### 🚨 Breaking changes
 
