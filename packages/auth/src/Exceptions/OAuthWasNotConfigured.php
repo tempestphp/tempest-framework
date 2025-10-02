@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Auth\Exceptions;
 
 use Exception;
+use Tempest\Support\Str;
 use UnitEnum;
 
 final class OAuthWasNotConfigured extends Exception implements AuthenticationException
 {
     public static function configurationWasMissing(null|string|UnitEnum $tag): self
     {
-        $tag = match (true) {
-            is_string($tag) => $tag,
-            $tag instanceof UnitEnum => $tag->name,
-            default => null,
-        };
+        $tag = Str\parse($tag, default: null);
 
         return new self(
             $tag

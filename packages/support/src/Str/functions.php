@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 namespace Tempest\Support\Str {
+    use BackedEnum;
     use Stringable;
     use Tempest\Support\Arr;
+    use UnitEnum;
     use voku\helper\ASCII;
 
     use function levenshtein as php_levenshtein;
@@ -887,7 +889,7 @@ namespace Tempest\Support\Str {
     /**
      * Parses the given value to a string, returning the default value if it is not a string or `Stringable`.
      */
-    function parse(mixed $string, string $default = ''): string
+    function parse(mixed $string, ?string $default = ''): ?string
     {
         if (is_string($string)) {
             return $string;
@@ -899,6 +901,14 @@ namespace Tempest\Support\Str {
 
         if ($string instanceof Stringable) {
             return (string) $string;
+        }
+
+        if ($string instanceof BackedEnum) {
+            return (string) $string->value;
+        }
+
+        if ($string instanceof UnitEnum) {
+            return $string->name;
         }
 
         if (is_object($string) && method_exists($string, '__toString')) {

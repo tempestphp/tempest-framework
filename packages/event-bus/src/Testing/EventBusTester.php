@@ -2,15 +2,12 @@
 
 namespace Tempest\EventBus\Testing;
 
-use BackedEnum;
 use Closure;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\GeneratorNotSupportedException;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
-use UnitEnum;
+use Tempest\Support\Str;
 
 final class EventBusTester
 {
@@ -110,12 +107,7 @@ final class EventBusTester
     /** @return array<\Tempest\EventBus\CallableEventHandler> */
     private function findHandlersFor(string|object $event): array
     {
-        $eventName = match (true) {
-            $event instanceof BackedEnum => $event->value,
-            $event instanceof UnitEnum => $event->name,
-            is_string($event) => $event,
-            default => $event::class,
-        };
+        $eventName = Str\parse($event) ?: $event::class;
 
         return $this->fakeEventBus->eventBusConfig->handlers[$eventName] ?? [];
     }
