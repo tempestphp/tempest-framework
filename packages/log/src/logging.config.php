@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Config;
 
 use Tempest;
-use Tempest\Log\Channels\DailyLogChannel;
-use Tempest\Log\LogConfig;
+use Tempest\Log\Config\DailyLogConfig;
 
-return new LogConfig(
-    channels: [
-        new DailyLogChannel(
-            path: Tempest\internal_storage_path('logs', 'tempest.log'),
-            maxFiles: Tempest\env('LOG_MAX_FILES', default: 31),
-        ),
-    ],
+return new DailyLogConfig(
+    path: Tempest\internal_storage_path('logs', 'tempest.log'),
+    prefix: Tempest\env('APPLICATION_NAME', default: 'tempest'),
+    maxFiles: Tempest\env('LOG_MAX_FILES', default: 31),
 );
