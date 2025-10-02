@@ -52,9 +52,6 @@ final readonly class DiscordOAuthController
     #[Get('/auth/discord')]
     public function redirect(): Redirect
     {
-        // Saves a unique token in the user's session
-        $this->session->set('discord:oauth', $this->oauth->getState());
-
         // Redirects to the OAuth provider's authorization page
         return new Redirect($this->oauth->getAuthorizationUrl());
     }
@@ -62,25 +59,17 @@ final readonly class DiscordOAuthController
     #[Get('/auth/discord/callback')]
     public function callback(Request $request): Redirect
     {
-        // Validates the saved session token to prevent CSRF attacks
-        if ($this->session->get('discord:oauth') !== $request->get('state')) {
-            return new Redirect('/?error=invalid_state');
-        }
-
-        // Fetches the user information from the OAuth provider
-        $discordUser = $this->oauth->fetchUser($request->get('code'));
-
-        // Creates or updates the user in the database
-        $user = query(User::class)->updateOrCreate([
-            'discord_id' => $discordUser->id,
-        ], [
-            'discord_id' => $discordUser->id,
-            'username' => $discordUser->nickname,
-            'email' => $discordUser->email,
-        ]);
-
-        // Finally, authenticates the user in the application
-        $this->authenticator->authenticate($user);
+        $user = $this->oauth->authenticate(
+            $request,
+            function (OAuthUser $oauthUser): Authenticatable {
+                return query(User::class)->updateOrCreate([
+                    'discord_id' => $discordUser->id,
+                ], [
+                    'discord_id' => $discordUser->id,
+                    'username' => $discordUser->nickname,
+                    'email' => $discordUser->email,
+                ]);
+            });
 
         return new Redirect('/');
     }
