@@ -22,7 +22,7 @@ final class DecoratorDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        $decorator = $class->getAttribute(Decorator::class);
+        $decorator = $class->getAttribute(Decorates::class);
 
         if ($decorator === null) {
             return;
@@ -34,7 +34,7 @@ final class DecoratorDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$class, $decorator]) {
-            /** @var Decorator $decorator */
+            /** @var Decorates $decorator */
             $this->container->addDecorator($class, $decorator->decorates);
         }
     }

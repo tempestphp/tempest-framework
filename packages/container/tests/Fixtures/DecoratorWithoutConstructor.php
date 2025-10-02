@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-use Tempest\Container\Decorator;
+use Tempest\Container\Decorates;
 
-#[Decorator(DecoratedInterface::class)]
+#[Decorates(DecoratedInterface::class)]
 class DecoratorWithoutConstructor implements DecoratedInterface
 {
 }

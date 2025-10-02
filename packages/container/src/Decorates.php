@@ -7,7 +7,7 @@ namespace Tempest\Container;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class Decorator
+final readonly class Decorates
 {
     public function __construct(
         public string $decorates,
