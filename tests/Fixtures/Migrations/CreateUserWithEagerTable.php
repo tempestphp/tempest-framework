@@ -13,7 +13,7 @@ use Tests\Tempest\Fixtures\Models\UserWithEager;
 
 final class CreateUserWithEagerTable implements MigratesUp, MigratesDown
 {
-    private(set) string $name = '0000-00-06_create_users_table';
+    private(set) string $name = '0000-00-05_create_users_table';
 
     public function up(): QueryStatement
     {

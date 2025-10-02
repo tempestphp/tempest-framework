@@ -13,7 +13,7 @@ use Tests\Tempest\Fixtures\Models\ProfileWithEager;
 
 final class CreateProfileWithEagerTable implements MigratesUp, MigratesDown
 {
-    private(set) string $name = '0000-00-05_create_profiles_table';
+    private(set) string $name = '0000-00-06_create_profiles_table';
 
     public function up(): QueryStatement
     {
