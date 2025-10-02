@@ -347,7 +347,7 @@ final class ModelInspector
                 continue;
             }
 
-            if ($property->hasAttribute(Virtual::class)) {
+            if ($property->isVirtual() || $property->hasAttribute(Virtual::class)) {
                 continue;
             }
 
