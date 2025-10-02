@@ -43,11 +43,14 @@ final class TestingOAuthClient implements OAuthClient
         get => Arr\last($this->authorizationUrls)['url'] ?? null;
     }
 
+    /** @var array{url: string, scopes: array, options: array, state: string}[] */
     private array $authorizationUrls = [];
 
+    /** @var array{access_token: string, token_type: 'Bearer', expires_in: int, code: string}[] */
     private array $accessTokens = [];
 
-    private array $callbacks = [];
+    /** @var array{token: AccessToken, code: string, user: OAuthUser}[] */
+    private array $users = [];
 
     public function __construct(
         private(set) OAuthUser $user,
@@ -56,7 +59,7 @@ final class TestingOAuthClient implements OAuthClient
         private readonly UriGenerator $uri,
     ) {}
 
-    public function getAuthorizationUrl(array $scopes = [], array $options = []): string
+    public function buildAuthorizationUrl(array $scopes = [], array $options = []): string
     {
         $this->state = Random\secure_string(16);
 
@@ -86,12 +89,13 @@ final class TestingOAuthClient implements OAuthClient
         return $this->state;
     }
 
-    public function getAccessToken(string $code): AccessToken
+    public function requestAccessToken(string $code): AccessToken
     {
         $token = new AccessToken([
-            'access_token' => 'fat-' . $code,
+            'access_token' => 'tok-' . $code,
             'token_type' => 'Bearer',
             'expires_in' => 3600,
+            'code' => $code,
         ]);
 
         $this->accessTokens[] = [
@@ -102,33 +106,27 @@ final class TestingOAuthClient implements OAuthClient
         return $token;
     }
 
-    public function getUser(AccessToken $token): OAuthUser
+    public function fetchUser(AccessToken $token): OAuthUser
     {
+        $this->users[] = [
+            'token' => $token,
+            'code' => Arr\get_by_key($token->getValues(), 'code'),
+            'user' => $this->user,
+        ];
+
         return $this->user;
     }
 
-    public function fetchUser(string $code): OAuthUser
+    public function createRedirect(array $scopes = [], array $options = []): Redirect
     {
-        $token = $this->getAccessToken($code);
-        $user = $this->getUser($token);
-
-        $this->callbacks[] = [
-            'code' => $code,
-            'token' => $token,
-            'user' => $user,
-        ];
-
-        return $user;
+        return new Redirect($this->buildAuthorizationUrl($scopes, $options));
     }
 
-    public function createRedirect(): Redirect
+    public function authenticate(Request $request, Closure $map): Authenticatable
     {
-        return new Redirect($this->getAuthorizationUrl());
-    }
+        $user = $this->fetchUser($this->requestAccessToken($request->get('code')));
 
-    public function authenticate(Request $request, Closure $authenticate): Authenticatable
-    {
-        $authenticatable = $authenticate($this->user);
+        $authenticatable = $map($user);
 
         $this->authenticator->authenticate($authenticatable);
 
@@ -209,8 +207,8 @@ final class TestingOAuthClient implements OAuthClient
     public function assertUserFetched(string $code): void
     {
         Assert::assertNotEmpty(
-            actual: array_filter($this->callbacks, fn (array $callback) => $callback['code'] === $code),
-            message: sprintf('Callback with code "%s" was not handled.', $code),
+            actual: array_filter($this->users, fn (array $user) => $user['code'] === $code),
+            message: sprintf('User with code "%s" was not handled.', $code),
         );
     }
 
@@ -258,6 +256,6 @@ final class TestingOAuthClient implements OAuthClient
      */
     public function getCallbackCount(): int
     {
-        return count($this->callbacks);
+        return count($this->users);
     }
 }

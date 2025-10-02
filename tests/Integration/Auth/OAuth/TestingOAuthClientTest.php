@@ -5,12 +5,23 @@ namespace Tests\Tempest\Integration\Auth\OAuth;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\OAuth\Config\GitHubOAuthConfig;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthUser;
 use Tempest\Auth\OAuth\Testing\TestingOAuthClient;
 use Tempest\Core\AppConfig;
+use Tempest\Database\MigratesUp;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\PrimaryKey;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
+use Tempest\Support\Uri;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
 {
@@ -55,7 +66,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
 
         $client = $this->oauth->fake($this->user);
 
-        $url = $client->getAuthorizationUrl(['scope' => 'user:email']);
+        $url = $client->buildAuthorizationUrl(['scope' => 'user:email']);
 
         $this->assertStringContainsString('https://tempestphp.test/oauth/github', $url);
         $this->assertStringContainsString('https://github.com/login/oauth/authorize', $url);
@@ -85,7 +96,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             raw: [],
         ));
 
-        $user = $client->fetchUser('jondoe-123');
+        $user = $client->fetchUser($client->requestAccessToken('jondoe-123'));
 
         $this->assertEquals('jondoe-123', $user->id);
         $this->assertEquals('test@example.com', $user->email);
@@ -113,7 +124,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             ->fake($this->user)
             ->withClientId('test');
 
-        $this->assertStringContainsString('client_id=test', $client->getAuthorizationUrl());
+        $this->assertStringContainsString('client_id=test', $client->buildAuthorizationUrl());
     }
 
     #[Test]
@@ -129,7 +140,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             ->fake($this->user)
             ->withBaseUrl('https://provider.test');
 
-        $this->assertStringContainsString('https://provider.test', $client->getAuthorizationUrl());
+        $this->assertStringContainsString('https://provider.test', $client->buildAuthorizationUrl());
     }
 
     #[Test]
@@ -145,11 +156,11 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             ->fake($this->user)
             ->withRedirectUri('/oauth/redirect');
 
-        $this->assertStringContainsString('/oauth/redirect', $client->getAuthorizationUrl());
+        $this->assertStringContainsString('/oauth/redirect', $client->buildAuthorizationUrl());
     }
 
     #[Test]
-    public function can_test_flow(): void
+    public function manual_flow(): void
     {
         $this->container->config(new GitHubOAuthConfig(
             clientId: 'foo',
@@ -175,13 +186,13 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             ->withRedirectUri('/oauth/callback');
 
         // login step
-        $url = $client->getAuthorizationUrl(scopes: ['user:email']);
+        $url = $client->buildAuthorizationUrl(scopes: ['user:email']);
         $client->assertAuthorizationUrlGenerated(scopes: ['user:email']);
         $this->assertStringContainsString('https://tempestphp.test/oauth/callback', $url);
         $this->assertStringContainsString('https://github.com/login/oauth/authorize', $url);
 
         // callback step
-        $user = $client->fetchUser('authorization-code-from-github');
+        $user = $client->fetchUser($client->requestAccessToken('authorization-code-from-github'));
         $client->assertUserFetched('authorization-code-from-github');
         $client->assertAccessTokenRetrieved('authorization-code-from-github');
 
@@ -191,5 +202,95 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->assertEquals('Jane Developer', $user->name);
         $this->assertEquals('janedev', $user->nickname);
         $this->assertEquals('github', $user->provider);
+    }
+
+    #[Test]
+    public function abstracted_flow(): void
+    {
+        $this->database->reset(migrate: false);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUsersTable::class);
+
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+            tag: 'github',
+        ));
+
+        $this->container->config(new AppConfig(
+            baseUri: 'https://tempestphp.test',
+        ));
+
+        $client = $this->oauth
+            ->fake(new OAuthUser(
+                id: '12345',
+                email: 'developer@company.com',
+                name: 'Jane Developer',
+                nickname: 'janedev',
+                avatar: 'https://avatars.githubusercontent.com/u/12345',
+                provider: 'github',
+                raw: [],
+            ), tag: 'github')
+            ->withRedirectUri('/oauth/callback');
+
+        // login step (in a controller)
+        $url = $client->createRedirect(scopes: ['user:email'])->to;
+        $client->assertAuthorizationUrlGenerated(scopes: ['user:email']);
+        $this->assertStringContainsString('https://tempestphp.test/oauth/callback', $url);
+        $this->assertStringContainsString('https://github.com/login/oauth/authorize', $url);
+
+        // callback step
+        /** @var User */
+        $user = $client->authenticate(
+            request: new GenericRequest(
+                method: Method::GET,
+                uri: Uri\set_query('/oauth/callback', code: 'authorization-code-from-github', state: $client->getState()),
+            ),
+            map: fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
+                'github_id' => $user->id,
+            ], [
+                'github_id' => $user->id,
+                'email' => $user->email,
+                'full_name' => $user->name,
+                'username' => $user->nickname,
+            ]),
+        );
+
+        $client->assertUserFetched('authorization-code-from-github');
+        $client->assertAccessTokenRetrieved('authorization-code-from-github');
+
+        // assertions
+        $this->assertEquals('12345', $user->github_id);
+        $this->assertEquals('developer@company.com', $user->email);
+        $this->assertEquals('Jane Developer', $user->full_name);
+        $this->assertEquals('janedev', $user->username);
+    }
+}
+
+final class User implements Authenticatable
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $github_id,
+        public string $email,
+        public string $full_name,
+        public string $username,
+    ) {}
+}
+
+final class CreateUsersTable implements MigratesUp
+{
+    public string $name = '0-create-users-table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('users')
+            ->primary()
+            ->string('github_id')
+            ->string('email')
+            ->string('full_name')
+            ->string('username')
+            ->unique('github_id', 'email');
     }
 }

@@ -10,12 +10,20 @@ use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Http\Request;
 use Tempest\Http\Responses\Redirect;
 
+/**
+ * @template T of Authenticatable
+ */
 interface OAuthClient
 {
     /**
      * Gets the authorization URL for the OAuth provider.
      */
-    public function getAuthorizationUrl(array $scopes = [], array $options = []): string;
+    public function buildAuthorizationUrl(array $scopes = [], array $options = []): string;
+
+    /**
+     * Creates a redirect response for the OAuth flow.
+     */
+    public function createRedirect(array $scopes = [], array $options = []): Redirect;
 
     /**
      * Gets the state parameter for CSRF protection.
@@ -25,26 +33,19 @@ interface OAuthClient
     /**
      * Exchanges an authorization code for an access token.
      */
-    public function getAccessToken(string $code): AccessToken;
+    public function requestAccessToken(string $code): AccessToken;
 
     /**
      * Gets user information from an OAuth provider using an access token.
      */
-    public function getUser(AccessToken $token): OAuthUser;
+    public function fetchUser(AccessToken $token): OAuthUser;
 
     /**
-     * Completes OAuth flow with code and get user information.
+     * Authenticates a user based on the given OAuth callback request.
+     *
+     * @template T of Authenticatable
+     *
+     * @param Closure(OAuthUser): T $map A callback that should return an authenticatable model from the given OAuthUser. Typically, the callback is also responsible for saving the user to the database.
      */
-    public function fetchUser(string $code): OAuthUser;
-
-    /**
-     * Creates a redirect response for the OAuth flow.
-     */
-    public function createRedirect(): Redirect;
-
-    /**
-     * Authenticates a user based on the given oauth callback request
-     * @param Closure(\Tempest\Auth\OAuth\OAuthUser $user): Authenticatable $authenticate
-     */
-    public function authenticate(Request $request, Closure $authenticate): Authenticatable;
+    public function authenticate(Request $request, Closure $map): Authenticatable;
 }

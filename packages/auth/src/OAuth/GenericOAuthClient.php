@@ -51,7 +51,7 @@ final class GenericOAuthClient implements OAuthClient
         }
     }
 
-    public function getAuthorizationUrl(array $scopes = [], array $options = []): string
+    public function buildAuthorizationUrl(array $scopes = [], array $options = []): string
     {
         return $this->provider->getAuthorizationUrl([
             'scope' => $scopes ?? $this->config->scopes,
@@ -60,12 +60,19 @@ final class GenericOAuthClient implements OAuthClient
         ]);
     }
 
+    public function createRedirect(array $scopes = [], array $options = []): Redirect
+    {
+        $this->session->set($this->sessionKey, $this->provider->getState());
+
+        return new Redirect($this->buildAuthorizationUrl());
+    }
+
     public function getState(): ?string
     {
         return $this->provider->getState();
     }
 
-    public function getAccessToken(string $code): AccessToken
+    public function requestAccessToken(string $code): AccessToken
     {
         try {
             return $this->provider->getAccessToken('authorization_code', [
@@ -77,7 +84,7 @@ final class GenericOAuthClient implements OAuthClient
         }
     }
 
-    public function getUser(AccessToken $token): OAuthUser
+    public function fetchUser(AccessToken $token): OAuthUser
     {
         try {
             return $this->config->mapUser(
@@ -89,29 +96,19 @@ final class GenericOAuthClient implements OAuthClient
         }
     }
 
-    public function fetchUser(string $code): OAuthUser
-    {
-        return $this->getUser(
-            token: $this->getAccessToken($code),
-        );
-    }
-
-    public function createRedirect(): Redirect
-    {
-        $this->session->set($this->sessionKey, $this->provider->getState());
-
-        return new Redirect($this->getAuthorizationUrl());
-    }
-
-    public function authenticate(Request $request, Closure $authenticate): Authenticatable
+    public function authenticate(Request $request, Closure $map): Authenticatable
     {
         if ($this->session->get($this->sessionKey) !== $request->get('state')) {
             throw new OAuthStateWasInvalid();
         }
 
-        $user = $this->fetchUser($request->get('code'));
+        $user = $this->fetchUser(
+            token: $this->requestAccessToken(
+                code: $request->get('code'),
+            ),
+        );
 
-        $authenticable = $authenticate($user);
+        $authenticable = $map($user);
 
         $this->authenticator->authenticate($authenticable);
 
