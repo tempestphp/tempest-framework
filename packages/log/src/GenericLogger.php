@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Log;
 
+use Monolog\JsonSerializableDateTimeImmutable;
 use Monolog\Level as MonologLogLevel;
 use Monolog\Logger as Monolog;
 use Psr\Log\LogLevel as PsrLogLevel;
 use Stringable;
+use Tempest\DateTime\DateTime;
 use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
@@ -85,8 +87,20 @@ final class GenericLogger implements Logger
     private function writeLog(MonologLogLevel $level, Stringable|string $message, array $context): void
     {
         foreach ($this->logConfig->channels as $channel) {
-            $this->resolveDriver($channel, $level)->log($level, $message, $context);
+            $this->resolveDriver($channel, $level)->addRecord(
+                level: $level,
+                message: $message,
+                context: $context,
+                datetime: $this->resolveCurrentDateTime(),
+            );
         }
+    }
+
+    private function resolveCurrentDateTime(): JsonSerializableDateTimeImmutable
+    {
+        return new JsonSerializableDateTimeImmutable(useMicroseconds: true)->setTimestamp(
+            timestamp: DateTime::now()->getTimestamp()->getSeconds(),
+        );
     }
 
     private function resolveDriver(LogChannel $channel, MonologLogLevel $level): Monolog

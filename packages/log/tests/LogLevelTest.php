@@ -6,6 +6,7 @@ namespace Tempest\Log\Tests;
 
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Log\LogLevel;
 
@@ -14,8 +15,9 @@ use Tempest\Log\LogLevel;
  */
 final class LogLevelTest extends TestCase
 {
+    #[Test]
     #[DataProvider('levelsProvider')]
-    public function test_from_monolog(Level $level, LogLevel $expected): void
+    public function from_monolog(Level $level, LogLevel $expected): void
     {
         $this->assertSame($expected, LogLevel::fromMonolog($level));
     }
