@@ -15,6 +15,7 @@ use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Str;
 use UnitEnum;
 
 final class TestingDatabaseInitializer implements DynamicInitializer
@@ -30,11 +31,7 @@ final class TestingDatabaseInitializer implements DynamicInitializer
     #[Singleton]
     public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
     {
-        $tag = match (true) {
-            $tag instanceof UnitEnum => $tag->name,
-            is_string($tag) => $tag,
-            default => '',
-        };
+        $tag = Str\parse($tag);
 
         /** @var PDOConnection|null $connection */
         $connection = self::$connections[$tag] ?? null;

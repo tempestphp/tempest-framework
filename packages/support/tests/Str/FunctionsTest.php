@@ -16,6 +16,7 @@ final class FunctionsTest extends TestCase
         $this->assertSame('1', Str\parse('1'));
         $this->assertSame('1', Str\parse(1));
         $this->assertSame('', Str\parse(new stdClass()));
+        $this->assertSame(null, Str\parse(new stdClass(), default: null));
         $this->assertSame('', Str\parse(new stdClass(), default: ''));
         $this->assertSame('foo', Str\parse(new stdClass(), default: 'foo'));
         $this->assertSame('foo', Str\parse(new MutableString('foo')));

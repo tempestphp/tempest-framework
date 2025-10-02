@@ -47,15 +47,12 @@ trait HasConvenientWhereMethods
                     throw new \InvalidArgumentException("{$operator->value} operator requires an array of values");
                 }
 
-                $value = array_map(
-                    fn (mixed $value) => match (true) {
-                        $value instanceof BackedEnum => $value->value,
-                        $value instanceof UnitEnum => $value->name,
-                        $value instanceof ArrayAccess => (array) $value,
-                        default => $value,
-                    },
-                    $value,
-                );
+                $value = array_map(fn (mixed $value) => match (true) {
+                    $value instanceof BackedEnum => $value->value,
+                    $value instanceof UnitEnum => $value->name,
+                    $value instanceof ArrayAccess => (array) $value,
+                    default => $value,
+                }, $value);
 
                 $placeholders = str_repeat('?,', times: count($value) - 1) . '?';
                 $sql .= " {$operator->value} ({$placeholders})";

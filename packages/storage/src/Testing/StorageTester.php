@@ -6,10 +6,8 @@ use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Storage\Storage;
 use Tempest\Storage\StorageInitializer;
-use Tempest\Support\Arr;
+use Tempest\Support\Str;
 use UnitEnum;
-
-use function Tempest\Support\Str\to_kebab_case;
 
 final readonly class StorageTester
 {
@@ -22,11 +20,9 @@ final readonly class StorageTester
      */
     public function fake(null|string|UnitEnum $tag = null, bool $persist = false): TestingStorage
     {
-        $storage = new TestingStorage(match (true) {
-            is_string($tag) => to_kebab_case($tag),
-            $tag instanceof UnitEnum => to_kebab_case($tag->name),
-            default => 'default',
-        });
+        $storage = new TestingStorage(
+            path: Str\to_kebab_case(Str\parse($tag, default: 'default')),
+        );
 
         $this->container->singleton(Storage::class, $storage, $tag);
 
