@@ -14,10 +14,12 @@ use ReflectionClass;
 use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
 use Tempest\Log\Channels\AppendLogChannel;
-use Tempest\Log\Channels\DailyLogChannel;
-use Tempest\Log\Channels\WeeklyLogChannel;
+use Tempest\Log\Config\DailyLogConfig;
+use Tempest\Log\Config\MultipleChannelsLogConfig;
+use Tempest\Log\Config\NullLogConfig;
+use Tempest\Log\Config\SimpleLogConfig;
+use Tempest\Log\Config\WeeklyLogConfig;
 use Tempest\Log\GenericLogger;
-use Tempest\Log\LogConfig;
 use Tempest\Log\LogLevel;
 use Tempest\Log\MessageLogged;
 use Tempest\Support\Filesystem;
@@ -41,15 +43,11 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function append_log_channel(): void
+    public function simple_log_config(): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
 
-        $config = new LogConfig(
-            channels: [
-                new AppendLogChannel($filePath),
-            ],
-        );
+        $config = new SimpleLogConfig($filePath, prefix: 'tempest');
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
         $logger->info('test');
@@ -59,15 +57,11 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function daily_log_channel(): void
+    public function daily_log_config(): void
     {
         $clock = $this->clock();
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-m-d') . '.log';
-        $config = new LogConfig(
-            channels: [
-                new DailyLogChannel(__DIR__ . '/logs/tempest.log'),
-            ],
-        );
+        $config = new DailyLogConfig(__DIR__ . '/logs/tempest.log', prefix: 'tempest');
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
         $logger->info('test');
@@ -85,14 +79,10 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function weekly_log_channel(): void
+    public function weekly_log_config(): void
     {
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-W') . '.log';
-        $config = new LogConfig(
-            channels: [
-                new WeeklyLogChannel(__DIR__ . '/logs/tempest.log'),
-            ],
-        );
+        $config = new WeeklyLogConfig(__DIR__ . '/logs/tempest.log', prefix: 'tempest');
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
         $logger->info('test');
@@ -107,11 +97,12 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $filePath = __DIR__ . '/logs/multiple-tempest1.log';
         $secondFilePath = __DIR__ . '/logs/multiple-tempest2.log';
 
-        $config = new LogConfig(
+        $config = new MultipleChannelsLogConfig(
             channels: [
                 new AppendLogChannel($filePath),
                 new AppendLogChannel($secondFilePath),
             ],
+            prefix: 'tempest',
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
@@ -131,11 +122,9 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     public function log_levels(mixed $level, string $expected): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
-        $config = new LogConfig(
+        $config = new SimpleLogConfig(
+            path: $filePath,
             prefix: 'tempest',
-            channels: [
-                new AppendLogChannel($filePath),
-            ],
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));
@@ -157,7 +146,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             $this->assertSame(['foo' => 'bar'], $event->context);
         });
 
-        $logger = new GenericLogger(new LogConfig(), $eventBus);
+        $logger = new GenericLogger(new NullLogConfig(), $eventBus);
         $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
@@ -165,11 +154,9 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
     public function different_log_levels(): void
     {
         $filePath = __DIR__ . '/logs/tempest.log';
-        $config = new LogConfig(
+        $config = new SimpleLogConfig(
+            path: $filePath,
             prefix: 'tempest',
-            channels: [
-                new AppendLogChannel($filePath),
-            ],
         );
 
         $logger = new GenericLogger($config, $this->container->get(EventBus::class));

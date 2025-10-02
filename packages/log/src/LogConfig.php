@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Log;
 
-final class LogConfig
+interface LogConfig
 {
     /**
-     * @param LogChannel[] $channels
-     * @param string $prefix A descriptive name attached to all log messages.
+     * A descriptive name attached to all log messages.
      */
-    public function __construct(
-        public array $channels = [],
-        public string $prefix = 'tempest',
-    ) {}
+    public string $prefix {
+        get;
+    }
+
+    /**
+     * The log channels to which log messages will be sent.
+     *
+     * @var LogChannel[]
+     */
+    public array $channels {
+        get;
+    }
 }
