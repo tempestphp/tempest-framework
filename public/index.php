@@ -1,14 +1,36 @@
 <?php
 
-declare(strict_types=1);
-
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Router\HttpApplication;
+use Tempest\Router\WorkerApplication;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-HttpApplication::boot(__DIR__ . '/../', discoveryLocations: [
-    new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../tests/Fixtures/'),
-])->run();
+if (function_exists('frankenphp_handle_request')) {
+    ignore_user_abort(true);
 
-exit();
+    $application = WorkerApplication::boot(__DIR__ . '/../');
+
+    $handler = static function () {
+//        $application->run();
+        echo 'hi';
+    };
+
+    $maxRequests = (int)($_SERVER['MAX_REQUESTS'] ?? 0);
+
+    for ($nbRequests = 0; ! $maxRequests || $nbRequests < $maxRequests; ++$nbRequests) {
+        $keepRunning = frankenphp_handle_request($handler);
+
+        gc_collect_cycles();
+
+        if (! $keepRunning) break;
+    }
+} else {
+    HttpApplication::boot(__DIR__ . '/../', discoveryLocations: [
+        new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../tests/Fixtures/'),
+    ])->run();
+
+    exit();
+
+}
+
