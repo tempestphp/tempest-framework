@@ -681,6 +681,21 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <div class="inner upper"></div>
         HTML, $html);
     }
+    
+    public function test_merge_class_from_template_to_component(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="bg-gray-200"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="bg-red-500"></x-test>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div class="bg-gray-200 bg-red-500"></div>
+        HTML, $html);
+    }
 
     public function test_does_not_duplicate_br(): void
     {
