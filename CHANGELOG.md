@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.2.0](https://github.com/tempestphp/tempest-framework/compare/v2.1.0..2.2.0)  —  2025-10-02
+## [2.2.1](https://github.com/tempestphp/tempest-framework/compare/v2.2.0..2.2.1)  —  2025-10-03
+
+### 🐛 Bug fixes
+
+- **database**: update or create with initial values (#1597) ([d4450aa](https://github.com/tempestphp/tempest-framework/commit/d4450aa6a3b5bab0ccad38617b698ba51a5fe705))
+
+
+## [2.2.0](https://github.com/tempestphp/tempest-framework/compare/v2.1.0..v2.2.0)  —  2025-10-02
 
 ### 🚀 Features
 
