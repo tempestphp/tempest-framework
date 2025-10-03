@@ -548,6 +548,27 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotNull(Book::select()->where('title', 'B')->first());
     }
 
+    public function test_update_or_create_uses_initial_data_to_create(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+        );
+
+        Author::updateOrCreate(
+            find: ['name' => 'Brent'],
+            update: ['type' => AuthorType::B],
+        );
+
+        $this->assertNotNull(
+            Author::select()
+                ->where('name', 'Brent')
+                ->where('type', AuthorType::B)
+                ->first(),
+        );
+    }
+
     public function test_delete(): void
     {
         $this->migrate(

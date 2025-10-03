@@ -331,7 +331,7 @@ final readonly class QueryBuilder
         $primaryKeyName = $primaryKeyProperty->getName();
 
         if (! isset($model->{$primaryKeyName})) {
-            return $this->create(...$update);
+            return $this->create(...array_merge($find, $update));
         }
 
         query($model)

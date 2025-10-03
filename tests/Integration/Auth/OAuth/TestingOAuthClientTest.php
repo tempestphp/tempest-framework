@@ -249,7 +249,6 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             map: fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
                 'github_id' => $user->id,
             ], [
-                'github_id' => $user->id,
                 'email' => $user->email,
                 'full_name' => $user->name,
                 'username' => $user->nickname,
