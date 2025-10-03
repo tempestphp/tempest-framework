@@ -18,7 +18,11 @@ final class HttpRequestFailed extends Exception implements HasContext
         public readonly ?Response $cause = null,
         ?Throwable $previous = null,
     ) {
-        parent::__construct($message ?: '', $status->value, $previous);
+        parent::__construct(
+            message: $message ?: 'Failed request: ' . $status->value . ' ' . $this->status->description(),
+            code: $status->value,
+            previous: $previous,
+        );
     }
 
     public function context(): array
