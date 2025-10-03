@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus;
 
-use BackedEnum;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\TypeReflector;
-use UnitEnum;
+use Tempest\Support\Str;
 
 final class EventBusDiscovery implements Discovery
 {
@@ -29,12 +28,7 @@ final class EventBusDiscovery implements Discovery
                 continue;
             }
 
-            $eventName = match (true) {
-                $eventHandler->event instanceof BackedEnum => $eventHandler->event->value,
-                $eventHandler->event instanceof UnitEnum => $eventHandler->event->name,
-                is_string($eventHandler->event) => $eventHandler->event,
-                default => null,
-            };
+            $eventName = Str\parse($eventHandler->event, default: null);
 
             if ($eventName === null) {
                 $parameters = iterator_to_array($method->getParameters());

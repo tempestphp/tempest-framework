@@ -102,6 +102,10 @@ final readonly class TypeReflector implements Reflector
             return $input instanceof $cleanDefinition;
         }
 
+        if ($this->isInterface()) {
+            return $input instanceof $this->definition;
+        }
+
         if ($this->isIterable()) {
             return is_iterable($input);
         }

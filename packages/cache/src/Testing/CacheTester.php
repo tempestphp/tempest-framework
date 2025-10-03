@@ -7,9 +7,8 @@ use Tempest\Cache\CacheInitializer;
 use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Support\Str;
 use UnitEnum;
-
-use function Tempest\Support\Str\to_kebab_case;
 
 final readonly class CacheTester
 {
@@ -23,11 +22,7 @@ final readonly class CacheTester
     public function fake(null|string|UnitEnum $tag = null): TestingCache
     {
         $cache = new TestingCache(
-            tag: match (true) {
-                is_string($tag) => to_kebab_case($tag),
-                $tag instanceof UnitEnum => to_kebab_case($tag->name),
-                default => 'default',
-            },
+            tag: Str\to_kebab_case(Str\parse($tag, default: 'default')),
             clock: $this->container->get(Clock::class)->toPsrClock(),
         );
 

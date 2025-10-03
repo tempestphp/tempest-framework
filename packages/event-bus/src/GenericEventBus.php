@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus;
 
-use BackedEnum;
 use Closure;
 use Tempest\Container\Container;
-use UnitEnum;
+use Tempest\Support\Str;
 
 final readonly class GenericEventBus implements EventBus
 {
@@ -33,13 +32,7 @@ final readonly class GenericEventBus implements EventBus
     /** @return \Tempest\EventBus\CallableEventHandler[] */
     private function resolveHandlers(string|object $event): array
     {
-        $eventName = match (true) {
-            $event instanceof BackedEnum => $event->value,
-            $event instanceof UnitEnum => $event->name,
-            is_string($event) => $event,
-            default => $event::class,
-        };
-
+        $eventName = Str\parse($event) ?: $event::class;
         $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
         if (is_object($event)) {

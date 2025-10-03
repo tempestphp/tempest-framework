@@ -335,7 +335,7 @@ final readonly class BookController
 
 While constructor injection is almost always the preferred way to go, Tempest also offers the ability to inject values straight into properties, without them being requested by the constructor.
 
-You may mark any property—public, protected, or private—with the `#[Inject]` attribute. Whenever a class instance is resolved via the container, its properties marked for injection will be provided the right value.
+You may mark any property—public, protected, or private—with the `#[Inject]` attribute. Whenever a class instance is resolved via the container, its properties marked for injection will be provided the right value. Tagged singletons may also be injected using the optional `tag` parameter of the `#[Inject]` attribute.
 
 ```php Tempest/Console/src/HasConsole.php
 use Tempest\Container\Inject;
@@ -385,6 +385,50 @@ class MyCommand
 ```
 
 For these edge cases, it's nicer to make the trait self-contained without having to rely on constructor injection. That's why injected properties are supported.
+
+## Decorators
+
+The container supports the [decorator pattern](https://refactoring.guru/design-patterns/decorator), which allows you to wrap objects and add new behavior to them at runtime without changing their structure. This is particularly useful for adding cross-cutting concerns like logging, caching, validation, or authentication.
+
+To create a decorator, you need to:
+
+1. Use the {b`#[Tempest\Container\Decorates]`} attribute on your decorator class
+2. Implement the same interface as the class you're decorating
+3. Accept the decorated object as a constructor parameter
+
+```php app/Cache/CacheRepository.php
+use Tempest\Container\Decorates;
+
+#[Decorates(Repository::class)]
+final readonly class CacheRepository implements Repository
+{
+    public function __construct(
+        private Repository $repository,
+        private Cache $cache,
+    ) {}
+
+    public function findById(int $id): ?Book
+    {
+        return $this->cache->resolve(
+            key: "book.{$id}",
+            callback: fn () => $this->repository->find($id)
+        );
+    }
+
+    public function save(Book $book): Book
+    {
+        $this->cache->delete("book.{$book->id}");
+
+        return $this->repository->save($book);
+    }
+}
+```
+
+When you request the `Repository` from the container, Tempest will automatically wrap the original implementation with your decorator. The decorated object (the original `Repository`) is injected into the decorator's constructor.
+
+:::info
+Decorators are discovered automatically through Tempest's [discovery](../4-internals/02-discovery.md), so you don't need to manually register them.
+:::
 
 ## Proxy loading
 

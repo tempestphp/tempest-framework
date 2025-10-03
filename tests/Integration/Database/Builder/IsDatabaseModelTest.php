@@ -435,7 +435,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_create_with_virtual_property(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -449,6 +449,27 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(-$a->id->value, $a->fake);
+    }
+
+    public function test_virtual_hooked_property(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateModelWithHookedVirtualPropertyTable::class,
+        );
+
+        $a = ModelWithHookedVirtualProperty::create(
+            name: 'a',
+        );
+
+        $this->assertSame('A', $a->hookedName);
+
+        $a = ModelWithHookedVirtualProperty::select()->first();
+        $this->assertSame('A', $a->hookedName);
+
+        $a->name = 'b';
+        $a->save();
+        $this->assertSame('B', $a->hookedName);
     }
 
     public function test_select_virtual_property(): void
@@ -525,6 +546,27 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertNull(Book::select()->where('title', 'A')->first());
         $this->assertNotNull(Book::select()->where('title', 'B')->first());
+    }
+
+    public function test_update_or_create_uses_initial_data_to_create(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+        );
+
+        Author::updateOrCreate(
+            find: ['name' => 'Brent'],
+            update: ['type' => AuthorType::B],
+        );
+
+        $this->assertNotNull(
+            Author::select()
+                ->where('name', 'Brent')
+                ->where('type', AuthorType::B)
+                ->first(),
+        );
     }
 
     public function test_delete(): void
@@ -616,6 +658,47 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $foo->delete();
 
         $this->assertNull(Foo::get($fooId));
+    }
+
+    public function test_nullable_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        $a = ANullableModel::create(
+            name: 'a',
+        );
+
+        $a->load('b');
+
+        $this->assertNull($a->b);
+    }
+
+    public function test_nullable_relation_save(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBNullableTable::class,
+            CreateANullableTable::class,
+        );
+
+        ANullableModel::create(
+            name: 'a',
+            b: BNullableModel::new(
+                name: 'b',
+            ),
+        );
+
+        $a = ANullableModel::select()->first();
+        $a->save();
+
+        $a = ANullableModel::select()->with('b')->first();
+
+        $this->assertNotNull($a->b);
+        $this->assertSame('b', $a->b->name);
     }
 }
 
@@ -961,5 +1044,72 @@ final class CreateModelWithoutPrimaryKeyMigration implements MigratesUp
         return new CreateTableStatement('model_without_primary_keys')
             ->text('name')
             ->text('description');
+    }
+}
+
+final class CreateANullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-a-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('a')
+            ->primary()
+            ->string('name')
+            ->belongsTo('a.b_id', 'b.id', nullable: true);
+    }
+}
+
+final class CreateBNullableTable implements MigratesUp
+{
+    private(set) string $name = '100-create-b-nullable';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('b')
+            ->primary()
+            ->string('name');
+    }
+}
+
+#[Table('a')]
+final class ANullableModel
+{
+    use IsDatabaseModel;
+
+    public ?BNullableModel $b = null;
+
+    public string $name;
+}
+
+#[Table('b')]
+final class BNullableModel
+{
+    use IsDatabaseModel;
+
+    public string $name;
+}
+
+final class CreateModelWithHookedVirtualPropertyTable implements MigratesUp
+{
+    public string $name = '100-create-model-with-hooked-virtual-property';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('model_with_hooked_virtual_property')
+            ->primary()
+            ->string('name');
+    }
+}
+
+#[Table('model_with_hooked_virtual_property')]
+final class ModelWithHookedVirtualProperty
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    public string $hookedName {
+        get => strtoupper($this->name);
     }
 }

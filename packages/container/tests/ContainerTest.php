@@ -7,6 +7,7 @@ namespace Tempest\Container\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
+use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
 use Tempest\Container\Exceptions\InvokedCallableWasInvalid;
@@ -32,6 +33,12 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectD;
 use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
+use Tempest\Container\Tests\Fixtures\DecoratedClass;
+use Tempest\Container\Tests\Fixtures\DecoratedInterface;
+use Tempest\Container\Tests\Fixtures\DecoratorClass;
+use Tempest\Container\Tests\Fixtures\DecoratorInvalid;
+use Tempest\Container\Tests\Fixtures\DecoratorSecondClass;
+use Tempest\Container\Tests\Fixtures\DecoratorWithoutConstructor;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
 use Tempest\Container\Tests\Fixtures\EnumTag;
@@ -633,5 +640,53 @@ final class ContainerTest extends TestCase
 
         $this->assertSame('foo', $dependency->foo->name);
         $this->assertSame('bar', $dependency->bar->name);
+    }
+
+    public function test_returns_decorated_instance(): void
+    {
+        $container = new GenericContainer();
+        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->addDecorator(DecoratorClass::class, DecoratedInterface::class);
+
+        $instance = $container->get(DecoratedInterface::class);
+
+        $this->assertInstanceOf(DecoratorClass::class, $instance);
+        $this->assertInstanceOf(DecoratedClass::class, $instance->decorated);
+    }
+
+    public function test_returns_multiple_decorated_instance(): void
+    {
+        $container = new GenericContainer();
+        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->addDecorator(DecoratorClass::class, DecoratedInterface::class);
+        $container->addDecorator(DecoratorSecondClass::class, DecoratedInterface::class);
+
+        $instance = $container->get(DecoratedInterface::class);
+
+        $this->assertInstanceOf(DecoratorSecondClass::class, $instance);
+        $this->assertInstanceOf(DecoratorClass::class, $instance->decorated);
+        $this->assertInstanceOf(DecoratedClass::class, $instance->decorated->decorated);
+    }
+
+    public function test_throws_on_decorator_not_implementing_interface(): void
+    {
+        $container = new GenericContainer();
+        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->addDecorator(DecoratorInvalid::class, DecoratedInterface::class);
+
+        $this->expectException(DecoratorDidNotImplementInterface::class);
+
+        $container->get(DecoratedInterface::class);
+    }
+
+    public function test_returns_decorator_without_constructor(): void
+    {
+        $container = new GenericContainer();
+        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->addDecorator(DecoratorWithoutConstructor::class, DecoratedInterface::class);
+
+        $instance = $container->get(DecoratedInterface::class);
+
+        $this->assertInstanceOf(DecoratorWithoutConstructor::class, $instance);
     }
 }

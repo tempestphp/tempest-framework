@@ -7,7 +7,6 @@ namespace Tempest\Auth;
 use BackedEnum;
 use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\Authentication\Authenticatable;
-use Tempest\Auth\Exceptions\PolicyMethodWasInvalid;
 use Tempest\Auth\Exceptions\PolicyWasInvalid;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Support\Arr;
@@ -44,11 +43,7 @@ final class AuthConfig
         }
 
         foreach (Arr\wrap($policy->action) as $action) {
-            $action = match (true) {
-                $action instanceof BackedEnum => $action->value,
-                $action instanceof UnitEnum => $action->name,
-                default => $action,
-            };
+            $action = Str\parse($action);
 
             $this->policies[$policy->resource][$action] ??= [];
             $this->policies[$policy->resource][$action][] = $handler;

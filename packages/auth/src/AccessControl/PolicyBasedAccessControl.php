@@ -2,7 +2,6 @@
 
 namespace Tempest\Auth\AccessControl;
 
-use BackedEnum;
 use Closure;
 use Tempest\Auth\AuthConfig;
 use Tempest\Auth\Authentication\Authenticator;
@@ -13,6 +12,7 @@ use Tempest\Container\Container;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Str;
 use UnitEnum;
 
 /**
@@ -82,11 +82,7 @@ final readonly class PolicyBasedAccessControl implements AccessControl
             ? $resource::class
             : $resource;
 
-        $actionBeingEvaluated = match (true) {
-            $action instanceof BackedEnum => $action->value,
-            $action instanceof UnitEnum => $action->name,
-            default => $action,
-        };
+        $actionBeingEvaluated = Str\parse($action);
 
         return new ImmutableArray($this->authConfig->policies[$resource] ?? [])
             ->filter(fn ($_, string $action) => $action === $actionBeingEvaluated)

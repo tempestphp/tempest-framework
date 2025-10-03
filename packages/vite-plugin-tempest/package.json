@@ -1,7 +1,7 @@
 {
 	"name": "vite-plugin-tempest",
 	"type": "module",
-	"version": "2.0.0",
+	"version": "2.2.1",
 	"author": "Enzo Innocenzi",
 	"license": "MIT",
 	"sideEffects": false,
@@ -30,7 +30,7 @@
 		"vite": "^7.0.0"
 	},
 	"dependencies": {
-		"@innocenzi/utils": "^0.3.0",
+		"@innocenzi/utils": "^0.4.0",
 		"picocolors": "^1.1.1"
 	}
 }

@@ -12,6 +12,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Container\Container;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
@@ -22,13 +23,13 @@ use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
-use function Tempest\get;
 use function Tempest\Support\arr;
 
 final class TestResponseHelper
 {
     public function __construct(
         private(set) Response $response,
+        private(set) Request $request,
         private(set) ?Container $container = null,
     ) {}
 

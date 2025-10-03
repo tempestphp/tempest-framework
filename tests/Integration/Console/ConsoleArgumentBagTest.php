@@ -190,4 +190,14 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
             ->assertSee('foo')
             ->assertSee('true');
     }
+
+    #[TestWith(['variadic-string-argument foo bar baz', '["foo","bar","baz"]'])]
+    #[TestWith(['variadic-integer-argument 1 2 3', '[1,2,3]'])]
+    #[TestWith(['variadic-backed-enum-argument a b c', '["a","b","c"]'])]
+    public function test_variadic_argument(string $command, string $jsonOutput): void
+    {
+        $this->console
+            ->call($command)
+            ->assertSee($jsonOutput);
+    }
 }

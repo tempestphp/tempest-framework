@@ -154,6 +154,10 @@ final readonly class ArrayToObjectMapper implements Mapper
     {
         $caster = $this->casterFactory->forProperty($property);
 
+        if ($property->isNullable() && $value === null) {
+            return null;
+        }
+
         if ($caster === null) {
             return $value;
         }
