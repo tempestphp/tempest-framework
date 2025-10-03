@@ -561,7 +561,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             update: ['type' => AuthorType::B],
         );
 
-        $this->assertNotNull(Author::select()->where('name', 'Brent')->where('type', AuthorType::B)->first());
+        $this->assertNotNull(
+            Author::select()
+                ->where('name', 'Brent')
+                ->where('type', AuthorType::B)
+                ->first(),
+        );
     }
 
     public function test_delete(): void
