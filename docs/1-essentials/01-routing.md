@@ -690,6 +690,65 @@ final readonly class RestrictedRoute implements Route
 
 This attribute can be used in place of the usual route attributes, on controller action methods.
 
+## Session management
+
+Sessions in Tempest are managed by the {b`Tempest\Http\Session\Session`} class. You can inject it anywhere you need it. As soon as the `Session` is injected, it will be started behind the scenes.
+
+```php
+use Tempest\Http\Session\Session;
+
+final readonly class TodoController
+{
+    public function __construct(
+        private Session $session,
+    ) {}
+
+    #[Post('/select/{todo}']
+    public function select(Todo $todo): View
+    {
+        if ($this->session->get('selected_todo') === $todo->id) {
+            $this->session->remove('selected_todo');
+        } else {
+            $this->session->set('selected_todo', $todo->id);
+        }
+
+        return $this->list();
+    }
+}
+```
+
+### Flashing values
+
+When you need to "flash" something to the user — in other words: show something once and clear if after refresh — you can use the `flash()` method on the session:
+
+```php
+public function store(Todo $todo): Redirect
+{
+    $this->session->flash('message', 'Save was successful');
+    
+    return new Redirect('/');
+}
+```
+
+### Session configuration
+
+Currently, there's only a built-in file session driver. More drivers are to be added in the future. By default, the session will stay valid for 10 hours, which you can overwrite by creating a `session.config.php` file:
+
+```php app/Config/session.config.php
+<?php
+use Tempest\Http\Session\Config\FileSessionConfig;
+use Tempest\DateTime\Duration;
+
+return new FileSessionConfig(
+    path: 'sessions', // The path is relative to the project's cache folder
+    expiration: Duration::days(30),
+);
+```
+
+### Session cleaning
+
+Outdated sessions should occasionally be cleaned up. Tempest comes with a built-in command to do so: `tempest session:clean`. This command makes use of the [scheduler](/2.x/features/scheduling). If you have scheduling enabled, it will automatically run behind the scenes.
+
 ## Deferring tasks
 
 It is sometimes needed, during requests, to perform tasks that would take a few seconds to complete. This could be sending an email, or keeping track of a page visit.
