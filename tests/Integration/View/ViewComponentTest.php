@@ -681,7 +681,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <div class="inner upper"></div>
         HTML, $html);
     }
-    
+
     public function test_merge_class_from_template_to_component(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
