@@ -29,7 +29,7 @@ final readonly class TailLogsCommand
     {
         $appendLogChannel = null;
 
-        foreach ($this->config->channels as $channel) {
+        foreach ($this->config->logChannels as $channel) {
             if ($channel instanceof AppendLogChannel) {
                 $appendLogChannel = $channel;
                 break;
@@ -41,12 +41,12 @@ final readonly class TailLogsCommand
             return;
         }
 
-        Filesystem\create_file($appendLogChannel->getPath());
+        Filesystem\create_file($appendLogChannel->path);
 
-        $this->console->header('Tailing project logs', "Reading <file='{$appendLogChannel->getPath()}'/>…");
+        $this->console->header('Tailing project logs', "Reading <file='{$appendLogChannel->path}'/>…");
 
         new TailReader()->tail(
-            path: $appendLogChannel->getPath(),
+            path: $appendLogChannel->path,
             format: fn (string $text) => $this->highlighter->parse($text, new LogLanguage()),
         );
     }
