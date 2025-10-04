@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Log;
 
+use Monolog\JsonSerializableDateTimeImmutable;
 use Monolog\Level as MonologLogLevel;
 use Monolog\Logger as Monolog;
 use Psr\Log\LogLevel as PsrLogLevel;
 use Stringable;
+use Tempest\DateTime\DateTime;
 use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
