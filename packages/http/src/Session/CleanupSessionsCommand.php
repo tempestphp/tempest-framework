@@ -10,8 +10,6 @@ use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\EventBus\EventBus;
 
-use function Tempest\listen;
-
 final readonly class CleanupSessionsCommand
 {
     public function __construct(
@@ -20,10 +18,7 @@ final readonly class CleanupSessionsCommand
         private EventBus $eventBus,
     ) {}
 
-    #[ConsoleCommand(
-        name: 'session:clean',
-        description: 'Finds and removes all expired sessions',
-    )]
+    #[ConsoleCommand(name: 'session:clean', description: 'Finds and removes all expired sessions', aliases: ['session:cleanup'])]
     #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {

@@ -732,22 +732,48 @@ public function store(Todo $todo): Redirect
 
 ### Session configuration
 
-Currently, there's only a built-in file session driver. More drivers are to be added in the future. By default, the session will stay valid for 10 hours, which you can overwrite by creating a `session.config.php` file:
+Tempest supports file and database-based sessions, the former being the default option. Sessions can be configured by creating a `session.config.php` file, in which the expiration time and the session driver can be specified.
+
+#### File sessions
+
+When using file-based sessions, which is the default, session data will be stored in files within the specified directory, relative to `.tempest`. You may configure the path and expiration duration like so:
 
 ```php app/Config/session.config.php
-<?php
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\DateTime\Duration;
 
 return new FileSessionConfig(
-    path: 'sessions', // The path is relative to the project's cache folder
+   expiration: Duration::days(30),
+   path: 'sessions',
+);
+```
+
+#### Database sessions
+
+Tempest provides a database-based session driver, particularly useful for applications that run on multiple servers, as the session data can be shared across all instances.
+
+Before using database sessions, a dedicated table is needed. Tempest provides a migration, which may be installed in your project using its installer:
+
+```sh
+./tempest install sessions:database
+```
+
+This installer will also suggest creating the configuration file that sets up database sessions, with a default expiration of 30 days:
+
+```php app/Sessions/session.config.php
+use Tempest\Http\Session\Config\DatabaseSessionConfig;
+use Tempest\DateTime\Duration;
+
+return new DatabaseSessionConfig(
     expiration: Duration::days(30),
 );
 ```
 
 ### Session cleaning
 
-Outdated sessions should occasionally be cleaned up. Tempest comes with a built-in command to do so: `tempest session:clean`. This command makes use of the [scheduler](/2.x/features/scheduling). If you have scheduling enabled, it will automatically run behind the scenes.
+Sessions expire based on the last activity time. This means that as long as a user is actively using your application, their session will remain valid.
+
+Outdated sessions must occasionally be cleaned up. Tempest comes with a built-in command to do so, `session:clean`. This command makes use of the [scheduler](/2.x/features/scheduling). If you have scheduling enabled, it will automatically run behind the scenes.
 
 ## Deferring tasks
 

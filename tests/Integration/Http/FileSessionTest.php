@@ -134,4 +134,35 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->assertEquals('value', $session->get('test'));
         $this->assertEquals(['key' => 'value'], $session->get('test2'));
     }
+
+    public function test_session_expires_based_on_last_activity(): void
+    {
+        $clock = $this->clock('2023-01-01 00:00:00');
+
+        $this->container->config(new FileSessionConfig(
+            path: 'test_sessions',
+            expiration: Duration::minutes(30),
+        ));
+
+        $manager = $this->container->get(SessionManager::class);
+        $sessionId = new SessionId('last_activity_test');
+
+        // Create session
+        $session = $manager->create($sessionId);
+        $this->assertTrue($session->isValid());
+
+        $clock->plus(Duration::minutes(25));
+        $this->assertTrue($session->isValid());
+
+        // Perform activity
+        $session->set('activity', 'user_action');
+        $clock->plus(Duration::minutes(25));
+        $this->assertTrue($session->isValid());
+        $this->assertTrue($manager->isValid($sessionId));
+
+        // Move forward another 10 minutes, now 35 minutes from last activity
+        $clock->plus(Duration::minutes(10));
+        $this->assertFalse($session->isValid());
+        $this->assertFalse($manager->isValid($sessionId));
+    }
 }
