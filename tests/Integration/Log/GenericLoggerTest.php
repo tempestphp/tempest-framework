@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LogLevel as PsrLogLevel;
 use ReflectionClass;
+use Tempest\Core\AppConfig;
 use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
 use Tempest\Log\Channels\AppendLogChannel;
@@ -30,6 +31,14 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class GenericLoggerTest extends FrameworkIntegrationTestCase
 {
+    private EventBus $bus {
+        get => $this->container->get(EventBus::class);
+    }
+
+    private AppConfig $appConfig {
+        get => $this->container->get(AppConfig::class);
+    }
+
     #[PreCondition]
     protected function configure(): void
     {
@@ -49,7 +58,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
 
         $config = new SimpleLogConfig($filePath, prefix: 'tempest');
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
 
         $this->assertFileExists($filePath);
@@ -63,18 +72,18 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-m-d') . '.log';
         $config = new DailyLogConfig(__DIR__ . '/logs/tempest.log', prefix: 'tempest');
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
 
         $this->assertFileExists($filePath);
         $this->assertStringContainsString('test', Filesystem\read_file($filePath));
 
         $clock->plus(Duration::day());
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
 
         $clock->plus(Duration::days(2));
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
     }
 
@@ -84,7 +93,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-W') . '.log';
         $config = new WeeklyLogConfig(__DIR__ . '/logs/tempest.log', prefix: 'tempest');
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
 
         $this->assertFileExists($filePath);
@@ -105,7 +114,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             prefix: 'tempest',
         );
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->info('test');
 
         $this->assertFileExists($filePath);
@@ -127,7 +136,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             prefix: 'tempest',
         );
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->log($level, 'test');
 
         $this->assertFileExists($filePath);
@@ -146,7 +155,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             $this->assertSame(['foo' => 'bar'], $event->context);
         });
 
-        $logger = new GenericLogger(new NullLogConfig(), $eventBus);
+        $logger = new GenericLogger(new NullLogConfig(), $this->appConfig, $this->bus);
         $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
@@ -159,7 +168,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             prefix: 'tempest',
         );
 
-        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
+        $logger = new GenericLogger($config, $this->appConfig, $this->bus);
         $logger->critical('critical');
         $logger->debug('debug');
 

@@ -20,11 +20,11 @@ final readonly class AppendLogChannel implements LogChannel
      * @param null|int $filePermission Optional file permissions (default (0644) are only for owner read/write).
      */
     public function __construct(
-        private string $path,
-        private bool $useLocking = false,
-        private LogLevel $minimumLogLevel = LogLevel::DEBUG,
-        private bool $bubble = true,
-        private ?int $filePermission = null,
+        private(set) string $path,
+        private(set) bool $useLocking = false,
+        private(set) LogLevel $minimumLogLevel = LogLevel::DEBUG,
+        private(set) bool $bubble = true,
+        private(set) ?int $filePermission = null,
     ) {}
 
     public function getHandlers(Level $level): array
@@ -49,10 +49,5 @@ final readonly class AppendLogChannel implements LogChannel
         return [
             new PsrLogMessageProcessor(),
         ];
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 }
