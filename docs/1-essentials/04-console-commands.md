@@ -223,6 +223,21 @@ final readonly class SynchronizeAircraft
 }
 ```
 
+## Interactive components
+
+Tempest console comes with a range of interactive components that can be used to interact with the user while running a console command:
+
+- `$console->ask()` will prompt the user for input and validate it.
+- `$console->confirm()` will prompt the user for a yes/no answer.
+- `$console->password()` will prompt the user for a password, the input will be masked.
+- `$console->progressBar()` will render a progress bar.
+- `$console->search()` will prompt the user with a search bar and update a result list in real-time.
+- `$console->task()` will run a task and show a progress bar while it's running.
+
+:::warning
+Interactive components are only supported on Mac and Linux. On Windows, Tempest will fall back to non-interactive versions of these components.
+:::
+
 ## Middleware
 
 Console middleware can be applied globally or on a per-command basis. Global console middleware will be discovered and applied automatically, by priority order.
@@ -316,4 +331,4 @@ $this->console
     ->assertSee('caution')
     ->submit()
     ->assertSuccess();
-```
+``` 
