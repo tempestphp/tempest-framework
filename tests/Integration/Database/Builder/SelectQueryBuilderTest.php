@@ -45,6 +45,25 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
+    public function test_select_multiple_fields_as_one(): void
+    {
+        $this->assertSameWithoutBackticks(
+            'SELECT title AS t, index AS i FROM chapters',
+            query('chapters')
+                ->select('title AS t, index AS i')
+                ->build()
+                ->compile(),
+        );
+
+        $this->assertSameWithoutBackticks(
+            'SELECT title, index FROM chapters',
+            query('chapters')
+                ->select('title, index')
+                ->build()
+                ->compile(),
+        );
+    }
+
     public function test_select_without_any_fields_specified(): void
     {
         $query = query('chapters')->select()->build();
