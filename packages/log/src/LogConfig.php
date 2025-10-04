@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Log;
 
-interface LogConfig
+use Tempest\Container\HasTag;
+
+interface LogConfig extends HasTag
 {
     /**
-     * A descriptive name attached to all log messages.
+     * An optional prefix displayed in all log messages. By default, the current environment is used.
      */
-    public string $prefix {
+    public ?string $prefix {
         get;
     }
 
@@ -18,7 +20,7 @@ interface LogConfig
      *
      * @var LogChannel[]
      */
-    public array $channels {
+    public array $logChannels {
         get;
     }
 }
