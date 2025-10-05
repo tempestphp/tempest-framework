@@ -11,9 +11,8 @@ if (function_exists('frankenphp_handle_request')) {
 
     $application = WorkerApplication::boot(__DIR__ . '/../');
 
-    $handler = static function () {
-//        $application->run();
-        echo 'hi';
+    $handler = static function () use ($application) {
+        $application->run();
     };
 
     $maxRequests = (int)($_SERVER['MAX_REQUESTS'] ?? 0);

@@ -49,7 +49,7 @@ final readonly class ServeCommand
             -e FRANKENPHP_CONFIG="worker %s" \
             -v $PWD:/app \
             -p %d:80 -p %d:443 -p %d:443/udp \
-            dunglas/frankenphp
+            tempest
         SH,
         path($publicDir, 'index.php')->toString(),
         $port,
