@@ -42,8 +42,6 @@ final readonly class ServeCommand
 
     private function worker(string $host, int $port, int $httpsPort, string $publicDir): void
     {
-        $this->success('Listening on http://' . $host . ':' . $port . ', https://' . $host . ':' . $httpsPort);
-
         $command = sprintf(<<<'SH'
         docker run \
             -e FRANKENPHP_CONFIG="worker %s" \
@@ -56,6 +54,8 @@ final readonly class ServeCommand
         $httpsPort,
         $httpsPort
         );
+
+        $this->info('Listening on http://' . $host . ':' . $port . ', https://' . $host . ':' . $httpsPort);
 
         $this->info($command);
 

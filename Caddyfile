@@ -1,0 +1,8 @@
+{
+	frankenphp {
+		worker {
+			file /app/public/index.php
+			watch
+		}
+	}
+}
