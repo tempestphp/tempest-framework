@@ -94,7 +94,7 @@ $book = map(['book_title' => 'Timeline Taxi'])->to(Book::class);
 Similarly, you can use the {b`#[Tempest\Mapper\MapTo]`} attribute to specify the key that will be used when serializing the object to an array or a JSON string.
 
 ```php
-use Tempest\Mapper\MapFrom;
+use Tempest\Mapper\MapTo;
 
 final class Book
 {
