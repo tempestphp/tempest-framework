@@ -37,7 +37,7 @@ Optionally, you may install a basic front-end scaffolding that includes [Vite](h
 
 The assets created by this wizard, `main.entrypoint.ts` and `main.entrypoint.css`, are automatically discovered by Tempest. You can serve them using the [`<x-vite-tags />`](../1-essentials/03-views#x-vite-tags) component in your templates.
 
-You may then [run the front-end development server](../1-essentials/04-asset-bundling#running-the-development-server), which will serve your assets on-the-fly:
+You may then [run the front-end development server](../2-features/02-asset-bundling.md#running-the-development-server), which will serve your assets on-the-fly:
 
 ```bash
 {:hl-keyword:npm:} run dev
