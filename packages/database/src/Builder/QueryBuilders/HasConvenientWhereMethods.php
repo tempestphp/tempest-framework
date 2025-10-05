@@ -393,7 +393,7 @@ trait HasConvenientWhereMethods
     }
 
     /**
-     * Adds a `WHERE` condition for records created after a specific date.
+     * Adds a `WHERE` condition for records which specified field is after a specific date.
      *
      * @return self<TModel>
      */
@@ -403,7 +403,7 @@ trait HasConvenientWhereMethods
     }
 
     /**
-     * Adds a `WHERE` condition for records created before a specific date.
+     * Adds a `WHERE` condition for records which specified field is before a specific date.
      *
      * @return self<TModel>
      */
