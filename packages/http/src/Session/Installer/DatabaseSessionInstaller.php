@@ -31,7 +31,7 @@ final class DatabaseSessionInstaller implements Installer
     public function install(): void
     {
         $migration = $this->publish(
-            source: __DIR__ . '/CreateSessionsTable.stub.php',
+            source: __DIR__ . '/CreateSessionsTable.php',
             destination: src_path('Sessions/CreateSessionsTable.php'),
         );
 
