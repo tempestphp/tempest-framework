@@ -341,24 +341,22 @@ The JSON encoded header is available for when you're building APIs with Tempest.
 ```html app/x-error.view.php
 <?php
 use Tempest\Http\Session\Session;
+use Tempest\Validation\Validator;
 use function Tempest\get;
 
-/** @var Tempest\Validation\Rule[]|null $errors */
-$errors = get(Session::class)->get(Session::VALIDATION_ERRORS)[$name ?? null] ?? null;
-?>
+/** @var Session $session */
+$session = get(Session::class);
 
-<div :if="$errors !== null" :class="$class ?? ''">
-    <div :foreach="$errors as $error">
-        <div :if="is_array($error->message())">
-            <div :foreach="$error->message() as $message">
-                {{ $message }}
-            </div>
-        </div>
-        <div :else>
-            {{ $error->message() }}
-        </div>
-    </div>
-</div>
+/** @var Validator $validator */
+$validator = get(Validator::class);
+
+$errors = $session->getErrorsFor($name ?? '');
+
+?><ul :if="$errors !== []" :class="$class ?? ''">
+    <li :foreach="$errors as $error">
+        {{ $validator->getErrorMessage($error) }}
+    </li>
+</ul>
 ```
 
 This view component will be discovered and can then be used to display validation errors likes so:
