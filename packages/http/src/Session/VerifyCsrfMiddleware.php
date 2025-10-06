@@ -78,7 +78,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
                     urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
                 );
             } catch (EncryptionException) {
-                // If decryption fails, treat it as a mismatch
+                throw new CsrfTokenDidNotMatch();
             }
         }
 
