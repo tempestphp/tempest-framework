@@ -15,4 +15,6 @@ enum TokenType
     case PHP;
     case CONTENT;
     case DOCTYPE;
+    case CHARACTER_DATA_OPEN;
+    case CHARACTER_DATA_CLOSE;
 }
