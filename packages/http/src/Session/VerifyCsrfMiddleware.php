@@ -17,6 +17,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Json\Exception\JsonCouldNotBeDecoded;
 use Tempest\Support\Str;
 
 #[Priority(Priority::FRAMEWORK)]
@@ -77,7 +78,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
                 $tokenFromRequest = $this->encrypter->decrypt(
                     urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
                 );
-            } catch (EncryptionException) {
+            } catch (EncryptionException|JsonCouldNotBeDecoded) {
                 throw new CsrfTokenDidNotMatch();
             }
         }

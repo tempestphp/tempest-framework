@@ -101,6 +101,19 @@ final class CsrfTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
+    public function test_throws_csrf_exception_when_header_is_non_serialized_hash(): void
+    {
+        $this->expectException(CsrfTokenDidNotMatch::class);
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $session = $this->container->get(Session::class);
+
+        // simulate a non-serialized hash
+        $sessionCookieValue = 'i-am-not-correct';
+
+        $this->http
+            ->post('/test', headers: [VerifyCsrfMiddleware::CSRF_HEADER_KEY => $sessionCookieValue]);
+    }
+
     public function test_csrf_component(): void
     {
         $session = $this->container->get(Session::class);
