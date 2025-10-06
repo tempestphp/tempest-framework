@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.2.1](https://github.com/tempestphp/tempest-framework/compare/v2.2.0..2.2.1)  —  2025-10-03
+## [2.3.0](https://github.com/tempestphp/tempest-framework/compare/v2.2.1..2.3.0)  —  2025-10-06
+
+### 🚀 Features
+
+- **console**: support variadic argument (#1572) ([b5f4185](https://github.com/tempestphp/tempest-framework/commit/b5f41858d6674efca092d71f3504323392a103f4))
+- **container**: support decorators (#1537) ([2d29bd5](https://github.com/tempestphp/tempest-framework/commit/2d29bd5452e2363b4e44b5218df9a9291f1798cf))
+- **http**: support database-based sessions (#1605) ([174044c](https://github.com/tempestphp/tempest-framework/commit/174044c7726d8d804465474ab2905c43cc0113df))
+- **view**: parse RSS feeds with tempest/view (#1617) ([7398040](https://github.com/tempestphp/tempest-framework/commit/7398040393997d886f59fb4a8ba6d351ee56f9ac))
+
+### 🐛 Bug fixes
+
+- **database**: handle loading circular eager relations (#1556) ([b2e0c75](https://github.com/tempestphp/tempest-framework/commit/b2e0c75c67eb46458d4c8c32f9ae289b4a7ad930))
+- **database**: multiple select fields in one statement (#1603) ([cd51bcf](https://github.com/tempestphp/tempest-framework/commit/cd51bcf9a8c9380d216295178517d4202b40561c))
+- **http**: improve failed request exception messages (#1598) ([a84ce29](https://github.com/tempestphp/tempest-framework/commit/a84ce292496175de43a3685aece3210863a1fc2d))
+- **http**: publish migration during database session driver installation (#1606) ([2d6fa1b](https://github.com/tempestphp/tempest-framework/commit/2d6fa1b843deaddc998f0cd59c9abbc5e03e982c))
+
+
+## [2.2.1](https://github.com/tempestphp/tempest-framework/compare/v2.2.0..v2.2.1)  —  2025-10-03
 
 ### 🐛 Bug fixes
 
