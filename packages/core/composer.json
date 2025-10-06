@@ -5,10 +5,10 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/container": "2.3.0",
-        "tempest/discovery": "2.3.0",
-        "tempest/reflection": "2.3.0",
-        "tempest/support": "2.3.0",
+        "tempest/container": "dev-main",
+        "tempest/discovery": "dev-main",
+        "tempest/reflection": "dev-main",
+        "tempest/support": "dev-main",
         "vlucas/phpdotenv": "^5.6.1",
         "symfony/cache": "^7.3",
         "filp/whoops": "^2.15"
