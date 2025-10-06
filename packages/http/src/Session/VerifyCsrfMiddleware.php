@@ -8,6 +8,7 @@ use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
 use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Cryptography\Encryption\Exceptions\EncryptionException;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Method;
@@ -72,9 +73,13 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
         );
 
         if (! $tokenFromRequest && $request->headers->has(self::CSRF_HEADER_KEY)) {
-            $tokenFromRequest = $this->encrypter->decrypt(
-                urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
-            );
+            try {
+                $tokenFromRequest = $this->encrypter->decrypt(
+                    urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
+                );
+            } catch (EncryptionException) {
+                // If decryption fails, treat it as a mismatch
+            }
         }
 
         if (! $tokenFromRequest) {
