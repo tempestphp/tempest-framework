@@ -64,7 +64,7 @@ final class ValidatorTest extends TestCase
         });
 
         $this->assertCount(1, $failingRules);
-        $this->assertSame('I expected b', $failingRules[0]->message);
+        $this->assertSame('I expected b', $failingRules[0]->rule->message);
     }
 
     public function test_closure_passes_with_null_response(): void
@@ -115,8 +115,8 @@ final class ValidatorTest extends TestCase
         $failingRules = $validator->validateValuesForClass($class, []);
 
         $this->assertCount(7, $failingRules);
-        $this->assertInstanceOf(IsNotNull::class, $failingRules['b'][0]);
-        $this->assertInstanceOf(IsString::class, $failingRules['title'][0]);
+        $this->assertInstanceOf(IsNotNull::class, $failingRules['b'][0]->rule);
+        $this->assertInstanceOf(IsString::class, $failingRules['title'][0]->rule);
 
         $failingRules = $validator->validateValuesForClass($class, [
             'b' => [
@@ -183,7 +183,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => (object) []]);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_int_rule_from_property_type(): void
@@ -191,7 +191,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithIntProp::class, ['prop' => 'a']);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsInteger::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsInteger::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_float_rule_from_property_type(): void
@@ -199,7 +199,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithFloatProp::class, ['prop' => 'a']);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsFloat::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsFloat::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_bool_rule_from_property_type(): void
@@ -207,7 +207,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithBoolProp::class, ['prop' => 'a']);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsBoolean::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsBoolean::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_enum_rule_from_property_type(): void
@@ -215,7 +215,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithEnumProp::class, ['prop' => 'a']);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsEnum::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsEnum::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_not_null_from_scalar_property_type(): void
@@ -223,7 +223,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => null]);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_validation_infers_not_null_from_property_type(): void
@@ -231,7 +231,7 @@ final class ValidatorTest extends TestCase
         $failingRules = $this->validator->validateValuesForClass(ObjectWithObjectProperty::class, ['prop' => null]);
 
         $this->assertCount(1, $failingRules['prop']);
-        $this->assertInstanceOf(IsNotNull::class, $failingRules['prop'][0]);
+        $this->assertInstanceOf(IsNotNull::class, $failingRules['prop'][0]->rule);
     }
 
     public function test_skip_validation_attribute(): void
@@ -257,7 +257,7 @@ final class ValidatorTest extends TestCase
         );
 
         $this->assertCount(1, $failingRules);
-        $this->assertInstanceOf(IsEmail::class, $failingRules['email'][0]);
+        $this->assertInstanceOf(IsEmail::class, $failingRules['email'][0]->rule);
     }
 
     public function test_validate_values_all_valid(): void
