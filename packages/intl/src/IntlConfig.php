@@ -19,6 +19,9 @@ final class IntlConfig
     /** @var array<string,string[]> */
     public array $translationMessagePaths = [];
 
+    /** @var array<string> */
+    public array $catalogPaths = [];
+
     public function __construct(
         /**
          * Defines the locale used throughout the application.
@@ -47,6 +50,13 @@ final class IntlConfig
 
         if (! in_array($path, $this->translationMessagePaths[$locale->value], strict: true)) {
             $this->translationMessagePaths[$locale->value][] = $path;
+        }
+    }
+
+    public function addCatalogFile(string $path): void
+    {
+        if (! in_array($path, $this->catalogPaths, strict: true)) {
+            $this->catalogPaths[] = $path;
         }
     }
 }

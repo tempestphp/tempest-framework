@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="2.0">
+  <file id="messages" original="self" source-language="en" target-language="fr">
+    <unit id="cart.items">
+      <segment>
+        <source>
+          .input {$count :number}
+          .match $count
+          one {{There is one item in your cart.}}
+          *   {{There are {$count} items in your cart.}}
+        </source>
+        <target>
+          .input {$count :number}
+          .match $count
+          one {{Il y a un article dans votre panier.}}
+          *   {{Il y a {$count} articles dans votre panier.}}
+        </target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

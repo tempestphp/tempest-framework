@@ -30,7 +30,7 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
 
     public function discoverPath(DiscoveryLocation $location, string $path): void
     {
-        if (! ends_with($path, ['.json', '.yml', '.yaml'])) {
+        if (! ends_with($path, ['.json', '.yml', '.yaml', '.xml', '.xliff', '.sdlxliff', '.xlf'])) {
             return;
         }
 
@@ -48,12 +48,20 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$path, $locale]) {
-            $this->config->addTranslationMessageFile(Locale::from($locale), $path);
+            if ($locale === 'catalog') {
+                $this->config->addCatalogFile($path);
+            } else {
+                $this->config->addTranslationMessageFile(Locale::from($locale), $path);
+            }
         }
     }
 
     private function isLocale(string $candidate): bool
     {
+        if ($candidate === 'catalog') {
+            return true;
+        }
+
         $locale = arr(Locale::cases())
             ->first(function (Locale $locale) use ($candidate) {
                 if (strtolower($locale->value) === strtolower($candidate)) {

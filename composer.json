@@ -21,6 +21,7 @@
         "league/flysystem": "^3.29.1",
         "league/mime-type-detection": "^1.16",
         "league/oauth2-client": "^2.8",
+        "matecat/xliff-parser": "^2.2",
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",

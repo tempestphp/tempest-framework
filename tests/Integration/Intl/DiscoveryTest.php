@@ -38,6 +38,7 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.abcde.json');
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.fr.yaml');
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.en_US.json');
+        $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/Fixtures/messages.catalog.xliff');
         $discovery->apply();
 
         $config = $this->container->get(IntlConfig::class);
@@ -48,6 +49,11 @@ final class DiscoveryTest extends FrameworkIntegrationTestCase
                 'en_US' => [__DIR__ . '/Fixtures/messages.en_US.json'],
             ],
             actual: $config->translationMessagePaths,
+        );
+
+        $this->assertSame(
+            expected: [__DIR__ . '/Fixtures/messages.catalog.xliff'],
+            actual: $config->catalogPaths,
         );
     }
 }
