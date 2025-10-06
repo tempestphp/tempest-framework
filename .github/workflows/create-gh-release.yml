@@ -40,11 +40,10 @@ jobs:
       - name: Broadcast release on Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK_URL }}
-          RELEASE_BODY: ${{ steps.generate_release_notes.outputs.changelog }}
           RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          processed_body=$(echo "$RELEASE_BODY" | perl -0777 -pe 's/\n*### (\S+) (.+?)\n+/\n### `\1`  \2\n/g')
+          processed_body=$(cat release_notes.txt | perl -0777 -pe 's/\n*### (\S+) (.+?)\n+/\n### `\1`  \2\n/g')
           final_content=$(printf "%s\n%s" "-# Read the [GitHub release](<${RELEASE_URL}>)." "$processed_body")
           jq -n \
             --arg content "$final_content" \
