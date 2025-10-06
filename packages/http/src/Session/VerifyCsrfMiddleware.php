@@ -7,6 +7,7 @@ namespace Tempest\Http\Session;
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Method;
@@ -29,6 +30,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
         private SessionConfig $sessionConfig,
         private CookieManager $cookies,
         private Clock $clock,
+        private Encrypter $encrypter,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
@@ -67,8 +69,13 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
     {
         $tokenFromRequest = $request->get(
             key: Session::CSRF_TOKEN_KEY,
-            default: $request->headers->get(self::CSRF_HEADER_KEY),
         );
+
+        if (! $tokenFromRequest && $request->headers->has(self::CSRF_HEADER_KEY)) {
+            $tokenFromRequest = $this->encrypter->decrypt(
+                urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
+            );
+        }
 
         if (! $tokenFromRequest) {
             throw new CsrfTokenDidNotMatch();
