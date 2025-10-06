@@ -29,6 +29,8 @@ final class TempestViewLexer
                 $tokens[] = $this->lexComment();
             } elseif ($this->comesNext('<!doctype') || $this->comesNext('<!DOCTYPE')) {
                 $tokens[] = $this->lexDocType();
+            } elseif ($this->comesNext('<![CDATA')) {
+                $tokens = [...$tokens, ...$this->lexCharacterData()];
             } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
             } else {
@@ -191,5 +193,23 @@ final class TempestViewLexer
         $buffer = $this->consumeIncluding('>');
 
         return new Token($buffer, TokenType::DOCTYPE);
+    }
+
+    private function lexCharacterData(): array
+    {
+        $tokens = [
+            new Token($this->consumeIncluding('<![CDATA['), TokenType::CHARACTER_DATA_OPEN),
+        ];
+
+        $buffer = '';
+
+        while ($this->seek(3) !== ']]>' && $this->current !== null) {
+            $buffer .= $this->consume();
+        }
+
+        $tokens[] = new Token($buffer, TokenType::CONTENT);
+        $tokens[] = new Token($this->consume(3), TokenType::CHARACTER_DATA_CLOSE);
+
+        return $tokens;
     }
 }

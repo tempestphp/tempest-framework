@@ -5,7 +5,6 @@ namespace Tempest\View\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
-use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
@@ -275,6 +274,25 @@ final class TempestViewLexerTest extends TestCase
         $this->assertTokens(
             expected: [
                 new Token('<!-- comment', TokenType::COMMENT),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_cdata(): void
+    {
+        $tokens = new TempestViewLexer(<<<'RSS'
+        <title><![CDATA[ {{ $post['title'] }} ]]></title>
+        RSS)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<title', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('<![CDATA[', TokenType::CHARACTER_DATA_OPEN),
+                new Token(' {{ $post[\'title\'] }} ', TokenType::CONTENT),
+                new Token(']]>', TokenType::CHARACTER_DATA_CLOSE),
+                new Token('</title>', TokenType::CLOSING_TAG),
             ],
             actual: $tokens,
         );
