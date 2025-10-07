@@ -23,7 +23,9 @@ final class TempestViewLexer
         $tokens = [];
 
         while ($this->current) {
-            if ($this->comesNext('<?')) {
+            if ($this->comesNext('<?xml')) {
+                $tokens[] = $this->lexXml();
+            } elseif ($this->comesNext('<?')) {
                 $tokens[] = $this->lexPhp();
             } elseif ($this->comesNext('<!--')) {
                 $tokens[] = $this->lexComment();
@@ -153,6 +155,19 @@ final class TempestViewLexer
         }
 
         return $tokens;
+    }
+
+    private function lexXml(): Token
+    {
+        $buffer = '';
+
+        while ($this->seek(2) !== '?>' && $this->current !== null) {
+            $buffer .= $this->consume();
+        }
+
+        $buffer .= $this->consume(2);
+
+        return new Token($buffer, TokenType::XML);
     }
 
     private function lexPhp(): Token

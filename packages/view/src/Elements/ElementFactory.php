@@ -25,11 +25,22 @@ final class ElementFactory
         private readonly Container $container,
     ) {}
 
+    private(set) bool $isHtml = false;
+
     public function setViewCompiler(TempestViewCompiler $compiler): self
     {
         $this->compiler = $compiler;
 
         return $this;
+    }
+
+    public function withIsHtml(bool $isHtml): self
+    {
+        $clone = $this->clone();
+
+        $clone->isHtml = $isHtml;
+
+        return $clone;
     }
 
     public function make(Token $token): ?Element
@@ -103,6 +114,7 @@ final class ElementFactory
             $element = new GenericElement(
                 token: $token,
                 tag: $token->tag,
+                isHtml: $this->isHtml,
                 attributes: $attributes,
             );
         }

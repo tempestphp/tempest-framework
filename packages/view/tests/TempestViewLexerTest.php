@@ -298,6 +298,20 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_xml(): void
+    {
+        $tokens = new TempestViewLexer(<<<'XML'
+        <?xml version="1.0" encoding="UTF-8" ?>
+        XML)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<?xml version="1.0" encoding="UTF-8" ?>', TokenType::XML),
+            ],
+            actual: $tokens,
+        );
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);
