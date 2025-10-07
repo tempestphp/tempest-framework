@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.0](https://github.com/tempestphp/tempest-framework/compare/v2.2.1..2.3.0)  —  2025-10-06
+## [2.3.1](https://github.com/tempestphp/tempest-framework/compare/v2.3.0..2.3.1)  —  2025-10-07
+
+### 🐛 Bug fixes
+
+- **view**: support void tag rendering for XML files (#1621) ([a395534](https://github.com/tempestphp/tempest-framework/commit/a3955340171d2ae8eb4a35934418906e40026c34))
+
+
+## [2.3.0](https://github.com/tempestphp/tempest-framework/compare/v2.2.1..v2.3.0)  —  2025-10-06
 
 ### 🚀 Features
 
