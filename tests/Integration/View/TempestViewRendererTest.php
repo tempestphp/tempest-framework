@@ -786,6 +786,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_parse_rss_feed(): void
     {
         $rss = <<<'XML'
+        <?xml version="1.0" encoding="UTF-8" ?>
         <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
             <id>https://tempestphp.com/rss</id>
             <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
@@ -803,11 +804,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         ]);
 
         $this->assertSnippetsMatch(<<<'RSS'
+        <?xml version="1.0" encoding="UTF-8" ?>
         <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
             <id>https://tempestphp.com/rss</id>
-            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss">
+            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
             <title>Tempest</title>
-            <entry><title><![CDATA[ <h1>A</h1> ]]></title>
+            <entry>
+                <title><![CDATA[ <h1>A</h1> ]]></title>
                 <media:content medium="image" url="https://tempestphp.com/a"></media:content>
             </entry>
             <entry><title><![CDATA[ B ]]></title>

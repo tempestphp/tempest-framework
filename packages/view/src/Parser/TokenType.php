@@ -13,6 +13,7 @@ enum TokenType
     case CLOSING_TAG;
     case COMMENT;
     case PHP;
+    case XML;
     case CONTENT;
     case DOCTYPE;
     case CHARACTER_DATA_OPEN;
