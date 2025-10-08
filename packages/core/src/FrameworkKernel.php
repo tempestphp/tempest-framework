@@ -231,6 +231,7 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
+        // TODO: refactor to not have a hard-coded dependency on these exception handlers
         if (! class_exists(ConsoleExceptionHandler::class, false) || ! class_exists(HttpExceptionHandler::class, false)) {
             return $this;
         }
