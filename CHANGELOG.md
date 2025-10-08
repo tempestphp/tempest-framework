@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.1](https://github.com/tempestphp/tempest-framework/compare/v2.3.0..2.3.1)  —  2025-10-07
+## [2.3.2](https://github.com/tempestphp/tempest-framework/compare/v2.3.1..2.3.2)  —  2025-10-08
+
+### 🐛 Bug fixes
+
+- **installer**: set correct default port on base_uri (#1625) ([ef00d98](https://github.com/tempestphp/tempest-framework/commit/ef00d98f5996882dcac5898dc64e9f467512548f))
+- make package dependencies optional where possible (#1624) ([530c226](https://github.com/tempestphp/tempest-framework/commit/530c226b51732e6e290b575e7a55cda751f05cd9))
+
+
+## [2.3.1](https://github.com/tempestphp/tempest-framework/compare/v2.3.0..v2.3.1)  —  2025-10-07
 
 ### 🐛 Bug fixes
 
