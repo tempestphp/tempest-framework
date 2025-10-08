@@ -10,6 +10,7 @@ use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
@@ -19,6 +20,7 @@ use Tempest\Support\Filesystem;
 use Tempest\View\GenericView;
 use Throwable;
 
+use function Tempest\get;
 use function Tempest\Support\arr;
 
 final readonly class HttpExceptionHandler implements ExceptionHandler
@@ -52,7 +54,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     private function renderErrorResponse(Status $status, ?HttpRequestFailed $exception = null): Response
     {
-        if ($exception->request->headers->get('Accept') === 'application/json') {
+        if (get(Request::class)->headers->get('Accept') === 'application/json') {
             return new Json(
                 $this->appConfig->environment->isLocal() && $exception !== null
                     ? [
