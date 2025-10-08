@@ -149,6 +149,13 @@ final class TempestViewParserTest extends TestCase
         $this->assertSame($html, $parsed->compile());
     }
 
+    public function test_parse_xml(): void
+    {
+        $parsed = new TempestViewParser(new TempestViewLexer('<?xml version="1.0" encoding="UTF-8" ?>')->lex())->parse();
+
+        $this->assertFalse($parsed->isHtml);
+    }
+
     public static function data(): Generator
     {
         $files = glob(__DIR__ . '/Fixtures/html/*.html');

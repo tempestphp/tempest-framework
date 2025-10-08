@@ -121,8 +121,10 @@ final readonly class TempestViewCompiler
     {
         $elements = [];
 
+        $elementFactory = $this->elementFactory->withIsHtml($ast->isHtml);
+
         foreach ($ast as $token) {
-            $element = $this->elementFactory->make($token);
+            $element = $elementFactory->make($token);
 
             if ($element === null) {
                 continue;

@@ -17,6 +17,7 @@ final class GenericElement implements Element, WithToken
     public function __construct(
         public readonly Token $token,
         private readonly string $tag,
+        private readonly bool $isHtml,
         array $attributes,
     ) {
         $this->attributes = $attributes;
@@ -55,7 +56,11 @@ final class GenericElement implements Element, WithToken
 
         // Void elements
         if (is_void_tag($this->tag)) {
-            return "<{$this->tag}{$attributes}>";
+            if ($this->isHtml) {
+                return "<{$this->tag}{$attributes}>";
+            } else {
+                return "<{$this->tag}{$attributes} />";
+            }
         }
 
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
