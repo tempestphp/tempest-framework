@@ -17,6 +17,7 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
+use Tempest\Process\ProcessExecutor;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 final class FrameworkKernel implements Kernel
@@ -100,9 +101,15 @@ final class FrameworkKernel implements Kernel
 
     public function loadComposer(): self
     {
+        if (class_exists(GenericProcessExecutor::class, false)) {
+            $processExecutor = new GenericProcessExecutor();
+        } else {
+            $processExecutor = null;
+        }
+
         $composer = new Composer(
             root: $this->root,
-            executor: new GenericProcessExecutor(),
+            executor: $processExecutor,
         )->load();
 
         $this->container->singleton(Composer::class, $composer);

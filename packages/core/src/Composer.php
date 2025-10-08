@@ -26,7 +26,7 @@ final class Composer
 
     public function __construct(
         private readonly string $root,
-        private ProcessExecutor $executor,
+        private ?ProcessExecutor $executor = null,
     ) {}
 
     public function load(): self
@@ -102,7 +102,11 @@ final class Composer
 
     public function executeUpdate(): self
     {
-        $this->executor->run('composer up');
+        if ($this->executor) {
+            $this->executor->run('composer up');
+        } else {
+            exec('composer update');
+        }
 
         return $this;
     }

@@ -6,7 +6,6 @@
     "require": {
         "php": "^8.4",
         "tempest/container": "dev-main",
-        "tempest/process": "dev-main",
         "tempest/discovery": "dev-main",
         "tempest/reflection": "dev-main",
         "tempest/support": "dev-main",
