@@ -13,56 +13,58 @@ use Tempest\Support\Str;
 
 use function Tempest\root_path;
 
-final readonly class GenerateSigningKeyCommand
-{
-    public function __construct(
-        private EncryptionConfig $encryptionConfig,
-        private Console $console,
-    ) {}
-
-    #[ConsoleCommand('key:generate', description: 'Generates the signing key required to sign and verify data.')]
-    public function __invoke(bool $override = true): ExitCode
+if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+    final readonly class GenerateSigningKeyCommand
     {
-        $key = EncryptionKey::generate($this->encryptionConfig->algorithm);
+        public function __construct(
+            private EncryptionConfig $encryptionConfig,
+            private Console $console,
+        ) {}
 
-        $this->createDotEnvIfNotExists();
-        $this->addToDotEnv($key->toString(), $override);
+        #[ConsoleCommand('key:generate', description: 'Generates the signing key required to sign and verify data.')]
+        public function __invoke(bool $override = true): ExitCode
+        {
+            $key = EncryptionKey::generate($this->encryptionConfig->algorithm);
 
-        $this->console->writeln();
+            $this->createDotEnvIfNotExists();
+            $this->addToDotEnv($key->toString(), $override);
 
-        if ($override) {
-            $this->console->success('Signing key generated successfully.');
-        } else {
-            $this->console->info('The signing key already exists.');
+            $this->console->writeln();
+
+            if ($override) {
+                $this->console->success('Signing key generated successfully.');
+            } else {
+                $this->console->info('The signing key already exists.');
+            }
+
+            return ExitCode::SUCCESS;
         }
 
-        return ExitCode::SUCCESS;
-    }
-
-    private function getDotEnvPath(): string
-    {
-        return root_path('.env');
-    }
-
-    private function addToDotEnv(string $key, bool $override): void
-    {
-        $file = Filesystem\read_file($this->getDotEnvPath());
-
-        if (! Str\contains($file, 'SIGNING_KEY=')) {
-            $file = "SIGNING_KEY={$key}\n" . $file;
-        } elseif ($override) {
-            $file = Regex\replace($file, '/^SIGNING_KEY=.*$/m', "SIGNING_KEY={$key}");
+        private function getDotEnvPath(): string
+        {
+            return root_path('.env');
         }
 
-        Filesystem\write_file($this->getDotEnvPath(), $file);
-    }
+        private function addToDotEnv(string $key, bool $override): void
+        {
+            $file = Filesystem\read_file($this->getDotEnvPath());
 
-    private function createDotEnvIfNotExists(): void
-    {
-        if (Filesystem\exists($this->getDotEnvPath())) {
-            return;
+            if (! Str\contains($file, 'SIGNING_KEY=')) {
+                $file = "SIGNING_KEY={$key}\n" . $file;
+            } elseif ($override) {
+                $file = Regex\replace($file, '/^SIGNING_KEY=.*$/m', "SIGNING_KEY={$key}");
+            }
+
+            Filesystem\write_file($this->getDotEnvPath(), $file);
         }
 
-        Filesystem\create_file($this->getDotEnvPath());
+        private function createDotEnvIfNotExists(): void
+        {
+            if (Filesystem\exists($this->getDotEnvPath())) {
+                return;
+            }
+
+            Filesystem\create_file($this->getDotEnvPath());
+        }
     }
 }
