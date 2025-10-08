@@ -14,7 +14,7 @@ final class Json implements Response
 {
     use IsResponse;
 
-    public function __construct(array|JsonSerializable|null $body = null)
+    public function __construct(JsonSerializable|array|null $body = null)
     {
         $this->status = Status::OK;
         $this->body = $body;
