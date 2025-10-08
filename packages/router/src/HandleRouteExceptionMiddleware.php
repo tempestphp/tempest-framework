@@ -7,7 +7,9 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Status;
 use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -38,6 +40,11 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         return $this->forward($request, $next);
     }
 
+    private function wantsJson(Request $request): bool
+    {
+        return $request->headers->get('Accept') === 'application/json';
+    }
+
     private function forward(Request $request, HttpMiddlewareCallable $next): Response
     {
         try {
@@ -45,8 +52,21 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         } catch (ConvertsToResponse $convertsToResponse) {
             return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
+            if (! $this->wantsJson($request)) {
+                return new NotFound([
+                    'message' => 'The requested resource was not found.',
+                ]);
+            }
+
             return new NotFound();
         } catch (ValidationFailed $validationException) {
+            if (! $this->wantsJson($request)) {
+                return new Json([
+                    'message' => $validationException->getMessage(),
+                    'errors' => $validationException->errorMessages,
+                ])->setStatus(Status::UNPROCESSABLE_CONTENT);
+            }
+
             return new Invalid($validationException->subject, $validationException->failingRules);
         }
     }

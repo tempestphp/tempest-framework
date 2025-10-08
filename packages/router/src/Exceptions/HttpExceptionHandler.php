@@ -11,12 +11,15 @@ use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
+use Tempest\Http\Responses\Json;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
 use Tempest\Support\Filesystem;
 use Tempest\View\GenericView;
 use Throwable;
+
+use function Tempest\Support\arr;
 
 final readonly class HttpExceptionHandler implements ExceptionHandler
 {
@@ -49,6 +52,30 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     private function renderErrorResponse(Status $status, ?HttpRequestFailed $exception = null): Response
     {
+        if ($exception->request->headers->get('Accept') === 'application/json') {
+            return new Json(
+                $this->appConfig->environment->isLocal() && $exception !== null
+                    ? [
+                        'message' => $exception->getMessage(),
+                        'exception' => get_class($exception),
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
+                        'trace' => arr($exception->getTrace())->map(
+                            fn ($trace) => arr($trace)->removeKeys('args')->toArray(),
+                        )->toArray(),
+                    ] : [
+                        'message' => $exception?->getMessage() ?: match ($status) {
+                            Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
+                            Status::NOT_FOUND => 'This page could not be found on the server',
+                            Status::FORBIDDEN => 'You do not have permission to access this page',
+                            Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
+                            Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
+                            default => null,
+                        },
+                    ],
+            )->setStatus($status);
+        }
+
         return new GenericResponse(
             status: $status,
             body: new GenericView(__DIR__ . '/HttpErrorResponse/error.view.php', [
