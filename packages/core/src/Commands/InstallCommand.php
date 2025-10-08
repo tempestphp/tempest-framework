@@ -14,54 +14,56 @@ use Tempest\Core\InstallerConfig;
 
 use function Tempest\Support\arr;
 
-final readonly class InstallCommand
-{
-    use HasConsole;
-
-    public function __construct(
-        private InstallerConfig $installerConfig,
-        private Console $console,
-        private Container $container,
-    ) {}
-
-    #[ConsoleCommand(
-        name: 'install',
-        description: 'Applies the specified installer',
-        middleware: [ForceMiddleware::class],
-        allowDynamicArguments: true,
-    )]
-    public function __invoke(?string $installer = null, bool $_tailwind = false): void
+if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+    final readonly class InstallCommand
     {
-        $installer = $this->resolveInstaller($installer);
+        use HasConsole;
 
-        if ($installer === null) {
-            $this->error('Installer not found');
+        public function __construct(
+            private InstallerConfig $installerConfig,
+            private Console $console,
+            private Container $container,
+        ) {}
 
-            return;
+        #[ConsoleCommand(
+            name: 'install',
+            description: 'Applies the specified installer',
+            middleware: [ForceMiddleware::class],
+            allowDynamicArguments: true,
+        )]
+        public function __invoke(?string $installer = null, bool $_tailwind = false): void
+        {
+            $installer = $this->resolveInstaller($installer);
+
+            if ($installer === null) {
+                $this->error('Installer not found');
+
+                return;
+            }
+
+            if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?", default: true)) {
+                $this->error('Aborted.');
+
+                return;
+            }
+
+            $installer->install();
         }
 
-        if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?", default: true)) {
-            $this->error('Aborted.');
+        private function resolveInstaller(?string $search): ?Installer
+        {
+            /** @var Installer[]|\Tempest\Support\Arr\ImmutableArray $installers */
+            $installers = arr($this->installerConfig->installers)
+                ->map(fn (string $installerClass) => $this->container->get($installerClass));
 
-            return;
+            if (! $search) {
+                $search = $this->ask(
+                    question: 'Please choose an installer',
+                    options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->name)->toArray(),
+                );
+            }
+
+            return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->name === $search);
         }
-
-        $installer->install();
-    }
-
-    private function resolveInstaller(?string $search): ?Installer
-    {
-        /** @var Installer[]|\Tempest\Support\Arr\ImmutableArray $installers */
-        $installers = arr($this->installerConfig->installers)
-            ->map(fn (string $installerClass) => $this->container->get($installerClass));
-
-        if (! $search) {
-            $search = $this->ask(
-                question: 'Please choose an installer',
-                options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->name)->toArray(),
-            );
-        }
-
-        return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->name === $search);
     }
 }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use ErrorException;
+use RuntimeException;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -14,6 +17,8 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
+use Tempest\Process\ProcessExecutor;
+use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 final class FrameworkKernel implements Kernel
 {
@@ -67,7 +72,7 @@ final class FrameworkKernel implements Kernel
         $root = realpath($this->root);
 
         if (! is_dir($root)) {
-            throw new \RuntimeException('The specified root directory is not valid.');
+            throw new RuntimeException('The specified root directory is not valid.');
         }
 
         $this->root = $root;
@@ -96,9 +101,15 @@ final class FrameworkKernel implements Kernel
 
     public function loadComposer(): self
     {
+        if (class_exists(GenericProcessExecutor::class, false)) {
+            $processExecutor = new GenericProcessExecutor();
+        } else {
+            $processExecutor = null;
+        }
+
         $composer = new Composer(
             root: $this->root,
-            executor: new GenericProcessExecutor(),
+            executor: $processExecutor,
         )->load();
 
         $this->container->singleton(Composer::class, $composer);
@@ -227,11 +238,16 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
+        // TODO: refactor to not have a hard-coded dependency on these exception handlers
+        if (! class_exists(ConsoleExceptionHandler::class, false) || ! class_exists(HttpExceptionHandler::class, false)) {
+            return $this;
+        }
+
         $handler = $this->container->get(ExceptionHandler::class);
 
         set_exception_handler($handler->handle(...));
         set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
-            new \ErrorException(
+            new ErrorException(
                 message: $message,
                 code: $code,
                 filename: $filename,
