@@ -66,14 +66,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
                             fn ($trace) => arr($trace)->removeKeys('args')->toArray(),
                         )->toArray(),
                     ] : [
-                        'message' => $exception?->getMessage() ?: match ($status) {
-                            Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                            Status::NOT_FOUND => 'This page could not be found on the server',
-                            Status::FORBIDDEN => 'You do not have permission to access this page',
-                            Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                            Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                            default => null,
-                        },
+                        'message' => static::getErrorMessage($status, $exception),
                     ],
             )->setStatus($status);
         }
@@ -84,14 +77,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
                 'css' => $this->getStyleSheet(),
                 'status' => $status->value,
                 'title' => $status->description(),
-                'message' => $exception?->getMessage() ?: match ($status) {
-                    Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                    Status::NOT_FOUND => 'This page could not be found on the server',
-                    Status::FORBIDDEN => 'You do not have permission to access this page',
-                    Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                    Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                    default => null,
-                },
+                'message' => static::getErrorMessage($status, $exception),
             ]),
         );
     }
@@ -99,5 +85,19 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
     private function getStyleSheet(): string
     {
         return Filesystem\read_file(__DIR__ . '/HttpErrorResponse/style.css');
+    }
+
+    private static function getErrorMessage(Status $status, ?Throwable $exception = null): ?string
+    {
+        return (
+            $exception?->getMessage() ?: match ($status) {
+                Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
+                Status::NOT_FOUND => 'This page could not be found on the server',
+                Status::FORBIDDEN => 'You do not have permission to access this page',
+                Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
+                Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
+                default => null,
+            }
+        );
     }
 }
