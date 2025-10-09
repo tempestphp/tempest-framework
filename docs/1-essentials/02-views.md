@@ -4,13 +4,11 @@ description: "Tempest provides a modern templating engine with syntax inspired b
 keywords: "Experimental"
 ---
 
-:::warning
-Tempest View is currently experimental and is not covered by our backwards compatibility promise.
-:::
-
 ## Overview
 
-Views in Tempest are parsed by Tempest View, our own templating engine. Tempest View uses a syntax that can be thought of as a superset of HTML. If you prefer using a templating engine with more widespread support, [you may also use Blade, Twig, or any other](#using-other-engines)—as long as you provide a way to initialize it.
+Views in Tempest are parsed by Tempest View, our own templating engine. Tempest View uses a syntax that can be thought of as a superset of HTML. If you prefer using a templating engine with more widespread support, [you may also use Blade, Twig, or any other](#using-other-engines) — as long as you provide a way to initialize it.
+
+If you'd like to Tempest View as a standalone component in your project, you can read the documentation on how to do so [here](../5-extra-topics/02-standalone-components.md#tempest-view). 
 
 ### Syntax overview
 
