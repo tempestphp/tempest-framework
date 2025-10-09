@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Validator;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Database\PrimaryKey;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Rules;

@@ -9,6 +9,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\IsNotEmptyString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -21,14 +22,11 @@ final class InvalidTest extends FrameworkIntegrationTestCase
     {
         $request = new GenericRequest(Method::GET, '/original', ['foo' => 'bar'], ['referer' => '/original']);
 
-        $response = new Invalid(
-            $request,
-            [
-                'foo' => [
-                    new IsNotEmptyString(),
-                ],
+        $response = new Invalid($request, [
+            'foo' => [
+                new FailingRule(new IsNotEmptyString()),
             ],
-        );
+        ]);
 
         $this->assertSame(Status::FOUND, $response->status);
         $this->assertSame('/original', $response->getHeader('Location')->values[0]);
@@ -48,14 +46,11 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             headers: ['referer' => '/original'],
         );
 
-        $response = new Invalid(
-            $request,
-            [
-                'foo' => [
-                    new IsNotEmptyString(),
-                ],
+        $response = new Invalid($request, [
+            'foo' => [
+                new FailingRule(new IsNotEmptyString()),
             ],
-        );
+        ]);
 
         $this->assertSame(Status::FOUND, $response->status);
         $this->assertSame('/original', $response->getHeader('Location')->values[0]);

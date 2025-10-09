@@ -11,6 +11,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Intl\Translator;
 use Tempest\Support\Json;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 
@@ -27,7 +28,7 @@ final class Invalid implements Response
 
     public function __construct(
         Request $request,
-        /** @var \Tempest\Validation\Rule[][] $failingRules */
+        /** @var \Tempest\Validation\FailingRule[][] $failingRules */
         array $failingRules = [],
     ) {
         if ($referer = $request->headers['referer'] ?? null) {
@@ -44,7 +45,7 @@ final class Invalid implements Response
             Json\encode(
                 arr($failingRules)->map(
                     fn (array $failingRulesForField) => arr($failingRulesForField)->map(
-                        fn (Rule $rule) => $this->validator->getErrorMessage($rule),
+                        fn (FailingRule $rule) => $this->validator->getErrorMessage($rule),
                     )->toArray(),
                 )->toArray(),
             ),
