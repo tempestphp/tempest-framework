@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Responses;
 
+use JsonSerializable;
 use Tempest\Http\Header;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
@@ -13,7 +14,7 @@ final class Json implements Response
 {
     use IsResponse;
 
-    public function __construct(?array $body = null)
+    public function __construct(JsonSerializable|array|null $body = null)
     {
         $this->status = Status::OK;
         $this->body = $body;
