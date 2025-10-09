@@ -52,7 +52,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         } catch (ConvertsToResponse $convertsToResponse) {
             return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
-            if (! $this->wantsJson($request)) {
+            if ($this->wantsJson($request)) {
                 return new NotFound([
                     'message' => 'The requested resource was not found.',
                 ]);
@@ -60,7 +60,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
             return new NotFound();
         } catch (ValidationFailed $validationException) {
-            if (! $this->wantsJson($request)) {
+            if ($this->wantsJson($request)) {
                 return new Json([
                     'message' => $validationException->getMessage(),
                     'errors' => $validationException->errorMessages,
