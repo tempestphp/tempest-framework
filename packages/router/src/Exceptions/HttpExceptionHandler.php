@@ -12,7 +12,6 @@ use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Json;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
@@ -31,10 +30,16 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         private ResponseSender $responseSender,
         private Container $container,
         private ExceptionReporter $exceptionReporter,
+        private JsonHttpExceptionHandler $jsonHandler,
     ) {}
 
     public function handle(Throwable $throwable): void
     {
+        if (get(Request::class)->headers->get('Accept') === 'application/json') {
+            $this->jsonHandler->handle($throwable);
+            return;
+        }
+
         try {
             $this->exceptionReporter->report($throwable);
 
@@ -54,30 +59,20 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     private function renderErrorResponse(Status $status, ?HttpRequestFailed $exception = null): Response
     {
-        if (get(Request::class)->headers->get('Accept') === 'application/json') {
-            return new Json(
-                $this->appConfig->environment->isLocal() && $exception !== null
-                    ? [
-                        'message' => $exception->getMessage(),
-                        'exception' => get_class($exception),
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'trace' => arr($exception->getTrace())->map(
-                            fn ($trace) => arr($trace)->removeKeys('args')->toArray(),
-                        )->toArray(),
-                    ] : [
-                        'message' => static::getErrorMessage($status, $exception),
-                    ],
-            )->setStatus($status);
-        }
-
         return new GenericResponse(
             status: $status,
             body: new GenericView(__DIR__ . '/HttpErrorResponse/error.view.php', [
                 'css' => $this->getStyleSheet(),
                 'status' => $status->value,
                 'title' => $status->description(),
-                'message' => static::getErrorMessage($status, $exception),
+                'message' => $exception?->getMessage() ?: match ($status) {
+                    Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
+                    Status::NOT_FOUND => 'This page could not be found on the server',
+                    Status::FORBIDDEN => 'You do not have permission to access this page',
+                    Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
+                    Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
+                    default => null,
+                },
             ]),
         );
     }
@@ -85,19 +80,5 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
     private function getStyleSheet(): string
     {
         return Filesystem\read_file(__DIR__ . '/HttpErrorResponse/style.css');
-    }
-
-    private static function getErrorMessage(Status $status, ?Throwable $exception = null): ?string
-    {
-        return (
-            $exception?->getMessage() ?: match ($status) {
-                Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                Status::NOT_FOUND => 'This page could not be found on the server',
-                Status::FORBIDDEN => 'You do not have permission to access this page',
-                Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                default => null,
-            }
-        );
     }
 }
