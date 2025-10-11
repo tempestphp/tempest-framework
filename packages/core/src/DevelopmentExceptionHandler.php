@@ -4,6 +4,7 @@ namespace Tempest\Core;
 
 use Tempest\Container\Container;
 use Tempest\Http\Request;
+use Tempest\Router\Exceptions\JsonHttpExceptionHandler;
 use Tempest\Router\MatchedRoute;
 use Throwable;
 use Whoops\Handler\HandlerInterface;
@@ -17,6 +18,7 @@ final readonly class DevelopmentExceptionHandler implements ExceptionHandler
     public function __construct(
         private Container $container,
         private ExceptionReporter $exceptionReporter,
+        private JsonHttpExceptionHandler $jsonHandler,
     ) {
         $this->whoops = new Run();
         $this->whoops->pushHandler($this->createHandler());
@@ -24,6 +26,11 @@ final readonly class DevelopmentExceptionHandler implements ExceptionHandler
 
     public function handle(Throwable $throwable): void
     {
+        if ($this->container->get(Request::class)->headers->get('accept') === 'application/json') {
+            $this->jsonHandler->handle($throwable);
+            return;
+        }
+
         $this->exceptionReporter->report($throwable);
         $this->whoops->handleException($throwable);
     }

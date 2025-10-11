@@ -7,10 +7,17 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Status;
 use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
+
+use function Tempest\get;
+use function Tempest\Support\arr;
 
 #[Priority(Priority::FRAMEWORK - 10)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
@@ -24,7 +31,9 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         if ($this->routeConfig->throwHttpExceptions === true) {
             $response = $this->forward($request, $next);
 
-            if ($response->status->isServerError() || $response->status->isClientError()) {
+            $isValidationError = $response->status === Status::UNPROCESSABLE_CONTENT;
+
+            if (! $isValidationError && ($response->status->isServerError() || $response->status->isClientError())) {
                 throw new HttpRequestFailed(
                     request: $request,
                     status: $response->status,
@@ -38,6 +47,11 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         return $this->forward($request, $next);
     }
 
+    private function wantsJson(Request $request): bool
+    {
+        return $request->headers->get('Accept') === 'application/json';
+    }
+
     private function forward(Request $request, HttpMiddlewareCallable $next): Response
     {
         try {
@@ -45,8 +59,27 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         } catch (ConvertsToResponse $convertsToResponse) {
             return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
+            if ($this->wantsJson($request)) {
+                return new NotFound([
+                    'message' => 'The requested resource was not found.',
+                ]);
+            }
+
             return new NotFound();
         } catch (ValidationFailed $validationException) {
+            if ($this->wantsJson($request)) {
+                $errors = arr($validationException->failingRules)->map(
+                    fn (array $failingRulesForField, string $field) => arr($failingRulesForField)->map(
+                        fn (Rule $rule) => get(Validator::class)->getErrorMessage($rule, $field),
+                    )->toArray(),
+                );
+
+                return new Json([
+                    'message' => $errors->first()[0],
+                    'errors' => $errors->toArray(),
+                ])->setStatus(Status::UNPROCESSABLE_CONTENT);
+            }
+
             return new Invalid($validationException->subject, $validationException->failingRules);
         }
     }
