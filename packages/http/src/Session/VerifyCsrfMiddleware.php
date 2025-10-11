@@ -7,6 +7,8 @@ namespace Tempest\Http\Session;
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
+use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Cryptography\Encryption\Exceptions\EncryptionException;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Method;
@@ -15,6 +17,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Json\Exception\JsonCouldNotBeDecoded;
 use Tempest\Support\Str;
 
 #[Priority(Priority::FRAMEWORK)]
@@ -29,6 +32,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
         private SessionConfig $sessionConfig,
         private CookieManager $cookies,
         private Clock $clock,
+        private Encrypter $encrypter,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
@@ -67,8 +71,17 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
     {
         $tokenFromRequest = $request->get(
             key: Session::CSRF_TOKEN_KEY,
-            default: $request->headers->get(self::CSRF_HEADER_KEY),
         );
+
+        if (! $tokenFromRequest && $request->headers->has(self::CSRF_HEADER_KEY)) {
+            try {
+                $tokenFromRequest = $this->encrypter->decrypt(
+                    urldecode($request->headers->get(self::CSRF_HEADER_KEY)),
+                );
+            } catch (EncryptionException|JsonCouldNotBeDecoded) {
+                throw new CsrfTokenDidNotMatch();
+            }
+        }
 
         if (! $tokenFromRequest) {
             throw new CsrfTokenDidNotMatch();
