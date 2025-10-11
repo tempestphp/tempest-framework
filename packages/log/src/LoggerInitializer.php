@@ -6,18 +6,27 @@ namespace Tempest\Log;
 
 use Psr\Log\LoggerInterface;
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\AppConfig;
 use Tempest\EventBus\EventBus;
+use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
-final readonly class LoggerInitializer implements Initializer
+final readonly class LoggerInitializer implements DynamicInitializer
 {
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    {
+        return $class->getType()->matches(Logger::class) || $class->getType()->matches(LoggerInterface::class);
+    }
+
     #[Singleton]
-    public function initialize(Container $container): LoggerInterface|Logger
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): LoggerInterface|Logger
     {
         return new GenericLogger(
-            $container->get(LogConfig::class),
-            $container->get(EventBus::class),
+            logConfig: $container->get(LogConfig::class, $tag),
+            appConfig: $container->get(AppConfig::class),
+            eventBus: $container->get(EventBus::class),
         );
     }
 }
