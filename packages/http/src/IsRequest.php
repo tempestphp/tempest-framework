@@ -158,7 +158,7 @@ trait IsRequest
             ];
         }
 
-        if (empty($mediaTypes)) {
+        if (count($mediaTypes) === 0) {
             return true;
         }
 
