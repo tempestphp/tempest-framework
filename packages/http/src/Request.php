@@ -60,8 +60,7 @@ interface Request
 
     /**
      * Determines if the request's "Content-Type" header matches the given content type.
-     *
-     * If multiple content types are provided, the method returns true if all are matched.
+     * If multiple content types are provided, the method returns true if any of them matches.
      */
     public function accepts(ContentType ...$contentType): bool;
 }

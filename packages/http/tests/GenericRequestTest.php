@@ -150,7 +150,7 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_evaluates_all_content_types(): void
+    public function test_accepts_can_take_multiple_params(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -160,9 +160,10 @@ final class GenericRequestTest extends TestCase
             ],
         );
 
-        $this->assertFalse($request->accepts(ContentType::JSON, ContentType::HTML));
-        $this->assertTrue($request->accepts(ContentType::JSON, ContentType::XML));
+        $this->assertTrue($request->accepts(ContentType::HTML, ContentType::JSON));
+        $this->assertTrue($request->accepts(ContentType::XML, ContentType::JSON));
         $this->assertTrue($request->accepts(ContentType::JSON, ContentType::AVIF));
-        $this->assertFalse($request->accepts(ContentType::AVIF, ContentType::PNG));
+        $this->assertTrue($request->accepts(ContentType::AVIF, ContentType::PNG));
+        $this->assertFalse($request->accepts(ContentType::HTML, ContentType::PNG));
     }
 }

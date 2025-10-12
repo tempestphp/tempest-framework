@@ -158,8 +158,9 @@ trait IsRequest
             ];
         }
 
-        /** @var array<string, bool> */
-        $supported = [];
+        if (empty($mediaTypes)) {
+            return true;
+        }
 
         foreach ($contentTypes as $contentType) {
             [$mediaType, $subType] = explode('/', $contentType->value);
@@ -169,15 +170,12 @@ trait IsRequest
                     ($acceptedType['mediaType'] === '*' || $acceptedType['mediaType'] === $mediaType)
                     && ($acceptedType['subType'] === '*' || $acceptedType['subType'] === $subType)
                 ) {
-                    $supported[$contentType->value] = true;
-                    break;
+                    return true;
                 }
-
-                $supported[$contentType->value] = false;
             }
         }
 
-        return every($supported, static fn (bool $isSupported) => $isSupported);
+        return false;
     }
 
     public function withMethod(Method $method): self
