@@ -2,8 +2,6 @@
 
 namespace Tempest\Core;
 
-use Tempest\Support\Str;
-
 /**
  * Represents an insight for the `tempest about` command.
  */

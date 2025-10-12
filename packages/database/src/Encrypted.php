@@ -7,7 +7,6 @@ namespace Tempest\Database;
 use Attribute;
 use Tempest\Database\Casters\EncryptedCaster;
 use Tempest\Database\Serializers\EncryptedSerializer;
-use Tempest\Database\Serializers\HashedSerializer;
 use Tempest\Mapper\ProvidesCaster;
 use Tempest\Mapper\ProvidesSerializer;
 

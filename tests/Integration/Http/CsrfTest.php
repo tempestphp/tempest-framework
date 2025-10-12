@@ -6,7 +6,6 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Cryptography\Encryption\Encrypter;
-use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;

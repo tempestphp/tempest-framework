@@ -11,7 +11,6 @@ use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Intl\Translator;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Support\Arr;

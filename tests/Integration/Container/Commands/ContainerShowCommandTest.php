@@ -4,7 +4,6 @@ namespace Tests\Tempest\Integration\Container\Commands;
 
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
-use Tempest\Container\GenericContainer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use UnitEnum;
 

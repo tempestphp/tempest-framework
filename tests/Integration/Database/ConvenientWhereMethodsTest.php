@@ -8,10 +8,8 @@ use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\DateTime\DateTime;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

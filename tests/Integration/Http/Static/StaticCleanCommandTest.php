@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\Http\Static;
 use Tempest\Core\AppConfig;
 use Tempest\Router\Static\StaticCleanCommand;
 use Tempest\Router\Static\StaticGenerateCommand;
-use Tempest\Router\Static\StaticPageConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Static\Fixtures\StaticPageController;
 

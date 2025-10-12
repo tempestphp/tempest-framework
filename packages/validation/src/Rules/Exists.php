@@ -6,7 +6,6 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use InvalidArgumentException;
-use Tempest\Database\PrimaryKey;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
 

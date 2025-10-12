@@ -1,7 +1,6 @@
 <?php
 
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\ValueObject\RenameProperty;

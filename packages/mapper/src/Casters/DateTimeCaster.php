@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;

@@ -5,7 +5,6 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
-use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
