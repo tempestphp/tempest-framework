@@ -154,7 +154,7 @@ trait IsRequest
 
             $mediaTypes[] = [
                 'mediaType' => $acceptedType->before('/')->toString(),
-                'subType' => $acceptedType->afterFirst('/')->toString(),
+                'subType' => $acceptedType->afterFirst('/')->beforeLast(';q')->toString(),
             ];
         }
 

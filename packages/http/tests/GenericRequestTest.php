@@ -150,7 +150,21 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_can_take_multiple_params(): void
+    public function test_accepts_can_handle_priorities(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => 'text/html, application/xhtml+xml;q=0.8, application/xml;q=0.8, image/webp',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::XHTML));
+        $this->assertTrue($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_returns_true_on_first_match(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
