@@ -7,7 +7,6 @@ namespace Tempest\View\Elements;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Attributes\PhpAttribute;
-use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;

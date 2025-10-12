@@ -4,7 +4,6 @@ namespace Tempest\Reflection\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\Tests\Fixtures\TestClassA;
 
 final class TypeReflectorTest extends TestCase

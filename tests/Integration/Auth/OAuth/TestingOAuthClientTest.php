@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Auth\OAuth;
 
-use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\Authentication\Authenticatable;

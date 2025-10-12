@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

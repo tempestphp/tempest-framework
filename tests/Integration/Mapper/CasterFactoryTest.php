@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use BackedEnum;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Casters\BooleanCaster;
 use Tempest\Mapper\Casters\DateTimeCaster;
@@ -12,7 +11,6 @@ use Tempest\Mapper\Casters\IntegerCaster;
 use Tempest\Mapper\Casters\NativeDateTimeCaster;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
-use UnitEnum;
 
 use function Tempest\reflect;
 

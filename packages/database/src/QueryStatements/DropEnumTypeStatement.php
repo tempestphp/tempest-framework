@@ -9,7 +9,6 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use UnitEnum;
 
-use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final readonly class DropEnumTypeStatement implements QueryStatement

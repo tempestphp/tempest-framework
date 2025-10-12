@@ -6,9 +6,6 @@ namespace Tests\Tempest\Integration\Cache;
 
 use Tempest\Cache\Commands\CacheClearCommand;
 use Tempest\Cache\Config\InMemoryCacheConfig;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Icon\IconCache;
-use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

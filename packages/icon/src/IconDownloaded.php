@@ -2,8 +2,6 @@
 
 namespace Tempest\Icon;
 
-use Exception;
-
 final readonly class IconDownloaded
 {
     public function __construct(

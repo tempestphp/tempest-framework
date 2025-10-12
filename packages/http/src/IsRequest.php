@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Tempest\Http\Cookie\Cookie;
-use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\SkipValidation;
 

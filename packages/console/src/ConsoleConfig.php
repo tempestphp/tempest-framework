@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Console\Middleware\ConsoleExceptionMiddleware;
-use Tempest\Console\Middleware\HelpMiddleware;
-use Tempest\Console\Middleware\InvalidCommandMiddleware;
-use Tempest\Console\Middleware\OverviewMiddleware;
-use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
 use Tempest\Core\Middleware;
 use Tempest\Reflection\MethodReflector;
 

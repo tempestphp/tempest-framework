@@ -6,8 +6,6 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Tempest\Container\Container;
 use UnitEnum;
 
-use function Tempest\get;
-
 /**
  * Use a custom adapter as the cache backend.
  */

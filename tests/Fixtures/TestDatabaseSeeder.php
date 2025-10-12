@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Fixtures;
 
 use Tempest\Database\DatabaseSeeder;
-use Tempest\Discovery\SkipDiscovery;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use UnitEnum;
 
