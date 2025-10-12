@@ -31,9 +31,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         if ($this->routeConfig->throwHttpExceptions === true) {
             $response = $this->forward($request, $next);
 
-            $isValidationError = $response->status === Status::UNPROCESSABLE_CONTENT;
-
-            if (! $isValidationError && ($response->status->isServerError() || $response->status->isClientError())) {
+            if ($response->status->isServerError() || $response->status->isClientError()) {
                 throw new HttpRequestFailed(
                     request: $request,
                     status: $response->status,
