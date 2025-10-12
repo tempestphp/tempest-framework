@@ -10,6 +10,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\SkipValidation;
 
 use function Tempest\get;
+use function Tempest\Support\Arr\every;
 use function Tempest\Support\Arr\get_by_key;
 use function Tempest\Support\Arr\has_key;
 use function Tempest\Support\str;
@@ -137,24 +138,46 @@ trait IsRequest
         return has_key($this->query, $key);
     }
 
-    public function accepts(ContentType $contentType): bool
+    public function accepts(ContentType ...$contentTypes): bool
     {
-        $header = $this->headers->get(name: 'accept');
+        $header = $this->headers->get(name: 'accept') ?? '';
 
-        if ($header === null) {
-            return true;
+        /** @var array{mediaType:string,subType:string} */
+        $mediaTypes = [];
+
+        foreach (str($header)->explode(separator: ',') as $acceptedType) {
+            $acceptedType = str($acceptedType)->trim();
+
+            if ($acceptedType->isEmpty()) {
+                continue;
+            }
+
+            $mediaTypes[] = [
+                'mediaType' => $acceptedType->before('/')->toString(),
+                'subType' => $acceptedType->afterFirst('/')->toString(),
+            ];
         }
 
-        $accepts = str($header)
-            ->explode(separator: ',')
-            ->map(static fn (string $item) => trim($item))
-            ->filter(static fn (string $item) => $item !== '');
+        /** @var array<string, bool> */
+        $supported = [];
 
-        if ($accepts->isEmpty() || $accepts->contains(search: '*/*')) {
-            return true;
+        foreach ($contentTypes as $contentType) {
+            [$mediaType, $subType] = explode('/', $contentType->value);
+
+            foreach ($mediaTypes as $acceptedType) {
+                if (
+                    ($acceptedType['mediaType'] === '*' || $acceptedType['mediaType'] === $mediaType)
+                    && ($acceptedType['subType'] === '*' || $acceptedType['subType'] === $subType)
+                ) {
+                    $supported[$contentType->value] = true;
+                    break;
+                }
+
+                $supported[$contentType->value] = false;
+            }
         }
 
-        return $accepts->contains(search: $contentType->value);
+        return every($supported, static fn (bool $isSupported) => $isSupported);
     }
 
     public function withMethod(Method $method): self

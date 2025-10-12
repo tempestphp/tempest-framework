@@ -58,5 +58,10 @@ interface Request
 
     public function getCookie(string $name): ?Cookie;
 
-    public function accepts(ContentType $contentType): bool;
+    /**
+     * Determines if the request's "Content-Type" header matches the given content type.
+     *
+     * If multiple content types are provided, the method returns true if all are matched.
+     */
+    public function accepts(ContentType ...$contentType): bool;
 }

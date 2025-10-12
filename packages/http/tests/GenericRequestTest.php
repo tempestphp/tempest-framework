@@ -90,6 +90,21 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
+    public function test_accepts_with_empty_accept_header(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => '',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertTrue($request->accepts(ContentType::HTML));
+        $this->assertTrue($request->accepts(ContentType::XML));
+    }
+
     public function test_accepts_with_wildcard(): void
     {
         $request = new GenericRequest(
@@ -118,5 +133,36 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::JSON));
         $this->assertTrue($request->accepts(ContentType::HTML));
         $this->assertFalse($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_with_wildcard_subtype(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => 'application/*',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertFalse($request->accepts(ContentType::HTML));
+        $this->assertTrue($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_evaluates_all_content_types(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => 'application/*, image/avif',
+            ],
+        );
+
+        $this->assertFalse($request->accepts(ContentType::JSON, ContentType::HTML));
+        $this->assertTrue($request->accepts(ContentType::JSON, ContentType::XML));
+        $this->assertTrue($request->accepts(ContentType::JSON, ContentType::AVIF));
+        $this->assertFalse($request->accepts(ContentType::AVIF, ContentType::PNG));
     }
 }
