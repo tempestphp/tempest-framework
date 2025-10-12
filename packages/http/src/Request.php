@@ -57,4 +57,6 @@ interface Request
     public function getSessionValue(string $name): mixed;
 
     public function getCookie(string $name): ?Cookie;
+
+    public function accepts(ContentType $contentType): bool;
 }

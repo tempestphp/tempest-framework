@@ -6,6 +6,7 @@ namespace Tempest\Http\Tests;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use Tempest\Http\ContentType;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Header;
 use Tempest\Http\Method;
@@ -60,5 +61,62 @@ final class GenericRequestTest extends TestCase
 
         $this->expectException(LogicException::class);
         unset($headers['x']);
+    }
+
+    public function test_accepts_with_accept_header(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => 'application/json',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertFalse($request->accepts(ContentType::HTML));
+        $this->assertFalse($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_with_no_accept_header(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertTrue($request->accepts(ContentType::HTML));
+        $this->assertTrue($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_with_wildcard(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => '*/*',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertTrue($request->accepts(ContentType::HTML));
+        $this->assertTrue($request->accepts(ContentType::XML));
+    }
+
+    public function test_accepts_with_multiple_values(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'Accept' => 'application/json, text/html',
+            ],
+        );
+
+        $this->assertTrue($request->accepts(ContentType::JSON));
+        $this->assertTrue($request->accepts(ContentType::HTML));
+        $this->assertFalse($request->accepts(ContentType::XML));
     }
 }

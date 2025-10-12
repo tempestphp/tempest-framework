@@ -12,6 +12,7 @@ use Tempest\Validation\SkipValidation;
 use function Tempest\get;
 use function Tempest\Support\Arr\get_by_key;
 use function Tempest\Support\Arr\has_key;
+use function Tempest\Support\str;
 
 /** @phpstan-require-implements \Tempest\Http\Request */
 trait IsRequest
@@ -134,6 +135,26 @@ trait IsRequest
     public function hasQuery(string $key): bool
     {
         return has_key($this->query, $key);
+    }
+
+    public function accepts(ContentType $contentType): bool
+    {
+        $header = $this->headers->get(name: 'accept');
+
+        if ($header === null) {
+            return true;
+        }
+
+        $accepts = str($header)
+            ->explode(separator: ',')
+            ->map(static fn (string $item) => trim($item))
+            ->filter(static fn (string $item) => $item !== '');
+
+        if ($accepts->isEmpty() || $accepts->contains(search: '*/*')) {
+            return true;
+        }
+
+        return $accepts->contains(search: $contentType->value);
     }
 
     public function withMethod(Method $method): self
