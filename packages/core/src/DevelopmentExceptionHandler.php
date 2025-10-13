@@ -7,6 +7,7 @@ use Tempest\Http\ContentType;
 use Tempest\Http\Request;
 use Tempest\Router\Exceptions\JsonHttpExceptionRenderer;
 use Tempest\Router\MatchedRoute;
+use Tempest\Router\ResponseSender;
 use Throwable;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\PrettyPageHandler;
@@ -20,6 +21,7 @@ final readonly class DevelopmentExceptionHandler implements ExceptionHandler
         private Container $container,
         private ExceptionReporter $exceptionReporter,
         private JsonHttpExceptionRenderer $jsonHandler,
+        private ResponseSender $responseSender,
     ) {
         $this->whoops = new Run();
         $this->whoops->pushHandler($this->createHandler());
@@ -33,7 +35,7 @@ final readonly class DevelopmentExceptionHandler implements ExceptionHandler
 
         match (true) {
             $request->accepts(ContentType::HTML, ContentType::XHTML) => $this->whoops->handleException($throwable),
-            $request->accepts(ContentType::JSON) => $this->jsonHandler->render($throwable),
+            $request->accepts(ContentType::JSON) => $this->responseSender->send($this->jsonHandler->render($throwable)),
             default => $this->whoops->handleException($throwable),
         };
     }

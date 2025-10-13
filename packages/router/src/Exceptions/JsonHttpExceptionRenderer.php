@@ -30,7 +30,7 @@ final readonly class JsonHttpExceptionRenderer
             $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
             $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
-            $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status),
+            $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
             default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, $throwable),
         };
@@ -55,7 +55,7 @@ final readonly class JsonHttpExceptionRenderer
         return new Json(
             $this->appConfig->environment->isLocal() && $exception !== null
                 ? [
-                    'message' => $exception->getMessage(),
+                    'message' => static::getErrorMessage($status, $exception),
                     'exception' => get_class($exception),
                     'file' => $exception->getFile(),
                     'line' => $exception->getLine(),
@@ -77,7 +77,7 @@ final readonly class JsonHttpExceptionRenderer
                 Status::FORBIDDEN => 'You do not have permission to access this page',
                 Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
                 Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-                default => null,
+                default => $status->description(),
             }
         );
     }
