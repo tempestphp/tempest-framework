@@ -8,6 +8,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
 use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
+use Tempest\Http\ContentType;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
@@ -18,9 +19,6 @@ use Tempest\Router\ResponseSender;
 use Tempest\Support\Filesystem;
 use Tempest\View\GenericView;
 use Throwable;
-
-use function Tempest\get;
-use function Tempest\Support\arr;
 
 final readonly class HttpExceptionHandler implements ExceptionHandler
 {
@@ -35,7 +33,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 
     public function handle(Throwable $throwable): void
     {
-        if (get(Request::class)->headers->get('Accept') === 'application/json') {
+        if ($this->container->get(Request::class)->accepts(ContentType::JSON)) {
             $this->jsonHandler->handle($throwable);
             return;
         }

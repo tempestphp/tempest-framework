@@ -3,6 +3,7 @@
 namespace Tempest\Router;
 
 use Tempest\Core\Priority;
+use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -45,11 +46,6 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         return $this->forward($request, $next);
     }
 
-    private function wantsJson(Request $request): bool
-    {
-        return $request->headers->get('Accept') === 'application/json';
-    }
-
     private function forward(Request $request, HttpMiddlewareCallable $next): Response
     {
         try {
@@ -57,7 +53,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         } catch (ConvertsToResponse $convertsToResponse) {
             return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
-            if ($this->wantsJson($request)) {
+            if ($request->accepts(ContentType::JSON)) {
                 return new NotFound([
                     'message' => 'The requested resource was not found.',
                 ]);
@@ -65,7 +61,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
             return new NotFound();
         } catch (ValidationFailed $validationException) {
-            if ($this->wantsJson($request)) {
+            if ($request->accepts(ContentType::JSON)) {
                 $errors = arr($validationException->failingRules)->map(
                     fn (array $failingRulesForField, string $field) => arr($failingRulesForField)->map(
                         fn (Rule $rule) => get(Validator::class)->getErrorMessage($rule, $field),
