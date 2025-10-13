@@ -2,8 +2,6 @@
 
 namespace Tempest\KeyValue\Redis\Config;
 
-use UnitEnum;
-
 final class RedisConfig
 {
     public function __construct(

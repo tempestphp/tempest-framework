@@ -129,12 +129,12 @@ A common use case in many applications is to represent persisted data as objects
 These objects don't have to implement any interface—they may be plain-old PHP objects:
 
 ```php app/Book.php
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 use App\Author;
 
 final class Book
 {
-    #[Length(min: 1, max: 120)]
+    #[HasLength(min: 1, max: 120)]
     public string $title;
 
     public ?Author $author = null;
@@ -404,14 +404,14 @@ People who are used to Eloquent might prefer a more "active record" style to han
 
 ```php
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 use App\Author;
 
 final class Book
 {
     use IsDatabaseModel;
 
-    #[Length(min: 1, max: 120)]
+    #[HasLength(min: 1, max: 120)]
     public string $title;
 
     public ?Author $author = null;

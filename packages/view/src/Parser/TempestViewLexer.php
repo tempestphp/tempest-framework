@@ -117,7 +117,7 @@ final class TempestViewLexer
 
                 $attributeName = $this->consumeWhile(self::WHITESPACE);
 
-                $attributeName .= $this->consumeUntil('= >');
+                $attributeName .= $this->consumeUntil(self::WHITESPACE . '=/>');
 
                 $hasValue = $this->seek() === '=';
 

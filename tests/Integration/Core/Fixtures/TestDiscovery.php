@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Core\Fixtures;
 
 use Exception;
-use Serializable;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;

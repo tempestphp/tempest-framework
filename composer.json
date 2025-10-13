@@ -49,7 +49,7 @@
         "adam-paterson/oauth2-slack": "^1.1",
         "aws/aws-sdk-php": "^3.338.0",
         "azure-oss/storage-blob-flysystem": "^1.2",
-        "carthage-software/mago": "1.0.0-beta.24",
+        "carthage-software/mago": "1.0.0-beta.28",
         "depotwarehouse/oauth2-twitch": "^1.3",
         "guzzlehttp/psr7": "^2.6.1",
         "league/flysystem-aws-s3-v3": "^3.25.1",

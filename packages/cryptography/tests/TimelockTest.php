@@ -3,7 +3,6 @@
 namespace Tempest\Cryptography\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Clock\Clock;
 use Tempest\Clock\GenericClock;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Timelock;

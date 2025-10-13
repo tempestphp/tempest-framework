@@ -6,7 +6,6 @@ namespace Tempest\Support\Regex {
     use Closure;
     use RuntimeException;
     use Stringable;
-    use Tempest\Support\Arr\ImmutableArray;
 
     use function Tempest\Support\arr;
     use function Tempest\Support\Arr\filter;

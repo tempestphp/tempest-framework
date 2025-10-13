@@ -96,6 +96,40 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_boolean_attribute_with_self_closing_tag(): void
+    {
+        $code = '<input disabled/>';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<input', TokenType::OPEN_TAG_START),
+                new Token(' disabled', TokenType::ATTRIBUTE_NAME),
+                new Token('/>', TokenType::SELF_CLOSING_TAG_END),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_boolean_attribute_with_newline(): void
+    {
+        $code = '<div hidden
+></div>';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' hidden', TokenType::ATTRIBUTE_NAME),
+                new Token("\n>", TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
     #[TestWith(['</x-foo>'])]
     public function test_closing_tag(string $tag): void
     {
@@ -132,9 +166,9 @@ final class TempestViewLexerTest extends TestCase
     foo=', TokenType::ATTRIBUTE_NAME),
                 new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
                 new Token('
-    x-foo
-', TokenType::ATTRIBUTE_NAME),
-                new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
+    x-foo', TokenType::ATTRIBUTE_NAME),
+                new Token('
+    :baz=', TokenType::ATTRIBUTE_NAME),
                 new Token('"true"', TokenType::ATTRIBUTE_VALUE),
                 new Token("\n>", TokenType::OPEN_TAG_END),
                 new Token('

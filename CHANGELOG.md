@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.2](https://github.com/tempestphp/tempest-framework/compare/v2.3.1..2.3.2)  —  2025-10-08
+## [2.3.3](https://github.com/tempestphp/tempest-framework/compare/v2.3.2..2.3.3)  —  2025-10-09
+
+### 🚀 Features
+
+- **http**: support passing `JsonSerializable` to `Json` response (#1626) ([930e7ee](https://github.com/tempestphp/tempest-framework/commit/930e7eed7cecde43ebf61d9928f71fbdd0c57301))
+
+### 🐛 Bug fixes
+
+- **core**: optional dependency guards (#1630) ([1b23fd4](https://github.com/tempestphp/tempest-framework/commit/1b23fd4113a6f42a89b0894714ad48e86801ac33))
+
+
+## [2.3.2](https://github.com/tempestphp/tempest-framework/compare/v2.3.1..v2.3.2)  —  2025-10-08
 
 ### 🐛 Bug fixes
 

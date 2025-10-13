@@ -4,9 +4,6 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Exceptions\CouldNotUpdateRelation;
-use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
-use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
-use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
