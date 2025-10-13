@@ -3,16 +3,12 @@
 namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
-use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Core\ExceptionReporter;
-use Tempest\Core\Kernel;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
-use Tempest\Router\ResponseSender;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
@@ -24,10 +20,7 @@ final readonly class JsonHttpExceptionRenderer
 {
     public function __construct(
         private AppConfig $appConfig,
-        private Kernel $kernel,
-        private ResponseSender $responseSender,
-        private Container $container,
-        private ExceptionReporter $exceptionReporter,
+        private Validator $validator,
     ) {}
 
     public function render(Throwable $throwable): Response
@@ -39,10 +32,7 @@ final readonly class JsonHttpExceptionRenderer
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status),
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
-            default => $this->renderErrorResponse(
-                Status::INTERNAL_SERVER_ERROR,
-                $this->appConfig->environment->isLocal() ? $throwable : null,
-            ),
+            default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, $throwable),
         };
     }
 
@@ -50,7 +40,7 @@ final readonly class JsonHttpExceptionRenderer
     {
         $errors = arr($exception->failingRules)->map(
             fn (array $failingRulesForField, string $field) => arr($failingRulesForField)->map(
-                fn (Rule $rule) => $this->container->get(Validator::class)->getErrorMessage($rule, $field),
+                fn (Rule $rule) => $this->validator->getErrorMessage($rule, $field),
             )->toArray(),
         );
 
