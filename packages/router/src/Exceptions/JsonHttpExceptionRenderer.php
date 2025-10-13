@@ -5,7 +5,6 @@ namespace Tempest\Router\Exceptions;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Core\ExceptionHandler;
 use Tempest\Core\ExceptionReporter;
 use Tempest\Core\Kernel;
 use Tempest\Http\HttpRequestFailed;
@@ -14,11 +13,14 @@ use Tempest\Http\Responses\Json;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\ResponseSender;
+use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
 use Throwable;
 
 use function Tempest\Support\arr;
 
-final readonly class JsonHttpExceptionHandler implements ExceptionHandler
+final readonly class JsonHttpExceptionRenderer
 {
     public function __construct(
         private AppConfig $appConfig,
@@ -28,26 +30,34 @@ final readonly class JsonHttpExceptionHandler implements ExceptionHandler
         private ExceptionReporter $exceptionReporter,
     ) {}
 
-    public function handle(Throwable $throwable): void
+    public function render(Throwable $throwable): Response
     {
-        try {
-            $this->exceptionReporter->report($throwable);
+        return match (true) {
+            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
+            $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
+            $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
+            $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
+            $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status),
+            $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
+            default => $this->renderErrorResponse(
+                Status::INTERNAL_SERVER_ERROR,
+                $this->appConfig->environment->isLocal() ? $throwable : null,
+            ),
+        };
+    }
 
-            $response = match (true) {
-                $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
-                $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
-                $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status),
-                $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
-                default => $this->renderErrorResponse(
-                    Status::INTERNAL_SERVER_ERROR,
-                    $this->appConfig->environment->isLocal() ? $throwable : null,
-                ),
-            };
+    private function renderValidationErrorResponse(ValidationFailed $exception): Response
+    {
+        $errors = arr($exception->failingRules)->map(
+            fn (array $failingRulesForField, string $field) => arr($failingRulesForField)->map(
+                fn (Rule $rule) => $this->container->get(Validator::class)->getErrorMessage($rule, $field),
+            )->toArray(),
+        );
 
-            $this->responseSender->send($response);
-        } finally {
-            $this->kernel->shutdown();
-        }
+        return new Json([
+            'message' => $errors->first()[0],
+            'errors' => $errors->toArray(),
+        ])->setStatus(Status::UNPROCESSABLE_CONTENT);
     }
 
     private function renderErrorResponse(Status $status, ?Throwable $exception = null): Response

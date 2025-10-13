@@ -8,23 +8,19 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
-use Tempest\Http\Responses\Json;
+use Tempest\Http\Responses\NotAcceptable;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Status;
 use Tempest\Router\Exceptions\ConvertsToResponse;
+use Tempest\Router\Exceptions\JsonHttpExceptionRenderer;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
-use Tempest\Validation\Rule;
-use Tempest\Validation\Validator;
-
-use function Tempest\get;
-use function Tempest\Support\arr;
 
 #[Priority(Priority::FRAMEWORK - 10)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 {
     public function __construct(
         private RouteConfig $routeConfig,
+        private JsonHttpExceptionRenderer $jsonHandler,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
@@ -52,27 +48,18 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
             return $next($request);
         } catch (ConvertsToResponse $convertsToResponse) {
             return $convertsToResponse->toResponse();
-        } catch (RouteBindingFailed) {
-            if ($request->accepts(ContentType::JSON)) {
-                return new NotFound([
-                    'message' => 'The requested resource was not found.',
-                ]);
-            }
-
-            return new NotFound();
+        } catch (RouteBindingFailed $routeBindingFailed) {
+            return match (true) {
+                $request->accepts(ContentType::HTML, ContentType::XHTML) => new NotFound(),
+                $request->accepts(ContentType::JSON) => $this->jsonHandler->render($routeBindingFailed),
+                default => new NotAcceptable(),
+            };
         } catch (ValidationFailed $validationException) {
-            if ($request->accepts(ContentType::JSON)) {
-                $errors = arr($validationException->failingRules)->map(
-                    fn (array $failingRulesForField, string $field) => arr($failingRulesForField)->map(
-                        fn (Rule $rule) => get(Validator::class)->getErrorMessage($rule, $field),
-                    )->toArray(),
-                );
-
-                return new Json([
-                    'message' => $errors->first()[0],
-                    'errors' => $errors->toArray(),
-                ])->setStatus(Status::UNPROCESSABLE_CONTENT);
-            }
+            return match (true) {
+                $request->accepts(ContentType::HTML, ContentType::XHTML) => new Invalid($validationException->subject, $validationException->failingRules),
+                $request->accepts(ContentType::JSON) => $this->jsonHandler->render($validationException),
+                default => new NotAcceptable(),
+            };
 
             return new Invalid($validationException->subject, $validationException->failingRules);
         }

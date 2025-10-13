@@ -28,31 +28,37 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         private ResponseSender $responseSender,
         private Container $container,
         private ExceptionReporter $exceptionReporter,
-        private JsonHttpExceptionHandler $jsonHandler,
+        private JsonHttpExceptionRenderer $jsonHandler,
     ) {}
 
     public function handle(Throwable $throwable): void
     {
-        if ($this->container->get(Request::class)->accepts(ContentType::JSON)) {
-            $this->jsonHandler->handle($throwable);
-            return;
-        }
+        $request = $this->container->get(Request::class);
 
         try {
             $this->exceptionReporter->report($throwable);
 
             $response = match (true) {
-                $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
-                $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
-                $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
-                $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
-                default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),
+                $request->accepts(ContentType::HTML, ContentType::XHTML) => $this->handleHtml($throwable),
+                $request->accepts(ContentType::JSON) => $this->jsonHandler->render($throwable),
+                default => new GenericResponse(status: Status::NOT_ACCEPTABLE),
             };
 
             $this->responseSender->send($response);
         } finally {
             $this->kernel->shutdown();
         }
+    }
+
+    private function handleHtml(Throwable $throwable): Response
+    {
+        return match (true) {
+            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
+            $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
+            $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
+            $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
+            default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),
+        };
     }
 
     private function renderErrorResponse(Status $status, ?HttpRequestFailed $exception = null): Response
