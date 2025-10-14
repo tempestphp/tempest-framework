@@ -9,7 +9,6 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\SkipValidation;
 
 use function Tempest\get;
-use function Tempest\Support\Arr\every;
 use function Tempest\Support\Arr\get_by_key;
 use function Tempest\Support\Arr\has_key;
 use function Tempest\Support\str;
