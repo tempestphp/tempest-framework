@@ -23,7 +23,7 @@ use Tempest\Support\Str;
 #[Priority(Priority::FRAMEWORK)]
 final readonly class VerifyCsrfMiddleware implements HttpMiddleware
 {
-    public const string CSRF_COOKIE_KEY = 'xsrf-token';
+    public const string CSRF_COOKIE_KEY = 'XSRF-TOKEN';
     public const string CSRF_HEADER_KEY = 'x-xsrf-token';
 
     public function __construct(
