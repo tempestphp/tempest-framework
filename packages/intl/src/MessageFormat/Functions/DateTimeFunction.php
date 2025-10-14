@@ -5,6 +5,7 @@ namespace Tempest\Intl\MessageFormat\Functions;
 use Tempest\DateTime\DateStyle;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\TimeStyle;
+use Tempest\Intl\IntlConfig;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
 use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Support\Arr;
@@ -12,6 +13,10 @@ use Tempest\Support\Arr;
 final class DateTimeFunction implements FormattingFunction
 {
     public string $name = 'datetime';
+
+    public function __construct(
+        private readonly IntlConfig $intlConfig,
+    ) {}
 
     public function format(mixed $value, array $parameters): FormattedValue
     {
@@ -45,6 +50,7 @@ final class DateTimeFunction implements FormattingFunction
                     'none' => TimeStyle::NONE,
                     default => TimeStyle::SHORT,
                 },
+                locale: $this->intlConfig->currentLocale,
             ),
         );
     }

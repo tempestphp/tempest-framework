@@ -56,7 +56,7 @@ final class FormatterTest extends TestCase
             $this->markTestSkipped('`tempest/datetime` is needed for this test.');
         }
 
-        $formatter = new MessageFormatter([new DateTimeFunction()]);
+        $formatter = new MessageFormatter([$this->createDateTimeFunction()]);
 
         $value = $formatter->format(<<<'TXT'
         Today is {$today :datetime pattern=|yyyy/MM/dd|}.
@@ -367,7 +367,7 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter([
             $this->createNumberFunction(),
-            new DateTimeFunction(),
+            $this->createDateTimeFunction(),
         ]);
 
         $value = $formatter->format(<<<'TXT'
@@ -414,6 +414,13 @@ final class FormatterTest extends TestCase
     private function createNumberFunction(): NumberFunction
     {
         return new NumberFunction(
+            new IntlConfig(Locale::default(), Locale::default()),
+        );
+    }
+
+    private function createDateTimeFunction(): DateTimeFunction
+    {
+        return new DateTimeFunction(
             new IntlConfig(Locale::default(), Locale::default()),
         );
     }
