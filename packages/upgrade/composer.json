@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "rector/rector": "^2.2.3"
+        "rector/rector": "dev-main"
     },
     "autoload": {
         "psr-4": {
