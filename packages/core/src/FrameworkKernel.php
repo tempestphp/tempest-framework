@@ -17,7 +17,6 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
-use Tempest\Process\ProcessExecutor;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 final class FrameworkKernel implements Kernel

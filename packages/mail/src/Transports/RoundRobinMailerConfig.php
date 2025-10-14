@@ -5,10 +5,8 @@ namespace Tempest\Mail\Transports;
 use Symfony\Component\Mailer\Transport\RoundRobinTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\DateTime\Duration;
-use Tempest\Mail\EmailAddress;
 use Tempest\Mail\MailerConfig;
 use Tempest\Support\Arr;
-use UnitEnum;
 
 /**
  * Send emails using the round-robin balancing strategy.

@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Database\PrimaryKey;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;

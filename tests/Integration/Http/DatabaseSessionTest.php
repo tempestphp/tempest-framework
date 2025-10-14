@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Google\Protobuf\UInt32Value;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Migrations\MigrationManager;
 use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
@@ -22,7 +20,6 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
-use Tempest\Support\Arr\ImmutableArray;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;

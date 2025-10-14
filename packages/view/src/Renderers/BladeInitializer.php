@@ -8,7 +8,6 @@ use Tempest\Blade\Blade;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
-use Tempest\Container\Tag;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
 

@@ -6,7 +6,6 @@ namespace Tempest\Cache\Commands;
 
 use Tempest\Cache\Cache;
 use Tempest\Cache\Config\CacheConfig;
-use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;

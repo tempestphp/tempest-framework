@@ -5,7 +5,7 @@ namespace Tests\Tempest\Integration\Http;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
-use Tempest\Http\Cookie\Cookie;
+use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
@@ -84,15 +84,33 @@ final class CsrfTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_matches_from_header(): void
+    public function test_matches_from_header_when_encrypted(): void
     {
         $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
-
         $session = $this->container->get(Session::class);
 
+        // Encrypt the token as it would be in a real request
+        $sessionCookieValue = $this->container
+            ->get(Encrypter::class)
+            ->encrypt($session->token)
+            ->serialize();
+
         $this->http
-            ->post('/test', headers: [VerifyCsrfMiddleware::CSRF_HEADER_KEY => $session->token])
+            ->post('/test', headers: [VerifyCsrfMiddleware::CSRF_HEADER_KEY => $sessionCookieValue])
             ->assertOk();
+    }
+
+    public function test_throws_csrf_exception_when_header_is_non_serialized_hash(): void
+    {
+        $this->expectException(CsrfTokenDidNotMatch::class);
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $session = $this->container->get(Session::class);
+
+        // simulate a non-serialized hash
+        $sessionCookieValue = 'i-am-not-correct';
+
+        $this->http
+            ->post('/test', headers: [VerifyCsrfMiddleware::CSRF_HEADER_KEY => $sessionCookieValue]);
     }
 
     public function test_csrf_component(): void

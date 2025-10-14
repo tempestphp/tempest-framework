@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http\Responses;
 
 use JsonSerializable;
-use Tempest\Http\Header;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
 use Tempest\Http\Status;

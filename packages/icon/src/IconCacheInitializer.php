@@ -5,7 +5,6 @@ namespace Tempest\Icon;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
 
 use function Tempest\env;
 

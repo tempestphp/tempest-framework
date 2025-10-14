@@ -14,7 +14,6 @@ use Stringable;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Database\PrimaryKey;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;

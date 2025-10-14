@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Tests;
 
+use League\OAuth2\Client\Provider\Apple;
 use League\OAuth2\Client\Provider\Facebook;
 use League\OAuth2\Client\Provider\Github;
 use League\OAuth2\Client\Provider\Google;
@@ -12,6 +13,7 @@ use League\OAuth2\Client\Provider\LinkedIn;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\OAuth\Config\AppleOAuthConfig;
 use Tempest\Auth\OAuth\Config\DiscordOAuthConfig;
 use Tempest\Auth\OAuth\Config\FacebookOAuthConfig;
 use Tempest\Auth\OAuth\Config\GenericOAuthConfig;
@@ -141,6 +143,26 @@ final class OAuthTest extends TestCase
 
         $this->assertStringContainsString('discord.com', $url);
         $this->assertStringContainsString('discord-123', $url);
+    }
+
+    #[Test]
+    public function apple_oauth_config(): void
+    {
+        $config = new AppleOAuthConfig(
+            clientId: 'apple-123',
+            teamId: 'apple-team-id',
+            keyId: 'apple-key-id',
+            keyFile: 'apple-key-file',
+            redirectTo: '/auth/apple/callback',
+            scopes: ['email', 'name'],
+        );
+
+        $provider = $config->createProvider();
+        $url = $provider->getAuthorizationUrl();
+
+        $this->assertInstanceOf(Apple::class, $provider);
+        $this->assertStringContainsString('apple.com', $url);
+        $this->assertStringContainsString('apple-123', $url);
     }
 
     #[Test]

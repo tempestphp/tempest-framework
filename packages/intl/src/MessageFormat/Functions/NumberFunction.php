@@ -4,7 +4,6 @@ namespace Tempest\Intl\MessageFormat\Functions;
 
 use Tempest\Intl\Currency;
 use Tempest\Intl\IntlConfig;
-use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
 use Tempest\Intl\MessageFormat\FormattingFunction;
 use Tempest\Intl\MessageFormat\SelectorFunction;
