@@ -45,4 +45,9 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertEquals('Multiple Migrations', Intl\pluralize_last_word('Multiple Migrations'));
         $this->assertEquals('Multiple Aircraft', Intl\pluralize_last_word('Multiple Aircraft'));
     }
+
+    public function test_current_locale(): void
+    {
+        $this->assertSame(Intl\Locale::ENGLISH_UNITED_STATES, Intl\current_locale());
+    }
 }
