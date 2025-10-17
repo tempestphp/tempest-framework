@@ -922,7 +922,7 @@ trait DateTimeConvenienceMethods
      *
      * @param null|FormatPattern|string $pattern Optional custom format pattern for the date and time. If null, uses a default pattern.
      * @param null|Timezone $timezone Optional timezone for formatting. If null, uses the current timezone.
-     * @param null|Locale $locale Optional locale for formatting. If null, uses the system's default locale.
+     * @param null|Locale $locale Optional locale for formatting. If null, uses the configured locale or system default as fallback.
      *
      * @return string The formatted date and time string, according to the specified pattern, timezone, and locale.
      *
@@ -992,7 +992,7 @@ trait DateTimeConvenienceMethods
      * @param null|DateStyle $dateStyle Optional style for the date portion of the output. If null, a default style is used.
      * @param null|TimeStyle $timeStyle Optional style for the time portion of the output. If null, a default style is used.
      * @param null|Timezone $timezone Optional timezone for formatting. If null, uses the current timezone.
-     * @param null|Locale $locale Optional locale for formatting. If null, uses the system's default locale.
+     * @param null|Locale $locale Optional locale for formatting. If null, uses the configured locale or system default as fallback.
      *
      * @return string The string representation of the date and time, formatted according to the specified styles, timezone, and locale.
      *
