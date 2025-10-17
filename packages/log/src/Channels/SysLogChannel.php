@@ -4,29 +4,27 @@ declare(strict_types=1);
 
 namespace Tempest\Log\Channels;
 
+use Monolog\Handler\SyslogHandler;
 use Monolog\Level;
 use Monolog\Processor\PsrLogMessageProcessor;
-use Tempest\Log\FileHandlers\RotatingFileHandler;
 use Tempest\Log\LogChannel;
 use Tempest\Log\LogLevel;
 
-final readonly class WeeklyLogChannel implements LogChannel
+final readonly class SysLogChannel implements LogChannel
 {
     /**
-     * @param string $path The base log file name.
-     * @param int $maxFiles The maximal amount of files to keep.
-     * @param bool $lockFilesDuringWrites Whether to try to lock log file before doing any writes.
+     * @param string $identity The identity string to use for each log message. This is typically the application name.
+     * @param int $facility The syslog facility to use. See https://www.php.net/manual/en/function.openlog.php for available options.
      * @param LogLevel $minimumLogLevel The minimum log level to record.
      * @param bool $bubble Whether the messages that are handled can bubble up the stack or not.
-     * @param null|int $filePermission Optional file permissions (default (0644) are only for owner read/write).
+     * @param int $flags Options for the openlog system call. See https://www.php.net/manual/en/function.openlog.php
      */
     public function __construct(
-        private string $path,
-        private int $maxFiles = 5,
-        private bool $lockFilesDuringWrites = false,
+        private string $identity,
+        private int $facility = LOG_USER,
         private LogLevel $minimumLogLevel = LogLevel::DEBUG,
         private bool $bubble = true,
-        private ?int $filePermission = null,
+        private int $flags = LOG_PID,
     ) {}
 
     public function getHandlers(Level $level): array
@@ -36,14 +34,12 @@ final readonly class WeeklyLogChannel implements LogChannel
         }
 
         return [
-            new RotatingFileHandler(
-                filename: $this->path,
-                maxFiles: $this->maxFiles,
+            new SyslogHandler(
+                ident: $this->identity,
+                facility: $this->facility,
                 level: $level,
                 bubble: $this->bubble,
-                filePermission: $this->filePermission,
-                useLocking: $this->lockFilesDuringWrites,
-                dateFormat: RotatingFileHandler::FILE_PER_WEEK,
+                logopts: $this->flags,
             ),
         ];
     }
