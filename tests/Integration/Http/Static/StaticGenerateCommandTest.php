@@ -112,7 +112,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
-            ->call(StaticGenerateCommand::class, ['--crawl' => true, '--allow-external-dead-links' => false])
+            ->call(StaticGenerateCommand::class, ['--crawl' => true])
             ->assertExitCode(ExitCode::SUCCESS);
     }
 
@@ -124,7 +124,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
-            ->call(StaticGenerateCommand::class, ['--crawl' => true, '--allow-dead-links' => true])
+            ->call(StaticGenerateCommand::class, ['--crawl' => false])
             ->assertExitCode(ExitCode::SUCCESS);
     }
 
@@ -136,7 +136,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
-            ->call(StaticGenerateCommand::class, ['--crawl' => true, '--allow-external-dead-links' => false])
+            ->call(StaticGenerateCommand::class, ['--crawl' => true, '--external' => true])
             ->assertSee('2 DEAD LINKS')
             ->assertSee('https://test.com/404')
             ->assertSee('https://google.com/404')

@@ -62,10 +62,8 @@ final class StaticGenerateCommand
         ?string $filter = null,
         #[ConsoleArgument(description: 'Crawl the site for dead links')]
         bool $crawl = false,
-        #[ConsoleArgument(description: 'Allow dead links, only works when the --crawl flag is set')]
-        bool $allowDeadLinks = false,
-        #[ConsoleArgument(description: 'Allow external dead links, only works when the --crawl flag is set')]
-        bool $allowExternalDeadLinks = true,
+        #[ConsoleArgument(description: 'Crawl external links, only works when the --crawl flag is set')]
+        bool $external = false,
         #[ConsoleArgument(aliases: ['v'])]
         bool $verbose = false,
     ): ExitCode {
@@ -155,9 +153,9 @@ final class StaticGenerateCommand
                     }
 
                     if ($crawl) {
-                        $deadLinks = $this->detectDeadLinks($uri, $content, checkExternal: ! $allowExternalDeadLinks);
+                        $deadLinks = $this->detectDeadLinks($uri, $content, checkExternal: $external);
 
-                        if (! $allowDeadLinks && $deadLinks !== []) {
+                        if ($deadLinks !== []) {
                             $deadlinks[$uri] = $deadLinks;
                             throw new DeadLinksDetectedException($uri, $deadLinks);
                         }
