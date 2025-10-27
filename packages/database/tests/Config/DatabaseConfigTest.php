@@ -44,7 +44,7 @@ final class DatabaseConfigTest extends TestCase
                 password: 'secret', // @mago-expect lint:no-literal-password
                 database: 'tempest',
             ),
-            'mysql:host=localhost:3307;dbname=tempest',
+            'mysql:host=localhost;port=3307;dbname=tempest',
             'user',
             'secret',
         ];
