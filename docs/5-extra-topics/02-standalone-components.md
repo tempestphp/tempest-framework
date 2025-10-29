@@ -138,7 +138,7 @@ $eventBus->dispatch(new MyEvent());
 
 ## `tempest/command-bus`
 
-Tempest's event bus can be used as a standalone package, in order for event handlers to be discovered, you'll have to boot Tempest's kernel and resolve the event bus from the container:
+Tempest's command bus can be used as a standalone package, in order for command handlers to be discovered, you'll have to boot Tempest's kernel and resolve the command bus from the container:
 
 ```
 composer require tempest/command-bus
