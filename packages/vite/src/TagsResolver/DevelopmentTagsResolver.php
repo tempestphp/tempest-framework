@@ -11,6 +11,7 @@ use Tempest\Vite\ViteBridgeFile;
 
 use function Tempest\root_path;
 use function Tempest\Support\arr;
+use function Tempest\Support\Filesystem\real_path;
 use function Tempest\Support\str;
 
 final readonly class DevelopmentTagsResolver implements TagsResolver
@@ -60,7 +61,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
         return str($file)
             ->when(
                 condition: fn ($file) => $file->startsWith('./'),
-                callback: fn ($file) => str(realpath(root_path($file->toString()))),
+                callback: fn ($file) => str(real_path(root_path($file->toString()))),
             )
             ->replace('\\', '/') // `realpath` makes slashes backwards, so replacements below wouldn't work
             ->replaceStart(root_path('public'), '')
