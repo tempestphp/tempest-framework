@@ -147,8 +147,8 @@ namespace Tempest\Support\Path {
         }
 
         // Restore virtual phar prefix
-        if (\str_starts_with($path, 'phar:')) {
-            $path = \str_replace('phar:', 'phar://', $path);
+        if (str_starts_with($path, 'phar:')) {
+            $path = str_replace('phar:', 'phar://', $path);
         }
 
         return $path;
