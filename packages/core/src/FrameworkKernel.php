@@ -18,8 +18,7 @@ use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
-
-use function Tempest\Support\Filesystem\real_path;
+use Tempest\Support\Filesystem;
 
 final class FrameworkKernel implements Kernel
 {
@@ -77,7 +76,7 @@ final class FrameworkKernel implements Kernel
 
     public function validateRoot(): self
     {
-        $root = real_path($this->root);
+        $root = Filesystem\real_path($this->root);
 
         if (! is_dir($root)) {
             throw new RuntimeException('The specified root directory is not valid.');
@@ -198,7 +197,7 @@ final class FrameworkKernel implements Kernel
             throw CouldNotRegisterInternalStorage::noPermission($path);
         }
 
-        $this->internalStorage = real_path($path);
+        $this->internalStorage = Filesystem\real_path($path);
 
         return $this;
     }

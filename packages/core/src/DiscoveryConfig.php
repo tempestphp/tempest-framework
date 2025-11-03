@@ -2,7 +2,7 @@
 
 namespace Tempest\Core;
 
-use function Tempest\Support\Filesystem\real_path;
+use Tempest\Support\Filesystem;
 
 final class DiscoveryConfig
 {
@@ -27,7 +27,7 @@ final class DiscoveryConfig
         foreach ($paths as $path) {
             $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
 
-            $realpath = real_path($path);
+            $realpath = Filesystem\real_path($path);
 
             if ($realpath === null) {
                 continue;

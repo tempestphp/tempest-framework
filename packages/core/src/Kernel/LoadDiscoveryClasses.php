@@ -16,9 +16,8 @@ use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Filesystem;
 use Throwable;
-
-use function Tempest\Support\Filesystem\real_path;
 
 /** @internal */
 final class LoadDiscoveryClasses
@@ -107,7 +106,7 @@ final class LoadDiscoveryClasses
      */
     private function scan(DiscoveryLocation $location, array $discoveries, string $path): void
     {
-        $input = real_path($path);
+        $input = Filesystem\real_path($path);
 
         // Make sure the path is valid
         if ($input === null) {
