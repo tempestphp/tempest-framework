@@ -12,6 +12,7 @@ final readonly class Tempest
         ?string $root = null,
         /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
         array $discoveryLocations = [],
+        ?string $internalStorage = null,
     ): Container {
         $root ??= getcwd();
 
@@ -19,6 +20,7 @@ final readonly class Tempest
         return FrameworkKernel::boot(
             root: $root,
             discoveryLocations: $discoveryLocations,
+            internalStorage: $internalStorage,
         )->container;
     }
 }

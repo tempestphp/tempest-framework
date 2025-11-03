@@ -10,6 +10,7 @@ use Tempest\Highlight\ParsedInjection;
 use Tempest\Highlight\Themes\TerminalStyle;
 
 use function Tempest\root_path;
+use function Tempest\Support\Filesystem\real_path;
 use function Tempest\Support\str;
 
 final readonly class FileInjection implements Injection
@@ -21,9 +22,9 @@ final readonly class FileInjection implements Injection
             pattern: '/(?<match>\<file=(?<quote>[\"\'])(?<file>.+)\k<quote>\s*\/?>)/',
             callback: function (array $matches) {
                 $href = $matches['file'];
-                $exists = realpath($href) !== false;
+                $exists = real_path($href) !== null;
                 $file = $exists
-                    ? str(realpath($href))->replace('\\', '/')->stripStart(root_path())->stripStart('/')
+                    ? str(real_path($href))->replace('\\', '/')->stripStart(root_path())->stripStart('/')
                     : $href;
 
                 return TerminalStyle::UNDERLINE((string) $file);

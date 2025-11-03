@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
+use function Tempest\Support\Filesystem\real_path;
+
 final class DiscoveryLocation
 {
     public readonly string $namespace;
@@ -18,7 +20,7 @@ final class DiscoveryLocation
         string $path,
     ) {
         $this->namespace = $namespace;
-        $this->path = realpath(rtrim($path, '\\/'));
+        $this->path = real_path(rtrim($path, '\\/'));
     }
 
     public function isVendor(): bool
