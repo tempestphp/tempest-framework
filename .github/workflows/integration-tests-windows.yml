@@ -1,17 +1,8 @@
-name: Integration Tests
+name: Integration Tests (Windows)
 
 on:
-  pull_request:
-    paths-ignore:
-      - "docs/**"
-      - ".github/**"
-  workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
-env:
-  POSTGRES_USER: runner
-  POSTGRES_PASSWORD: ""
-  POSTGRES_DB: postgres
+    - cron: '0 8 * * *'
 
 jobs:
   vitest:
@@ -22,8 +13,7 @@ jobs:
         php:
           - 8.4
         os:
-          - ubuntu-latest
-#          - windows-latest
+          - windows-latest
 
     name: "Run tests: ${{ matrix.os }}"
 
@@ -56,20 +46,14 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-#          - windows-latest
+          - windows-latest
         php:
           - 8.4
         database:
           - sqlite
           - mysql
-          - postgres
         stability:
           - prefer-stable
-          - prefer-lowest
-#        exclude:
-#          - os: windows-latest
-#            database: postgres
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
