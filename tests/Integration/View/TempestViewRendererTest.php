@@ -856,4 +856,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<div class="hello"></div>', $html);
     }
+
+    public function test_zero_in_attribute(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <table border="0"></table>
+        HTML);
+
+        $this->assertSnippetsMatch('<table border="0"></table>', $html);
+    }
 }
