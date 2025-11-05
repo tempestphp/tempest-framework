@@ -230,7 +230,7 @@ To create a view component, create a `.view.php` file that starts with `x-`. The
 ```html app/x-base.view.php
 <html lang="en">
 	<head>
-		<title :if="$title">{{ $title }} — AirAcme</title>
+		<title :if="$title ?? null">{{ $title }} — AirAcme</title>
 		<title :else>AirAcme</title>
 	</head>
 	<body>
@@ -265,7 +265,7 @@ Attributes and [expression attributes](#expression-attributes) may be passed int
 
 ```html x-base.view.php
 // ...
-<title :if="$title">{{ $title }}</title>
+<title :if="$title ?? null">{{ $title }}</title>
 ```
 
 Note that the casing of attributes will affect the associated variable name:
