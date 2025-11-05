@@ -60,7 +60,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
         return str($file)
             ->when(
                 condition: fn ($file) => $file->startsWith('./'),
-                callback: fn ($file) => str(Filesystem\real_path(root_path($file->toString()))),
+                callback: fn ($file) => str(Filesystem\normalize_path(root_path($file->toString()))),
             )
             ->replace('\\', '/') // `realpath` makes slashes backwards, so replacements below wouldn't work
             ->replaceStart(root_path('public'), '')

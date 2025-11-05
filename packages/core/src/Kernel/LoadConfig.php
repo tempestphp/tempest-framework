@@ -86,7 +86,7 @@ final readonly class LoadConfig
      */
     private function scan(string $path, MutableArray $configPaths): void
     {
-        $input = Filesystem\real_path($path);
+        $input = Filesystem\normalize_path($path);
 
         // Make sure the path is valid
         if ($input === null) {

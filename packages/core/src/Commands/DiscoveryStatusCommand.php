@@ -63,7 +63,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
                 $this->console->writeln();
 
                 foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-                    $path = str(Filesystem\real_path($discoveryLocation->path))
+                    $path = str(Filesystem\normalize_path($discoveryLocation->path))
                         ->replaceStart(root_path(), '.')
                         ->toString();
 

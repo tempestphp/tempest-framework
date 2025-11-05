@@ -76,7 +76,7 @@ final class FrameworkKernel implements Kernel
 
     public function validateRoot(): self
     {
-        $root = Filesystem\real_path($this->root);
+        $root = Filesystem\normalize_path($this->root);
 
         if (! is_dir($root)) {
             throw new RuntimeException('The specified root directory is not valid.');
@@ -197,7 +197,7 @@ final class FrameworkKernel implements Kernel
             throw CouldNotRegisterInternalStorage::noPermission($path);
         }
 
-        $this->internalStorage = Filesystem\real_path($path);
+        $this->internalStorage = Filesystem\normalize_path($path);
 
         return $this;
     }

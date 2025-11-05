@@ -22,9 +22,9 @@ final readonly class FileInjection implements Injection
             pattern: '/(?<match>\<file=(?<quote>[\"\'])(?<file>.+)\k<quote>\s*\/?>)/',
             callback: function (array $matches) {
                 $href = $matches['file'];
-                $exists = Filesystem\real_path($href) !== null;
+                $exists = Filesystem\normalize_path($href) !== null;
                 $file = $exists
-                    ? str(Filesystem\real_path($href))->replace('\\', '/')->stripStart(root_path())->stripStart('/')
+                    ? str(Filesystem\normalize_path($href))->replace('\\', '/')->stripStart(root_path())->stripStart('/')
                     : $href;
 
                 return TerminalStyle::UNDERLINE((string) $file);

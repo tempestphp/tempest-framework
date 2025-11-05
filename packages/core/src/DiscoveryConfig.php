@@ -27,7 +27,7 @@ final class DiscoveryConfig
         foreach ($paths as $path) {
             $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
 
-            $realpath = Filesystem\real_path($path);
+            $realpath = Filesystem\normalize_path($path);
 
             if ($realpath === null) {
                 continue;

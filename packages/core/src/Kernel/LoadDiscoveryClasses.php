@@ -106,7 +106,7 @@ final class LoadDiscoveryClasses
      */
     private function scan(DiscoveryLocation $location, array $discoveries, string $path): void
     {
-        $input = Filesystem\real_path($path);
+        $input = Filesystem\normalize_path($path);
 
         // Make sure the path is valid
         if ($input === null) {

@@ -20,7 +20,7 @@ final class DiscoveryLocation
         string $path,
     ) {
         $this->namespace = $namespace;
-        $this->path = Filesystem\real_path(rtrim($path, '\\/'));
+        $this->path = Filesystem\normalize_path(rtrim($path, '\\/'));
     }
 
     public function isVendor(): bool
