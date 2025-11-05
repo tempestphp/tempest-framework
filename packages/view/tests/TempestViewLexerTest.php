@@ -4,7 +4,6 @@ namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\View\Exceptions\AttributesWithSingleQuotesWereNotAllowed;
 use Tempest\View\Parser\TempestViewLexer;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
@@ -353,9 +352,18 @@ final class TempestViewLexerTest extends TestCase
         <div class='hello'></div>
         HTML;
 
-        $this->expectException(AttributesWithSingleQuotesWereNotAllowed::class);
+        $tokens = new TempestViewLexer($html)->lex();
 
-        new TempestViewLexer($html)->lex();
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' class=', TokenType::ATTRIBUTE_NAME),
+                new Token('\'hello\'', TokenType::ATTRIBUTE_VALUE),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
     }
 
     private function assertTokens(array $expected, TokenCollection $actual): void

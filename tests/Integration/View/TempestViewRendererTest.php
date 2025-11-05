@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Tempest\Support\Html\HtmlString;
-use Tempest\View\Exceptions\AttributesWithSingleQuotesWereNotAllowed;
 use Tempest\View\Exceptions\ElementWasInvalid;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
@@ -851,10 +850,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_attributes_with_single_quotes(): void
     {
-        $this->expectException(AttributesWithSingleQuotesWereNotAllowed::class);
-
         $html = $this->render(<<<'HTML'
         <div class='hello'></div>
         HTML);
+
+        $this->assertSnippetsMatch('<div class="hello"></div>', $html);
     }
 }
