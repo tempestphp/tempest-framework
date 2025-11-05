@@ -1,8 +1,13 @@
 name: Integration Tests (Windows)
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 8 * * *'
+env:
+  POSTGRES_USER: runner
+  POSTGRES_PASSWORD: ""
+  POSTGRES_DB: postgres
 
 jobs:
   vitest:
@@ -14,6 +19,8 @@ jobs:
           - 8.4
         os:
           - windows-latest
+    env:
+      POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
 
     name: "Run tests: ${{ matrix.os }}"
 
@@ -25,7 +32,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql intl, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup Bun
@@ -52,8 +59,11 @@ jobs:
         database:
           - sqlite
           - mysql
+          - postgres
         stability:
           - prefer-stable
+    env:
+      POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
@@ -65,7 +75,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, intl, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup problem matchers
