@@ -46,10 +46,16 @@ final class PhpIfElement implements Element, WrapsElement
 
     public function compile(): string
     {
+        if ($condition = $this->wrappingElement->consumeAttribute(':isset')) {
+            $condition = sprintf('isset(%s)', $condition);
+        } else {
+            $condition = $this->wrappingElement->consumeAttribute(':if');
+        }
+
         $compiled = sprintf(
             '<?php if(%s): ?>
                 %s',
-            $this->wrappingElement->consumeAttribute(':if'),
+            $condition,
             $this->wrappingElement->compile(),
         );
 
