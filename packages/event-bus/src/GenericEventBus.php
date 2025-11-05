@@ -33,7 +33,7 @@ final readonly class GenericEventBus implements EventBus
     /** @return \Tempest\EventBus\CallableEventHandler[] */
     private function resolveHandlers(string|object $event): array
     {
-        $eventName = Str\parse($event) ?? $event::class;
+        $eventName = Str\parse($event) ?: $event::class;
 
         if ($event instanceof UnitEnum) {
             $eventName = $event::class . '::' . $eventName;
