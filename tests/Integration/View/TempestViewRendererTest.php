@@ -847,4 +847,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         </feed>
         RSS, $parsed);
     }
+
+    public function test_attributes_with_single_quotes(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <div class='hello'></div>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="hello"></div>', $html);
+    }
 }
