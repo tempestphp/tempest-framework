@@ -232,6 +232,18 @@ The example above will only render the child `div` elements:
 <div>Post C</div>
 ```
 
+### Invalid single quotes
+
+While attributes with single quotes are allowed by the HTML spec, they are not by Tempest View. You must always use double quotes for attribute values, for all attributes.
+
+```
+<{:hl-keyword:div:} {:hl-property::isset:}="$title">{{ $title }}</{:hl-keyword:div:}>
+<{:hl-keyword:div:} {:hl-property:class:}="foo bar"></{:hl-keyword:div:}>
+
+<{:hl-keyword:div:} {:hl-property::isset:}={:hl-error:'title':}>{{ $title }}</{:hl-keyword:div:}> 
+<{:hl-keyword:div:} {:hl-property:class:}={:hl-error:'foo bar':}></{:hl-keyword:div:}>
+```
+
 ## View components
 
 Components allow for splitting the user interface into independent and reusable pieces.
