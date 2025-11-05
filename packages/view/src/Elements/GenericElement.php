@@ -41,7 +41,7 @@ final class GenericElement implements Element, WithToken
         $attributes = [];
 
         foreach ($this->getAttributes() as $name => $value) {
-            if ($value) {
+            if ($value !== null && $value !== '') {
                 $attributes[] = $name . '="' . $value . '"';
             } else {
                 $attributes[] = $name;
