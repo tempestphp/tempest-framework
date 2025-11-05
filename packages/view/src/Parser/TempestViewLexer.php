@@ -2,6 +2,8 @@
 
 namespace Tempest\View\Parser;
 
+use Tempest\View\Exceptions\AttributesWithSingleQuotesWereNotAllowed;
+
 final class TempestViewLexer
 {
     private const string WHITESPACE = PHP_EOL . "\n\t\f ";
@@ -131,6 +133,10 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
+                    if ($this->seek() === '\'') {
+                        throw new AttributesWithSingleQuotesWereNotAllowed();
+                    }
+
                     $attributeValue = $this->consumeIncluding('"');
                     $attributeValue .= $this->consumeIncluding('"');
 

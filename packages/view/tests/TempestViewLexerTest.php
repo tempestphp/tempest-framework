@@ -4,6 +4,7 @@ namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\View\Exceptions\AttributesWithSingleQuotesWereNotAllowed;
 use Tempest\View\Parser\TempestViewLexer;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
@@ -344,6 +345,17 @@ final class TempestViewLexerTest extends TestCase
             ],
             actual: $tokens,
         );
+    }
+
+    public function test_single_quote_attributes(): void
+    {
+        $html = <<<HTML
+        <div class='hello'></div>
+        HTML;
+
+        $this->expectException(AttributesWithSingleQuotesWereNotAllowed::class);
+
+        new TempestViewLexer($html)->lex();
     }
 
     private function assertTokens(array $expected, TokenCollection $actual): void
