@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 8 * * *'
+env:
+  POSTGRES_USER: runner
+  POSTGRES_PASSWORD: ""
+  POSTGRES_DB: postgres
 
 jobs:
   vitest:
@@ -55,6 +59,7 @@ jobs:
         database:
           - sqlite
           - mysql
+          - postgres
         stability:
           - prefer-stable
     env:
