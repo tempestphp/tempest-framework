@@ -177,13 +177,28 @@ Apart from HTMLs boolean attributes, the same syntax can be used with any expres
 
 ### Control flow directives
 
-#### `:if`, `:elseif` and `:else`
+#### `:if`, `:elseif`, and `:else`
 
 The `:if` directive can conditionally render the element it is attached to, depending on the result of its expression. Similarly, the `:elseif` and `:else` directives can be used on direct siblings for additional control.
 
 ```html
 <span :if="$this->pendingUploads->isEmpty()">Import files</span>
 <span :else>Import {{ $this->pendingUploads->count() }} file(s)</span>
+```
+
+#### `:isset`
+
+The `:isset` directive can be used to conditionally render the element it is attached to, depending on the existence of a variable.
+
+```html
+<h1 :isset="$title">{{ $title }}</h1>
+```
+
+Since `:isset` is a shorthand for `:if="isset()"`, it can be combined with `:elseif` and `:else`:
+
+```html
+<h1 :isset="$title">{{ $title }}</h1>
+<h1 :else>Title</h1>
 ```
 
 #### `:foreach` and `:{:hl-keyword:forelse:}`

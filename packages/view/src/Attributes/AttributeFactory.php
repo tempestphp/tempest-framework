@@ -12,6 +12,7 @@ final readonly class AttributeFactory
     {
         return match (true) {
             $attributeName === ':if' => new IfAttribute(),
+            $attributeName === ':isset' => new IssetAttribute(),
             $attributeName === ':elseif' => new ElseIfAttribute(),
             $attributeName === ':else' => new ElseAttribute(),
             $attributeName === ':foreach' => new ForeachAttribute(),

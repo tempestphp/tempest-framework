@@ -78,6 +78,34 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_isset_attribute(): void
+    {
+        $this->assertSame(
+            '',
+            $this->render(view('<div :isset="$foo">Hello</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>elseif</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :elseif="true">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :elseif="false">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->render(view('<div :isset="$foo">Hello</div>', foo: true)),
+        );
+    }
+
     public function test_if_with_other_expression_attributes(): void
     {
         $html = $this->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');
