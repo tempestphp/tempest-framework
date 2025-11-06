@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3.3](https://github.com/tempestphp/tempest-framework/compare/v2.3.2..2.3.3)  —  2025-10-09
+## [2.4.0](https://github.com/tempestphp/tempest-framework/compare/v2.3.3..2.4.0)  —  2025-10-22
+
+### 🚨 Breaking changes
+
+- **http**: [**breaking**] add `--crawl` flag to `static:generate` command (#1656) ([fee1230](https://github.com/tempestphp/tempest-framework/commit/fee1230971fed3cc7ec1836fe29c89f5d32a87b5))
+
+### 🚀 Features
+
+- **http**: add accepts helper method (#1638) ([b61d352](https://github.com/tempestphp/tempest-framework/commit/b61d352e9842fc5a4bcd5aef7ec93ae63bba8a6b))
+- **intl**: add `current_locale` util (#1643) ([1dab1c7](https://github.com/tempestphp/tempest-framework/commit/1dab1c7e6629725e81f40e13aefd6dbcf81302ff))
+
+### 🐛 Bug fixes
+
+- **auth**: invalid key file arguments for Apple OAuth provider (#1640) ([bf476c0](https://github.com/tempestphp/tempest-framework/commit/bf476c00ac80e6b2ef6abbbfbd2159f180d3bb33))
+- **http**: desrialize csrf token from headers (#1616) ([d1ee721](https://github.com/tempestphp/tempest-framework/commit/d1ee7211e9dd457350fc9d22819e09de22beafff))
+- **reflection**: return null for method return type if not defined (#1645) ([b3acd5f](https://github.com/tempestphp/tempest-framework/commit/b3acd5f4cf6195ab9047a1b8ca21b8b50d4cddb1))
+- **view**: handle boolean attribute followed by non space whitespace or self-closing tags (#1632) ([cd226a3](https://github.com/tempestphp/tempest-framework/commit/cd226a3d9ad99875cf2bc707b2e8e5820f739c0a))
+
+
+## [2.3.3](https://github.com/tempestphp/tempest-framework/compare/v2.3.2..v2.3.3)  —  2025-10-09
 
 ### 🚀 Features
 

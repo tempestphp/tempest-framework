@@ -10,6 +10,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\Kernel;
+use Tempest\Support\Filesystem;
 
 use function Tempest\root_path;
 use function Tempest\Support\str;
@@ -62,7 +63,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
                 $this->console->writeln();
 
                 foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-                    $path = str(realpath($discoveryLocation->path))
+                    $path = str(Filesystem\normalize_path($discoveryLocation->path))
                         ->replaceStart(root_path(), '.')
                         ->toString();
 

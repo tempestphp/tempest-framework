@@ -16,6 +16,7 @@ namespace Tempest\DateTime {
 
     use function hrtime;
     use function microtime;
+    use function Tempest\Intl\current_locale;
 
     use const Tempest\DateTime\NANOSECONDS_PER_SECOND;
 
@@ -94,7 +95,7 @@ namespace Tempest\DateTime {
 
         $dateStyle ??= DateStyle::default();
         $timeStyle ??= TimeStyle::default();
-        $locale ??= Locale::default();
+        $locale ??= current_locale();
         $timezone ??= Timezone::default();
 
         return new IntlDateFormatter(

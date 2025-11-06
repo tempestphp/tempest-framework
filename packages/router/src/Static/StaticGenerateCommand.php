@@ -60,8 +60,10 @@ final class StaticGenerateCommand
     #[ConsoleCommand(name: 'static:generate', description: 'Compiles static pages')]
     public function __invoke(
         ?string $filter = null,
-        bool $allowDeadLinks = false,
-        bool $allowExternalDeadLinks = true,
+        #[ConsoleArgument(description: 'Crawl the site for dead links')]
+        bool $crawl = false,
+        #[ConsoleArgument(description: 'Crawl external links, only works when the --crawl flag is set')]
+        bool $external = false,
         #[ConsoleArgument(aliases: ['v'])]
         bool $verbose = false,
     ): ExitCode {
@@ -150,9 +152,13 @@ final class StaticGenerateCommand
                         mkdir($directory->toString(), recursive: true);
                     }
 
-                    if (! $allowDeadLinks && count($links = $this->detectDeadLinks($uri, $content, checkExternal: ! $allowExternalDeadLinks)) > 0) {
-                        $deadlinks[$uri] = $links;
-                        throw new DeadLinksDetectedException($uri, $links);
+                    if ($crawl) {
+                        $deadLinks = $this->detectDeadLinks($uri, $content, checkExternal: $external);
+
+                        if ($deadLinks !== []) {
+                            $deadlinks[$uri] = $deadLinks;
+                            throw new DeadLinksDetectedException($uri, $deadLinks);
+                        }
                     }
 
                     Filesystem\write_file($file->toString(), $content);
@@ -184,8 +190,8 @@ final class StaticGenerateCommand
         if ($deadlinks) {
             $this->console->header('Dead links');
 
-            foreach ($deadlinks as $uri => $links) {
-                foreach ($links as $link) {
+            foreach ($deadlinks as $uri => $deadLinks) {
+                foreach ($deadLinks as $link) {
                     $this->keyValue("<style='fg-gray'>{$uri}</style>", "<style='fg-red'>{$link}</style>");
                 }
             }
