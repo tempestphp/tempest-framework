@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagsResolver;
 
+use Tempest\Support\Filesystem;
 use Tempest\Support\Json;
 use Tempest\Vite\Exceptions\ManifestEntrypointWasNotFoundException;
 use Tempest\Vite\Manifest\Chunk;
@@ -253,7 +254,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
         return str($file)
             ->when(
                 condition: fn ($file) => $file->startsWith('./'),
-                callback: fn ($file) => str(realpath(root_path($file->toString()))),
+                callback: fn ($file) => str(Filesystem\normalize_path(root_path($file->toString()))),
             )
             ->replaceStart(root_path('public'), '')
             ->replaceStart(root_path(), '')
