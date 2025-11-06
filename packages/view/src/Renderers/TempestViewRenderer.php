@@ -29,7 +29,7 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-        private readonly ?ViewConfig $viewConfig,
+        private readonly ViewConfig $viewConfig,
         private readonly ?Container $container,
     ) {}
 
