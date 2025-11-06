@@ -3,6 +3,10 @@ title: Discovery
 description: "Learn how Tempest automatically locates controller actions, event handlers, console commands, and other components of your application."
 ---
 
+:::info
+Read the [getting started with discovery](/blog/discovery-explained) guide if you are new to Tempest. 
+:::
+
 ## Overview
 
 Tempest introduces a unique approach to bootstrapping an application. Instead of requiring manual registration of project code and packages, Tempest automatically scans the codebase and detects the components that should be loaded. This process is called **discovery**.
