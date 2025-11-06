@@ -7,7 +7,6 @@ namespace Tempest\View\Renderers;
 use Stringable;
 use Tempest\Container\Container;
 use Tempest\Core\Environment;
-use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Attributes\AttributeFactory;
@@ -19,7 +18,6 @@ use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
-use Tempest\View\ViewComponentDiscovery;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
@@ -138,10 +136,10 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string)$value;
+            return (string) $value;
         }
 
-        return htmlentities((string)$value);
+        return htmlentities((string) $value);
     }
 
     private function validateView(View $view): void
