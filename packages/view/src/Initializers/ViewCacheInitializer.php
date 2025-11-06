@@ -7,6 +7,7 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\AppConfig;
 use Tempest\View\ViewCache;
+
 use function Tempest\env;
 
 final class ViewCacheInitializer implements Initializer
