@@ -622,6 +622,23 @@ Tempest views are always compiled to plain PHP code before being rendered. Durin
 
 During deployments, that cache must be cleared in order to not serve outdated views to users. You may do that by running `tempest view:clear` on every deploy.
 
+## Separate view directories
+
+View files can live in any directory that is discoverable by Tempest. That means: a directory with a PSR-4 namespace associated with it. If you want your view files to live outside of `src` or `app`, you can add a namespace for it in composer.json:
+
+```json composer.json
+"autoload": {
+    "psr-4": {
+        "App\\": "src/",
+        "Views\\": "views/"
+    },
+}
+```
+
+Don't forget to run `composer up` after making changes to your composer.json file.
+
+Note that view files themselves don't need a namespace; this namespace is only here to tell Tempest that `views/` is a directory it should scan. If you want to add a class in the `Views` namespace (like, for example, a [custom view object](/2.x/essentials/views#using-dedicated-view-objects)), then that is possible as well. 
+
 ## Using other engines
 
 While Tempest View is simple to use, it currently lacks tooling support from editors and IDEs. You may also simply prefer other templating engines. For these reasons, you may use any other engine of your choice.
