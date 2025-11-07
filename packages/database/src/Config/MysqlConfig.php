@@ -13,7 +13,7 @@ final class MysqlConfig implements DatabaseConfig
 {
     public string $dsn {
         get => sprintf(
-            'mysql:host=%s;port=%s;dbname=%s',
+            'mysql:host=%s:%s;dbname=%s',
             $this->host,
             $this->port,
             $this->database,
