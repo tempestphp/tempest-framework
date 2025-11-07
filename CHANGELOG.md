@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..2.6.3)  —  2025-11-07
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..2.7.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **router**: add `#[Stateless]` attribute (#1692) ([86d140d](https://github.com/tempestphp/tempest-framework/commit/86d140d8ac03b9fb1c49eaa867cc89fa448f5da8))
+
+
+## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..v2.6.3)  —  2025-11-07
 
 ### 🐛 Bug fixes
 
