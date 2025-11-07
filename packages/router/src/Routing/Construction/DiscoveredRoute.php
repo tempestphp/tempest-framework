@@ -8,7 +8,7 @@ use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Route;
 
-final readonly class DiscoveredRoute implements Route
+final class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 

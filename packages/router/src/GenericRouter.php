@@ -83,22 +83,6 @@ final readonly class GenericRouter implements Router
                     )) {
                         return $callable($request);
                     }
-
-                    // Skip middleware that sets cookies or session values when the route is stateless
-                    if (
-                        $matchedRoute->route->handler->hasAttribute(Stateless::class)
-                        && in_array(
-                            needle: $middlewareClass->getName(),
-                            haystack: [
-                                VerifyCsrfMiddleware::class,
-                                SetCurrentUrlMiddleware::class,
-                                SetCookieMiddleware::class,
-                            ],
-                            strict: true,
-                        )
-                    ) {
-                        return $callable($request);
-                    }
                 }
 
                 /** @var HttpMiddleware $middleware */
