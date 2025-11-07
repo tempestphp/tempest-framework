@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..2.6.1)  —  2025-11-07
+## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..2.6.2)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: cleanup session without starting a new one (#1688) ([9a7dee6](https://github.com/tempestphp/tempest-framework/commit/9a7dee6491e314841fb758223370cdaeb5e88239))
+
+
+## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..v2.6.1)  —  2025-11-07
 
 ### 🐛 Bug fixes
 
