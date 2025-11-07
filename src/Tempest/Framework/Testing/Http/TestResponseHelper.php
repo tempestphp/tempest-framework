@@ -184,6 +184,26 @@ final class TestResponseHelper
         return $this;
     }
 
+    public function assertDoesNotHaveCookie(string $key, null|string|Closure $value = null): self
+    {
+        /** @var array<string,Cookie> */
+        $cookies = Arr\map_with_keys(
+            array: $this->response->getHeader('set-cookie')->values ?? [],
+            map: function (string $cookie) {
+                $cookie = Cookie::createFromString($cookie);
+                yield $cookie->key => $cookie;
+            },
+        );
+
+        Assert::assertArrayNotHasKey(
+            key: $key,
+            array: $cookies,
+            message: sprintf("A cookie was set for [%s], while it shouldn't have been", $key),
+        );
+
+        return $this;
+    }
+
     public function assertHasSession(string $key, ?Closure $callback = null): self
     {
         $this->assertHasContainer();
