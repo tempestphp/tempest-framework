@@ -24,7 +24,7 @@ After publishing, you may run `./tempest migrate`. You now have the building blo
 
 Tempest's authentication is flexible enough not to assume that an authenticatable model is a user. If your application uses a different system for authentication, such as an API key or a service account, you have the ability to create such a model while preserving the correct nomenclature.
 
-To register an authenticatable model, you may create a class that implements the {b`Tempest\Auth\Authentication\Authenticatable`} interface. Tempest automatically discovers this interface. If you run `tempest install auth`, a basic `User` model like below can be created for you.
+To register an authenticatable model, you may create a class that implements the {b`Tempest\Auth\Authentication\Authenticatable`} interface. This interface is automatically discovered by Tempest.
 
 ```php app/Authentication/User.php
 use Tempest\Auth\Authentication\Authenticatable;
