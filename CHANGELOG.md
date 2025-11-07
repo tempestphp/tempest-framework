@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..2.6.0)  —  2025-11-07
+## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..2.6.1)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: gracefully recover from corrupt session retrieval (#1687) ([8c5d8cc](https://github.com/tempestphp/tempest-framework/commit/8c5d8cc501096a27aaeb96e520643727e741eec9))
+
+
+## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..v2.6.0)  —  2025-11-07
 
 ### 🚀 Features
 
