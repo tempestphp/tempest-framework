@@ -26,6 +26,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
+use Tests\Tempest\Integration\Route\Fixtures\PrefixController;
 use Tests\Tempest\Integration\Route\Fixtures\StatelessController;
 
 /**
@@ -261,7 +262,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('x-custom');
     }
 
-    public function test_stateless_actions(): void
+    public function test_stateless_decorator(): void
     {
         $this->registerRoute(StatelessController::class);
 
@@ -270,5 +271,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk()
             ->assertDoesNotHaveCookie('tempest_session_id')
             ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
+
+    public function test_prefix_decorator(): void
+    {
+        $this->registerRoute(PrefixController::class);
+
+        $this->http
+            ->get('/prefix/endpoint')
+            ->assertOk();
     }
 }
