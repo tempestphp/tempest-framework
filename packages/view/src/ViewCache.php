@@ -20,6 +20,22 @@ final class ViewCache
         );
     }
 
+    public static function enabled(?string $path = null): self
+    {
+        return new self(
+            enabled: true,
+            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
+        );
+    }
+
+    public static function disabled(?string $path = null): self
+    {
+        return new self(
+            enabled: false,
+            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
+        );
+    }
+
     public function clear(): void
     {
         $this->pool->clear();

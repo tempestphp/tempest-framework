@@ -97,25 +97,7 @@ ld($variable);
 
 ## `tempest/view`
 
-Tempest View can be used as a standalone package:
-
-```
-composer require tempest/view
-```
-
-```php
-$container = Tempest::boot(__DIR__);
-
-$view = view(__DIR__ . '/src/b.view.php');
-
-echo $container->get(ViewRenderer::class)->render($view);
-```
-
-There are a couple of notes to make when running Tempest View as a standalone component:
-
-- Any view files and components will be discovered and must be in a directory with a valid PSR-4 namespace. View files themselves don't need to have a namespace, though.
-- View files are compiled and cached. You can manually enable or disable this cache by setting the `{env}{:hl-keyword:VIEW_CACHE:}` environment variable to `true` or `false`. By default, the view cache is disabled.
-- Optionally, you can require `tempest/console`, which will provide you with the `vendor/bin/tempest view:clear` command to clear view caches. If you don't install `tempest/console`, you'll have to manually clear view caches on deployment by removing the `.tempest/cache/views` directory.
+Tempest View can be used as a standalone package. You can read about how to use it [here](/2.x/essentials/views#tempest-view-as-a-standalone-engine).
 
 ## `tempest/event-bus`
 
