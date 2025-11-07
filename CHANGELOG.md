@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..2.6.2)  —  2025-11-07
+## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..2.6.3)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **database**: revert broken mysql dsn changes (#1689) ([9edc4d2](https://github.com/tempestphp/tempest-framework/commit/9edc4d2ba4e132aeb5bba6f6114a60b175f50b2a))
+
+
+## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..v2.6.2)  —  2025-11-07
 
 ### 🐛 Bug fixes
 
