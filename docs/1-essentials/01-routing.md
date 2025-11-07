@@ -633,7 +633,7 @@ final class ErrorResponseProcessor implements ResponseProcessor
 
 ## Stateless routes
 
-When you're building API endpoints, RSS pages, or any other kind of page that does not require any cookie or session data, you mark a route as stateless, skipping all cookie-related logic:
+When you're building API endpoints, RSS pages, or any other kind of page that does not require any cookie or session data, you may use the `{#[Tempest\Router\Stateless]}` attribute, which will remove all state-related logic:
 
 ```php
 use Tempest\Router\Stateless;
