@@ -3,7 +3,6 @@
 namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
 use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
 use Tempest\View\Renderers\TempestViewRenderer;
@@ -21,9 +20,10 @@ final class StandaloneViewRendererTest extends TestCase
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
         );
 
-        $renderer = TempestViewRenderer::make(
-            viewConfig: $viewConfig,
-        );
+        $renderer =
+            TempestViewRenderer::make(
+                viewConfig: $viewConfig,
+            );
 
         $html = $renderer->render(
             view(__DIR__ . '/Fixtures/standalone.view.php'),
@@ -73,9 +73,10 @@ final class StandaloneViewRendererTest extends TestCase
         $viewCache = ViewCache::enabled();
         $viewCache->clear();
 
-        $renderer = TempestViewRenderer::make(
-            viewCache: $viewCache,
-        );
+        $renderer =
+            TempestViewRenderer::make(
+                viewCache: $viewCache,
+            );
 
         $html = $renderer->render(
             view(__DIR__ . '/Fixtures/standalone.view.php'),

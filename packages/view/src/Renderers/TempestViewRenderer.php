@@ -17,7 +17,6 @@ use Tempest\View\GenericView;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
-use Tempest\View\ViewCachePool;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
@@ -52,7 +51,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $elementFactory->setViewCompiler($compiler);
 
-        $viewCache = $viewCache ?? ViewCache::disabled();
+        $viewCache ??= ViewCache::disabled();
 
         return new self(
             compiler: $compiler,

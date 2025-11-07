@@ -24,7 +24,7 @@ final class ViewCache
     {
         return new self(
             enabled: true,
-            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache')
+            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
         );
     }
 
@@ -32,7 +32,7 @@ final class ViewCache
     {
         return new self(
             enabled: false,
-            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache')
+            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
         );
     }
 
