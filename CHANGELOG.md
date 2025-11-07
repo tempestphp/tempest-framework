@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..2.5.0)  —  2025-11-06
+## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..2.6.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **view**: standalone `TempestViewRenderer` support (#1686) ([2f5a3bc](https://github.com/tempestphp/tempest-framework/commit/2f5a3bc317f24852bdff5851a70bb8007248c0aa))
+
+
+## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..v2.5.0)  —  2025-11-06
 
 ### 🚀 Features
 
