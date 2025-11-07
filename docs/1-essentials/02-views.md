@@ -673,15 +673,31 @@ You can choose whichever way you prefer. Chances are that, if you use the minima
 
 ### A note on caching
 
-When you're using the minimal setup, view caching can be enabled by passing in a `$cache` paremeter into `TempestViewRenderer::make()`:
+When you're using the minimal setup, view caching can be enabled by passing in a `$viewCache` paremeter into `TempestViewRenderer::make()`:
 
 ```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewCache;
+
 $renderer = TempestViewRenderer::make(
-    cache: true,
+    cache: ViewCache::enabled(),
 );
 ```
 
-It's recommended to turn view caching on in production environments. To clear the view cache, you'll have to manually delete the cache directory, which is located at `./vendor/tempest/view/.tempest/cache`.
+It's recommended to turn view caching on in production environments. To clear the view cache, you can call the `clear()` method on the `ViewCache` object:
+
+```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewCache;
+
+$viewCache = ViewCache::enabled();
+
+$viewCache->clear();
+
+$renderer = TempestViewRenderer::make(
+    cache: $viewCache,
+);
+```
 
 ## Separate view directories
 

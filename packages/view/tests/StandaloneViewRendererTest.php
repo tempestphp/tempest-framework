@@ -3,9 +3,11 @@
 namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
 use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
 use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
@@ -19,10 +21,9 @@ final class StandaloneViewRendererTest extends TestCase
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
         );
 
-        $renderer =
-            TempestViewRenderer::make(
-                viewConfig: $viewConfig,
-            );
+        $renderer = TempestViewRenderer::make(
+            viewConfig: $viewConfig,
+        );
 
         $html = $renderer->render(
             view(__DIR__ . '/Fixtures/standalone.view.php'),
@@ -65,6 +66,43 @@ final class StandaloneViewRendererTest extends TestCase
         } catch (ViewComponentPathWasInvalid $e) {
             $this->assertStringContainsString('standalone-base.view.php', $e->getMessage());
         }
+    }
+
+    public function test_with_cache_enabled(): void
+    {
+        $viewCache = ViewCache::enabled();
+        $viewCache->clear();
+
+        $renderer = TempestViewRenderer::make(
+            viewCache: $viewCache,
+        );
+
+        $html = $renderer->render(
+            view(__DIR__ . '/Fixtures/standalone.view.php'),
+        );
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <x-standalone-base>
+            Hi
+        </x-standalone-base>
+        HTML, $html);
+    }
+
+    public function test_with_cache_disabled(): void
+    {
+        $renderer = TempestViewRenderer::make(
+            viewCache: ViewCache::disabled(),
+        );
+
+        $html = $renderer->render(
+            view(__DIR__ . '/Fixtures/standalone.view.php'),
+        );
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <x-standalone-base>
+            Hi
+        </x-standalone-base>
+        HTML, $html);
     }
 
     protected function assertSnippetsMatch(string $expected, string $actual): void

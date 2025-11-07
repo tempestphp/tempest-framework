@@ -35,7 +35,7 @@ final class TempestViewRenderer implements ViewRenderer
 
     public static function make(
         ?ViewConfig $viewConfig = null,
-        bool $cache = false,
+        ?ViewCache $viewCache = null,
         Environment $environment = Environment::PRODUCTION,
     ): self {
         $viewConfig ??= new ViewConfig();
@@ -52,10 +52,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $elementFactory->setViewCompiler($compiler);
 
-        $viewCache = new ViewCache(
-            enabled: $cache,
-            pool: new ViewCachePool(__DIR__ . '/../../.tempest/cache'),
-        );
+        $viewCache = $viewCache ?? ViewCache::disabled();
 
         return new self(
             compiler: $compiler,
