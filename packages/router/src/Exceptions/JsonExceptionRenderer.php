@@ -16,7 +16,7 @@ use Throwable;
 
 use function Tempest\Support\arr;
 
-final readonly class JsonHttpExceptionRenderer
+final readonly class JsonExceptionRenderer
 {
     public function __construct(
         private AppConfig $appConfig,

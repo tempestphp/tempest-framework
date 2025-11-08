@@ -11,7 +11,7 @@ use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotAcceptable;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Exceptions\ConvertsToResponse;
-use Tempest\Router\Exceptions\JsonHttpExceptionRenderer;
+use Tempest\Router\Exceptions\JsonExceptionRenderer;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Validation\Exceptions\ValidationFailed;
 
@@ -20,7 +20,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 {
     public function __construct(
         private RouteConfig $routeConfig,
-        private JsonHttpExceptionRenderer $jsonHandler,
+        private JsonExceptionRenderer $jsonHandler,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
