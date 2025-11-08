@@ -538,6 +538,26 @@ use Tempest\Router\Get;
 final readonly class StatelessController { /* … */ }
 ```
 
+### Custom route decorators
+
+Building your own route decorators is done by implementing the {b`\Tempest\Router\RouteDecorator`} interface and marking your decorator as an attribute.
+
+```php
+use Attribute;
+use Tempest\Router\RouteDecorator;
+
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
+final readonly class Auth implements RouteDecorator
+{
+    public function decorate(Route $route): Route
+    {
+        $route->middleare[] = AuthMiddleware::class;
+
+        return $route;
+    }
+}
+```
+
 ## Responses
 
 All requests to a controller action expect a response to be returned to the client. This is done by returning a `{php}View` or a `{php}Response` object.
