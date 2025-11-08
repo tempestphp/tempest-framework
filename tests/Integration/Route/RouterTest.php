@@ -16,8 +16,6 @@ use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
-use Tests\Tempest\Fixtures\Controllers\PrefixController;
-use Tests\Tempest\Fixtures\Controllers\StatelessController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;

@@ -11,7 +11,6 @@ use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Router\Exceptions\ControllerActionHadNoReturn;
 use Tempest\Router\Exceptions\MatchedRouteCouldNotBeResolved;
 use Tempest\Router\Routing\Matching\RouteMatcher;

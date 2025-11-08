@@ -9,20 +9,24 @@ use Tempest\Http\Method;
 interface Route
 {
     public Method $method {
-        get; set;
+        get;
+        set;
     }
 
     public string $uri {
-        get; set;
+        get;
+        set;
     }
 
     /** @var class-string<HttpMiddleware>[]  */
     public array $middleware {
-        get; set;
+        get;
+        set;
     }
 
     /** @var class-string<HttpMiddleware>[]  */
     public array $without {
-        get; set;
+        get;
+        set;
     }
 }
