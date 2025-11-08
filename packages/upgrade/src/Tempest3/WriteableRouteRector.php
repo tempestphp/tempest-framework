@@ -38,6 +38,6 @@ final class WriteableRouteRector extends AbstractRector
             return;
         }
 
-        $node->flags = $node->flags & ~Modifiers::READONLY;
+        $node->flags &= ~Modifiers::READONLY;
     }
 }
