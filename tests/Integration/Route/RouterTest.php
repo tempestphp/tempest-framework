@@ -16,6 +16,8 @@ use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tests\Tempest\Fixtures\Controllers\PrefixController;
+use Tests\Tempest\Fixtures\Controllers\StatelessController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -26,8 +28,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
-use Tests\Tempest\Integration\Route\Fixtures\PrefixController;
-use Tests\Tempest\Integration\Route\Fixtures\StatelessController;
 
 /**
  * @internal
@@ -264,8 +264,6 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_stateless_decorator(): void
     {
-        $this->registerRoute(StatelessController::class);
-
         $this->http
             ->get('/stateless')
             ->assertOk()
@@ -275,8 +273,6 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_prefix_decorator(): void
     {
-        $this->registerRoute(PrefixController::class);
-
         $this->http
             ->get('/prefix/endpoint')
             ->assertOk();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Tempest\Integration\Route\Fixtures;
+namespace Tests\Tempest\Fixtures\Controllers;
 
 use Tempest\Http\Responses\Ok;
 use Tempest\Router\Get;

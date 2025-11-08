@@ -4,7 +4,6 @@ namespace Tempest\Router;
 
 use Attribute;
 use Tempest\Http\Session\VerifyCsrfMiddleware;
-use Tempest\Router\Routing\Construction\DiscoveredRoute;
 
 /**
  * Mark a route handler as stateless, causing all cookie- and session-related middleware to be skipped.
@@ -12,7 +11,7 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Stateless implements RouteDecorator
 {
-    public function decorate(DiscoveredRoute $route): DiscoveredRoute
+    public function decorate(Route $route): Route
     {
         $route->without = [
             ...$route->without,

@@ -34,17 +34,6 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
             return new NotFound();
         }
 
-        // Apply route decorators
-        $decorators = [
-            ...$matchedRoute->route->handler->getDeclaringClass()->getAttributes(RouteDecorator::class),
-            ...$matchedRoute->route->handler->getAttributes(RouteDecorator::class),
-        ];
-
-        /** @var \Tempest\Router\RouteDecorator $decorator */
-        foreach ($decorators as $decorator) {
-            $matchedRoute->route = $decorator->decorate($matchedRoute->route);
-        }
-
         // We register the matched route in the container, some internal framework components will need it
         $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
 
