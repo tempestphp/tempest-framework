@@ -32,6 +32,8 @@ final readonly class OAuthControllerStub
     #[Get('callback-route')]
     public function callback(Request $request): Redirect
     {
+        // TODO: implement, the code below is an example
+
         $this->oauth->authenticate(
             request: $request,
             map: fn (OAuthUser $user): Authenticatable => query('user-model-fqcn')->updateOrCreate([
