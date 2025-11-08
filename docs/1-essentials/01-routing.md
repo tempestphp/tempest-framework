@@ -631,6 +631,23 @@ final class ErrorResponseProcessor implements ResponseProcessor
 }
 ```
 
+## Stateless routes
+
+When you're building API endpoints, RSS pages, or any other kind of page that does not require any cookie or session data, you may use the `{#[Tempest\Router\Stateless]}` attribute, which will remove all state-related logic:
+
+```php
+use Tempest\Router\Stateless;
+use Tempest\Router\Get;
+
+final readonly class JsonController
+{
+    #[Stateless]
+    #[Get('/json')]
+    public function json(string $path): Response
+    { /* … */ }
+}
+```
+
 ## Custom route attributes
 
 It is often a requirement to have a bunch of routes following the same specifications—for instance, using the same middleware, or the same URI prefix.

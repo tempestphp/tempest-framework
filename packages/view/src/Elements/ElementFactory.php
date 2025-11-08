@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\View\Attributes\PhpAttribute;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
@@ -18,13 +17,12 @@ final class ElementFactory
 {
     private TempestViewCompiler $compiler;
 
-    public function __construct(
-        private readonly AppConfig $appConfig,
-        private readonly ViewConfig $viewConfig,
-        private readonly Container $container,
-    ) {}
-
     private(set) bool $isHtml = false;
+
+    public function __construct(
+        private readonly ViewConfig $viewConfig,
+        private readonly Environment $environment,
+    ) {}
 
     public function setViewCompiler(TempestViewCompiler $compiler): self
     {
@@ -93,7 +91,7 @@ final class ElementFactory
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             $element = new ViewComponentElement(
                 token: $token,
-                environment: $this->appConfig->environment,
+                environment: $this->environment,
                 compiler: $this->compiler,
                 viewComponent: $viewComponentClass,
                 attributes: $attributes,

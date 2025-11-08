@@ -2,7 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..2.5.0)  —  2025-11-06
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..2.7.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **router**: add `#[Stateless]` attribute (#1692) ([86d140d](https://github.com/tempestphp/tempest-framework/commit/86d140d8ac03b9fb1c49eaa867cc89fa448f5da8))
+
+
+## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..v2.6.3)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **database**: revert broken mysql dsn changes (#1689) ([9edc4d2](https://github.com/tempestphp/tempest-framework/commit/9edc4d2ba4e132aeb5bba6f6114a60b175f50b2a))
+
+
+## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..v2.6.2)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: cleanup session without starting a new one (#1688) ([9a7dee6](https://github.com/tempestphp/tempest-framework/commit/9a7dee6491e314841fb758223370cdaeb5e88239))
+
+
+## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..v2.6.1)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: gracefully recover from corrupt session retrieval (#1687) ([8c5d8cc](https://github.com/tempestphp/tempest-framework/commit/8c5d8cc501096a27aaeb96e520643727e741eec9))
+
+
+## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..v2.6.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **view**: standalone `TempestViewRenderer` support (#1686) ([2f5a3bc](https://github.com/tempestphp/tempest-framework/commit/2f5a3bc317f24852bdff5851a70bb8007248c0aa))
+
+
+## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..v2.5.0)  —  2025-11-06
 
 ### 🚀 Features
 

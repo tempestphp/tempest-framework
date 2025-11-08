@@ -11,6 +11,7 @@ use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
@@ -25,6 +26,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
+use Tests\Tempest\Integration\Route\Fixtures\StatelessController;
 
 /**
  * @internal
@@ -257,5 +259,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->head('/explicit-head')
             ->assertOk()
             ->assertHasHeader('x-custom');
+    }
+
+    public function test_stateless_actions(): void
+    {
+        $this->registerRoute(StatelessController::class);
+
+        $this->http
+            ->get('/stateless')
+            ->assertOk()
+            ->assertDoesNotHaveCookie('tempest_session_id')
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
     }
 }
