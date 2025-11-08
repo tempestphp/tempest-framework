@@ -96,6 +96,10 @@ final class ConsoleCommandDiscovery implements Discovery
 
 Discovery makes Tempest truly understand your codebase so that you don't have to explain the framework how to use it. Of course, discovery is heavily optimized for local development and entirely cached in production, so there's no performance overhead. Even better: discovery isn't just a core framework feature, you're encouraged to write your own project-specific discovery classes wherever they make sense. That's the Tempest way.
 
+:::info
+Read the [getting started with discovery](/blog/discovery-explained) guide if you are new to Tempest.
+:::
+
 Besides Discovery, Tempest is designed to be extensible. You'll find that any part of the framework can be replaced and hooked into by implementing an interface and plugging it into the container. No fighting the framework, Tempest gets out of your way.
 
 ```php

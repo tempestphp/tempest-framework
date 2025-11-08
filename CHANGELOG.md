@@ -2,7 +2,59 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.4.0](https://github.com/tempestphp/tempest-framework/compare/v2.3.3..2.4.0)  —  2025-10-22
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..2.7.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **router**: add `#[Stateless]` attribute (#1692) ([86d140d](https://github.com/tempestphp/tempest-framework/commit/86d140d8ac03b9fb1c49eaa867cc89fa448f5da8))
+
+
+## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..v2.6.3)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **database**: revert broken mysql dsn changes (#1689) ([9edc4d2](https://github.com/tempestphp/tempest-framework/commit/9edc4d2ba4e132aeb5bba6f6114a60b175f50b2a))
+
+
+## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..v2.6.2)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: cleanup session without starting a new one (#1688) ([9a7dee6](https://github.com/tempestphp/tempest-framework/commit/9a7dee6491e314841fb758223370cdaeb5e88239))
+
+
+## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..v2.6.1)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: gracefully recover from corrupt session retrieval (#1687) ([8c5d8cc](https://github.com/tempestphp/tempest-framework/commit/8c5d8cc501096a27aaeb96e520643727e741eec9))
+
+
+## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..v2.6.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **view**: standalone `TempestViewRenderer` support (#1686) ([2f5a3bc](https://github.com/tempestphp/tempest-framework/commit/2f5a3bc317f24852bdff5851a70bb8007248c0aa))
+
+
+## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..v2.5.0)  —  2025-11-06
+
+### 🚀 Features
+
+- **core**: support booting in phar (#1672) ([536db47](https://github.com/tempestphp/tempest-framework/commit/536db4750fa5c2d1497e93645199be333a558132))
+- **core**: make discovery cache environment variable partial by default (#1682) ([f50af80](https://github.com/tempestphp/tempest-framework/commit/f50af80f5f72ff467b827ef18341b03c2569aef0))
+- **view**: add `:isset` attribte (#1675) ([1af3b23](https://github.com/tempestphp/tempest-framework/commit/1af3b23e843d7646617413a57b4fb0a8fa9ff3a4))
+- **view**: support single-quote attributes (#1678) ([071993a](https://github.com/tempestphp/tempest-framework/commit/071993ab2b29e3a909812062bfbccaf482c6f2f8))
+
+### 🐛 Bug fixes
+
+- **database**: fix dsn format for mysql connection (#1664) ([6c3cbe2](https://github.com/tempestphp/tempest-framework/commit/6c3cbe24442353d85a6a05d9a5320fb6a01e3301))
+- **events**: prevent enum event naming collisions (#1681) ([1602654](https://github.com/tempestphp/tempest-framework/commit/16026543ab6f38d4f676b95c58797d83a56c089d))
+- **view**: zero-values in attributes (#1679) ([66dda2f](https://github.com/tempestphp/tempest-framework/commit/66dda2f2f57b4292e96348904901cf27fac84cb8))
+- psr-discovery dependency (#1655) ([a1679a1](https://github.com/tempestphp/tempest-framework/commit/a1679a125de8eb32bafe576d78d2af6a829ee641))
+
+
+## [2.4.0](https://github.com/tempestphp/tempest-framework/compare/v2.3.3..v2.4.0)  —  2025-10-22
 
 ### 🚨 Breaking changes
 

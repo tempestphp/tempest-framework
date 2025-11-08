@@ -346,6 +346,26 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_single_quote_attributes(): void
+    {
+        $html = <<<HTML
+        <div class='hello'></div>
+        HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' class=', TokenType::ATTRIBUTE_NAME),
+                new Token('\'hello\'', TokenType::ATTRIBUTE_VALUE),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);

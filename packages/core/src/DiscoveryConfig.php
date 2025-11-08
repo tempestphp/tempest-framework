@@ -2,6 +2,8 @@
 
 namespace Tempest\Core;
 
+use Tempest\Support\Filesystem;
+
 final class DiscoveryConfig
 {
     private array $skipDiscovery = [];
@@ -25,9 +27,9 @@ final class DiscoveryConfig
         foreach ($paths as $path) {
             $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
 
-            $realpath = realpath($path);
+            $realpath = Filesystem\normalize_path($path);
 
-            if ($realpath === false) {
+            if ($realpath === null) {
                 continue;
             }
 

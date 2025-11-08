@@ -62,6 +62,10 @@ final readonly class FileSessionManager implements SessionManager
             return false;
         }
 
+        if (! ($session->lastActiveAt ?? null)) {
+            return false;
+        }
+
         return $this->clock->now()->before(
             other: $session->lastActiveAt->plus($this->sessionConfig->expiration),
         );

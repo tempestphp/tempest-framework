@@ -11,6 +11,7 @@ use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Router\Exceptions\ControllerActionHadNoReturn;
 use Tempest\Router\Exceptions\MatchedRouteCouldNotBeResolved;
 use Tempest\Router\Routing\Matching\RouteMatcher;
@@ -70,12 +71,32 @@ final readonly class GenericRouter implements Router
         $middlewareStack = $this->routeConfig->middleware;
 
         foreach ($middlewareStack->unwrap() as $middlewareClass) {
-            $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
-                // We skip this middleware if it's ignored by the route
+            $callable = new HttpMiddlewareCallable(closure: function (Request $request) use ($middlewareClass, $callable) {
                 if ($this->container->has(MatchedRoute::class)) {
                     $matchedRoute = $this->container->get(MatchedRoute::class);
 
-                    if (in_array($middlewareClass->getName(), $matchedRoute->route->without, strict: true)) {
+                    // Skip the middleware if it's ignored by the route
+                    if (in_array(
+                        needle: $middlewareClass->getName(),
+                        haystack: $matchedRoute->route->without,
+                        strict: true,
+                    )) {
+                        return $callable($request);
+                    }
+
+                    // Skip middleware that sets cookies or session values when the route is stateless
+                    if (
+                        $matchedRoute->route->handler->hasAttribute(Stateless::class)
+                        && in_array(
+                            needle: $middlewareClass->getName(),
+                            haystack: [
+                                VerifyCsrfMiddleware::class,
+                                SetCurrentUrlMiddleware::class,
+                                SetCookieMiddleware::class,
+                            ],
+                            strict: true,
+                        )
+                    ) {
                         return $callable($request);
                     }
                 }

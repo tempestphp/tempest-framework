@@ -131,8 +131,12 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $attributeValue = $this->consumeIncluding('"');
-                    $attributeValue .= $this->consumeIncluding('"');
+                    $quote = $this->seek() === '\''
+                        ? '\''
+                        : '"';
+
+                    $attributeValue = $this->consumeIncluding($quote);
+                    $attributeValue .= $this->consumeIncluding($quote);
 
                     $tokens[] = new Token(
                         content: $attributeValue,
