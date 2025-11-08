@@ -177,13 +177,28 @@ Apart from HTMLs boolean attributes, the same syntax can be used with any expres
 
 ### Control flow directives
 
-#### `:if`, `:elseif` and `:else`
+#### `:if`, `:elseif`, and `:else`
 
 The `:if` directive can conditionally render the element it is attached to, depending on the result of its expression. Similarly, the `:elseif` and `:else` directives can be used on direct siblings for additional control.
 
 ```html
 <span :if="$this->pendingUploads->isEmpty()">Import files</span>
 <span :else>Import {{ $this->pendingUploads->count() }} file(s)</span>
+```
+
+#### `:isset`
+
+The `:isset` directive can be used to conditionally render the element it is attached to, depending on the existence of a variable.
+
+```html
+<h1 :isset="$title">{{ $title }}</h1>
+```
+
+Since `:isset` is a shorthand for `:if="isset()"`, it can be combined with `:elseif` and `:else`:
+
+```html
+<h1 :isset="$title">{{ $title }}</h1>
+<h1 :else>Title</h1>
 ```
 
 #### `:foreach` and `:{:hl-keyword:forelse:}`
@@ -230,7 +245,7 @@ To create a view component, create a `.view.php` file that starts with `x-`. The
 ```html app/x-base.view.php
 <html lang="en">
 	<head>
-		<title :if="$title">{{ $title }} — AirAcme</title>
+		<title :if="$title ?? null">{{ $title }} — AirAcme</title>
 		<title :else>AirAcme</title>
 	</head>
 	<body>
@@ -265,7 +280,7 @@ Attributes and [expression attributes](#expression-attributes) may be passed int
 
 ```html x-base.view.php
 // ...
-<title :if="$title">{{ $title }}</title>
+<title :if="$title ?? null">{{ $title }}</title>
 ```
 
 Note that the casing of attributes will affect the associated variable name:
@@ -606,6 +621,100 @@ Tempest views are always compiled to plain PHP code before being rendered. Durin
 ```
 
 During deployments, that cache must be cleared in order to not serve outdated views to users. You may do that by running `tempest view:clear` on every deploy.
+
+## Tempest View as a standalone engine
+
+Tempest View is also designed to be used as a standalone engine in whatever PHP project you want. Start by requiring `tempest/view`:
+
+```sh
+composer require tempest/view
+```
+
+As a bare minimum setup, you can create an instance of the renderer by calling `TempestViewRenderer::make()`:
+
+```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use function Tempest\view;
+
+$renderer = TempestViewRenderer::make();
+
+$html = $renderer->render(view('home.view.php', name: 'Brent'));
+```
+
+If, however, you want view component support, you will need to provide a `ViewConfig` object as well:
+
+```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewConfig;
+
+$config = new ViewConfig()->addViewComponents(
+    __DIR__ . '/components/x-base.view.php',
+    __DIR__ . '/components/x-footer.view.php',
+    __DIR__ . '/components/x-header.view.php',
+);
+
+$renderer = TempestViewRenderer::make($config);
+```
+
+If you want to rely on Tempest's discovery to find view components, you can boot a minimal version of Tempest, and resolve the view renderer from the container:
+
+```php
+use Tempest\Core\Tempest;
+use Tempest\View\ViewRenderer;
+
+$container = Tempest::boot(__DIR__);
+
+$html = $container->get(ViewRenderer::class)->render(
+    view('home.view.php', name: 'Brent')
+);
+```
+
+You can choose whichever way you prefer. Chances are that, if you use the minimal setup without booting Tempest, you'll want to add a custom view component loader. That's up to you to implement then.
+
+### A note on caching
+
+When you're using the minimal setup, view caching can be enabled by passing in a `$viewCache` paremeter into `TempestViewRenderer::make()`:
+
+```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewCache;
+
+$renderer = TempestViewRenderer::make(
+    cache: ViewCache::enabled(),
+);
+```
+
+It's recommended to turn view caching on in production environments. To clear the view cache, you can call the `clear()` method on the `ViewCache` object:
+
+```php
+use Tempest\View\Renderers\TempestViewRenderer;
+use Tempest\View\ViewCache;
+
+$viewCache = ViewCache::enabled();
+
+$viewCache->clear();
+
+$renderer = TempestViewRenderer::make(
+    cache: $viewCache,
+);
+```
+
+## Separate view directories
+
+View files can live in any directory that is discoverable by Tempest. That means: a directory with a PSR-4 namespace associated with it. If you want your view files to live outside of `src` or `app`, you can add a namespace for it in composer.json:
+
+```json composer.json
+"autoload": {
+    "psr-4": {
+        "App\\": "src/",
+        "Views\\": "views/"
+    },
+}
+```
+
+Don't forget to run `composer up` after making changes to your composer.json file.
+
+Note that view files themselves don't need a namespace; this namespace is only here to tell Tempest that `views/` is a directory it should scan. If you want to add a class in the `Views` namespace (like, for example, a [custom view object](/2.x/essentials/views#using-dedicated-view-objects)), then that is possible as well.
 
 ## Using other engines
 

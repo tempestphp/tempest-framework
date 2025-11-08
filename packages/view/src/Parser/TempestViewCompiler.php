@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\View\Parser;
 
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
@@ -30,7 +29,8 @@ final readonly class TempestViewCompiler
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
-        private Kernel $kernel,
+        /** @var DiscoveryLocation[] */
+        private array $discoveryLocations = [],
     ) {}
 
     public function compile(string|View $view): string
@@ -86,7 +86,7 @@ final readonly class TempestViewCompiler
 
         $searchPathOptions = [
             ...$searchPathOptions,
-            ...arr($this->kernel->discoveryLocations)
+            ...arr($this->discoveryLocations)
                 ->map(fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
                 ->toArray(),
         ];

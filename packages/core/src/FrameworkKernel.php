@@ -18,6 +18,7 @@ use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
+use Tempest\Support\Filesystem;
 
 final class FrameworkKernel implements Kernel
 {
@@ -34,14 +35,20 @@ final class FrameworkKernel implements Kernel
         /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
+        ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
+
+        if ($internalStorage !== null) {
+            $this->internalStorage = $internalStorage;
+        }
     }
 
     public static function boot(
         string $root,
         array $discoveryLocations = [],
         ?Container $container = null,
+        ?string $internalStorage = null,
     ): self {
         if (! defined('TEMPEST_START')) {
             define('TEMPEST_START', value: hrtime(true));
@@ -51,6 +58,7 @@ final class FrameworkKernel implements Kernel
             root: $root,
             discoveryLocations: $discoveryLocations,
             container: $container,
+            internalStorage: $internalStorage,
         )
             ->validateRoot()
             ->loadEnv()
@@ -68,7 +76,7 @@ final class FrameworkKernel implements Kernel
 
     public function validateRoot(): self
     {
-        $root = realpath($this->root);
+        $root = Filesystem\normalize_path($this->root);
 
         if (! is_dir($root)) {
             throw new RuntimeException('The specified root directory is not valid.');
@@ -175,7 +183,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerInternalStorage(): self
     {
-        $path = $this->root . '/.tempest';
+        $path = isset($this->internalStorage) ? $this->internalStorage : $this->root . '/.tempest';
 
         if (! is_dir($path)) {
             if (file_exists($path)) {
@@ -189,7 +197,7 @@ final class FrameworkKernel implements Kernel
             throw CouldNotRegisterInternalStorage::noPermission($path);
         }
 
-        $this->internalStorage = realpath($path);
+        $this->internalStorage = Filesystem\normalize_path($path);
 
         return $this;
     }
