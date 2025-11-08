@@ -245,6 +245,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHeaderContains('Location', 'https://tempestphp.com');
     }
 
+    public function test_router_returns_json_exception_when_accepts_json(): void
+    {
+        $this->registerRoute([Http500Controller::class, 'throwsException']);
+
+        $this->http
+            ->get('/throws-exception', headers: ['Accept' => 'application/json'])
+            ->assertStatus(Status::INTERNAL_SERVER_ERROR)
+            ->assertJsonHasKeys('message');
+    }
+
     public function test_head_requests(): void
     {
         $this->registerRoute([HeadController::class, 'implicitHead']);
