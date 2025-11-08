@@ -15,6 +15,7 @@ final class UserModel implements Authenticatable
     public function __construct(
         public string $email,
         #[Hashed]
+        #[\SensitiveParameter]
         public ?string $password,
     ) {}
 }
