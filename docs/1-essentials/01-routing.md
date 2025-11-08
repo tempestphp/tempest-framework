@@ -336,44 +336,19 @@ Whenever a validation error occurs, Tempest will redirect back to the page the r
 - As a JSON encoded string in the `{txt}X-Validation` header
 - Within the session with the `Session::VALIDATION_ERRORS` key
 
-The JSON encoded header is available for when you're building APIs with Tempest. The session errors are available for when you're building web pages. In the case of the latter, you need a way to actually show the errors on a web page. Tempest's recommended way to do so is by creating a custom [view component](/docs/essentials/views#view-components):
-
-```html app/x-error.view.php
-<?php
-use Tempest\Http\Session\Session;
-use Tempest\Validation\Validator;
-use function Tempest\get;
-
-/** @var Session $session */
-$session = get(Session::class);
-
-/** @var Validator $validator */
-$validator = get(Validator::class);
-
-$errors = $session->getErrorsFor($name ?? '');
-
-?><ul :if="$errors !== []" :class="$class ?? ''">
-    <li :foreach="$errors as $error">
-        {{ $validator->getErrorMessage($error) }}
-    </li>
-</ul>
-```
-
-This view component will be discovered and can then be used to display validation errors likes so:
+The JSON encoded header is available for when you're building APIs with Tempest. The session errors are available for when you're building web pages. For web pages, you also need a way to show the errors when they occur; Tempest comes with some built-in view components to help you with that.
 
 ```html
-<form action="/register" method="post">
-    <label for="name">Name</label>
-    <input type="text" name="name" id="name" autofocus class="border"/>
-    <x-error name="name" class="text-red-400 …" />
+<x-form :action="uri(StorePostController::class)">
+    <x-input name="name" />
     
-    <!-- … -->
-</form>
+    <x-input type="email" name="email" />
+    
+    <x-submit />
+</x-form>
 ```
 
-:::info
-Currently, Tempest doesn't include built-in view components to handle form validation. That's because we don't have a strategy yet for dealing with different frontend frameworks. We rather give control to the user to build their own form components for maximum flexibility. This is likely to change in the future, but for now you'll have to make your own `x-error` component.
-:::
+`{html}<x-form>` is a view component that will automatically include the CSRF token, as well as default to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once. In practice, you'll likely want to make changes to these built-in view components. That's why you can run `./tempest install view-components` and select the components you want to pull into your project. You can [read more about installing view components here](/2.x/essentials/views#built-in-components).
 
 ## Route middleware
 
@@ -653,6 +628,23 @@ final class ErrorResponseProcessor implements ResponseProcessor
 
         return $response;
     }
+}
+```
+
+## Stateless routes
+
+When you're building API endpoints, RSS pages, or any other kind of page that does not require any cookie or session data, you may use the `{#[Tempest\Router\Stateless]}` attribute, which will remove all state-related logic:
+
+```php
+use Tempest\Router\Stateless;
+use Tempest\Router\Get;
+
+final readonly class JsonController
+{
+    #[Stateless]
+    #[Get('/json')]
+    public function json(string $path): Response
+    { /* … */ }
 }
 ```
 
