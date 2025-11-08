@@ -275,4 +275,20 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/prefix/endpoint')
             ->assertOk();
     }
+
+    public function test_with_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/with-decorated-middleware')
+            ->assertOk()
+            ->assertHasHeader('middleware');
+    }
+
+    public function test_without_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/without-decorated-middleware')
+            ->assertOk()
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
 }
