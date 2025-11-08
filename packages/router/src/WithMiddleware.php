@@ -4,7 +4,6 @@ namespace Tempest\Router;
 
 use Attribute;
 
-
 /**
  * Add middleware to its associated routes.
  */
