@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..2.7.0)  —  2025-11-07
+## [2.7.1](https://github.com/tempestphp/tempest-framework/compare/v2.7.0..2.7.1)  —  2025-11-09
+
+### 🚀 Features
+
+- **auth**: mark password property with `#[SensitiveParameter]` (#1693) ([129fdd5](https://github.com/tempestphp/tempest-framework/commit/129fdd54cd989203508b461bbbbddf85448aabb7))
+
+### 🐛 Bug fixes
+
+- **view**: discovery locations for view compiler (#1701) ([8604b86](https://github.com/tempestphp/tempest-framework/commit/8604b86e3118a79f8813df5a6f2315a802368a5c))
+
+
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..v2.7.0)  —  2025-11-07
 
 ### 🚀 Features
 
@@ -714,7 +725,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
 
 ### 🚨 Breaking changes
 
