@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.7.2](https://github.com/tempestphp/tempest-framework/compare/v2.7.1..2.7.2)  —  2025-11-10
+## [2.8.0](https://github.com/tempestphp/tempest-framework/compare/v2.7.2..2.8.0)  —  2025-11-10
+
+### 🚨 Breaking changes
+
+- **router**: [**breaking**] add route decorators (#1695) ([c901dfe](https://github.com/tempestphp/tempest-framework/commit/c901dfeec7c01394a4481a08ca8381988a0b03ad))
+
+
+## [2.7.2](https://github.com/tempestphp/tempest-framework/compare/v2.7.1..v2.7.2)  —  2025-11-10
 
 ### 🐛 Bug fixes
 
@@ -732,7 +739,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
 
 ### 🚨 Breaking changes
 
