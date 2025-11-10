@@ -12,7 +12,7 @@ use Tempest\Router\Route;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\MarkedRoute;
 
-final readonly class FakeRouteBuilder implements Route
+final class FakeRouteBuilder implements Route
 {
     private MethodReflector $handler;
 
@@ -43,7 +43,7 @@ final readonly class FakeRouteBuilder implements Route
 
     public function asDiscoveredRoute(): DiscoveredRoute
     {
-        return DiscoveredRoute::fromRoute($this, $this->handler);
+        return DiscoveredRoute::fromRoute($this, [], $this->handler);
     }
 
     public function handler(): void

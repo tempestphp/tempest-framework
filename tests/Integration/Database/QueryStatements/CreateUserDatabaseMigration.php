@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\Database\QueryStatements;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Database\QueryStatements\DropTableStatement;
 
 final class CreateUserDatabaseMigration implements MigratesUp
 {

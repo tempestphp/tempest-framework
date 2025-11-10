@@ -22,7 +22,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 
 final class InsertRelationsTest extends FrameworkIntegrationTestCase

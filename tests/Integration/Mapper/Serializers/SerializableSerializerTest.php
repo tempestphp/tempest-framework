@@ -5,7 +5,6 @@ namespace Tests\Tempest\Integration\Mapper\Serializers;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\SerializableSerializer;
-use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\JsonSerializableObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject;
 

@@ -6,7 +6,6 @@ use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Commands\InstallCommand;
-use Tempest\Support\JavaScript\DependencyInstaller;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

@@ -60,8 +60,8 @@ final class AppleOAuthConfig implements OAuthConfig
         return new Apple([
             'clientId' => $this->clientId,
             'teamId' => $this->teamId,
-            'keyId' => $this->keyId,
-            'keyFile' => $this->keyFile,
+            'keyFileId' => $this->keyId,
+            'keyFilePath' => $this->keyFile,
         ]);
     }
 

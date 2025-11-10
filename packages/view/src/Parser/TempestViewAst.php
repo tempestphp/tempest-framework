@@ -12,8 +12,14 @@ final class TempestViewAst implements IteratorAggregate, ArrayAccess
         private(set) TokenCollection $tokens = new TokenCollection(),
     ) {}
 
+    private(set) bool $isHtml = true;
+
     public function add(Token $token): self
     {
+        if ($token->type === TokenType::XML) {
+            $this->isHtml = false;
+        }
+
         $this->tokens->add($token);
 
         return $this;

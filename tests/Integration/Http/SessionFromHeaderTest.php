@@ -9,7 +9,6 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Session\Config\FileSessionConfig;
-use Tempest\Http\Session\Resolvers\HeaderSessionIdResolver;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

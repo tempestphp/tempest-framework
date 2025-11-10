@@ -6,7 +6,6 @@ namespace Tempest\Container\Tests\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
-use Tempest\Container\Tag;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
 

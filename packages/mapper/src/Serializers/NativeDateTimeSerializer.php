@@ -7,7 +7,6 @@ namespace Tempest\Mapper\Serializers;
 use DateTimeInterface;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
-use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;

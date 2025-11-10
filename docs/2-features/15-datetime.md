@@ -10,6 +10,10 @@ PHP provides multiple date and time implementations. There is [`DateTime`](https
 
 Tempest provides an alternative to [`DateTimeInterface`](https://www.php.net/manual/en/class.datetimeinterface.php), partially based on [`IntlCalendar`](https://www.php.net/manual/en/class.intlcalendar.php). This implementation provides a better API with a more consistent interface. It was initially created by {x:azjezz} for the [PSL](https://github.com/azjezz/psl), and was ported to Tempest so it could be deeply integrated.
 
+:::info
+You're not required to use Tempest's DateTime implementation, and may as well use PHP's native datetime, Carbon, or any other. If you rely on third-party libraries like Carbon, you should read about [global casters and serializers](/2.x/features/mapper#registering-casters-and-serializers-globally) as well to ensure model support.  
+:::
+
 ## Creating date instances
 
 The {`Tempest\DateTime\DateTime`} class provides a `DateTime::parse()` method to create a date from a string, a timestamp, or another datetime instance. This is the most flexible way to create a date instance.

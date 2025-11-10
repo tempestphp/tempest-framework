@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Benchmark\Http\Routing\Matching;
 
 use Generator;
-use Laminas\Diactoros\ServerRequest;
 use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;

@@ -8,6 +8,8 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
+use function Tempest\Support\str;
+
 final class SelectStatement implements QueryStatement, HasWhereStatements
 {
     public function __construct(
@@ -46,6 +48,13 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         $columns = $this->fields->isEmpty()
             ? '*'
             : $this->fields
+                ->flatMap(function (string|Stringable|FieldStatement $field) {
+                    if ($field instanceof FieldStatement) {
+                        return $field;
+                    }
+
+                    return str($field)->explode(',')->toArray();
+                })
                 ->map(function (string|Stringable|FieldStatement $field) use ($dialect) {
                     if (! $field instanceof FieldStatement) {
                         $field = new FieldStatement($field);

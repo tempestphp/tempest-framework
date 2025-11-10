@@ -365,7 +365,7 @@ final class ModelInspector
         return $selectFields;
     }
 
-    public function resolveRelations(string $relationString, string $parent = ''): array
+    public function resolveRelations(string $relationString, string $parent = '', array $visitedPaths = []): array
     {
         if ($relationString === '') {
             return [];
@@ -384,6 +384,11 @@ final class ModelInspector
         unset($relationNames[0]);
 
         $relationModel = inspect($currentRelation);
+        $modelType = $relationModel->getName();
+
+        if (in_array($modelType, $visitedPaths, true)) {
+            return [$currentRelationName => $currentRelation->setParent($parent)];
+        }
 
         $newRelationString = implode('.', $relationNames);
         $currentRelation->setParent($parent);
@@ -395,10 +400,13 @@ final class ModelInspector
 
         $relations = [$currentRelationName => $currentRelation];
 
-        return [...$relations, ...$relationModel->resolveRelations($newRelationString, $newParent)];
+        return [
+            ...$relations,
+            ...$relationModel->resolveRelations($newRelationString, $newParent, [...$visitedPaths, $this->getName()]),
+        ];
     }
 
-    public function resolveEagerRelations(string $parent = ''): array
+    public function resolveEagerRelations(string $parent = '', array $visitedPaths = []): array
     {
         if (! $this->isObjectModel()) {
             return [];
@@ -418,14 +426,23 @@ final class ModelInspector
                 continue;
             }
 
-            $relations[$property->getName()] = $currentRelation->setParent($parent);
             $newParent = ltrim(sprintf(
                 '%s.%s',
                 $parent,
                 $currentRelationName,
             ), '.');
 
-            foreach (inspect($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
+            $relationModel = inspect($currentRelation);
+            $modelType = $relationModel->getName();
+
+            if (in_array($modelType, $visitedPaths, true)) {
+                continue;
+            }
+
+            $relations[$property->getName()] = $currentRelation->setParent($parent);
+            $newVisitedPaths = [...$visitedPaths, $this->getName()];
+
+            foreach ($relationModel->resolveEagerRelations($newParent, $newVisitedPaths) as $name => $nestedEagerRelation) {
                 $relations[$name] = $nestedEagerRelation;
             }
         }

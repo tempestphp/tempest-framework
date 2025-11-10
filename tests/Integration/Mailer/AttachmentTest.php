@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\Mail\Attachment;
-use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Exceptions\FileAttachmentWasNotFound;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

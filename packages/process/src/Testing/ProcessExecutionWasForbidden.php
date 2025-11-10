@@ -5,7 +5,6 @@ namespace Tempest\Process\Testing;
 use Exception;
 use Tempest\Core\HasContext;
 use Tempest\Process\Exceptions\ProcessException;
-use Tempest\Process\PendingPool;
 use Tempest\Process\PendingProcess;
 
 use function Tempest\Support\arr;

@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\TestDependency;
 

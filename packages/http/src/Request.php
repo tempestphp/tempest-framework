@@ -57,4 +57,10 @@ interface Request
     public function getSessionValue(string $name): mixed;
 
     public function getCookie(string $name): ?Cookie;
+
+    /**
+     * Determines if the request's "Content-Type" header matches the given content type.
+     * If multiple content types are provided, the method returns true if any of them matches.
+     */
+    public function accepts(ContentType ...$contentType): bool;
 }

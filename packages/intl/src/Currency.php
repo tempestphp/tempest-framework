@@ -2,10 +2,6 @@
 
 namespace Tempest\Intl;
 
-use Stringable;
-use TypeError;
-use ValueError;
-
 use function Tempest\Support\str;
 
 /**

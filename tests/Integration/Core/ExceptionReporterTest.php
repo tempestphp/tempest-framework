@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Core;
 
 use Exception;
-use GPBMetadata\Google\Type\Expr;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionReporter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

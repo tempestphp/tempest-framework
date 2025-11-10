@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests\Responses;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\Header;
 use Tempest\Http\Responses\Created;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Status;

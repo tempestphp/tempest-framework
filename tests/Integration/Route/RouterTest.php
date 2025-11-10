@@ -9,9 +9,9 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\PrimaryKey;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
@@ -21,7 +21,6 @@ use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
-use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -259,5 +258,37 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->head('/explicit-head')
             ->assertOk()
             ->assertHasHeader('x-custom');
+    }
+
+    public function test_stateless_decorator(): void
+    {
+        $this->http
+            ->get('/stateless')
+            ->assertOk()
+            ->assertDoesNotHaveCookie('tempest_session_id')
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
+
+    public function test_prefix_decorator(): void
+    {
+        $this->http
+            ->get('/prefix/endpoint')
+            ->assertOk();
+    }
+
+    public function test_with_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/with-decorated-middleware')
+            ->assertOk()
+            ->assertHasHeader('middleware');
+    }
+
+    public function test_without_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/without-decorated-middleware')
+            ->assertOk()
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
     }
 }

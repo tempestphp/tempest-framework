@@ -27,7 +27,7 @@ Some frontend frameworks also provide a `{html}:{:hl-property:attribute:}` synta
 
 ### Control structures
 
-Control structures like conditionals and loops are modelled with expression attributes. These control structure attributes are available: `{html}:{:hl-property:if:}`, `{html}:{:hl-property:elseif:}`, `{html}:{:hl-property:else:}`, `{html}:{:hl-property:foreach:}`, `{html}:{:hl-property:forelse:}`. Code within these control structures is compiled to valid PHP expressions.
+Control structures like conditionals and loops are modelled with expression attributes. These control structure attributes are available: `{html}:{:hl-property:if:}`, `{html}:{:hl-property:elseif:}`, `{html}:{:hl-property:else:}`, {:hl-property:isset:}`, `{html}:{:hl-property:foreach:}`, `{html}:{:hl-property:forelse:}`. Code within these control structures is compiled to valid PHP expressions.
 
 The following conditional:
 

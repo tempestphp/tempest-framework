@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
-use Tempest\Database\PrimaryKey;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -72,12 +70,16 @@ final readonly class GenericRouter implements Router
         $middlewareStack = $this->routeConfig->middleware;
 
         foreach ($middlewareStack->unwrap() as $middlewareClass) {
-            $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
-                // We skip this middleware if it's ignored by the route
+            $callable = new HttpMiddlewareCallable(closure: function (Request $request) use ($middlewareClass, $callable) {
                 if ($this->container->has(MatchedRoute::class)) {
                     $matchedRoute = $this->container->get(MatchedRoute::class);
 
-                    if (in_array($middlewareClass->getName(), $matchedRoute->route->without, strict: true)) {
+                    // Skip the middleware if it's ignored by the route
+                    if (in_array(
+                        needle: $middlewareClass->getName(),
+                        haystack: $matchedRoute->route->without,
+                        strict: true,
+                    )) {
                         return $callable($request);
                     }
                 }

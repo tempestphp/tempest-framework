@@ -1,11 +1,12 @@
 <?php
 
-namespace Tempest\View;
+namespace Tempest\View\Initializers;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\AppConfig;
+use Tempest\View\ViewCache;
 
 use function Tempest\env;
 

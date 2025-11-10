@@ -2,7 +2,6 @@
 
 namespace Tempest\Cryptography\Tests\Signing;
 
-use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;

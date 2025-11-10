@@ -62,8 +62,12 @@ final readonly class FileSessionManager implements SessionManager
             return false;
         }
 
+        if (! ($session->lastActiveAt ?? null)) {
+            return false;
+        }
+
         return $this->clock->now()->before(
-            other: $session->createdAt->plus($this->sessionConfig->expiration),
+            other: $session->lastActiveAt->plus($this->sessionConfig->expiration),
         );
     }
 
@@ -113,23 +117,20 @@ final readonly class FileSessionManager implements SessionManager
      */
     private function persist(SessionId $id, ?array $data = null): Session
     {
+        $now = $this->clock->now();
         $session = $this->resolve($id) ?? new Session(
             id: $id,
-            createdAt: $this->clock->now(),
+            createdAt: $now,
+            lastActiveAt: $now,
         );
 
-        $path = $this->getPath($id);
-        $dir = dirname($path);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
-        }
+        $session->lastActiveAt = $now;
 
         if ($data !== null) {
             $session->data = $data;
         }
 
-        Filesystem\write_file($path, serialize($session), LOCK_EX);
+        Filesystem\write_file($this->getPath($id), serialize($session), LOCK_EX);
 
         return $session;
     }

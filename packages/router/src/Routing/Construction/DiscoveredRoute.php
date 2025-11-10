@@ -8,7 +8,7 @@ use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Route;
 
-final readonly class DiscoveredRoute implements Route
+final class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
@@ -16,8 +16,13 @@ final readonly class DiscoveredRoute implements Route
 
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
-    public static function fromRoute(Route $route, MethodReflector $methodReflector): self
+    /** @param \Tempest\Router\RouteDecorator[] $decorators */
+    public static function fromRoute(Route $route, array $decorators, MethodReflector $methodReflector): self
     {
+        foreach ($decorators as $decorator) {
+            $route = $decorator->decorate($route);
+        }
+
         return new self(
             $route->uri,
             $route->method,

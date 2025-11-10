@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Matching;
 
-use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;

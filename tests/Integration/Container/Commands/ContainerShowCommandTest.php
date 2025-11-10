@@ -4,7 +4,6 @@ namespace Tests\Tempest\Integration\Container\Commands;
 
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
-use Tempest\Container\GenericContainer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use UnitEnum;
 
@@ -74,6 +73,13 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                 public function addInitializer(mixed $initializerClass): self
                 {
                     $this->container->addInitializer($initializerClass);
+
+                    return $this;
+                }
+
+                public function addDecorator(mixed $decoratorClass, mixed $decoratedClass): self
+                {
+                    $this->container->addDecorator($decoratorClass, $decoratedClass);
 
                     return $this;
                 }

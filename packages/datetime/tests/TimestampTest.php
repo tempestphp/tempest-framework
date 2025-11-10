@@ -6,7 +6,6 @@ namespace Tempest\DateTime\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psl\Async;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;
 use Tempest\DateTime\Exception\OverflowException;
@@ -20,7 +19,6 @@ use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Order;
 use Tempest\Support\Math;
 
-use function Tempest\DateTime\create_intl_date_formatter;
 use function time;
 
 use const Tempest\DateTime\NANOSECONDS_PER_SECOND;

@@ -142,6 +142,10 @@ final class Token
 
     private function attributeValue(string $value): string
     {
-        return str($value)->afterFirst('"')->beforeLast('"')->toString();
+        $value = str($value);
+
+        $quote = $value->startsWith('"') ? '"' : "'";
+
+        return str($value)->afterFirst($quote)->beforeLast($quote)->toString();
     }
 }

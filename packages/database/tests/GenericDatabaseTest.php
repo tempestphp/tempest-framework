@@ -6,7 +6,6 @@ namespace Tempest\Database\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;

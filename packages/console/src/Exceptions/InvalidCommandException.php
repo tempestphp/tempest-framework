@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Exceptions;
 
-use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentDefinition;

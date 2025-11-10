@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

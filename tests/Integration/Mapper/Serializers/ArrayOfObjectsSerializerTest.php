@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;

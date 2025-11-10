@@ -2,7 +2,153 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.2.0](https://github.com/tempestphp/tempest-framework/compare/v2.1.0..2.2.0)  —  2025-10-02
+## [2.8.0](https://github.com/tempestphp/tempest-framework/compare/v2.7.2..2.8.0)  —  2025-11-10
+
+### 🚨 Breaking changes
+
+- **router**: [**breaking**] add route decorators (#1695) ([c901dfe](https://github.com/tempestphp/tempest-framework/commit/c901dfeec7c01394a4481a08ca8381988a0b03ad))
+
+
+## [2.7.2](https://github.com/tempestphp/tempest-framework/compare/v2.7.1..v2.7.2)  —  2025-11-10
+
+### 🐛 Bug fixes
+
+- **console**: respect default value in confirm when forced (#1698) ([708c8f9](https://github.com/tempestphp/tempest-framework/commit/708c8f9ee5cef6c19d26e8ebcb069633341413ce))
+
+
+## [2.7.1](https://github.com/tempestphp/tempest-framework/compare/v2.7.0..v2.7.1)  —  2025-11-09
+
+### 🚀 Features
+
+- **auth**: mark password property with `#[SensitiveParameter]` (#1693) ([129fdd5](https://github.com/tempestphp/tempest-framework/commit/129fdd54cd989203508b461bbbbddf85448aabb7))
+
+### 🐛 Bug fixes
+
+- **view**: discovery locations for view compiler (#1701) ([8604b86](https://github.com/tempestphp/tempest-framework/commit/8604b86e3118a79f8813df5a6f2315a802368a5c))
+
+
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..v2.7.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **router**: add `#[Stateless]` attribute (#1692) ([86d140d](https://github.com/tempestphp/tempest-framework/commit/86d140d8ac03b9fb1c49eaa867cc89fa448f5da8))
+
+
+## [2.6.3](https://github.com/tempestphp/tempest-framework/compare/v2.6.2..v2.6.3)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **database**: revert broken mysql dsn changes (#1689) ([9edc4d2](https://github.com/tempestphp/tempest-framework/commit/9edc4d2ba4e132aeb5bba6f6114a60b175f50b2a))
+
+
+## [2.6.2](https://github.com/tempestphp/tempest-framework/compare/v2.6.1..v2.6.2)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: cleanup session without starting a new one (#1688) ([9a7dee6](https://github.com/tempestphp/tempest-framework/commit/9a7dee6491e314841fb758223370cdaeb5e88239))
+
+
+## [2.6.1](https://github.com/tempestphp/tempest-framework/compare/v2.6.0..v2.6.1)  —  2025-11-07
+
+### 🐛 Bug fixes
+
+- **http**: gracefully recover from corrupt session retrieval (#1687) ([8c5d8cc](https://github.com/tempestphp/tempest-framework/commit/8c5d8cc501096a27aaeb96e520643727e741eec9))
+
+
+## [2.6.0](https://github.com/tempestphp/tempest-framework/compare/v2.5.0..v2.6.0)  —  2025-11-07
+
+### 🚀 Features
+
+- **view**: standalone `TempestViewRenderer` support (#1686) ([2f5a3bc](https://github.com/tempestphp/tempest-framework/commit/2f5a3bc317f24852bdff5851a70bb8007248c0aa))
+
+
+## [2.5.0](https://github.com/tempestphp/tempest-framework/compare/v2.4.0..v2.5.0)  —  2025-11-06
+
+### 🚀 Features
+
+- **core**: support booting in phar (#1672) ([536db47](https://github.com/tempestphp/tempest-framework/commit/536db4750fa5c2d1497e93645199be333a558132))
+- **core**: make discovery cache environment variable partial by default (#1682) ([f50af80](https://github.com/tempestphp/tempest-framework/commit/f50af80f5f72ff467b827ef18341b03c2569aef0))
+- **view**: add `:isset` attribte (#1675) ([1af3b23](https://github.com/tempestphp/tempest-framework/commit/1af3b23e843d7646617413a57b4fb0a8fa9ff3a4))
+- **view**: support single-quote attributes (#1678) ([071993a](https://github.com/tempestphp/tempest-framework/commit/071993ab2b29e3a909812062bfbccaf482c6f2f8))
+
+### 🐛 Bug fixes
+
+- **database**: fix dsn format for mysql connection (#1664) ([6c3cbe2](https://github.com/tempestphp/tempest-framework/commit/6c3cbe24442353d85a6a05d9a5320fb6a01e3301))
+- **events**: prevent enum event naming collisions (#1681) ([1602654](https://github.com/tempestphp/tempest-framework/commit/16026543ab6f38d4f676b95c58797d83a56c089d))
+- **view**: zero-values in attributes (#1679) ([66dda2f](https://github.com/tempestphp/tempest-framework/commit/66dda2f2f57b4292e96348904901cf27fac84cb8))
+- psr-discovery dependency (#1655) ([a1679a1](https://github.com/tempestphp/tempest-framework/commit/a1679a125de8eb32bafe576d78d2af6a829ee641))
+
+
+## [2.4.0](https://github.com/tempestphp/tempest-framework/compare/v2.3.3..v2.4.0)  —  2025-10-22
+
+### 🚨 Breaking changes
+
+- **http**: [**breaking**] add `--crawl` flag to `static:generate` command (#1656) ([fee1230](https://github.com/tempestphp/tempest-framework/commit/fee1230971fed3cc7ec1836fe29c89f5d32a87b5))
+
+### 🚀 Features
+
+- **http**: add accepts helper method (#1638) ([b61d352](https://github.com/tempestphp/tempest-framework/commit/b61d352e9842fc5a4bcd5aef7ec93ae63bba8a6b))
+- **intl**: add `current_locale` util (#1643) ([1dab1c7](https://github.com/tempestphp/tempest-framework/commit/1dab1c7e6629725e81f40e13aefd6dbcf81302ff))
+
+### 🐛 Bug fixes
+
+- **auth**: invalid key file arguments for Apple OAuth provider (#1640) ([bf476c0](https://github.com/tempestphp/tempest-framework/commit/bf476c00ac80e6b2ef6abbbfbd2159f180d3bb33))
+- **http**: desrialize csrf token from headers (#1616) ([d1ee721](https://github.com/tempestphp/tempest-framework/commit/d1ee7211e9dd457350fc9d22819e09de22beafff))
+- **reflection**: return null for method return type if not defined (#1645) ([b3acd5f](https://github.com/tempestphp/tempest-framework/commit/b3acd5f4cf6195ab9047a1b8ca21b8b50d4cddb1))
+- **view**: handle boolean attribute followed by non space whitespace or self-closing tags (#1632) ([cd226a3](https://github.com/tempestphp/tempest-framework/commit/cd226a3d9ad99875cf2bc707b2e8e5820f739c0a))
+
+
+## [2.3.3](https://github.com/tempestphp/tempest-framework/compare/v2.3.2..v2.3.3)  —  2025-10-09
+
+### 🚀 Features
+
+- **http**: support passing `JsonSerializable` to `Json` response (#1626) ([930e7ee](https://github.com/tempestphp/tempest-framework/commit/930e7eed7cecde43ebf61d9928f71fbdd0c57301))
+
+### 🐛 Bug fixes
+
+- **core**: optional dependency guards (#1630) ([1b23fd4](https://github.com/tempestphp/tempest-framework/commit/1b23fd4113a6f42a89b0894714ad48e86801ac33))
+
+
+## [2.3.2](https://github.com/tempestphp/tempest-framework/compare/v2.3.1..v2.3.2)  —  2025-10-08
+
+### 🐛 Bug fixes
+
+- **installer**: set correct default port on base_uri (#1625) ([ef00d98](https://github.com/tempestphp/tempest-framework/commit/ef00d98f5996882dcac5898dc64e9f467512548f))
+- make package dependencies optional where possible (#1624) ([530c226](https://github.com/tempestphp/tempest-framework/commit/530c226b51732e6e290b575e7a55cda751f05cd9))
+
+
+## [2.3.1](https://github.com/tempestphp/tempest-framework/compare/v2.3.0..v2.3.1)  —  2025-10-07
+
+### 🐛 Bug fixes
+
+- **view**: support void tag rendering for XML files (#1621) ([a395534](https://github.com/tempestphp/tempest-framework/commit/a3955340171d2ae8eb4a35934418906e40026c34))
+
+
+## [2.3.0](https://github.com/tempestphp/tempest-framework/compare/v2.2.1..v2.3.0)  —  2025-10-06
+
+### 🚀 Features
+
+- **console**: support variadic argument (#1572) ([b5f4185](https://github.com/tempestphp/tempest-framework/commit/b5f41858d6674efca092d71f3504323392a103f4))
+- **container**: support decorators (#1537) ([2d29bd5](https://github.com/tempestphp/tempest-framework/commit/2d29bd5452e2363b4e44b5218df9a9291f1798cf))
+- **http**: support database-based sessions (#1605) ([174044c](https://github.com/tempestphp/tempest-framework/commit/174044c7726d8d804465474ab2905c43cc0113df))
+- **view**: parse RSS feeds with tempest/view (#1617) ([7398040](https://github.com/tempestphp/tempest-framework/commit/7398040393997d886f59fb4a8ba6d351ee56f9ac))
+
+### 🐛 Bug fixes
+
+- **database**: handle loading circular eager relations (#1556) ([b2e0c75](https://github.com/tempestphp/tempest-framework/commit/b2e0c75c67eb46458d4c8c32f9ae289b4a7ad930))
+- **database**: multiple select fields in one statement (#1603) ([cd51bcf](https://github.com/tempestphp/tempest-framework/commit/cd51bcf9a8c9380d216295178517d4202b40561c))
+- **http**: improve failed request exception messages (#1598) ([a84ce29](https://github.com/tempestphp/tempest-framework/commit/a84ce292496175de43a3685aece3210863a1fc2d))
+- **http**: publish migration during database session driver installation (#1606) ([2d6fa1b](https://github.com/tempestphp/tempest-framework/commit/2d6fa1b843deaddc998f0cd59c9abbc5e03e982c))
+
+
+## [2.2.1](https://github.com/tempestphp/tempest-framework/compare/v2.2.0..v2.2.1)  —  2025-10-03
+
+### 🐛 Bug fixes
+
+- **database**: update or create with initial values (#1597) ([d4450aa](https://github.com/tempestphp/tempest-framework/commit/d4450aa6a3b5bab0ccad38617b698ba51a5fe705))
+
+
+## [2.2.0](https://github.com/tempestphp/tempest-framework/compare/v2.1.0..v2.2.0)  —  2025-10-02
 
 ### 🚀 Features
 

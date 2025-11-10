@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Auth\OAuth;
 
-use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\Authentication\Authenticatable;
@@ -249,7 +248,6 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
             map: fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
                 'github_id' => $user->id,
             ], [
-                'github_id' => $user->id,
                 'email' => $user->email,
                 'full_name' => $user->name,
                 'username' => $user->nickname,

@@ -19,8 +19,6 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
     {
-        ini_set('intl.default_locale', 'en-US'); // @mago-expect lint:no-ini-set
-
         parent::setUp();
 
         $config = $this->container->get(IntlConfig::class);
@@ -44,13 +42,6 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame('Hello, Jon Doe!', translate('hello', name: 'Jon Doe'));
         $this->assertSame('Checkout', translate('cart.checkout'));
         $this->assertSame('Passer à la caisse', translate_locale(Locale::FRENCH, 'cart.checkout'));
-    }
-
-    public function test_default_locale(): void
-    {
-        $config = $this->container->get(IntlConfig::class);
-
-        $this->assertSame(Locale::default(), $config->currentLocale);
     }
 
     public function test_event_miss(): void

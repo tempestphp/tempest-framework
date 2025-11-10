@@ -38,6 +38,7 @@ final class User implements Authenticatable
     public function __construct(
         public string $email,
         #[Hashed]
+        #[\SensitiveParameter]
         public ?string $password,
     ) {}
 }

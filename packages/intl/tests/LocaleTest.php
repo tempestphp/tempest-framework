@@ -11,6 +11,7 @@ use Tempest\Intl\Locale;
 
 use function locale_get_default;
 use function locale_set_default;
+use function Tempest\Intl\current_locale;
 use function Tempest\Support\Str\replace_every;
 
 final class LocaleTest extends TestCase
@@ -251,5 +252,14 @@ final class LocaleTest extends TestCase
         $this->assertFalse($locale->hasRegion());
         $this->assertNull($locale->getRegion());
         $this->assertNull($locale->getDisplayRegion());
+    }
+
+    public function test_current_locale(): void
+    {
+        foreach (Locale::cases() as $locale) {
+            locale_set_default($locale->value);
+
+            $this->assertSame($locale, current_locale());
+        }
     }
 }

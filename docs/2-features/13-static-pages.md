@@ -111,6 +111,20 @@ The only thing left to do is to generate the static pages:
 <comment>…</comment>
 ```
 
+## Crawling for dead links
+
+Optionally, you can instruct the static generate to crawl your pages to scan for dead links. This is done by passing the `--crawl` option to the `static:generate` command:
+
+```console
+<dim>./tempest static:generate --crawl</dim>
+```
+
+By default, the crawler will only check for internal dead links. If you want to check for external links as well, you can pass the `--external` option:
+
+```console
+<dim>./tempest static:generate --crawl --external</dim>
+```
+
 ## Production
 
 Static pages are generated in the `/public` directory, as `index.html` files. Most web servers will automatically serve these static pages for you without any additional setup.

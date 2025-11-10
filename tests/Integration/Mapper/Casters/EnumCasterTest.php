@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Mapper\Casters;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Mapper\Casters\BooleanCaster;
 use Tempest\Mapper\Casters\EnumCaster;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\BackedEnumToSerialize;

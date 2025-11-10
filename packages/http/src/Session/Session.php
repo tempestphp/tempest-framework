@@ -41,6 +41,7 @@ final class Session
     public function __construct(
         public SessionId $id,
         public DateTimeInterface $createdAt,
+        public DateTimeInterface $lastActiveAt,
         /** @var array<array-key, mixed> */
         public array $data = [],
     ) {}

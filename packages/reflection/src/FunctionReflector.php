@@ -8,7 +8,6 @@ use Closure;
 use Generator;
 use ReflectionFunction as PHPReflectionFunction;
 use ReflectionParameter;
-use Tempest\Support\Arr;
 
 final readonly class FunctionReflector implements Reflector
 {

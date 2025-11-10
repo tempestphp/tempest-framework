@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\LockAcquisitionTimedOut;
 use Tempest\DateTime\Duration;

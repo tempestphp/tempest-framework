@@ -2,7 +2,6 @@
 
 namespace Tempest\KeyValue\Redis;
 
-use Exception;
 use Predis;
 use Tempest\Container\Container;
 use Tempest\Core\Insight;

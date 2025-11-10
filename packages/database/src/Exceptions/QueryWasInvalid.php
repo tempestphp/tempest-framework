@@ -8,7 +8,6 @@ use Exception;
 use PDOException;
 use Tempest\Core\HasContext;
 use Tempest\Database\Query;
-use Tempest\Support\Json;
 
 final class QueryWasInvalid extends Exception implements HasContext
 {

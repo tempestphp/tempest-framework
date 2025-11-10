@@ -15,8 +15,6 @@ use Tempest\Console\Point;
 use function function_exists;
 use function Tempest\Support\arr;
 
-use const DIRECTORY_SEPARATOR;
-
 final class Terminal
 {
     public int $width;
@@ -151,11 +149,11 @@ final class Terminal
 
     public static function supportsTty(): bool
     {
-        if (! function_exists('shell_exec')) {
+        if (PHP_OS_FAMILY === 'Windows' || ! function_exists('shell_exec')) {
             return false;
         }
 
-        return (bool) shell_exec('stty 2> ' . ('\\' === DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
+        return (bool) shell_exec('stty 2> /dev/null');
     }
 
     private function clear(): self

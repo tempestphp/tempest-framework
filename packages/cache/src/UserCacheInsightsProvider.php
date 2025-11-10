@@ -7,7 +7,6 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Tempest\Cache\Config\CacheConfig;
-use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Insight;

@@ -19,7 +19,7 @@ final readonly class ForceCommand
     )]
     public function __invoke(): void
     {
-        if (! $this->console->confirm('continue?')) {
+        if (! $this->console->confirm('continue?', default: true)) {
             return;
         }
 

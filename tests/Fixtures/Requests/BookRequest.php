@@ -7,7 +7,6 @@ namespace Tests\Tempest\Fixtures\Requests;
 use Tempest\Database\HasOne;
 use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
-use Tempest\Validation\Rules\Exists;
 use Tempest\Validation\Rules\HasLength;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;

@@ -9,7 +9,6 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use Tempest\Intl\Translator;
 use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;

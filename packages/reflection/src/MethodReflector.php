@@ -53,8 +53,12 @@ final class MethodReflector implements Reflector
         return $this->reflectionMethod->invokeArgs($object, $args);
     }
 
-    public function getReturnType(): TypeReflector
+    public function getReturnType(): ?TypeReflector
     {
+        if ($this->reflectionMethod->getReturnType() === null) {
+            return null;
+        }
+
         return new TypeReflector($this->reflectionMethod->getReturnType());
     }
 

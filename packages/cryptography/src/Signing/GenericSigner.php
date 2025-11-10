@@ -2,7 +2,6 @@
 
 namespace Tempest\Cryptography\Signing;
 
-use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasMissing;
 use Tempest\Cryptography\Timelock;
 use Tempest\DateTime\Duration;
 

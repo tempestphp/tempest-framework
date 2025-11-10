@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Models;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
 use Tempest\Database\Virtual;
 

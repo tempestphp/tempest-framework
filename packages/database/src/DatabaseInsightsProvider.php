@@ -11,7 +11,6 @@ use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 
-use function Tempest\root_path;
 use function Tempest\Support\Path\normalize;
 use function Tempest\Support\Path\to_relative_path;
 

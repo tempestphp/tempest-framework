@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\DateTime\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\SecondsStyle;
 use Tempest\DateTime\Timestamp;

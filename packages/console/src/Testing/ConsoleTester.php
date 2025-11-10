@@ -10,7 +10,6 @@ use PHPUnit\Framework\Assert;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\ExitCode;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -20,7 +19,6 @@ use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
 use Tempest\Highlight\Highlighter;
 
 final class ConsoleTester

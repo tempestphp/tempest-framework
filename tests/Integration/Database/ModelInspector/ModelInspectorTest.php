@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\PrimaryKey;
 use Tempest\Database\Virtual;
 use Tempest\Mapper\Casters\DtoCaster;
 use Tempest\Mapper\CastWith;

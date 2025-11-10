@@ -21,18 +21,33 @@ final class ViewConfig
         public string $rendererClass = TempestViewRenderer::class,
     ) {}
 
-    public function addViewProcessor(ClassReflector $viewProcessor): void
+    public function addViewProcessor(ClassReflector $viewProcessor): self
     {
         $this->viewProcessors[] = $viewProcessor->getName();
+
+        return $this;
     }
 
-    public function addViewComponent(ViewComponent $pending): void
+    public function addViewComponents(string|ViewComponent ...$viewComponents): self
     {
+        foreach ($viewComponents as $viewComponent) {
+            $this->addViewComponent($viewComponent);
+        }
+
+        return $this;
+    }
+
+    public function addViewComponent(string|ViewComponent $pending): self
+    {
+        if (is_string($pending)) {
+            $pending = ViewComponent::fromPath($pending);
+        }
+
         $existing = $this->viewComponents[$pending->name] ?? null;
 
         if ($existing && $pending->isVendorComponent) {
             // Vendor components don't overwrite existing components
-            return;
+            return $this;
         }
 
         if ($existing?->isProjectComponent && $pending->isProjectComponent) {
@@ -44,5 +59,7 @@ final class ViewConfig
         }
 
         $this->viewComponents[$pending->name] = $pending;
+
+        return $this;
     }
 }

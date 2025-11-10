@@ -7,6 +7,7 @@ namespace Tempest\EventBus;
 use Closure;
 use Tempest\Container\Container;
 use Tempest\Support\Str;
+use UnitEnum;
 
 final readonly class GenericEventBus implements EventBus
 {
@@ -33,6 +34,11 @@ final readonly class GenericEventBus implements EventBus
     private function resolveHandlers(string|object $event): array
     {
         $eventName = Str\parse($event) ?: $event::class;
+
+        if ($event instanceof UnitEnum) {
+            $eventName = $event::class . '::' . $eventName;
+        }
+
         $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
         if (is_object($event)) {

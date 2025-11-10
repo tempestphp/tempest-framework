@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Http\Method;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
-final readonly class Trace implements Route
+final class Trace implements Route
 {
     public Method $method;
 

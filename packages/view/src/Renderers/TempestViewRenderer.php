@@ -6,8 +6,11 @@ namespace Tempest\View\Renderers;
 
 use Stringable;
 use Tempest\Container\Container;
+use Tempest\Core\Environment;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Html\HtmlString;
+use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewVariableWasReserved;
 use Tempest\View\GenericView;
@@ -26,8 +29,37 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
         private readonly ViewConfig $viewConfig,
-        private readonly Container $container,
+        private readonly ?Container $container,
     ) {}
+
+    public static function make(
+        ?ViewConfig $viewConfig = null,
+        ?ViewCache $viewCache = null,
+        Environment $environment = Environment::PRODUCTION,
+    ): self {
+        $viewConfig ??= new ViewConfig();
+
+        $elementFactory = new ElementFactory(
+            $viewConfig,
+            $environment,
+        );
+
+        $compiler = new TempestViewCompiler(
+            elementFactory: $elementFactory,
+            attributeFactory: new AttributeFactory(),
+        );
+
+        $elementFactory->setViewCompiler($compiler);
+
+        $viewCache ??= ViewCache::disabled();
+
+        return new self(
+            compiler: $compiler,
+            viewCache: $viewCache,
+            viewConfig: $viewConfig,
+            container: null,
+        );
+    }
 
     public function __get(string $name): mixed
     {
@@ -58,8 +90,12 @@ final class TempestViewRenderer implements ViewRenderer
     private function processView(View $view): View
     {
         foreach ($this->viewConfig->viewProcessors as $viewProcessorClass) {
-            /** @var \Tempest\View\ViewProcessor $viewProcessor */
-            $viewProcessor = $this->container->get($viewProcessorClass);
+            if ($this->container) {
+                /**  @var \Tempest\View\ViewProcessor $viewProcessor */
+                $viewProcessor = $this->container->get($viewProcessorClass);
+            } else {
+                $viewProcessor = new $viewProcessorClass();
+            }
 
             $view = $viewProcessor->process($view);
         }

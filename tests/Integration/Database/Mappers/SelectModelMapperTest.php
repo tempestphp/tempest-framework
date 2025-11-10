@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Database\Mappers;
 
-use Tempest\Auth\Install\User;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;

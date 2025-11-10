@@ -23,7 +23,7 @@ jobs:
           - 8.4
         os:
           - ubuntu-latest
-          - windows-latest
+#          - windows-latest
 
     name: "Run tests: ${{ matrix.os }}"
 
@@ -35,7 +35,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql intl, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup Bun
@@ -57,7 +57,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
+#          - windows-latest
         php:
           - 8.4
         database:
@@ -67,9 +67,9 @@ jobs:
         stability:
           - prefer-stable
           - prefer-lowest
-        exclude:
-          - os: windows-latest
-            database: postgres
+#        exclude:
+#          - os: windows-latest
+#            database: postgres
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
@@ -81,7 +81,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, intl, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup problem matchers

@@ -503,3 +503,15 @@ function read_symbolic_link(string $path): string
 
     return $result;
 }
+
+/**
+ * Returns the real path for the specified $path or null if it doesn't exist.
+ */
+function normalize_path(string $path): ?string
+{
+    if (class_exists(\Phar::class) && \Phar::running(false) !== '' && str_starts_with($path, 'phar:')) {
+        return $path;
+    }
+
+    return realpath($path) ?: null;
+}

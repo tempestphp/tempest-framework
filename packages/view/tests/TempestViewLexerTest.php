@@ -5,7 +5,6 @@ namespace Tempest\View\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
-use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
@@ -97,6 +96,40 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_boolean_attribute_with_self_closing_tag(): void
+    {
+        $code = '<input disabled/>';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<input', TokenType::OPEN_TAG_START),
+                new Token(' disabled', TokenType::ATTRIBUTE_NAME),
+                new Token('/>', TokenType::SELF_CLOSING_TAG_END),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_boolean_attribute_with_newline(): void
+    {
+        $code = '<div hidden
+></div>';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' hidden', TokenType::ATTRIBUTE_NAME),
+                new Token("\n>", TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
     #[TestWith(['</x-foo>'])]
     public function test_closing_tag(string $tag): void
     {
@@ -133,9 +166,9 @@ final class TempestViewLexerTest extends TestCase
     foo=', TokenType::ATTRIBUTE_NAME),
                 new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
                 new Token('
-    x-foo
-', TokenType::ATTRIBUTE_NAME),
-                new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
+    x-foo', TokenType::ATTRIBUTE_NAME),
+                new Token('
+    :baz=', TokenType::ATTRIBUTE_NAME),
                 new Token('"true"', TokenType::ATTRIBUTE_VALUE),
                 new Token("\n>", TokenType::OPEN_TAG_END),
                 new Token('
@@ -275,6 +308,59 @@ final class TempestViewLexerTest extends TestCase
         $this->assertTokens(
             expected: [
                 new Token('<!-- comment', TokenType::COMMENT),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_cdata(): void
+    {
+        $tokens = new TempestViewLexer(<<<'RSS'
+        <title><![CDATA[ {{ $post['title'] }} ]]></title>
+        RSS)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<title', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('<![CDATA[', TokenType::CHARACTER_DATA_OPEN),
+                new Token(' {{ $post[\'title\'] }} ', TokenType::CONTENT),
+                new Token(']]>', TokenType::CHARACTER_DATA_CLOSE),
+                new Token('</title>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_xml(): void
+    {
+        $tokens = new TempestViewLexer(<<<'XML'
+        <?xml version="1.0" encoding="UTF-8" ?>
+        XML)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<?xml version="1.0" encoding="UTF-8" ?>', TokenType::XML),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_single_quote_attributes(): void
+    {
+        $html = <<<HTML
+        <div class='hello'></div>
+        HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' class=', TokenType::ATTRIBUTE_NAME),
+                new Token('\'hello\'', TokenType::ATTRIBUTE_VALUE),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
             ],
             actual: $tokens,
         );

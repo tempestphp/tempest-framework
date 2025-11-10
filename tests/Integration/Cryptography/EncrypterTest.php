@@ -6,7 +6,6 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Cryptography\Encryption\EncryptionAlgorithm;
 use Tempest\Cryptography\Encryption\EncryptionConfig;
 use Tempest\Cryptography\Encryption\EncryptionKey;
-use Tempest\Cryptography\Signing\Signer;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

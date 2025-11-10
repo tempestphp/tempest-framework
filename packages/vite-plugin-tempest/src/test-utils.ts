@@ -1,14 +1,18 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { afterEach, type MockInstance, vi } from 'vitest'
+import { afterAll, beforeEach, type MockInstance, vi } from 'vitest'
 import * as config from './config'
 import type { TempestViteConfiguration } from './types'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.join(__dirname, 'fixtures')
 
-afterEach(() => {
+beforeEach(() => {
+	fs.rmSync(fixtures, { force: true, recursive: true })
+})
+
+afterAll(() => {
 	fs.rmSync(fixtures, { force: true, recursive: true })
 })
 
@@ -29,7 +33,7 @@ export function mockTempestConfiguration(
 }
 
 export async function writeFixture(name: string, content: string) {
-	const filePath = path.join(fixtures, 'tempest-vite.test.json')
+	const filePath = path.join(fixtures, name)
 
 	fs.mkdirSync(fixtures, { recursive: true })
 	fs.writeFileSync(filePath, content)

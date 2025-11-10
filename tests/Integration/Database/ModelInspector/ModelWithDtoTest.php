@@ -5,7 +5,6 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\PrimaryKey;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Mapper\Casters\DtoCaster;

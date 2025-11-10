@@ -10,6 +10,7 @@ use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Str;
+use UnitEnum;
 
 final class EventBusDiscovery implements Discovery
 {
@@ -29,6 +30,10 @@ final class EventBusDiscovery implements Discovery
             }
 
             $eventName = Str\parse($eventHandler->event, default: null);
+
+            if ($eventHandler->event instanceof UnitEnum) {
+                $eventName = $eventHandler->event::class . '::' . $eventName;
+            }
 
             if ($eventName === null) {
                 $parameters = iterator_to_array($method->getParameters());

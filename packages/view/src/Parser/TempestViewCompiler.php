@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\View\Parser;
 
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
-use Tempest\View\Attributes\ElseAttribute;
-use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
-use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
@@ -33,7 +29,8 @@ final readonly class TempestViewCompiler
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
-        private Kernel $kernel,
+        /** @var DiscoveryLocation[] */
+        private array $discoveryLocations = [],
     ) {}
 
     public function compile(string|View $view): string
@@ -89,7 +86,7 @@ final readonly class TempestViewCompiler
 
         $searchPathOptions = [
             ...$searchPathOptions,
-            ...arr($this->kernel->discoveryLocations)
+            ...arr($this->discoveryLocations)
                 ->map(fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
                 ->toArray(),
         ];
@@ -121,8 +118,10 @@ final readonly class TempestViewCompiler
     {
         $elements = [];
 
+        $elementFactory = $this->elementFactory->withIsHtml($ast->isHtml);
+
         foreach ($ast as $token) {
-            $element = $this->elementFactory->make($token);
+            $element = $elementFactory->make($token);
 
             if ($element === null) {
                 continue;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use BackedEnum;
 use DateTime as NativeDateTime;
 use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface as NativeDateTimeInterface;

@@ -23,12 +23,16 @@ final class TempestViewLexer
         $tokens = [];
 
         while ($this->current) {
-            if ($this->comesNext('<?')) {
+            if ($this->comesNext('<?xml')) {
+                $tokens[] = $this->lexXml();
+            } elseif ($this->comesNext('<?')) {
                 $tokens[] = $this->lexPhp();
             } elseif ($this->comesNext('<!--')) {
                 $tokens[] = $this->lexComment();
             } elseif ($this->comesNext('<!doctype') || $this->comesNext('<!DOCTYPE')) {
                 $tokens[] = $this->lexDocType();
+            } elseif ($this->comesNext('<![CDATA')) {
+                $tokens = [...$tokens, ...$this->lexCharacterData()];
             } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
             } else {
@@ -113,7 +117,7 @@ final class TempestViewLexer
 
                 $attributeName = $this->consumeWhile(self::WHITESPACE);
 
-                $attributeName .= $this->consumeUntil('= >');
+                $attributeName .= $this->consumeUntil(self::WHITESPACE . '=/>');
 
                 $hasValue = $this->seek() === '=';
 
@@ -127,8 +131,12 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $attributeValue = $this->consumeIncluding('"');
-                    $attributeValue .= $this->consumeIncluding('"');
+                    $quote = $this->seek() === '\''
+                        ? '\''
+                        : '"';
+
+                    $attributeValue = $this->consumeIncluding($quote);
+                    $attributeValue .= $this->consumeIncluding($quote);
 
                     $tokens[] = new Token(
                         content: $attributeValue,
@@ -151,6 +159,19 @@ final class TempestViewLexer
         }
 
         return $tokens;
+    }
+
+    private function lexXml(): Token
+    {
+        $buffer = '';
+
+        while ($this->seek(2) !== '?>' && $this->current !== null) {
+            $buffer .= $this->consume();
+        }
+
+        $buffer .= $this->consume(2);
+
+        return new Token($buffer, TokenType::XML);
     }
 
     private function lexPhp(): Token
@@ -191,5 +212,23 @@ final class TempestViewLexer
         $buffer = $this->consumeIncluding('>');
 
         return new Token($buffer, TokenType::DOCTYPE);
+    }
+
+    private function lexCharacterData(): array
+    {
+        $tokens = [
+            new Token($this->consumeIncluding('<![CDATA['), TokenType::CHARACTER_DATA_OPEN),
+        ];
+
+        $buffer = '';
+
+        while ($this->seek(3) !== ']]>' && $this->current !== null) {
+            $buffer .= $this->consume();
+        }
+
+        $tokens[] = new Token($buffer, TokenType::CONTENT);
+        $tokens[] = new Token($this->consume(3), TokenType::CHARACTER_DATA_CLOSE);
+
+        return $tokens;
     }
 }

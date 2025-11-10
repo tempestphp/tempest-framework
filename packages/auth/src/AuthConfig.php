@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use BackedEnum;
 use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Exceptions\PolicyWasInvalid;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Str;
-use UnitEnum;
 
 final class AuthConfig
 {

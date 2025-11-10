@@ -8,6 +8,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Kernel;
 use Tempest\Support\Arr\MutableArray;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Str;
 
 /** @internal */
@@ -85,10 +86,10 @@ final readonly class LoadConfig
      */
     private function scan(string $path, MutableArray $configPaths): void
     {
-        $input = realpath($path);
+        $input = Filesystem\normalize_path($path);
 
         // Make sure the path is valid
-        if ($input === false) {
+        if ($input === null) {
             return;
         }
 

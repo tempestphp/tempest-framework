@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ElementWasInvalid;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -50,10 +53,6 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_relative_view_path_rendering(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Relative paths not supported on Windows');
-        }
-
         $this->http
             ->get(uri([RelativeViewController::class, 'asFunction']))
             ->assertOk()
@@ -75,6 +74,34 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '<div>Hello</div>',
             $this->render(view('<div :if="$this->show">Hello</div>')->data(show: true)),
+        );
+    }
+
+    public function test_isset_attribute(): void
+    {
+        $this->assertSame(
+            '',
+            $this->render(view('<div :isset="$foo">Hello</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>elseif</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :elseif="true">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->render(view('<div :isset="$foo">Hello</div><div :elseif="false">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->render(view('<div :isset="$foo">Hello</div>', foo: true)),
         );
     }
 
@@ -781,5 +808,78 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSnippetsMatch('<p>This should be rendered</p>', $html);
+    }
+
+    public function test_parse_rss_feed(): void
+    {
+        $rss = <<<'XML'
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+            <id>https://tempestphp.com/rss</id>
+            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
+            <title>Tempest</title>
+            <entry :foreach="$posts as $post">
+                <title><![CDATA[ {!! $post['title'] !!} ]]></title>
+                <media:content :url="$post['url']" medium="image" />
+            </entry>
+        </feed>
+        XML;
+
+        $parsed = $this->render($rss, posts: [
+            ['title' => '<h1>A</h1>', 'url' => 'https://tempestphp.com/a'],
+            ['title' => 'B', 'url' => 'https://tempestphp.com/b'],
+        ]);
+
+        $this->assertSnippetsMatch(<<<'RSS'
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+            <id>https://tempestphp.com/rss</id>
+            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
+            <title>Tempest</title>
+            <entry>
+                <title><![CDATA[ <h1>A</h1> ]]></title>
+                <media:content medium="image" url="https://tempestphp.com/a"></media:content>
+            </entry>
+            <entry><title><![CDATA[ B ]]></title>
+                <media:content medium="image" url="https://tempestphp.com/b"></media:content>
+            </entry>
+        </feed>
+        RSS, $parsed);
+    }
+
+    public function test_attributes_with_single_quotes(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <div class='hello'></div>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="hello"></div>', $html);
+    }
+
+    public function test_zero_in_attribute(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <table border="0"></table>
+        HTML);
+
+        $this->assertSnippetsMatch('<table border="0"></table>', $html);
+    }
+
+    public function test_discovery_locations_are_passed_to_compiler(): void
+    {
+        /** @var \Tempest\Core\Kernel $kernel */
+        $kernel = $this->get(Kernel::class);
+
+        $kernel->discoveryLocations[] = new DiscoveryLocation(
+            'Tests\Tempest\Integration\View\Fixtures',
+            __DIR__ . '/Fixtures',
+        );
+
+        /** @var TempestViewRenderer $renderer */
+        $renderer = $this->get(TempestViewRenderer::class);
+
+        $html = $renderer->render(view('discovered-view.view.php'));
+
+        $this->assertSnippetsMatch('<div>Hi</div>', $html);
     }
 }

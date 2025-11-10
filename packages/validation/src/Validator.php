@@ -6,7 +6,6 @@ namespace Tempest\Validation;
 
 use Closure;
 use Tempest\Container\Singleton;
-use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Translator;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
