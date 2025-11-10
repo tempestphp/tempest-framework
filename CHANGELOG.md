@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.7.1](https://github.com/tempestphp/tempest-framework/compare/v2.7.0..2.7.1)  —  2025-11-09
+## [2.7.2](https://github.com/tempestphp/tempest-framework/compare/v2.7.1..2.7.2)  —  2025-11-10
+
+### 🐛 Bug fixes
+
+- **console**: respect default value in confirm when forced (#1698) ([708c8f9](https://github.com/tempestphp/tempest-framework/commit/708c8f9ee5cef6c19d26e8ebcb069633341413ce))
+
+
+## [2.7.1](https://github.com/tempestphp/tempest-framework/compare/v2.7.0..v2.7.1)  —  2025-11-09
 
 ### 🚀 Features
 
