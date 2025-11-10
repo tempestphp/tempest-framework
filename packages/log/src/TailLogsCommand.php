@@ -11,7 +11,6 @@ use Tempest\Console\Output\TailReader;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
-use Tempest\Log\Channels\SimpleLogConfig;
 use Tempest\Log\LogConfig;
 use Tempest\Support\Filesystem;
 
