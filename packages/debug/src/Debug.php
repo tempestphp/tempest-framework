@@ -12,7 +12,6 @@ use Tempest\Container\GenericContainer;
 use Tempest\EventBus\EventBus;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Support\Filesystem;
-use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
 final readonly class Debug
 {
