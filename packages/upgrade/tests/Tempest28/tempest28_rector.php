@@ -5,5 +5,5 @@ use Tempest\Upgrade\Set\TempestSetList;
 
 return RectorConfig::configure()
     ->withSets([
-        TempestSetList::TEMPEST_30,
+        TempestSetList::TEMPEST_28,
     ]);

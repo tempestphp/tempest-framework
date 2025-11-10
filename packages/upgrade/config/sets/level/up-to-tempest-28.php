@@ -8,6 +8,6 @@ use Tempest\Upgrade\Set\TempestSetList;
 return static function (RectorConfig $config): void {
     $config->sets([
         TempestSetList::TEMPEST_20,
-        TempestSetList::TEMPEST_30,
+        TempestSetList::TEMPEST_28,
     ]);
 };
