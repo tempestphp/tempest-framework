@@ -44,6 +44,7 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           processed_body=$(cat release_notes.txt | perl -0777 -pe 's/\n*### (\S+) (.+?)\n+/\n### `\1`  \2\n/g')
+          processed_body="${processed_body#$'\n'}"
           final_content=$(printf "%s\n%s" "-# Read the [GitHub release](<${RELEASE_URL}>)." "$processed_body")
           jq -n \
             --arg content "$final_content" \
