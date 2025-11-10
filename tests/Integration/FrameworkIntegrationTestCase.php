@@ -13,6 +13,7 @@ use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
+use Tempest\Router\RouteDecorator;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
@@ -103,9 +104,14 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         }
 
         $configurator = $this->container->get(RouteConfigurator::class);
+
         $configurator->addRoute(
             DiscoveredRoute::fromRoute(
                 $reflector->getAttribute(Route::class),
+                [
+                    ...$reflector->getDeclaringClass()->getAttributes(RouteDecorator::class),
+                    ...$reflector->getAttributes(RouteDecorator::class),
+                ],
                 $reflector,
             ),
         );

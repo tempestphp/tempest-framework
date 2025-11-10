@@ -26,15 +26,21 @@ final class RouteDiscovery implements Discovery
             $routeAttributes = $method->getAttributes(Route::class);
 
             foreach ($routeAttributes as $routeAttribute) {
-                $this->discoveryItems->add($location, [$method, $routeAttribute]);
+                $decorators = [
+                    ...$method->getDeclaringClass()->getAttributes(RouteDecorator::class),
+                    ...$method->getAttributes(RouteDecorator::class),
+                ];
+
+                $route = DiscoveredRoute::fromRoute($routeAttribute, $decorators, $method);
+
+                $this->discoveryItems->add($location, $route);
             }
         }
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as [$method, $routeAttribute]) {
-            $route = DiscoveredRoute::fromRoute($routeAttribute, $method);
+        foreach ($this->discoveryItems as $route) {
             $this->configurator->addRoute($route);
         }
 

@@ -26,7 +26,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
-use Tests\Tempest\Integration\Route\Fixtures\StatelessController;
 
 /**
  * @internal
@@ -261,14 +260,35 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('x-custom');
     }
 
-    public function test_stateless_actions(): void
+    public function test_stateless_decorator(): void
     {
-        $this->registerRoute(StatelessController::class);
-
         $this->http
             ->get('/stateless')
             ->assertOk()
             ->assertDoesNotHaveCookie('tempest_session_id')
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
+
+    public function test_prefix_decorator(): void
+    {
+        $this->http
+            ->get('/prefix/endpoint')
+            ->assertOk();
+    }
+
+    public function test_with_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/with-decorated-middleware')
+            ->assertOk()
+            ->assertHasHeader('middleware');
+    }
+
+    public function test_without_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/without-decorated-middleware')
+            ->assertOk()
             ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
     }
 }

@@ -440,26 +440,120 @@ final readonly class ReceiveInteractionController
 }
 ```
 
-### Group middleware
+## Route decorators (route groups)
 
-While Tempest does not provide a way to group middleware, you can easily create your own route attribute that applies or excludes a set of middleware to a route.
+Route decorators are Tempest's way to manage routes in bulk; it's a feature similar to route groups in other frameworks. Route decorators are attributes that implement the {b`\Tempest\Router\RouteDecorator`} interface. A route decorator's task is to make changes or add functionality to whether route it's associated with. Tempest comes with a few built-in route decorators, and you can make your own as well.
 
-```php Api.php
-#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
-final readonly class Api implements Route
+In most cases, you'll want to add route decorators to a controller class, so that they are applied to all actions of that class:
+
+```php
+use Tempest\Router\Prefix;
+use Tempest\Router\Get;
+
+#[Prefix('/api')]
+final readonly class ApiController
 {
-    public function __construct(
-        public Method $method,
-        public string $uri,
-        public array $middleware = [],
-        public array $without = [],
-    ) {
-        $this->uri = "/api/{$uri}";
-        $this->without[] = [
-            ...$without,
-            VerifyCsrfMiddleware::class,
-            SetCookieMiddleware::class
-        ];
+    #[Get('/books')]
+    public function books(): Response { /* … */ }
+    
+    #[Get('/authors')]
+    public function authors(): Response { /* … */ }
+}
+```
+
+However, route decorators may also be applied to individual controller actions:
+
+```php
+use Tempest\Router\Stateless;
+use Tempest\Router\Get;
+
+final readonly class BlogPostController
+{
+    #[Stateless]
+    #[Get('/rss')]
+    public function rss(): Response { /* … */ }
+}
+```
+
+### Built-in route decorators
+
+These route decorators are provided by Tempest:
+
+#### `#[Stateless]`
+
+When you're building API endpoints, RSS feeds, or any other kind of page that does not require any cookie or session data, you may use the {b`#[Tempest\Router\Stateless]`} attribute, which will remove all state-related logic:
+
+```php
+use Tempest\Router\Stateless;
+use Tempest\Router\Get;
+
+final readonly class BlogPostController
+{
+    #[Stateless]
+    #[Get('/rss')]
+    public function rss(): Response { /* … */ }
+}
+```
+
+#### `#[Prefix]`
+
+Adds a prefix to all associated routes.
+
+```php
+use Tempest\Router\Prefix;
+use Tempest\Router\Get;
+
+#[Prefix('/api')]
+final readonly class ApiController
+{
+    #[Get('/books')]
+    public function books(): Response { /* … */ }
+    
+    #[Get('/authors')]
+    public function authors(): Response { /* … */ }
+}
+```
+
+#### `#[WithMiddleware]`
+
+Adds middleware to all associated routes.
+
+```php
+use Tempest\Router\WithMiddleware;
+use Tempest\Router\Get;
+
+#[Middleware(AuthMiddleware::class, AdminMiddleware::class)]
+final readonly class AdminController { /* … */ }
+```
+
+#### `#[WithoutMiddleware]`
+
+Explicitly removes middleware to all associated routes.
+
+```php
+use Tempest\Router\WithoutMiddleware;
+use Tempest\Router\Get;
+
+#[WithoutMiddleware(VerifyCsrfMiddleware::class, SetCookieMiddleware::class)]
+final readonly class StatelessController { /* … */ }
+```
+
+### Custom route decorators
+
+Building your own route decorators is done by implementing the {b`\Tempest\Router\RouteDecorator`} interface and marking your decorator as an attribute.
+
+```php
+use Attribute;
+use Tempest\Router\RouteDecorator;
+
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
+final readonly class Auth implements RouteDecorator
+{
+    public function decorate(Route $route): Route
+    {
+        $route->middleare[] = AuthMiddleware::class;
+
+        return $route;
     }
 }
 ```
@@ -628,23 +722,6 @@ final class ErrorResponseProcessor implements ResponseProcessor
 
         return $response;
     }
-}
-```
-
-## Stateless routes
-
-When you're building API endpoints, RSS pages, or any other kind of page that does not require any cookie or session data, you may use the `{#[Tempest\Router\Stateless]}` attribute, which will remove all state-related logic:
-
-```php
-use Tempest\Router\Stateless;
-use Tempest\Router\Get;
-
-final readonly class JsonController
-{
-    #[Stateless]
-    #[Get('/json')]
-    public function json(string $path): Response
-    { /* … */ }
 }
 ```
 
