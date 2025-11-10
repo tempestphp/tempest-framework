@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest30\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest28\Fixtures;
 
 use Tempest\Http\Method;
 use Tempest\Router\Route;
