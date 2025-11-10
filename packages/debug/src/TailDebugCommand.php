@@ -6,7 +6,6 @@ namespace Tempest\Debug;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Highlight\VarExportLanguage\VarExportLanguage;
 use Tempest\Console\Output\TailReader;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
