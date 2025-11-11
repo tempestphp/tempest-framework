@@ -69,7 +69,7 @@ final class CasterFactory
     public function forType(TypeReflector $type): ?Caster
     {
         foreach ($this->casters as [$for, $casterClass]) {
-            if (is_string($for) && $type->matches($for) && ! \is_callable($for)) {
+            if (is_string($for) && $type->matches($for) && is_string($casterClass)) {
                 return get($casterClass);
             }
         }
