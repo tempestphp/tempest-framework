@@ -110,7 +110,7 @@ final readonly class TypeReflector implements Reflector
             return is_iterable($input);
         }
 
-        if (str_contains($this->definition, '|')) {
+        if ($this->isUnion()) {
             return array_any($this->split(), static fn ($type) => $type->accepts($input));
         }
 
@@ -118,11 +118,33 @@ final readonly class TypeReflector implements Reflector
             return array_all($this->split(), static fn ($type) => $type->accepts($input));
         }
 
+        // non-native array types, e.g. string[] or Type[]
+        if (\str_contains($this->definition, '[]')) {
+            if (! \is_iterable($input)) {
+                return false;
+            }
+
+            $typeName = str_replace('[]', '', $this->definition);
+            $itemType = new self($typeName);
+
+            foreach ($input as $item) {
+                if (! $itemType->accepts($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         return false;
     }
 
     public function matches(string $className): bool
     {
+        if ($this->isBuiltIn()) {
+            return $this->cleanDefinition === $className;
+        }
+
         return is_a($this->cleanDefinition, $className, true);
     }
 
@@ -166,6 +188,11 @@ final readonly class TypeReflector implements Reflector
     public function isBackedEnum(): bool
     {
         return $this->matches(BackedEnum::class);
+    }
+
+    public function isUnion(): bool
+    {
+        return str_contains($this->definition, '|');
     }
 
     // TODO: should be refactored outside of the reflector component

@@ -5,6 +5,7 @@ namespace Tempest\Reflection\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\Tests\Fixtures\TestClassA;
+use Tempest\Reflection\TypeReflector;
 
 final class TypeReflectorTest extends TestCase
 {
@@ -88,6 +89,13 @@ final class TypeReflectorTest extends TestCase
                 ->getParameter('other')
                 ->getType()
                 ->isUnitEnum(),
+        );
+    }
+
+    public function test_string_type_matches_string(): void
+    {
+        $this->assertTrue(
+            new TypeReflector('string')->matches('string'),
         );
     }
 }

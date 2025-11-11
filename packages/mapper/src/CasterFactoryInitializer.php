@@ -21,6 +21,8 @@ use Tempest\Mapper\Casters\IntegerCaster;
 use Tempest\Mapper\Casters\JsonToArrayCaster;
 use Tempest\Mapper\Casters\NativeDateTimeCaster;
 use Tempest\Mapper\Casters\ObjectCaster;
+use Tempest\Mapper\Casters\StringCaster;
+use Tempest\Mapper\Casters\UnionCaster;
 use Tempest\Reflection\PropertyReflector;
 use UnitEnum;
 
@@ -29,7 +31,9 @@ final class CasterFactoryInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): CasterFactory
     {
-        return new CasterFactory()
+        $casterFactory = new CasterFactory();
+
+        $casterFactory
             ->addCaster('array', JsonToArrayCaster::class)
             ->addCaster('bool', BooleanCaster::class)
             ->addCaster('boolean', BooleanCaster::class)
@@ -37,13 +41,20 @@ final class CasterFactoryInitializer implements Initializer
             ->addCaster('integer', IntegerCaster::class)
             ->addCaster('float', FloatCaster::class)
             ->addCaster('double', FloatCaster::class)
-            ->addCaster(fn (PropertyReflector $property) => $property->getIterableType() !== null, fn (PropertyReflector $property) => new ArrayToObjectCollectionCaster($property))
+            ->addCaster('string', StringCaster::class)
+            ->addCaster(
+                fn (PropertyReflector $property) => $property->getIterableType() !== null,
+                fn (PropertyReflector $property) => new ArrayToObjectCollectionCaster($property, $casterFactory),
+            )
             ->addCaster(fn (PropertyReflector $property) => $property->getType()->isClass(), fn (PropertyReflector $property) => new ObjectCaster($property->getType()))
+            ->addCaster(fn (PropertyReflector $property) => $property->getType()->isUnion(), fn (PropertyReflector $property) => new UnionCaster($property))
             ->addCaster(UnitEnum::class, fn (PropertyReflector $property) => new EnumCaster($property->getType()->getName()))
             ->addCaster(DateTimeInterface::class, DateTimeCaster::fromProperty(...))
             ->addCaster(NativeDateTimeImmutable::class, NativeDateTimeCaster::fromProperty(...))
             ->addCaster(NativeDateTime::class, NativeDateTimeCaster::fromProperty(...))
             ->addCaster(NativeDateTimeInterface::class, NativeDateTimeCaster::fromProperty(...))
             ->addCaster(DateTime::class, DateTimeCaster::fromProperty(...));
+
+        return $casterFactory;
     }
 }
