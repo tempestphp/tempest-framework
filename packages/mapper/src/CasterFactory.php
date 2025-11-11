@@ -7,6 +7,7 @@ namespace Tempest\Mapper;
 use Closure;
 use Tempest\Mapper\Casters\DtoCaster;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 use function Tempest\get;
 
@@ -59,6 +60,17 @@ final class CasterFactory
                 return is_callable($casterClass)
                     ? $casterClass($property)
                     : get($casterClass);
+            }
+        }
+
+        return null;
+    }
+
+    public function forType(TypeReflector $type): ?Caster
+    {
+        foreach ($this->casters as [$for, $casterClass]) {
+            if (is_string($for) && $type->matches($for) && ! \is_callable($for)) {
+                return get($casterClass);
             }
         }
 
