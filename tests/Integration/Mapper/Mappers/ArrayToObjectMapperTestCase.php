@@ -15,7 +15,9 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMixedArray;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringOrMixedArray;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringOrObjectUnion;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringsArray;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithUnionArray;
@@ -230,6 +232,47 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(ObjectA::class, $object->item);
         $this->assertSame('1', $object->item->a);
         $this->assertSame('2', $object->item->b);
+    }
+
+    public function test_map_array_with_mixed_array_property(): void
+    {
+        $object = map(['items' => ['a', 1, 2.5, true, null, ['key' => 'value']]])->to(ObjectWithMixedArray::class);
+
+        $this->assertSame(
+            [
+                'a',
+                1,
+                2.5,
+                true,
+                null,
+                ['key' => 'value'],
+            ],
+            $object->items,
+        );
+    }
+
+    public function test_map_union_string_or_mixed_array_with_string(): void
+    {
+        $object = map(['items' => 'string'])->to(ObjectWithStringOrMixedArray::class);
+
+        $this->assertIsString($object->items);
+        $this->assertSame('string', $object->items);
+    }
+
+    public function test_map_union_string_or_mixed_array_with_array(): void
+    {
+        $object = map(['items' => ['a', 1, true, ['b' => 2]]])->to(ObjectWithStringOrMixedArray::class);
+
+        $this->assertIsArray($object->items);
+        $this->assertSame(
+            [
+                'a',
+                1,
+                true,
+                ['b' => 2],
+            ],
+            $object->items,
+        );
     }
 }
 
