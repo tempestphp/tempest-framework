@@ -50,22 +50,24 @@ final class RouteTreeNode
         return $this->dynamicPaths[$regexRouteSegment] ??= self::createDynamicRouteNode($regexRouteSegment);
     }
 
-    public function setTargetRoute(MarkedRoute $markedRoute): void
+    public function setTargetRoute(MarkedRoute $markedRoute, bool $allowDuplicate = false): void
     {
-        if ($this->targetRoute !== null) {
+        if ($this->targetRoute !== null && ! $allowDuplicate) {
             throw new DuplicateRouteException($markedRoute->route);
         }
 
-        $this->targetRoute = $markedRoute;
+        if ($this->targetRoute === null) {
+            $this->targetRoute = $markedRoute;
+        }
     }
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string
     {
-        $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
+        $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_OPTIONAL_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         return preg_replace_callback(
             $regex,
-            static fn ($matches) => trim($matches[2] ?? DiscoveredRoute::DEFAULT_MATCHING_GROUP),
+            static fn ($matches) => trim($matches[3] ?? DiscoveredRoute::DEFAULT_MATCHING_GROUP),
             $uriPart,
         );
     }

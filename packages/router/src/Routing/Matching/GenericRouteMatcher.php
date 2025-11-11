@@ -80,7 +80,24 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         $valueMap = [];
 
         foreach ($route->parameters as $i => $param) {
-            $value = $routeMatches[$i + 1];
+            $value = $routeMatches[$i + 1] ?? null;
+            $isOptional = $route->optionalParameters[$param] ?? false;
+
+            if ($value === null || $value === '') {
+                if (! $isOptional) {
+                    continue;
+                }
+
+                $parameterReflector = $route->handler->getParameter($param);
+
+                if ($parameterReflector && $parameterReflector->hasDefaultValue()) {
+                    $valueMap[$param] = $parameterReflector->getDefaultValue();
+
+                    continue;
+                }
+
+                continue;
+            }
 
             $parameterReflector = $route->handler->getParameter($param);
 
