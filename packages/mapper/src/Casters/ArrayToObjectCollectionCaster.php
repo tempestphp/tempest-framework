@@ -23,6 +23,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster
 
         $caster = match (true) {
             $iterableType->isEnum() => new EnumCaster($iterableType->getName()),
+            $iterableType->getName() === 'mixed' => new MixedCaster(),
             $iterableType->isBuiltIn() => $this->casterFactory->forType($iterableType),
             default => new ObjectCaster($iterableType),
         };

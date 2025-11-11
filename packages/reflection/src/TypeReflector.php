@@ -81,10 +81,13 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
+        if ($this->cleanDefinition === 'mixed') {
+            return true;
+        }
+
         if ($this->isBuiltIn()) {
             return match ($this->cleanDefinition) {
                 'false' => $input === false,
-                'mixed' => true,
                 'never' => false,
                 'true' => $input === true,
                 'void' => false,
