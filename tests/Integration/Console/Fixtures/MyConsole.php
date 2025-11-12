@@ -13,8 +13,10 @@ final class MyConsole
         string $path,
         TestStringEnum $type,
         TestStringEnum $fallback = TestStringEnum::A,
+        ?TestStringEnum $nullableEnum = null,
         int $times = 1,
         bool $force = false,
+        ?string $optional = null,
     ): void {
     }
 }
