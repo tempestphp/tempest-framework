@@ -30,7 +30,7 @@ final class RoutingTree
         $segments = $markedRoute->route->split();
 
         // Traverse the tree and find the node for each route segment
-        foreach ($segments as $index => $routeSegment) {
+        foreach ($segments as $routeSegment) {
             $isOptional = $this->isOptionalSegment($routeSegment);
 
             if ($isOptional) {
