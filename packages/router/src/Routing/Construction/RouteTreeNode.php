@@ -50,15 +50,13 @@ final class RouteTreeNode
         return $this->dynamicPaths[$regexRouteSegment] ??= self::createDynamicRouteNode($regexRouteSegment);
     }
 
-    public function setTargetRoute(MarkedRoute $markedRoute, bool $allowDuplicate = false): void
+    public function setTargetRoute(MarkedRoute $markedRoute): void
     {
-        if ($this->targetRoute !== null && ! $allowDuplicate) {
+        if ($this->targetRoute !== null) {
             throw new DuplicateRouteException($markedRoute->route);
         }
 
-        if ($this->targetRoute === null) {
-            $this->targetRoute = $markedRoute;
-        }
+        $this->targetRoute = $markedRoute;
     }
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string

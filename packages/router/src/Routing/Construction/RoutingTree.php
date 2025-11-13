@@ -28,22 +28,20 @@ final class RoutingTree
         $node = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
         $segments = $markedRoute->route->split();
-        $hasOptionalParams = false;
 
         // Traverse the tree and find the node for each route segment
         foreach ($segments as $index => $routeSegment) {
             $isOptional = $this->isOptionalSegment($routeSegment);
 
             if ($isOptional) {
-                $hasOptionalParams = true;
-                $node->setTargetRoute($markedRoute, allowDuplicate: true);
+                $node->setTargetRoute($markedRoute);
                 $routeSegment = $this->stripOptionalMarker($routeSegment);
             }
 
             $node = $node->findOrCreateNodeForSegment($routeSegment);
         }
 
-        $node->setTargetRoute($markedRoute, allowDuplicate: $hasOptionalParams);
+        $node->setTargetRoute($markedRoute);
     }
 
     private function isOptionalSegment(string $segment): bool
