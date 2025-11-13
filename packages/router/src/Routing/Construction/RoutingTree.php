@@ -46,7 +46,7 @@ final class RoutingTree
 
     private function isOptionalSegment(string $segment): bool
     {
-        return str_contains($segment, '?');
+        return str_starts_with($segment, '{?');
     }
 
     private function stripOptionalMarker(string $segment): string
