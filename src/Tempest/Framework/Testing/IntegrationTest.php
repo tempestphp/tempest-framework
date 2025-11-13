@@ -123,6 +123,8 @@ abstract class IntegrationTest extends TestCase
         $container = $this->kernel->container;
         $this->container = $container;
 
+        $this->appConfig = $this->container->get(className: AppConfig::class);
+
         return $this;
     }
 
