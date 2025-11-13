@@ -7,11 +7,13 @@ use Tempest\Mail\Email;
 use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Mailer;
 
+use function Tempest\get;
+
 final class TestingMailer implements Mailer
 {
-    public function __construct(
-        private readonly ?EventBus $eventBus = null,
-    ) {}
+    private ?EventBus $eventBus {
+        get => get(className: EventBus::class);
+    }
 
     /**
      * List of emails that would have been sent.
