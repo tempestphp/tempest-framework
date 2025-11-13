@@ -90,7 +90,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
 
                 $parameterReflector = $route->handler->getParameter($param);
 
-                if ($parameterReflector && $parameterReflector->hasDefaultValue()) {
+                if ($parameterReflector?->hasDefaultValue()) {
                     $valueMap[$param] = $parameterReflector->getDefaultValue();
 
                     continue;
@@ -101,7 +101,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
 
             $parameterReflector = $route->handler->getParameter($param);
 
-            if ($parameterReflector && $parameterReflector->getType()?->isBackedEnum()) {
+            if ($parameterReflector?->getType()->isBackedEnum()) {
                 $value = $parameterReflector->getType()->asClass()->callStatic('tryFrom', $value);
 
                 if ($value === null) {
