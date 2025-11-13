@@ -22,7 +22,7 @@ final class OptionalParametersTest extends TestCase
         $tree = new RoutingTree();
 
         $markedRoute = $routeBuilder
-            ->withUri('/users/{id?}')
+            ->withUri('/users/{?id}')
             ->withHandler('handlerWithOptionalId')
             ->asMarkedRoute('a');
 
@@ -43,12 +43,12 @@ final class OptionalParametersTest extends TestCase
 
         $matchedWithoutParam = $matcher->match(new GenericRequest(Method::GET, '/users'));
         $this->assertNotNull($matchedWithoutParam);
-        $this->assertEquals('/users/{id?}', $matchedWithoutParam->route->uri);
+        $this->assertEquals('/users/{?id}', $matchedWithoutParam->route->uri);
         $this->assertEquals(['id' => 'default-id'], $matchedWithoutParam->params);
 
         $matchedWithParam = $matcher->match(new GenericRequest(Method::GET, '/users/123'));
         $this->assertNotNull($matchedWithParam);
-        $this->assertEquals('/users/{id?}', $matchedWithParam->route->uri);
+        $this->assertEquals('/users/{?id}', $matchedWithParam->route->uri);
         $this->assertEquals(['id' => '123'], $matchedWithParam->params);
     }
 
@@ -58,7 +58,7 @@ final class OptionalParametersTest extends TestCase
         $tree = new RoutingTree();
 
         $markedRoute = $routeBuilder
-            ->withUri('/posts/{id?}/{slug?}')
+            ->withUri('/posts/{?id}/{?slug}')
             ->withHandler('handlerWithTwoOptionalParams')
             ->asMarkedRoute('a');
 
@@ -96,7 +96,7 @@ final class OptionalParametersTest extends TestCase
         $tree = new RoutingTree();
 
         $markedRoute = $routeBuilder
-            ->withUri('/posts/{id}/{slug?}')
+            ->withUri('/posts/{id}/{?slug}')
             ->withHandler('handlerWithRequiredAndOptional')
             ->asMarkedRoute('a');
 
@@ -130,7 +130,7 @@ final class OptionalParametersTest extends TestCase
         $tree = new RoutingTree();
 
         $markedRoute = $routeBuilder
-            ->withUri('/users/{id?:\d+}')
+            ->withUri('/users/{?id:\d+}')
             ->withHandler('handlerWithOptionalId')
             ->asMarkedRoute('a');
 
@@ -166,7 +166,7 @@ final class OptionalParametersTest extends TestCase
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
 
         $route = $routeBuilder
-            ->withUri('/users/{id?}')
+            ->withUri('/users/{?id}')
             ->withHandler('handlerWithOptionalId')
             ->asDiscoveredRoute();
 
@@ -179,7 +179,7 @@ final class OptionalParametersTest extends TestCase
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
 
         $route = $routeBuilder
-            ->withUri('/posts/{id}/{slug?}')
+            ->withUri('/posts/{id}/{?slug}')
             ->withHandler('handlerWithRequiredAndOptional')
             ->asDiscoveredRoute();
 

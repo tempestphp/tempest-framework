@@ -12,9 +12,9 @@ final class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
-    public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
-
     public const string ROUTE_PARAM_OPTIONAL_REGEX = '(\??)';
+
+    public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
 
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
@@ -62,12 +62,12 @@ final class DiscoveredRoute implements Route
      */
     private static function getRouteParams(string $uriPart): array
     {
-        $regex = '#\{' . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_OPTIONAL_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
+        $regex = '#\{' . self::ROUTE_PARAM_OPTIONAL_REGEX . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         preg_match_all($regex, $uriPart, $matches);
 
-        $names = $matches[1] ?? [];
-        $optionalMarkers = $matches[2] ?? [];
+        $optionalMarkers = $matches[1] ?? [];
+        $names = $matches[2] ?? [];
 
         $optional = [];
         foreach ($names as $i => $name) {
