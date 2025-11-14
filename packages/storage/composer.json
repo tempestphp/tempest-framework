@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.4",
         "league/flysystem": "^3.29.1",
-        "tempest/container": "dev-main"
+        "tempest/container": "2.9.1"
     },
     "require-dev": {
         "aws/aws-sdk-php": "^3.338.0",
@@ -20,7 +20,7 @@
         "league/flysystem-google-cloud-storage": "^3.25.1",
         "league/mime-type-detection": "^1.16",
         "microsoft/azure-storage-blob": "^1.5",
-        "tempest/support": "dev-main"
+        "tempest/support": "2.9.1"
     },
     "autoload": {
         "psr-4": {
