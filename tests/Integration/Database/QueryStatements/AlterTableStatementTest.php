@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use PHPUnit\Framework\Attributes\Test;
-use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryWasInvalid;
