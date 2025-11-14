@@ -139,12 +139,12 @@ final readonly class BooksCommand
 Or what about [Tempest's ORM](../1-essentials/03-database), which aims to have truly decoupled models:
 
 ```php
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 use App\Author;
 
 final class Book
 {
-    #[Length(min: 1, max: 120)]
+    #[HasLength(min: 1, max: 120)]
     public string $title;
 
     public ?Author $author = null;

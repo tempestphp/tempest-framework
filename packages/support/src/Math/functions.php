@@ -380,7 +380,7 @@ namespace Tempest\Support\Math {
      */
     function maxva(int|float $first, int|float $second, int|float ...$rest): int|float
     {
-        $max = $first > $second ? $first : $second;
+        $max = \max($first, $second);
 
         foreach ($rest as $number) {
             if ($number > $max) {
@@ -512,7 +512,7 @@ namespace Tempest\Support\Math {
      */
     function minva(int|float $first, int|float $second, int|float ...$rest): int|float
     {
-        $min = $first < $second ? $first : $second;
+        $min = \min($first, $second);
 
         foreach ($rest as $number) {
             if ($number < $min) {

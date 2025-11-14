@@ -73,10 +73,6 @@ final class MetaViewComponentCommand
             $viewComponent = $this->viewConfig->viewComponents[$viewComponent] ?? null;
         }
 
-        if ($viewComponent === null) {
-            return null;
-        }
-
         return $viewComponent;
     }
 

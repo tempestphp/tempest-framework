@@ -90,7 +90,7 @@ final class MockClock implements Clock
     /**
      * @mago-expect lint:no-debug-symbols
      */
-    public function dd(): void
+    public function dd(): never
     {
         dd($this->now);
     }
