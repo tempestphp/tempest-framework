@@ -23,6 +23,27 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
+    private GenericConsole $testConsole;
+
+    private MemoryOutputBuffer $consoleOutput;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->consoleOutput = new MemoryOutputBuffer();
+
+        $highlighter = new Highlighter(new TextTerminalTheme());
+
+        $this->testConsole = new GenericConsole(
+            output: $this->consoleOutput,
+            input: new UnsupportedInputBuffer(),
+            highlighter: $highlighter,
+            executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class),
+            argumentBag: $this->container->get(ConsoleArgumentBag::class),
+        );
+    }
+
     public function test_render(): void
     {
         $handler = new MethodReflector(new ReflectionMethod(new MyConsole(), 'handle'));
@@ -31,23 +52,32 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 
         $consoleCommand->setHandler($handler);
 
-        $output = new MemoryOutputBuffer();
-
-        $highlighter = new Highlighter(new TextTerminalTheme());
-
-        $console = new GenericConsole(
-            output: $output,
-            input: new UnsupportedInputBuffer(),
-            highlighter: $highlighter,
-            executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class),
-            argumentBag: $this->container->get(ConsoleArgumentBag::class),
-        );
-
-        (new RenderConsoleCommand($console))($consoleCommand);
+        (new RenderConsoleCommand($this->testConsole))($consoleCommand);
 
         $this->assertSame(
             'test description',
-            trim($output->getBufferWithoutFormatting()[0]),
+            trim($this->consoleOutput->getBufferWithoutFormatting()[0]),
+        );
+    }
+
+    public function test_render_arguments(): void
+    {
+        $handler = new MethodReflector(new ReflectionMethod(new MyConsole(), 'handle'));
+
+        $consoleCommand = $handler->getAttributes(ConsoleCommand::class)[0];
+
+        $consoleCommand->setHandler($handler);
+
+        $renderConsoleCommand = new RenderConsoleCommand(
+            console: $this->testConsole,
+            renderArguments: true,
+        );
+
+        $renderConsoleCommand($consoleCommand);
+
+        $this->assertSame(
+            'test <path> <type {a|b|c}> [fallback=a {a|b|c}] [nullable-enum=null {a|b|c}] [times=1] [--force=false] [optional=null] description',
+            trim($this->consoleOutput->getBufferWithoutFormatting()[0]),
         );
     }
 }

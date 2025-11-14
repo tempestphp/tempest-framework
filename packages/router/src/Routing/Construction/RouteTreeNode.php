@@ -61,11 +61,11 @@ final class RouteTreeNode
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string
     {
-        $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
+        $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_OPTIONAL_REGEX . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         return preg_replace_callback(
             $regex,
-            static fn ($matches) => trim($matches[2] ?? DiscoveredRoute::DEFAULT_MATCHING_GROUP),
+            static fn ($matches) => trim($matches[3] ?? DiscoveredRoute::DEFAULT_MATCHING_GROUP),
             $uriPart,
         );
     }

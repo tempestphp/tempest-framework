@@ -291,4 +291,48 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk()
             ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
     }
+
+    public function test_optional_parameter_with_required_parameter(): void
+    {
+        $this->http
+            ->get('/articles/123')
+            ->assertOk()
+            ->assertSee('Article 123 without slug');
+
+        $this->http
+            ->get('/articles/123/my-article')
+            ->assertOk()
+            ->assertSee('Article 123 with slug my-article');
+    }
+
+    public function test_optional_parameter_only(): void
+    {
+        $this->http
+            ->get('/users')
+            ->assertOk()
+            ->assertSee('All users');
+
+        $this->http
+            ->get('/users/456')
+            ->assertOk()
+            ->assertSee('User 456');
+    }
+
+    public function test_multiple_optional_parameters(): void
+    {
+        $this->http
+            ->get('/posts')
+            ->assertOk()
+            ->assertSee('All posts');
+
+        $this->http
+            ->get('/posts/789')
+            ->assertOk()
+            ->assertSee('Post 789');
+
+        $this->http
+            ->get('/posts/789/tech')
+            ->assertOk()
+            ->assertSee('Post 789 in category tech');
+    }
 }

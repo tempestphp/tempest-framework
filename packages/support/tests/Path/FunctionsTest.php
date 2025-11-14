@@ -189,5 +189,10 @@ final class FunctionsTest extends TestCase
             'paths' => ['foo\\', '\\'],
             'expected' => 'foo/',
         ];
+
+        yield 'phar prefix' => [
+            'paths' => ['phar:///home/user/file.php'],
+            'expected' => 'phar:///home/user/file.php',
+        ];
     }
 }

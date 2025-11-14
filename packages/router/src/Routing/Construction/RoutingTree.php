@@ -27,12 +27,31 @@ final class RoutingTree
         // @mago-expect lint:no-multi-assignments
         $node = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
+        $segments = $markedRoute->route->split();
+
         // Traverse the tree and find the node for each route segment
-        foreach ($markedRoute->route->split() as $routeSegment) {
+        foreach ($segments as $routeSegment) {
+            $isOptional = $this->isOptionalSegment($routeSegment);
+
+            if ($isOptional) {
+                $node->setTargetRoute($markedRoute);
+                $routeSegment = $this->stripOptionalMarker($routeSegment);
+            }
+
             $node = $node->findOrCreateNodeForSegment($routeSegment);
         }
 
         $node->setTargetRoute($markedRoute);
+    }
+
+    private function isOptionalSegment(string $segment): bool
+    {
+        return str_starts_with($segment, '{?');
+    }
+
+    private function stripOptionalMarker(string $segment): string
+    {
+        return str_replace('?', '', $segment);
     }
 
     /** @return array<string, MatchingRegex> */

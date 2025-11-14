@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\AssertionFailedError;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\Email;
+use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\GenericEmail;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
@@ -78,5 +79,23 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
                 $this->assertCount(1, $email->attachments);
                 $this->assertSame('hello!', ($email->attachments[0]->resolve)());
             });
+    }
+
+    public function test_email_was_sent_event_was_dispatched(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->mailer
+            ->send(email: new GenericEmail(
+                subject: 'Hello',
+                to: 'jon@doe.co',
+                html: 'Hello Jon',
+                from: 'no-reply@tempestphp.com',
+                attachments: [
+                    Attachment::fromClosure(callable: fn () => 'hello!'),
+                ],
+            ));
+
+        $this->eventBus->assertDispatched(event: EmailWasSent::class);
     }
 }

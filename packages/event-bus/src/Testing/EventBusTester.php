@@ -38,7 +38,7 @@ final class EventBusTester
     {
         $this->assertFaked();
 
-        Assert::assertNotNull(
+        Assert::assertNotEmpty(
             actual: $dispatches = $this->findDispatches($event),
             message: 'The event was not dispatched.',
         );

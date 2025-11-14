@@ -24,7 +24,6 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\EventBus\EventBus;
 use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\GenericRequest;
@@ -120,6 +119,8 @@ abstract class IntegrationTest extends TestCase
         $container = $this->kernel->container;
         $this->container = $container;
 
+        $this->appConfig = $this->container->get(className: AppConfig::class);
+
         return $this;
     }
 
@@ -139,9 +140,7 @@ abstract class IntegrationTest extends TestCase
         $this->eventBus = new EventBusTester($this->container);
         $this->storage = new StorageTester($this->container);
         $this->cache = new CacheTester($this->container);
-        $this->mailer = new MailTester(new TestingMailer(
-            eventBus: $this->container->get(EventBus::class),
-        ));
+        $this->mailer = new MailTester(new TestingMailer());
 
         $this->process = $this->container->get(ProcessTester::class);
         $this->process->disableProcessExecution();

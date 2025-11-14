@@ -698,4 +698,22 @@ final class UnixFunctionsTest extends TestCase
         $this->assertFalse(is_file($link));
         $this->assertFalse(is_link($link));
     }
+
+    public function test_normalize_path_in_phar(): void
+    {
+        if (\Phar::canWrite() === false) {
+            $this->markTestSkipped('phar.readonly is enabled in php.ini.');
+        }
+
+        $pharFile = $this->fixtures . '/phar.phar';
+        $phar = new \Phar($pharFile, 0, 'phar.phar');
+        $phar->addFile(__DIR__ . '/../../src/Filesystem/functions.php', 'functions.php');
+        $phar->addFile(__DIR__ . '/../Fixtures/Phar/normalize_path.php', 'index.php');
+        $phar->createDefaultStub('index.php');
+
+        $output = shell_exec('php ' . $pharFile);
+
+        $this->assertIsString($output);
+        $this->assertStringStartsWith('phar://', $output);
+    }
 }
