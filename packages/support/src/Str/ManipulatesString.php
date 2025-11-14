@@ -128,11 +128,11 @@ trait ManipulatesString
     /**
      * Converts the string to its English singular form.
      */
-    public function singularize(int|array|Countable $count = 2): self
+    public function singularize(): self
     {
         $this->ensurePluralizerInstalled(__METHOD__);
 
-        return $this->createOrModify(Intl\singularize($this->value, $count));
+        return $this->createOrModify(Intl\singularize($this->value));
     }
 
     /**

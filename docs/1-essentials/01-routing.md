@@ -344,13 +344,13 @@ A request class must implement {`Tempest\Http\Request`} and should use the {`Tem
 ```php app/RegisterAirportRequest.php
 use Tempest\Http\Request;
 use Tempest\Http\IsRequest;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 
 final class RegisterAirportRequest implements Request
 {
     use IsRequest;
 
-    #[Length(min: 10, max: 120)]
+    #[HasLength(min: 10, max: 120)]
     public string $name;
 
     public ?DateTimeImmutable $registeredAt = null;
