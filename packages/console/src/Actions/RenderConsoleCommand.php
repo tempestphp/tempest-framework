@@ -63,13 +63,7 @@ final readonly class RenderConsoleCommand
             return $formattedArgumentName->wrap('<style="fg-gray dim"><</style>', '<style="fg-gray dim">></style>')->toString();
         }
 
-        $defaultValue = match (true) {
-            $argument->default === true => 'true',
-            $argument->default === false => 'false',
-            is_null($argument->default) => 'null',
-            is_array($argument->default) => 'array',
-            default => "{$argument->default}",
-        };
+        $defaultValue = $this->getArgumentDefaultValue($argument);
 
         return str()
             ->append(str('[')->wrap('<style="fg-gray dim">', '</style>'))
@@ -89,11 +83,24 @@ final readonly class RenderConsoleCommand
 
         $partsAsString = ' {<style="fg-blue">' . implode('|', $parts) . '</style>}';
         $line = "<style=\"fg-blue\">{$argument->name}</style>";
+        $defaultValue = $this->getArgumentDefaultValue($argument);
 
         if ($argument->hasDefault) {
-            return "[{$line}={$argument->default->value}{$partsAsString}]";
+            return "[{$line}={$defaultValue}{$partsAsString}]";
         }
 
         return "<{$line}{$partsAsString}>";
+    }
+
+    private function getArgumentDefaultValue(ConsoleArgumentDefinition $argument): string
+    {
+        return match (true) {
+            $argument->default === true => 'true',
+            $argument->default === false => 'false',
+            is_null($argument->default) => 'null',
+            is_array($argument->default) => 'array',
+            $argument->default instanceof BackedEnum => $argument->default->value,
+            default => "{$argument->default}",
+        };
     }
 }
