@@ -107,7 +107,7 @@ final class ProcessTester
      *
      * @mago-expect lint:no-debug-symbols
      */
-    public function debugExecutedProcesses(): void
+    public function debugExecutedProcesses(): never
     {
         dd($this->executor->executions);
     }
