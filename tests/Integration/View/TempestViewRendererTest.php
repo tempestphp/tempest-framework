@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ElementWasInvalid;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -50,10 +53,6 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_relative_view_path_rendering(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Relative paths not supported on Windows');
-        }
-
         $this->http
             ->get(uri([RelativeViewController::class, 'asFunction']))
             ->assertOk()
@@ -864,5 +863,23 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSnippetsMatch('<table border="0"></table>', $html);
+    }
+
+    public function test_discovery_locations_are_passed_to_compiler(): void
+    {
+        /** @var \Tempest\Core\Kernel $kernel */
+        $kernel = $this->get(Kernel::class);
+
+        $kernel->discoveryLocations[] = new DiscoveryLocation(
+            'Tests\Tempest\Integration\View\Fixtures',
+            __DIR__ . '/Fixtures',
+        );
+
+        /** @var TempestViewRenderer $renderer */
+        $renderer = $this->get(TempestViewRenderer::class);
+
+        $html = $renderer->render(view('discovered-view.view.php'));
+
+        $this->assertSnippetsMatch('<div>Hi</div>', $html);
     }
 }

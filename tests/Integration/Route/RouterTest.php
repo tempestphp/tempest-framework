@@ -26,7 +26,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
-use Tests\Tempest\Integration\Route\Fixtures\StatelessController;
 
 /**
  * @internal
@@ -261,14 +260,79 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('x-custom');
     }
 
-    public function test_stateless_actions(): void
+    public function test_stateless_decorator(): void
     {
-        $this->registerRoute(StatelessController::class);
-
         $this->http
             ->get('/stateless')
             ->assertOk()
             ->assertDoesNotHaveCookie('tempest_session_id')
             ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
+
+    public function test_prefix_decorator(): void
+    {
+        $this->http
+            ->get('/prefix/endpoint')
+            ->assertOk();
+    }
+
+    public function test_with_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/with-decorated-middleware')
+            ->assertOk()
+            ->assertHasHeader('middleware');
+    }
+
+    public function test_without_middleware_decorator(): void
+    {
+        $this->http
+            ->get('/without-decorated-middleware')
+            ->assertOk()
+            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+    }
+
+    public function test_optional_parameter_with_required_parameter(): void
+    {
+        $this->http
+            ->get('/articles/123')
+            ->assertOk()
+            ->assertSee('Article 123 without slug');
+
+        $this->http
+            ->get('/articles/123/my-article')
+            ->assertOk()
+            ->assertSee('Article 123 with slug my-article');
+    }
+
+    public function test_optional_parameter_only(): void
+    {
+        $this->http
+            ->get('/users')
+            ->assertOk()
+            ->assertSee('All users');
+
+        $this->http
+            ->get('/users/456')
+            ->assertOk()
+            ->assertSee('User 456');
+    }
+
+    public function test_multiple_optional_parameters(): void
+    {
+        $this->http
+            ->get('/posts')
+            ->assertOk()
+            ->assertSee('All posts');
+
+        $this->http
+            ->get('/posts/789')
+            ->assertOk()
+            ->assertSee('Post 789');
+
+        $this->http
+            ->get('/posts/789/tech')
+            ->assertOk()
+            ->assertSee('Post 789 in category tech');
     }
 }

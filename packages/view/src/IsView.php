@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use function Tempest\Support\path;
+use function Tempest\Support\Path\normalize;
 
 /** @phpstan-require-implements \Tempest\View\View */
 trait IsView
@@ -24,7 +25,7 @@ trait IsView
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
-        if (str_ends_with($trace[0]['file'], 'view/src/functions.php')) {
+        if (str_ends_with(normalize($trace[0]['file']), 'view/src/functions.php')) {
             $this->relativeRootPath = path($trace[1]['file'])->dirname()->toString();
         } else {
             $this->relativeRootPath = path($trace[0]['file'])->dirname()->toString();

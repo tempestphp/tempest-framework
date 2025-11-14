@@ -8,20 +8,30 @@ use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Route;
 
-final readonly class DiscoveredRoute implements Route
+final class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
+
+    public const string ROUTE_PARAM_OPTIONAL_REGEX = '(\??)';
 
     public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
 
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
-    public static function fromRoute(Route $route, MethodReflector $methodReflector): self
+    /** @param \Tempest\Router\RouteDecorator[] $decorators */
+    public static function fromRoute(Route $route, array $decorators, MethodReflector $methodReflector): self
     {
+        foreach ($decorators as $decorator) {
+            $route = $decorator->decorate($route);
+        }
+
+        $paramInfo = self::getRouteParams($route->uri);
+
         return new self(
             $route->uri,
             $route->method,
-            self::getRouteParams($route->uri),
+            $paramInfo['names'],
+            $paramInfo['optional'],
             $route->middleware,
             $methodReflector,
             $route->without ?? [],
@@ -34,6 +44,8 @@ final readonly class DiscoveredRoute implements Route
         public string $uri,
         public Method $method,
         public array $parameters,
+        /** @var array<string, bool> */
+        public array $optionalParameters,
         /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $middleware,
         public MethodReflector $handler,
@@ -42,14 +54,30 @@ final readonly class DiscoveredRoute implements Route
         $this->isDynamic = $parameters !== [];
     }
 
-    /** @return string[] */
+    /**
+     * @return array{
+     *     names: string[],
+     *     optional: array<string, bool>
+     * }
+     */
     private static function getRouteParams(string $uriPart): array
     {
-        $regex = '#\{' . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
+        $regex = '#\{' . self::ROUTE_PARAM_OPTIONAL_REGEX . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         preg_match_all($regex, $uriPart, $matches);
 
-        return $matches[1] ?? [];
+        $optionalMarkers = $matches[1] ?? [];
+        $names = $matches[2] ?? [];
+
+        $optional = [];
+        foreach ($names as $i => $name) {
+            $optional[$name] = $optionalMarkers[$i] === '?';
+        }
+
+        return [
+            'names' => $names,
+            'optional' => $optional,
+        ];
     }
 
     /**

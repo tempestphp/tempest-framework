@@ -2,7 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..2.7.0)  —  2025-11-07
+## [2.8.0](https://github.com/tempestphp/tempest-framework/compare/v2.7.2..2.8.0)  —  2025-11-10
+
+### 🚨 Breaking changes
+
+- **router**: [**breaking**] add route decorators (#1695) ([c901dfe](https://github.com/tempestphp/tempest-framework/commit/c901dfeec7c01394a4481a08ca8381988a0b03ad))
+
+
+## [2.7.2](https://github.com/tempestphp/tempest-framework/compare/v2.7.1..v2.7.2)  —  2025-11-10
+
+### 🐛 Bug fixes
+
+- **console**: respect default value in confirm when forced (#1698) ([708c8f9](https://github.com/tempestphp/tempest-framework/commit/708c8f9ee5cef6c19d26e8ebcb069633341413ce))
+
+
+## [2.7.1](https://github.com/tempestphp/tempest-framework/compare/v2.7.0..v2.7.1)  —  2025-11-09
+
+### 🚀 Features
+
+- **auth**: mark password property with `#[SensitiveParameter]` (#1693) ([129fdd5](https://github.com/tempestphp/tempest-framework/commit/129fdd54cd989203508b461bbbbddf85448aabb7))
+
+### 🐛 Bug fixes
+
+- **view**: discovery locations for view compiler (#1701) ([8604b86](https://github.com/tempestphp/tempest-framework/commit/8604b86e3118a79f8813df5a6f2315a802368a5c))
+
+
+## [2.7.0](https://github.com/tempestphp/tempest-framework/compare/v2.6.3..v2.7.0)  —  2025-11-07
 
 ### 🚀 Features
 

@@ -262,7 +262,7 @@ final class GenericConsole implements Console
     public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool
     {
         if ($this->isForced) {
-            return true;
+            return $default;
         }
 
         return $this->component(new ConfirmComponent($question, $default, $yes, $no));

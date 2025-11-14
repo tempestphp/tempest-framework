@@ -114,6 +114,18 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         });
     }
 
+    public function test_assert_dispatched_failure(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('The event was not dispatched.');
+
+        $this->eventBus->assertDispatched('this-was-not-dispatched');
+    }
+
     public function test_assert_not_dispatched(): void
     {
         $this->eventBus->preventEventHandling();
