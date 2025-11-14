@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
-use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
@@ -67,12 +66,12 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $dialect = $this->container->get(DatabaseConfig::class)?->dialect;
+        $dialect = $this->container->get(DatabaseConfig::class)->dialect;
+
         match ($dialect) {
             DatabaseDialect::MYSQL => $this->expectNotToPerformAssertions(),
             DatabaseDialect::SQLITE => $this->expectException(DialectWasNotSupported::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(DialectWasNotSupported::class),
-            null => throw new RuntimeException('No database dialect available'),
         };
 
         $this->migrate(

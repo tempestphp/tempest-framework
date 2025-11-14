@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use PHPUnit\Framework\Attributes\Test;
-use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryWasInvalid;
@@ -45,11 +44,10 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 email: 'test@example.com',
             );
         } catch (QueryWasInvalid $queryWasInvalid) {
-            $message = match ($this->container->get(DatabaseConfig::class)?->dialect) {
+            $message = match ($this->container->get(DatabaseConfig::class)->dialect) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
                 DatabaseDialect::POSTGRESQL => 'column "email" of relation "users" does not exist',
-                null => throw new RuntimeException('No database dialect available'),
             };
 
             $this->assertStringContainsString($message, $queryWasInvalid->getMessage());

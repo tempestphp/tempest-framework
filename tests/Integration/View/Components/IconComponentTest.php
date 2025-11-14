@@ -91,7 +91,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $this->render('<x-icon name="ph:eye" />');
 
         $iconCache = $this->container->get(IconCache::class);
-        $cachedIcon = $iconCache?->get('icon-ph-eye');
+        $cachedIcon = $iconCache->get('icon-ph-eye');
 
         $this->assertNotNull($cachedIcon);
         $this->assertSame('<svg></svg>', $cachedIcon);

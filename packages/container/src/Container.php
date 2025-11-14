@@ -22,7 +22,7 @@ interface Container
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
-     * @return null|TClassName
+     * @return TClassName
      */
     public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): mixed;
 

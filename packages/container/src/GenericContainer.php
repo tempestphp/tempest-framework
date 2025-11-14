@@ -171,9 +171,9 @@ final class GenericContainer implements Container
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
-     * @return null|TClassName
+     * @return TClassName
      */
-    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         $this->resolveChain();
 
@@ -325,7 +325,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         $instance = $this->resolveDependency($className, $tag, ...$params);
 
@@ -336,7 +336,7 @@ final class GenericContainer implements Container
         return $instance;
     }
 
-    private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         $class = new ClassReflector($className);
 
@@ -646,7 +646,7 @@ final class GenericContainer implements Container
             : $className;
     }
 
-    private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): ?object
+    private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
             $decoratorClassReflector = new ClassReflector($decoratorClass);
