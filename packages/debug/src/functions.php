@@ -21,7 +21,7 @@ namespace {
          * Writes the given `$input` to the logs, dumps it, and stops the execution of the script.
          * @see \Tempest\Debug\Debug::log()
          */
-        function ld(mixed ...$input): void
+        function ld(mixed ...$input): never
         {
             Debug::resolve()->log($input);
             die();

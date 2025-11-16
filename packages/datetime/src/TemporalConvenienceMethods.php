@@ -561,7 +561,7 @@ trait TemporalConvenienceMethods
      * @phpstan-ignore disallowed.function
      * @mago-expect lint:no-debug-symbols
      */
-    public function dd(): void
+    public function dd(): never
     {
         dd($this);
     }

@@ -49,6 +49,85 @@ final readonly class AircraftController
 }
 ```
 
+### Optional parameters
+
+Sometimes you may want a route to match both with and without a parameter. For instance, you might want `/aircraft` to show all aircraft, and `/aircraft/123` to show a specific aircraft. This can be achieved by marking route parameters as optional.
+
+To mark a parameter as optional, prefix it with a question mark `?` inside the curly braces. The corresponding method parameter must either be nullable or have a default value.
+
+```php app/AircraftController.php
+use Tempest\Router\Get;
+use Tempest\View\View;
+use function Tempest\view;
+
+final readonly class AircraftController
+{
+    #[Get(uri: '/aircraft/{?id}')]
+    public function index(?string $id): View
+    {
+        if ($id === null) {
+            // Show all aircraft
+            $aircraft = $this->aircraftRepository->all();
+        } else {
+            // Show specific aircraft
+            $aircraft = $this->aircraftRepository->find($id);
+        }
+
+        return view('aircraft.view.php', aircraft: $aircraft);
+    }
+}
+```
+
+In this example, both `/aircraft` and `/aircraft/123` will match the same route. When the parameter is not provided, the method parameter receives `null`.
+
+Alternatively, you may provide a default value instead of using a nullable type:
+
+```php app/AircraftController.php
+#[Get(uri: '/aircraft/{?type}')]
+public function filter(string $type = 'all'): View
+{
+    // When /aircraft is requested, $type will be 'all'
+    // When /aircraft/commercial is requested, $type will be 'commercial'
+}
+```
+
+You may also combine required and optional parameters. Optional parameters should come after required ones:
+
+```php app/FlightController.php
+use Tempest\Router\Get;
+use Tempest\View\View;
+use function Tempest\view;
+
+final readonly class FlightController
+{
+    #[Get(uri: '/flights/{id}/{?segment}')]
+    public function show(string $id, ?string $segment): View
+    {
+        // Matches both /flights/AA123 and /flights/AA123/departure
+    }
+}
+```
+
+Multiple optional parameters are also supported:
+
+```php app/AircraftController.php
+#[Get(uri: '/aircraft/{?manufacturer}/{?model}')]
+public function search(?string $manufacturer, ?string $model): View
+{
+    // Matches /aircraft, /aircraft/cessna, and /aircraft/cessna/172
+}
+```
+
+Optional parameters work seamlessly with [regular expression constraints](#regular-expression-constraints). Simply add the regex pattern after the parameter name:
+
+```php app/AircraftController.php
+#[Get(uri: '/aircraft/{?id:\d+}')]
+public function show(?int $id): View
+{
+    // Matches /aircraft and /aircraft/123 (numeric only)
+}
+```
+
 ### Regular expression constraints
 
 You may constrain the format of a route parameter by specifying a regular expression after its name.
@@ -265,13 +344,13 @@ A request class must implement {`Tempest\Http\Request`} and should use the {`Tem
 ```php app/RegisterAirportRequest.php
 use Tempest\Http\Request;
 use Tempest\Http\IsRequest;
-use Tempest\Validation\Rules\Length;
+use Tempest\Validation\Rules\HasLength;
 
 final class RegisterAirportRequest implements Request
 {
     use IsRequest;
 
-    #[Length(min: 10, max: 120)]
+    #[HasLength(min: 10, max: 120)]
     public string $name;
 
     public ?DateTimeImmutable $registeredAt = null;

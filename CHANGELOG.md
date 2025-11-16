@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.8.0](https://github.com/tempestphp/tempest-framework/compare/v2.7.2..2.8.0)  —  2025-11-10
+## [2.9.0](https://github.com/tempestphp/tempest-framework/compare/v2.8.0..v2.9.0)  —  2025-11-14
+
+### 🚀 Features
+
+- **router**: improve optional route parameter syntax (#1706) ([68f4aba](https://github.com/tempestphp/tempest-framework/commit/68f4aba41f8df225792aeaf5c94dca818079e0f8))
+- **testing**: inject app config in Integration test setup (#1710) ([14a8da8](https://github.com/tempestphp/tempest-framework/commit/14a8da80880dda8eb6eb0b1222d75adf578908d5))
+
+### 🐛 Bug fixes
+
+- **console**: render nullable enum arguments (#1711) ([402f0e7](https://github.com/tempestphp/tempest-framework/commit/402f0e7547fef30f68c78bb0bef26607b449f7fc))
+- **eventbus**: change dispatched assertion from not null to not empty (#1709) ([82318a6](https://github.com/tempestphp/tempest-framework/commit/82318a6a4362c228f6b81bb23ee752b950ed17cc))
+- **view**: support relative view paths on windows (#1703) ([87b2f7b](https://github.com/tempestphp/tempest-framework/commit/87b2f7bfd43c2d277ee788ffbbe8b072f232771a))
+
+
+## [2.8.0](https://github.com/tempestphp/tempest-framework/compare/v2.7.2..v2.8.0)  —  2025-11-10
 
 ### 🚨 Breaking changes
 

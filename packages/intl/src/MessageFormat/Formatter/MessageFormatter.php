@@ -57,7 +57,7 @@ final class MessageFormatter
 
             $this->variables = $this->parseLocalVariables($variables);
 
-            return $this->formatMessage($ast, $variables);
+            return $this->formatMessage($ast);
         } catch (ParsingException $e) {
             throw new FormattingException('Failed to parse message.', [
                 'message' => $message,
