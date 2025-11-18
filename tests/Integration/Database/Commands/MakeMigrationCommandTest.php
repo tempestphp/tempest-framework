@@ -20,7 +20,10 @@ final class MakeMigrationCommandTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->installer->configure(__DIR__ . '/install', new Psr4Namespace('App\\', __DIR__ . '/install/App'));
+        $this->installer->configure(
+            $this->internalStorage . '/install',
+            new Psr4Namespace('App\\', $this->internalStorage . '/install/App'),
+        );
     }
 
     #[PostCondition]

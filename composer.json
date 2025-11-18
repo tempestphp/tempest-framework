@@ -87,7 +87,8 @@
         "tempest/blade": "dev-main",
         "thenetworg/oauth2-azure": "^2.2",
         "twig/twig": "^3.16",
-        "wohali/oauth2-discord-new": "^1.2"
+        "wohali/oauth2-discord-new": "^1.2",
+        "brianium/paratest": "^7.14"
     },
     "replace": {
         "tempest/auth": "self.version",

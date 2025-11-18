@@ -19,8 +19,8 @@ final class DatabaseSessionInstallerTest extends FrameworkIntegrationTestCase
     protected function configure(): void
     {
         $this->installer
-            ->configure(__DIR__ . '/install', new Psr4Namespace('App\\', __DIR__ . '/install/App'))
-            ->setRoot(__DIR__ . '/install');
+            ->configure($this->internalStorage . '/install', new Psr4Namespace('App\\', $this->internalStorage . '/install/App'))
+            ->setRoot($this->internalStorage . '/install');
     }
 
     #[PostCondition]

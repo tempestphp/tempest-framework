@@ -30,8 +30,8 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
         parent::setUp();
 
         $this->installer->configure(
-            __DIR__ . '/install',
-            new Psr4Namespace('App\\', __DIR__ . '/install/App'),
+            $this->internalStorage . '/install',
+            new Psr4Namespace('App\\', $this->internalStorage . '/install/App'),
         );
     }
 
