@@ -11,7 +11,6 @@ use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
-use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
@@ -24,25 +23,31 @@ use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\get;
 
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
-final class UpdateQueryBuilder implements BuildsQuery
+final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private UpdateStatement $update;
 
-    private array $bindings = [];
+    public array $bindings = [];
 
-    private ModelInspector $model;
+    public ModelInspector $model;
 
     private array $after = [];
 
     private ?PrimaryKey $primaryKeyForRelations = null;
+
+    public ImmutableArray $wheres {
+        get => $this->update->where;
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -57,6 +62,25 @@ final class UpdateQueryBuilder implements BuildsQuery
         $this->update = new UpdateStatement(
             table: $this->model->getTableDefinition(),
         );
+    }
+
+    /**
+     * Creates an instance from another query builder, inheriting conditions and bindings.
+     *
+     * @template TSourceModel of object
+     * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @return UpdateQueryBuilder<TSourceModel>
+     */
+    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, mixed ...$values): UpdateQueryBuilder
+    {
+        $builder = new self($source->model->model, $values, get(SerializerFactory::class));
+        $builder->bind(...$source->bindings);
+
+        foreach ($source->wheres as $where) {
+            $builder->wheres[] = $where;
+        }
+
+        return $builder;
     }
 
     /**
@@ -243,16 +267,6 @@ final class UpdateQueryBuilder implements BuildsQuery
         if (! $model->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForRelation($model->getName(), $relationType);
         }
-    }
-
-    private function getStatementForWhere(): HasWhereStatements
-    {
-        return $this->update;
-    }
-
-    private function getModel(): ModelInspector
-    {
-        return $this->model;
     }
 
     private function handleHasManyRelation(string $key, mixed $relations): bool
@@ -520,14 +534,14 @@ final class UpdateQueryBuilder implements BuildsQuery
             }
         }
 
-        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        if ($this->getStatementForWhere()->where->isNotEmpty()) {
+        if ($this->wheres->isNotEmpty()) {
             return $this->andWhere($field, $value, $operator);
         }
 
-        $this->getStatementForWhere()->where[] = new WhereStatement($condition['sql']);
+        $this->wheres[] = new WhereStatement($condition['sql']);
         $this->bind(...$condition['bindings']);
 
         return $this;

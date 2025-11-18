@@ -10,6 +10,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -526,6 +527,15 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame([true, 'featured', 4.5], $query->bindings);
+    }
+
+    public function test_count_query_builder_from_another_query_builder(): void
+    {
+        $query = query(Chapter::class)
+            ->select()
+            ->where('book_id', 1);
+
+        $this->assertCount(1, CountQueryBuilder::fromQueryBuilder($query)->wheres);
     }
 }
 

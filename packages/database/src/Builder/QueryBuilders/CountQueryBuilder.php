@@ -9,7 +9,7 @@ use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
-use Tempest\Database\QueryStatements\HasWhereStatements;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
@@ -18,17 +18,22 @@ use function Tempest\Database\inspect;
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
-final class CountQueryBuilder implements BuildsQuery
+final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private CountStatement $count;
 
-    private array $bindings = [];
+    public ModelInspector $model;
 
-    private ModelInspector $model;
+    public array $bindings = [];
+
+    public ImmutableArray $wheres {
+        get => $this->count->where;
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -41,6 +46,26 @@ final class CountQueryBuilder implements BuildsQuery
             table: $this->model->getTableDefinition(),
             column: $column,
         );
+    }
+
+    /**
+     * Creates an instance from another query builder, inheriting conditions and bindings.
+     *
+     * @template TSourceModel of object
+     * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @param string|null $column
+     * @return CountQueryBuilder<TSourceModel>
+     */
+    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, ?string $column = null): CountQueryBuilder
+    {
+        $builder = new self($source->model->model, $column);
+        $builder->bind(...$source->bindings);
+
+        foreach ($source->wheres as $where) {
+            $builder->wheres[] = $where;
+        }
+
+        return $builder;
     }
 
     /**
@@ -98,15 +123,5 @@ final class CountQueryBuilder implements BuildsQuery
     public function build(mixed ...$bindings): Query
     {
         return new Query($this->count, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
-    }
-
-    private function getStatementForWhere(): HasWhereStatements
-    {
-        return $this->count;
-    }
-
-    private function getModel(): ModelInspector
-    {
-        return $this->model;
     }
 }

@@ -6,7 +6,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
-use Tempest\Database\QueryStatements\HasWhereStatements;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
@@ -15,17 +15,22 @@ use function Tempest\Database\inspect;
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
-final class DeleteQueryBuilder implements BuildsQuery
+final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private DeleteStatement $delete;
 
-    private array $bindings = [];
+    public array $bindings = [];
 
-    private ModelInspector $model;
+    public ModelInspector $model;
+
+    public ImmutableArray $wheres {
+        get => $this->delete->where;
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -34,6 +39,25 @@ final class DeleteQueryBuilder implements BuildsQuery
     {
         $this->model = inspect($model);
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
+    }
+
+    /**
+     * Creates an instance from another query builder, inheriting conditions and bindings.
+     *
+     * @template TSourceModel of object
+     * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @return DeleteQueryBuilder<TSourceModel>
+     */
+    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source): DeleteQueryBuilder
+    {
+        $builder = new self($source->model->model);
+        $builder->bind(...$source->bindings);
+
+        foreach ($source->wheres as $where) {
+            $builder->wheres[] = $where;
+        }
+
+        return $builder;
     }
 
     /**
@@ -95,15 +119,5 @@ final class DeleteQueryBuilder implements BuildsQuery
         }
 
         return new Query($this->delete, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
-    }
-
-    private function getStatementForWhere(): HasWhereStatements
-    {
-        return $this->delete;
-    }
-
-    private function getModel(): ModelInspector
-    {
-        return $this->model;
     }
 }
