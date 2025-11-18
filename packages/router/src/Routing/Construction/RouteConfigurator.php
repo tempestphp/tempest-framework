@@ -22,6 +22,9 @@ final class RouteConfigurator
     /** @var array<string,array<string,\Tempest\Router\Routing\Construction\DiscoveredRoute>> */
     private array $dynamicRoutes = [];
 
+    /** @var array<string,string[]> */
+    private array $handlerIndex = [];
+
     private bool $isDirty = false;
 
     private RoutingTree $routingTree;
@@ -34,6 +37,7 @@ final class RouteConfigurator
     public function addRoute(DiscoveredRoute $route): void
     {
         $this->isDirty = true;
+        $this->handlerIndex[$route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName()] = $route->uri;
 
         if ($route->isDynamic) {
             $this->addDynamicRoute($route);
@@ -76,6 +80,7 @@ final class RouteConfigurator
             $this->staticRoutes,
             $this->dynamicRoutes,
             $this->routingTree->toMatchingRegexes(),
+            $this->handlerIndex,
         );
     }
 

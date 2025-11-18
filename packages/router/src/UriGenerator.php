@@ -13,7 +13,8 @@ use Tempest\DateTime\Duration;
 use Tempest\Http\Request;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\Exceptions\ControllerMethodHadNoRouteAttribute;
+use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
+use Tempest\Router\Exceptions\ControllerMethodHadNoRoute;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
@@ -25,6 +26,7 @@ final class UriGenerator
 {
     public function __construct(
         private AppConfig $appConfig,
+        private RouteConfig $routeConfig,
         private Signer $signer,
         private Container $container,
     ) {}
@@ -178,7 +180,7 @@ final class UriGenerator
 
         $matchedRoute = $this->container->get(MatchedRoute::class);
         $candidateUri = $this->createUri($action, ...[...$matchedRoute->params, ...$params]);
-        $currentUri = $this->createUri([$matchedRoute->route->handler->getDeclaringClass(), $matchedRoute->route->handler->getName()]);
+        $currentUri = $this->createUri([$matchedRoute->route->handler->getDeclaringClass()->getName(), $matchedRoute->route->handler->getName()]);
 
         foreach ($matchedRoute->params as $key => $value) {
             if ($value instanceof BackedEnum) {
@@ -206,14 +208,20 @@ final class UriGenerator
 
         [$controllerClass, $controllerMethod] = is_array($action) ? $action : [$action, '__invoke'];
 
-        $routeAttribute = new ClassReflector($controllerClass)
-            ->getMethod($controllerMethod)
-            ->getAttribute(Route::class);
+        $uri = $this->routeConfig->handlerIndex[$controllerClass . '::' . $controllerMethod] ?? null;
 
-        if ($routeAttribute === null) {
-            throw new ControllerMethodHadNoRouteAttribute($controllerClass, $controllerMethod);
+        if (! $uri) {
+            if (! class_exists($controllerClass)) {
+                throw ControllerActionDoesNotExist::controllerNotFound($controllerClass, $controllerMethod);
+            }
+
+            if (! method_exists($controllerClass, $controllerMethod)) {
+                throw ControllerActionDoesNotExist::actionNotFound($controllerClass, $controllerMethod);
+            }
+
+            throw new ControllerMethodHadNoRoute($controllerClass, $controllerMethod);
         }
 
-        return Str\ensure_starts_with($routeAttribute->uri, '/');
+        return Str\ensure_starts_with($uri, '/');
     }
 }
