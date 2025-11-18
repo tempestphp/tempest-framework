@@ -37,7 +37,10 @@ final class RouteConfigurator
     public function addRoute(DiscoveredRoute $route): void
     {
         $this->isDirty = true;
-        $this->handlerIndex[$route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName()] = $route->uri;
+
+        $handler = $route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName();
+        $this->handlerIndex[$handler] ??= [];
+        $this->handlerIndex[$handler][] = $route->uri;
 
         if ($route->isDynamic) {
             $this->addDynamicRoute($route);

@@ -18,7 +18,7 @@ final class RouteConfig
         /** @var array<string,\Tempest\Router\Routing\Matching\MatchingRegex> */
         public array $matchingRegexes = [],
 
-        /** @var array<string,string> */
+        /** @var array<string,string[]> */
         public array $handlerIndex = [],
 
         /** @var class-string<\Tempest\Router\ResponseProcessor>[] */

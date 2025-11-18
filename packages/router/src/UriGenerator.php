@@ -15,6 +15,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
 use Tempest\Router\Exceptions\ControllerMethodHadNoRoute;
+use Tempest\Router\Exceptions\ControllerMethodHasMultipleRoutes;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;
@@ -208,9 +209,9 @@ final class UriGenerator
 
         [$controllerClass, $controllerMethod] = is_array($action) ? $action : [$action, '__invoke'];
 
-        $uri = $this->routeConfig->handlerIndex[$controllerClass . '::' . $controllerMethod] ?? null;
+        $routes = array_unique($this->routeConfig->handlerIndex[$controllerClass . '::' . $controllerMethod] ?? []);
 
-        if (! $uri) {
+        if ($routes === []) {
             if (! class_exists($controllerClass)) {
                 throw ControllerActionDoesNotExist::controllerNotFound($controllerClass, $controllerMethod);
             }
@@ -222,6 +223,10 @@ final class UriGenerator
             throw new ControllerMethodHadNoRoute($controllerClass, $controllerMethod);
         }
 
-        return Str\ensure_starts_with($uri, '/');
+        if (count($routes) > 1) {
+            throw new ControllerMethodHasMultipleRoutes($controllerClass, $controllerMethod, $routes);
+        }
+
+        return Str\ensure_starts_with($routes[0], '/');
     }
 }

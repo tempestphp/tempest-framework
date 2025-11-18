@@ -10,8 +10,10 @@ use Tempest\DateTime\Duration;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
+use Tempest\Router\Exceptions\ControllerMethodHasMultipleRoutes;
 use Tempest\Router\UriGenerator;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
+use Tests\Tempest\Fixtures\Controllers\ControllerWithRepeatedRoutes;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\PrefixController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
@@ -281,5 +283,23 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
         $this->http->get('/prefix/endpoint')->assertOk();
 
         $this->assertTrue($this->generator->isCurrentUri(PrefixController::class));
+    }
+
+    #[Test]
+    public function controller_with_multiple_routes(): void
+    {
+        $this->expectException(ControllerMethodHasMultipleRoutes::class);
+        $this->expectExceptionMessage('Controller method `' . ControllerWithRepeatedRoutes::class . '::__invoke()` has multiple different routes');
+
+        $this->generator->createUri(ControllerWithRepeatedRoutes::class);
+    }
+
+    #[Test]
+    public function uri_to_controller_with_multiple_routes(): void
+    {
+        $this->assertSame(
+            '/repeated/a',
+            $this->generator->createUri('/repeated/a'),
+        );
     }
 }
