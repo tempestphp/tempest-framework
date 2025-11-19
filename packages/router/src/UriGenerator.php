@@ -42,7 +42,7 @@ final class UriGenerator
             return false;
         }
 
-        if ($expiresAt !== null && is_numeric($expiresAt) && DateTime::fromTimestamp((int)$expiresAt)->isPast()) {
+        if ($expiresAt !== null && is_numeric($expiresAt) && DateTime::fromTimestamp((int) $expiresAt)->isPast()) {
             return false;
         }
 
@@ -75,7 +75,7 @@ final class UriGenerator
         }
 
         if ($duration instanceof Duration) {
-            $duration = DateTime::now()->plusMilliseconds((int)$duration->getTotalMilliseconds());
+            $duration = DateTime::now()->plusMilliseconds((int) $duration->getTotalMilliseconds());
         }
 
         return $this->createSignedUri($uri, ...[
@@ -150,7 +150,7 @@ final class UriGenerator
 
             $uri = $uri->replaceRegex(
                 regex: '#\{' . $key . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
-                replace: (string)$value,
+                replace: (string) $value,
             );
         }
 
