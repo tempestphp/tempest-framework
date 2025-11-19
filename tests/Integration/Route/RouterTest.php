@@ -272,7 +272,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
     public function test_prefix_decorator(): void
     {
         $this->http
-            ->get('/prefix/endpoint')
+            ->get('/prefix/methodPrefix/endpoint')
             ->assertOk();
     }
 

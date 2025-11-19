@@ -19,6 +19,7 @@ use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
 
+use function Tempest\Support\path;
 use function Tempest\Support\str;
 
 final class UriGenerator
@@ -41,7 +42,7 @@ final class UriGenerator
             return false;
         }
 
-        if ($expiresAt !== null && is_numeric($expiresAt) && DateTime::fromTimestamp((int) $expiresAt)->isPast()) {
+        if ($expiresAt !== null && is_numeric($expiresAt) && DateTime::fromTimestamp((int)$expiresAt)->isPast()) {
             return false;
         }
 
@@ -74,7 +75,7 @@ final class UriGenerator
         }
 
         if ($duration instanceof Duration) {
-            $duration = DateTime::now()->plusMilliseconds((int) $duration->getTotalMilliseconds());
+            $duration = DateTime::now()->plusMilliseconds((int)$duration->getTotalMilliseconds());
         }
 
         return $this->createSignedUri($uri, ...[
@@ -149,7 +150,7 @@ final class UriGenerator
 
             $uri = $uri->replaceRegex(
                 regex: '#\{' . $key . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
-                replace: (string) $value,
+                replace: (string)$value,
             );
         }
 
@@ -206,14 +207,24 @@ final class UriGenerator
 
         [$controllerClass, $controllerMethod] = is_array($action) ? $action : [$action, '__invoke'];
 
-        $routeAttribute = new ClassReflector($controllerClass)
-            ->getMethod($controllerMethod)
-            ->getAttribute(Route::class);
+        $method = new ClassReflector($controllerClass)->getMethod($controllerMethod);
+
+        $routeAttribute = $method->getAttribute(Route::class);
 
         if ($routeAttribute === null) {
             throw new ControllerMethodHadNoRouteAttribute($controllerClass, $controllerMethod);
         }
 
-        return Str\ensure_starts_with($routeAttribute->uri, '/');
+        $parts = array_map(
+            fn (Prefix $prefix) => $prefix->prefix,
+            array_filter([
+                $method->getDeclaringClass()->getAttribute(Prefix::class),
+                $method->getAttribute(Prefix::class),
+            ]),
+        );
+
+        $parts[] = $routeAttribute->uri;
+
+        return Str\ensure_starts_with(path(...$parts)->toString(), '/');
     }
 }

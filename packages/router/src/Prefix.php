@@ -13,7 +13,7 @@ use function Tempest\Support\path;
 final readonly class Prefix implements RouteDecorator
 {
     public function __construct(
-        private string $prefix,
+        public string $prefix,
     ) {}
 
     public function decorate(Route $route): Route

@@ -13,6 +13,7 @@ use Tempest\Http\Method;
 use Tempest\Router\UriGenerator;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
+use Tests\Tempest\Fixtures\Controllers\PrefixController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
@@ -45,6 +46,14 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('https://test.com/abc', $this->generator->createUri('/abc'));
         $this->assertEquals('https://test.com/test/1/a/b/c/d', $this->generator->createUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
+    }
+
+    #[Test]
+    public function test_generate_uri_with_prefix_decorator(): void
+    {
+        $uri = uri(PrefixController::class);
+
+        $this->assertSame('/prefix/methodPrefix/endpoint', $uri);
     }
 
     #[Test]
