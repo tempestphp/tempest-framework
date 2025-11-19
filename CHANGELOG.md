@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9.2](https://github.com/tempestphp/tempest-framework/compare/v2.9.1..2.9.2)  —  2025-11-19
+
+### 🐛 Bug fixes
+
+- **intl**: make pluralizer singleton (#1726) ([39b2b2d](https://github.com/tempestphp/tempest-framework/commit/39b2b2da8683a1d08b5ebabcd71f35486a85e403))
+
+
 ## [2.9.0](https://github.com/tempestphp/tempest-framework/compare/v2.8.0..v2.9.0)  —  2025-11-14
 
 ### 🚀 Features
