@@ -16,6 +16,7 @@ use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
@@ -123,8 +124,6 @@ abstract class IntegrationTest extends TestCase
         /** @var GenericContainer $container */
         $container = $this->kernel->container;
         $this->container = $container;
-
-        $this->appConfig = $this->container->get(className: AppConfig::class);
 
         return $this;
     }
