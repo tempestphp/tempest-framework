@@ -49,8 +49,6 @@ abstract class IntegrationTest extends TestCase
     /** @var \Tempest\Discovery\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
 
-    protected AppConfig $appConfig;
-
     protected Kernel $kernel;
 
     protected GenericContainer $container;
@@ -121,8 +119,6 @@ abstract class IntegrationTest extends TestCase
         /** @var GenericContainer $container */
         $container = $this->kernel->container;
         $this->container = $container;
-
-        $this->appConfig = $this->container->get(className: AppConfig::class);
 
         return $this;
     }
@@ -222,8 +218,6 @@ abstract class IntegrationTest extends TestCase
         unset($this->root);
         /** @phpstan-ignore-next-line */
         unset($this->discoveryLocations);
-        /** @phpstan-ignore-next-line */
-        unset($this->appConfig);
         /** @phpstan-ignore-next-line */
         unset($this->kernel);
         /** @phpstan-ignore-next-line */
