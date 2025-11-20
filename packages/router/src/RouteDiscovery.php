@@ -27,8 +27,8 @@ final class RouteDiscovery implements Discovery
 
             foreach ($routeAttributes as $routeAttribute) {
                 $decorators = [
-                    ...$method->getDeclaringClass()->getAttributes(RouteDecorator::class),
                     ...$method->getAttributes(RouteDecorator::class),
+                    ...$method->getDeclaringClass()->getAttributes(RouteDecorator::class),
                 ];
 
                 $route = DiscoveredRoute::fromRoute($routeAttribute, $decorators, $method);

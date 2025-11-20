@@ -9,7 +9,7 @@ use Tempest\Router\Prefix;
 #[Prefix('/prefix')]
 final class PrefixController
 {
-    #[Get('/endpoint')]
+    #[Prefix('/method'), Get('/endpoint')]
     public function __invoke(): Ok
     {
         return new Ok();

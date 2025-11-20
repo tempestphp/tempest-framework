@@ -4,15 +4,16 @@ namespace Tests\Tempest\Integration\Route;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
-use ReflectionException;
 use Tempest\Core\AppConfig;
 use Tempest\Database\PrimaryKey;
 use Tempest\DateTime\Duration;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
 use Tempest\Router\UriGenerator;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
+use Tests\Tempest\Fixtures\Controllers\PrefixController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
@@ -56,9 +57,19 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
     #[Test]
     public function uri_generation_with_invalid_fqcn(): void
     {
-        $this->expectException(ReflectionException::class);
+        $this->expectException(ControllerActionDoesNotExist::class);
+        $this->expectExceptionMessage('The controller class `Tests\Tempest\Fixtures\Controllers\TestControllerInvalid` does not exist.');
 
         $this->generator->createUri(TestController::class . 'Invalid');
+    }
+
+    #[Test]
+    public function uri_generation_with_invalid_method(): void
+    {
+        $this->expectException(ControllerActionDoesNotExist::class);
+        $this->expectExceptionMessage('The method `invalid()` does not exist in controller class `Tests\Tempest\Fixtures\Controllers\TestController`.');
+
+        $this->generator->createUri([TestController::class, 'invalid']);
     }
 
     #[Test]
@@ -247,6 +258,37 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
             name: 'a',
             foo: 'bar',
             signature: 'uwu',
+        );
+    }
+
+    #[Test]
+    public function generates_uri_with_prefix_decorator(): void
+    {
+        $this->assertSame(
+            '/prefix/method/endpoint',
+            $this->generator->createUri(PrefixController::class),
+        );
+
+        $this->assertSame(
+            '/prefix/method/endpoint',
+            uri(PrefixController::class),
+        );
+    }
+
+    #[Test]
+    public function is_current_uri_with_prefix_decorator(): void
+    {
+        $this->http->get('/prefix/method/endpoint')->assertOk();
+
+        $this->assertTrue($this->generator->isCurrentUri(PrefixController::class));
+    }
+
+    #[Test]
+    public function uri_to_controller_with_multiple_routes(): void
+    {
+        $this->assertSame(
+            '/repeated/a',
+            $this->generator->createUri('/repeated/a'),
         );
     }
 }
