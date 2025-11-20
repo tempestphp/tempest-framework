@@ -3,26 +3,20 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
-use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
-use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\WhereStatement;
-use Tempest\Support\Str;
 
 use function Tempest\Support\str;
 
 /**
  * @template TModel of object
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
+ * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereConditions
  * @use \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
 {
     use HasConvenientWhereMethods;
-
-    abstract private function getModel(): ModelInspector;
-
-    abstract private function getStatementForWhere(): HasWhereStatements;
 
     /**
      * Adds a SQL `WHERE` condition to the query. If the `$statement` looks like raw SQL, the method will assume it is and call `whereRaw`. Otherwise, `whereField` will be called.
@@ -51,14 +45,14 @@ trait HasWhereQueryBuilderMethods
     public function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
         $operator = WhereOperator::fromOperator($operator);
-        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        if ($this->getStatementForWhere()->where->isNotEmpty()) {
+        if ($this->wheres->isNotEmpty()) {
             return $this->andWhere($field, $value, $operator);
         }
 
-        $this->getStatementForWhere()->where[] = new WhereStatement($condition['sql']);
+        $this->wheres[] = new WhereStatement($condition['sql']);
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -72,10 +66,10 @@ trait HasWhereQueryBuilderMethods
     public function andWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
     {
         $operator = WhereOperator::fromOperator($operator);
-        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->getStatementForWhere()->where[] = new WhereStatement("AND {$condition['sql']}");
+        $this->wheres[] = new WhereStatement("AND {$condition['sql']}");
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -89,10 +83,10 @@ trait HasWhereQueryBuilderMethods
     public function orWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
     {
         $operator = WhereOperator::fromOperator($operator);
-        $fieldDefinition = $this->getModel()->getFieldDefinition($field);
+        $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->getStatementForWhere()->where[] = new WhereStatement("OR {$condition['sql']}");
+        $this->wheres[] = new WhereStatement("OR {$condition['sql']}");
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -105,11 +99,11 @@ trait HasWhereQueryBuilderMethods
      */
     public function whereRaw(string $statement, mixed ...$bindings): self
     {
-        if ($this->getStatementForWhere()->where->isNotEmpty() && ! str($statement)->trim()->startsWith(['AND', 'OR'])) {
+        if ($this->wheres->isNotEmpty() && ! str($statement)->trim()->startsWith(['AND', 'OR'])) {
             return $this->andWhereRaw($statement, ...$bindings);
         }
 
-        $this->getStatementForWhere()->where[] = new WhereStatement($statement);
+        $this->wheres[] = new WhereStatement($statement);
         $this->bind(...$bindings);
 
         return $this;
@@ -122,7 +116,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->getStatementForWhere()->where[] = new WhereStatement("AND {$rawCondition}");
+        $this->wheres[] = new WhereStatement("AND {$rawCondition}");
         $this->bind(...$bindings);
 
         return $this;
@@ -135,7 +129,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->getStatementForWhere()->where[] = new WhereStatement("OR {$rawCondition}");
+        $this->wheres[] = new WhereStatement("OR {$rawCondition}");
         $this->bind(...$bindings);
 
         return $this;
@@ -149,12 +143,12 @@ trait HasWhereQueryBuilderMethods
      */
     public function whereGroup(Closure $callback): self
     {
-        $groupBuilder = new WhereGroupBuilder($this->getModel());
+        $groupBuilder = new WhereGroupBuilder($this->model);
         $callback($groupBuilder);
         $group = $groupBuilder->build();
 
         if (! $group->conditions->isEmpty()) {
-            $this->getStatementForWhere()->where[] = $group;
+            $this->wheres[] = $group;
             $this->bind(...$groupBuilder->getBindings());
         }
 
@@ -169,8 +163,8 @@ trait HasWhereQueryBuilderMethods
      */
     public function andWhereGroup(Closure $callback): self
     {
-        if ($this->getStatementForWhere()->where->isNotEmpty()) {
-            $this->getStatementForWhere()->where[] = new WhereStatement('AND');
+        if ($this->wheres->isNotEmpty()) {
+            $this->wheres[] = new WhereStatement('AND');
         }
 
         return $this->whereGroup($callback);
@@ -184,8 +178,8 @@ trait HasWhereQueryBuilderMethods
      */
     public function orWhereGroup(Closure $callback): self
     {
-        if ($this->getStatementForWhere()->where->isNotEmpty()) {
-            $this->getStatementForWhere()->where[] = new WhereStatement('OR');
+        if ($this->wheres->isNotEmpty()) {
+            $this->wheres[] = new WhereStatement('OR');
         }
 
         return $this->whereGroup($callback);

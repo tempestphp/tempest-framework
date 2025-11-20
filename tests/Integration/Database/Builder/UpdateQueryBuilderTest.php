@@ -18,6 +18,7 @@ use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -466,6 +467,15 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->update(items: [['name' => 'Test Item']])
             ->whereNot('id', 999)
             ->execute();
+    }
+
+    public function test_update_query_builder_from_another_query_builder(): void
+    {
+        $query = query(Chapter::class)
+            ->select()
+            ->where('book_id', 1);
+
+        $this->assertCount(1, UpdateQueryBuilder::fromQueryBuilder($query, ['title' => 'Updated Title'])->wheres);
     }
 }
 

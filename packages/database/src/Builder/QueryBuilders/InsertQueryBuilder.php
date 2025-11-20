@@ -36,9 +36,9 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private array $after = [];
 
-    private array $bindings = [];
+    public array $bindings = [];
 
-    private ModelInspector $model;
+    public ModelInspector $model;
 
     /**
      * @param class-string<TModel>|string|TModel $model

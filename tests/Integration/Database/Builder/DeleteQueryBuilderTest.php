@@ -8,6 +8,7 @@ use Tempest\Database\PrimaryKey;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -152,5 +153,14 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['draft', '2022-01-01'], $query->bindings);
+    }
+
+    public function test_delete_query_builder_from_another_query_builder(): void
+    {
+        $query = query(Chapter::class)
+            ->select()
+            ->where('book_id', 1);
+
+        $this->assertCount(1, DeleteQueryBuilder::fromQueryBuilder($query)->wheres);
     }
 }

@@ -561,6 +561,40 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi Chapter 4', $page10->data[0]->title);
     }
 
+    public function test_paginate_with_where_condition(): void
+    {
+        $this->seed();
+
+        $page1 = query(Chapter::class)
+            ->select()
+            ->whereField('book_id', value: 1)
+            ->paginate(itemsPerPage: 2);
+
+        $this->assertSame(3, $page1->totalItems);
+        $this->assertSame(2, $page1->totalPages);
+        $this->assertSame(1, $page1->currentPage);
+        $this->assertCount(2, $page1->data);
+        $this->assertSame('LOTR 1.1', $page1->data[0]->title);
+        $this->assertSame('LOTR 1.2', $page1->data[1]->title);
+    }
+
+    public function test_select_query_builder_from_another_query_builder(): void
+    {
+        $this->seed();
+
+        $source = query(Chapter::class)
+            ->select()
+            ->where('book_id', 1);
+
+        $query = SelectQueryBuilder::fromQueryBuilder($source);
+        $results = $query->all();
+
+        $this->assertCount(3, $results);
+        $this->assertSame('LOTR 1.1', $results[0]->title);
+        $this->assertSame('LOTR 1.2', $results[1]->title);
+        $this->assertSame('LOTR 1.3', $results[2]->title);
+    }
+
     private function seed(): void
     {
         $this->migrate(

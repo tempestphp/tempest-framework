@@ -11,12 +11,14 @@ use function Tempest\Support\arr;
 
 final class CountStatement implements QueryStatement, HasWhereStatements
 {
-    public bool $distinct = false;
-
+    /**
+     * @param ImmutableArray<WhereStatement> $where
+     */
     public function __construct(
         public readonly TableDefinition $table,
         public ?string $column = null,
         public ImmutableArray $where = new ImmutableArray(),
+        public bool $distinct = false,
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
