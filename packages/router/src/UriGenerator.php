@@ -223,10 +223,6 @@ final class UriGenerator
             throw new ControllerMethodHadNoRoute($controllerClass, $controllerMethod);
         }
 
-        if (count($routes) > 1) {
-            throw new ControllerMethodHasMultipleRoutes($controllerClass, $controllerMethod, $routes);
-        }
-
         return Str\ensure_starts_with($routes[0], '/');
     }
 }
