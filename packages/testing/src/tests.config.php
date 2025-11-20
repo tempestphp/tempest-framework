@@ -1,5 +1,5 @@
 <?php
 
-use Tempest\Testing\TestsConfig;
+use Tempest\Testing\TestConfig;
 
-return new TestsConfig();
+return new TestConfig();

@@ -4,7 +4,7 @@ namespace Tempest\Testing;
 
 use Tempest\Reflection\MethodReflector;
 
-final class TestsConfig
+final class TestConfig
 {
     public function __construct(
         /** @var MethodReflector[] */

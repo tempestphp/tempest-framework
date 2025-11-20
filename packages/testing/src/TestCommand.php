@@ -6,15 +6,21 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Tempest\Testing\Exceptions\TestHasFailed;
+use Tempest\EventBus\EventBus;
+use Tempest\Testing\Events\TestFailed;
+use Tempest\Testing\Events\TestSkipped;
+use Tempest\Testing\Events\TestSucceeded;
 
 final class TestCommand
 {
     use HasConsole;
 
+    private bool $all = false;
+
     public function __construct(
-        private readonly TestsConfig $testConfig,
+        private readonly TestConfig $testConfig,
         private readonly Container $container,
+        private readonly EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand]
@@ -24,56 +30,61 @@ final class TestCommand
         #[ConsoleArgument(description: 'Show all output, including succeeding tests')]
         bool $all = false,
     ): void {
-        $successCount = 0;
-        $failedCount = 0;
+        $this->eventBus->listen($this->onTestFailed(...));
+        $this->eventBus->listen($this->onTestSucceeded(...));
+        $this->eventBus->listen($this->onTestSkipped(...));
 
-        foreach ($this->testConfig->tests as $test) {
-            $testName = $test->getDeclaringClass()->getName() . ':' . $test->getName();
+        $this->all = $all;
 
-            if ($filter && ! str_contains($testName, $filter)) {
-                if ($all) {
-                    $this->info('skipped', $testName);
-                }
+        $runner = new TestRunner('Default', $filter);
 
-                continue;
-            }
+        $result = $runner->run(
+            $this->container,
+            $this->testConfig->tests,
+        );
 
-            try {
-                $this->container->invoke($test);
+        if ($result->succeeded) {
+            $this->success("{$result->succeeded} successful tests");
+        }
 
-                if ($all) {
-                    $this->success('check', $testName);
-                }
+        if ($result->failed) {
+            $this->error("{$result->failed} failed tests");
+        }
 
-                $successCount += 1;
-            } catch (TestHasFailed $testHasFailed) {
-                $message = sprintf(
-                    <<<'TXT'
+        if ($result->succeeded === 0 && $result->failed === 0) {
+            $this->info("No tests were run");
+        }
+    }
+
+    public function onTestFailed(TestFailed $event): void
+    {
+        $message = sprintf(
+            <<<'TXT'
                     %s
                     %s
                     TXT,
-                    $testHasFailed->reason,
-                    $testHasFailed->location
-                );
+            $event->exception->reason,
+            $event->exception->location
+        );
 
-                $this->error($message, $testName);
+        $this->error($message, $event->name);
+    }
 
-                $failedCount += 1;
-            }
+    public function onTestSkipped(TestSkipped $event): void
+    {
+        if (! $this->all) {
+            return;
         }
 
-        $this->writeln();
+        $this->info('skipped', $event->name);
+    }
 
-        if ($successCount) {
-            $this->success("{$successCount} successful tests");
+    public function onTestSucceeded(TestSucceeded $event): void
+    {
+        if (! $this->all) {
+            return;
         }
 
-        if ($failedCount) {
-            $this->error("{$failedCount} failed tests");
-        }
-
-        if ($failedCount === 0 && $successCount === 0) {
-            $this->info("No tests were run");
-        }
+        $this->info('check', $event->name);
     }
 }

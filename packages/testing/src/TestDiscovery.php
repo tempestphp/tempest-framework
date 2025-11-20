@@ -7,12 +7,12 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final class TestsDiscovery implements Discovery
+final class TestDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private readonly TestsConfig $testConfig,
+        private readonly TestConfig $testConfig,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
