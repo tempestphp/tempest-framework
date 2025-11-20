@@ -159,6 +159,7 @@
             "Tempest\\Router\\": "packages/router/src",
             "Tempest\\Storage\\": "packages/storage/src",
             "Tempest\\Support\\": "packages/support/src",
+            "Tempest\\Testing\\": "packages/testing/src",
             "Tempest\\Upgrade\\": "packages/upgrade/src",
             "Tempest\\Validation\\": "packages/validation/src",
             "Tempest\\View\\": "packages/view/src",
@@ -196,6 +197,7 @@
             "packages/support/src/Str/functions.php",
             "packages/support/src/Uri/functions.php",
             "packages/support/src/functions.php",
+            "packages/testing/src/functions.php",
             "packages/view/src/functions.php",
             "packages/vite/src/functions.php"
         ]
@@ -227,6 +229,7 @@
             "Tempest\\Router\\Tests\\": "packages/router/tests",
             "Tempest\\Storage\\Tests\\": "packages/storage/tests",
             "Tempest\\Support\\Tests\\": "packages/support/tests",
+            "Tempest\\Testing\\Tests\\": "packages/testing/tests",
             "Tempest\\Upgrade\\Tests\\": "packages/upgrade/tests",
             "Tempest\\Validation\\Tests\\": "packages/validation/tests",
             "Tempest\\View\\Tests\\": "packages/view/tests",

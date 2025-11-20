@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Console\Fixtures;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
-final readonly class TestCommand
+final readonly class DummyTestCommand
 {
     public function __construct(
         private Console $console,

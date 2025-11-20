@@ -1,0 +1,23 @@
+{
+    "name": "tempest/testing",
+    "description": "Test runner for Tempest",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/console": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Testing\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Testing\\Tests\\": "tests"
+        }
+    }
+}
