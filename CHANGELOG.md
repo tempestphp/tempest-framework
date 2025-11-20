@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.9.2](https://github.com/tempestphp/tempest-framework/compare/v2.9.1..2.9.2)  —  2025-11-19
+## [2.9.3](https://github.com/tempestphp/tempest-framework/compare/v2.9.2..2.9.3)  —  2025-11-20
+
+### 🐛 Bug fixes
+
+- **router**: use route registry to generate uris (#1724) ([6dc51c2](https://github.com/tempestphp/tempest-framework/commit/6dc51c29e40092379f918e6f3bd47862c2e090d1))
+
+
+## [2.9.2](https://github.com/tempestphp/tempest-framework/compare/v2.9.1..v2.9.2)  —  2025-11-19
 
 ### 🐛 Bug fixes
 
