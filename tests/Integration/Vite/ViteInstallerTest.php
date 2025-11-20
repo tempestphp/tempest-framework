@@ -14,12 +14,15 @@ final class ViteInstallerTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->installer->configure(__DIR__ . '/install', new Psr4Namespace('App\\', __DIR__ . '/install/app'));
+        $this->installer->configure(
+            $this->internalStorage . '/install',
+            new Psr4Namespace('App\\', $this->internalStorage . '/install/app'),
+        );
 
-        mkdir(__DIR__ . '/install/node_modules');
+        mkdir($this->internalStorage . '/install/node_modules');
 
         // force usage of npm because bun will mutate Tempest's root install otherwise
-        touch(__DIR__ . '/install/package-lock.json');
+        touch($this->internalStorage . '/install/package-lock.json');
     }
 
     #[After]

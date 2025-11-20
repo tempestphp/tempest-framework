@@ -21,9 +21,9 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Filesystem\delete_file(root_path('.env'));
+
+        parent::tearDown();
     }
 
     public function test_creates_dot_env(): void

@@ -36,6 +36,7 @@ use Tempest\Process\Testing\ProcessTester;
 use Tempest\Storage\Testing\StorageTester;
 use Throwable;
 
+use function Tempest\env;
 use function Tempest\Support\Path\normalize;
 use function Tempest\Support\Path\to_absolute_path;
 
@@ -45,6 +46,8 @@ use function Tempest\Support\Path\to_absolute_path;
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;
+
+    protected string $internalStorage;
 
     /** @var \Tempest\Discovery\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
@@ -110,12 +113,14 @@ abstract class IntegrationTest extends TestCase
     {
         // We force forward slashes for consistency even on Windows.
         $this->root ??= normalize(realpath(getcwd()));
+        $this->internalStorage = $this->root . '/.tempest/test_internal_storage/' . env('TEST_TOKEN', 'default');
 
         $discoveryLocations = [...$this->discoveryLocations, ...$this->discoverTestLocations()];
 
         $this->kernel ??= FrameworkKernel::boot(
             root: $this->root,
             discoveryLocations: $discoveryLocations,
+            internalStorage: $this->internalStorage,
         );
 
         /** @var GenericContainer $container */
@@ -234,6 +239,8 @@ abstract class IntegrationTest extends TestCase
         unset($this->http);
         /** @phpstan-ignore-next-line */
         unset($this->oauth);
+
+        GenericContainer::setInstance(null);
     }
 
     protected function assertException(string $expectedExceptionClass, Closure $handler, ?Closure $assertException = null, ?string $message = null): void
