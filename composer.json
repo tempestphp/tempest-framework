@@ -246,6 +246,7 @@
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "fmt": "vendor/bin/mago fmt",
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
+        "style": "composer fmt && composer lint:fix",
         "lint": "vendor/bin/mago lint --potentially-unsafe --minimum-fail-level=note",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
