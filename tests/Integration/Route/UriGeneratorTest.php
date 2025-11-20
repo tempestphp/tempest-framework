@@ -266,12 +266,12 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
     public function generates_uri_with_prefix_decorator(): void
     {
         $this->assertSame(
-            '/prefix/endpoint',
+            '/prefix/method/endpoint',
             $this->generator->createUri(PrefixController::class),
         );
 
         $this->assertSame(
-            '/prefix/endpoint',
+            '/prefix/method/endpoint',
             uri(PrefixController::class),
         );
     }
@@ -279,7 +279,7 @@ final class UriGeneratorTest extends FrameworkIntegrationTestCase
     #[Test]
     public function is_current_uri_with_prefix_decorator(): void
     {
-        $this->http->get('/prefix/endpoint')->assertOk();
+        $this->http->get('/prefix/method/endpoint')->assertOk();
 
         $this->assertTrue($this->generator->isCurrentUri(PrefixController::class));
     }
