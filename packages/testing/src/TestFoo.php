@@ -13,12 +13,14 @@ final class TestFoo
     #[Test]
     public function b(): void
     {
+        sleep(1);
         test(true)->is(false);
     }
 
     #[Test]
     public function c(): void
     {
+        sleep(1);
         test(true)->is(true);
     }
 

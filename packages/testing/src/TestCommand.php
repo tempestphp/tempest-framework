@@ -15,7 +15,7 @@ final class TestCommand
 {
     use HasConsole;
 
-    private bool $all = false;
+    private bool $verbose = false;
 
     public function __construct(
         private readonly TestConfig $testConfig,
@@ -25,16 +25,18 @@ final class TestCommand
 
     #[ConsoleCommand]
     public function __invoke(
-        #[ConsoleArgument(description: 'Only run tests matching the given fuzzy filter')]
+        #[ConsoleArgument(description: 'Only run tests matching this fuzzy filter')]
         ?string $filter = null,
-        #[ConsoleArgument(description: 'Show all output, including succeeding tests')]
-        bool $all = false,
+        #[ConsoleArgument(description: 'Show all output, including succeeding and skipped tests', aliases: ['-v'])]
+        bool $verbose = false,
     ): void {
+        $start = microtime(true);
+
         $this->eventBus->listen($this->onTestFailed(...));
         $this->eventBus->listen($this->onTestSucceeded(...));
         $this->eventBus->listen($this->onTestSkipped(...));
 
-        $this->all = $all;
+        $this->verbose = $verbose;
 
         $runner = new TestRunner('Default', $filter);
 
@@ -42,6 +44,10 @@ final class TestCommand
             $this->container,
             $this->testConfig->tests,
         );
+
+        $end = microtime(true);
+        $elapsed = round($end - $start, 2);
+        $this->info("Tests took {$elapsed} seconds to run");
 
         if ($result->succeeded) {
             $this->success("{$result->succeeded} successful tests");
@@ -72,7 +78,7 @@ final class TestCommand
 
     public function onTestSkipped(TestSkipped $event): void
     {
-        if (! $this->all) {
+        if (! $this->verbose) {
             return;
         }
 
@@ -81,10 +87,10 @@ final class TestCommand
 
     public function onTestSucceeded(TestSucceeded $event): void
     {
-        if (! $this->all) {
+        if (! $this->verbose) {
             return;
         }
 
-        $this->info('check', $event->name);
+        $this->success('check', $event->name);
     }
 }
