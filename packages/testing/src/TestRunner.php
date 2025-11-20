@@ -2,7 +2,9 @@
 
 namespace Tempest\Testing;
 
+use Symfony\Component\Process\Process;
 use Tempest\Container\Container;
+use Tempest\Reflection\MethodReflector;
 use Tempest\Testing\Events\TestFailed;
 use Tempest\Testing\Events\TestSkipped;
 use Tempest\Testing\Events\TestSucceeded;
@@ -21,27 +23,55 @@ final readonly class TestRunner
     {
         $result = new TestRunnerResult();
 
-        foreach ($tests as $test) {
-            $testName = $test->getDeclaringClass()->getName() . ':' . $test->getName();
+        // TODO: filter before passing to runner
+//        if ($filter && ! str_contains($testName, $filter)) {
+//            $this->output(new TestSkipped($testName));
+//
+//            continue;
+//        }
 
-            if ($this->filter && ! str_contains($testName, $this->filter)) {
-                event(new TestSkipped($testName));
+        $tests = array_map(
+            fn (MethodReflector $test) => '--tests="' . $test->getDeclaringClass()->getName() . '::' . $test->getName() . '"',
+            $tests
+        );
 
-                continue;
-            }
+        $process = new Process([
+            PHP_BINDIR . '/php',
+            'tempest',
+            'test:run',
+            ...$tests
+        ]);
 
-            try {
-                $container->invoke($test);
+        $process->start(function (string $type, string $buffer) {
+            $event = unserialize(trim($buffer));
 
-                event(new TestSucceeded($testName));
+            event($event);
+        });
 
-                $result->success();
-            } catch (TestHasFailed $testHasFailed) {
-                event(new TestFailed($testName, $testHasFailed));
 
-                $result->fail();
-            }
-        }
+        $process->wait();
+//
+//        foreach ($tests as $test) {
+//            $testName = $test->getDeclaringClass()->getName() . '::' . $test->getName();
+//
+//            if ($this->filter && ! str_contains($testName, $this->filter)) {
+//                event(new TestSkipped($testName));
+//
+//                continue;
+//            }
+//
+//            try {
+//                $container->invoke($test);
+//
+//                event(new TestSucceeded($testName));
+//
+//                $result->success();
+//            } catch (TestHasFailed $exception) {
+//                event(TestFailed::fromException($testName, $exception));
+//
+//                $result->fail();
+//            }
+//        }
 
         return $result;
     }
