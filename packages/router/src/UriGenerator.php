@@ -15,7 +15,6 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
 use Tempest\Router\Exceptions\ControllerMethodHadNoRoute;
-use Tempest\Router\Exceptions\ControllerMethodHasMultipleRoutes;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Support\Arr;
 use Tempest\Support\Regex;

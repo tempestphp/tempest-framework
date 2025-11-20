@@ -12,7 +12,6 @@ use Tempest\Http\Method;
 use Tempest\Router\Exceptions\ControllerActionDoesNotExist;
 use Tempest\Router\UriGenerator;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
-use Tests\Tempest\Fixtures\Controllers\ControllerWithRepeatedRoutes;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\PrefixController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
