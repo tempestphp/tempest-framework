@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Installer;
 
-use Symfony\Component\Process\Process;
 use Tempest\Auth\OAuth\SupportedOAuthProvider;
 use Tempest\Core\PublishesFiles;
+use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotFound;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotReadable;
 use Tempest\Support\Str\ImmutableString;
@@ -21,6 +21,10 @@ use function Tempest\Support\str;
 final class OAuthInstaller
 {
     use PublishesFiles;
+
+    public function __construct(
+        private readonly ProcessExecutor $processExecutor,
+    ) {}
 
     public function install(): void
     {
@@ -133,10 +137,7 @@ final class OAuthInstaller
             ->filter();
 
         if ($packages->isNotEmpty()) {
-            $this->task(
-                label: "Installing composer dependencies {$packages->implode(', ')}",
-                handler: new Process(['composer', 'require', ...$packages], cwd: root_path()),
-            );
+            $this->processExecutor->run("composer require {$packages->implode(', ')}");
         }
     }
 
