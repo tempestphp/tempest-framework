@@ -33,6 +33,8 @@ final class TestCommand
     public function __invoke(
         #[ConsoleArgument(description: 'Only run tests matching this fuzzy filter')]
         ?string $filter = null,
+        #[ConsoleArgument(description: 'Number of processes to run tests in parallel')]
+        int $processes = 5,
         #[ConsoleArgument(description: 'Show all output, including succeeding and skipped tests', aliases: ['-v'])]
         bool $verbose = false,
     ): void {
@@ -46,8 +48,10 @@ final class TestCommand
 
         $this->result->startTime();
 
+        $chunks = ceil($tests->count() / $processes);
+
         $tests = $tests
-            ->chunk(50)
+            ->chunk($chunks)
             ->map(fn (ImmutableArray $tests, int $i) => new TestRunner($i)->run($tests));
 
         $this->info("Running on {$tests->count()} processes");
