@@ -12,7 +12,7 @@ final class Test
     public MethodReflector $handler;
 
     public string $name {
-        get => $this->handler->getDeclaringClass()->getName() . '::' . $this->handler->getName() . '"';
+        get => $this->handler->getDeclaringClass()->getName() . '::' . $this->handler->getName();
     }
 
     public static function fromName(string $name): self

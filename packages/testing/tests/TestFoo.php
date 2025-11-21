@@ -7,33 +7,33 @@ use function Tempest\Testing\test;
 
 final class TestFoo
 {
-    #[Test]
+//    #[Test]
     public function a(): void
     {
         test(true)->is(false);
     }
 
-    #[Test]
+//    #[Test]
     public function b(): void
     {
         sleep(1);
         test(true)->is(false);
     }
 
-    #[Test]
+//    #[Test]
     public function c(): void
     {
         sleep(1);
         test(true)->is(true);
     }
 
-    #[Test]
+//    #[Test]
     public function d(): void
     {
         test(true)->is(true);
     }
 
-    #[Test]
+//    #[Test]
     public function e(): void
     {
         test(true)->is(false);

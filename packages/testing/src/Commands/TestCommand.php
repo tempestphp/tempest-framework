@@ -60,11 +60,13 @@ final class TestCommand
             ->chunk($chunks)
             ->map(fn (ImmutableArray $tests, int $i) => new TestRunner($i)->run($tests));
 
-        $this->info(sprintf(
-            "Running on %d %s",
-            $tests->count(),
-            str('process')->pluralize($tests->count()),
-        ));
+        if ($this->verbose) {
+            $this->info(sprintf(
+                "Running on %d %s",
+                $tests->count(),
+                str('process')->pluralize($tests->count()),
+            ))->writeln();
+        }
 
         $tests->map(fn (TestRunner $runner) => $runner->wait());
 
@@ -85,16 +87,16 @@ final class TestCommand
         );
 
         $this->result->addFailed();
-        $this->error($message, $event->name);
+
+        $this->error(sprintf('<style="fg-red">%s</style>', $event->name));
+        $this->writeln(sprintf('     <style="fg-red underline">%s</style>', $event->location));
+        $this->writeln(sprintf('     <style="fg-red">%s</style>', $event->reason));
+        $this->writeln();
     }
 
     public function onTestSkipped(TestSkipped $event): void
     {
         $this->result->addSkipped();
-
-        if ($this->verbose) {
-            $this->info('skipped', $event->name);
-        }
     }
 
     public function onTestSucceeded(TestSucceeded $event): void
@@ -102,25 +104,25 @@ final class TestCommand
         $this->result->addSucceeded();
 
         if ($this->verbose) {
-            $this->success('check', $event->name);
+            $this->success($event->name);
         }
     }
 
     private function renderResult(): void
     {
-        $this->info("Tests took {$this->result->elapsedTime} seconds to run");
+        $message = sprintf(
+            '<style="bg-green"> %d succeeded </style> <style="bg-red"> %d failed </style> <style="bg-blue"> %d skipped </style> <style="bg-yellow"> %ss </style>',
+            $this->result->succeeded,
+            $this->result->failed,
+            $this->result->skipped,
+            $this->result->elapsedTime,
+        );
 
-        if ($this->result->skipped) {
-            $this->info("{$this->result->skipped} skipped tests");
+        if ($this->result->failed > 0 || $this->verbose) {
+            $this->writeln();
         }
 
-        if ($this->result->succeeded) {
-            $this->success("{$this->result->succeeded} successful tests");
-        }
-
-        if ($this->result->failed) {
-            $this->error("{$this->result->failed} failed tests");
-        }
+        $this->writeln($message);
     }
 
     private function getTests(?string $filter): ImmutableArray

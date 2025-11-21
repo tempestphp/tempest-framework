@@ -15,7 +15,7 @@ final readonly class TestRunner
     /** @param ImmutableArray<array-key, \Tempest\Testing\Test> $tests */
     public function run(ImmutableArray $tests): self
     {
-        $tests = $tests->map(fn (Test $test) => '--tests="' . $test->name);
+        $tests = $tests->map(fn (Test $test) => '--tests="' . $test->name . '"');
 
         $this->process = new Process([
             PHP_BINDIR . '/php',
