@@ -22,16 +22,16 @@ final class TestDiscovery implements Discovery
         }
 
         foreach ($class->getPublicMethods() as $method) {
-            if ($method->hasAttribute(Test::class)) {
-                $this->discoveryItems->add($location, $method);
+            if ($test = $method->getAttribute(Test::class)) {
+                $this->discoveryItems->add($location, [$test, $method]);
             }
         }
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as $handler) {
-            $this->testConfig->addTest($handler);
+        foreach ($this->discoveryItems as [$test, $handler]) {
+            $this->testConfig->addTest($test, $handler);
         }
     }
 }

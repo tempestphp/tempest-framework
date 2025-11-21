@@ -40,10 +40,17 @@ final class TestCommand
 
         $runner = new TestRunner('Default', $filter);
 
-        $result = $runner->run(
-            $this->container,
-            $this->testConfig->tests,
-        );
+        $tests = $this->testConfig->tests;
+
+        if ($filter) {
+            foreach ($tests as $i => $test) {
+                if (! $test->matchesFilter($filter)) {
+                    unset($tests[$i]);
+                }
+            }
+        }
+
+        $result = $runner->run($tests);
 
         $end = microtime(true);
         $elapsed = round($end - $start, 2);
@@ -69,8 +76,8 @@ final class TestCommand
                     %s
                     %s
                     TXT,
-            $event->exception->reason,
-            $event->exception->location
+            $event->reason,
+            $event->location
         );
 
         $this->error($message, $event->name);

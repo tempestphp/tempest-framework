@@ -7,12 +7,16 @@ use Tempest\Reflection\MethodReflector;
 final class TestConfig
 {
     public function __construct(
-        /** @var MethodReflector[] */
+        /** @var \Tempest\Testing\Test[] */
         public array $tests = [],
     ) {}
 
-    public function addTest(MethodReflector $handler): void
+    public function addTest(Test $test, MethodReflector $handler): self
     {
-        $this->tests[] = $handler;
+        $test->handler = $handler;
+
+        $this->tests[] = $test;
+
+        return $this;
     }
 }
