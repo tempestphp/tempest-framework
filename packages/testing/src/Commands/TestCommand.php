@@ -77,20 +77,11 @@ final class TestCommand
 
     public function onTestFailed(TestFailed $event): void
     {
-        $message = sprintf(
-            <<<'TXT'
-                    %s
-                    %s
-                    TXT,
-            $event->reason,
-            $event->location,
-        );
-
         $this->result->addFailed();
 
         $this->error(sprintf('<style="fg-red">%s</style>', $event->name));
-        $this->writeln(sprintf('     <style="fg-red underline">%s</style>', $event->location));
-        $this->writeln(sprintf('     <style="fg-red">%s</style>', $event->reason));
+        $this->writeln(sprintf('  <style="fg-red dim">//</style> <style="fg-red underline">%s</style>', $event->location));
+        $this->writeln(sprintf('  <style="fg-red dim">//</style> <style="fg-red">%s</style>', $event->reason));
         $this->writeln();
     }
 

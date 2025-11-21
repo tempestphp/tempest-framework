@@ -41,6 +41,6 @@ final class TestRunCommand
 
     private function output(object $event): void
     {
-        $this->writeln(serialize($event));
+        $this->writeln('[EVENT] ' . serialize($event));
     }
 }

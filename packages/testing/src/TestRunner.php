@@ -25,9 +25,13 @@ final readonly class TestRunner
         ]);
 
         $this->process->start(function (string $type, string $buffer) {
-            foreach (explode("\n", trim($buffer)) as $line) {
-                $event = unserialize($line);
-                event($event);
+            foreach (explode(PHP_EOL, trim($buffer)) as $line) {
+                if (str_starts_with($line, '[EVENT]')) {
+                    $output = unserialize(substr($line, strlen('[EVENT] ')));
+                    event($output);
+                } else {
+                    echo $line . PHP_EOL;
+                }
             }
         });
 
