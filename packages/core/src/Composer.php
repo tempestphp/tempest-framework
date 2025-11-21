@@ -63,6 +63,18 @@ final class Composer
         return $this;
     }
 
+    public function getDevNamespaces(): Arr\ImmutableArray
+    {
+        $composerPath = Path\normalize($this->root, 'composer.json');
+        $composer = $this->loadComposerFile($composerPath);
+
+        return arr($composer)
+            ->get('autoload-dev.psr-4', default: arr())
+            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
+            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->values();
+    }
+
     public function setMainNamespace(Psr4Namespace $namespace): self
     {
         $this->mainNamespace = $namespace;

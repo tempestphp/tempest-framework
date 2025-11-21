@@ -5,8 +5,10 @@ namespace Tempest\Testing;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 
+#[SkipDiscovery]
 final class TestDiscovery implements Discovery
 {
     use IsDiscovery;
@@ -17,10 +19,6 @@ final class TestDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (str_contains($location->path, '/vendor/') || str_contains($location->path, '\\vendor\\')) {
-            return;
-        }
-
         foreach ($class->getPublicMethods() as $method) {
             if ($test = $method->getAttribute(Test::class)) {
                 $this->discoveryItems->add($location, [$test, $method]);

@@ -32,9 +32,12 @@ final class LoadDiscoveryClasses
         private readonly DiscoveryCache $discoveryCache,
     ) {}
 
-    public function __invoke(): void
+    /**
+     * @param class-string<Discovery>[]|null $discoveryClasses>
+     */
+    public function __invoke(?array $discoveryClasses = null): void
     {
-        $discoveries = $this->build();
+        $discoveries = $this->build($discoveryClasses);
 
         foreach ($discoveries as $discovery) {
             $this->applyDiscovery($discovery);
@@ -42,27 +45,39 @@ final class LoadDiscoveryClasses
     }
 
     /** @return Discovery[] */
-    public function build(): array
+    public function build(?array $discoveryClasses = null): array
     {
-        // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-        $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
+        if ($discoveryClasses === null) {
+            // DiscoveryDiscovery needs to be applied before we can build all other discoveries
+            $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
 
-        // The first pass over all directories to find all discovery classes
-        $this->discover([$discoveryDiscovery]);
+            // The first pass over all directories to find all discovery classes
+            $this->discover([$discoveryDiscovery]);
 
-        // Manually apply DiscoveryDiscovery
-        $this->applyDiscovery($discoveryDiscovery);
+            // Manually apply DiscoveryDiscovery
+            $this->applyDiscovery($discoveryDiscovery);
 
-        // Resolve all other discoveries from the container, optionally loading their cache
-        $discoveries = array_map(
-            fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
-            $this->kernel->discoveryClasses,
-        );
+            // Resolve all other discoveries from the container, optionally loading their cache
+            $discoveries = array_map(
+                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+                $this->kernel->discoveryClasses,
+            );
 
-        // The second pass over all directories to apply all other discovery classes
-        $this->discover($discoveries);
+            // The second pass over all directories to apply all other discovery classes
+            $this->discover($discoveries);
 
-        return [$discoveryDiscovery, ...$discoveries];
+            return [$discoveryDiscovery, ...$discoveries];
+        } else {
+            // Resolve all manually specified discoveries
+            $discoveries = array_map(
+                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+                $discoveryClasses,
+            );
+
+            $this->discover($discoveries);
+
+            return $discoveries;
+        }
     }
 
     /**

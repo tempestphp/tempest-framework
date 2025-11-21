@@ -1,6 +1,9 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Tests;
+
+use Tempest\Testing\Test;
+use function Tempest\Testing\test;
 
 final class TestFoo
 {

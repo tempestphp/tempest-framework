@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Route;
+namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;

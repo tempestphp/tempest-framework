@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Commands;
 
 use ReflectionException;
 use Tempest\Console\ConsoleCommand;
@@ -9,6 +9,7 @@ use Tempest\Container\Container;
 use Tempest\Testing\Events\TestFailed;
 use Tempest\Testing\Events\TestSucceeded;
 use Tempest\Testing\Exceptions\TestHasFailed;
+use Tempest\Testing\Test;
 
 final class TestRunCommand
 {
@@ -18,7 +19,7 @@ final class TestRunCommand
         private readonly Container $container,
     ) {}
 
-    #[ConsoleCommand]
+    #[ConsoleCommand(middleware: [WithDiscoveredTestsMiddleware::class])]
     public function __invoke(array $tests): void {
         foreach ($tests as $testName) {
             try {

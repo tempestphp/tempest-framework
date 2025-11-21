@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Database;
+namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;

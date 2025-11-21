@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Commands;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -12,6 +12,10 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Testing\Events\TestFailed;
 use Tempest\Testing\Events\TestSkipped;
 use Tempest\Testing\Events\TestSucceeded;
+use Tempest\Testing\Test;
+use Tempest\Testing\TestConfig;
+use Tempest\Testing\TestResult;
+use Tempest\Testing\TestRunner;
 use function Tempest\event;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -30,7 +34,7 @@ final class TestCommand
         private readonly ProcessExecutor $executor,
     ) {}
 
-    #[ConsoleCommand]
+    #[ConsoleCommand(middleware: [WithDiscoveredTestsMiddleware::class])]
     public function __invoke(
         #[ConsoleArgument(description: 'Only run tests matching this fuzzy filter')]
         ?string $filter = null,
@@ -86,22 +90,20 @@ final class TestCommand
 
     public function onTestSkipped(TestSkipped $event): void
     {
-        if (! $this->verbose) {
-            return;
-        }
-
         $this->result->addSkipped();
-        $this->info('skipped', $event->name);
+
+        if ($this->verbose) {
+            $this->info('skipped', $event->name);
+        }
     }
 
     public function onTestSucceeded(TestSucceeded $event): void
     {
-        if (! $this->verbose) {
-            return;
-        }
-
         $this->result->addSucceeded();
-        $this->success('check', $event->name);
+
+        if ($this->verbose) {
+            $this->success('check', $event->name);
+        }
     }
 
     private function renderResult(): void
