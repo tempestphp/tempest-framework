@@ -24,6 +24,15 @@ final readonly class Tester
         return $this;
     }
 
+    public function equals(mixed $expected): self
+    {
+        if ($expected != $this->subject) {
+            throw new TestHasFailed("failed asserting that %s equals %s", $this->subject, $expected);
+        }
+
+        return $this;
+    }
+
     public function hasCount(int $expected): self
     {
         if ($expected !== count($this->subject)) {
