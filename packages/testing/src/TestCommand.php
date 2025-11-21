@@ -14,6 +14,7 @@ use Tempest\Testing\Events\TestSkipped;
 use Tempest\Testing\Events\TestSucceeded;
 use function Tempest\event;
 use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final class TestCommand
 {
@@ -37,7 +38,8 @@ final class TestCommand
         int $processes = 5,
         #[ConsoleArgument(description: 'Show all output, including succeeding and skipped tests', aliases: ['-v'])]
         bool $verbose = false,
-    ): void {
+    ): void
+    {
         $this->verbose = $verbose;
         $this->result = new TestResult();
         $this->eventBus->listen($this->onTestFailed(...));
@@ -54,7 +56,11 @@ final class TestCommand
             ->chunk($chunks)
             ->map(fn (ImmutableArray $tests, int $i) => new TestRunner($i)->run($tests));
 
-        $this->info("Running on {$tests->count()} processes");
+        $this->info(sprintf(
+            "Running on %d %s",
+            $tests->count(),
+            str('process')->pluralize($tests->count()),
+        ));
 
         $tests->map(fn (TestRunner $runner) => $runner->wait());
 
@@ -71,7 +77,7 @@ final class TestCommand
                     %s
                     TXT,
             $event->reason,
-            $event->location
+            $event->location,
         );
 
         $this->result->addFailed();
@@ -117,17 +123,19 @@ final class TestCommand
 
     private function getTests(?string $filter): ImmutableArray
     {
-        $tests = $this->testConfig->tests;
+        $tests = arr($this->testConfig->tests);
 
-        if ($filter) {
-            foreach ($tests as $i => $test) {
-                if (! $test->matchesFilter($filter)) {
-                    unset($tests[$i]);
-                    event(new TestSkipped($test->name));
-                }
-            }
+        if (! $filter) {
+            return $tests;
         }
 
-        return arr($tests);
+        return $tests->filter(function (Test $test) use ($filter) {
+            if (! $test->matchesFilter($filter)) {
+                event(new TestSkipped($test->name));
+                return false;
+            }
+
+            return true;
+        });
     }
 }
