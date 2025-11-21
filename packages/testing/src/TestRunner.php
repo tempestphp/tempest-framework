@@ -3,42 +3,41 @@
 namespace Tempest\Testing;
 
 use Symfony\Component\Process\Process;
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\event;
 
 final readonly class TestRunner
 {
-    public function __construct(
-        private string $name,
-        private ?string $filter,
-    ) {}
+    public function __construct(private string $name = 'Default') {}
 
-    /** @param \Tempest\Testing\Test[] $tests */
-    public function run(array $tests): TestRunnerResult
+    private Process $process;
+
+    /** @param ImmutableArray<array-key, \Tempest\Testing\Test> $tests */
+    public function run(ImmutableArray $tests): self
     {
-        $result = new TestRunnerResult();
+        $tests = $tests->map(fn (Test $test) => '--tests="' . $test->name);
 
-        $tests = array_map(
-            fn (Test $test) => '--tests="' . $test->name,
-            $tests
-        );
-
-        $process = new Process([
+        $this->process = new Process([
             PHP_BINDIR . '/php',
             'tempest',
             'test:run',
             ...$tests
         ]);
 
-        $process->start(function (string $type, string $buffer) {
+        $this->process->start(function (string $type, string $buffer) {
             foreach (explode("\n", trim($buffer)) as $line) {
                 $event = unserialize($line);
                 event($event);
             }
         });
 
+        return $this;
+    }
 
-        $process->wait();
+    public function wait(): self
+    {
+        $this->process->wait();
 
-        return $result;
+        return $this;
     }
 }
