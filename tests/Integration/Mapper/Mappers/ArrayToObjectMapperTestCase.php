@@ -15,7 +15,12 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMixedArray;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringOrMixedArray;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringOrObjectUnion;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringsArray;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithUnionArray;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
@@ -164,6 +169,110 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $object->roles);
         $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+    }
+
+    public function test_map_array_with_string_array_property(): void
+    {
+        $object = map(['items' => ['a', 'b', 'c']])->to(ObjectWithStringsArray::class);
+
+        $this->assertCount(3, $object->items);
+        $this->assertSame(
+            [
+                'a',
+                'b',
+                'c',
+            ],
+            $object->items,
+        );
+    }
+
+    public function test_map_union_array_property_with_string(): void
+    {
+        $object = map(['items' => 'a'])->to(ObjectWithUnionArray::class);
+
+        $this->assertSame(
+            'a',
+            $object->items,
+        );
+    }
+
+    public function test_map_union_array_property_with_array(): void
+    {
+        $object = map(['items' => ['a', 'b', 'c']])->to(ObjectWithUnionArray::class);
+
+        $this->assertSame(
+            [
+                'a',
+                'b',
+                'c',
+            ],
+            $object->items,
+        );
+    }
+
+    public function test_map_union_array_property_with_null(): void
+    {
+        $object = map(['items' => null])->to(ObjectWithUnionArray::class);
+
+        $this->assertNull($object->items);
+    }
+
+    public function test_map_union_string_or_object_with_string(): void
+    {
+        $object = map(['item' => 'string'])->to(ObjectWithStringOrObjectUnion::class);
+
+        $this->assertIsString($object->item);
+        $this->assertSame('string', $object->item);
+    }
+
+    public function test_map_union_string_or_object_with_object(): void
+    {
+        $object = map(['item' => ['a' => '1', 'b' => '2']])->to(ObjectWithStringOrObjectUnion::class);
+
+        $this->assertInstanceOf(ObjectA::class, $object->item);
+        $this->assertSame('1', $object->item->a);
+        $this->assertSame('2', $object->item->b);
+    }
+
+    public function test_map_array_with_mixed_array_property(): void
+    {
+        $object = map(['items' => ['a', 1, 2.5, true, null, ['key' => 'value']]])->to(ObjectWithMixedArray::class);
+
+        $this->assertSame(
+            [
+                'a',
+                1,
+                2.5,
+                true,
+                null,
+                ['key' => 'value'],
+            ],
+            $object->items,
+        );
+    }
+
+    public function test_map_union_string_or_mixed_array_with_string(): void
+    {
+        $object = map(['items' => 'string'])->to(ObjectWithStringOrMixedArray::class);
+
+        $this->assertIsString($object->items);
+        $this->assertSame('string', $object->items);
+    }
+
+    public function test_map_union_string_or_mixed_array_with_array(): void
+    {
+        $object = map(['items' => ['a', 1, true, ['b' => 2]]])->to(ObjectWithStringOrMixedArray::class);
+
+        $this->assertIsArray($object->items);
+        $this->assertSame(
+            [
+                'a',
+                1,
+                true,
+                ['b' => 2],
+            ],
+            $object->items,
+        );
     }
 }
 
