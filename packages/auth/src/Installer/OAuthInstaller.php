@@ -137,7 +137,7 @@ final class OAuthInstaller
             ->filter();
 
         if ($packages->isNotEmpty()) {
-            $this->processExecutor->run("composer require {$packages->implode(', ')}");
+            $this->processExecutor->run("composer require {$packages->implode(' ')}");
         }
     }
 
