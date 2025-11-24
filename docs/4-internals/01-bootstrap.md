@@ -7,7 +7,7 @@ description: "Learn the steps involved in bootstrapping the framework."
 
 Here's a short summary of what booting Tempest looks like.
 
-- The entry point is either `public/index.html` or `./tempest`.
+- The entry point is either `public/index.php` or `./tempest`.
 - Tempest boots using the {b`\Tempest\Core\FrameworkKernel`}.
 - Bootstrap classes are located in the [`Tempest\Core\Kernel`](https://github.com/tempestphp/tempest-framework/tree/main/packages/core/src/Kernel) namespace.
 - First, discovery is started through the {b`\Tempest\Core\LoadDiscoveryLocations`} and {b`\Tempest\Core\LoadDiscoveryClasses`} classes.
