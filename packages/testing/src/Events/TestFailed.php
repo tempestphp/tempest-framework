@@ -2,9 +2,10 @@
 
 namespace Tempest\Testing\Events;
 
+use Tempest\EventBus\HandleOnce;
 use Tempest\Testing\Exceptions\TestHasFailed;
 
-final readonly class TestFailed implements DispatchToParentProcess
+final readonly class TestFailed implements DispatchToParentProcess, HandleOnce
 {
     public function __construct(
         public string $name,

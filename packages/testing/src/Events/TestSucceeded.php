@@ -2,7 +2,9 @@
 
 namespace Tempest\Testing\Events;
 
-final readonly class TestSucceeded implements DispatchToParentProcess
+use Tempest\EventBus\HandleOnce;
+
+final readonly class TestSucceeded implements DispatchToParentProcess, HandleOnce
 {
     public function __construct(
         public string $name,

@@ -2,7 +2,9 @@
 
 namespace Tempest\Testing\Events;
 
-final class TestRunEnded
+use Tempest\EventBus\HandleOnce;
+
+final class TestRunEnded implements HandleOnce
 {
 
 }

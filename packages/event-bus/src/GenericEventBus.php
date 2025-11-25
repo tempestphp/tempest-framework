@@ -62,6 +62,10 @@ final readonly class GenericEventBus implements EventBus
                 $callable = $eventHandler->normalizeCallable($this->container);
 
                 $callable($event);
+
+                if ($event instanceof HandleOnce) {
+                    break;
+                }
             }
         });
 

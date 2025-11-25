@@ -12,6 +12,8 @@ final class TestEventHandler
 
     public static bool $fromEnumEvent = false;
 
+    public static int $onceCount = 0;
+
     #[EventHandler('string-event')]
     public function fromString(): void
     {
@@ -22,5 +24,17 @@ final class TestEventHandler
     public function fromEnum(): void
     {
         self::$fromEnumEvent = true;
+    }
+
+    #[EventHandler]
+    public function onceEventA(OnceEvent $event): void
+    {
+        self::$onceCount += 1;
+    }
+
+    #[EventHandler]
+    public function onceEventB(OnceEvent $event): void
+    {
+        self::$onceCount += 1;
     }
 }

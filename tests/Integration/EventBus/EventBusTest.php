@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\EventBus;
 use Tests\Tempest\Fixtures\Events\DiscoveredEventBusMiddleware;
 use Tests\Tempest\Fixtures\Events\EnumEvent;
 use Tests\Tempest\Fixtures\Events\EventInterfaceImplementation;
+use Tests\Tempest\Fixtures\Events\OnceEvent;
 use Tests\Tempest\Fixtures\Events\OtherEnumEvent;
 use Tests\Tempest\Fixtures\Events\TestEventHandler;
 use Tests\Tempest\Fixtures\Handlers\EventInterfaceHandler;
@@ -62,5 +63,14 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         event(EnumEvent::Foo);
 
         $this->assertTrue(DiscoveredEventBusMiddleware::$hit);
+    }
+    
+    public function test_handle_once(): void
+    {
+        TestEventHandler::$onceCount = 0;
+
+        event(new OnceEvent());
+
+        $this->assertSame(1, TestEventHandler::$onceCount);
     }
 }

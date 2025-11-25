@@ -2,7 +2,9 @@
 
 namespace Tempest\Testing\Events;
 
-final readonly class TestSkipped
+use Tempest\EventBus\HandleOnce;
+
+final readonly class TestSkipped implements HandleOnce
 {
     public function __construct(
         public string $name,
