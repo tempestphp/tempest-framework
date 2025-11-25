@@ -5,6 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
+        "tempest/core":  "dev-main",
+        "tempest/event-bus":  "dev-main",
         "tempest/console": "dev-main"
     },
     "autoload": {
