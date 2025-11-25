@@ -4,7 +4,7 @@ namespace Tempest\Testing\Events;
 
 use Tempest\Testing\Exceptions\TestHasFailed;
 
-final readonly class TestFailed
+final readonly class TestFailed implements DispatchToParentProcess
 {
     public function __construct(
         public string $name,

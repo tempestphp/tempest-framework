@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Testing\Commands;
+namespace Tempest\Testing\Console;
 
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;

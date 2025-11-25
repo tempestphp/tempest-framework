@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Testing\Commands;
+namespace Tempest\Testing\Console;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -9,13 +9,16 @@ use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Testing\Actions\ChunkAndRunTests;
 use Tempest\Testing\Events\TestFailed;
+use Tempest\Testing\Events\TestRunEnded;
+use Tempest\Testing\Events\TestRunStarted;
+use Tempest\Testing\Events\TestsChunked;
 use Tempest\Testing\Events\TestSkipped;
 use Tempest\Testing\Events\TestSucceeded;
 use Tempest\Testing\Test;
 use Tempest\Testing\TestConfig;
 use Tempest\Testing\TestResult;
-use Tempest\Testing\TestRunner;
 use function Tempest\event;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -46,33 +49,29 @@ final class TestCommand
     {
         $this->verbose = $verbose;
         $this->result = new TestResult();
+
         $this->eventBus->listen($this->onTestFailed(...));
         $this->eventBus->listen($this->onTestSucceeded(...));
         $this->eventBus->listen($this->onTestSkipped(...));
+        $this->eventBus->listen($this->onTestsChunked(...));
+        $this->eventBus->listen($this->onTestRunStarted(...));
+        $this->eventBus->listen($this->onTestRunEnded(...));
 
-        $tests = $this->getTests($filter);
+        new ChunkAndRunTests()(
+            tests: $this->getTests($filter),
+            processes: $processes
+        );
+    }
 
-        $this->result->startTime();
-
-        $chunks = ceil($tests->count() / $processes);
-
-        $tests = $tests
-            ->chunk($chunks)
-            ->map(fn (ImmutableArray $tests, int $i) => new TestRunner($i)->run($tests));
-
+    public function onTestsChunked(TestsChunked $event): void
+    {
         if ($this->verbose) {
             $this->info(sprintf(
                 "Running on %d %s",
-                $tests->count(),
-                str('process')->pluralize($tests->count()),
+                $event->processCount,
+                str('process')->pluralize($event->processCount),
             ))->writeln();
         }
-
-        $tests->map(fn (TestRunner $runner) => $runner->wait());
-
-        $this->result->endTime();
-
-        $this->renderResult();
     }
 
     public function onTestFailed(TestFailed $event): void
@@ -99,8 +98,15 @@ final class TestCommand
         }
     }
 
-    private function renderResult(): void
+    public function onTestRunStarted(TestRunStarted $event): void
     {
+        $this->result->startTime();
+    }
+
+    public function onTestRunEnded(TestRunEnded $event): void
+    {
+        $this->result->endTime();
+
         $message = sprintf(
             '<style="bg-green"> %d succeeded </style> <style="bg-red"> %d failed </style> <style="bg-blue"> %d skipped </style> <style="bg-yellow"> %ss </style>',
             $this->result->succeeded,
