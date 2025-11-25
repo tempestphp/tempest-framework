@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer update --prefer-dist --no-interaction
+          composer update --prefer-dist --no-interaction  --ignore-platform-reqs
           composer mago:install-binary
 
       - name: Run Mago
