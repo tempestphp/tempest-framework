@@ -1,12 +1,14 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Discovery;
 
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Testing\Config\TestConfig;
+use Tempest\Testing\Test;
 
 #[SkipDiscovery]
 final class TestDiscovery implements Discovery

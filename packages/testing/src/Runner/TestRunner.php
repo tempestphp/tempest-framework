@@ -1,9 +1,10 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Runner;
 
 use Symfony\Component\Process\Process;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Testing\Test;
 use function Tempest\event;
 
 final readonly class TestRunner

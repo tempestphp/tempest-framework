@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Testing;
+namespace Tempest\Testing\Runner;
 
 final class TestResult
 {

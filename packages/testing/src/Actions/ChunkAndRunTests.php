@@ -6,7 +6,7 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Testing\Events\TestRunEnded;
 use Tempest\Testing\Events\TestRunStarted;
 use Tempest\Testing\Events\TestsChunked;
-use Tempest\Testing\TestRunner;
+use Tempest\Testing\Runner\TestRunner;
 use function Tempest\event;
 
 final class ChunkAndRunTests

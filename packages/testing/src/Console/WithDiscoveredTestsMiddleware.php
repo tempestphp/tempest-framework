@@ -15,7 +15,7 @@ use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tempest\Testing\TestDiscovery;
+use Tempest\Testing\Discovery\TestDiscovery;
 
 final class WithDiscoveredTestsMiddleware implements ConsoleMiddleware
 {
