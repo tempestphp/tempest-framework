@@ -18,6 +18,9 @@ final class Composer
     /** @var array<Psr4Namespace> */
     public array $namespaces;
 
+    /** @var array<Psr4Namespace> */
+    public array $devNamespaces;
+
     public ?Psr4Namespace $mainNamespace = null;
 
     private string $composerPath;
@@ -60,7 +63,18 @@ final class Composer
             ->unique(fn (Psr4Namespace $ns) => $ns->namespace)
             ->toArray();
 
+        $this->devNamespaces = arr($this->composer)
+            ->get('autoload-dev.psr-4', default: arr())
+            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
+            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->values()
+            ->toArray();
+
         return $this;
+    }
+
+    public function getDevNamespaces(): Arr\ImmutableArray
+    {
     }
 
     public function setMainNamespace(Psr4Namespace $namespace): self

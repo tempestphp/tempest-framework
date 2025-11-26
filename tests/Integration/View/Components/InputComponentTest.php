@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\View\Components;
+namespace Tests\Tempest\Integration\View\Components;
 
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\HasLength;

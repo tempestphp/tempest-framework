@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Http;
+namespace Tests\Tempest\Integration\Http;
 
 use Tempest\View\GenericView;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
