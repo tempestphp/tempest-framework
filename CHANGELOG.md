@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.9.3](https://github.com/tempestphp/tempest-framework/compare/v2.9.2..2.9.3)  —  2025-11-20
+## [2.10.0](https://github.com/tempestphp/tempest-framework/compare/v2.9.3..2.10.0)  —  2025-11-26
+
+### 🚀 Features
+
+- **core**: load composer dev namespaces (#1736) ([892da0c](https://github.com/tempestphp/tempest-framework/commit/892da0ce1a2b0b0b44a4b48121c4a3d7dc3e862d))
+- **database**: add ability to create a query builder from another one (#1725) ([55204a0](https://github.com/tempestphp/tempest-framework/commit/55204a05c2d69ca3376d74cb795be6fb389e28a4))
+- **tests**: support paratest (#1721) ([f5b5cd3](https://github.com/tempestphp/tempest-framework/commit/f5b5cd3f61c0d49fdeb38f97d6de861893ac4cbc))
+- **view**: fixes PHP 8.5 null offset deprecation warning (#1729) ([2349c71](https://github.com/tempestphp/tempest-framework/commit/2349c71f960f3638bed89f703d282c451b4536b8))
+
+
+## [2.9.3](https://github.com/tempestphp/tempest-framework/compare/v2.9.2..v2.9.3)  —  2025-11-20
 
 ### 🐛 Bug fixes
 
