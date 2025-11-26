@@ -168,7 +168,10 @@ final class FrameworkKernel implements Kernel
     public function loadDiscovery(): self
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
-        $this->container->invoke(LoadDiscoveryClasses::class);
+        $this->container->invoke(
+            LoadDiscoveryClasses::class,
+            discoveryLocations: $this->discoveryLocations,
+        );
 
         return $this;
     }

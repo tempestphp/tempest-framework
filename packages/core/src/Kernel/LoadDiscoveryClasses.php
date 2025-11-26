@@ -26,52 +26,80 @@ final class LoadDiscoveryClasses
     private array $shouldSkipForClass = [];
 
     public function __construct(
-        private readonly Kernel $kernel,
         private readonly Container $container,
         private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
     ) {}
 
-    public function __invoke(): void
-    {
-        $discoveries = $this->build();
+    /**
+     * @param class-string<Discovery>[]|null $discoveryClasses
+     * @param DiscoveryLocation[]|null $discoveryLocations
+     */
+    public function __invoke(
+        ?array $discoveryClasses = null,
+        ?array $discoveryLocations = null,
+    ): void {
+        $discoveries = $this->build($discoveryClasses, $discoveryLocations);
 
         foreach ($discoveries as $discovery) {
             $this->applyDiscovery($discovery);
         }
     }
 
-    /** @return Discovery[] */
-    public function build(): array
-    {
-        // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-        $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
+    /**
+     * @param class-string<Discovery>[]|null $discoveryClasses
+     * @param DiscoveryLocation[]|null $discoveryLocations
+     * @return Discovery[]
+     */
+    public function build(
+        ?array $discoveryClasses = null,
+        ?array $discoveryLocations = null,
+    ): array {
+        $kernel = $this->container->get(Kernel::class);
 
-        // The first pass over all directories to find all discovery classes
-        $this->discover([$discoveryDiscovery]);
+        $discoveryLocations ??= $kernel->discoveryLocations;
 
-        // Manually apply DiscoveryDiscovery
-        $this->applyDiscovery($discoveryDiscovery);
+        if ($discoveryClasses === null) {
+            // DiscoveryDiscovery needs to be applied before we can build all other discoveries
+            $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
 
-        // Resolve all other discoveries from the container, optionally loading their cache
-        $discoveries = array_map(
-            fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
-            $this->kernel->discoveryClasses,
-        );
+            // The first pass over all directories to find all discovery classes
+            $this->discover([$discoveryDiscovery], $discoveryLocations);
 
-        // The second pass over all directories to apply all other discovery classes
-        $this->discover($discoveries);
+            // Manually apply DiscoveryDiscovery
+            $this->applyDiscovery($discoveryDiscovery);
 
-        return [$discoveryDiscovery, ...$discoveries];
+            // Resolve all other discoveries from the container, optionally loading their cache
+            $discoveries = array_map(
+                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+                $kernel->discoveryClasses,
+            );
+
+            // The second pass over all directories to apply all other discovery classes
+            $this->discover($discoveries, $discoveryLocations);
+
+            return [$discoveryDiscovery, ...$discoveries];
+        } else {
+            // Resolve all manually specified discoveries
+            $discoveries = array_map(
+                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+                $discoveryClasses,
+            );
+
+            $this->discover($discoveries, $discoveryLocations);
+
+            return $discoveries;
+        }
     }
 
     /**
      * Build a list of discovery classes within all registered discovery locations
      * @param Discovery[] $discoveries
+     * @param DiscoveryLocation[]|null $discoveryLocations
      */
-    private function discover(array $discoveries): void
+    private function discover(array $discoveries, array $discoveryLocations): void
     {
-        foreach ($this->kernel->discoveryLocations as $location) {
+        foreach ($discoveryLocations as $location) {
             // Skip location based on cache status
             if ($this->isLocationCached($location)) {
                 $cachedForLocation = $this->discoveryCache->restore($location);
@@ -258,7 +286,7 @@ final class LoadDiscoveryClasses
             return true;
         }
 
-        // Current discovery was present in the except array, so it shouldn't be skipped
+        // Current discovery was present in the excepted array, so it shouldn't be skipped
         return false;
     }
 

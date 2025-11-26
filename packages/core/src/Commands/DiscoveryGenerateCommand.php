@@ -30,7 +30,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
             private AppConfig $appConfig,
         ) {}
 
-        #[ConsoleCommand(name: 'discovery:generate', description: 'Compile and cache all discovery according to the configured discovery caching strategy')]
+        #[ConsoleCommand(
+            name: 'discovery:generate',
+            description: 'Compile and cache all discovery according to the configured discovery caching strategy',
+            aliases: ['d:g'],
+        )]
         public function __invoke(): void
         {
             $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $this->appConfig->environment->isProduction()));
@@ -59,7 +63,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
             $kernel = $this->resolveKernel();
 
             $loadDiscoveryClasses = new LoadDiscoveryClasses(
-                kernel: $kernel,
                 container: $kernel->container,
                 discoveryConfig: $kernel->container->get(DiscoveryConfig::class),
                 discoveryCache: $this->discoveryCache,
