@@ -76,8 +76,8 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
                 ManualTestDiscovery::class,
             ],
             discoveryLocations: [
-                new DiscoveryLocation('Tests\Tempest\Integration\Core\Fixtures', __DIR__ . '/Fixtures')
-            ]
+                new DiscoveryLocation('Tests\Tempest\Integration\Core\Fixtures', __DIR__ . '/Fixtures'),
+            ],
         );
 
         $this->assertTrue($dependency->discovered);
