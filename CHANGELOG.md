@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.10.0](https://github.com/tempestphp/tempest-framework/compare/v2.9.3..2.10.0)  —  2025-11-26
+## [2.11.0](https://github.com/tempestphp/tempest-framework/compare/v2.10.0..2.11.0)  —  2025-11-26
+
+### 🚀 Features
+
+- **core**: partial discovery loading (#1737) ([92a31c3](https://github.com/tempestphp/tempest-framework/commit/92a31c3a2ccfecbea1b0ffdf0f212af23d0b36a7))
+
+
+## [2.10.0](https://github.com/tempestphp/tempest-framework/compare/v2.9.3..v2.10.0)  —  2025-11-26
 
 ### 🚀 Features
 
