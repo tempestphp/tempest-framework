@@ -70,4 +70,22 @@ final class IsEnumTest extends TestCase
         $this->assertTrue($rule->except(SomeBackedEnum::Test2)->isValid('one'));
         $this->assertFalse($rule->except(SomeBackedEnum::Test)->isValid('one'));
     }
+
+    public function test_validating_with_or_null(): void
+    {
+        $rule = new IsEnum(enum: SomeEnum::class, orNull: true);
+
+        $this->assertTrue(condition: $rule->isValid(value: null));
+        $this->assertFalse(condition: $rule->isValid(value: 'NOPE_NOT_HERE'));
+        $this->assertTrue(condition: $rule->isValid(value: 'VALUE_1'));
+    }
+
+    public function test_failing_to_validate_with_or_null(): void
+    {
+        $rule = new IsEnum(enum: SomeEnum::class, orNull: false);
+
+        $this->assertFalse(condition: $rule->isValid(value: null));
+        $this->assertFalse(condition: $rule->isValid(value: 'NOPE_NOT_HERE'));
+        $this->assertTrue(condition: $rule->isValid(value: 'VALUE_1'));
+    }
 }
