@@ -107,6 +107,23 @@ final class PropertyReflector implements Reflector
         return new TypeReflector(ltrim($match[1], '\\'));
     }
 
+    public function getDocType(): ?TypeReflector
+    {
+        $doc = $this->reflectionProperty->getDocComment();
+
+        if (! $doc) {
+            return null;
+        }
+
+        preg_match('/@var ([^\s]+)/', $doc, $match);
+
+        if (! isset($match[1])) {
+            return null;
+        }
+
+        return new TypeReflector($match[1]);
+    }
+
     public function isUninitialized(object $object): bool
     {
         return ! $this->reflectionProperty->isInitialized($object);
