@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
+use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
@@ -63,9 +64,21 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $dependency = $this->container->get(ManualTestDiscoveryDependency::class);
         $dependency->discovered = false;
 
-        $this->container->get(LoadDiscoveryClasses::class)([
-            ManualTestDiscovery::class,
-        ]);
+        /** @var LoadDiscoveryClasses $loadDiscoveryClasses */
+        $loadDiscoveryClasses = $this->container->get(LoadDiscoveryClasses::class);
+
+        $loadDiscoveryClasses(discoveryClasses: [], discoveryLocations: []);
+
+        $this->assertFalse($dependency->discovered);
+
+        $loadDiscoveryClasses(
+            discoveryClasses: [
+                ManualTestDiscovery::class,
+            ],
+            discoveryLocations: [
+                new DiscoveryLocation('Tests\Tempest\Integration\Core\Fixtures', __DIR__ . '/Fixtures')
+            ]
+        );
 
         $this->assertTrue($dependency->discovered);
     }

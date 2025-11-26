@@ -33,7 +33,7 @@ final class LoadDiscoveryClasses
 
     /**
      * @param class-string<Discovery>[]|null $discoveryClasses
-     * @param class-string<DiscoveryLocation>[]|null $discoveryLocations
+     * @param DiscoveryLocation[]|null $discoveryLocations
      */
     public function __invoke(
         ?array $discoveryClasses = null,
@@ -48,7 +48,7 @@ final class LoadDiscoveryClasses
 
     /**
      * @param class-string<Discovery>[]|null $discoveryClasses
-     * @param class-string<DiscoveryLocation>[]|null $discoveryLocations
+     * @param DiscoveryLocation[]|null $discoveryLocations
      * @return Discovery[]
      */
     public function build(
@@ -95,7 +95,7 @@ final class LoadDiscoveryClasses
     /**
      * Build a list of discovery classes within all registered discovery locations
      * @param Discovery[] $discoveries
-     * @param class-string<DiscoveryLocation>[]|null $discoveryLocations
+     * @param DiscoveryLocation[]|null $discoveryLocations
      */
     private function discover(array $discoveries, array $discoveryLocations): void
     {

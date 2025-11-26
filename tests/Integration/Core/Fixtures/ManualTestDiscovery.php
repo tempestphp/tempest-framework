@@ -13,17 +13,21 @@ final class ManualTestDiscovery implements Discovery
 {
     use IsDiscovery;
 
+    private bool $shouldDiscover = false;
+
     public function __construct(
         private readonly ManualTestDiscoveryDependency $dependency,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        return;
+        if ($class->getName() === ManualTestDiscoveryDependency::class) {
+            $this->shouldDiscover = true;
+        }
     }
 
     public function apply(): void
     {
-        $this->dependency->discovered = true;
+        $this->dependency->discovered = $this->shouldDiscover;
     }
 }
