@@ -12,8 +12,8 @@ use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
 use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
-use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscoveryDependency;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscovery;
+use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscoveryDependency;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\get;
@@ -55,7 +55,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $foundMigrations, 'Expected one hidden migration to be found');
     }
-    
+
     #[Test]
     public function only_load_specific_discovery_classes(): void
     {
