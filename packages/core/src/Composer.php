@@ -73,10 +73,6 @@ final class Composer
         return $this;
     }
 
-    public function getDevNamespaces(): Arr\ImmutableArray
-    {
-    }
-
     public function setMainNamespace(Psr4Namespace $namespace): self
     {
         $this->mainNamespace = $namespace;
