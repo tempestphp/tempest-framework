@@ -140,4 +140,28 @@ final class ComposerTest extends FrameworkIntegrationTestCase
 
         new Composer(root: __DIR__, executor: $this->container->get(ProcessExecutor::class))->load();
     }
+
+    #[Test]
+    public function dev_namespaces(): void
+    {
+        $composer = $this->initializeComposer([
+            'autoload' => [
+                'psr-4' => [
+                    'App\\' => 'app/',
+                ],
+            ],
+            'autoload-dev' => [
+                'psr-4' => [
+                    'Test\\' => 'test/',
+                    'Foo\\' => 'foo/',
+                ],
+            ],
+        ]);
+
+        $this->assertCount(2, $composer->devNamespaces);
+        $this->assertSame('Test\\', $composer->devNamespaces[1]->namespace);
+        $this->assertSame('test/', $composer->devNamespaces[1]->path);
+        $this->assertSame('Foo\\', $composer->devNamespaces[0]->namespace);
+        $this->assertSame('foo/', $composer->devNamespaces[0]->path);
+    }
 }
