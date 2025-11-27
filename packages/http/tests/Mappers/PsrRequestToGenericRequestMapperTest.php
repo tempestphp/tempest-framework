@@ -43,7 +43,6 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
 
         $reflection = new ReflectionClass($this->mapper);
         $this->requestMethod = $reflection->getMethod('requestMethod');
-        $this->requestMethod->setAccessible(true);
     }
 
     #[DataProvider('nonPostMethodsProvider')]
