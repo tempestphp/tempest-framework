@@ -2,9 +2,9 @@
 
 namespace Tests\Tempest\Fixtures\Events;
 
-use Tempest\EventBus\WithoutPropagation;
+use Tempest\EventBus\StopsPropagation;
 
-#[WithoutPropagation]
+#[StopsPropagation]
 final readonly class EventWithoutPropagation
 {
 }

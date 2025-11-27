@@ -4,14 +4,14 @@ namespace Tests\Tempest\Fixtures\Events;
 
 use Tempest\Container\Singleton;
 use Tempest\EventBus\EventHandler;
-use Tempest\EventBus\WithoutPropagation;
+use Tempest\EventBus\StopsPropagation;
 
 #[Singleton]
 final class HandlersForEventWithListenerWithoutPropagation
 {
     public int $count = 0;
 
-    #[EventHandler, WithoutPropagation]
+    #[EventHandler, StopsPropagation]
     public function a(EventForListenerWithoutPropagation $event): void
     {
         $this->count++;
