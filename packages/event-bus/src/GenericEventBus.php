@@ -66,7 +66,10 @@ final readonly class GenericEventBus implements EventBus
 
                 $callable($event);
 
-                if (is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class) || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)) {
+                if (
+                    is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class)
+                    || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)
+                ) {
                     break;
                 }
             }
