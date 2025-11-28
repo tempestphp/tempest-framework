@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.11.0](https://github.com/tempestphp/tempest-framework/compare/v2.10.0..2.11.0)  —  2025-11-26
+## [2.12.0](https://github.com/tempestphp/tempest-framework/compare/v2.11.0..2.12.0)  —  2025-11-28
+
+### 🚀 Features
+
+- **eventbus**: add `#[StopsPropagation]` (#1740) ([5769ec2](https://github.com/tempestphp/tempest-framework/commit/5769ec215d96b4dbdac9a3e2fb93f97de152fca5))
+- **validation**: support nullable enums (#1739) ([a9ca8c4](https://github.com/tempestphp/tempest-framework/commit/a9ca8c4d60aca0ba4e14d0c31ce056c02415c10e))
+
+### 🐛 Bug fixes
+
+- **core**: remove php 8.5 deprecations (#1742) ([7501c1b](https://github.com/tempestphp/tempest-framework/commit/7501c1b494a2ec2e5ee27f4a8407fbdef5e484ae))
+- **support**: correct some string function oversights (#1743) ([f113128](https://github.com/tempestphp/tempest-framework/commit/f113128d71bd5fd10568f9cc07a86732f4e6a116))
+- **support**: process error message after callback in box() (#1741) ([908352a](https://github.com/tempestphp/tempest-framework/commit/908352a81969be7d4652b1c62758261b4751ee35))
+
+
+## [2.11.0](https://github.com/tempestphp/tempest-framework/compare/v2.10.0..v2.11.0)  —  2025-11-26
 
 ### 🚀 Features
 
@@ -784,7 +798,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
 
 ### 🚨 Breaking changes
 

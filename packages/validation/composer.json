@@ -7,10 +7,10 @@
         "php": "^8.4",
         "egulias/email-validator": "^4.0.2",
         "giggsey/libphonenumber-for-php-lite": "^9.0",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/intl": "dev-main",
-        "tempest/datetime": "dev-main"
+        "tempest/reflection": "2.12.0",
+        "tempest/support": "2.12.0",
+        "tempest/intl": "2.12.0",
+        "tempest/datetime": "2.12.0"
     },
     "autoload": {
         "psr-4": {
