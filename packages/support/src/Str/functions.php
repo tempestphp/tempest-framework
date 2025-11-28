@@ -257,7 +257,7 @@ namespace Tempest\Support\Str {
             return $string;
         }
 
-        return mb_substr($string, $farthestPosition + strlen($foundSearch));
+        return mb_substr($string, $farthestPosition + mb_strlen($foundSearch));
     }
 
     /**
@@ -371,7 +371,7 @@ namespace Tempest\Support\Str {
         $search = normalize_string($search);
 
         foreach (Arr\wrap($search) as $item) {
-            if ($search === '') {
+            if ($item === '') {
                 continue;
             }
 
@@ -421,7 +421,7 @@ namespace Tempest\Support\Str {
         $search = normalize_string($search);
 
         foreach (Arr\wrap($search) as $item) {
-            if ($search === '') {
+            if ($item === '') {
                 continue;
             }
 
@@ -443,7 +443,7 @@ namespace Tempest\Support\Str {
         $string = (string) $string;
 
         foreach (Arr\wrap($search) as $item) {
-            if ($search === '') {
+            if ($item === '') {
                 continue;
             }
 
