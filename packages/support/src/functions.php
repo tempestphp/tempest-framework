@@ -67,12 +67,12 @@ namespace Tempest\Support {
             $lastMessage = $message;
         });
 
-        if (null !== $lastMessage && Str\contains($lastMessage, '): ')) {
-            $lastMessage = Str\after_first(Str\to_lower_case($lastMessage), '): ');
-        }
-
         try {
             $value = $callback();
+
+            if (null !== $lastMessage && Str\contains($lastMessage, '): ')) {
+                $lastMessage = Str\after_first(Str\to_lower_case($lastMessage), '): ');
+            }
 
             return [$value, $lastMessage];
         } finally {
