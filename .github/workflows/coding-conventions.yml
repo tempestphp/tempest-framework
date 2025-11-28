@@ -4,7 +4,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-# CSFixer and Rector are temporarily disabled until they have proper PHP 8.4 support
 jobs:
   check-style:
     name: Run style check
@@ -15,12 +14,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.5
           coverage: none
 
       - name: Install dependencies
         run: |
-          composer update --prefer-dist --no-interaction
+          composer update --prefer-dist --no-interaction  --ignore-platform-reqs
           composer mago:install-binary
 
       - name: Run Mago
@@ -46,7 +45,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.5
           coverage: none
 
       - name: Install composer dependencies
@@ -65,7 +64,7 @@ jobs:
 #      - name: Setup PHP
 #        uses: shivammathur/setup-php@v2
 #        with:
-#          php-version: 8.4
+#          php-version: 8.5
 #          coverage: none
 #
 #      - name: Install composer dependencies
