@@ -139,7 +139,7 @@ final readonly class Validator
         }
 
         if ($property->getType()->isEnum()) {
-            $rules[] = new IsEnum($property->getType()->getName());
+            $rules[] = new IsEnum(enum: $property->getType()->getName(), orNull: $property->isNullable());
         }
 
         return $this->validateValue($value, $rules);
