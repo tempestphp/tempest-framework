@@ -18,7 +18,7 @@ namespace Tempest\Support {
     }
 
     /**
-     * Creates an instance of {@see \Tempest\Support\Arr\ImmutableCollection} using the given `$input`. If `$input` is not an array, it will be wrapped in one.
+     * Creates an instance of {@see \Tempest\Support\Arr\ImmutableArray} using the given `$input`. If `$input` is not an array, it will be wrapped in one.
      */
     function arr(mixed $input = []): ImmutableArray
     {
