@@ -6,7 +6,11 @@ namespace Tests\Tempest\Integration\EventBus;
 
 use Tests\Tempest\Fixtures\Events\DiscoveredEventBusMiddleware;
 use Tests\Tempest\Fixtures\Events\EnumEvent;
+use Tests\Tempest\Fixtures\Events\EventForListenerWithoutPropagation;
 use Tests\Tempest\Fixtures\Events\EventInterfaceImplementation;
+use Tests\Tempest\Fixtures\Events\EventWithoutPropagation;
+use Tests\Tempest\Fixtures\Events\HandlersForEventWithListenerWithoutPropagation;
+use Tests\Tempest\Fixtures\Events\HandlersForEventWithoutPropagation;
 use Tests\Tempest\Fixtures\Events\OtherEnumEvent;
 use Tests\Tempest\Fixtures\Events\TestEventHandler;
 use Tests\Tempest\Fixtures\Handlers\EventInterfaceHandler;
@@ -62,5 +66,25 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         event(EnumEvent::Foo);
 
         $this->assertTrue(DiscoveredEventBusMiddleware::$hit);
+    }
+
+    public function test_event_without_propagation(): void
+    {
+        $handler = $this->get(HandlersForEventWithoutPropagation::class);
+        $handler->count = 0;
+
+        event(new EventWithoutPropagation());
+
+        $this->assertSame(1, $handler->count);
+    }
+
+    public function test_listener_without_propagation(): void
+    {
+        $handler = $this->get(HandlersForEventWithListenerWithoutPropagation::class);
+        $handler->count = 0;
+
+        event(new EventForListenerWithoutPropagation());
+
+        $this->assertSame(1, $handler->count);
     }
 }

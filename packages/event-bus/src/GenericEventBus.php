@@ -9,6 +9,8 @@ use Tempest\Container\Container;
 use Tempest\Support\Str;
 use UnitEnum;
 
+use function Tempest\reflect;
+
 final readonly class GenericEventBus implements EventBus
 {
     public function __construct(
@@ -55,6 +57,7 @@ final readonly class GenericEventBus implements EventBus
         return $handlers;
     }
 
+    /** @param \Tempest\EventBus\CallableEventHandler[] $eventHandlers */
     private function getCallable(array $eventHandlers): EventBusMiddlewareCallable
     {
         $callable = new EventBusMiddlewareCallable(function (string|object $event) use ($eventHandlers): void {
@@ -62,6 +65,13 @@ final readonly class GenericEventBus implements EventBus
                 $callable = $eventHandler->normalizeCallable($this->container);
 
                 $callable($event);
+
+                if (
+                    is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class)
+                    || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)
+                ) {
+                    break;
+                }
             }
         });
 

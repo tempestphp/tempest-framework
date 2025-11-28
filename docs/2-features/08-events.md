@@ -159,6 +159,31 @@ final readonly class EventLoggerMiddleware implements EventBusMiddleware
 { /* … */ }
 ```
 
+## Stopping event propagation
+
+In rare cases you might want an event only to be handled by a single handler. You can use the `b{Tempest\EventBus\StopsPropagation}` attribute on both events and event handlers to achieve this:
+
+```php
+use Tempest\EventBus\StopsPropagation;
+
+#[StopsPropagation]
+final class MyEvent {}
+```
+
+```php
+use Tempest\EventBus\StopsPropagation;
+use Tempest\EventBus\EventHandler;
+
+final class MyHandler 
+{   
+    #[StopsPropagation]
+    public function handle(OtherEvent $event): void
+    {
+        // …
+    }
+}
+```
+
 ## Built-in framework events
 
 Tempest includes a few built-in events that are primarily used internally. While most applications won’t need them, you are free to listen to them if desired.
