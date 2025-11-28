@@ -40,6 +40,10 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
                     migration: $this->container->get(to_fqcn($migration, root: root_path())),
                 );
             }
+
+            if ($this->shouldInstallOAuth()) {
+                $this->container->get(OAuthInstaller::class)->install();
+            }
         }
 
         private function shouldMigrate(): bool
@@ -48,6 +52,17 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
 
             if ($argument === null || ! is_bool($argument->value)) {
                 return $this->console->confirm('Do you want to execute migrations?', default: false);
+            }
+
+            return (bool) $argument->value;
+        }
+
+        private function shouldInstallOAuth(): bool
+        {
+            $argument = $this->consoleArgumentBag->get('oauth');
+
+            if ($argument === null || ! is_bool($argument->value)) {
+                return $this->console->confirm('Do you want to install OAuth?', default: false);
             }
 
             return (bool) $argument->value;
