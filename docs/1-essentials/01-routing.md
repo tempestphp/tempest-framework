@@ -387,6 +387,33 @@ final readonly class AirportController
 The `map()` function allows mapping any data from any source into objects of your choice. You may read more about them in [their documentation](../2-features/01-mapper.md).
 :::
 
+### Sensitive fields
+
+When handling sensitive data such as passwords or tokens, you may not want these values to be stored in the session or re-displayed in forms after validation errors. You can mark request properties as sensitive using the {b`#[Tempest\Http\SensitiveField]`} attribute:
+
+```php app/ResetPasswordRequest.php
+use Tempest\Http\Request;
+use Tempest\Http\IsRequest;
+use Tempest\Http\SensitiveField;
+use Tempest\Validation\Rules\HasMinLength;
+
+final class ResetPasswordRequest implements Request
+{
+    use IsRequest;
+
+    public string $email;
+
+    #[SensitiveField]
+    #[HasMinLength(8)]
+    public string $password;
+
+    #[SensitiveField]
+    public string $password_confirmation;
+}
+```
+
+When a validation error occurs, Tempest will filter out sensitive fields from the original values stored in the session. This prevents sensitive data from being re-populated in forms after a redirect.
+
 ### Retrieving data directly
 
 For simpler use cases, you may simply retrieve a value from the body or the query parameter using the request's `get` method.

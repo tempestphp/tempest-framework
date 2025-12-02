@@ -56,12 +56,18 @@ final readonly class Validator
      * Creates a {@see ValidationFailed} exception from the given rule failures, populated with error messages.
      *
      * @param array<string,Rule[]> $failingRules
+     * @param class-string|null $targetClass
      */
-    public function createValidationFailureException(array $failingRules, null|object|string $subject = null): ValidationFailed
+    public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
     {
-        return new ValidationFailed($failingRules, $subject, Arr\map_iterable($failingRules, function (array $rules, string $field) {
-            return Arr\map_iterable($rules, fn (Rule $rule) => $this->getErrorMessage($rule, $field));
-        }));
+        return new ValidationFailed(
+            $failingRules,
+            $subject,
+            Arr\map_iterable($failingRules, function (array $rules, string $field) {
+                return Arr\map_iterable($rules, fn (Rule $rule) => $this->getErrorMessage($rule, $field));
+            }),
+            $targetClass,
+        );
     }
 
     /**
