@@ -175,9 +175,9 @@ final class Aircraft implements Bindable
 {
     use IsDatabaseModel;
 
-    public function resolve(string $input): self
+    public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
@@ -193,9 +193,9 @@ final class Aircraft implements Bindable
     #[IsBindingValue]
     public string $callSign;
 
-    public function resolve(string $input): self
+    public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
