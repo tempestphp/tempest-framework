@@ -177,7 +177,7 @@ final class Aircraft implements Bindable
 
     public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
@@ -195,7 +195,7 @@ final class Aircraft implements Bindable
 
     public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
