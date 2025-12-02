@@ -60,12 +60,15 @@ final class BelongsTo implements Relation
     public function getSelectFields(): ImmutableArray
     {
         $relationModel = inspect($this->property->getType()->asClass());
+        $tableReference = $this->isSelfReferencing()
+            ? $this->property->getName()
+            : $relationModel->getTableName();
 
         return $relationModel
             ->getSelectFields()
-            ->map(function ($field) use ($relationModel) {
+            ->map(function ($field) use ($tableReference) {
                 return new FieldStatement(
-                    $relationModel->getTableName() . '.' . $field,
+                    $tableReference . '.' . $field,
                 )
                     ->withAlias(
                         sprintf('%s.%s', $this->property->getName(), $field),
@@ -82,6 +85,16 @@ final class BelongsTo implements Relation
         $relationJoin = $this->getRelationJoin($relationModel);
         $ownerJoin = $this->getOwnerJoin($ownerModel);
 
+        if ($this->isSelfReferencing()) {
+            return new JoinStatement(sprintf(
+                'LEFT JOIN %s AS %s ON %s = %s',
+                $relationModel->getTableName(),
+                $this->property->getName(),
+                $relationJoin,
+                $ownerJoin,
+            ));
+        }
+
         // LEFT JOIN authors ON authors.id = books.author_id
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
@@ -94,9 +107,12 @@ final class BelongsTo implements Relation
     private function getRelationJoin(ModelInspector $relationModel): string
     {
         $relationJoin = $this->relationJoin;
+        $tableReference = $this->isSelfReferencing()
+            ? $this->property->getName()
+            : $relationModel->getTableName();
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
-            $relationJoin = sprintf('%s.%s', $relationModel->getTableName(), $relationJoin);
+            $relationJoin = sprintf('%s.%s', $tableReference, $relationJoin);
         }
 
         if ($relationJoin) {
@@ -109,7 +125,15 @@ final class BelongsTo implements Relation
             throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'BelongsTo');
         }
 
-        return sprintf('%s.%s', $relationModel->getTableName(), $primaryKey);
+        return sprintf('%s.%s', $tableReference, $primaryKey);
+    }
+
+    private function isSelfReferencing(): bool
+    {
+        $relationModel = inspect($this->property->getType()->asClass());
+        $ownerModel = inspect($this->property->getClass());
+
+        return $relationModel->getTableName() === $ownerModel->getTableName();
     }
 
     private function getOwnerJoin(ModelInspector $ownerModel): string

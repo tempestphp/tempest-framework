@@ -40,11 +40,14 @@ final class HasOne implements Relation
     public function getSelectFields(): ImmutableArray
     {
         $relationModel = inspect($this->property->getType()->asClass());
+        $tableReference = $this->isSelfReferencing()
+            ? $this->property->getName()
+            : $relationModel->getTableName();
 
         return $relationModel
             ->getSelectFields()
             ->map(fn ($field) => new FieldStatement(
-                $relationModel->getTableName() . '.' . $field,
+                $tableReference . '.' . $field,
             )
                 ->withAlias(
                     sprintf('%s.%s', $this->property->getName(), $field),
@@ -60,6 +63,16 @@ final class HasOne implements Relation
         $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
         $relationJoin = $this->getRelationJoin($relationModel);
 
+        if ($this->isSelfReferencing()) {
+            return new JoinStatement(sprintf(
+                'LEFT JOIN %s AS %s ON %s = %s',
+                $ownerModel->getTableName(),
+                $this->property->getName(),
+                $ownerJoin,
+                $relationJoin,
+            ));
+        }
+
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
             $ownerModel->getTableName(),
@@ -71,11 +84,14 @@ final class HasOne implements Relation
     private function getOwnerJoin(ModelInspector $ownerModel, ModelInspector $relationModel): string
     {
         $ownerJoin = $this->ownerJoin;
+        $tableReference = $this->isSelfReferencing()
+            ? $this->property->getName()
+            : $ownerModel->getTableName();
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
             $ownerJoin = sprintf(
                 '%s.%s',
-                $ownerModel->getTableName(),
+                $tableReference,
                 $ownerJoin,
             );
         }
@@ -92,9 +108,17 @@ final class HasOne implements Relation
 
         return sprintf(
             '%s.%s',
-            $ownerModel->getTableName(),
+            $tableReference,
             str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
         );
+    }
+
+    private function isSelfReferencing(): bool
+    {
+        $relationModel = inspect($this->property->getType()->asClass());
+        $ownerModel = inspect($this->property->getClass());
+
+        return $relationModel->getTableName() === $ownerModel->getTableName();
     }
 
     private function getRelationJoin(ModelInspector $relationModel): string
