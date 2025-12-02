@@ -7,7 +7,7 @@ namespace Tempest\Http\Responses;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Sensitive;
+use Tempest\Http\SensitiveField;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Reflection\ClassReflector;
@@ -70,7 +70,7 @@ final class Invalid implements Response
         $reflector = new ClassReflector($targetClass);
 
         foreach ($reflector->getPublicProperties() as $property) {
-            if ($property->hasAttribute(Sensitive::class)) {
+            if ($property->hasAttribute(SensitiveField::class)) {
                 unset($body[$property->getName()]);
             }
         }

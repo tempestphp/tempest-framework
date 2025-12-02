@@ -6,7 +6,7 @@ namespace Tests\Tempest\Fixtures\Requests;
 
 use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
-use Tempest\Http\Sensitive;
+use Tempest\Http\SensitiveField;
 use Tempest\Validation\Rules\IsNotEmptyString;
 
 final class SensitiveFieldRequest implements Request
@@ -16,7 +16,7 @@ final class SensitiveFieldRequest implements Request
     #[IsNotEmptyString]
     public string $not_sensitive_param;
 
-    #[Sensitive]
+    #[SensitiveField]
     #[IsNotEmptyString]
     public string $sensitive_param;
 }
