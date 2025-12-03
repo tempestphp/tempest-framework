@@ -178,6 +178,10 @@ final class UriGenerator
     {
         $action = $this->normalizeActionToUri($action);
 
+        if (! $this->container->has(MatchedRoute::class)) {
+            return false;
+        }
+
         $matchedRoute = $this->container->get(MatchedRoute::class);
         $candidateUri = $this->createUri($action, ...[...$matchedRoute->params, ...$params]);
         $currentUri = $this->createUri([$matchedRoute->route->handler->getDeclaringClass()->getName(), $matchedRoute->route->handler->getName()]);
