@@ -153,9 +153,7 @@ final class PropertyReflector implements Reflector
 
         $hasDefaultValue = $this->reflectionProperty->hasDefaultValue();
 
-        $hasPromotedDefaultValue = $this->isPromoted()
-            && isset($constructorParameters[$this->getName()])
-            && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
+        $hasPromotedDefaultValue = $this->isPromoted() && isset($constructorParameters[$this->getName()]) && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }

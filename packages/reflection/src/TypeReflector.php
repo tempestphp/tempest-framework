@@ -6,7 +6,6 @@ namespace Tempest\Reflection;
 
 use BackedEnum;
 use DateTimeInterface;
-use Exception;
 use Generator;
 use Iterator;
 use ReflectionClass as PHPReflectionClass;
@@ -264,7 +263,7 @@ final readonly class TypeReflector implements Reflector
         }
 
         throw new \InvalidArgumentException(
-            sprintf('Could not resolve type for reflector of type: %s', get_debug_type($reflector))
+            sprintf('Could not resolve type for reflector of type: %s', get_debug_type($reflector)),
         );
     }
 
