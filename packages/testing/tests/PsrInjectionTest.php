@@ -55,7 +55,7 @@ final readonly class PsrInjectionTest
 
 final class PsrContainer implements ContainerInterface
 {
-    public function get(string $id)
+    public function get(string $id): Dependency
     {
         return new Dependency('psr');
     }

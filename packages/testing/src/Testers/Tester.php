@@ -78,7 +78,7 @@ final readonly class Tester
 
     public function isEqualTo(mixed $expected): self
     {
-        if ($expected != $this->subject) {
+        if ($expected != $this->subject) { // @mago-expect lint:identity-comparison
             throw new TestHasFailed('failed asserting that %s is equal to %s', $this->subject, $expected);
         }
 
@@ -87,7 +87,7 @@ final readonly class Tester
 
     public function isNotEqualTo(mixed $expected): self
     {
-        if ($expected == $this->subject) {
+        if ($expected == $this->subject) { // @mago-expect lint:identity-comparison
             throw new TestHasFailed('failed asserting that %s is not equal to %s', $this->subject, $expected);
         }
 
@@ -162,7 +162,7 @@ final readonly class Tester
             throw new TestHasFailed('failed asserting that %s contains %s', $this->subject, $search);
         }
 
-        if (is_array($this->subject) && ! in_array($search, $this->subject)) {
+        if (is_array($this->subject) && ! in_array($search, $this->subject, strict: true)) {
             throw new TestHasFailed('failed asserting that %s contains %s', $this->subject, $search);
         }
 
@@ -179,7 +179,7 @@ final readonly class Tester
             throw new TestHasFailed('failed asserting that %s does not contain %s', $this->subject, $search);
         }
 
-        if (is_array($this->subject) && in_array($search, $this->subject)) {
+        if (is_array($this->subject) && in_array($search, $this->subject, strict: true)) {
             throw new TestHasFailed('failed asserting that %s does not contain %s', $this->subject, $search);
         }
 
@@ -294,7 +294,7 @@ final readonly class Tester
 
     public function isEmpty(): self
     {
-        if (! empty($this->subject)) {
+        if (! empty($this->subject)) { // @mago-expect lint:no-empty
             throw new TestHasFailed('failed asserting that %s is empty', $this->subject);
         }
 
@@ -303,7 +303,7 @@ final readonly class Tester
 
     public function isNotEmpty(): self
     {
-        if (empty($this->subject)) {
+        if (empty($this->subject)) { // @mago-expect lint:no-empty
             throw new TestHasFailed('failed asserting that %s is not empty', $this->subject);
         }
 

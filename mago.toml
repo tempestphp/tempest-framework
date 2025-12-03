@@ -13,6 +13,7 @@ excludes = [
 	"**/*.stub.php",
 	"**/*.input.php",
 	"**/*.expected.php",
+	"packages/testing/tests/ProviderTest.php",
 ]
 
 [formatter]
