@@ -22,16 +22,16 @@ final readonly class EnumCaster implements Caster
             return null;
         }
 
-        if (!is_a($this->enum, \BackedEnum::class, allow_string: true)) {
-            return null;
-        }
-
         if (is_a($input, $this->enum)) {
             return $input;
         }
 
         if (defined("{$this->enum}::{$input}")) {
             return constant("{$this->enum}::{$input}");
+        }
+
+        if (! is_a($this->enum, \BackedEnum::class, allow_string: true)) {
+            return null;
         }
 
         return forward_static_call("{$this->enum}::from", $input);
