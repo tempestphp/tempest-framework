@@ -24,7 +24,7 @@ trait IsIterable
 
     public function valid(): bool
     {
-        return $this->current() !== false;
+        return $this->key() !== null;
     }
 
     public function rewind(): void
