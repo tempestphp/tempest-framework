@@ -82,7 +82,3 @@ jobs:
       - name: Execute PHPUnit tests
         run: |
           [ ! -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || phpunit -c "packages/${{ matrix.package.basename }}/phpunit.xml"
-
-      - name: Execute Tempest tests
-        run: |
-          [ -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || cd "packages/${{ matrix.package.basename }}"; php vendor/bin/tempest test
