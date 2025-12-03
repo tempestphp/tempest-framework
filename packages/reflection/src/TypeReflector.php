@@ -263,7 +263,9 @@ final readonly class TypeReflector implements Reflector
             ));
         }
 
-        throw new Exception('Could not resolve type');
+        throw new \InvalidArgumentException(
+            sprintf('Could not resolve type for reflector of type: %s', get_debug_type($reflector))
+        );
     }
 
     private function resolveIsNullable(PHPReflectionType|PHPReflector|string $reflector): bool
