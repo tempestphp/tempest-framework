@@ -193,6 +193,7 @@ export default function tempest(): Plugin {
 					if (req.url === '/index.html') {
 						res.writeHead(302, { Location: appUrl })
 						res.end()
+                        return
 					}
 
 					next()
