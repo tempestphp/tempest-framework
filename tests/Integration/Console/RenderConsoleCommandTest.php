@@ -55,7 +55,7 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
         (new RenderConsoleCommand($this->testConsole))($consoleCommand);
 
         $this->assertSame(
-            'test description',
+            'fixture description',
             trim($this->consoleOutput->getBufferWithoutFormatting()[0]),
         );
     }
@@ -76,7 +76,7 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
         $renderConsoleCommand($consoleCommand);
 
         $this->assertSame(
-            'test <path> <type {a|b|c}> [fallback=a {a|b|c}] [nullable-enum=null {a|b|c}] [times=1] [--force=false] [optional=null] description',
+            'fixture <path> <type {a|b|c}> [fallback=a {a|b|c}] [nullable-enum=null {a|b|c}] [times=1] [--force=false] [optional=null] description',
             trim($this->consoleOutput->getBufferWithoutFormatting()[0]),
         );
     }

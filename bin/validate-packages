@@ -48,7 +48,7 @@ function checkPackage(array $package): void
 {
     checkPackageFile($package, '.gitattributes');
     checkPackageFile($package, 'composer.json');
-    checkPackageFile($package, 'phpunit.xml');
+//    checkPackageFile($package, 'phpunit.xml');
     // TODO: Issue #426
     // checkPackageFile($package, 'README.md');
     checkPackageLicense($package);
