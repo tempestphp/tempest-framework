@@ -38,7 +38,7 @@ final class RedisConfig
         /**
          * Path of the UNIX domain socket file used when connecting to Redis using UNIX domain sockets.
          */
-        public ?int $unixSocketPath = null,
+        public ?string $unixSocketPath = null,
 
         /**
          * Specifies the protocol used to communicate with the Redis instance. This is specific to predis.
