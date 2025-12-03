@@ -2,8 +2,6 @@
 
 namespace Tempest\Cryptography\Password;
 
-use Tempest\Cryptography\Password\HashingAlgorithm;
-
 interface PasswordHasher
 {
     public HashingAlgorithm $algorithm {

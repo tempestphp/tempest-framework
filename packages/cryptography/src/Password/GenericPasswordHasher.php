@@ -4,7 +4,6 @@ namespace Tempest\Cryptography\Password;
 
 use Error;
 use Tempest\Cryptography\Password\Exceptions\HashingFailed;
-use Tempest\Cryptography\Password\HashingAlgorithm;
 use ValueError;
 
 final class GenericPasswordHasher implements PasswordHasher
