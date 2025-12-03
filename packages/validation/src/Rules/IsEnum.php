@@ -62,6 +62,8 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
                 ...$this->only,
                 ...(is_array($values) ? $values : func_get_args()),
             ],
+            except: $this->except,
+            orNull: $this->orNull,
         );
     }
 
