@@ -5,6 +5,7 @@ namespace Tests\Tempest\Integration\Auth\OAuth;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Exceptions\OAuthStateWasInvalid;
 use Tempest\Auth\OAuth\Config\GitHubOAuthConfig;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -262,6 +263,69 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
         $this->assertEquals('developer@company.com', $user->email);
         $this->assertEquals('Jane Developer', $user->full_name);
         $this->assertEquals('janedev', $user->username);
+    }
+
+    #[Test]
+    public function state_is_cleared_after_authentication(): void
+    {
+        $this->database->reset(migrate: false);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUsersTable::class);
+
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $client->createRedirect();
+
+        $this->assertNotNull($client->getState());
+
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: Uri\set_query('/oauth/callback', code: 'auth-code', state: $client->getState()),
+        );
+
+        $client->authenticate(
+            $request,
+            static fn (OAuthUser $user): User => query(User::class)->updateOrCreate(
+                ['github_id' => $user->id],
+                ['email' => $user->email ?? '', 'full_name' => $user->name ?? '', 'username' => $user->nickname ?? ''],
+            ),
+        );
+
+        $this->assertNull($client->getState());
+    }
+
+    #[Test]
+    public function state_is_cleared_even_when_validation_fails(): void
+    {
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $client->createRedirect();
+
+        $this->assertNotNull($client->getState());
+
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: Uri\set_query('/oauth/callback', code: 'auth-code', state: 'invalid-state'),
+        );
+
+        try {
+            $client->authenticate($request, static fn (OAuthUser $user): User => new User('', '', '', ''));
+        } catch (OAuthStateWasInvalid) {
+            // @mago-expect lint:no-empty-catch-clause
+        }
+
+        $this->assertNull($client->getState());
     }
 }
 
