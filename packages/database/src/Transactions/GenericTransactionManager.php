@@ -35,7 +35,7 @@ final readonly class GenericTransactionManager implements TransactionManager
 
     public function rollback(): void
     {
-        $transactionRolledBack = $this->connection->rollBack();
+        $transactionRolledBack = $this->connection->rollback();
 
         if (! $transactionRolledBack) {
             throw new CouldNotRollbackTransaction();
