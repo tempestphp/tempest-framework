@@ -164,7 +164,7 @@ final class DateTimeTest extends TestCase
                 0,
             ],
             [
-                'Unexpected seconds value encountered. Provided "59", but the calendar expects "-1". Ensure the seconds are correct and within the 0-59 range.',
+                'Unexpected seconds value encountered. Provided "-1", but the calendar expects "59". Ensure the seconds are correct and within the 0-59 range.',
                 2024,
                 1,
                 1,
