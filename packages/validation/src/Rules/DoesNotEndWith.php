@@ -20,6 +20,10 @@ final readonly class DoesNotEndWith implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         return ! str_ends_with($value, $this->needle);
     }
 

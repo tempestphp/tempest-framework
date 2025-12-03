@@ -15,7 +15,7 @@ final readonly class IsUnixTimestamp implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        if (! filter_var($value, FILTER_VALIDATE_INT)) {
+        if (filter_var($value, FILTER_VALIDATE_INT) === false) {
             return false;
         }
 
