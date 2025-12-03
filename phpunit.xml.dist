@@ -25,6 +25,7 @@
     </include>
     <exclude>
       <directory suffix=".php">src/Tempest/**/tests</directory>
+      <directory suffix=".php">packages/testing</directory>
       <directory suffix=".cache.php">src</directory>
     </exclude>
   </source>
