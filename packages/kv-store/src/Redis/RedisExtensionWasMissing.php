@@ -5,7 +5,7 @@ namespace Tempest\KeyValue\Redis;
 use Exception;
 use Predis;
 
-final class ReddisExtensionWasMissing extends Exception implements RedisException
+final class RedisExtensionWasMissing extends Exception implements RedisException
 {
     public function __construct(string $fqcn)
     {
