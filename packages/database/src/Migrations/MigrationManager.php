@@ -247,10 +247,6 @@ final class MigrationManager
 
         $statement = $migration->down();
 
-        if ($statement === null) {
-            return;
-        }
-
         $query = new Query($statement->compile($this->dialect));
 
         try {
