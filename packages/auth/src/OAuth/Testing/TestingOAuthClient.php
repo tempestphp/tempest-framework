@@ -64,11 +64,11 @@ final class TestingOAuthClient implements OAuthClient
         $this->state = Random\secure_string(16);
 
         $provider = $this->config->createProvider();
-        $provider->getBaseAuthorizationUrl();
+        $baseAuthorizationUrl = $provider->getBaseAuthorizationUrl();
 
         $url = sprintf(
             '%s/oauth/authorize?redirect_uri=%s&client_id=%s&state=%s',
-            $this->baseUrl ?? $provider->getBaseAuthorizationUrl(),
+            $this->baseUrl ?? $baseAuthorizationUrl,
             $this->redirectUri,
             $this->clientId,
             $this->state,
