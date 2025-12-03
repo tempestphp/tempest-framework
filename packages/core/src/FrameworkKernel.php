@@ -256,14 +256,16 @@ final class FrameworkKernel implements Kernel
         $handler = $this->container->get(ExceptionHandler::class);
 
         set_exception_handler($handler->handle(...));
-        set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
-            new ErrorException(
+        set_error_handler(function (int $code, string $message, string $filename, int $line) use ($handler): bool {
+            $handler->handle(new ErrorException(
                 message: $message,
                 code: $code,
                 filename: $filename,
                 line: $line,
-            ),
-        ), error_levels: E_ERROR);
+            ));
+
+            return true;
+        }, error_levels: E_ERROR);
 
         return $this;
     }
