@@ -12,7 +12,7 @@ use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
 {
-    /** @var array<int, Monolog> */
+    /** @var array<string, Monolog> */
     private array $drivers = [];
 
     public function __construct(
