@@ -59,6 +59,8 @@ final class GitHubOAuthConfig implements OAuthConfig
      */
     public function mapUser(ObjectFactory $factory, ResourceOwnerInterface $resourceOwner): OAuthUser
     {
+        $data = $resourceOwner->toArray();
+
         return $factory->withData([
             'id' => (string) $resourceOwner->getId(),
             'email' => $resourceOwner->getEmail(),
@@ -66,7 +68,7 @@ final class GitHubOAuthConfig implements OAuthConfig
             'nickname' => $resourceOwner->getNickname(),
             'avatar' => $data['avatar_url'] ?? null,
             'provider' => $this->provider,
-            'raw' => $resourceOwner->toArray(),
+            'raw' => $data,
         ])->to(OAuthUser::class);
     }
 }
