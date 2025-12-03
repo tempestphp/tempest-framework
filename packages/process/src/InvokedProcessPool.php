@@ -29,7 +29,7 @@ final class InvokedProcessPool implements Countable
     }
 
     public function __construct(
-        /** @var MutableArray<InvokedProcessInterface> */
+        /** @var MutableArray<InvokedProcess> */
         private MutableArray $processes,
     ) {}
 

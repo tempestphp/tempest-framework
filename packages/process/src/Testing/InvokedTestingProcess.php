@@ -115,11 +115,7 @@ final class InvokedTestingProcess implements InvokedProcess
 
     public function stop(float|int|Duration $timeout = 10, ?int $signal = null): self
     {
-        if ($timeout instanceof Duration) {
-            $timeout = $timeout->getTotalSeconds();
-        }
-
-        $this->process->stop((float) $timeout, $signal);
+        $this->remainingRunIterations = 0;
 
         return $this;
     }
