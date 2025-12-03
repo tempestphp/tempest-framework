@@ -145,15 +145,11 @@ final class InsertQueryBuilder implements BuildsQuery
         $data = [];
 
         foreach ($reflection->getPublicProperties() as $property) {
-            if (! $property->isInitialized($object)) {
+            if ($property->isUninitialized($object)) {
                 continue;
             }
 
             if ($property->isVirtual()) {
-                continue;
-            }
-
-            if ($property->isUninitialized($object)) {
                 continue;
             }
 
