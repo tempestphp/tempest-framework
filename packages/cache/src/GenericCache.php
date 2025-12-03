@@ -130,6 +130,13 @@ final class GenericCache implements Cache
 
     public function getMany(iterable $key): array
     {
+        if (! $this->enabled) {
+            return Arr\map_with_keys(
+                array: $key,
+                map: fn (string|Stringable $key) => yield (string) $key => null,
+            );
+        }
+
         return Arr\map_with_keys(
             array: $key,
             map: fn (string|Stringable $key) => yield (string) $key => $this->adapter->getItem((string) $key)->get(),
