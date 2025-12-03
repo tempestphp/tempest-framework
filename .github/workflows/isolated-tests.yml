@@ -85,4 +85,4 @@ jobs:
 
       - name: Execute Tempest tests
         run: |
-          [ -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || cd "packages/${{ matrix.package.basename }}"; php packages/${{ matrix.package.basename }}/vendor/bin/tempest test
+          [ -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || cd "packages/${{ matrix.package.basename }}"; php vendor/bin/tempest test
