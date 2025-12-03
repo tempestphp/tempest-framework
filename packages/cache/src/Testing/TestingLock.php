@@ -66,6 +66,11 @@ final class TestingLock implements Lock
                 $until = DateTime::now()->plus($until);
             }
 
+            Assert::assertNotNull(
+                actual: $this->expiration,
+                message: "Expected lock `{$this->key}` to have an expiration, but it has none.",
+            );
+
             Assert::assertTrue(
                 condition: $this->expiration->afterOrAtTheSameTime($until),
                 message: "Expected lock `{$this->key}` to expire at or after `{$until}`, but it expires at `{$this->expiration}`.",
