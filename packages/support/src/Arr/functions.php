@@ -518,7 +518,7 @@ namespace Tempest\Support\Arr {
 
         if (count($array) !== count($values)) {
             throw new InvalidArgumentException(
-                sprintf('Cannot combine arrays of different lengths (%d keys vs %d values)', count($array), count($values))
+                sprintf('Cannot combine arrays of different lengths (%d keys vs %d values)', count($array), count($values)),
             );
         }
 
@@ -798,6 +798,10 @@ namespace Tempest\Support\Arr {
             : explode('.', $key);
 
         foreach ($keys as $key) {
+            if (! is_array($value) && ! $value instanceof \ArrayAccess) {
+                return $default;
+            }
+
             if (! isset($value[$key])) {
                 return $default;
             }
