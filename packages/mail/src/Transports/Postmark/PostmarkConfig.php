@@ -53,7 +53,7 @@ final class PostmarkConfig implements MailerConfig, ProvidesDefaultSender
     public function createTransport(): TransportInterface
     {
         return new PostmarkTransportFactory()->create(new Dsn(
-            scheme: PostmarkConnectionScheme::API->value,
+            scheme: $this->scheme->value,
             host: $this->host ?? 'default',
             user: $this->key,
             port: $this->port,
