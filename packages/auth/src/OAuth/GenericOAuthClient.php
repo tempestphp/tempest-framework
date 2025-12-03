@@ -62,7 +62,7 @@ final class GenericOAuthClient implements OAuthClient
 
     public function createRedirect(array $scopes = [], array $options = []): Redirect
     {
-        $to = $this->buildAuthorizationUrl();
+        $to = $this->buildAuthorizationUrl($scopes, $options);
 
         $this->session->set($this->sessionKey, $this->provider->getState());
 
