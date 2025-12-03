@@ -516,6 +516,12 @@ namespace Tempest\Support\Arr {
         $array = to_array($array);
         $values = to_array($values);
 
+        if (count($array) !== count($values)) {
+            throw new InvalidArgumentException(
+                sprintf('Cannot combine arrays of different lengths (%d keys vs %d values)', count($array), count($values))
+            );
+        }
+
         return array_combine($array, $values);
     }
 
