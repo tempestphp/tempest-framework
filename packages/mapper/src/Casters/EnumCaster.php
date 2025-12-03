@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Casters;
 
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use UnitEnum;
 
 final readonly class EnumCaster implements Caster

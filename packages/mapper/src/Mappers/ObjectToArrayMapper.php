@@ -49,7 +49,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
-        if (!$property->isInitialized($object)) {
+        if (! $property->isInitialized($object)) {
             return null;
         }
 
