@@ -52,11 +52,7 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
-        if ($this->logConfig === null) {
-            return;
-        }
-
-        if (! $this->logConfig->debugLogPath) {
+        if (! $this->logConfig?->debugLogPath) {
             return;
         }
 
