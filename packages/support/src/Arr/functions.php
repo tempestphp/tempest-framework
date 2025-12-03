@@ -843,11 +843,12 @@ namespace Tempest\Support\Arr {
      */
     function contains(iterable $array, mixed $search): bool
     {
+        $array = to_array($array);
         $search = $search instanceof Closure
             ? $search
             : static fn (mixed $value) => $value === $search;
 
-        return namespace\first(to_array($array), $search) !== null;
+        return array_any($array, static fn ($value, $key) => $search($value, $key));
     }
 
     /**
