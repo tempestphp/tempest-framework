@@ -12,7 +12,7 @@ use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
 {
-    /** @var array<int, Monolog> */
+    /** @var array<string, Monolog> */
     private array $drivers = [];
 
     public function __construct(
@@ -82,7 +82,7 @@ final class GenericLogger implements Logger
         $this->eventBus->dispatch(new MessageLogged(LogLevel::fromMonolog($level), $message, $context));
     }
 
-    private function writeLog(MonologLogLevel $level, string $message, array $context): void
+    private function writeLog(MonologLogLevel $level, Stringable|string $message, array $context): void
     {
         foreach ($this->logConfig->channels as $channel) {
             $this->resolveDriver($channel, $level)->log($level, $message, $context);
