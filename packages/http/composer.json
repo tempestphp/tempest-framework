@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "tempest/core": "dev-main",
         "tempest/clock": "dev-main",
         "tempest/console": "dev-main",
