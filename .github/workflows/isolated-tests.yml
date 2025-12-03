@@ -33,7 +33,7 @@ jobs:
     outputs:
       matrix: ${{ steps.get_json.outputs.json }}
 
-  phpunit:
+  tests:
     runs-on: ${{ matrix.os }}
     needs: get_packages
     strategy:
@@ -82,3 +82,7 @@ jobs:
       - name: Execute PHPUnit tests
         run: |
           [ ! -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || phpunit -c "packages/${{ matrix.package.basename }}/phpunit.xml"
+
+      - name: Execute Tempest tests
+        run: |
+          [ -f "packages/${{ matrix.package.basename }}/phpunit.xml" ] || cd "packages/${{ matrix.package.basename }}"; php packages/${{ matrix.package.basename }}/vendor/bin/tempest test
