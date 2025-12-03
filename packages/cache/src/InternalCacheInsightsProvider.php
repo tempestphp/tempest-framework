@@ -29,7 +29,7 @@ final class InternalCacheInsightsProvider implements InsightsProvider
                 true => match ($this->discoveryCache->enabled) {
                     true => match ($this->discoveryCache->strategy) {
                         DiscoveryCacheStrategy::FULL => new Insight('Enabled', Insight::SUCCESS),
-                        DiscoveryCacheStrategy::PARTIAL => new Insight('Enabled (Partial)', Insight::SUCCESS),
+                        DiscoveryCacheStrategy::PARTIAL => new Insight('Enabled (partial)', Insight::SUCCESS),
                         default => null, // INVALID and NONE are handled
                     },
                     false => new Insight('Disabled', Insight::WARNING),
