@@ -38,7 +38,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
         public function __invoke(bool $internal = true): void
         {
             if (! $this->container instanceof GenericContainer) {
-                $this->console->error('Clearing caches is only available when using the default container.');
+                $this->console->error('Checking cache status is only available when using the default container.');
                 return;
             }
 
