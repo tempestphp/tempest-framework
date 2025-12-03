@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Casters;
 
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use UnitEnum;
 
 final readonly class EnumCaster implements Caster
@@ -19,6 +20,10 @@ final readonly class EnumCaster implements Caster
     public function cast(mixed $input): ?object
     {
         if ($input === null) {
+            return null;
+        }
+
+        if (!is_a($this->enum, \BackedEnum::class, allow_string: true)) {
             return null;
         }
 
