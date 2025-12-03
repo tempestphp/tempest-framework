@@ -2,6 +2,7 @@
     "name": "tempest/testing",
     "description": "A parallel test runner for modern PHP",
     "license": "MIT",
+    "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
         "tempest/core": "dev-main",
