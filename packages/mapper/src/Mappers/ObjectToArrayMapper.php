@@ -49,6 +49,10 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
+        if (! $property->isInitialized($object)) {
+            return null;
+        }
+
         $propertyValue = $property->getValue($object);
 
         if ($property->getIterableType()?->isClass()) {
