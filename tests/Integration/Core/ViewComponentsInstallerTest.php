@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Core;
+namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\View\ViewComponent;

@@ -151,7 +151,7 @@ final class UnixFunctionsTest extends TestCase
     public function test_delete_directory_non_recursive(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/.*Directory not empty.*/');
+        $this->expectExceptionMessageMatches('/.*directory not empty.*/');
 
         $dir = $this->fixtures . '/tmp';
 

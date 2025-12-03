@@ -35,12 +35,16 @@ final readonly class CacheInitializer implements DynamicInitializer
         );
     }
 
-    private function shouldCacheBeEnabled(?string $tag): bool
+    private function shouldCacheBeEnabled(null|string|UnitEnum $tag): bool
     {
         $globalCacheEnabled = (bool) env('CACHE_ENABLED', default: true);
 
         if (! $tag) {
             return $globalCacheEnabled;
+        }
+
+        if ($tag instanceof UnitEnum) {
+            $tag = $tag->name;
         }
 
         $environmentVariableName = str($tag)

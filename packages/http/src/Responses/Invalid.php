@@ -7,8 +7,10 @@ namespace Tempest\Http\Responses;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Http\SensitiveField;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
@@ -24,10 +26,14 @@ final class Invalid implements Response
         get => get(Validator::class);
     }
 
+    /**
+     * @param class-string|null $targetClass
+     */
     public function __construct(
         Request $request,
         /** @var \Tempest\Validation\Rule[][] $failingRules */
         array $failingRules = [],
+        ?string $targetClass = null,
     ) {
         if ($referer = $request->headers['referer'] ?? null) {
             $this->addHeader('Location', $referer);
@@ -37,7 +43,7 @@ final class Invalid implements Response
         }
 
         $this->flash(Session::VALIDATION_ERRORS, $failingRules);
-        $this->flash(Session::ORIGINAL_VALUES, $request->body);
+        $this->flash(Session::ORIGINAL_VALUES, $this->filterSensitiveFields($request, $targetClass));
         $this->addHeader(
             'x-validation',
             Json\encode(
@@ -48,5 +54,27 @@ final class Invalid implements Response
                 )->toArray(),
             ),
         );
+    }
+
+    /**
+     * @param class-string|null $targetClass
+     */
+    private function filterSensitiveFields(Request $request, ?string $targetClass): array
+    {
+        $body = $request->body;
+
+        if ($targetClass === null) {
+            return $body;
+        }
+
+        $reflector = new ClassReflector($targetClass);
+
+        foreach ($reflector->getPublicProperties() as $property) {
+            if ($property->hasAttribute(SensitiveField::class)) {
+                unset($body[$property->getName()]);
+            }
+        }
+
+        return $body;
     }
 }

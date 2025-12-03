@@ -58,7 +58,8 @@ final readonly class RequestToObjectMapper implements Mapper
         $failingRules = $this->validator->validateValuesForClass($to, $data);
 
         if ($failingRules !== []) {
-            throw $this->validator->createValidationFailureException($failingRules, $from);
+            $targetClass = is_string($to) ? $to : $to::class;
+            throw $this->validator->createValidationFailureException($failingRules, $from, $targetClass);
         }
 
         return map($data)->with(ArrayToObjectMapper::class)->to($to);

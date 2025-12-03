@@ -102,4 +102,19 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('Timeline Taxi', Book::find(id: 1)->first()->title);
     }
+
+    public function test_sensitive_fields_are_excluded_from_original_values(): void
+    {
+        $this->http
+            ->post(
+                uri: uri([ValidationController::class, 'storeSensitive']),
+                body: ['not_sensitive_param' => '', 'sensitive_param' => 'secret123'],
+                headers: ['referer' => '/test-sensitive-validation'],
+            )
+            ->assertHasValidationError('not_sensitive_param')
+            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data): void {
+                $this->assertArrayNotHasKey('sensitive_param', $data);
+                $this->assertArrayHasKey('not_sensitive_param', $data);
+            });
+    }
 }

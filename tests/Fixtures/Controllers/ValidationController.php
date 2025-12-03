@@ -12,6 +12,7 @@ use Tempest\Router\Get;
 use Tempest\Router\Post;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Requests\BookRequest;
+use Tests\Tempest\Fixtures\Requests\SensitiveFieldRequest;
 use Tests\Tempest\Fixtures\Requests\ValidationRequest;
 
 use function Tempest\Router\uri;
@@ -26,6 +27,12 @@ final readonly class ValidationController
 
     #[Post('/test-validation-responses')]
     public function store(ValidationRequest $request): Response
+    {
+        return new Redirect(uri([self::class, 'get']));
+    }
+
+    #[Post('/test-sensitive-validation')]
+    public function storeSensitive(SensitiveFieldRequest $request): Response
     {
         return new Redirect(uri([self::class, 'get']));
     }
