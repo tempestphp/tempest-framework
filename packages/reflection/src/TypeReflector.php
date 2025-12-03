@@ -232,7 +232,13 @@ final readonly class TypeReflector implements Reflector
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
-            return $this->resolveDefinition($reflector->getType());
+            $type = $reflector->getType();
+
+            if ($type === null) {
+                return 'mixed';
+            }
+
+            return $this->resolveDefinition($type);
         }
 
         if ($reflector instanceof PHPReflectionClass) {
@@ -267,7 +273,9 @@ final readonly class TypeReflector implements Reflector
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
-            return $reflector->getType()->allowsNull();
+            $type = $reflector->getType();
+
+            return $type === null || $type->allowsNull();
         }
 
         if ($reflector instanceof PHPReflectionType) {
