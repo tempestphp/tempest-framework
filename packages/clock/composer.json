@@ -3,7 +3,7 @@
     "description": "A clock component that handle few simple clock operations.",
     "require": {
         "php": "^8.5",
-        "psr/clock": "^1.0.0",
+        "psr/clock": "^1.0",
         "tempest/datetime": "dev-main"
     },
     "autoload": {
