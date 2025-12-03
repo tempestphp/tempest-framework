@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "egulias/email-validator": "^4.0.2",
         "giggsey/libphonenumber-for-php-lite": "^9.0",
         "tempest/reflection": "dev-main",
