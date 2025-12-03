@@ -4,6 +4,7 @@ namespace Tempest\Cache;
 
 use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
 use Tempest\Icon\IconCache;
@@ -26,7 +27,11 @@ final class InternalCacheInsightsProvider implements InsightsProvider
             'Discovery' => match ($this->discoveryCache->valid) {
                 false => new Insight('Invalid', Insight::ERROR),
                 true => match ($this->discoveryCache->enabled) {
-                    true => new Insight('Enabled', Insight::ERROR),
+                    true => match ($this->discoveryCache->strategy) {
+                        DiscoveryCacheStrategy::FULL => new Insight('Enabled', Insight::SUCCESS),
+                        DiscoveryCacheStrategy::PARTIAL => new Insight('Enabled (Partial)', Insight::SUCCESS),
+                        default => null, // INVALID and NONE are handled
+                    },
                     false => new Insight('Disabled', Insight::WARNING),
                 },
             },
