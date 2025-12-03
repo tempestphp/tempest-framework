@@ -1,0 +1,26 @@
+{
+    "name": "tempest/testing",
+    "description": "A parallel test runner for modern PHP",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "tempest/core": "^dev-main",
+        "tempest/event-bus": "^dev-main",
+        "tempest/console": "^dev-main",
+        "symfony/process": "^7.3",
+        "psr/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Testing\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Testing\\Tests\\": "tests"
+        }
+    }
+}

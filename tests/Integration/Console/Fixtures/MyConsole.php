@@ -8,7 +8,7 @@ use Tempest\Console\ConsoleCommand;
 
 final class MyConsole
 {
-    #[ConsoleCommand(name: 'test', description: 'description')]
+    #[ConsoleCommand(name: 'fixture', description: 'description')]
     public function handle(
         string $path,
         TestStringEnum $type,
