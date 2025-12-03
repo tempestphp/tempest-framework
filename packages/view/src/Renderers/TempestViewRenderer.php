@@ -135,7 +135,7 @@ final class TempestViewRenderer implements ViewRenderer
             return (string) $value;
         }
 
-        return htmlentities((string) $value);
+        return htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     private function validateView(View $view): void
