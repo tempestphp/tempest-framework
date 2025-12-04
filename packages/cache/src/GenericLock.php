@@ -38,7 +38,7 @@ final class GenericLock implements Lock
             expiration: $this->expiration,
         );
 
-        return true;
+        return $this->cache->get($this->key) === $this->owner;
     }
 
     public function execute(Closure $callback, null|DateTimeInterface|Duration $wait = null): mixed

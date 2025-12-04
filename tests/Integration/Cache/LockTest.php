@@ -73,7 +73,7 @@ final class LockTest extends FrameworkIntegrationTestCase
         // No longer locked after another 30 min (total 1h)
         $clock->plus(Duration::minutes(30));
         $this->assertTrue($lock->acquire());
-        $this->assertFalse($lock->release());
+        $this->assertTrue($lock->release());
     }
 
     public function test_lock_execution_without_timeout(): void
