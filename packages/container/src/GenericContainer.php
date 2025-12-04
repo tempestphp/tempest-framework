@@ -635,6 +635,30 @@ final class GenericContainer implements Container
         $this->chain = $this->chain?->clone();
     }
 
+    public function deepClone(): self
+    {
+        $clonedSingletons = new ArrayIterator();
+
+        foreach ($this->singletons as $index => $singleton) {
+            $clonedSingletons[$index] = is_object($singleton) ? clone $singleton : $singleton;
+        }
+
+        $clonedDefinitions = new ArrayIterator();
+
+        foreach ($this->definitions as $index => $definition) {
+            $clonedDefinitions[$index] = is_object($definition) ? clone $definition : $definition;
+        }
+
+        $clone = clone ($this, [
+            'singletons' => $clonedSingletons,
+            'definitions' => $clonedDefinitions,
+        ]);
+
+        $clone->singleton(Container::class, $clone);
+
+        return $clone;
+    }
+
     private function resolveTaggedName(string $className, null|string|UnitEnum $tag): string
     {
         if ($tag instanceof UnitEnum) {

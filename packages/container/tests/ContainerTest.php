@@ -6,6 +6,7 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Tempest\Container\Container;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
@@ -39,6 +40,7 @@ use Tempest\Container\Tests\Fixtures\DecoratorClass;
 use Tempest\Container\Tests\Fixtures\DecoratorInvalid;
 use Tempest\Container\Tests\Fixtures\DecoratorSecondClass;
 use Tempest\Container\Tests\Fixtures\DecoratorWithoutConstructor;
+use Tempest\Container\Tests\Fixtures\DependencyForDeepClone;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
 use Tempest\Container\Tests\Fixtures\EnumTag;
@@ -688,5 +690,18 @@ final class ContainerTest extends TestCase
         $instance = $container->get(DecoratedInterface::class);
 
         $this->assertInstanceOf(DecoratorWithoutConstructor::class, $instance);
+    }
+
+    public function test_deep_clone_container(): void
+    {
+        $dependencyA = new DependencyForDeepClone();
+        $container = new GenericContainer();
+        $container->singleton(DependencyForDeepClone::class, $dependencyA);
+        $container->singleton(Container::class, $container);
+
+        $clone = $container->deepClone();
+
+        $this->assertNotSame($clone->get(Container::class), $container->get(Container::class));
+        $this->assertNotSame($clone->get(DependencyForDeepClone::class), $container->get(DependencyForDeepClone::class));
     }
 }
