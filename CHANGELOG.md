@@ -2,7 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.12.0](https://github.com/tempestphp/tempest-framework/compare/v2.11.0..2.12.0)  —  2025-11-28
+## [2.13.0](https://github.com/tempestphp/tempest-framework/compare/v2.12.0..2.13.0)  —  2025-12-04
+
+### 🚀 Features
+
+- **auth**: add OAuth installer (#1674) ([9c82b71](https://github.com/tempestphp/tempest-framework/commit/9c82b715b448633a704591e9b78823da28debc98))
+- **cache**: make `assertLocked` ensure that the checked lock has an expiration (#1758) ([1a2e8fb](https://github.com/tempestphp/tempest-framework/commit/1a2e8fbe90259d2bd5a8a0876d4b8fed35c5dcd7))
+- **container**: make all container properties publicly readable (#1785) ([be93ec1](https://github.com/tempestphp/tempest-framework/commit/be93ec1388ec7d253637705d4335d13a78a39f00))
+- **database**: add support for self-referencing relations (#1745) ([df2dcdc](https://github.com/tempestphp/tempest-framework/commit/df2dcdc231384d2dd359f8b621f0ae1f31a3e703))
+- **http**: add support to mark Request properties as #[SensitiveField] (#1746) ([0000c99](https://github.com/tempestphp/tempest-framework/commit/0000c99251b31d0bfa84389fb101be1560d916c3))
+
+### 🐛 Bug fixes
+
+- **auth**: correctly map user in GitHub OAuth provider (#1751) ([ad2182a](https://github.com/tempestphp/tempest-framework/commit/ad2182ac40684b78752e7f7511228688f5093c1a))
+- **auth**: pass scopes/options to auth URL builder (#1750) ([cbe54d7](https://github.com/tempestphp/tempest-framework/commit/cbe54d7f3f7e137fe43e9ad7f8837bd2f7103e9a))
+- **auth**: update outdated authenticatable import (#1752) ([5c68b96](https://github.com/tempestphp/tempest-framework/commit/5c68b968763229dfb5a78c01a80df3b1b134e6c0))
+- **cache**: support enum tags (#1756) ([678b695](https://github.com/tempestphp/tempest-framework/commit/678b69582e526e25ff545c346179bda9636f1415))
+- **cache**: add descriptions to `cache:clear` arguments (#1755) ([e324f6e](https://github.com/tempestphp/tempest-framework/commit/e324f6e767b50acd6e76e8310be12422b85e782b))
+- **command-bus**: extract uuid from pending commands when not provided (#1761) ([b787c16](https://github.com/tempestphp/tempest-framework/commit/b787c16e57f60de3bd7883944561f02fce3a661a))
+- **console**: properly normalize boolean flag names (#1762) ([c6e6867](https://github.com/tempestphp/tempest-framework/commit/c6e6867ede678b9798386bab12e1e2afaef91bc8))
+- **core**: gracefully handle missing seeders when using `db:seed` (#1759) ([450ca75](https://github.com/tempestphp/tempest-framework/commit/450ca7576c6e5a8f4f5719dd27e7d4d4a29954c9))
+- **process**: properly return exit code if missing (#1776) ([9ad1587](https://github.com/tempestphp/tempest-framework/commit/9ad158747a810db490aef43a7a6c1bcfe062d900))
+
+
+## [2.12.0](https://github.com/tempestphp/tempest-framework/compare/v2.11.0..v2.12.0)  —  2025-11-28
 
 ### 🚀 Features
 
@@ -798,7 +821,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
 
 ### 🚨 Breaking changes
 
