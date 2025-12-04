@@ -26,20 +26,20 @@ final class GenericContainer implements Container
 
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
-        private ArrayIterator $definitions = new ArrayIterator(),
+        private(set) ArrayIterator $definitions = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, mixed> $singletons */
-        private ArrayIterator $singletons = new ArrayIterator(),
+        private(set) ArrayIterator $singletons = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, class-string> $initializers */
-        public ArrayIterator $initializers = new ArrayIterator(),
+        private(set) ArrayIterator $initializers = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
-        private ArrayIterator $dynamicInitializers = new ArrayIterator(),
+        private(set) ArrayIterator $dynamicInitializers = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, class-string[]> $decorators */
-        private ArrayIterator $decorators = new ArrayIterator(),
-        private ?DependencyChain $chain = null,
+        private(set) ArrayIterator $decorators = new ArrayIterator(),
+        private(set) ?DependencyChain $chain = null,
     ) {}
 
     public function setDefinitions(array $definitions): self
