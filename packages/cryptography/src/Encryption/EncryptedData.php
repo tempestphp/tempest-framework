@@ -38,10 +38,18 @@ final readonly class EncryptedData implements Stringable
             throw EncryptedDataWasInvalid::dueToInvalidFormat();
         }
 
+        $payload = base64_decode($decoded['payload'], strict: true);
+        $iv = base64_decode($decoded['iv'], strict: true);
+        $tag = base64_decode($decoded['tag'], strict: true);
+
+        if ($payload === false || $iv === false || $tag === false) {
+            throw EncryptedDataWasInvalid::dueToInvalidFormat();
+        }
+
         return new self(
-            payload: base64_decode($decoded['payload'], strict: true),
-            iv: base64_decode($decoded['iv'], strict: true),
-            tag: base64_decode($decoded['tag'], strict: true),
+            payload: $payload,
+            iv: $iv,
+            tag: $tag,
             signature: new Signature($decoded['signature']),
             algorithm: EncryptionAlgorithm::from($decoded['algorithm']),
         );

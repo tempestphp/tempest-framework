@@ -15,4 +15,9 @@ final class HashingFailed extends Exception implements PasswordHashingException
     {
         return new self('Could not hash an empty password.');
     }
+
+    public static function forInvalidHashingAlgorithm(): self
+    {
+        return new self('The specified hashing algorithm is not supported.');
+    }
 }

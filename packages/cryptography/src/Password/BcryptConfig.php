@@ -2,8 +2,6 @@
 
 namespace Tempest\Cryptography\Password;
 
-use Tempest\Cryptography\Password\HashingAlgorithm;
-
 final class BcryptConfig implements PasswordHashingConfig
 {
     public HashingAlgorithm $algorithm = HashingAlgorithm::BCRYPT;
