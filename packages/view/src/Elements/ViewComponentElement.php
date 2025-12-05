@@ -141,7 +141,7 @@ final class ViewComponentElement implements Element, WithToken
             ->prepend(
                 // Open the current scope
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    '<?php (function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
@@ -150,7 +150,7 @@ final class ViewComponentElement implements Element, WithToken
             ->append(
                 // Close and call the current scope
                 sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s) ?>',
+                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s %s) ?>',
                     ViewObjectExporter::export($this->viewComponentAttributes),
                     ViewObjectExporter::export($slots),
                     $this->scopedVariables->isNotEmpty()
@@ -161,6 +161,9 @@ final class ViewComponentElement implements Element, WithToken
                         : '',
                     $this->expressionAttributes->isNotEmpty()
                         ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
+                        : '',
+                    $this->scopedVariables->isNotEmpty()
+                        ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
                         : '',
                 ),
             );

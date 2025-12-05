@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "symfony/process": "^7.3",
         "tempest/container": "dev-main",
         "tempest/support": "dev-main",
