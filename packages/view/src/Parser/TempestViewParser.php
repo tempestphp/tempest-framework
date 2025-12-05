@@ -9,10 +9,7 @@ final class TempestViewParser
     private array $scope = [];
 
     private ?Token $currentScope {
-        get {
-            $lastKey = array_key_last($this->scope);
-            return $lastKey !== null ? $this->scope[$lastKey] : null;
-        }
+        get => array_last($this->scope);
     }
 
     public function __construct(
