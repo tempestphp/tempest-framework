@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace Tempest\Reflection;
 
 use Error;
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\ParserFactory;
 use ReflectionProperty as PHPReflectionProperty;
 
 final class PropertyReflector implements Reflector
 {
     use HasAttributes;
+
+    /** @var array<string, array<string, string>> */
+    private static array $useStatementCache = [];
 
     public function __construct(
         private readonly PHPReflectionProperty $reflectionProperty,
@@ -104,7 +111,119 @@ final class PropertyReflector implements Reflector
             return null;
         }
 
-        return new TypeReflector(ltrim($match[1], '\\'));
+        $typeName = ltrim($match[1], '\\');
+
+        if (str_contains($match[1], '\\')) {
+            return new TypeReflector($typeName);
+        }
+
+        return new TypeReflector($this->resolveShortClassName($typeName));
+    }
+
+    private function resolveShortClassName(string $shortName): string
+    {
+        if (class_exists($shortName)) {
+            return $shortName;
+        }
+
+        $declaringClass = $this->reflectionProperty->getDeclaringClass();
+        $fileName = $declaringClass->getFileName();
+
+        if ($fileName && ($resolved = $this->resolveFromUseStatements($fileName, $shortName))) {
+            return $resolved;
+        }
+
+        $namespace = $declaringClass->getNamespaceName();
+
+        if ($namespace !== '') {
+            $fqcn = $namespace . '\\' . $shortName;
+
+            if (class_exists($fqcn)) {
+                return $fqcn;
+            }
+        }
+
+        return $shortName;
+    }
+
+    private function resolveFromUseStatements(string $fileName, string $shortName): ?string
+    {
+        $useStatements = $this->getUseStatements($fileName);
+
+        return $useStatements[$shortName] ?? null;
+    }
+
+    /** @return array<string, string> */
+    private function getUseStatements(string $fileName): array
+    {
+        return self::$useStatementCache[$fileName] ??= $this->parseUseStatements($fileName);
+    }
+
+    /** @return array<string, string> */
+    private function parseUseStatements(string $fileName): array
+    {
+        $content = file_get_contents($fileName);
+
+        if ($content === false) {
+            return [];
+        }
+
+        $ast = new ParserFactory()
+            ->createForNewestSupportedVersion()
+            ->parse($content);
+
+        if ($ast === null) {
+            return [];
+        }
+
+        $useStatements = [];
+        $traverser = new NodeTraverser();
+
+        $traverser->addVisitor(new class($useStatements) extends NodeVisitorAbstract {
+            public function __construct(
+                private array &$useStatements,
+            ) {}
+
+            public function enterNode(Node $node): null
+            {
+                match (true) {
+                    $node instanceof Node\Stmt\Use_ && $node->type === Node\Stmt\Use_::TYPE_NORMAL => $this->extractUseItems($node->uses),
+                    $node instanceof Node\Stmt\GroupUse => $this->extractGroupUseItems($node),
+                    default => null,
+                };
+
+                return null;
+            }
+
+            /** @param Node\UseItem[] $uses */
+            private function extractUseItems(array $uses, string $prefix = ''): void
+            {
+                foreach ($uses as $use) {
+                    $fqcn = $prefix . $use->name->toString();
+                    $alias = $use->alias->name ?? $use->name->getLast();
+                    $this->useStatements[$alias] = $fqcn;
+                }
+            }
+
+            private function extractGroupUseItems(Node\Stmt\GroupUse $node): void
+            {
+                $prefix = $node->prefix->toString() . '\\';
+
+                foreach ($node->uses as $use) {
+                    if ($use->type !== Node\Stmt\Use_::TYPE_NORMAL) {
+                        continue;
+                    }
+
+                    $fqcn = $prefix . $use->name->toString();
+                    $alias = $use->alias->name ?? $use->name->getLast();
+                    $this->useStatements[$alias] = $fqcn;
+                }
+            }
+        });
+
+        $traverser->traverse($ast);
+
+        return $useStatements;
     }
 
     public function isUninitialized(object $object): bool
