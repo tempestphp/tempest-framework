@@ -21,8 +21,8 @@ final class Session
 
     private array $expiredKeys = [];
 
-    private SessionManager $manager {
-        get => get(SessionManager::class);
+    private SessionCache $cache {
+        get => get(className:SessionCache::class);
     }
 
     /**
@@ -30,11 +30,11 @@ final class Session
      */
     public string $token {
         get {
-            if (! $this->get(self::CSRF_TOKEN_KEY)) {
-                $this->set(self::CSRF_TOKEN_KEY, Random\uuid());
+            if (! $this->get(key:self::CSRF_TOKEN_KEY)) {
+                $this->set(key:self::CSRF_TOKEN_KEY, value:Random\uuid());
             }
 
-            return $this->get(self::CSRF_TOKEN_KEY);
+            return $this->get(key:self::CSRF_TOKEN_KEY);
         }
     }
 
@@ -48,7 +48,7 @@ final class Session
 
     public function set(string $key, mixed $value): void
     {
-        $this->manager->set($this->id, $key, $value);
+        $this->cache->set(sessionId:$this->id, key:$key, value:$value);
     }
 
     /**
@@ -56,7 +56,7 @@ final class Session
      */
     public function flash(string $key, mixed $value): void
     {
-        $this->manager->set($this->id, $key, new FlashValue($value));
+        $this->cache->set(sessionId:$this->id, key:$key, value:new FlashValue(value:$value));
     }
 
     /**
@@ -64,7 +64,7 @@ final class Session
      */
     public function reflash(): void
     {
-        foreach ($this->manager->all($this->id) as $key => $value) {
+        foreach ($this->cache->all(sessionId:$this->id) as $key => $value) {
             if (! $value instanceof FlashValue) {
                 continue;
             }
@@ -75,7 +75,7 @@ final class Session
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->manager->get($this->id, $key, $default);
+        $value = $this->cache->get(sessionId:$this->id, key:$key, default:$default);
 
         if ($value instanceof FlashValue) {
             $this->expiredKeys[$key] = $key;
@@ -88,22 +88,22 @@ final class Session
     /** @return \Tempest\Validation\Rule[] */
     public function getErrorsFor(string $name): array
     {
-        return $this->get(self::VALIDATION_ERRORS)[$name] ?? [];
+        return $this->get(key:self::VALIDATION_ERRORS)[$name] ?? [];
     }
 
     public function getOriginalValueFor(string $name, mixed $default = ''): mixed
     {
-        return $this->get(self::ORIGINAL_VALUES)[$name] ?? $default;
+        return $this->get(key:self::ORIGINAL_VALUES)[$name] ?? $default;
     }
 
     public function getPreviousUrl(): string
     {
-        return $this->get(self::PREVIOUS_URL, default: '');
+        return $this->get(key:self::PREVIOUS_URL, default: '');
     }
 
     public function setPreviousUrl(string $url): void
     {
-        $this->set(self::PREVIOUS_URL, $url);
+        $this->set(key:self::PREVIOUS_URL, value:$url);
     }
 
     /**
@@ -111,37 +111,42 @@ final class Session
      */
     public function consume(string $key, mixed $default = null): mixed
     {
-        $value = $this->get($key, $default);
+        $value = $this->get(key:$key, default:$default);
 
-        $this->remove($key);
+        $this->remove(key:$key);
 
         return $value;
     }
 
     public function all(): array
     {
-        return $this->manager->all($this->id);
+        return $this->cache->all(sessionId:$this->id);
     }
 
     public function remove(string $key): void
     {
-        $this->manager->remove($this->id, $key);
+        $this->cache->remove(sessionId:$this->id, key:$key);
     }
 
     public function destroy(): void
     {
-        $this->manager->destroy($this->id);
+        $this->cache->destroy(sessionId:$this->id);
     }
 
     public function isValid(): bool
     {
-        return $this->manager->isValid($this->id);
+        return $this->cache->isValid(session:$this->id);
+    }
+
+    public function persist(): void
+    {
+        $this->cache->persist(sessionId:$this->id);
     }
 
     public function cleanup(): void
     {
         foreach ($this->expiredKeys as $key) {
-            $this->manager->remove($this->id, $key);
+            $this->cache->remove(sessionId:$this->id, key:$key);
         }
     }
 }

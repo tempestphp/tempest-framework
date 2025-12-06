@@ -6,6 +6,7 @@ namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionCache;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
@@ -21,138 +22,99 @@ final readonly class FileSessionManager implements SessionManager
     public function __construct(
         private Clock $clock,
         private SessionConfig $sessionConfig,
+        private SessionCache $cache,
     ) {}
 
     public function create(SessionId $id): Session
     {
-        return $this->persist($id);
-    }
+        $session = $this->resolve(id:$id);
 
-    public function set(SessionId $id, string $key, mixed $value): void
-    {
-        $this->persist($id, [...$this->getData($id), ...[$key => $value]]);
-    }
+        if ($session) {
+            return $session;
+        }
 
-    public function get(SessionId $id, string $key, mixed $default = null): mixed
-    {
-        return $this->getData($id)[$key] ?? $default;
-    }
+        $session = new Session(
+            id: $id,
+            createdAt: $this->clock->now(),
+            lastActiveAt: $this->clock->now(),
+            data: [],
+        );
 
-    public function remove(SessionId $id, string $key): void
-    {
-        $data = $this->getData($id);
+        $this->cache->store(session:$session);
 
-        unset($data[$key]);
-
-        $this->persist($id, $data);
+        return $session;
     }
 
     public function destroy(SessionId $id): void
     {
-        unlink($this->getPath($id));
+        unlink(filename:$this->getPath(id:$id));
 
-        event(new SessionDestroyed($id));
+        event(event:new SessionDestroyed(id:$id));
     }
 
-    public function isValid(SessionId $id): bool
+    public function resolve(SessionId $id): ?Session
     {
-        $session = $this->resolve($id);
+        $session = $this->cache->find(sessionId:$id);
 
-        if ($session === null) {
-            return false;
+        if ($session) {
+            return $session;
         }
 
-        if (! ($session->lastActiveAt ?? null)) {
-            return false;
-        }
-
-        return $this->clock->now()->before(
-            other: $session->lastActiveAt->plus($this->sessionConfig->expiration),
-        );
-    }
-
-    private function getPath(SessionId $id): string
-    {
-        return internal_storage_path($this->sessionConfig->path, (string) $id);
-    }
-
-    private function resolve(SessionId $id): ?Session
-    {
-        $path = $this->getPath($id);
+        $path = $this->getPath(id:$id);
 
         try {
-            if (! Filesystem\is_file($path)) {
+            if (! Filesystem\is_file(path:$path)) {
                 return null;
             }
 
-            $file_pointer = fopen($path, 'rb');
-            flock($file_pointer, LOCK_SH);
+            $file_pointer = fopen(filename:$path, mode:'rb');
+            flock(stream:$file_pointer, operation:LOCK_SH);
 
-            $content = Filesystem\read_file($path);
+            $content = Filesystem\read_file(filename:$path);
 
-            flock($file_pointer, LOCK_UN);
-            fclose($file_pointer);
+            flock(stream:$file_pointer, operation:LOCK_UN);
+            fclose(stream:$file_pointer);
 
-            return unserialize($content, ['allowed_classes' => true]);
+            $session = unserialize(data:$content, options:['allowed_classes' => true]);
+
+            $this->cache->store(session:$session);
+
+            return $session;
         } catch (Throwable) {
             return null;
         }
     }
 
-    public function all(SessionId $id): array
+    public function persist(Session $session): void
     {
-        return $this->getData($id);
-    }
+        $session->lastActiveAt = $this->clock->now();
 
-    /**
-     * @return array<mixed>
-     */
-    private function getData(SessionId $id): array
-    {
-        return $this->resolve($id)->data ?? [];
-    }
-
-    /**
-     * @param array<mixed>|null $data
-     */
-    private function persist(SessionId $id, ?array $data = null): Session
-    {
-        $now = $this->clock->now();
-        $session = $this->resolve($id) ?? new Session(
-            id: $id,
-            createdAt: $now,
-            lastActiveAt: $now,
-        );
-
-        $session->lastActiveAt = $now;
-
-        if ($data !== null) {
-            $session->data = $data;
-        }
-
-        Filesystem\write_file($this->getPath($id), serialize($session), LOCK_EX);
-
-        return $session;
+        Filesystem\write_file(filename:$this->getPath(id:$session->id), content:serialize(value:$session), flags:LOCK_EX);
     }
 
     public function cleanup(): void
     {
-        $sessionFiles = glob(internal_storage_path($this->sessionConfig->path, '/*'));
+        $sessionFiles = glob(pattern:internal_storage_path($this->sessionConfig->path, '/*'));
 
         foreach ($sessionFiles as $sessionFile) {
-            $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));
+            $id = new SessionId(id:pathinfo(path:$sessionFile, flags:PATHINFO_FILENAME));
 
-            $session = $this->resolve($id);
+            $session = $this->resolve(id:$id);
 
             if ($session === null) {
                 continue;
             }
 
-            if ($this->isValid($session->id)) {
+            if ($this->cache->isValid(session:$session)) {
                 continue;
             }
 
             $session->destroy();
         }
+    }
+
+    private function getPath(SessionId $id): string
+    {
+        return internal_storage_path($this->sessionConfig->path, (string) $id);
     }
 }
