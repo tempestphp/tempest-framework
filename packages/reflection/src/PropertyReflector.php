@@ -254,12 +254,16 @@ final class PropertyReflector implements Reflector
         while ($i < $count && $tokens[$i]->text !== '}') {
             $this->skipWhitespaceTokens($tokens, $i, $count);
 
+            if ($i >= $count) {
+                break;
+            }
+
             if ($tokens[$i]->is([T_FUNCTION, T_CONST])) {
                 while ($i < $count && $tokens[$i]->text !== ',' && $tokens[$i]->text !== '}') {
                     $i++;
                 }
 
-                if ($tokens[$i]->text === ',') {
+                if ($i < $count && $tokens[$i]->text === ',') {
                     $i++;
                 }
 
@@ -275,17 +279,23 @@ final class PropertyReflector implements Reflector
 
             $this->skipWhitespaceTokens($tokens, $i, $count);
 
+            if ($i >= $count) {
+                break;
+            }
+
             $alias = $this->parseAlias($tokens, $i, $count) ?? $this->getShortName($name);
             $useStatements[$alias] = $prefix . '\\' . $name;
 
             $this->skipWhitespaceTokens($tokens, $i, $count);
 
-            if ($tokens[$i]->text === ',') {
+            if ($i < $count && $tokens[$i]->text === ',') {
                 $i++;
             }
         }
 
-        $i++;
+        if ($i < $count) {
+            $i++;
+        }
     }
 
     private function getShortName(string $fqcn): string
