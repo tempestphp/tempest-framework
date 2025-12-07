@@ -55,18 +55,18 @@ final readonly class Validator
     /**
      * Creates a {@see ValidationFailed} exception from the given rule failures, populated with error messages.
      *
-     * @param array<string,Rule[]> $failingRules
+     * @param array<string,FailingRule[]> $failingRules
      * @param class-string|null $targetClass
      */
     public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
     {
         return new ValidationFailed(
-            $failingRules,
-            $subject,
-            Arr\map_iterable($failingRules, function (array $rules, string $field) {
-                return Arr\map_iterable($rules, fn (Rule $rule) => $this->getErrorMessage($rule, $field));
+            failingRules: $failingRules,
+            subject: $subject,
+            errorMessages: Arr\map_iterable($failingRules, function (array $rules, string $field) {
+                return Arr\map_iterable($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field));
             }),
-            $targetClass,
+            targetClass: $targetClass,
         );
     }
 
@@ -74,7 +74,7 @@ final readonly class Validator
      * Validates the specified `$values` for the corresponding public properties on the specified `$class`, using built-in PHP types and attribute rules.
      *
      * @param ClassReflector|class-string $class
-     * @return Rule[]
+     * @return array<string,FailingRule[]>
      */
     public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
     {
@@ -125,7 +125,7 @@ final readonly class Validator
     /**
      * Validates `$value` against the specified `$property`, using built-in PHP types and attribute rules.
      *
-     * @return Rule[]
+     * @return FailingRule[]
      */
     public function validateValueForProperty(PropertyReflector $property, mixed $value): array
     {
@@ -148,14 +148,19 @@ final readonly class Validator
             $rules[] = new IsEnum(enum: $property->getType()->getName(), orNull: $property->isNullable());
         }
 
-        return $this->validateValue($value, $rules);
+        $key = $property->getAttribute(TranslationKey::class)?->key;
+
+        return Arr\map_iterable(
+            array: $this->validateValue($value, $rules),
+            map: fn (FailingRule $rule) => $rule->withKey($key),
+        );
     }
 
     /**
      * Validates the specified `$value` against the specified set of `$rules`. If a rule is a closure, it may return a string as a validation error.
      *
      * @param Rule|array<Rule|(Closure(mixed $value):string|false)>|(Closure(mixed $value):string|false) $rules
-     * @return Rule[]
+     * @return FailingRule[]
      */
     public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
@@ -169,7 +174,7 @@ final readonly class Validator
             $rule = $this->convertToRule($rule, $value);
 
             if (! $rule->isValid($value)) {
-                $failingRules[] = $rule;
+                $failingRules[] = new FailingRule($rule, value: $value);
             }
         }
 
@@ -206,21 +211,18 @@ final readonly class Validator
     /**
      * Gets a localized validation error message for the specified rule.
      */
-    public function getErrorMessage(Rule $rule, ?string $field = null): string
+    public function getErrorMessage(Rule|FailingRule $rule, ?string $field = null): string
     {
         if ($rule instanceof HasErrorMessage) {
             return $rule->getErrorMessage();
         }
 
-        $ruleTranslationKey = str($rule::class)
-            ->classBasename()
-            ->snake()
-            ->replaceEvery([ // those are snake case issues that we manually fix for consistency
-                'i_pv6' => 'ipv6',
-                'i_pv4' => 'ipv4',
-                'reg_ex' => 'regex',
-            ])
-            ->toString();
+        $ruleTranslationKey = $this->getTranslationKey($rule);
+
+        if ($rule instanceof FailingRule) {
+            $field ??= $rule->field;
+            $rule = $rule->rule;
+        }
 
         $variables = [
             'field' => $this->getFieldName($ruleTranslationKey, $field),
@@ -231,6 +233,30 @@ final readonly class Validator
         }
 
         return $this->translator->translate("validation_error.{$ruleTranslationKey}", ...$variables);
+    }
+
+    private function getTranslationKey(Rule|FailingRule $rule): string
+    {
+        $key = '';
+
+        if ($rule instanceof FailingRule && $rule->key) {
+            $key .= $rule->key;
+        }
+
+        if ($rule instanceof FailingRule) {
+            $rule = $rule->rule;
+        }
+
+        return str($rule::class)
+            ->classBasename()
+            ->snake()
+            ->replaceEvery([ // those are snake case issues that we manually fix for consistency
+                'i_pv6' => 'ipv6',
+                'i_pv4' => 'ipv4',
+                'reg_ex' => 'regex',
+            ])
+            ->when($key !== '', fn ($s) => $s->append('.', $key))
+            ->toString();
     }
 
     private function getFieldName(string $key, ?string $field = null): string
