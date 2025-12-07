@@ -8,7 +8,7 @@ use Tempest\Mapper\MapperConfig;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class DtoCaster implements Caster
 {

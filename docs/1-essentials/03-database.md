@@ -147,7 +147,7 @@ final class Book
 Because model objects aren't tied to the database specifically, Tempest's [mapper](../2-features/01-mapper.md) can map data from many different sources to them. For instance, you can persist your models as JSON instead of a database, if you want to:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($json)->collection()->to(Book::class); // from JSON source to Book collection
 $json = map($books)->toJson(); // from Book collection to JSON

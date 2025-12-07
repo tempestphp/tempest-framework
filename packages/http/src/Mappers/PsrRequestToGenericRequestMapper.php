@@ -17,7 +17,7 @@ use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 use Throwable;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 final readonly class PsrRequestToGenericRequestMapper implements Mapper

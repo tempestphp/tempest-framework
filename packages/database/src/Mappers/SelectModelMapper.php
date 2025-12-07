@@ -11,7 +11,7 @@ use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr\MutableArray;
 
 use function Tempest\Database\inspect;
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 #[SkipDiscovery]

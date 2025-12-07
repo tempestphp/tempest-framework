@@ -27,7 +27,7 @@ use Tempest\Support\Paginator\Paginator;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * @template TModel of object
