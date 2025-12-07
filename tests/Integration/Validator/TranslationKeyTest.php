@@ -5,7 +5,6 @@ namespace Tests\Tempest\Integration\Validator;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Locale;
-use Tempest\Intl\Translator;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules;
 use Tempest\Validation\TranslationKey;
