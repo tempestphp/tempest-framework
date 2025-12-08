@@ -16,7 +16,7 @@ final class RedisSessionConfig implements SessionConfig
      */
     public function __construct(
         private(set) Duration $expiration,
-        private(set) string $prefix = 'session',
+        private(set) string $prefix = 'session:',
     ) {}
 
     public function createManager(Container $container): RedisSessionManager

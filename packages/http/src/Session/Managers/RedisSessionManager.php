@@ -120,12 +120,16 @@ final readonly class RedisSessionManager implements SessionManager
 
     private function getKey(SessionId $id): string
     {
-        return sprintf('%s_%s', $this->sessionConfig->prefix, $id);
+        return sprintf('%s%s', $this->sessionConfig->prefix, $id);
     }
 
     private function getSessionIdFromKey(string $key): SessionId
     {
-        return new SessionId(new ImmutableString($key)->afterFirst('_')->toString());
+        return new SessionId(
+            new ImmutableString($key)
+                ->afterFirst($this->sessionConfig->prefix)
+                ->toString(),
+        );
     }
 
     public function cleanup(): void
@@ -135,7 +139,7 @@ final readonly class RedisSessionManager implements SessionManager
         do {
             $result = $this->redis->command('SCAN', $cursor, 'MATCH', $this->getKey(new SessionId('*')), 'COUNT', '100');
             $cursor = $result[0];
-
+            ld($result);
             foreach ($result[1] as $key) {
                 $sessionId = $this->getSessionIdFromKey($key);
 
@@ -143,9 +147,8 @@ final readonly class RedisSessionManager implements SessionManager
                     continue;
                 }
 
-               $this->destroy($sessionId);
+                $this->destroy($sessionId);
             }
-
-        } while( $cursor != '0');
+        } while ($cursor !== '0');
     }
 }

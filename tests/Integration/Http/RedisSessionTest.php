@@ -31,7 +31,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2)));
         $this->container->singleton(
             SessionManager::class,
-            fn() => new RedisSessionManager(
+            fn () => new RedisSessionManager(
                 $this->container->get(Clock::class),
                 $this->container->get(Redis::class),
                 $this->container->get(SessionConfig::class),
@@ -242,7 +242,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     {
         $session = $this->getSessionFromDatabase($sessionId);
 
-        $this->assertNotNull($session, "Session {$sessionId} should not exist in database");
+        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
     }
 
     private function assertSessionNotExistsInDatabase(SessionId $sessionId): void
@@ -250,17 +250,6 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $session = $this->getSessionFromDatabase($sessionId);
 
         $this->assertNull($session, "Session {$sessionId} should not exist in database");
-    }
-
-    private function assertSessionDataInDatabase(SessionId $sessionId, array $data): void
-    {
-        $session = $this->getSessionFromDatabase($sessionId);
-
-        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
-
-        foreach ($data as $key => $value) {
-            $this->assertEquals($value, $session->data[$key], "Session data key '{$key}' should match expected value");
-        }
     }
 
     private function getSessionLastActiveTimestamp(SessionId $sessionId): \Tempest\DateTime\DateTime
@@ -272,16 +261,15 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         return $session->lastActiveAt;
     }
 
-
     private function getSessionFromDatabase(SessionId $id): ?Session
     {
         $config = $this->container->get(SessionConfig::class);
         $redis = $this->container->get(Redis::class);
 
         try {
-            $content = $redis->get(sprintf('%s_%s', $config->prefix, $id));
+            $content = $redis->get(sprintf('%s%s', $config->prefix, $id));
             return unserialize($content, ['allowed_classes' => true]);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }
