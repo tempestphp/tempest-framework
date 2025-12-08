@@ -19,7 +19,7 @@ final class SerializerFactory
     /**
      * @var array<string,array{string|Closure,class-string<\Tempest\Mapper\Serializer>|Closure,int}[]>
      */
-    private(set) array $contextSerializers = [];
+    private(set) array $serializers = [];
 
     public function __construct(
         private readonly Container $container,
@@ -30,13 +30,10 @@ final class SerializerFactory
      */
     public function addSerializer(string|array|Closure $for, string|Closure $serializerClass, string $context = Context::DEFAULT, int $priority = 0): self
     {
-        if (! isset($this->contextSerializers[$context])) {
-            $this->contextSerializers[$context] = [];
-        }
+        $this->serializers[$context] ??= [];
+        $this->serializers[$context][] = [$for, $serializerClass, $priority];
 
-        $this->contextSerializers[$context][] = [$for, $serializerClass, $priority];
-
-        usort($this->contextSerializers[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->serializers[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
@@ -63,8 +60,8 @@ final class SerializerFactory
         }
 
         $serializers = [
-            ...($this->contextSerializers[$context] ?? []),
-            ...($this->contextSerializers[Context::DEFAULT] ?? []),
+            ...($this->serializers[$context] ?? []),
+            ...($this->serializers[Context::DEFAULT] ?? []),
         ];
 
         foreach ($serializers as [$for, $serializerClass]) {
@@ -95,8 +92,8 @@ final class SerializerFactory
         }
 
         $serializers = [
-            ...($this->contextSerializers[$context] ?? []),
-            ...($this->contextSerializers[Context::DEFAULT] ?? []),
+            ...($this->serializers[$context] ?? []),
+            ...($this->serializers[Context::DEFAULT] ?? []),
         ];
 
         foreach ($serializers as [$for, $serializerClass]) {
