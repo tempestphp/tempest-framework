@@ -23,5 +23,4 @@ final class RedisSessionConfig implements SessionConfig
     {
         return $container->get(RedisSessionManager::class);
     }
-
 }

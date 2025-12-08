@@ -11,8 +11,8 @@ use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
-use Tempest\Support\Filesystem;
 use Throwable;
+
 use function Tempest\event;
 
 final readonly class RedisSessionManager implements SessionManager
