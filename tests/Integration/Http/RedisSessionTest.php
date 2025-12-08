@@ -6,6 +6,7 @@ namespace Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Session\Config\RedisSessionConfig;
@@ -28,7 +29,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2)));
+        $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2), prefix: 'test_session:'));
         $this->container->singleton(
             SessionManager::class,
             fn () => new RedisSessionManager(
@@ -252,7 +253,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $this->assertNull($session, "Session {$sessionId} should not exist in database");
     }
 
-    private function getSessionLastActiveTimestamp(SessionId $sessionId): \Tempest\DateTime\DateTime
+    private function getSessionLastActiveTimestamp(SessionId $sessionId): DateTimeInterface
     {
         $session = $this->getSessionFromDatabase($sessionId);
 
@@ -263,11 +264,10 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
 
     private function getSessionFromDatabase(SessionId $id): ?Session
     {
-        $config = $this->container->get(SessionConfig::class);
         $redis = $this->container->get(Redis::class);
 
         try {
-            $content = $redis->get(sprintf('%s%s', $config->prefix, $id));
+            $content = $redis->get(sprintf('%s%s',  'test_session:', $id));
             return unserialize($content, ['allowed_classes' => true]);
         } catch (Throwable) {
             return null;

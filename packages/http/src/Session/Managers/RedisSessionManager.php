@@ -139,7 +139,6 @@ final readonly class RedisSessionManager implements SessionManager
         do {
             $result = $this->redis->command('SCAN', $cursor, 'MATCH', $this->getKey(new SessionId('*')), 'COUNT', '100');
             $cursor = $result[0];
-            ld($result);
             foreach ($result[1] as $key) {
                 $sessionId = $this->getSessionIdFromKey($key);
 
