@@ -11,6 +11,7 @@ use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Provider\Instagram;
 use League\OAuth2\Client\Provider\LinkedIn;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Auth\OAuth\Config\AppleOAuthConfig;
@@ -23,7 +24,9 @@ use Tempest\Auth\OAuth\Config\InstagramOAuthConfig;
 use Tempest\Auth\OAuth\Config\LinkedInOAuthConfig;
 use Tempest\Auth\OAuth\OAuthClientInitializer;
 use Tempest\Auth\OAuth\OAuthUser;
+use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\ObjectFactory;
@@ -31,11 +34,18 @@ use Tempest\Mapper\ObjectFactory;
 final class OAuthTest extends TestCase
 {
     private GenericContainer $container {
-        get => $this->container ??= new GenericContainer()->addInitializer(OAuthClientInitializer::class);
+        get => $this->container ??= new GenericContainer();
     }
 
     private ObjectFactory $factory {
-        get => $this->factory ??= new ObjectFactory(new MapperConfig([ArrayToObjectMapper::class]), $this->container);
+        get => $this->factory ??= new ObjectFactory(new MapperConfig([Context::DEFAULT => [ArrayToObjectMapper::class]]), $this->container);
+    }
+
+    #[Before]
+    public function before(): void
+    {
+        $this->container->singleton(Container::class, $this->container);
+        $this->container->addInitializer(OAuthClientInitializer::class);
     }
 
     #[Test]
