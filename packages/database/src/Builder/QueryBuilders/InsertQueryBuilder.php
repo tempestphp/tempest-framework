@@ -4,6 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Database;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
@@ -14,6 +16,7 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Database\Virtual;
 use Tempest\Intl;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -22,6 +25,7 @@ use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\get;
 use function Tempest\Support\str;
 
 /**
@@ -39,6 +43,10 @@ final class InsertQueryBuilder implements BuildsQuery
     public array $bindings = [];
 
     public ModelInspector $model;
+
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -469,7 +477,13 @@ final class InsertQueryBuilder implements BuildsQuery
             return null;
         }
 
-        return $this->serializerFactory->forProperty($property)?->serialize($value) ?? $value;
+        $context = match ($this->database->dialect) {
+            DatabaseDialect::MYSQL => Context::DATABASE_MYSQL,
+            DatabaseDialect::POSTGRESQL => Context::DATABASE_POSTGRESQL,
+            DatabaseDialect::SQLITE => Context::DATABASE_SQLITE,
+        };
+
+        return $this->serializerFactory->forProperty($property, $context)?->serialize($value) ?? $value;
     }
 
     private function serializeIterableValue(string $key, mixed $value): mixed

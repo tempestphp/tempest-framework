@@ -20,7 +20,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_top_level_array_of_simple_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_array_containers';
 
             public function up(): QueryStatement
@@ -62,7 +62,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_top_level_array_of_nested_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_array_containers_nested';
 
             public function up(): QueryStatement
@@ -105,7 +105,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_empty_top_level_array(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_array_containers_empty';
 
             public function up(): QueryStatement

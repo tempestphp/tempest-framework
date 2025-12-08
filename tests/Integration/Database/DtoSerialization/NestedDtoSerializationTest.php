@@ -20,7 +20,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_deeply_nested_dtos(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_structure';
 
             public function up(): QueryStatement
@@ -82,7 +82,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_nested_dtos_with_mixed_types(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_grimoire';
 
             public function up(): QueryStatement
