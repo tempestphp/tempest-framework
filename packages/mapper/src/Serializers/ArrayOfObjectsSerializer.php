@@ -8,7 +8,7 @@ use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Serializer;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final class ArrayOfObjectsSerializer implements Serializer
 {

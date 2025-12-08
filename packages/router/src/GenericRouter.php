@@ -16,7 +16,7 @@ use Tempest\Router\Exceptions\MatchedRouteCouldNotBeResolved;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\View\View;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class GenericRouter implements Router
 {

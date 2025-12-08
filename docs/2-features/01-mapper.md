@@ -16,7 +16,7 @@ You may map data from a source to a target using the `map()` function. This func
 Calling the `to()` method on this instance will return a new instance of the target class, populated with the mapped data:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $book = map($rawBookAsJson)->to(Book::class);
 ```
@@ -26,7 +26,7 @@ $book = map($rawBookAsJson)->to(Book::class);
 When the source data is an array, you may instruct the mapper to map each item of the collection to an instance of the target class by calling the `collection()` method.
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($rawBooksAsJson)
     ->collection()
@@ -54,7 +54,7 @@ $result = map($rawBooksAsJson)
 Of course, `with()` can also be combined with `collection()` and `to()`.
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($rawBooksAsJson)
     ->collection()
@@ -235,4 +235,4 @@ $container->get(SerializerFactory::class)
 	->addSerializer(Address::class, AddressSerializer::class);
 ```
 
-If you're looking for the right place where to put this logic, [provider classes](/docs/extra-topics/package-development#provider-classes) is our recommendation. 
+If you're looking for the right place where to put this logic, [provider classes](/docs/extra-topics/package-development#provider-classes) is our recommendation.

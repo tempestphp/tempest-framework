@@ -27,8 +27,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 
-use function Tempest\make;
-use function Tempest\map;
+use function Tempest\Mapper\make;
+use function Tempest\Mapper\map;
 
 /**
  * @internal

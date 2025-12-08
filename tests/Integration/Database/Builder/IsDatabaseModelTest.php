@@ -51,7 +51,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * @internal

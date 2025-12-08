@@ -11,7 +11,7 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class ObjectToArrayMapper implements Mapper
 {

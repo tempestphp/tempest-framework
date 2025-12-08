@@ -6,6 +6,7 @@ namespace Tempest\Support\Arr;
 
 use Closure;
 use Stringable;
+use Tempest\Mapper;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Support\Json\encode;
@@ -654,7 +655,7 @@ trait ManipulatesArray
     /**
      * Maps the items of the instance to the given object.
      *
-     * @see \Tempest\map()
+     * @see \Tempest\Mapper\map()
      *
      * @template T
      * @param class-string<T> $to
@@ -668,7 +669,7 @@ trait ManipulatesArray
     /**
      * Maps the first item of the instance to the given object.
      *
-     * @see \Tempest\map()
+     * @see \Tempest\Mapper\map()
      *
      * @template T
      * @param class-string<T> $to
@@ -676,13 +677,13 @@ trait ManipulatesArray
      */
     public function mapFirstTo(string $to): mixed
     {
-        return \Tempest\map($this->first())->to($to);
+        return Mapper\map($this->first())->to($to);
     }
 
     /**
      * Maps the last item of the instance to the given object.
      *
-     * @see \Tempest\map()
+     * @see \Tempest\Mapper\map()
      *
      * @template T
      * @param class-string<T> $to
@@ -690,7 +691,7 @@ trait ManipulatesArray
      */
     public function mapLastTo(string $to): mixed
     {
-        return \Tempest\map($this->last())->to($to);
+        return Mapper\map($this->last())->to($to);
     }
 
     /**
