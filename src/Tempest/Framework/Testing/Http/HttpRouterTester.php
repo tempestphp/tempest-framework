@@ -15,7 +15,7 @@ use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 use Tempest\Support\Uri;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final class HttpRouterTester
 {

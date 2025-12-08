@@ -9,7 +9,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Json;
 use Throwable;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class JsonToObjectMapper implements Mapper
 {
