@@ -11,6 +11,7 @@ use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
+use Tempest\Support\Str\ImmutableString;
 use Throwable;
 
 use function Tempest\event;
@@ -122,10 +123,29 @@ final readonly class RedisSessionManager implements SessionManager
         return sprintf('%s_%s', $this->sessionConfig->prefix, $id);
     }
 
+    private function getSessionIdFromKey(string $key): SessionId
+    {
+        return new SessionId(new ImmutableString($key)->afterFirst('_')->toString());
+    }
+
     public function cleanup(): void
     {
-        // what should we do here?
-        // on persist we set the expiration (ttl) for the session in the redis store
-        // in theory all session data should be expire by itself
+        $cursor = '0';
+
+        do {
+            $result = $this->redis->command('SCAN', $cursor, 'MATCH', $this->getKey(new SessionId('*')), 'COUNT', '100');
+            $cursor = $result[0];
+
+            foreach ($result[1] as $key) {
+                $sessionId = $this->getSessionIdFromKey($key);
+
+                if ($this->isValid($sessionId)) {
+                    continue;
+                }
+
+               $this->destroy($sessionId);
+            }
+
+        } while( $cursor != '0');
     }
 }

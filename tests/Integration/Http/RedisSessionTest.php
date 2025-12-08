@@ -17,6 +17,7 @@ use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Throwable;
 
 /**
  * @internal
@@ -30,12 +31,17 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2)));
         $this->container->singleton(
             SessionManager::class,
-            fn () => new RedisSessionManager(
+            fn() => new RedisSessionManager(
                 $this->container->get(Clock::class),
                 $this->container->get(Redis::class),
                 $this->container->get(SessionConfig::class),
             ),
         );
+    }
+
+    protected function tearDown(): void
+    {
+        $this->container->get(Redis::class)->flush();
     }
 
     #[Test]
@@ -170,5 +176,121 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $clock->plus(Duration::minutes(10));
         $this->assertFalse($session->isValid());
         $this->assertFalse($manager->isValid($sessionId));
+    }
+
+    #[Test]
+    public function cleanup_removes_expired_sessions(): void
+    {
+        $clock = $this->clock('2023-01-01 00:00:00');
+
+        $this->container->config(new RedisSessionConfig(expiration: Duration::minutes(30)));
+
+        $manager = $this->container->get(SessionManager::class);
+
+        $activeSessionId = new SessionId('active_session');
+        $activeSession = $manager->create($activeSessionId);
+        $activeSession->set('status', 'active');
+
+        $clock->minus(Duration::hour());
+        $expiredSessionId = new SessionId('expired_session');
+        $expiredSession = $manager->create($expiredSessionId);
+        $expiredSession->set('status', 'expired');
+
+        $clock->plus(Duration::hour());
+
+        $this->assertSessionExistsInDatabase($activeSessionId);
+        $this->assertSessionExistsInDatabase($expiredSessionId);
+
+        $manager->cleanup();
+
+        $this->assertSessionExistsInDatabase($activeSessionId);
+        $this->assertSessionNotExistsInDatabase($expiredSessionId);
+    }
+
+    #[Test]
+    public function session_updates_last_active_timestamp(): void
+    {
+        $clock = $this->clock('2023-01-01 12:00:00');
+
+        $manager = $this->container->get(SessionManager::class);
+        $sessionId = new SessionId('timestamp_test');
+
+        $session = $manager->create($sessionId);
+        $originalTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
+
+        $clock->plus(Duration::minutes(5));
+
+        $session->set('action', 'spell_cast');
+        $updatedTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
+
+        $this->assertTrue($updatedTimestamp->after($originalTimestamp));
+    }
+
+    #[Test]
+    public function session_persists_csrf_token(): void
+    {
+        $session = $this->container->get(Session::class);
+        $token = $session->token;
+
+        $data = $this->getSessionDataFromDatabase($session->id);
+
+        $this->assertEquals($token, $data[Session::CSRF_TOKEN_KEY]);
+        $this->assertEquals($token, $session->token);
+    }
+
+    private function assertSessionExistsInDatabase(SessionId $sessionId): void
+    {
+        $session = $this->getSessionFromDatabase($sessionId);
+
+        $this->assertNotNull($session, "Session {$sessionId} should not exist in database");
+    }
+
+    private function assertSessionNotExistsInDatabase(SessionId $sessionId): void
+    {
+        $session = $this->getSessionFromDatabase($sessionId);
+
+        $this->assertNull($session, "Session {$sessionId} should not exist in database");
+    }
+
+    private function assertSessionDataInDatabase(SessionId $sessionId, array $data): void
+    {
+        $session = $this->getSessionFromDatabase($sessionId);
+
+        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
+
+        foreach ($data as $key => $value) {
+            $this->assertEquals($value, $session->data[$key], "Session data key '{$key}' should match expected value");
+        }
+    }
+
+    private function getSessionLastActiveTimestamp(SessionId $sessionId): \Tempest\DateTime\DateTime
+    {
+        $session = $this->getSessionFromDatabase($sessionId);
+
+        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
+
+        return $session->lastActiveAt;
+    }
+
+
+    private function getSessionFromDatabase(SessionId $id): ?Session
+    {
+        $config = $this->container->get(SessionConfig::class);
+        $redis = $this->container->get(Redis::class);
+
+        try {
+            $content = $redis->get(sprintf('%s_%s', $config->prefix, $id));
+            return unserialize($content, ['allowed_classes' => true]);
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function getSessionDataFromDatabase(SessionId $id): array
+    {
+        return $this->getSessionFromDatabase($id)->data ?? [];
     }
 }
