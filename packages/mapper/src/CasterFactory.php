@@ -18,7 +18,7 @@ final class CasterFactory
     /**
      * @var array<string, array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure, int}[]>
      */
-    private array $contextCasters = [];
+    private array $casters = [];
 
     public function __construct(
         private readonly Container $container,
@@ -29,13 +29,10 @@ final class CasterFactory
      */
     public function addCaster(string|array|Closure $for, string|Closure $casterClass, string $context = Context::DEFAULT, int $priority = 0): self
     {
-        if (! isset($this->contextCasters[$context])) {
-            $this->contextCasters[$context] = [];
-        }
+        $this->casters[$context] ??= [];
+        $this->casters[$context][] = [$for, $casterClass, $priority];
 
-        $this->contextCasters[$context][] = [$for, $casterClass, $priority];
-
-        usort($this->contextCasters[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->casters[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
@@ -62,8 +59,8 @@ final class CasterFactory
         }
 
         $casters = [
-            ...($this->contextCasters[$context] ?? []),
-            ...($this->contextCasters[Context::DEFAULT] ?? []),
+            ...($this->casters[$context] ?? []),
+            ...($this->casters[Context::DEFAULT] ?? []),
         ];
 
         foreach ($casters as [$for, $casterClass]) {
