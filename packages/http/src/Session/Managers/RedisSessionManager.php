@@ -49,7 +49,7 @@ final readonly class RedisSessionManager implements SessionManager
 
     public function destroy(SessionId $id): void
     {
-        $this->redis->getClient()->del($this->getKey($id));
+        $this->redis->command('UNLINK', $this->getKey($id));
 
         event(new SessionDestroyed($id));
     }
