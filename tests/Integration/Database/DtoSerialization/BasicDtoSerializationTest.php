@@ -8,10 +8,10 @@ use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Mapper\CastWith;
 use Tempest\Mapper\SerializeAs;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -191,8 +191,8 @@ final class Character
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[CastWith(DataTransferObjectCaster::class)]
+#[SerializeWith(DataTransferObjectSerializer::class)]
 final class CharacterStats
 {
     public function __construct(
@@ -210,8 +210,8 @@ final class CharacterClassInfo
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[CastWith(DataTransferObjectCaster::class)]
+#[SerializeWith(DataTransferObjectSerializer::class)]
 final class ClassDetails
 {
     public function __construct(
@@ -229,8 +229,8 @@ final class UserPreferences
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[CastWith(DataTransferObjectCaster::class)]
+#[SerializeWith(DataTransferObjectSerializer::class)]
 #[SerializeAs('app-settings')]
 final class ApplicationSettings
 {

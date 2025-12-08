@@ -27,6 +27,8 @@ final class ObjectFactory
 
     private bool $isCollection = false;
 
+    private string $context = Context::DEFAULT;
+
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
@@ -59,6 +61,19 @@ final class ObjectFactory
         $this->isCollection = true;
 
         return $this;
+    }
+
+    /**
+     * Sets the context for mapping.
+     *
+     * @return self<ClassType>
+     */
+    public function in(string $context): self
+    {
+        $clone = clone $this;
+        $clone->context = $context;
+
+        return $clone;
     }
 
     /**
@@ -202,7 +217,7 @@ final class ObjectFactory
         }
 
         // Map using an inferred mapper
-        $mappers = $this->config->mappers;
+        $mappers = $this->config->mappers[$this->context] ?? $this->config->mappers[Context::DEFAULT] ?? [];
 
         foreach ($mappers as $mapperClass) {
             /** @var Mapper $mapper */
@@ -234,12 +249,16 @@ final class ObjectFactory
 
             foreach ($function->getParameters() as $parameter) {
                 $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName());
+
+                if ($parameter->getName() === 'context') {
+                    $data[$parameter->getName()] ??= $this->context;
+                }
             }
 
             return $mapper(...$data);
         }
 
-        $mapper = $this->container->get($mapper);
+        $mapper = $this->container->get($mapper, context: $this->context);
 
         /** @var Mapper $mapper */
         return $mapper->map($from, $to);

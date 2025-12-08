@@ -6,11 +6,20 @@ namespace Tempest\Mapper\Serializers;
 
 use JsonSerializable;
 use Serializable;
+use Tempest\Core\Priority;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::LOW)]
 final class SerializableSerializer implements Serializer
 {
+    public static function for(): array
+    {
+        return [Serializable::class, JsonSerializable::class];
+    }
+
     public function serialize(mixed $input): array|string
     {
         if ($input instanceof JsonSerializable) {

@@ -5,25 +5,35 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Serializers;
 
 use DateTimeInterface as NativeDateTimeInterface;
+use Tempest\Core\Priority;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
+use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
-final readonly class DateTimeSerializer implements Serializer
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::HIGHEST)]
+final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
 {
     public function __construct(
         private FormatPattern|string $format = FormatPattern::SQL_DATE_TIME,
     ) {}
 
-    public static function fromReflector(PropertyReflector|TypeReflector $reflector): self
+    public static function for(): array
     {
-        if ($reflector instanceof PropertyReflector) {
-            $format = $reflector->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::SQL_DATE_TIME;
+        return [DateTime::class, DateTimeInterface::class];
+    }
+
+    public static function make(PropertyReflector|TypeReflector|string $input): Serializer
+    {
+        if ($input instanceof PropertyReflector) {
+            $format = $input->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::SQL_DATE_TIME;
         } else {
             $format = FormatPattern::SQL_DATE_TIME;
         }

@@ -123,7 +123,7 @@ final readonly class TypeReflector implements Reflector
 
     public function matches(string $className): bool
     {
-        return is_a($this->cleanDefinition, $className, true);
+        return is_a($this->cleanDefinition, $className, allow_string: true);
     }
 
     public function getName(): string
@@ -185,15 +185,7 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
-        return in_array(
-            $this->cleanDefinition,
-            [
-                'array',
-                'iterable',
-                Generator::class,
-            ],
-            strict: true,
-        );
+        return in_array($this->cleanDefinition, ['array', 'iterable', Generator::class], strict: true);
     }
 
     public function isStringable(): bool
@@ -202,13 +194,7 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
-        return in_array(
-            $this->cleanDefinition,
-            [
-                'string',
-            ],
-            strict: true,
-        );
+        return in_array($this->cleanDefinition, ['string'], strict: true);
     }
 
     public function isNullable(): bool

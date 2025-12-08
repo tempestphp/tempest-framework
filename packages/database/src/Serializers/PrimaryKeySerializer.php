@@ -8,7 +8,12 @@ use Tempest\Mapper\Serializer;
 
 final class PrimaryKeySerializer implements Serializer
 {
-    public function serialize(mixed $input): array|string
+    public static function for(): string
+    {
+        return PrimaryKey::class;
+    }
+
+    public function serialize(mixed $input): string|int
     {
         if (! $input instanceof PrimaryKey) {
             throw new ValueCouldNotBeSerialized(PrimaryKey::class);

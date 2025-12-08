@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Serializers;
+namespace Tempest\Database\Serializers;
 
-use Tempest\Core\Priority;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
-#[Context(Context::DEFAULT)]
-#[Priority(Priority::NORMAL)]
-final class BooleanSerializer implements Serializer
+#[Context(Context::DATABASE_POSTGRESQL)]
+final class PostgresBooleanSerializer implements Serializer
 {
-    public static function for(): array
+    public static function for(): string
     {
-        return ['bool', 'boolean'];
+        return 'bool';
     }
 
     public function serialize(mixed $input): string

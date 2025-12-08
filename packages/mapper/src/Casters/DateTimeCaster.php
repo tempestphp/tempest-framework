@@ -4,23 +4,35 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
+use Closure;
+use Tempest\Core\Priority;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
-final readonly class DateTimeCaster implements Caster
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::HIGHEST)]
+final readonly class DateTimeCaster implements Caster, DynamicCaster
 {
     public function __construct(
         private FormatPattern|string $format = FormatPattern::ISO8601,
     ) {}
 
-    public static function fromProperty(PropertyReflector $property): self
+    public static function for(): Closure
+    {
+        return fn (TypeReflector $type) => $type->matches(DateTimeInterface::class);
+    }
+
+    public static function make(PropertyReflector $property): self
     {
         return new self(
-            $property->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::ISO8601,
+            format: $property->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::ISO8601,
         );
     }
 

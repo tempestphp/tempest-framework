@@ -8,6 +8,11 @@ use Tempest\Mapper\Caster;
 
 final class MyObjectCaster implements Caster
 {
+    public static function for(): false
+    {
+        return false;
+    }
+
     public function cast(mixed $input): MyObject
     {
         return new MyObject($input);

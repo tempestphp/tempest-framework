@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
+use Tempest\Core\Priority;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\Support\Json;
 
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::NORMAL)]
 final class ArrayToJsonSerializer implements Serializer
 {
+    public static function for(): string
+    {
+        return 'array';
+    }
+
     public function serialize(mixed $input): string
     {
         if ($input instanceof ArrayInterface) {

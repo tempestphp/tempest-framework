@@ -41,9 +41,9 @@ final readonly class DatabaseInitializer implements DynamicInitializer
         $connection = $container->get(Connection::class, $tag);
 
         return new GenericDatabase(
-            $connection,
-            new GenericTransactionManager($connection),
-            $container->get(SerializerFactory::class),
+            connection: $connection,
+            transactionManager: new GenericTransactionManager($connection),
+            serializerFactory: new SerializerFactory($container),
         );
     }
 }

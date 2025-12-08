@@ -14,6 +14,11 @@ final readonly class EncryptedSerializer implements Serializer
         private Encrypter $encrypter,
     ) {}
 
+    public static function for(): false
+    {
+        return false;
+    }
+
     public function serialize(mixed $input): array|string
     {
         if (! is_string($input)) {
