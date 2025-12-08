@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 final class MapperConfig
 {
     public function __construct(
-        /** @var array<string, class-string[]> */
+        /** @var array<string,array<string,class-string[]>> */
         public array $mappers = [],
         /** @var array<class-string,string> */
         public array $serializationMap = [],
