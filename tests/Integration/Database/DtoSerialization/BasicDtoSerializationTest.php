@@ -21,7 +21,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_simple_dto_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character';
 
             public function up(): QueryStatement
@@ -53,7 +53,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_simple_dto_serialization_with_named_arguments(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character_named_args';
 
             public function up(): QueryStatement
@@ -85,7 +85,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_dto_with_enums(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_character_class_infos';
 
             public function up(): QueryStatement
@@ -121,7 +121,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_dto_with_custom_serialization_name(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_settings';
 
             public function up(): QueryStatement

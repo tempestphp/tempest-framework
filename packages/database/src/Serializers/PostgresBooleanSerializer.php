@@ -11,9 +11,9 @@ use Tempest\Mapper\Serializer;
 #[Context(Context::DATABASE_POSTGRESQL)]
 final class PostgresBooleanSerializer implements Serializer
 {
-    public static function for(): string
+    public static function for(): array
     {
-        return 'bool';
+        return ['bool', 'boolean'];
     }
 
     public function serialize(mixed $input): string
