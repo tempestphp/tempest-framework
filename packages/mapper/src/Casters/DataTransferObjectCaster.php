@@ -2,7 +2,9 @@
 
 namespace Tempest\Mapper\Casters;
 
+use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Support\Arr;
@@ -10,11 +12,18 @@ use Tempest\Support\Json;
 
 use function Tempest\Mapper\map;
 
-final readonly class DtoCaster implements Caster
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::LOW)]
+final readonly class DataTransferObjectCaster implements Caster
 {
     public function __construct(
         private MapperConfig $mapperConfig,
     ) {}
+
+    public static function for(): false
+    {
+        return false; // this caster is always applied manually
+    }
 
     public function cast(mixed $input): mixed
     {

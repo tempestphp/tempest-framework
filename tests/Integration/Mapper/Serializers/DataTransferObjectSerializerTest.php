@@ -5,7 +5,7 @@ namespace Tests\Tempest\Integration\Mapper\Serializers;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\BackedEnumToSerialize;
 use Tests\Tempest\Integration\Mapper\Fixtures\JsonSerializableObject;
@@ -16,13 +16,13 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNullableProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\UnitEnumToSerialize;
 
-final class DtoSerializerTest extends FrameworkIntegrationTestCase
+final class DataTransferObjectSerializerTest extends FrameworkIntegrationTestCase
 {
     public function test_serialize(): void
     {
         $this->assertSame(
             json_encode(['type' => MyObject::class, 'data' => ['name' => 'test']]),
-            new DtoSerializer(new MapperConfig())->serialize(new MyObject(name: 'test')),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize(new MyObject(name: 'test')),
         );
     }
 
@@ -32,13 +32,13 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             json_encode(['type' => 'my-object', 'data' => ['name' => 'test']]),
-            new DtoSerializer($config)->serialize(new MyObject(name: 'test')),
+            new DataTransferObjectSerializer($config)->serialize(new MyObject(name: 'test')),
         );
     }
 
     public function test_can_serialize_empty_array(): void
     {
-        $result = new DtoSerializer(new MapperConfig())->serialize([]);
+        $result = new DataTransferObjectSerializer(new MapperConfig())->serialize([]);
 
         $this->assertSame('[]', $result);
     }
@@ -47,7 +47,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 
-        new DtoSerializer(new MapperConfig())->serialize('string');
+        new DataTransferObjectSerializer(new MapperConfig())->serialize('string');
     }
 
     public function test_serialize_nested_objects(): void
@@ -75,7 +75,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($nestedA),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($nestedA),
         );
     }
 
@@ -98,7 +98,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($object),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($object),
         );
     }
 
@@ -116,7 +116,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($object),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($object),
         );
     }
 
@@ -134,7 +134,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($object),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($object),
         );
     }
 
@@ -168,7 +168,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($nestedA),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($nestedA),
         );
     }
 
@@ -192,7 +192,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($objects),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($objects),
         );
     }
 
@@ -207,7 +207,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($object),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($object),
         );
     }
 
@@ -236,13 +236,13 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($nestedA),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($nestedA),
         );
     }
 
     public function test_serialize_backed_enum_directly(): void
     {
-        $serializer = new DtoSerializer(new MapperConfig());
+        $serializer = new DataTransferObjectSerializer(new MapperConfig());
 
         $result = $serializer->serialize([BackedEnumToSerialize::FOO]);
 
@@ -251,7 +251,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
     public function test_serialize_unit_enum_directly(): void
     {
-        $serializer = new DtoSerializer(new MapperConfig());
+        $serializer = new DataTransferObjectSerializer(new MapperConfig());
 
         $result = $serializer->serialize([UnitEnumToSerialize::BAR]);
 
@@ -282,7 +282,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer($config)->serialize($object),
+            new DataTransferObjectSerializer($config)->serialize($object),
         );
     }
 
@@ -306,7 +306,7 @@ final class DtoSerializerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             $expected,
-            new DtoSerializer(new MapperConfig())->serialize($objects),
+            new DataTransferObjectSerializer(new MapperConfig())->serialize($objects),
         );
     }
 }

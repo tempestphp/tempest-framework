@@ -12,6 +12,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\SerializerFactory;
 use Throwable;
 use UnitEnum;
@@ -27,6 +28,14 @@ final class GenericDatabase implements Database
 
     public null|string|UnitEnum $tag {
         get => $this->connection->config->tag;
+    }
+
+    private string $context {
+        get => match ($this->dialect) {
+            DatabaseDialect::POSTGRESQL => Context::DATABASE_POSTGRESQL,
+            DatabaseDialect::MYSQL => Context::DATABASE_MYSQL,
+            DatabaseDialect::SQLITE => Context::DATABASE_SQLITE,
+        };
     }
 
     public function __construct(
@@ -128,17 +137,9 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
-            // Database handle booleans differently. We might need a database-aware serializer at some point.
-            if (is_bool($value)) {
-                $value = match ($this->dialect) {
-                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
-                    default => $value ? '1' : '0',
-                };
-            }
-
             if ($value instanceof Query) {
                 $value = $value->execute();
-            } elseif ($serializer = $this->serializerFactory->forValue($value)) {
+            } elseif ($serializer = $this->serializerFactory->forValue($value, $this->context)) {
                 $value = $serializer->serialize($value);
             }
 

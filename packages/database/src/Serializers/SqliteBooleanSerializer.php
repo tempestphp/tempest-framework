@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Serializers;
+namespace Tempest\Database\Serializers;
 
-use Tempest\Core\Priority;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
-#[Context(Context::DEFAULT)]
-#[Priority(Priority::NORMAL)]
-final class BooleanSerializer implements Serializer
+#[Context(Context::DATABASE_SQLITE)]
+final class SqliteBooleanSerializer implements Serializer
 {
-    public static function for(): array
+    public static function for(): string
     {
-        return ['bool', 'boolean'];
+        return 'bool';
     }
 
     public function serialize(mixed $input): string
@@ -24,6 +22,6 @@ final class BooleanSerializer implements Serializer
             throw new ValueCouldNotBeSerialized('boolean');
         }
 
-        return $input ? 'true' : 'false';
+        return $input ? '1' : '0';
     }
 }

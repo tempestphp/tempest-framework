@@ -8,9 +8,9 @@ use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -138,7 +138,7 @@ final readonly class ArrayContainerModel
 {
     public function __construct(
         public string $name,
-        #[SerializeWith(DtoSerializer::class), CastWith(DtoCaster::class)]
+        #[SerializeWith(DataTransferObjectSerializer::class), CastWith(DataTransferObjectCaster::class)]
         public array $data,
     ) {}
 }

@@ -3,10 +3,10 @@
 namespace Tests\Tempest\Integration\Mapper\Casters;
 
 use Tempest\Http\Method;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tempest\Mapper\MapperConfig;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\MyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectA;
@@ -14,13 +14,13 @@ use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNullableProperties;
 
-final class DtoCasterTest extends FrameworkIntegrationTestCase
+final class DataTransferObjectCasterTest extends FrameworkIntegrationTestCase
 {
     public function test_cast(): void
     {
         $json = json_encode(['type' => MyObject::class, 'data' => ['name' => 'test']]);
 
-        $dto = new DtoCaster(new MapperConfig())->cast($json);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertInstanceOf(MyObject::class, $dto);
         $this->assertSame('test', $dto->name);
@@ -32,7 +32,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
 
         $json = json_encode(['type' => 'my-object', 'data' => ['name' => 'test']]);
 
-        $dto = new DtoCaster($config)->cast($json);
+        $dto = new DataTransferObjectCaster($config)->cast($json);
 
         $this->assertInstanceOf(MyObject::class, $dto);
         $this->assertSame('test', $dto->name);
@@ -44,7 +44,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
 
         $this->expectException(ValueCouldNotBeCast::class);
 
-        new DtoCaster(new MapperConfig())->cast($json);
+        new DataTransferObjectCaster(new MapperConfig())->cast($json);
     }
 
     public function test_cast_nested_objects(): void
@@ -65,7 +65,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             ],
         ]);
 
-        $dto = new DtoCaster(new MapperConfig())->cast($json);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertInstanceOf(NestedObjectA::class, $dto);
         $this->assertCount(2, $dto->items);
@@ -86,7 +86,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             ],
         ]);
 
-        $dto = new DtoCaster(new MapperConfig())->cast($json);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertInstanceOf(ObjectWithNullableProperties::class, $dto);
         $this->assertSame('test', $dto->a);
@@ -103,7 +103,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             ],
         ]);
 
-        $dto = new DtoCaster(new MapperConfig())->cast($json);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertInstanceOf(ObjectWithEnum::class, $dto);
         $this->assertSame(Method::GET, $dto->method);
@@ -116,7 +116,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             'data' => ['name' => 'test'],
         ];
 
-        $dto = new DtoCaster(new MapperConfig())->cast($array);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($array);
 
         $this->assertInstanceOf(MyObject::class, $dto);
         $this->assertSame('test', $dto->name);
@@ -135,7 +135,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             ],
         ]);
 
-        $dto = new DtoCaster(new MapperConfig())->cast($json);
+        $dto = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertIsArray($dto);
         $this->assertCount(2, $dto);
@@ -156,7 +156,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             'data' => ['name' => 'mapped nested'],
         ]);
 
-        $dto = new DtoCaster($config)->cast($json);
+        $dto = new DataTransferObjectCaster($config)->cast($json);
 
         $this->assertInstanceOf(NestedObjectB::class, $dto);
         $this->assertSame('mapped nested', $dto->name);
@@ -166,7 +166,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
     {
         $originalValue = 42;
 
-        $result = new DtoCaster(new MapperConfig())->cast($originalValue);
+        $result = new DataTransferObjectCaster(new MapperConfig())->cast($originalValue);
 
         $this->assertSame($originalValue, $result);
     }
@@ -177,7 +177,7 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
 
         $this->expectException(ValueCouldNotBeCast::class);
 
-        new DtoCaster(new MapperConfig())->cast($malformedJson);
+        new DataTransferObjectCaster(new MapperConfig())->cast($malformedJson);
     }
 
     public function test_serialize_and_cast_roundtrip(): void
@@ -187,10 +187,10 @@ final class DtoCasterTest extends FrameworkIntegrationTestCase
             new NestedObjectB(name: 'Fern'),
         ]);
 
-        $serializer = new DtoSerializer(new MapperConfig());
+        $serializer = new DataTransferObjectSerializer(new MapperConfig());
         $json = $serializer->serialize($original);
 
-        $casted = new DtoCaster(new MapperConfig())->cast($json);
+        $casted = new DataTransferObjectCaster(new MapperConfig())->cast($json);
 
         $this->assertInstanceOf(NestedObjectA::class, $casted);
         $this->assertCount(2, $casted->items);

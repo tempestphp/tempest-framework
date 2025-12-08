@@ -5,63 +5,110 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Container\Container;
+use Tempest\Container\Singleton;
+use Tempest\Mapper\Casters\DataTransferObjectCaster;
+use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
-use function Tempest\get;
-
+#[Singleton]
 final class CasterFactory
 {
     /**
-     * @var array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure}[]
+     * @var array<string, array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure, int}[]>
      */
-    private array $casters = [];
+    private array $contextCasters = [];
+
+    public function __construct(
+        private readonly Container $container,
+    ) {}
 
     /**
      * @param class-string<\Tempest\Mapper\Caster> $casterClass
      */
-    public function addCaster(string|Closure $for, string|Closure $casterClass): self
+    public function addCaster(string|array|Closure $for, string|Closure $casterClass, string $context = Context::DEFAULT, int $priority = 0): self
     {
-        $this->casters = [[$for, $casterClass], ...$this->casters];
+        if (! isset($this->contextCasters[$context])) {
+            $this->contextCasters[$context] = [];
+        }
+
+        $this->contextCasters[$context][] = [$for, $casterClass, $priority];
+
+        usort($this->contextCasters[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
 
-    public function forProperty(PropertyReflector $property): ?Caster
+    public function forProperty(PropertyReflector $property, string $context = Context::DEFAULT): ?Caster
     {
         $type = $property->getType();
-
-        // Get CastWith from the property
         $castWith = $property->getAttribute(CastWith::class);
 
-        // Get CastWith from the property's type if there's no property-defined CastWith
         if ($castWith === null && $type->isClass()) {
             $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
 
             if ($castWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
-                $castWith = new CastWith(DtoCaster::class);
+                return $this->container->get(DataTransferObjectCaster::class);
             }
         }
 
-        // Return the caster if defined with CastWith
-        if ($castWith !== null) {
-            // Resolve the caster from the container
-            return get($castWith->className);
+        if ($castWith) {
+            return $this->container->get($castWith->className);
         }
 
         if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
-            return get($casterAttribute->caster);
+            return $this->container->get($casterAttribute->caster);
         }
 
-        // Resolve caster from manual additions
-        foreach ($this->casters as [$for, $casterClass]) {
-            if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {
-                return is_callable($casterClass)
-                    ? $casterClass($property)
-                    : get($casterClass);
+        $casters = [
+            ...($this->contextCasters[$context] ?? []),
+            ...($this->contextCasters[Context::DEFAULT] ?? []),
+        ];
+
+        foreach ($casters as [$for, $casterClass]) {
+            if (! $this->casterMatches($for, $property)) {
+                continue;
             }
+
+            if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
+                return $casterClass::make($property);
+            }
+
+            return $this->container->get($casterClass);
         }
 
         return null;
+    }
+
+    private function casterMatches(Closure|string|array $for, PropertyReflector $property): bool
+    {
+        if (is_array($for)) {
+            return array_any($for, fn (Closure|string $forType) => $this->casterMatches($forType, $property));
+        }
+
+        $type = $property->getType();
+
+        if (is_callable($for)) {
+            $parameter = new FunctionReflector($for)->getParameter(key: 0);
+
+            if ($parameter?->getType()->getName() === PropertyReflector::class) {
+                return $for($property);
+            }
+
+            if ($parameter?->getType()->getName() === TypeReflector::class) {
+                return $for($type);
+            }
+        }
+
+        if (is_string($for) && $type->matches($for)) {
+            return true;
+        }
+
+        if ($type->getName() === $for) {
+            return true;
+        }
+
+        return false;
     }
 }

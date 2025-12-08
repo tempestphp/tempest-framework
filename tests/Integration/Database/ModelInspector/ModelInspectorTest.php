@@ -4,9 +4,9 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Virtual;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\IntegrationTestCase;
 
@@ -59,8 +59,8 @@ final class ModelInspectorTestModelWithVirtualDto
     public ModelInspectorTestDtoForModelWithVirtual $dto;
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[CastWith(DataTransferObjectCaster::class)]
+#[SerializeWith(DataTransferObjectSerializer::class)]
 final class ModelInspectorTestDtoForModelWithSerializer
 {
     public function __construct(
@@ -86,6 +86,6 @@ final class ModelInspectorTestModelWithSerializedDtoProperty
 {
     use IsDatabaseModel;
 
-    #[SerializeWith(DtoSerializer::class)]
+    #[SerializeWith(DataTransferObjectSerializer::class)]
     public ModelInspectorTestDtoForModelWithSerializerOnProperty $dto;
 }

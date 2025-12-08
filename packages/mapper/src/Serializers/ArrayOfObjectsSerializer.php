@@ -4,14 +4,25 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
+use Closure;
+use Tempest\Core\Priority;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\Mapper\map;
 
+#[Context(Context::DEFAULT)]
+#[Priority(Priority::HIGHEST)]
 final class ArrayOfObjectsSerializer implements Serializer
 {
+    public static function for(): Closure
+    {
+        return fn (PropertyReflector $property) => $property->getIterableType() !== null;
+    }
+
     public function serialize(mixed $input): array
     {
         if (! is_array($input)) {
