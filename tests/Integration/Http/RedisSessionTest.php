@@ -116,6 +116,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new RedisSessionConfig(
             expiration: Duration::second(),
+            prefix: 'test_session:',
         ));
 
         $sessionManager = $this->container->get(SessionManager::class);
@@ -155,6 +156,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new RedisSessionConfig(
             expiration: Duration::minutes(30),
+            prefix: 'test_session:',
         ));
 
         $manager = $this->container->get(SessionManager::class);
@@ -184,7 +186,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 
-        $this->container->config(new RedisSessionConfig(expiration: Duration::minutes(30)));
+        $this->container->config(new RedisSessionConfig(expiration: Duration::minutes(30), prefix: 'test_session:'));
 
         $manager = $this->container->get(SessionManager::class);
 
@@ -267,7 +269,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $redis = $this->container->get(Redis::class);
 
         try {
-            $content = $redis->get(sprintf('%s%s',  'test_session:', $id));
+            $content = $redis->get(sprintf('%s%s', 'test_session:', $id));
             return unserialize($content, ['allowed_classes' => true]);
         } catch (Throwable) {
             return null;
