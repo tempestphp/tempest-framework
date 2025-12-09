@@ -7,11 +7,9 @@ namespace Tempest\Mapper\Serializers;
 use JsonSerializable;
 use Serializable;
 use Tempest\Core\Priority;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::LOW)]
 final class SerializableSerializer implements Serializer
 {

@@ -8,6 +8,7 @@ use Tempest\Core\Priority;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
+use Tempest\Mapper\Attributes\Context;
 use Tempest\Reflection\ClassReflector;
 
 final class SerializerDiscovery implements Discovery
@@ -24,15 +25,16 @@ final class SerializerDiscovery implements Discovery
             return;
         }
 
-        $context = $class->getAttribute(Context::class)->name ?? Context::DEFAULT;
-        $priority = $class->getAttribute(Priority::class)->priority ?? Priority::NORMAL;
-
-        $this->discoveryItems->add($location, [$context, $class->getName(), $priority]);
+        $this->discoveryItems->add($location, [
+            $class->getAttribute(Context::class)?->name,
+            $class->getAttribute(Priority::class)?->priority,
+            $class->getName(),
+        ]);
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as [$context, $serializerClass, $priority]) {
+        foreach ($this->discoveryItems as [$context, $priority, $serializerClass]) {
             $for = $serializerClass::for();
 
             if ($for === false) {
@@ -42,8 +44,8 @@ final class SerializerDiscovery implements Discovery
             $this->serializerFactory->addSerializer(
                 for: $for,
                 serializerClass: $serializerClass,
+                priority: $priority ?? Priority::NORMAL,
                 context: $context,
-                priority: $priority,
             );
         }
     }

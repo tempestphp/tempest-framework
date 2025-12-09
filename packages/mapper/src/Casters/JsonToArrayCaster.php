@@ -6,10 +6,8 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Context;
 use Tempest\Support\Json;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::NORMAL)]
 final class JsonToArrayCaster implements Caster
 {

@@ -14,7 +14,7 @@ use function Tempest\Support\path;
 final readonly class JsonFileToObjectMapper implements Mapper
 {
     public function __construct(
-        private string $context = Context::DEFAULT,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool

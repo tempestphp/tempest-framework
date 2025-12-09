@@ -4,7 +4,6 @@ namespace Tempest\Mapper\Serializers;
 
 use BackedEnum;
 use JsonSerializable;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\Serializer;
@@ -14,7 +13,6 @@ use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use UnitEnum;
 
-#[Context(Context::DEFAULT)]
 final readonly class DataTransferObjectSerializer implements Serializer
 {
     public function __construct(

@@ -6,6 +6,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Direction;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\Mappers\SelectModelMapper;
@@ -27,6 +29,7 @@ use Tempest\Support\Paginator\Paginator;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\get;
 use function Tempest\Mapper\map;
 
 /**
@@ -162,6 +165,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
         return map($query->fetch())
             ->with(SelectModelMapper::class)
+            ->in(new DatabaseContext(get(Database::class, $this->onDatabase)->dialect))
             ->to($this->model->getName());
     }
 

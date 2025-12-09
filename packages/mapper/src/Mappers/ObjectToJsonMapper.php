@@ -12,7 +12,7 @@ use function Tempest\Mapper\map;
 final readonly class ObjectToJsonMapper implements Mapper
 {
     public function __construct(
-        private string $context = Context::DEFAULT,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool

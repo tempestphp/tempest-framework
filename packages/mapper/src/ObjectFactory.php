@@ -15,6 +15,7 @@ use Tempest\Mapper\Mappers\ObjectToJsonMapper;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
+use UnitEnum;
 
 /** @template ClassType */
 final class ObjectFactory
@@ -27,7 +28,7 @@ final class ObjectFactory
 
     private bool $isCollection = false;
 
-    private string $context = Context::DEFAULT;
+    private Context|UnitEnum|string|null $context = null;
 
     public function __construct(
         private readonly MapperConfig $config,
@@ -68,7 +69,7 @@ final class ObjectFactory
      *
      * @return self<ClassType>
      */
-    public function in(string $context): self
+    public function in(Context|UnitEnum|string|null $context): self
     {
         $clone = clone $this;
         $clone->context = $context;
@@ -184,21 +185,15 @@ final class ObjectFactory
         );
     }
 
-    private function mapObject(
-        mixed $from,
-        mixed $to,
-        bool $isCollection,
-    ): mixed {
+    private function mapObject(mixed $from, mixed $to, bool $isCollection): mixed
+    {
         // Map collections
         if ($isCollection && is_array($from)) {
-            return array_map(
-                fn (mixed $item) => $this->mapObject(
-                    from: $item,
-                    to: $to,
-                    isCollection: false,
-                ),
-                $from,
-            );
+            return array_map(fn (mixed $item) => $this->mapObject(
+                from: $item,
+                to: $to,
+                isCollection: false,
+            ), $from);
         }
 
         // Map using explicitly defined mappers
@@ -216,15 +211,14 @@ final class ObjectFactory
             return $result;
         }
 
-        // Map using an inferred mapper
-        $mappers = $this->config->mappers[$this->context] ?? $this->config->mappers[Context::DEFAULT] ?? [];
+        $context = MappingContext::from($this->context);
 
-        foreach ($mappers as $mapperClass) {
+        foreach ($this->config->mappers as $mapperClass) {
             /** @var Mapper $mapper */
-            $mapper = $this->container->get($mapperClass);
+            $mapper = $this->container->get($mapperClass, context: $context);
 
-            if ($mapper->canMap(from: $from, to: $to)) {
-                return $mapper->map(from: $from, to: $to);
+            if ($mapper->canMap($from, $to)) {
+                return $mapper->map($from, $to);
             }
         }
 
@@ -235,11 +229,10 @@ final class ObjectFactory
      * @template MapperType of \Tempest\Mapper\Mapper
      * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> $mapper
      */
-    private function mapWith(
-        mixed $mapper,
-        mixed $from,
-        mixed $to,
-    ): mixed {
+    private function mapWith(mixed $mapper, mixed $from, mixed $to): mixed
+    {
+        $context = MappingContext::from($this->context);
+
         if ($mapper instanceof Closure) {
             $function = new FunctionReflector($mapper);
 
@@ -248,17 +241,18 @@ final class ObjectFactory
             ];
 
             foreach ($function->getParameters() as $parameter) {
-                $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName());
-
-                if ($parameter->getName() === 'context') {
-                    $data[$parameter->getName()] ??= $this->context;
+                if ($parameter->getType()->matches(Context::class)) {
+                    $data[$parameter->getName()] ??= $context;
+                    continue;
                 }
+
+                $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName(), context: $context);
             }
 
             return $mapper(...$data);
         }
 
-        $mapper = $this->container->get($mapper, context: $this->context);
+        $mapper = $this->container->get($mapper, context: $context);
 
         /** @var Mapper $mapper */
         return $mapper->map($from, $to);

@@ -4,8 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
-use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
@@ -17,7 +17,6 @@ use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
 use Tempest\Intl;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -50,6 +49,10 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private Database $database {
         get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
     }
 
     public ImmutableArray $wheres {
@@ -260,13 +263,9 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function serializeValue(PropertyReflector $property, mixed $value): mixed
     {
-        $context = match ($this->database->dialect) {
-            DatabaseDialect::MYSQL => Context::DATABASE_MYSQL,
-            DatabaseDialect::POSTGRESQL => Context::DATABASE_POSTGRESQL,
-            DatabaseDialect::SQLITE => Context::DATABASE_SQLITE,
-        };
-
-        $serializer = $this->serializerFactory->forProperty($property, $context);
+        $serializer = $this->serializerFactory
+            ->in($this->context)
+            ->forProperty($property);
 
         if ($value !== null && $serializer !== null) {
             return $serializer->serialize($value);

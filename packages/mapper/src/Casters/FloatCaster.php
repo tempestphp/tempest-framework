@@ -6,9 +6,7 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Context;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::NORMAL)]
 final readonly class FloatCaster implements Caster
 {

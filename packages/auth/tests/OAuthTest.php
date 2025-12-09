@@ -26,7 +26,6 @@ use Tempest\Auth\OAuth\OAuthClientInitializer;
 use Tempest\Auth\OAuth\OAuthUser;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\ObjectFactory;
@@ -38,7 +37,7 @@ final class OAuthTest extends TestCase
     }
 
     private ObjectFactory $factory {
-        get => $this->factory ??= new ObjectFactory(new MapperConfig([Context::DEFAULT => [ArrayToObjectMapper::class]]), $this->container);
+        get => $this->factory ??= new ObjectFactory(new MapperConfig([ArrayToObjectMapper::class]), $this->container);
     }
 
     #[Before]

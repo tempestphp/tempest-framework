@@ -4,8 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
-use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
@@ -16,7 +16,6 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Database\Virtual;
 use Tempest\Intl;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -46,6 +45,10 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private Database $database {
         get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
     }
 
     /**
@@ -477,13 +480,10 @@ final class InsertQueryBuilder implements BuildsQuery
             return null;
         }
 
-        $context = match ($this->database->dialect) {
-            DatabaseDialect::MYSQL => Context::DATABASE_MYSQL,
-            DatabaseDialect::POSTGRESQL => Context::DATABASE_POSTGRESQL,
-            DatabaseDialect::SQLITE => Context::DATABASE_SQLITE,
-        };
-
-        return $this->serializerFactory->forProperty($property, $context)?->serialize($value) ?? $value;
+        return $this->serializerFactory
+            ->in($this->context)
+            ->forProperty($property)
+            ?->serialize($value) ?? $value;
     }
 
     private function serializeIterableValue(string $key, mixed $value): mixed

@@ -4,7 +4,6 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Support\Arr;
@@ -12,7 +11,6 @@ use Tempest\Support\Json;
 
 use function Tempest\Mapper\map;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::LOW)]
 final readonly class DataTransferObjectCaster implements Caster
 {
