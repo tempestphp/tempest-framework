@@ -9,7 +9,7 @@ use Tempest\Mapper\Caster;
 
 final class ObjectFactoryACaster implements Caster
 {
-    public static function for(): string|Closure
+    public static function for(): string
     {
         return 'string';
     }

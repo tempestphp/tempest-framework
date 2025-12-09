@@ -2,12 +2,11 @@
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Closure;
 use Tempest\Mapper\Serializer;
 
 final class DoubleStringSerializer implements Serializer
 {
-    public static function for(): string|Closure
+    public static function for(): string
     {
         return 'string';
     }
