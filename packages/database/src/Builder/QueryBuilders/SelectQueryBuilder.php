@@ -52,6 +52,14 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     public array $bindings = [];
 
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
+    }
+
     public ImmutableArray $wheres {
         get => $this->select->where;
         set => $this->select->where;
@@ -165,7 +173,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
         return map($query->fetch())
             ->with(SelectModelMapper::class)
-            ->in(new DatabaseContext(get(Database::class, $this->onDatabase)->dialect))
+            ->in($this->context)
             ->to($this->model->getName());
     }
 
