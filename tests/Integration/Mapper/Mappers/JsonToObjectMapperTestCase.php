@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
+use Tempest\Mapper\MappingContext;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
@@ -25,14 +26,14 @@ final class JsonToObjectMapperTestCase extends FrameworkIntegrationTestCase
 
     public function test_invalid_json(): void
     {
-        $mapper = new JsonToObjectMapper();
+        $mapper = new JsonToObjectMapper(MappingContext::default());
 
         $this->assertFalse($mapper->canMap('invalid', ObjectA::class));
     }
 
     public function test_invalid_object(): void
     {
-        $mapper = new JsonToObjectMapper();
+        $mapper = new JsonToObjectMapper(MappingContext::default());
 
         $this->assertFalse($mapper->canMap('{}', 'unknown'));
     }
