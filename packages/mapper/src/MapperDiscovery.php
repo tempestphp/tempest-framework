@@ -23,19 +23,13 @@ final class MapperDiscovery implements Discovery
             return;
         }
 
-        $context = $class->getAttribute(Context::class);
-        $contextName = $context->name ?? Context::DEFAULT;
-
-        $this->discoveryItems->add($location, [$contextName, $class->getName()]);
+        $this->discoveryItems->add($location, [$class->getName()]);
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as [$contextName, $className]) {
-            if (! isset($this->config->mappers[$contextName])) {
-                $this->config->mappers[$contextName] = [];
-            }
-            $this->config->mappers[$contextName][] = $className;
+        foreach ($this->discoveryItems as [$className]) {
+            $this->config->addMapper($className);
         }
     }
 }

@@ -6,5 +6,5 @@ use Tempest\Reflection\PropertyReflector;
 
 interface DynamicCaster
 {
-    public static function make(PropertyReflector $property): Caster;
+    public static function make(PropertyReflector $property, Context $context): Caster;
 }

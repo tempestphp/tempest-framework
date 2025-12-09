@@ -12,7 +12,6 @@ use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Json;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::HIGHEST)]
 final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCaster
 {
@@ -25,7 +24,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
         return fn (PropertyReflector $property) => $property->getIterableType() !== null;
     }
 
-    public static function make(PropertyReflector $property): self
+    public static function make(PropertyReflector $property, Context $context): self
     {
         return new self($property);
     }

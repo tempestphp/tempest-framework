@@ -17,7 +17,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::HIGHEST)]
 final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
 {
@@ -30,7 +29,7 @@ final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
         return [DateTime::class, DateTimeInterface::class];
     }
 
-    public static function make(PropertyReflector|TypeReflector|string $input): Serializer
+    public static function make(PropertyReflector|TypeReflector|string $input, Context $context): Serializer
     {
         if ($input instanceof PropertyReflector) {
             $format = $input->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::SQL_DATE_TIME;

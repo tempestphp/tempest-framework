@@ -15,7 +15,6 @@ use Tempest\Reflection\TypeReflector;
 
 use function Tempest\Mapper\map;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::HIGH)]
 final readonly class ObjectCaster implements Caster, DynamicCaster
 {
@@ -28,7 +27,7 @@ final readonly class ObjectCaster implements Caster, DynamicCaster
         return fn (PropertyReflector $property) => $property->getType()->isClass();
     }
 
-    public static function make(PropertyReflector $property): static
+    public static function make(PropertyReflector $property, Context $context): static
     {
         return new self($property->getType());
     }

@@ -17,7 +17,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
-#[Context(Context::DEFAULT)]
 #[Priority(Priority::HIGHEST)]
 final readonly class NativeDateTimeCaster implements Caster, DynamicCaster
 {
@@ -31,7 +30,7 @@ final readonly class NativeDateTimeCaster implements Caster, DynamicCaster
         return fn (TypeReflector $type) => $type->matches(DateTimeInterface::class);
     }
 
-    public static function make(PropertyReflector $property): NativeDateTimeCaster
+    public static function make(PropertyReflector $property, Context $context): NativeDateTimeCaster
     {
         $format = $property->getAttribute(HasDateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
 

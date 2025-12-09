@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 final class MapperConfig
 {
     public function __construct(
-        /** @var array<string,array<string,class-string[]>> */
+        /** @var class-string[] */
         public array $mappers = [],
         /** @var array<class-string,string> */
         public array $serializationMap = [],
@@ -21,6 +21,13 @@ final class MapperConfig
     public function serializeAs(string $class, string $name): self
     {
         $this->serializationMap[$class] = $name;
+
+        return $this;
+    }
+
+    public function addMapper(string $mapperClass): self
+    {
+        $this->mappers[] = $mapperClass;
 
         return $this;
     }

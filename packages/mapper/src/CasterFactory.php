@@ -11,6 +11,7 @@ use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use UnitEnum;
 
 #[Singleton]
 final class CasterFactory
@@ -18,7 +19,9 @@ final class CasterFactory
     /**
      * @var array<string, array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure, int}[]>
      */
-    private array $casters = [];
+    private(set) array $casters = [];
+
+    private(set) Context|UnitEnum|string|null $context = null;
 
     public function __construct(
         private readonly Container $container,
@@ -27,18 +30,32 @@ final class CasterFactory
     /**
      * @param class-string<\Tempest\Mapper\Caster> $casterClass
      */
-    public function addCaster(string|array|Closure $for, string|Closure $casterClass, string $context = Context::DEFAULT, int $priority = 0): self
+    public function addCaster(string|array|Closure $for, string|Closure $casterClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
     {
-        $this->casters[$context] ??= [];
-        $this->casters[$context][] = [$for, $casterClass, $priority];
+        $context = MappingContext::from($context);
 
-        usort($this->casters[$context], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        $this->casters[$context->key] ??= [];
+        $this->casters[$context->key][] = [$for, $casterClass, $priority];
+
+        usort($this->casters[$context->key], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
 
-    public function forProperty(PropertyReflector $property, string $context = Context::DEFAULT): ?Caster
+    /**
+     * Sets the context that should be passed to casters.
+     */
+    public function in(Context|UnitEnum|string $context): self
     {
+        $serializer = clone $this;
+        $serializer->context = $context;
+
+        return $serializer;
+    }
+
+    public function forProperty(PropertyReflector $property): ?Caster
+    {
+        $context = MappingContext::from($this->context);
         $type = $property->getType();
         $castWith = $property->getAttribute(CastWith::class);
 
@@ -46,33 +63,28 @@ final class CasterFactory
             $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
 
             if ($castWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
-                return $this->container->get(DataTransferObjectCaster::class);
+                return $this->container->get(DataTransferObjectCaster::class, context: $context);
             }
         }
 
         if ($castWith) {
-            return $this->container->get($castWith->className);
+            return $this->container->get($castWith->className, context: $context);
         }
 
         if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
-            return $this->container->get($casterAttribute->caster);
+            return $this->container->get($casterAttribute->caster, context: $context);
         }
 
-        $casters = [
-            ...($this->casters[$context] ?? []),
-            ...($this->casters[Context::DEFAULT] ?? []),
-        ];
-
-        foreach ($casters as [$for, $casterClass]) {
+        foreach ($this->resolveCasters() as [$for, $casterClass]) {
             if (! $this->casterMatches($for, $property)) {
                 continue;
             }
 
             if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
-                return $casterClass::make($property);
+                return $casterClass::make($property, $context);
             }
 
-            return $this->container->get($casterClass);
+            return $this->container->get($casterClass, context: $context);
         }
 
         return null;
@@ -107,5 +119,16 @@ final class CasterFactory
         }
 
         return false;
+    }
+
+    /**
+     * @return array{string|Closure,class-string<\Tempest\Mapper\Caster>|Closure,int}[]
+     */
+    private function resolveCasters(): array
+    {
+        return [
+            ...($this->casters[MappingContext::from($this->context)->key] ?? []),
+            ...($this->casters[MappingContext::default()->key] ?? []),
+        ];
     }
 }

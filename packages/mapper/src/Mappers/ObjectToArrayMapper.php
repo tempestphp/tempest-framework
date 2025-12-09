@@ -18,7 +18,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
         private SerializerFactory $serializerFactory,
-        private string $context = Context::DEFAULT,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -67,7 +67,7 @@ final readonly class ObjectToArrayMapper implements Mapper
             return $propertyValue;
         }
 
-        if ($propertyValue !== null && ($serializer = $this->serializerFactory->forProperty($property, $this->context)) !== null) {
+        if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) !== null) {
             return $serializer->serialize($propertyValue);
         }
 

@@ -12,7 +12,6 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
-use Tempest\Mapper\Context;
 use Tempest\Mapper\SerializerFactory;
 use Throwable;
 use UnitEnum;
@@ -30,12 +29,8 @@ final class GenericDatabase implements Database
         get => $this->connection->config->tag;
     }
 
-    private string $context {
-        get => match ($this->dialect) {
-            DatabaseDialect::POSTGRESQL => Context::DATABASE_POSTGRESQL,
-            DatabaseDialect::MYSQL => Context::DATABASE_MYSQL,
-            DatabaseDialect::SQLITE => Context::DATABASE_SQLITE,
-        };
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->dialect);
     }
 
     public function __construct(
@@ -139,7 +134,7 @@ final class GenericDatabase implements Database
         foreach ($query->bindings as $key => $value) {
             if ($value instanceof Query) {
                 $value = $value->execute();
-            } elseif ($serializer = $this->serializerFactory->forValue($value, $this->context)) {
+            } elseif ($serializer = $this->serializerFactory->in($this->context)->forValue($value)) {
                 $value = $serializer->serialize($value);
             }
 

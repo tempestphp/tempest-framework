@@ -21,7 +21,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-        private string $context = Context::DEFAULT,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -158,7 +158,9 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        $caster = $this->casterFactory->forProperty($property, $this->context);
+        $caster = $this->casterFactory
+            ->in($this->context)
+            ->forProperty($property);
 
         if ($property->isNullable() && $value === null) {
             return null;

@@ -45,14 +45,11 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     public function uses_casters_from_given_context(): void
     {
         $factory = $this->container->get(Mapper\CasterFactory::class);
-        $factory->addCaster('string', CustomStringSerializer::class, context: 'custom', priority: Priority::HIGHEST);
+        $factory->addCaster('string', CustomStringSerializer::class, context: 'custom');
 
         $author = Mapper\make(Author::class)
             ->in('custom')
-            ->from([
-                'id' => 1,
-                'name' => 'test',
-            ]);
+            ->from('{"name":"{\"type\":\"string\",\"value\":\"test\"}","type":"a","books":[],"publisher":null,"id":1}');
 
         $this->assertInstanceOf(Author::class, $author);
         $this->assertSame('test', $author->name);
