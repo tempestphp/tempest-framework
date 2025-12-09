@@ -71,6 +71,10 @@ final readonly class ObjectToArrayMapper implements Mapper
             return $serializer->serialize($propertyValue);
         }
 
+        // if (is_object($propertyValue)) {
+        //     return map($propertyValue)->toArray();
+        // }
+
         return $propertyValue;
     }
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DataTransferObjectCaster;
+use Tempest\Database\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
+use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -138,11 +139,13 @@ final readonly class ArrayContainerModel
 {
     public function __construct(
         public string $name,
-        #[SerializeWith(DataTransferObjectSerializer::class), CastWith(DataTransferObjectCaster::class)]
+        #[SerializeWith(DataTransferObjectSerializer::class)]
+        #[CastWith(DataTransferObjectCaster::class)]
         public array $data,
     ) {}
 }
 
+#[SerializeAs(self::class)]
 final readonly class SimpleArrayItem
 {
     public function __construct(
@@ -151,6 +154,7 @@ final readonly class SimpleArrayItem
     ) {}
 }
 
+#[SerializeAs(self::class)]
 final readonly class ItemWithNestedArray
 {
     public function __construct(
