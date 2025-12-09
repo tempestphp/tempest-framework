@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Mapper;
 
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Priority;
 use Tempest\Mapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -25,30 +26,34 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function uses_serializers_from_given_context(): void
+    #[TestWith(['custom'], name: 'string')]
+    #[TestWith([TestMapperContextEnum::VALUE], name: 'enum')]
+    public function uses_serializers_from_given_context(mixed $context): void
     {
         $author = new Author(
             name: 'test',
         );
 
         $factory = $this->container->get(Mapper\SerializerFactory::class);
-        $factory->addSerializer('string', CustomStringSerializer::class, context: 'custom', priority: Priority::HIGHEST);
+        $factory->addSerializer('string', CustomStringSerializer::class, context: $context, priority: Priority::HIGHEST);
 
         $serialized = Mapper\map($author)
-            ->in('custom')
+            ->in($context)
             ->toJson();
 
         $this->assertSame('{"name":"{\"type\":\"string\",\"value\":\"test\"}","type":"a","books":[],"publisher":null,"id":null}', $serialized);
     }
 
     #[Test]
-    public function uses_casters_from_given_context(): void
+    #[TestWith(['custom'], name: 'string')]
+    #[TestWith([TestMapperContextEnum::VALUE], name: 'enum')]
+    public function uses_casters_from_given_context(mixed $context): void
     {
         $factory = $this->container->get(Mapper\CasterFactory::class);
-        $factory->addCaster('string', CustomStringSerializer::class, context: 'custom');
+        $factory->addCaster('string', CustomStringSerializer::class, context: $context);
 
         $author = Mapper\make(Author::class)
-            ->in('custom')
+            ->in($context)
             ->from('{"name":"{\"type\":\"string\",\"value\":\"test\"}","type":"a","books":[],"publisher":null,"id":1}');
 
         $this->assertInstanceOf(Author::class, $author);
@@ -75,4 +80,9 @@ final readonly class CustomStringSerializer implements Mapper\Serializer, Mapper
 
         return $data['value'] ?? null;
     }
+}
+
+enum TestMapperContextEnum: string
+{
+    case VALUE = 'value';
 }
