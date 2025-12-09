@@ -36,6 +36,13 @@ final class ObjectFactory
     ) {}
 
     /**
+     * Sets the target class for mapping operations.
+     *
+     * ### Example
+     * ```php
+     * $factory->forClass(Author::class)->from(['name' => 'Jon Doe']);
+     * ```
+     *
      * @template T of object
      * @param T|class-string<T> $objectOrClass
      * @return self<T>
@@ -47,6 +54,14 @@ final class ObjectFactory
         return $this;
     }
 
+    /**
+     * Sets the source data for mapping.
+     *
+     * ### Example
+     * ```php
+     * $factory->withData(['name' => 'Jon Doe'])->to(Author::class);
+     * ```
+     */
     public function withData(mixed $data): self
     {
         $this->from = $data;
@@ -55,6 +70,18 @@ final class ObjectFactory
     }
 
     /**
+     * Marks the mapping operation to process an array of objects instead of a single object.
+     *
+     * ### Example
+     * ```php
+     * make(Author::class)
+     *     ->collection()
+     *     ->from([
+     *         ['name' => 'Jon Doe'],
+     *         ['name' => 'Jane Smith'],
+     *     ]);
+     * ```
+     *
      * @return self<ClassType[]>
      */
     public function collection(): self
@@ -65,7 +92,14 @@ final class ObjectFactory
     }
 
     /**
-     * Sets the context for mapping.
+     * Sets the context for mapping, allowing context-specific mappers to be used.
+     *
+     * ### Example
+     * ```php
+     * make(Author::class)
+     *     ->in(Context::API)
+     *     ->from(['name' => 'Jon Doe']);
+     * ```
      *
      * @return self<ClassType>
      */
@@ -78,6 +112,16 @@ final class ObjectFactory
     }
 
     /**
+     * Maps the given data to the target class.
+     *
+     * ### Example
+     * ```php
+     * $author = make(Author::class)->from([
+     *     'first_name' => 'Jon',
+     *     'last_name' => 'Doe',
+     * ]);
+     * ```
+     *
      * @return ClassType
      */
     public function from(mixed $data): mixed
@@ -90,6 +134,19 @@ final class ObjectFactory
     }
 
     /**
+     * Specifies custom mappers to use for the mapping operation.
+     *
+     * ### Example
+     * ```php
+     * map(['name' => 'Jon Doe'])
+     *     ->with(CustomMapper::class)
+     *     ->to(Author::class);
+     *
+     * map($data)
+     *     ->with(fn (SomeMapper $mapper) => $mapper->map($data))
+     *     ->do();
+     * ```
+     *
      * @template MapperType of \Tempest\Mapper\Mapper
      * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
      * @return self<ClassType>
@@ -102,6 +159,16 @@ final class ObjectFactory
     }
 
     /**
+     * Maps the source data to the specified target class.
+     *
+     * ### Example
+     * ```php
+     * $author = map([
+     *     'first_name' => 'Jon',
+     *     'last_name' => 'Doe',
+     * ])->to(Author::class);
+     * ```
+     *
      * @template T of object
      * @param T|class-string<T>|string $to
      * @return T|T[]|mixed
@@ -115,6 +182,17 @@ final class ObjectFactory
         );
     }
 
+    /**
+     * Executes the mapping using explicitly specified mappers.
+     *
+     * ### Example
+     * ```php
+     * $result = map($data)
+     *     ->with(ObjectToArrayMapper::class)
+     *     ->with(ArrayToJsonMapper::class)
+     *     ->do();
+     * ```
+     */
     public function do(): mixed
     {
         if ($this->with === []) {
@@ -134,6 +212,15 @@ final class ObjectFactory
         return $result;
     }
 
+    /**
+     * Converts the source data to an array.
+     *
+     * ### Example
+     * ```php
+     * $array = map($author)->toArray();
+     * $arrays = map($authors)->collection()->toArray();
+     * ```
+     */
     public function toArray(): array
     {
         if (is_object($this->from)) {
@@ -158,6 +245,15 @@ final class ObjectFactory
         throw new DataCouldNotBeMapped($this->from, 'array');
     }
 
+    /**
+     * Converts the source data to a JSON string.
+     *
+     * ### Example
+     * ```php
+     * $json = map($author)->toJson();
+     * $json = map(['name' => 'Jon Doe'])->toJson();
+     * ```
+     */
     public function toJson(): string
     {
         if (is_object($this->from)) {
@@ -172,6 +268,13 @@ final class ObjectFactory
     }
 
     /**
+     * Maps data from one format to another.
+     *
+     * ### Example
+     * ```php
+     * $author = $factory->map(['name' => 'Jon Doe'], to: Author::class);
+     * ```
+     *
      * @template T of object
      * @param T|class-string<T>|string $to
      * @return T|mixed
