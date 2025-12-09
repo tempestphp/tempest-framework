@@ -8,11 +8,7 @@ use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DataTransferObjectCaster;
-use Tempest\Mapper\CastWith;
 use Tempest\Mapper\SerializeAs;
-use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
-use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -191,8 +187,7 @@ final class Character
     ) {}
 }
 
-#[CastWith(DataTransferObjectCaster::class)]
-#[SerializeWith(DataTransferObjectSerializer::class)]
+#[SerializeAs(self::class)]
 final class CharacterStats
 {
     public function __construct(
@@ -210,8 +205,7 @@ final class CharacterClassInfo
     ) {}
 }
 
-#[CastWith(DataTransferObjectCaster::class)]
-#[SerializeWith(DataTransferObjectSerializer::class)]
+#[SerializeAs(self::class)]
 final class ClassDetails
 {
     public function __construct(
@@ -229,8 +223,6 @@ final class UserPreferences
     ) {}
 }
 
-#[CastWith(DataTransferObjectCaster::class)]
-#[SerializeWith(DataTransferObjectSerializer::class)]
 #[SerializeAs('app-settings')]
 final class ApplicationSettings
 {

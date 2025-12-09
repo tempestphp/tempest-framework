@@ -1,26 +1,34 @@
 <?php
 
-namespace Tempest\Mapper\Casters;
+namespace Tempest\Database\Casters;
 
+use Closure;
 use Tempest\Core\Priority;
+use Tempest\Database\DatabaseContext;
+use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Context as MapperContext;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tempest\Mapper\MapperConfig;
+use Tempest\Mapper\SerializeAs;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
 
 use function Tempest\Mapper\map;
 
-#[Priority(Priority::LOW)]
+#[Priority(Priority::HIGHEST)]
+#[Context(DatabaseContext::class)]
 final readonly class DataTransferObjectCaster implements Caster
 {
     public function __construct(
         private MapperConfig $mapperConfig,
+        private MapperContext $context,
     ) {}
 
-    public static function for(): false
+    public static function for(): Closure
     {
-        return false; // this caster is always applied manually
+        return fn (TypeReflector $type) => $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class);
     }
 
     public function cast(mixed $input): mixed
@@ -48,7 +56,9 @@ final readonly class DataTransferObjectCaster implements Caster
                 value: $input['type'],
             ) ?: $input['type'];
 
-            return map($this->deserialize($input['data']))->to($class);
+            return map($this->deserialize($input['data']))
+                ->in($this->context)
+                ->to($class);
         }
 
         if (is_array($input)) {

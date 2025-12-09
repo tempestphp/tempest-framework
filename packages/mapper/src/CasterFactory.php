@@ -7,7 +7,6 @@ namespace Tempest\Mapper;
 use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
-use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
@@ -61,10 +60,6 @@ final class CasterFactory
 
         if ($castWith === null && $type->isClass()) {
             $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-
-            if ($castWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
-                return $this->container->get(DataTransferObjectCaster::class, context: $context);
-            }
         }
 
         if ($castWith) {

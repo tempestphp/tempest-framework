@@ -95,6 +95,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
         $result = map($query->fetch())
             ->with(SelectModelMapper::class)
+            ->in($this->context)
             ->to($this->model->getName());
 
         if ($result === []) {

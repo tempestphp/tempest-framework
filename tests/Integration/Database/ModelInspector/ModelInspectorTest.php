@@ -2,11 +2,11 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\Serializers\DataTransferObjectSerializer;
 use Tempest\Database\Virtual;
-use Tempest\Mapper\Casters\DataTransferObjectCaster;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\IntegrationTestCase;
 

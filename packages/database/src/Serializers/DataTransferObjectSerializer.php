@@ -1,32 +1,39 @@
 <?php
 
-namespace Tempest\Mapper\Serializers;
+namespace Tempest\Database\Serializers;
 
 use BackedEnum;
+use Closure;
 use JsonSerializable;
+use Tempest\Core\Priority;
+use Tempest\Database\DatabaseContext;
+use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
+use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use UnitEnum;
 
+#[Priority(Priority::HIGHEST)]
+#[Context(DatabaseContext::class)]
 final readonly class DataTransferObjectSerializer implements Serializer
 {
     public function __construct(
         private MapperConfig $mapperConfig,
     ) {}
 
-    public static function for(): false
+    public static function for(): Closure
     {
-        return false;
+        return fn (TypeReflector $type) => $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class);
     }
 
     public function serialize(mixed $input): array|string
     {
-        // Support top-level arrays
         if (is_array($input)) {
             return Json\encode($this->serializeWithType($input));
         }

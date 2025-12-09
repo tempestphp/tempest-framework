@@ -7,7 +7,6 @@ namespace Tempest\Mapper;
 use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
-use Tempest\Mapper\Serializers\DataTransferObjectSerializer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
@@ -62,10 +61,6 @@ final class SerializerFactory
 
         if ($serializeWith === null && $type->isClass()) {
             $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
-
-            if ($serializeWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
-                $serializeWith = new SerializeWith(DataTransferObjectSerializer::class);
-            }
         }
 
         if ($serializeWith !== null) {
