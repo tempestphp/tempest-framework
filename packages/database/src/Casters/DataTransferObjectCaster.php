@@ -2,15 +2,16 @@
 
 namespace Tempest\Database\Casters;
 
-use Closure;
 use Tempest\Core\Priority;
 use Tempest\Database\DatabaseContext;
 use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Context as MapperContext;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeCast;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\SerializeAs;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
@@ -19,16 +20,20 @@ use function Tempest\Mapper\map;
 
 #[Priority(Priority::HIGHEST)]
 #[Context(DatabaseContext::class)]
-final readonly class DataTransferObjectCaster implements Caster
+final readonly class DataTransferObjectCaster implements Caster, DynamicCaster
 {
     public function __construct(
         private MapperConfig $mapperConfig,
         private MapperContext $context,
     ) {}
 
-    public static function for(): Closure
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
     {
-        return fn (TypeReflector $type) => $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class);
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
     }
 
     public function cast(mixed $input): mixed

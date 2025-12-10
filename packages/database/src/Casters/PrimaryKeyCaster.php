@@ -7,13 +7,20 @@ namespace Tempest\Database\Casters;
 use Tempest\Core\Priority;
 use Tempest\Database\PrimaryKey;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class PrimaryKeyCaster implements Caster
+final readonly class PrimaryKeyCaster implements Caster, DynamicCaster
 {
-    public static function for(): string
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return PrimaryKey::class;
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(PrimaryKey::class);
     }
 
     public function cast(mixed $input): PrimaryKey

@@ -6,13 +6,20 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Priority(Priority::NORMAL)]
-final readonly class FloatCaster implements Caster
+final readonly class FloatCaster implements Caster, DynamicCaster
 {
-    public static function for(): array
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return ['float', 'double'];
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return in_array($type->getName(), ['float', 'double'], strict: true);
     }
 
     public function cast(mixed $input): float

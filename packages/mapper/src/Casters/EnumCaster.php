@@ -8,11 +8,13 @@ use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use UnitEnum;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class EnumCaster implements Caster, ConfigurableCaster
+final readonly class EnumCaster implements Caster, DynamicCaster, ConfigurableCaster
 {
     /**
      * @param class-string<UnitEnum> $enum
@@ -21,14 +23,18 @@ final readonly class EnumCaster implements Caster, ConfigurableCaster
         private string $enum,
     ) {}
 
-    public static function configure(PropertyReflector $property, Context $context): Caster
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return new self(enum: $property->getType()->getName());
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(UnitEnum::class);
     }
 
-    public static function for(): string
+    public static function configure(PropertyReflector $property, Context $context): self
     {
-        return UnitEnum::class;
+        return new self(enum: $property->getType()->getName());
     }
 
     public function cast(mixed $input): ?object

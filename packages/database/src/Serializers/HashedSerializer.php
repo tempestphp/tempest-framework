@@ -11,11 +11,6 @@ final readonly class HashedSerializer implements Serializer
         private PasswordHasher $passwordHasher,
     ) {}
 
-    public static function for(): false
-    {
-        return false;
-    }
-
     public function serialize(mixed $input): string
     {
         if (! is_string($input)) {

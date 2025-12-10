@@ -7,19 +7,26 @@ namespace Tempest\Database\Serializers;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\DatabaseContext;
 use Tempest\Mapper\Attributes\Context;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Context(DatabaseContext::class)]
-final class BooleanSerializer implements Serializer
+final class BooleanSerializer implements Serializer, DynamicSerializer
 {
     public function __construct(
         private DatabaseContext $context,
     ) {}
 
-    public static function for(): array
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
     {
-        return ['bool', 'boolean'];
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        return $type->getName() === 'bool' || $type->getName() === 'boolean';
     }
 
     public function serialize(mixed $input): string

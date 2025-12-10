@@ -21,7 +21,7 @@ final class CasterDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(Caster::class)) {
+        if (! $class->implements(DynamicCaster::class)) {
             return;
         }
 
@@ -35,14 +35,7 @@ final class CasterDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$context, $priority, $casterClass]) {
-            $for = $casterClass::for();
-
-            if ($for === false) {
-                continue;
-            }
-
             $this->casterFactory->addCaster(
-                for: $for,
                 casterClass: $casterClass,
                 priority: $priority ?? Priority::NORMAL,
                 context: $context,

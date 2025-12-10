@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use Closure;
 use Tempest\Core\Priority;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
@@ -12,20 +11,25 @@ use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class DateTimeCaster implements Caster, ConfigurableCaster
+final readonly class DateTimeCaster implements Caster, DynamicCaster, ConfigurableCaster
 {
     public function __construct(
         private FormatPattern|string $format = FormatPattern::ISO8601,
     ) {}
 
-    public static function for(): Closure
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return fn (TypeReflector $type) => $type->matches(DateTimeInterface::class);
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(DateTimeInterface::class);
     }
 
     public static function configure(PropertyReflector $property, Context $context): self

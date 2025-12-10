@@ -10,14 +10,13 @@ use Tempest\Container\Singleton;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
-use TypeError;
 use UnitEnum;
 
 #[Singleton]
 final class SerializerFactory
 {
     /**
-     * @var array<string,array{string|Closure,class-string<\Tempest\Mapper\Serializer>|Closure,int}[]>
+     * @var array<string,array{class-string<\Tempest\Mapper\Serializer>,int}[]>
      */
     private(set) array $serializers = [];
 
@@ -30,14 +29,14 @@ final class SerializerFactory
     /**
      * @param class-string<\Tempest\Mapper\Serializer> $serializerClass
      */
-    public function addSerializer(string|array|Closure $for, string|Closure $serializerClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
+    public function addSerializer(string $serializerClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
     {
         $context = MappingContext::from($context);
 
         $this->serializers[$context->name] ??= [];
-        $this->serializers[$context->name][] = [$for, $serializerClass, $priority];
+        $this->serializers[$context->name][] = [$serializerClass, $priority];
 
-        usort($this->serializers[$context->name], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->serializers[$context->name], static fn (array $a, array $b) => $a[1] <=> $b[1]);
 
         return $this;
     }
@@ -71,9 +70,11 @@ final class SerializerFactory
             return $this->container->get($serializerAttribute->serializer, context: $context);
         }
 
-        foreach ($this->resolveSerializers() as [$for, $serializerClass]) {
-            if (! $this->serializerMatches($for, $type)) {
-                continue;
+        foreach ($this->resolveSerializers() as [$serializerClass]) {
+            if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
+                if (! $serializerClass::accepts($property)) {
+                    continue;
+                }
             }
 
             $serializer = $this->resolveSerializer($serializerClass, $property);
@@ -95,12 +96,14 @@ final class SerializerFactory
         if (is_object($value)) {
             $input = new ClassReflector($value)->getType();
         } else {
-            $input = gettype($value);
+            $input = new TypeReflector(gettype($value));
         }
 
-        foreach ($this->resolveSerializers() as [$for, $serializerClass]) {
-            if (! $this->serializerMatches($for, $input)) {
-                continue;
+        foreach ($this->resolveSerializers() as [$serializerClass]) {
+            if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
+                if (! $serializerClass::accepts($input)) {
+                    continue;
+                }
             }
 
             $serializer = $this->resolveSerializer($serializerClass, $input);
@@ -116,52 +119,19 @@ final class SerializerFactory
     /**
      * @param Closure|class-string<Serializer|ConfigurableSerializer> $serializerClass
      */
-    private function resolveSerializer(Closure|string $serializerClass, PropertyReflector|TypeReflector|string $input): ?Serializer
+    private function resolveSerializer(string $serializerClass, PropertyReflector|TypeReflector|string $input): ?Serializer
     {
         $context = MappingContext::from($this->context);
 
-        if ($serializerClass instanceof Closure) {
-            try {
-                return $serializerClass($input, $context);
-            } catch (TypeError) {
-                return null;
-            }
-        }
-
         if (is_a($serializerClass, ConfigurableSerializer::class, allow_string: true)) {
-            return $serializerClass::make($input, $context);
+            return $serializerClass::configure($input, $context);
         }
 
         return $this->container->get($serializerClass, context: $context);
     }
 
-    private function serializerMatches(Closure|string|array $for, TypeReflector|string $input): bool
-    {
-        if (is_array($for)) {
-            return array_any($for, fn (Closure|string $forType) => $this->serializerMatches($forType, $input));
-        }
-
-        if (is_callable($for)) {
-            try {
-                return $for($input);
-            } catch (TypeError) {
-                return false;
-            }
-        }
-
-        if ($for === $input) {
-            return true;
-        }
-
-        if ($input instanceof TypeReflector) {
-            return $input->getName() === $for || $input->matches($for);
-        }
-
-        return false;
-    }
-
     /**
-     * @return array{string|Closure,class-string<\Tempest\Mapper\Serializer>|Closure,int}[]
+     * @return array{class-string<Serializer|ConfigurableSerializer>|Closure,int}[]
      */
     private function resolveSerializers(): array
     {

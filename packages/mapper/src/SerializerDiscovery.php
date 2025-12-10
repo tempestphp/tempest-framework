@@ -21,7 +21,7 @@ final class SerializerDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(Serializer::class)) {
+        if (! $class->implements(DynamicSerializer::class)) {
             return;
         }
 
@@ -35,14 +35,7 @@ final class SerializerDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$context, $priority, $serializerClass]) {
-            $for = $serializerClass::for();
-
-            if ($for === false) {
-                continue;
-            }
-
             $this->serializerFactory->addSerializer(
-                for: $for,
                 serializerClass: $serializerClass,
                 priority: $priority ?? Priority::NORMAL,
                 context: $context,
