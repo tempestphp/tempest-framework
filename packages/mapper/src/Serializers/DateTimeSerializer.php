@@ -9,8 +9,8 @@ use Tempest\Core\Priority;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
+use Tempest\Mapper\ConfigurableSerializer;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
@@ -18,7 +18,7 @@ use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
+final readonly class DateTimeSerializer implements Serializer, ConfigurableSerializer
 {
     public function __construct(
         private FormatPattern|string $format = FormatPattern::SQL_DATE_TIME,
@@ -29,7 +29,7 @@ final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
         return [DateTime::class, DateTimeInterface::class];
     }
 
-    public static function make(PropertyReflector|TypeReflector|string $input, Context $context): Serializer
+    public static function configure(PropertyReflector|TypeReflector|string $input, Context $context): Serializer
     {
         if ($input instanceof PropertyReflector) {
             $format = $input->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::SQL_DATE_TIME;

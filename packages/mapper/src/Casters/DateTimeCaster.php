@@ -10,14 +10,14 @@ use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class DateTimeCaster implements Caster, DynamicCaster
+final readonly class DateTimeCaster implements Caster, ConfigurableCaster
 {
     public function __construct(
         private FormatPattern|string $format = FormatPattern::ISO8601,
@@ -28,7 +28,7 @@ final readonly class DateTimeCaster implements Caster, DynamicCaster
         return fn (TypeReflector $type) => $type->matches(DateTimeInterface::class);
     }
 
-    public static function make(PropertyReflector $property, Context $context): self
+    public static function configure(PropertyReflector $property, Context $context): self
     {
         return new self(
             format: $property->getAttribute(HasDateTimeFormat::class)->format ?? FormatPattern::ISO8601,

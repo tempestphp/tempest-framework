@@ -75,8 +75,8 @@ final class CasterFactory
                 continue;
             }
 
-            if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
-                return $casterClass::make($property, $context);
+            if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {
+                return $casterClass::configure($property, $context);
             }
 
             return $this->container->get($casterClass, context: $context);

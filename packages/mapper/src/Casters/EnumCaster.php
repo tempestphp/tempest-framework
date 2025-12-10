@@ -6,13 +6,13 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use UnitEnum;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class EnumCaster implements Caster, DynamicCaster
+final readonly class EnumCaster implements Caster, ConfigurableCaster
 {
     /**
      * @param class-string<UnitEnum> $enum
@@ -21,7 +21,7 @@ final readonly class EnumCaster implements Caster, DynamicCaster
         private string $enum,
     ) {}
 
-    public static function make(PropertyReflector $property, Context $context): Caster
+    public static function configure(PropertyReflector $property, Context $context): Caster
     {
         return new self(enum: $property->getType()->getName());
     }

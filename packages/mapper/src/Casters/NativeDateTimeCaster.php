@@ -11,14 +11,14 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class NativeDateTimeCaster implements Caster, DynamicCaster
+final readonly class NativeDateTimeCaster implements Caster, ConfigurableCaster
 {
     public function __construct(
         private string $format = 'Y-m-d H:i:s',
@@ -30,7 +30,7 @@ final readonly class NativeDateTimeCaster implements Caster, DynamicCaster
         return fn (TypeReflector $type) => $type->matches(DateTimeInterface::class);
     }
 
-    public static function make(PropertyReflector $property, Context $context): NativeDateTimeCaster
+    public static function configure(PropertyReflector $property, Context $context): NativeDateTimeCaster
     {
         $format = $property->getAttribute(HasDateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
 

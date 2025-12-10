@@ -9,8 +9,8 @@ use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface;
 use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\Core\Priority;
+use Tempest\Mapper\ConfigurableSerializer;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
@@ -18,7 +18,7 @@ use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]
-final readonly class NativeDateTimeSerializer implements Serializer, DynamicSerializer
+final readonly class NativeDateTimeSerializer implements Serializer, ConfigurableSerializer
 {
     public function __construct(
         private string $format = 'Y-m-d H:i:s',
@@ -29,7 +29,7 @@ final readonly class NativeDateTimeSerializer implements Serializer, DynamicSeri
         return [NativeDateTimeInterface::class, NativeDateTimeImmutable::class, NativeDateTime::class];
     }
 
-    public static function make(PropertyReflector|TypeReflector|string $input, Context $context): Serializer
+    public static function configure(PropertyReflector|TypeReflector|string $input, Context $context): Serializer
     {
         if ($input instanceof PropertyReflector) {
             $format = $input->getAttribute(HasDateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
