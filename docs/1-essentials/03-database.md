@@ -306,9 +306,9 @@ The encryption key is taken from the `SIGNING_KEY` environment variable.
 
 ### Data transfer object properties
 
-It's possible to store objects as-is in a `json` column, when they don't need to be part of your database schema.
+You can store arbitrary objects directly in a `json` column when they don’t need to be part of the relational schema.
 
-To do this, you may simply mark these objects with the `#[Tempest\Mapper\SerializeAs]` and specify a name for this object to be serialized as. Not that this name must uniquely correspond to a single class.
+To do this, annotate the class with `⁠#[Tempest\Mapper\SerializeAs]` and provide a unique identifier for the object’s serialized form. The identifier must map to a single, distinct class.
 
 ```php
 use Tempest\Mapper\SerializeAs;
