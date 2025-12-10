@@ -5,10 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/cache": "dev-main",
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
-        "tempest/debug": "dev-main",
         "tempest/generation": "dev-main",
         "tempest/highlight": "^2.11.4",
         "tempest/log": "dev-main",
