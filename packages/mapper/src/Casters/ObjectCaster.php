@@ -7,8 +7,8 @@ namespace Tempest\Mapper\Casters;
 use Closure;
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
-use Tempest\Mapper\DynamicCaster;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
@@ -16,7 +16,7 @@ use Tempest\Reflection\TypeReflector;
 use function Tempest\Mapper\map;
 
 #[Priority(Priority::HIGH)]
-final readonly class ObjectCaster implements Caster, DynamicCaster
+final readonly class ObjectCaster implements Caster, ConfigurableCaster
 {
     public function __construct(
         private TypeReflector $type,
@@ -27,7 +27,7 @@ final readonly class ObjectCaster implements Caster, DynamicCaster
         return fn (PropertyReflector $property) => $property->getType()->isClass();
     }
 
-    public static function make(PropertyReflector $property, Context $context): static
+    public static function configure(PropertyReflector $property, Context $context): static
     {
         return new self($property->getType());
     }

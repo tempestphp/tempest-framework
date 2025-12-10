@@ -19,5 +19,8 @@ interface Serializer
      */
     public static function for(): false|array|string|Closure;
 
+    /**
+     * Serializes the given input into a string, array, or integer.
+     */
     public function serialize(mixed $input): array|string|int;
 }

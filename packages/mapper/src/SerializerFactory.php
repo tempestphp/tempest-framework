@@ -114,7 +114,7 @@ final class SerializerFactory
     }
 
     /**
-     * @param Closure|class-string<Serializer|DynamicSerializer> $serializerClass
+     * @param Closure|class-string<Serializer|ConfigurableSerializer> $serializerClass
      */
     private function resolveSerializer(Closure|string $serializerClass, PropertyReflector|TypeReflector|string $input): ?Serializer
     {
@@ -128,7 +128,7 @@ final class SerializerFactory
             }
         }
 
-        if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
+        if (is_a($serializerClass, ConfigurableSerializer::class, allow_string: true)) {
             return $serializerClass::make($input, $context);
         }
 
