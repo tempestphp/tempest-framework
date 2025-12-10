@@ -77,7 +77,7 @@ final readonly class RedisSessionManager implements SessionManager
         try {
             $content = $this->redis->get($this->getKey($id));
             return unserialize($content, ['allowed_classes' => true]);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return null;
         }
     }
