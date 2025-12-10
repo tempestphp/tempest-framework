@@ -10,15 +10,22 @@ use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Attributes\Context;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Context(DatabaseContext::class)]
-final readonly class DateTimeSerializer implements Serializer
+final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
 {
-    public static function for(): array
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
     {
-        return [DateTime::class, DateTimeInterface::class, NativeDateTimeInterface::class];
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        return $type->matches(DateTime::class) || $type->matches(DateTimeInterface::class) || $type->matches(NativeDateTimeInterface::class);
     }
 
     public function serialize(mixed $input): string

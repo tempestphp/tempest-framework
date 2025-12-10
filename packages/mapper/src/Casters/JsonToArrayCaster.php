@@ -6,14 +6,21 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Json;
 
 #[Priority(Priority::NORMAL)]
-final class JsonToArrayCaster implements Caster
+final class JsonToArrayCaster implements Caster, DynamicCaster
 {
-    public static function for(): string
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return 'array';
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->getName() === 'array';
     }
 
     public function cast(mixed $input): array

@@ -7,15 +7,22 @@ namespace Tempest\Mapper\Serializers;
 use JsonSerializable;
 use Serializable;
 use Tempest\Core\Priority;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Priority(Priority::LOW)]
-final class SerializableSerializer implements Serializer
+final class SerializableSerializer implements Serializer, DynamicSerializer
 {
-    public static function for(): array
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return [Serializable::class, JsonSerializable::class];
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(Serializable::class) || $type->matches(JsonSerializable::class);
     }
 
     public function serialize(mixed $input): array|string

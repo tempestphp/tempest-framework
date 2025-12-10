@@ -3,11 +3,11 @@
 namespace Tempest\Database\Serializers;
 
 use BackedEnum;
-use Closure;
 use JsonSerializable;
 use Tempest\Core\Priority;
 use Tempest\Database\DatabaseContext;
 use Tempest\Mapper\Attributes\Context;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
 use Tempest\Mapper\SerializeAs;
@@ -21,15 +21,19 @@ use UnitEnum;
 
 #[Priority(Priority::HIGHEST)]
 #[Context(DatabaseContext::class)]
-final readonly class DataTransferObjectSerializer implements Serializer
+final readonly class DataTransferObjectSerializer implements Serializer, DynamicSerializer
 {
     public function __construct(
         private MapperConfig $mapperConfig,
     ) {}
 
-    public static function for(): Closure
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
     {
-        return fn (TypeReflector $type) => $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class);
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
     }
 
     public function serialize(mixed $input): array|string

@@ -6,16 +6,23 @@ namespace Tempest\Mapper\Serializers;
 
 use BackedEnum;
 use Tempest\Core\Priority;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use UnitEnum;
 
 #[Priority(Priority::NORMAL)]
-final class EnumSerializer implements Serializer
+final class EnumSerializer implements Serializer, DynamicSerializer
 {
-    public static function for(): string
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return UnitEnum::class;
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(UnitEnum::class);
     }
 
     public function serialize(mixed $input): string

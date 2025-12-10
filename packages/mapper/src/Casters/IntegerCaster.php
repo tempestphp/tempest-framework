@@ -6,13 +6,20 @@ namespace Tempest\Mapper\Casters;
 
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 #[Priority(Priority::NORMAL)]
-final readonly class IntegerCaster implements Caster
+final readonly class IntegerCaster implements Caster, DynamicCaster
 {
-    public static function for(): array
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return ['int', 'integer']; // TODO: not sure if both aliases are needed
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return in_array($type->getName(), ['int', 'integer'], strict: true);
     }
 
     public function cast(mixed $input): int

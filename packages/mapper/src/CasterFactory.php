@@ -7,16 +7,14 @@ namespace Tempest\Mapper;
 use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
-use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Reflection\TypeReflector;
 use UnitEnum;
 
 #[Singleton]
 final class CasterFactory
 {
     /**
-     * @var array<string, array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure, int}[]>
+     * @var array<string, array{class-string<\Tempest\Mapper\Caster>, int}[]>
      */
     private(set) array $casters = [];
 
@@ -29,14 +27,14 @@ final class CasterFactory
     /**
      * @param class-string<\Tempest\Mapper\Caster> $casterClass
      */
-    public function addCaster(string|array|Closure $for, string|Closure $casterClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
+    public function addCaster(string $casterClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
     {
         $context = MappingContext::from($context);
 
         $this->casters[$context->name] ??= [];
-        $this->casters[$context->name][] = [$for, $casterClass, $priority];
+        $this->casters[$context->name][] = [$casterClass, $priority];
 
-        usort($this->casters[$context->name], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->casters[$context->name], static fn (array $a, array $b) => $a[1] <=> $b[1]);
 
         return $this;
     }
@@ -70,9 +68,11 @@ final class CasterFactory
             return $this->container->get($casterAttribute->caster, context: $context);
         }
 
-        foreach ($this->resolveCasters() as [$for, $casterClass]) {
-            if (! $this->casterMatches($for, $property)) {
-                continue;
+        foreach ($this->resolveCasters() as [$casterClass]) {
+            if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
+                if (! $casterClass::accepts($property)) {
+                    continue;
+                }
             }
 
             if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {
@@ -85,39 +85,8 @@ final class CasterFactory
         return null;
     }
 
-    private function casterMatches(Closure|string|array $for, PropertyReflector $property): bool
-    {
-        if (is_array($for)) {
-            return array_any($for, fn (Closure|string $forType) => $this->casterMatches($forType, $property));
-        }
-
-        $type = $property->getType();
-
-        if (is_callable($for)) {
-            $parameter = new FunctionReflector($for)->getParameter(key: 0);
-
-            if ($parameter?->getType()->getName() === PropertyReflector::class) {
-                return $for($property);
-            }
-
-            if ($parameter?->getType()->getName() === TypeReflector::class) {
-                return $for($type);
-            }
-        }
-
-        if (is_string($for) && $type->matches($for)) {
-            return true;
-        }
-
-        if ($type->getName() === $for) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
-     * @return array{string|Closure,class-string<\Tempest\Mapper\Caster>|Closure,int}[]
+     * @return array{class-string<\Tempest\Mapper\Caster>|Closure,int}[]
      */
     private function resolveCasters(): array
     {

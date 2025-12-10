@@ -15,11 +15,6 @@ final readonly class EncryptedCaster implements Caster
         private Encrypter $encrypter,
     ) {}
 
-    public static function for(): false
-    {
-        return false;
-    }
-
     public function cast(mixed $input): ?string
     {
         if ($input === null) {

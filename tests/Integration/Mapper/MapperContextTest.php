@@ -6,6 +6,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Priority;
 use Tempest\Mapper;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -35,7 +37,7 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
         );
 
         $factory = $this->container->get(Mapper\SerializerFactory::class);
-        $factory->addSerializer('string', CustomStringSerializer::class, context: $context, priority: Priority::HIGHEST);
+        $factory->addSerializer(CustomStringSerializer::class, context: $context, priority: Priority::HIGHEST);
 
         $serialized = Mapper\map($author)
             ->in($context)
@@ -50,7 +52,7 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     public function uses_casters_from_given_context(mixed $context): void
     {
         $factory = $this->container->get(Mapper\CasterFactory::class);
-        $factory->addCaster('string', CustomStringSerializer::class, context: $context);
+        $factory->addCaster(CustomStringSerializer::class, context: $context);
 
         $author = Mapper\make(Author::class)
             ->in($context)
@@ -62,11 +64,15 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     }
 }
 
-final readonly class CustomStringSerializer implements Mapper\Serializer, Mapper\Caster
+final readonly class CustomStringSerializer implements Mapper\Serializer, Mapper\Caster, Mapper\DynamicSerializer, Mapper\DynamicCaster
 {
-    public static function for(): string
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return 'string';
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->getName() === 'string';
     }
 
     public function serialize(mixed $input): string

@@ -3,14 +3,21 @@
 namespace Tempest\Database\Serializers;
 
 use Tempest\Database\PrimaryKey;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
-final class PrimaryKeySerializer implements Serializer
+final class PrimaryKeySerializer implements Serializer, DynamicSerializer
 {
-    public static function for(): string
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
     {
-        return PrimaryKey::class;
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(PrimaryKey::class);
     }
 
     public function serialize(mixed $input): string|int
