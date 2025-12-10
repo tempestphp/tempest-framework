@@ -215,6 +215,16 @@ final readonly class TypeReflector implements Reflector
         return $this->isNullable;
     }
 
+    public function isUnion(): bool
+    {
+        return str_contains($this->definition, '|');
+    }
+
+    public function isIntersection(): bool
+    {
+        return str_contains($this->definition, '&');
+    }
+
     /** @return self[] */
     public function split(): array
     {
