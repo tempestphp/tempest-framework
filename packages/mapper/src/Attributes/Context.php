@@ -15,21 +15,21 @@ use UnitEnum;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Context implements MapperContext
 {
-    public string $key {
+    public string $name {
         get {
-            if ($this->name instanceof BackedEnum) {
-                return $this->name->value;
+            if ($this->context instanceof BackedEnum) {
+                return $this->context->value;
             }
 
-            if ($this->name instanceof UnitEnum) {
-                return $this->name->name;
+            if ($this->context instanceof UnitEnum) {
+                return $this->context->name;
             }
 
-            return $this->name;
+            return $this->context;
         }
     }
 
     public function __construct(
-        public BackedEnum|UnitEnum|string $name,
+        public BackedEnum|UnitEnum|string $context,
     ) {}
 }

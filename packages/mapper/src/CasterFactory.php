@@ -33,10 +33,10 @@ final class CasterFactory
     {
         $context = MappingContext::from($context);
 
-        $this->casters[$context->key] ??= [];
-        $this->casters[$context->key][] = [$for, $casterClass, $priority];
+        $this->casters[$context->name] ??= [];
+        $this->casters[$context->name][] = [$for, $casterClass, $priority];
 
-        usort($this->casters[$context->key], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->casters[$context->name], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
@@ -122,8 +122,8 @@ final class CasterFactory
     private function resolveCasters(): array
     {
         return [
-            ...($this->casters[MappingContext::from($this->context)->key] ?? []),
-            ...($this->casters[MappingContext::default()->key] ?? []),
+            ...($this->casters[MappingContext::from($this->context)->name] ?? []),
+            ...($this->casters[MappingContext::default()->name] ?? []),
         ];
     }
 }

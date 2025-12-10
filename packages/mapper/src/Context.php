@@ -8,9 +8,9 @@ namespace Tempest\Mapper;
 interface Context
 {
     /**
-     * A unique identifier for this context.
+     * A unique name for this context.
      */
-    public string $key {
+    public string $name {
         get;
     }
 }
