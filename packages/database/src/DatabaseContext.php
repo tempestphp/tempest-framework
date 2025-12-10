@@ -7,7 +7,7 @@ use Tempest\Mapper\Context;
 
 final class DatabaseContext implements Context
 {
-    private(set) string $key = self::class;
+    private(set) string $name = self::class;
 
     public function __construct(
         private(set) DatabaseDialect $dialect,

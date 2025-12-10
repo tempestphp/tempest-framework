@@ -34,10 +34,10 @@ final class SerializerFactory
     {
         $context = MappingContext::from($context);
 
-        $this->serializers[$context->key] ??= [];
-        $this->serializers[$context->key][] = [$for, $serializerClass, $priority];
+        $this->serializers[$context->name] ??= [];
+        $this->serializers[$context->name][] = [$for, $serializerClass, $priority];
 
-        usort($this->serializers[$context->key], static fn (array $a, array $b) => $a[2] <=> $b[2]);
+        usort($this->serializers[$context->name], static fn (array $a, array $b) => $a[2] <=> $b[2]);
 
         return $this;
     }
@@ -166,8 +166,8 @@ final class SerializerFactory
     private function resolveSerializers(): array
     {
         return [
-            ...($this->serializers[MappingContext::from($this->context)->key] ?? []),
-            ...($this->serializers[MappingContext::default()->key] ?? []),
+            ...($this->serializers[MappingContext::from($this->context)->name] ?? []),
+            ...($this->serializers[MappingContext::default()->name] ?? []),
         ];
     }
 }
