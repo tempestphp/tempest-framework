@@ -11,6 +11,7 @@ use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Exceptions\ViewNotFound;
+use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
 
@@ -39,6 +40,11 @@ final readonly class TempestViewCompiler
 
         // 1. Retrieve template
         $template = $this->retrieveTemplate($view);
+
+        // Check for XML declarations when short_open_tag is enabled
+        if (ini_get('short_open_tag') && str_contains($template, needle: '<?xml')) {
+            throw new XmlDeclarationCouldNotBeParsed();
+        }
 
         // 2. Remove comments before parsing
         $template = $this->removeComments($template);

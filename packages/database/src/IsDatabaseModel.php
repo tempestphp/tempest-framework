@@ -68,11 +68,11 @@ trait IsDatabaseModel
     }
 
     /**
-     * Finds a model instance by its ID.
+     * Finds a model instance by its ID. Use through {@see Tempest\Router\Bindable}.
      */
-    public static function resolve(string|int|PrimaryKey $id): self
+    public static function resolve(string $input): self
     {
-        return query(self::class)->resolve($id);
+        return query(self::class)->resolve($input);
     }
 
     /**
