@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Http;
+namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
