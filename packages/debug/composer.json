@@ -5,9 +5,11 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/console": "dev-main",
         "tempest/highlight": "^2.11.4",
         "symfony/var-dumper": "^7.1"
+    },
+    "require-dev": {
+        "tempest/console": "dev-main"
     },
     "autoload": {
         "psr-4": {

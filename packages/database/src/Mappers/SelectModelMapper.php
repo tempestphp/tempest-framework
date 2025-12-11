@@ -7,6 +7,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr\MutableArray;
 
@@ -17,6 +18,10 @@ use function Tempest\Support\arr;
 #[SkipDiscovery]
 final class SelectModelMapper implements Mapper
 {
+    public function __construct(
+        private Context $context,
+    ) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return false;
@@ -33,7 +38,10 @@ final class SelectModelMapper implements Mapper
             ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
             ->values();
 
-        $objects = map($parsed->toArray())->collection()->to($to);
+        $objects = map($parsed->toArray())
+            ->in($this->context)
+            ->collection()
+            ->to($to);
 
         foreach ($objects as $i => $object) {
             foreach ($model->getRelations() as $relation) {

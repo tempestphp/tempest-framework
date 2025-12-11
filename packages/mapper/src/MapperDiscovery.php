@@ -23,13 +23,13 @@ final class MapperDiscovery implements Discovery
             return;
         }
 
-        $this->discoveryItems->add($location, $class->getName());
+        $this->discoveryItems->add($location, [$class->getName()]);
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as $className) {
-            $this->config->mappers[] = $className;
+        foreach ($this->discoveryItems as [$className]) {
+            $this->config->addMapper($className);
         }
     }
 }
