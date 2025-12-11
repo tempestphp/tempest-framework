@@ -15,57 +15,55 @@ use function Tempest\root_path;
 use function Tempest\src_path;
 use function Tempest\Support\Namespace\to_fqcn;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
-    final class AuthenticationInstaller implements Installer
+final class AuthenticationInstaller implements Installer
+{
+    use PublishesFiles;
+
+    private(set) string $name = 'auth';
+
+    public function __construct(
+        private readonly MigrationManager $migrationManager,
+        private readonly Container $container,
+        private readonly Console $console,
+        private readonly ConsoleArgumentBag $consoleArgumentBag,
+    ) {}
+
+    public function install(): void
     {
-        use PublishesFiles;
+        $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
+        $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
+        $this->publishImports();
 
-        private(set) string $name = 'auth';
-
-        public function __construct(
-            private readonly MigrationManager $migrationManager,
-            private readonly Container $container,
-            private readonly Console $console,
-            private readonly ConsoleArgumentBag $consoleArgumentBag,
-        ) {}
-
-        public function install(): void
-        {
-            $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
-            $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
-            $this->publishImports();
-
-            if ($migration && $this->shouldMigrate()) {
-                $this->migrationManager->executeUp(
-                    migration: $this->container->get(to_fqcn($migration, root: root_path())),
-                );
-            }
-
-            if ($this->shouldInstallOAuth()) {
-                $this->container->get(OAuthInstaller::class)->install();
-            }
+        if ($migration && $this->shouldMigrate()) {
+            $this->migrationManager->executeUp(
+                migration: $this->container->get(to_fqcn($migration, root: root_path())),
+            );
         }
 
-        private function shouldMigrate(): bool
-        {
-            $argument = $this->consoleArgumentBag->get('migrate');
+        if ($this->shouldInstallOAuth()) {
+            $this->container->get(OAuthInstaller::class)->install();
+        }
+    }
 
-            if ($argument === null || ! is_bool($argument->value)) {
-                return $this->console->confirm('Do you want to execute migrations?', default: false);
-            }
+    private function shouldMigrate(): bool
+    {
+        $argument = $this->consoleArgumentBag->get('migrate');
 
-            return (bool) $argument->value;
+        if ($argument === null || ! is_bool($argument->value)) {
+            return $this->console->confirm('Do you want to execute migrations?', default: false);
         }
 
-        private function shouldInstallOAuth(): bool
-        {
-            $argument = $this->consoleArgumentBag->get('oauth');
+        return (bool) $argument->value;
+    }
 
-            if ($argument === null || ! is_bool($argument->value)) {
-                return $this->console->confirm('Do you want to install OAuth?', default: false);
-            }
+    private function shouldInstallOAuth(): bool
+    {
+        $argument = $this->consoleArgumentBag->get('oauth');
 
-            return (bool) $argument->value;
+        if ($argument === null || ! is_bool($argument->value)) {
+            return $this->console->confirm('Do you want to install OAuth?', default: false);
         }
+
+        return (bool) $argument->value;
     }
 }

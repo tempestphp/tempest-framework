@@ -22,88 +22,86 @@ use UnitEnum;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
-    final readonly class CacheStatusCommand
+final readonly class CacheStatusCommand
+{
+    use HasConsole;
+
+    public function __construct(
+        private Console $console,
+        private Container $container,
+        private AppConfig $appConfig,
+        private DiscoveryCache $discoveryCache,
+    ) {}
+
+    #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
+    public function __invoke(bool $internal = true): void
     {
-        use HasConsole;
+        if (! $this->container instanceof GenericContainer) {
+            $this->console->error('Checking cache status is only available when using the default container.');
+            return;
+        }
 
-        public function __construct(
-            private Console $console,
-            private Container $container,
-            private AppConfig $appConfig,
-            private DiscoveryCache $discoveryCache,
-        ) {}
+        $caches = arr($this->container->getSingletons(CacheConfig::class))
+            ->map(fn ($_, string $key) => $this->container->get(Cache::class, $key === CacheConfig::class ? null : Str\after_last($key, '#')))
+            ->values();
 
-        #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
-        public function __invoke(bool $internal = true): void
-        {
-            if (! $this->container instanceof GenericContainer) {
-                $this->console->error('Checking cache status is only available when using the default container.');
-                return;
-            }
+        if ($internal) {
+            $this->console->header('Internal caches');
 
-            $caches = arr($this->container->getSingletons(CacheConfig::class))
-                ->map(fn ($_, string $key) => $this->container->get(Cache::class, $key === CacheConfig::class ? null : Str\after_last($key, '#')))
-                ->values();
-
-            if ($internal) {
-                $this->console->header('Internal caches');
-
-                foreach ([ConfigCache::class, ViewCache::class, IconCache::class] as $cacheName) {
-                    /** @var Cache $cache */
-                    $cache = $this->container->get($cacheName);
-
-                    $this->console->keyValue(
-                        key: $cacheName,
-                        value: match ($cache->enabled) {
-                            true => '<style="bold fg-green">ENABLED</style>',
-                            false => '<style="bold fg-red">DISABLED</style>',
-                        },
-                    );
-                }
+            foreach ([ConfigCache::class, ViewCache::class, IconCache::class] as $cacheName) {
+                /** @var Cache $cache */
+                $cache = $this->container->get($cacheName);
 
                 $this->console->keyValue(
-                    key: DiscoveryCache::class,
-                    value: match ($this->discoveryCache->valid) {
-                        false => '<style="bold fg-red">INVALID</style>',
-                        true => match ($this->discoveryCache->enabled) {
-                            true => '<style="bold fg-green">ENABLED</style>',
-                            false => '<style="bold fg-red">DISABLED</style>',
-                        },
-                    },
-                );
-
-                if ($this->appConfig->environment->isProduction() && ! $this->discoveryCache->enabled) {
-                    $this->console->writeln();
-                    $this->console->error('Discovery cache is disabled in production. This is not recommended.');
-                }
-            }
-
-            $this->console->header('User caches');
-
-            /** @var Cache $cache */
-            foreach ($caches as $cache) {
-                $this->console->keyValue(
-                    key: $this->getCacheName($cache),
+                    key: $cacheName,
                     value: match ($cache->enabled) {
                         true => '<style="bold fg-green">ENABLED</style>',
                         false => '<style="bold fg-red">DISABLED</style>',
                     },
                 );
             }
+
+            $this->console->keyValue(
+                key: DiscoveryCache::class,
+                value: match ($this->discoveryCache->valid) {
+                    false => '<style="bold fg-red">INVALID</style>',
+                    true => match ($this->discoveryCache->enabled) {
+                        true => '<style="bold fg-green">ENABLED</style>',
+                        false => '<style="bold fg-red">DISABLED</style>',
+                    },
+                },
+            );
+
+            if ($this->appConfig->environment->isProduction() && ! $this->discoveryCache->enabled) {
+                $this->console->writeln();
+                $this->console->error('Discovery cache is disabled in production. This is not recommended.');
+            }
         }
 
-        private function getCacheName(Cache $cache): string
-        {
-            if (! $cache instanceof GenericCache) {
-                return $cache::class;
-            }
+        $this->console->header('User caches');
 
-            if ($cache->tag instanceof UnitEnum) {
-                return $cache->tag->name;
-            }
-
-            return $cache->tag ?? 'default';
+        /** @var Cache $cache */
+        foreach ($caches as $cache) {
+            $this->console->keyValue(
+                key: $this->getCacheName($cache),
+                value: match ($cache->enabled) {
+                    true => '<style="bold fg-green">ENABLED</style>',
+                    false => '<style="bold fg-red">DISABLED</style>',
+                },
+            );
         }
+    }
+
+    private function getCacheName(Cache $cache): string
+    {
+        if (! $cache instanceof GenericCache) {
+            return $cache::class;
+        }
+
+        if ($cache->tag instanceof UnitEnum) {
+            return $cache->tag->name;
+        }
+
+        return $cache->tag ?? 'default';
     }
 }
