@@ -25,7 +25,7 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
         $environment = $this->appConfig->environment;
 
         if ($environment->isProduction() || $environment->isStaging()) {
-            if ($this->console->isForced()) {
+            if ($this->console->isForced) {
                 return $next($invocation);
             }
 

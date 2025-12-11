@@ -39,7 +39,7 @@ final class GenericConsole implements Console
 
     private ?string $label = null;
 
-    private bool $isForced = false;
+    public private(set) bool $isForced = false;
 
     private bool $supportsPrompting = true;
 
@@ -71,11 +71,6 @@ final class GenericConsole implements Console
         $this->isForced = true;
 
         return $this;
-    }
-
-    public function isForced(): bool
-    {
-        return $this->isForced;
     }
 
     public function disablePrompting(): self

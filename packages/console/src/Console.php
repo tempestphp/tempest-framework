@@ -161,5 +161,7 @@ interface Console
     /**
      * Whether the console is in forced mode (skipping confirmations).
      */
-    public function isForced(): bool;
+    public bool $isForced {
+        get;
+    }
 }
