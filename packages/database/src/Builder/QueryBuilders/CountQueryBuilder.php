@@ -9,11 +9,13 @@ use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
+use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\Support\arr;
 
 /**
  * @template TModel of object
@@ -30,6 +32,9 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
     public ModelInspector $model;
 
     public array $bindings = [];
+
+    /** @var array<JoinStatement|string> */
+    public array $joins = [];
 
     public ImmutableArray $wheres {
         get => $this->count->where;
@@ -63,6 +68,16 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
         foreach ($source->wheres as $where) {
             $builder->wheres[] = $where;
+        }
+
+        if ($source instanceof SupportsJoins) {
+            $builder->joins = $source->joins;
+        }
+
+        if ($source instanceof SupportsRelations) {
+            foreach ($source->getResolvedRelations() as $relation) {
+                $builder->joins[] = $relation->getJoinStatement();
+            }
         }
 
         return $builder;
@@ -122,6 +137,18 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     public function build(mixed ...$bindings): Query
     {
-        return new Query($this->count, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
+        $count = $this->count;
+
+        if ($this->joins !== []) {
+            $count = new CountStatement(
+                table: $count->table,
+                column: $count->column,
+                where: $count->where,
+                distinct: $count->distinct,
+                joins: arr($this->joins)->map(fn (JoinStatement|string $join) => $join instanceof JoinStatement ? $join : new JoinStatement($join)),
+            );
+        }
+
+        return new Query($count, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
     }
 }
