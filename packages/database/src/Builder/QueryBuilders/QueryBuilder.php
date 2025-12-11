@@ -264,7 +264,10 @@ final readonly class QueryBuilder
 
         if ($id !== null && $primaryKeyProperty !== null) {
             $primaryKeyName = $primaryKeyProperty->getName();
-            $model->{$primaryKeyName} = new PrimaryKey($id);
+
+            if (! $inspector->hasUuidPrimaryKey() || $model->{$primaryKeyName} === null) {
+                $model->{$primaryKeyName} = new PrimaryKey($id);
+            }
         }
 
         return $model;
