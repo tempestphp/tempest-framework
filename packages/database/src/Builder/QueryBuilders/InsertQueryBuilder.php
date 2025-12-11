@@ -21,6 +21,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Random;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
@@ -401,15 +402,21 @@ final class InsertQueryBuilder implements BuildsQuery
         $entry = [];
 
         foreach ($modelClass->getPublicProperties() as $property) {
+            $propertyName = $property->getName();
+
             if (! $property->isInitialized($model)) {
+                if ($definition->isUuidPrimaryKey($property)) {
+                    $uuid = new PrimaryKey(Random\uuid());
+                    $property->setValue($model, $uuid);
+                    $entry[$propertyName] = $this->serializeValue($property, $uuid);
+                }
+
                 continue;
             }
 
             if ($property->isVirtual()) {
                 continue;
             }
-
-            $propertyName = $property->getName();
 
             if ($property->hasAttribute(Virtual::class)) {
                 continue;
@@ -434,10 +441,6 @@ final class InsertQueryBuilder implements BuildsQuery
             }
 
             $column = $propertyName;
-
-            if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
-                continue;
-            }
 
             if ($definition->isRelation($property)) {
                 [$column, $value] = $this->resolveRelationProperty($definition, $property, $value);
