@@ -2,14 +2,14 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Database\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DtoSerializer;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -46,8 +46,8 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
     }
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[CastWith(DataTransferObjectCaster::class)]
+#[SerializeWith(DataTransferObjectSerializer::class)]
 final class ModelWithDtoTestDtoForModelWithSerializer
 {
     public function __construct(

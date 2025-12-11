@@ -24,4 +24,11 @@ final class MapperConfig
 
         return $this;
     }
+
+    public function addMapper(string $mapperClass): self
+    {
+        $this->mappers[] = $mapperClass;
+
+        return $this;
+    }
 }
