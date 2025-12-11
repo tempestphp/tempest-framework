@@ -51,7 +51,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $elementFactory->setViewCompiler($compiler);
 
-        $viewCache ??= ViewCache::disabled();
+        $viewCache ??= ViewCache::create(enabled: false);
 
         return new self(
             compiler: $compiler,
