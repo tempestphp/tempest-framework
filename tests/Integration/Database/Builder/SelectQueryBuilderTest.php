@@ -607,7 +607,6 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(3, $page1->totalItems);
         $this->assertCount(3, $page1->data);
-        $this->assertNotNull($page1->data[0]->book);
         $this->assertSame('LOTR 1', $page1->data[0]->book->title);
     }
 
@@ -622,8 +621,6 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(13, $page1->totalItems);
         $this->assertCount(5, $page1->data);
 
-        $this->assertNotNull($page1->data[0]->book);
-        $this->assertNotNull($page1->data[0]->book->author);
         $this->assertInstanceOf(Author::class, $page1->data[0]->book->author);
         $this->assertSame('Tolkien', $page1->data[0]->book->author->name);
     }
