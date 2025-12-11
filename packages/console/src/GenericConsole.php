@@ -73,6 +73,11 @@ final class GenericConsole implements Console
         return $this;
     }
 
+    public function isForced(): bool
+    {
+        return $this->isForced;
+    }
+
     public function disablePrompting(): self
     {
         $this->supportsPrompting = false;

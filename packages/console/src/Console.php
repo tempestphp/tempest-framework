@@ -157,4 +157,9 @@ interface Console
      * Forces the console to not be interactive.
      */
     public function disablePrompting(): self;
+
+    /**
+     * Whether the console is in forced mode (skipping confirmations).
+     */
+    public function isForced(): bool;
 }
