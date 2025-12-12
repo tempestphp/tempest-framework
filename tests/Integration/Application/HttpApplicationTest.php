@@ -27,7 +27,7 @@ final class HttpApplicationTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function session_is_only_cleaned_when_started(): void
+    public function session_is_not_set_even_when_it_was_cleaned_and_empty(): void
     {
         $this->appConfig->baseUri = 'http://127.0.0.1:8081';
         $process = new Process(['./tempest', 'serve', '127.0.0.1:8081'], getcwd());
