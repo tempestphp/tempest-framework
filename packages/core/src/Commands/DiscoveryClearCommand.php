@@ -8,7 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\DiscoveryCache;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryClearCommand
     {
         public function __construct(

@@ -13,7 +13,7 @@ use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeInitializerCommand
     {
         use PublishesFiles;

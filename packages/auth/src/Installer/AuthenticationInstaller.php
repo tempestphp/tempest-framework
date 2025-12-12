@@ -15,7 +15,7 @@ use function Tempest\root_path;
 use function Tempest\src_path;
 use function Tempest\Support\Namespace\to_fqcn;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class AuthenticationInstaller implements Installer
     {
         use PublishesFiles;

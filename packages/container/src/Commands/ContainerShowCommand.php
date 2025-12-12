@@ -18,7 +18,7 @@ use function Tempest\Support\Str\after_last;
 use function Tempest\Support\Str\before_last;
 use function Tempest\Support\Str\contains;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class ContainerShowCommand
     {
         public function __construct(

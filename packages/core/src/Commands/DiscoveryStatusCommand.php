@@ -15,7 +15,7 @@ use Tempest\Support\Filesystem;
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryStatusCommand
     {
         public function __construct(

@@ -8,7 +8,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Intl\Number;
 use Tempest\Support\Str;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class ServeCommand
     {
         #[ConsoleCommand(
