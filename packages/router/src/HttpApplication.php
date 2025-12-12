@@ -10,7 +10,7 @@ use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use Tempest\Http\RequestFactory;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\Session;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 
@@ -57,7 +57,7 @@ final readonly class HttpApplication implements Application
             $router->dispatch($psrRequest),
         );
 
-        $this->container->get(SessionManager::class)->cleanup();
+        $this->container->get(Session::class)->cleanup();
 
         $this->container->get(Kernel::class)->shutdown();
     }
