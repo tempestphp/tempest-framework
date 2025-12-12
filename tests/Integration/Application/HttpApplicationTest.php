@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\Application;
 
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Process\Process;
-use Tempest\Http\Session\Session;
 use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithoutSession;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithSession;
