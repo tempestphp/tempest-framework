@@ -5,8 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/http": "dev-main",
-        "tempest/view": "dev-main",
+        "tempest/http": "dev-3.x",
+        "tempest/view": "dev-3.x",
         "tempest/highlight": "^2.11.4",
         "symfony/var-exporter": "^7.1"
     },

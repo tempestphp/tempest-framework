@@ -9,7 +9,7 @@
         "symfony/var-dumper": "^7.1"
     },
     "require-dev": {
-        "tempest/console": "dev-main"
+        "tempest/console": "dev-3.x"
     },
     "autoload": {
         "psr-4": {
