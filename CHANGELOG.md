@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.13.0](https://github.com/tempestphp/tempest-framework/compare/v2.12.0..2.13.0)  —  2025-12-04
+## [2.14.0](https://github.com/tempestphp/tempest-framework/compare/v2.13.0..2.14.0)  —  2025-12-12
+
+### 🚨 Breaking changes
+
+- **console**: [**breaking**] allow `--force` to bypass `CautionMiddleware` (#1804) ([bccf92f](https://github.com/tempestphp/tempest-framework/commit/bccf92fb3e88c8ba35b1f89a8f893031a072df96))
+
+### 🚀 Features
+
+- **session**: add redis session manager (#1790) ([eb7150b](https://github.com/tempestphp/tempest-framework/commit/eb7150b8c4226397feee5311b0033c5f05fd9be1))
+
+### 🐛 Bug fixes
+
+- **core**: fix class guards not using the autoloader (#1808) ([450b2e7](https://github.com/tempestphp/tempest-framework/commit/450b2e7058852044d6257dc98c92b3366cb7e2fc))
+- **database**: support route binding through `IsDatabaseModel` (#1794) ([3556acb](https://github.com/tempestphp/tempest-framework/commit/3556acb1538a26cb21b33fb0e0d15180b64527c9))
+- **database**: support pagination with joins and relations (#1801) ([0b52ffd](https://github.com/tempestphp/tempest-framework/commit/0b52ffd2cd18db89bb27fa3ace5b409e90f20f7e))
+- **router**: add null checks and fix route parameter handling (#1778) ([c89c345](https://github.com/tempestphp/tempest-framework/commit/c89c345da59a97612c4ac5807cafee0b5e1b1da9))
+- **view**: throw exception when parsing xml views with `short_open_tag` enabled (#1795) ([30b2a6f](https://github.com/tempestphp/tempest-framework/commit/30b2a6ff8f8d4d108b334109748c96fe56ad8bde))
+
+
+## [2.13.0](https://github.com/tempestphp/tempest-framework/compare/v2.12.0..v2.13.0)  —  2025-12-04
 
 ### 🚀 Features
 
