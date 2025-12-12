@@ -20,6 +20,10 @@ final readonly class DoesNotStartWith implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         return ! str_starts_with($value, $this->needle);
     }
 

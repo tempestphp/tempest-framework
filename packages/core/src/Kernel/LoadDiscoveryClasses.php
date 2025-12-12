@@ -153,7 +153,12 @@ final class LoadDiscoveryClasses
                 return;
             }
 
-            foreach (scandir($input, SCANDIR_SORT_NONE) as $subPath) {
+            $subPaths = scandir($input, SCANDIR_SORT_NONE);
+            if ($subPaths === false) {
+                return;
+            }
+
+            foreach ($subPaths as $subPath) {
                 // `.` and `..` are skipped
                 if ($subPath === '.' || $subPath === '..') {
                     continue;

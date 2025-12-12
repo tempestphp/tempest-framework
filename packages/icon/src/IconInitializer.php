@@ -7,7 +7,6 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\EventBus\EventBus;
 use Tempest\HttpClient\HttpClient;
-use Tempest\Icon\IconCache;
 
 final class IconInitializer implements Initializer
 {

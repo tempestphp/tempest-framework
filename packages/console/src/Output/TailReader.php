@@ -28,6 +28,8 @@ final readonly class TailReader
             $newOffset = ftell($handle);
 
             if ($newOffset <= $offset) {
+                usleep(10_000);
+
                 continue;
             }
 

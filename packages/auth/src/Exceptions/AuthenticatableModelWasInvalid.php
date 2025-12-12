@@ -3,7 +3,7 @@
 namespace Tempest\Auth\Exceptions;
 
 use Exception;
-use Tempest\Auth\Authenticatable;
+use Tempest\Auth\Authentication\Authenticatable;
 
 final class AuthenticatableModelWasInvalid extends Exception implements AuthenticationException
 {

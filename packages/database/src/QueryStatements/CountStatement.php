@@ -13,12 +13,14 @@ final class CountStatement implements QueryStatement, HasWhereStatements
 {
     /**
      * @param ImmutableArray<WhereStatement> $where
+     * @param ImmutableArray<JoinStatement> $joins
      */
     public function __construct(
         public readonly TableDefinition $table,
         public ?string $column = null,
         public ImmutableArray $where = new ImmutableArray(),
         public bool $distinct = false,
+        public ImmutableArray $joins = new ImmutableArray(),
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
@@ -33,6 +35,12 @@ final class CountStatement implements QueryStatement, HasWhereStatements
             sprintf('SELECT %s', $countField->compile($dialect)),
             sprintf('FROM `%s`', $this->table->name),
         ]);
+
+        if ($this->joins->isNotEmpty()) {
+            foreach ($this->joins as $join) {
+                $query[] = $join->compile($dialect);
+            }
+        }
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where

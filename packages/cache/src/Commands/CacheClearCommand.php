@@ -38,9 +38,9 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
         public function __invoke(
             #[ConsoleArgument(description: 'Name of the tagged cache to clear')]
             ?string $tag = null,
-            #[ConsoleCommand(description: 'Whether to clear all caches')]
+            #[ConsoleArgument(description: 'Whether to clear all caches')]
             bool $all = false,
-            #[ConsoleCommand(description: 'Whether to clear internal caches')]
+            #[ConsoleArgument(description: 'Whether to clear internal caches')]
             bool $internal = false,
         ): void {
             if (! $this->container instanceof GenericContainer) {

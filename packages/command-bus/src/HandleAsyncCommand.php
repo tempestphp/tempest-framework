@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
+use DateTimeImmutable;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
@@ -32,7 +33,16 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
                 if ($uuid) {
                     $command = $this->repository->findPendingCommand($uuid);
                 } else {
-                    $command = arr($this->repository->getPendingCommands())->first();
+                    $pendingCommands = arr($this->repository->getPendingCommands());
+
+                    if ($pendingCommands->isEmpty()) {
+                        $this->error('No pending command found.');
+
+                        return ExitCode::ERROR;
+                    }
+
+                    $uuid = $pendingCommands->keys()->first();
+                    $command = $pendingCommands->get($uuid);
                 }
 
                 if (! $command) {
@@ -40,6 +50,12 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
 
                     return ExitCode::ERROR;
                 }
+
+                $time = new DateTimeImmutable();
+                $this->keyValue(
+                    key: $uuid,
+                    value: "<style='fg-gray'>{$time->format('Y-m-d H:i:s')}</style>",
+                );
 
                 $commandHandler = $this->commandBusConfig->handlers[$command::class] ?? null;
 
@@ -56,6 +72,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
                 );
 
                 $this->repository->markAsDone($uuid);
+
+                $this->keyValue(
+                    key: "<style='fg-gray'>{$uuid}</style>",
+                    value: "<style='fg-green bold'>SUCCESS</style>",
+                );
 
                 return ExitCode::SUCCESS;
             } catch (Throwable $throwable) {

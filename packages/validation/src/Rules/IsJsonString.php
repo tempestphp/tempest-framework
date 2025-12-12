@@ -20,6 +20,10 @@ final readonly class IsJsonString implements Rule
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         $arguments = ['json' => $value];
 
         if ($this->depth !== null) {

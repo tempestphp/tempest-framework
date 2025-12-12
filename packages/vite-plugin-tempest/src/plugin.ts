@@ -193,6 +193,7 @@ export default function tempest(): Plugin {
 					if (req.url === '/index.html') {
 						res.writeHead(302, { Location: appUrl })
 						res.end()
+						return
 					}
 
 					next()
@@ -325,10 +326,6 @@ function resolveEnvironmentServerConfig(env: Record<string, string>): {
  * Resolve the host name from the environment.
  */
 function resolveHostFromEnv(env: Record<string, string>): string | undefined {
-	if (env.VITE_DEV_SERVER_KEY) {
-		return env.VITE_DEV_SERVER_KEY
-	}
-
 	try {
 		return new URL(env.BASE_URI).host
 	} catch {

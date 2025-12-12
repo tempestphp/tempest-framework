@@ -18,7 +18,7 @@ final class DivisibleByTest extends TestCase
 
         $this->assertTrue($rule->isValid(10));
         $this->assertTrue($rule->isValid(5));
-        $this->assertFalse($rule->isValid(0));
+        $this->assertTrue($rule->isValid(0));
 
         $this->assertFalse($rule->isValid(3));
         $this->assertFalse($rule->isValid(4));

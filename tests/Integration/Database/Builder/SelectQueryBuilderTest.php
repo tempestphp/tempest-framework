@@ -595,9 +595,39 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1.3', $results[2]->title);
     }
 
+    public function test_paginate_preserves_relations(): void
+    {
+        $this->seed();
+
+        $page1 = query(Chapter::class)
+            ->select()
+            ->with('book')
+            ->whereRaw('books.title = ?', 'LOTR 1')
+            ->paginate(itemsPerPage: 5, currentPage: 1);
+
+        $this->assertSame(3, $page1->totalItems);
+        $this->assertCount(3, $page1->data);
+        $this->assertSame('LOTR 1', $page1->data[0]->book->title);
+    }
+
+    public function test_paginate_with_nested_relations(): void
+    {
+        $this->seed();
+
+        $page1 = Chapter::select()
+            ->with('book.author')
+            ->paginate(itemsPerPage: 5, currentPage: 1);
+
+        $this->assertSame(13, $page1->totalItems);
+        $this->assertCount(5, $page1->data);
+
+        $this->assertInstanceOf(Author::class, $page1->data[0]->book->author);
+        $this->assertSame('Tolkien', $page1->data[0]->book->author->name);
+    }
+
     private function seed(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

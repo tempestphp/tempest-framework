@@ -52,7 +52,11 @@ async function loadConfigurationFromTempestConsole(): Promise<TempestViteConfigu
 		const { stdout } = await exec(`${php.value} ${TEMPEST_BIN} ${VITE_CONFIG_COMMAND}`)
 		const json = stdout.match(/\{.*\}/s)
 
-		return JSON.parse(json?.[0] as string)
+		if (!json?.[0]) {
+			throw new Error('Could not find valid JSON in Tempest console output')
+		}
+
+		return JSON.parse(json[0])
 	} catch (error) {
 		console.error(
 			`[vite-plugin-tempest] Could not load configuration from [${php.value} ${TEMPEST_BIN} ${VITE_CONFIG_COMMAND}].`,

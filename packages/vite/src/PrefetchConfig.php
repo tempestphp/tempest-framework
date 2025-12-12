@@ -13,7 +13,7 @@ final class PrefetchConfig
         public PrefetchStrategy $strategy = PrefetchStrategy::NONE,
 
         /**
-         * Number of assets to prefech concurrently when using the waterfall strategy.
+         * Number of assets to prefetch concurrently when using the waterfall strategy.
          */
         public int $concurrent = 3,
 

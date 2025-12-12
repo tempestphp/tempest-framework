@@ -30,7 +30,7 @@ final readonly class HasLength implements Rule, HasTranslationVariables
             return false;
         }
 
-        $length = strlen($value);
+        $length = mb_strlen($value);
 
         $min = $this->min ?? $length;
         $max = $this->max ?? $length;

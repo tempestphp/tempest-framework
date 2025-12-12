@@ -98,13 +98,15 @@ final class PropertyReflector implements Reflector
             return null;
         }
 
-        preg_match('/@var ([\\\\\w]+)\[]/', $doc, $match);
-
-        if (! isset($match[1])) {
-            return null;
+        if (preg_match('/@var\s+([\\\\\w]+)\[\]/', $doc, $match)) {
+            return new TypeReflector(ltrim($match[1], '\\'));
         }
 
-        return new TypeReflector(ltrim($match[1], '\\'));
+        if (preg_match('/@var\s+(?:list|array)<([\\\\\w]+)>/', $doc, $match)) {
+            return new TypeReflector(ltrim($match[1], '\\'));
+        }
+
+        return null;
     }
 
     public function isUninitialized(object $object): bool
@@ -151,7 +153,7 @@ final class PropertyReflector implements Reflector
 
         $hasDefaultValue = $this->reflectionProperty->hasDefaultValue();
 
-        $hasPromotedDefaultValue = $this->isPromoted() && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
+        $hasPromotedDefaultValue = $this->isPromoted() && isset($constructorParameters[$this->getName()]) && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }

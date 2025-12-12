@@ -65,7 +65,7 @@ final readonly class ConsoleArgumentDefinition
         $normalizedName = str($name)->kebab();
 
         if ($boolean) {
-            $normalizedName->replaceStart('no-', '');
+            $normalizedName = $normalizedName->replaceStart('no-', '');
         }
 
         return $normalizedName->toString();

@@ -2,7 +2,6 @@
 
 namespace Tempest\Process\Testing;
 
-use RuntimeException;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\InvokedSystemProcess;

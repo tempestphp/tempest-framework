@@ -51,7 +51,7 @@ final class RoutingTree
 
     private function stripOptionalMarker(string $segment): string
     {
-        return str_replace('?', '', $segment);
+        return preg_replace('/^\{\?/', '{', $segment);
     }
 
     /** @return array<string, MatchingRegex> */

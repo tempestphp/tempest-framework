@@ -62,7 +62,7 @@ final class GenericOAuthClient implements OAuthClient
 
     public function createRedirect(array $scopes = [], array $options = []): Redirect
     {
-        $to = $this->buildAuthorizationUrl();
+        $to = $this->buildAuthorizationUrl($scopes, $options);
 
         $this->session->set($this->sessionKey, $this->provider->getState());
 
@@ -100,7 +100,12 @@ final class GenericOAuthClient implements OAuthClient
 
     public function authenticate(Request $request, Closure $map): Authenticatable
     {
-        if ($this->session->get($this->sessionKey) !== $request->get('state')) {
+        $expectedState = $this->session->get($this->sessionKey);
+        $actualState = $request->get('state');
+
+        $this->session->remove($this->sessionKey);
+
+        if ($expectedState !== $actualState) {
             throw new OAuthStateWasInvalid();
         }
 

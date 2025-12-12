@@ -56,7 +56,7 @@ namespace {
          * @see ld()
          * @see \Tempest\Debug\Debug::log()
          */
-        function dd(mixed ...$input): void
+        function dd(mixed ...$input): never
         {
             ld(...$input);
         }
