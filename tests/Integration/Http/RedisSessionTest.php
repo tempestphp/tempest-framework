@@ -29,6 +29,10 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
+            $this->markTestSkipped('The `redis` extension is not loaded.');
+        }
+
         $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2), prefix: 'test_session:'));
         $this->container->singleton(
             SessionManager::class,
