@@ -38,13 +38,13 @@ final class HttpApplicationTest extends FrameworkIntegrationTestCase
 
         $response = $client->get(uri(ControllerWithoutSession::class));
         $cookies = arr($response->getHeader('set-cookie')->values ?? [])
-            ->map(fn (string $cookie) => explode('=', $cookie)[0] ?? null);
+            ->map(fn (string $cookie) => explode('=', $cookie)[0]);
 
         $this->assertFalse($cookies->contains('tempest_session_id'));
 
         $response = $client->get(uri(ControllerWithSession::class));
         $cookies = arr($response->getHeader('set-cookie')->values ?? [])
-            ->map(fn (string $cookie) => explode('=', $cookie)[0] ?? null);
+            ->map(fn (string $cookie) => explode('=', $cookie)[0]);
 
         $this->assertTrue($cookies->contains('tempest_session_id'));
 
