@@ -7,9 +7,9 @@
         "php": "^8.5",
         "doctrine/inflector": "^2.0",
         "symfony/yaml": "^7.3",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/support": "dev-main"
+        "tempest/core": "dev-3.x",
+        "tempest/container": "dev-3.x",
+        "tempest/support": "dev-3.x"
     },
     "suggest": {
         "tempest/datetime": "In order to use the `datetime` function",

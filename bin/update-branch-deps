@@ -1,0 +1,51 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Updates inter-package dependencies to use the current branch.
+ *
+ * Usage: bin/update-branch-deps [branch]
+ *
+ * If no branch is specified, uses the current git branch.
+ * This is useful when creating version branches (e.g., 3.x) that need
+ * inter-package dependencies to reference dev-3.x instead of dev-main.
+ */
+
+$branch = $argv[1] ?? trim(exec('git rev-parse --abbrev-ref HEAD'));
+$devBranch = "dev-{$branch}";
+
+echo "Updating inter-package dependencies to {$devBranch}\n\n";
+
+$output = shell_exec(__DIR__ . '/get-packages');
+$tempestPackages = json_decode($output, associative: true);
+
+$packageNames = array_map(fn($p) => $p['package'], $tempestPackages);
+
+foreach ($tempestPackages as $package) {
+    $composerPath = sprintf('%s/composer.json', $package['directory']);
+    $composerFile = json_decode(file_get_contents($composerPath), true);
+    $modified = false;
+
+    foreach (['require', 'require-dev'] as $section) {
+        if (!isset($composerFile[$section])) {
+            continue;
+        }
+
+        foreach ($composerFile[$section] as $dep => $version) {
+            if (in_array($dep, $packageNames, true) && $version !== $devBranch) {
+                $composerFile[$section][$dep] = $devBranch;
+                $modified = true;
+                echo "  {$package['name']}: {$dep} -> {$devBranch}\n";
+            }
+        }
+    }
+
+    if ($modified) {
+        file_put_contents(
+            $composerPath,
+            json_encode($composerFile, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+        );
+    }
+}
+
+echo "\nDone.\n";

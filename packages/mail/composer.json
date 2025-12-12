@@ -5,9 +5,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/event-bus": "dev-main",
+        "tempest/reflection": "dev-3.x",
+        "tempest/support": "dev-3.x",
+        "tempest/event-bus": "dev-3.x",
         "symfony/mailer": "^7.2.6"
     },
     "require-dev": {

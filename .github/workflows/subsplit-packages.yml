@@ -2,7 +2,7 @@ name: "Sub-split packages"
 
 on:
   push:
-    branches: [main]
+    branches: [main, 3.x]
     tags: ["v*"]
   workflow_dispatch:
 
