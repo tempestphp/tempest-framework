@@ -248,7 +248,9 @@ trait IsDatabaseModel
                 ->insert($this)
                 ->execute();
 
-            $primaryKeyProperty->setValue($this, $id);
+            if (! $model->hasUuidPrimaryKey()) {
+                $primaryKeyProperty->setValue($this, $id);
+            }
 
             return $this;
         }
