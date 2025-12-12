@@ -1,27 +1,53 @@
 <?php
 
-namespace Tempest\Mapper\Serializers;
+namespace Tempest\Database\Serializers;
 
 use BackedEnum;
 use JsonSerializable;
+use Tempest\Core\Priority;
+use Tempest\Database\DatabaseContext;
+use Tempest\Mapper\Attributes\Context;
+use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\MapperConfig;
+use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use UnitEnum;
 
-final readonly class DtoSerializer implements Serializer
+#[Priority(Priority::HIGHEST)]
+#[Context(DatabaseContext::class)]
+final readonly class DataTransferObjectSerializer implements Serializer, DynamicSerializer
 {
     public function __construct(
         private MapperConfig $mapperConfig,
     ) {}
 
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
+    {
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        if ($type->isUnion()) {
+            foreach ($type->split() as $memberType) {
+                if (static::accepts($memberType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
+    }
+
     public function serialize(mixed $input): array|string
     {
-        // Support top-level arrays
         if (is_array($input)) {
             return Json\encode($this->serializeWithType($input));
         }

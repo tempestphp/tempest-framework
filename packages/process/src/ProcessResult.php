@@ -34,7 +34,7 @@ final readonly class ProcessResult
     public static function fromSymfonyProcess(SymfonyProcess $process): self
     {
         return new self(
-            exitCode: $process->getExitCode(),
+            exitCode: $process->getExitCode() ?? -1,
             output: $process->getOutput(),
             errorOutput: $process->getErrorOutput(),
         );

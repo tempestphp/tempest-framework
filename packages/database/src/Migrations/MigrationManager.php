@@ -247,10 +247,6 @@ final class MigrationManager
 
         $statement = $migration->down();
 
-        if ($statement === null) {
-            return;
-        }
-
         $query = new Query($statement->compile($this->dialect));
 
         try {
@@ -261,10 +257,10 @@ final class MigrationManager
 
             $this->database->execute($query);
 
-            // Disable foreign key checks
+            // Enable foreign key checks
             new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
         } catch (QueryWasInvalid $queryWasInvalid) {
-            // Disable foreign key checks
+            // Enable foreign key checks
             new SetForeignKeyChecksStatement(enable: true)->execute($this->dialect, $this->onDatabase);
 
             event(new MigrationFailed($migration->name, $queryWasInvalid));

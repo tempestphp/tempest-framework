@@ -147,7 +147,7 @@ final class Book
 Because model objects aren't tied to the database specifically, Tempest's [mapper](../2-features/01-mapper.md) can map data from many different sources to them. For instance, you can persist your models as JSON instead of a database, if you want to:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($json)->collection()->to(Book::class); // from JSON source to Book collection
 $json = map($books)->toJson(); // from Book collection to JSON
@@ -218,6 +218,10 @@ final class Book
     public array $chapters = [];
 }
 ```
+
+:::warning
+Relation types in docblocks must always be fully qualified, and not use short class names.
+:::
 
 Tempest will infer all the information it needs to build the right queries for you. However, there might be cases where property names and type information don't map one-to-one on your database schema. In that case you can use dedicated attributes to define relations.
 
@@ -304,34 +308,41 @@ final class User
 
 The encryption key is taken from the `SIGNING_KEY` environment variable.
 
-### DTO properties
+### Data transfer object properties
 
-Sometimes, you might want to store data objects as-is in a table, without there needing to be a relation to another table. To do so, it's enough to add a serializer and caster to the data object's class, and Tempest will know that these objects aren't meant to be treated as database models. Next, you can store the object's data as a json field on the table (see [migrations](#migrations) for more info).
+You can store arbitrary objects directly in a `json` column when they don’t need to be part of the relational schema.
+
+To do this, annotate the class with `⁠#[Tempest\Mapper\SerializeAs]` and provide a unique identifier for the object’s serialized form. The identifier must map to a single, distinct class.
 
 ```php
-use Tempest\Database\IsDatabaseModel;
-use Tempest\Mapper\CastWith;
-use Tempest\Mapper\SerializeWith;
-use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\SerializeAs;
 
-final class DebugItem
+final class User implements Authenticatable
 {
-    use IsDatabaseModel;
-    
-    /* … */
-    
-    public Backtrace $backtrace,
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $email,
+        #[Hashed, SensitiveParameter]
+        public ?string $password,
+        public Settings $settings,
+    ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
-final class Backtrace
+#[SerializeAs('user_settings')]
+final class Settings
 {
-    // This object won't be considered a relation,
-    // but rather serialized and stored in a JSON column.
+    public function __construct(
+        public readonly Theme $theme,
+        public readonly bool $hide_sidebar_by_default,
+    ) {}
+}
 
-    public array $frames = [];
+enum Theme: string
+{
+    case DARK = 'dark';
+    case LIGHT = 'light';
+    case AUTO = 'auto';
 }
 ```
 

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\CasterFactory;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr;
 use Throwable;
 
 use function Tempest\Support\arr;
@@ -19,6 +21,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -36,15 +39,15 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
-        $class = new ClassReflector($to);
-        $object = $this->resolveObject($to);
-        $from = arr($from)->undot()->toArray();
-        $isStrictClass = $class->hasAttribute(Strict::class);
+        $targetClass = new ClassReflector($to);
+        $targetObject = $this->resolveObject($to);
+        $from = Arr\wrap($from) |> Arr\undot(...);
+        $isStrictClass = $targetClass->hasAttribute(Strict::class);
 
         $missingValues = [];
         $unsetProperties = [];
 
-        foreach ($class->getPublicProperties() as $property) {
+        foreach ($targetClass->getPublicProperties() as $property) {
             if ($property->isVirtual()) {
                 continue;
             }
@@ -59,28 +62,31 @@ final readonly class ArrayToObjectMapper implements Mapper
                     missingValues: $missingValues,
                     unsetProperties: $unsetProperties,
                 );
+
                 continue;
             }
 
-            $value = $this->resolveValue($property, $from[$propertyName]);
-            $property->setValue($object, $value);
+            $property->setValue(
+                object: $targetObject,
+                value: $this->resolveValue($property, $from[$propertyName]),
+            );
         }
 
         if ($missingValues !== []) {
             throw new MappingValuesWereMissing($to, $missingValues);
         }
 
-        $this->setParentRelations($object, $class);
+        $this->setParentRelations($targetObject, $targetClass);
 
         foreach ($unsetProperties as $property) {
             if ($property->isVirtual()) {
                 continue;
             }
 
-            $property->unset($object);
+            $property->unset($targetObject);
         }
 
-        return $object;
+        return $targetObject;
     }
 
     private function resolvePropertyName(PropertyReflector $property, array $from): string
@@ -152,7 +158,9 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        $caster = $this->casterFactory->forProperty($property);
+        $caster = $this->casterFactory
+            ->in($this->context)
+            ->forProperty($property);
 
         if ($property->isNullable() && $value === null) {
             return null;

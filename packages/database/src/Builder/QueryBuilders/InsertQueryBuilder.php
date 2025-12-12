@@ -4,6 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
@@ -22,6 +24,7 @@ use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\get;
 use function Tempest\Support\str;
 
 /**
@@ -39,6 +42,14 @@ final class InsertQueryBuilder implements BuildsQuery
     public array $bindings = [];
 
     public ModelInspector $model;
+
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -145,15 +156,11 @@ final class InsertQueryBuilder implements BuildsQuery
         $data = [];
 
         foreach ($reflection->getPublicProperties() as $property) {
-            if (! $property->isInitialized($object)) {
+            if ($property->isUninitialized($object)) {
                 continue;
             }
 
             if ($property->isVirtual()) {
-                continue;
-            }
-
-            if ($property->isUninitialized($object)) {
                 continue;
             }
 
@@ -473,7 +480,10 @@ final class InsertQueryBuilder implements BuildsQuery
             return null;
         }
 
-        return $this->serializerFactory->forProperty($property)?->serialize($value) ?? $value;
+        return $this->serializerFactory
+            ->in($this->context)
+            ->forProperty($property)
+            ?->serialize($value) ?? $value;
     }
 
     private function serializeIterableValue(string $key, mixed $value): mixed

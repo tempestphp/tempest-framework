@@ -8,15 +8,17 @@ use Monolog\Level as MonologLogLevel;
 use Monolog\Logger as Monolog;
 use Psr\Log\LogLevel as PsrLogLevel;
 use Stringable;
+use Tempest\Core\AppConfig;
 use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
 {
-    /** @var array<int, Monolog> */
+    /** @var array<string, Monolog> */
     private array $drivers = [];
 
     public function __construct(
         private readonly LogConfig $logConfig,
+        private readonly AppConfig $appConfig,
         private readonly EventBus $eventBus,
     ) {}
 
@@ -82,9 +84,9 @@ final class GenericLogger implements Logger
         $this->eventBus->dispatch(new MessageLogged(LogLevel::fromMonolog($level), $message, $context));
     }
 
-    private function writeLog(MonologLogLevel $level, string $message, array $context): void
+    private function writeLog(MonologLogLevel $level, Stringable|string $message, array $context): void
     {
-        foreach ($this->logConfig->channels as $channel) {
+        foreach ($this->logConfig->logChannels as $channel) {
             $this->resolveDriver($channel, $level)->log($level, $message, $context);
         }
     }
@@ -95,7 +97,7 @@ final class GenericLogger implements Logger
 
         if (! isset($this->drivers[$key])) {
             $this->drivers[$key] = new Monolog(
-                name: $this->logConfig->prefix,
+                name: $this->logConfig->prefix ?? $this->appConfig->environment->value,
                 handlers: $channel->getHandlers($level),
                 processors: $channel->getProcessors(),
             );

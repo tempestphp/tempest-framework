@@ -5,6 +5,7 @@ namespace Tempest\View\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
 use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
+use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
@@ -70,7 +71,7 @@ final class StandaloneViewRendererTest extends TestCase
 
     public function test_with_cache_enabled(): void
     {
-        $viewCache = ViewCache::enabled();
+        $viewCache = ViewCache::create();
         $viewCache->clear();
 
         $renderer =
@@ -92,7 +93,7 @@ final class StandaloneViewRendererTest extends TestCase
     public function test_with_cache_disabled(): void
     {
         $renderer = TempestViewRenderer::make(
-            viewCache: ViewCache::disabled(),
+            viewCache: ViewCache::create(enabled: false),
         );
 
         $html = $renderer->render(
@@ -104,6 +105,18 @@ final class StandaloneViewRendererTest extends TestCase
             Hi
         </x-standalone-base>
         HTML, $html);
+    }
+
+    public function test_xml_declaration_with_short_open_tag(): void
+    {
+        if (! ini_get('short_open_tag')) {
+            $this->markTestSkipped('This test requires short_open_tag to be enabled.');
+        }
+
+        $this->expectException(XmlDeclarationCouldNotBeParsed::class);
+
+        $renderer = TempestViewRenderer::make();
+        $renderer->render('<?xml version="1.0" encoding="UTF-8" ?><test></test>');
     }
 
     protected function assertSnippetsMatch(string $expected, string $actual): void

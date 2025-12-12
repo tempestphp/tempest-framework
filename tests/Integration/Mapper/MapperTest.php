@@ -27,8 +27,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 
-use function Tempest\make;
-use function Tempest\map;
+use function Tempest\Mapper\make;
+use function Tempest\Mapper\map;
 
 /**
  * @internal
@@ -37,11 +37,10 @@ final class MapperTest extends FrameworkIntegrationTestCase
 {
     public function test_make_object_from_class_string(): void
     {
-        $author = make(Author::class)
-            ->from([
-                'id' => 1,
-                'name' => 'test',
-            ]);
+        $author = make(Author::class)->from([
+            'id' => 1,
+            'name' => 'test',
+        ]);
 
         $this->assertSame('test', $author->name);
         $this->assertSame(1, $author->id->value);
@@ -97,14 +96,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_make_object_with_has_many_relation(): void
     {
-        $author = make(Author::class)
-            ->from([
-                'name' => 'test',
-                'books' => [
-                    ['title' => 'a'],
-                    ['title' => 'b'],
-                ],
-            ]);
+        $author = make(Author::class)->from([
+            'name' => 'test',
+            'books' => [
+                ['title' => 'a'],
+                ['title' => 'b'],
+            ],
+        ]);
 
         $this->assertSame('test', $author->name);
         $this->assertCount(2, $author->books);
@@ -115,13 +113,12 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_make_object_with_one_to_one_relation(): void
     {
-        $book = make(Book::class)
-            ->from([
-                'title' => 'test',
-                'author' => [
-                    'name' => 'author',
-                ],
-            ]);
+        $book = make(Book::class)->from([
+            'title' => 'test',
+            'author' => [
+                'name' => 'author',
+            ],
+        ]);
 
         $this->assertSame('test', $book->title);
         $this->assertSame('author', $book->author->name);

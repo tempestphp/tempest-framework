@@ -26,6 +26,10 @@ final readonly class HasCount implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
+        if (! is_array($value) && ! $value instanceof \Countable) {
+            return false;
+        }
+
         $length = count($value);
 
         $min = $this->min ?? $length;

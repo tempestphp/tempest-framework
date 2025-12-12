@@ -43,6 +43,10 @@ final class IconCache
 
     public function clear(): void
     {
+        if (! $this->enabled) {
+            return;
+        }
+
         $this->pool->clear();
     }
 

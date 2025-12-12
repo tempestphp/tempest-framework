@@ -11,29 +11,33 @@ use Symfony\Component\VarDumper\VarDumper;
 use Tempest\Container\GenericContainer;
 use Tempest\EventBus\EventBus;
 use Tempest\Highlight\Themes\TerminalStyle;
-use Tempest\Log\LogConfig;
+use Tempest\Support\Filesystem;
 
 final readonly class Debug
 {
     private function __construct(
-        private ?LogConfig $logConfig = null,
+        private ?DebugConfig $config = null,
         private ?EventBus $eventBus = null,
     ) {}
 
     public static function resolve(): self
     {
         try {
-            $container = GenericContainer::instance();
-
             return new self(
-                logConfig: $container?->get(LogConfig::class),
-                eventBus: $container?->get(EventBus::class),
+                config: GenericContainer::instance()->get(DebugConfig::class),
+                eventBus: GenericContainer::instance()->get(EventBus::class),
             );
         } catch (Exception) {
             return new self();
         }
     }
 
+    /**
+     * Logs and/or dumps the given items.
+     *
+     * @param bool $writeToLog Whether to write the items to the log file.
+     * @param bool $writeToOut Whether to dump the items to the standard output.
+     */
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -52,30 +56,19 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
-        if ($this->logConfig === null) {
+        if (! $this->config?->logPath) {
             return;
         }
 
-        if (! $this->logConfig->debugLogPath) {
-            return;
-        }
+        Filesystem\create_directory_for_file($this->config->logPath);
 
-        $directory = dirname($this->logConfig->debugLogPath);
-
-        if (! is_dir($directory)) {
-            mkdir(directory: $directory, recursive: true);
-        }
-
-        $handle = @fopen($this->logConfig->debugLogPath, 'a');
-
-        if (! $handle) {
+        if (! ($handle = @fopen($this->config->logPath, 'a'))) {
             return;
         }
 
         foreach ($items as $key => $item) {
-            $output = $this->createDump($item) . $callPath;
-
-            fwrite($handle, "{$key} " . $output . PHP_EOL);
+            fwrite($handle, TerminalStyle::BG_BLUE(" {$key} ") . TerminalStyle::FG_GRAY(' → ' . TerminalStyle::ITALIC($callPath)));
+            fwrite($handle, $this->createCliDump($item) . PHP_EOL);
         }
 
         fclose($handle);
@@ -86,27 +79,27 @@ final readonly class Debug
         foreach ($items as $key => $item) {
             if (defined('STDOUT')) {
                 fwrite(STDOUT, TerminalStyle::BG_BLUE(" {$key} ") . ' ');
-
-                $output = $this->createDump($item);
-
-                fwrite(STDOUT, $output);
-
-                fwrite(STDOUT, $callPath . PHP_EOL);
+                fwrite(STDOUT, $this->createCliDump($item));
+                fwrite(STDOUT, TerminalStyle::DIM('→ ' . TerminalStyle::ITALIC($callPath)) . PHP_EOL . PHP_EOL);
             } else {
                 echo
-                    sprintf(
-                        '<span style="
-                    display:inline-block; 
-                    color: #fff; 
-                    font-family: %s;
-                    padding: 2px 4px;
-                    font-size: 0.8rem;
-                    margin-bottom: -12px;
-                    background: #0071BC;"
-                >%s (%s)</span>',
-                        'Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
-                        $key,
-                        $callPath,
+                    vsprintf(
+                        <<<HTML
+                        <span style="
+                            display:inline-block; 
+                            color: #fff; 
+                            font-family: %s;
+                            padding: 2px 4px;
+                            font-size: 0.8rem;
+                            margin-bottom: -12px;
+                            background: #0071BC;"
+                        >%s (%s)</span>
+                        HTML,
+                        [
+                            'Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
+                            $key,
+                            $callPath,
+                        ],
                     )
                 ;
 
@@ -115,10 +108,9 @@ final readonly class Debug
         }
     }
 
-    private function createDump(mixed $input): string
+    private function createCliDump(mixed $input): string
     {
         $cloner = new VarCloner();
-
         $output = '';
 
         $dumper = new CliDumper(function ($line, $depth) use (&$output): void {
@@ -130,7 +122,6 @@ final readonly class Debug
         });
 
         $dumper->setColors(true);
-
         $dumper->dump($cloner->cloneVar($input));
 
         return preg_replace(

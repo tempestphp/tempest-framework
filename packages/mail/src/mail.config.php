@@ -20,7 +20,7 @@ return new SmtpMailerConfig(
         'smtps' => SmtpScheme::SMTPS,
         'smtp' => SmtpScheme::SMTP,
     },
-    host: env('MAIL_SMTP_HOST', default: '127.0.0.0'),
+    host: env('MAIL_SMTP_HOST', default: '127.0.0.1'),
     port: env('MAIL_SMTP_PORT', default: 2525),
     username: env('MAIL_SMTP_USERNAME', default: ''),
     password: env('MAIL_SMTP_PASSWORD', default: ''),

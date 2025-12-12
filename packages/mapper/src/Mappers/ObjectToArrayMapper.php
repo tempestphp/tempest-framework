@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use JsonSerializable;
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
         private SerializerFactory $serializerFactory,
+        private Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -49,6 +51,10 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
+        if (! $property->isInitialized($object)) {
+            return null;
+        }
+
         $propertyValue = $property->getValue($object);
 
         if ($property->getIterableType()?->isClass()) {
@@ -61,7 +67,7 @@ final readonly class ObjectToArrayMapper implements Mapper
             return $propertyValue;
         }
 
-        if ($propertyValue !== null && ($serializer = $this->serializerFactory->forProperty($property)) !== null) {
+        if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) !== null) {
             return $serializer->serialize($propertyValue);
         }
 

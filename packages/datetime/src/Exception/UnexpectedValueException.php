@@ -117,8 +117,8 @@ final class UnexpectedValueException extends PhpUnexpectedValueException impleme
     {
         return new self(sprintf(
             'Unexpected seconds value encountered. Provided "%d", but the calendar expects "%d". Ensure the seconds are correct and within the 0-59 range.',
-            $calendar_seconds,
             $provided_seconds,
+            $calendar_seconds,
         ));
     }
 }

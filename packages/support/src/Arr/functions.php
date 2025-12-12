@@ -9,6 +9,7 @@ namespace Tempest\Support\Arr {
     use InvalidArgumentException;
     use LogicException;
     use Random\Randomizer;
+    use Tempest\Mapper;
     use Tempest\Support\Str\ImmutableString;
     use Traversable;
 
@@ -516,6 +517,12 @@ namespace Tempest\Support\Arr {
         $array = to_array($array);
         $values = to_array($values);
 
+        if (count($array) !== count($values)) {
+            throw new InvalidArgumentException(
+                sprintf('Cannot combine arrays of different lengths (%d keys vs %d values)', count($array), count($values)),
+            );
+        }
+
         return array_combine($array, $values);
     }
 
@@ -792,6 +799,10 @@ namespace Tempest\Support\Arr {
             : explode('.', $key);
 
         foreach ($keys as $key) {
+            if (! is_array($value) && ! $value instanceof \ArrayAccess) {
+                return $default;
+            }
+
             if (! isset($value[$key])) {
                 return $default;
             }
@@ -843,11 +854,12 @@ namespace Tempest\Support\Arr {
      */
     function contains(iterable $array, mixed $search): bool
     {
+        $array = to_array($array);
         $search = $search instanceof Closure
             ? $search
             : static fn (mixed $value) => $value === $search;
 
-        return namespace\first(to_array($array), $search) !== null;
+        return array_any($array, static fn ($value, $key) => $search($value, $key));
     }
 
     /**
@@ -1079,14 +1091,14 @@ namespace Tempest\Support\Arr {
     /**
      * Returns a new array with the value of the given array mapped to the given object.
      *
-     * @see Tempest\map()
+     * @see Tempest\Mapper\map()
      *
      * @template T
      * @param class-string<T> $to
      */
     function map_to(iterable $array, string $to): array
     {
-        return \Tempest\map(to_array($array))->collection()->to($to);
+        return Mapper\map(to_array($array))->collection()->to($to);
     }
 
     /**

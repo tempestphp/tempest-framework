@@ -21,6 +21,10 @@ final readonly class IsBetween implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
+        if (! is_numeric($value)) {
+            return false;
+        }
+
         return $value >= $this->min && $value <= $this->max;
     }
 

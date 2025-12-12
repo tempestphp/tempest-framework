@@ -8,6 +8,9 @@
         "tempest/highlight": "^2.11.4",
         "symfony/var-dumper": "^7.1"
     },
+    "require-dev": {
+        "tempest/console": "dev-main"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Debug\\": "src"

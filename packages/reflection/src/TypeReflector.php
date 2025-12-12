@@ -6,7 +6,6 @@ namespace Tempest\Reflection;
 
 use BackedEnum;
 use DateTimeInterface;
-use Exception;
 use Generator;
 use Iterator;
 use ReflectionClass as PHPReflectionClass;
@@ -123,7 +122,7 @@ final readonly class TypeReflector implements Reflector
 
     public function matches(string $className): bool
     {
-        return is_a($this->cleanDefinition, $className, true);
+        return is_a($this->cleanDefinition, $className, allow_string: true);
     }
 
     public function getName(): string
@@ -185,15 +184,7 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
-        return in_array(
-            $this->cleanDefinition,
-            [
-                'array',
-                'iterable',
-                Generator::class,
-            ],
-            strict: true,
-        );
+        return in_array($this->cleanDefinition, ['array', 'iterable', Generator::class], strict: true);
     }
 
     public function isStringable(): bool
@@ -202,18 +193,22 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
-        return in_array(
-            $this->cleanDefinition,
-            [
-                'string',
-            ],
-            strict: true,
-        );
+        return in_array($this->cleanDefinition, ['string'], strict: true);
     }
 
     public function isNullable(): bool
     {
         return $this->isNullable;
+    }
+
+    public function isUnion(): bool
+    {
+        return str_contains($this->definition, '|');
+    }
+
+    public function isIntersection(): bool
+    {
+        return str_contains($this->definition, '&');
     }
 
     /** @return self[] */
@@ -232,7 +227,13 @@ final readonly class TypeReflector implements Reflector
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
-            return $this->resolveDefinition($reflector->getType());
+            $type = $reflector->getType();
+
+            if ($type === null) {
+                return 'mixed';
+            }
+
+            return $this->resolveDefinition($type);
         }
 
         if ($reflector instanceof PHPReflectionClass) {
@@ -257,7 +258,9 @@ final readonly class TypeReflector implements Reflector
             ));
         }
 
-        throw new Exception('Could not resolve type');
+        throw new \InvalidArgumentException(
+            sprintf('Could not resolve type for reflector of type: %s', get_debug_type($reflector)),
+        );
     }
 
     private function resolveIsNullable(PHPReflectionType|PHPReflector|string $reflector): bool
@@ -267,7 +270,9 @@ final readonly class TypeReflector implements Reflector
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
-            return $reflector->getType()->allowsNull();
+            $type = $reflector->getType();
+
+            return $type === null || $type->allowsNull();
         }
 
         if ($reflector instanceof PHPReflectionType) {

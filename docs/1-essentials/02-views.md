@@ -8,7 +8,7 @@ keywords: "Experimental"
 
 Views in Tempest are parsed by Tempest View, our own templating engine. Tempest View uses a syntax that can be thought of as a superset of HTML. If you prefer using a templating engine with more widespread support, [you may also use Blade, Twig, or any other](#using-other-engines) — as long as you provide a way to initialize it.
 
-If you'd like to Tempest View as a standalone component in your project, you can read the documentation on how to do so [here](../5-extra-topics/02-standalone-components.md#tempest-view). 
+If you'd like to Tempest View as a standalone component in your project, you can read the documentation on how to do so [here](../5-extra-topics/02-standalone-components.md#tempest-view).
 
 ### Syntax overview
 
@@ -447,7 +447,7 @@ $title = 'foo';
 <!-- $title will need to be passed in explicitly, 
      otherwise `x-post` wouldn't know about it: -->
 
-<x-post :title="$title"></x-post> 
+<x-post :title="$title"></x-post>
 ```
 
 ```php
@@ -463,7 +463,6 @@ final class HomeController
 ```
 
 ```html x-base.view.php
-
 <h1>{{ $siteTitle }}</h1>
 ```
 
@@ -680,7 +679,7 @@ use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 
 $renderer = TempestViewRenderer::make(
-    cache: ViewCache::enabled(),
+    cache: ViewCache::create(),
 );
 ```
 
@@ -690,8 +689,7 @@ It's recommended to turn view caching on in production environments. To clear th
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 
-$viewCache = ViewCache::enabled();
-
+$viewCache = ViewCache::create();
 $viewCache->clear();
 
 $renderer = TempestViewRenderer::make(
