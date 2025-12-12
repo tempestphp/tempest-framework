@@ -32,7 +32,7 @@ final readonly class CompleteCommand
         array $input,
         int $current,
     ): void {
-        $commandName = $input[1] ?? null;
+        $commandName = $input[1] ?? '';
 
         $command = $this->consoleConfig->commands[$commandName] ?? null;
 

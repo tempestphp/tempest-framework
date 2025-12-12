@@ -20,11 +20,13 @@ final readonly class IsDivisibleBy implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
-        if (! is_numeric($value) || $value === 0) {
+        if (! is_numeric($value)) {
             return false;
         }
 
-        return new IsMultipleOf($this->divisor)->isValid($value);
+        $intValue = (int) $value;
+
+        return ($intValue % $this->divisor) === 0;
     }
 
     public function getTranslationVariables(): array

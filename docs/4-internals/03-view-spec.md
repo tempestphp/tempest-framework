@@ -473,7 +473,7 @@ This component provides a form element that will post by default and includes th
 
 ```html
 <?php
-use function \Tempest\uri;
+use function \Tempest\Router\uri;
 ?>
 
 <x-form :action="uri(StorePostController::class)">

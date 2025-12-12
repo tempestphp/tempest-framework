@@ -12,7 +12,21 @@ This implementation is built on top of the PHP league's [OAuth client](https://g
 
 ## Getting started
 
-To get started with OAuth, you will first need to create a configuration file for your desired OAuth provider.
+Tempest provides an installer to quickly set up OAuth in your project. You can run the installer using the following command:
+
+```sh
+./tempest install auth --oauth
+```
+
+The installer will:
+- Prompt you to select one or more OAuth providers from the available options
+- Publish the necessary configuration files and controller stubs
+- Optionally add the OAuth credentials to your `.env` and `.env.example` files
+- Optionally install the required Composer dependencies for the selected providers
+
+This is the quickest way to get started with OAuth in your Tempest application.
+
+Alternatively, you can manually create a configuration file for your desired OAuth provider.
 
 Tempest provides a [different configuration object for each provider](#available-providers). For instance, if you wish to authenticate users with GitHub, you may create a `github.config.php` file returning an instance of {b`Tempest\Auth\OAuth\Config\GitHubOAuthConfig`}:
 

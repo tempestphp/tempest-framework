@@ -17,6 +17,7 @@ final readonly class ControllerWithRepeatedRoutes
     #[Get('/repeated/d')]
     #[Post('/repeated/e')]
     #[Post('/repeated/f')]
+    #[Get('/repeated/f')]
     public function __invoke(): Response
     {
         return new Ok();

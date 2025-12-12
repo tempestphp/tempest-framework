@@ -32,7 +32,7 @@ final readonly class IsPassword implements Rule, HasTranslationVariables
             return false;
         }
 
-        if (strlen($value) < $this->min) {
+        if (mb_strlen($value) < $this->min) {
             return false;
         }
 

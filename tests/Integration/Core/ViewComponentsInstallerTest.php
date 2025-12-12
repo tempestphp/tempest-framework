@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Core;
+namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\View\ViewComponent;
@@ -19,10 +19,10 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->configure(
-                __DIR__ . '/install',
-                new Psr4Namespace('App\\', __DIR__ . '/install/App'),
+                $this->internalStorage . '/install',
+                new Psr4Namespace('App\\', $this->internalStorage . '/install/App'),
             )
-            ->setRoot(__DIR__ . '/install');
+            ->setRoot($this->internalStorage . '/install');
 
         $this->registerViewComponent(
             name: 'x-vendor-a',

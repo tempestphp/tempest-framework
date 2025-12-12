@@ -9,26 +9,36 @@ use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
-use Tempest\Database\QueryStatements\HasWhereStatements;
+use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\Support\arr;
 
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
-final class CountQueryBuilder implements BuildsQuery
+final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
     private CountStatement $count;
 
-    private array $bindings = [];
+    public ModelInspector $model;
 
-    private ModelInspector $model;
+    public array $bindings = [];
+
+    /** @var array<JoinStatement|string> */
+    public array $joins = [];
+
+    public ImmutableArray $wheres {
+        get => $this->count->where;
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -41,6 +51,36 @@ final class CountQueryBuilder implements BuildsQuery
             table: $this->model->getTableDefinition(),
             column: $column,
         );
+    }
+
+    /**
+     * Creates an instance from another query builder, inheriting conditions and bindings.
+     *
+     * @template TSourceModel of object
+     * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @param string|null $column
+     * @return CountQueryBuilder<TSourceModel>
+     */
+    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, ?string $column = null): CountQueryBuilder
+    {
+        $builder = new self($source->model->model, $column);
+        $builder->bind(...$source->bindings);
+
+        foreach ($source->wheres as $where) {
+            $builder->wheres[] = $where;
+        }
+
+        if ($source instanceof SupportsJoins) {
+            $builder->joins = $source->joins;
+        }
+
+        if ($source instanceof SupportsRelations) {
+            foreach ($source->getResolvedRelations() as $relation) {
+                $builder->joins[] = $relation->getJoinStatement();
+            }
+        }
+
+        return $builder;
     }
 
     /**
@@ -97,16 +137,11 @@ final class CountQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
+        if ($this->joins !== []) {
+            $this->count->joins = arr($this->joins)
+                ->map(fn (JoinStatement|string $join) => $join instanceof JoinStatement ? $join : new JoinStatement($join));
+        }
+
         return new Query($this->count, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
-    }
-
-    private function getStatementForWhere(): HasWhereStatements
-    {
-        return $this->count;
-    }
-
-    private function getModel(): ModelInspector
-    {
-        return $this->model;
     }
 }

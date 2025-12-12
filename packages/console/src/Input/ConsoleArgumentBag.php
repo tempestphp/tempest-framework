@@ -47,7 +47,7 @@ final class ConsoleArgumentBag
 
     public function last(): ?ConsoleInputArgument
     {
-        return $this->arguments[array_key_last($this->arguments)] ?? null;
+        return $this->arguments[array_key_last($this->arguments) ?? ''] ?? null;
     }
 
     public function has(string ...$names): bool

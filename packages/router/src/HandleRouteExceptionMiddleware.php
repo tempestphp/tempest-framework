@@ -47,7 +47,7 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
         } catch (RouteBindingFailed) {
             return new NotFound();
         } catch (ValidationFailed $validationException) {
-            return new Invalid($validationException->subject, $validationException->failingRules);
+            return new Invalid($validationException->subject, $validationException->failingRules, $validationException->targetClass);
         }
     }
 }

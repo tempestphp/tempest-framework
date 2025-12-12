@@ -61,7 +61,7 @@ final readonly class Attachment
         $path = Path\normalize($path);
 
         if (! Filesystem\is_file($path)) {
-            throw new FileAttachmentWasNotFound($path);
+            throw FileAttachmentWasNotFound::forFilesystemFile($path);
         }
 
         return new self(

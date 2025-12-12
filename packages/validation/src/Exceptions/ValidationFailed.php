@@ -14,11 +14,13 @@ final class ValidationFailed extends Exception
      *
      * @param array<TKey,Rule[]> $failingRules
      * @param array<TKey,string> $errorMessages
+     * @param class-string|null $targetClass
      */
     public function __construct(
         public readonly array $failingRules,
         public readonly null|object|string $subject = null,
         public readonly array $errorMessages = [],
+        public readonly ?string $targetClass = null,
     ) {
         parent::__construct(match (true) {
             is_null($subject) => 'Validation failed.',

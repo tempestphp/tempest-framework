@@ -102,6 +102,84 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
 
         $relation->getJoinStatement();
     }
+
+    public function test_self_referencing_belongs_to(): void
+    {
+        $model = inspect(SelfReferencingCategoryModel::class);
+        $relation = $model->getRelation('parent');
+
+        $this->assertInstanceOf(BelongsTo::class, $relation);
+
+        $this->assertEquals(
+            'LEFT JOIN categories AS parent ON parent.id = categories.parent_id',
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_self_referencing_belongs_to_select_fields(): void
+    {
+        $model = inspect(SelfReferencingCategoryModel::class);
+        $relation = $model->getRelation('parent');
+
+        $selectFields = $relation->getSelectFields();
+
+        $this->assertSame(
+            'parent.id AS `parent.id`',
+            $selectFields[0]->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            'parent.parent_id AS `parent.parent_id`',
+            $selectFields[1]->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            'parent.name AS `parent.name`',
+            $selectFields[2]->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_self_referencing_belongs_to_with_custom_owner_join(): void
+    {
+        $model = inspect(SelfReferencingCategoryModel::class);
+        $relation = $model->getRelation('parentWithCustomOwnerJoin');
+
+        $this->assertEquals(
+            'LEFT JOIN categories AS parentWithCustomOwnerJoin ON parentWithCustomOwnerJoin.id = categories.category_parent_id',
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_self_referencing_has_many(): void
+    {
+        $model = inspect(SelfReferencingCategoryModel::class);
+        $relation = $model->getRelation('children');
+
+        $this->assertInstanceOf(HasMany::class, $relation);
+
+        $this->assertEquals(
+            'LEFT JOIN categories AS children ON children.parent_id = categories.id',
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_self_referencing_has_many_select_fields(): void
+    {
+        $model = inspect(SelfReferencingCategoryModel::class);
+        $relation = $model->getRelation('children');
+
+        $selectFields = $relation->getSelectFields();
+
+        $this->assertSame(
+            'children.id AS `children.id`',
+            $selectFields[0]->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            'children.parent_id AS `children.parent_id`',
+            $selectFields[1]->compile(DatabaseDialect::SQLITE),
+        );
+    }
 }
 
 #[Table('relation')]
@@ -167,4 +245,24 @@ final class BelongsToTestOwnerWithoutIdModel
     public BelongsToTestRelationWithoutIdModel $relation;
 
     public string $name;
+}
+
+#[Table('categories')]
+final class SelfReferencingCategoryModel
+{
+    public PrimaryKey $id;
+
+    public ?int $parent_id = null;
+
+    public string $name;
+
+    #[BelongsTo(ownerJoin: 'parent_id', relationJoin: 'id')]
+    public ?SelfReferencingCategoryModel $parent = null;
+
+    #[BelongsTo(ownerJoin: 'category_parent_id', relationJoin: 'id')]
+    public ?SelfReferencingCategoryModel $parentWithCustomOwnerJoin = null;
+
+    /** @var \Tests\Tempest\Integration\Database\ModelInspector\SelfReferencingCategoryModel[] */
+    #[HasMany(ownerJoin: 'parent_id', relationJoin: 'id')]
+    public array $children = [];
 }

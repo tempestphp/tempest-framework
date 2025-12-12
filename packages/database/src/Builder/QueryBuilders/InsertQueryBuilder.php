@@ -36,9 +36,9 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private array $after = [];
 
-    private array $bindings = [];
+    public array $bindings = [];
 
-    private ModelInspector $model;
+    public ModelInspector $model;
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -145,15 +145,11 @@ final class InsertQueryBuilder implements BuildsQuery
         $data = [];
 
         foreach ($reflection->getPublicProperties() as $property) {
-            if (! $property->isInitialized($object)) {
+            if ($property->isUninitialized($object)) {
                 continue;
             }
 
             if ($property->isVirtual()) {
-                continue;
-            }
-
-            if ($property->isUninitialized($object)) {
                 continue;
             }
 

@@ -30,7 +30,7 @@ final class Icon
      */
     public function render(string $icon): ?string
     {
-        [$collection, $iconName] = $this->parseIconIdentifier($icon);
+        [$collection, $iconName] = $this->parseIconIdentifier($icon) ?? [null, null];
 
         if ($this->iconCache->get("icon-failure-{$collection}-{$iconName}")) {
             return null;

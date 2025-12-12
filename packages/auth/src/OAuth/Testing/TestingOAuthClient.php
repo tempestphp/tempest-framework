@@ -9,6 +9,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\Assert;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
+use Tempest\Auth\Exceptions\OAuthStateWasInvalid;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -64,11 +65,11 @@ final class TestingOAuthClient implements OAuthClient
         $this->state = Random\secure_string(16);
 
         $provider = $this->config->createProvider();
-        $provider->getBaseAuthorizationUrl();
+        $baseAuthorizationUrl = $provider->getBaseAuthorizationUrl();
 
         $url = sprintf(
             '%s/oauth/authorize?redirect_uri=%s&client_id=%s&state=%s',
-            $this->baseUrl ?? $provider->getBaseAuthorizationUrl(),
+            $this->baseUrl ?? $baseAuthorizationUrl,
             $this->redirectUri,
             $this->clientId,
             $this->state,
@@ -124,6 +125,15 @@ final class TestingOAuthClient implements OAuthClient
 
     public function authenticate(Request $request, Closure $map): Authenticatable
     {
+        $expectedState = $this->state;
+        $actualState = $request->get('state');
+
+        $this->state = null;
+
+        if ($expectedState !== $actualState) {
+            throw new OAuthStateWasInvalid();
+        }
+
         $user = $this->fetchUser($this->requestAccessToken($request->get('code')));
 
         $authenticatable = $map($user);

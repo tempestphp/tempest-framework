@@ -23,7 +23,7 @@ final class DatabaseConfigTest extends FrameworkIntegrationTestCase
     public function test_strategy_is_taken_into_account(string $strategy, string $expected): void
     {
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/../database.sqlite',
+            path: $this->internalStorage . '/../database.sqlite',
             namingStrategy: new $strategy(),
         ));
 

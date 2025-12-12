@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\View\Components;
+namespace Tests\Tempest\Integration\View\Components;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

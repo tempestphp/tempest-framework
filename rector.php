@@ -5,13 +5,11 @@ declare(strict_types=1);
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
-use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
-use Rector\Php74\Rector\Ternary\ParenthesizeNestedTernaryRector;
 use Rector\Php81\Rector\Array_\FirstClassCallableRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
@@ -21,8 +19,8 @@ use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRecto
 use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
 use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\NarrowObjectReturnTypeRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
-use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;
 use Rector\TypeDeclaration\Rector\Empty_\EmptyOnNullableObjectToInstanceOfRector;
 
 return RectorConfig::configure()
@@ -54,10 +52,10 @@ return RectorConfig::configure()
         RestoreDefaultNullToNullableTypePropertyRector::class,
         ReturnNeverTypeRector::class,
         StaticCallOnNonStaticToInstanceCallRector::class,
-        ClosureReturnTypeRector::class,
         EncapsedStringsToSprintfRector::class,
         AddArrowFunctionReturnTypeRector::class,
         PrivatizeFinalClassMethodRector::class,
+        NarrowObjectReturnTypeRector::class,
     ])
     ->withParallel(300, 10, 10)
     ->withPreparedSets(

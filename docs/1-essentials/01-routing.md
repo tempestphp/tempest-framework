@@ -175,9 +175,9 @@ final class Aircraft implements Bindable
 {
     use IsDatabaseModel;
 
-    public function resolve(string $input): self
+    public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
@@ -193,9 +193,9 @@ final class Aircraft implements Bindable
     #[IsBindingValue]
     public string $callSign;
 
-    public function resolve(string $input): self
+    public static function resolve(string $input): self
     {
-        return self::find(id: $input);
+        return self::findById(id: $input);
     }
 }
 ```
@@ -241,7 +241,7 @@ public function docsRedirect(string $path): Redirect
 
 ## Generating URIs
 
-Tempest provides a `\Tempest\uri` function that can be used to generate a URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
+Tempest provides a `\Tempest\Router\uri` function that can be used to generate a URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
 
 ```php
 use function Tempest\Router\uri;
@@ -337,7 +337,7 @@ A core pattern of any web application is to access data from the current request
 
 In most situations, the data you expect to receive from a request is structured. You expect clients to send specific values, and you want them to follow specific rules.
 
-The idiomatic way to achieve this is by using request classes. They are classes with public properties that correspond to the data you want to retrieve from the request. Tempest will automatically validate these properties using PHP's type system, in addition to optional [validation attributes](../2-features/06-validation) if needed.
+The idiomatic way to achieve this is by using request classes. They are classes with public properties that correspond to the data you want to retrieve from the request. Tempest will automatically validate these properties using PHP's type system, in addition to optional [validation attributes](../2-features/03-validation) if needed.
 
 A request class must implement {`Tempest\Http\Request`} and should use the {`Tempest\Http\IsRequest`} trait, which provides the default implementation.
 
@@ -387,6 +387,33 @@ final readonly class AirportController
 The `map()` function allows mapping any data from any source into objects of your choice. You may read more about them in [their documentation](../2-features/01-mapper.md).
 :::
 
+### Sensitive fields
+
+When handling sensitive data such as passwords or tokens, you may not want these values to be stored in the session or re-displayed in forms after validation errors. You can mark request properties as sensitive using the {b`#[Tempest\Http\SensitiveField]`} attribute:
+
+```php app/ResetPasswordRequest.php
+use Tempest\Http\Request;
+use Tempest\Http\IsRequest;
+use Tempest\Http\SensitiveField;
+use Tempest\Validation\Rules\HasMinLength;
+
+final class ResetPasswordRequest implements Request
+{
+    use IsRequest;
+
+    public string $email;
+
+    #[SensitiveField]
+    #[HasMinLength(8)]
+    public string $password;
+
+    #[SensitiveField]
+    public string $password_confirmation;
+}
+```
+
+When a validation error occurs, Tempest will filter out sensitive fields from the original values stored in the session. This prevents sensitive data from being re-populated in forms after a redirect.
+
 ### Retrieving data directly
 
 For simpler use cases, you may simply retrieve a value from the body or the query parameter using the request's `get` method.
@@ -427,7 +454,7 @@ The JSON encoded header is available for when you're building APIs with Tempest.
 </x-form>
 ```
 
-`{html}<x-form>` is a view component that will automatically include the CSRF token, as well as default to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once. In practice, you'll likely want to make changes to these built-in view components. That's why you can run `./tempest install view-components` and select the components you want to pull into your project. You can [read more about installing view components here](/2.x/essentials/views#built-in-components).
+`{html}<x-form>` is a view component that will automatically include the CSRF token, as well as default to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once. In practice, you'll likely want to make changes to these built-in view components. That's why you can run `./tempest install view-components` and select the components you want to pull into your project. You can [read more about installing view components here](../1-essentials/02-views.md#built-in-components).
 
 ## Route middleware
 
@@ -919,7 +946,7 @@ return new DatabaseSessionConfig(
 
 Sessions expire based on the last activity time. This means that as long as a user is actively using your application, their session will remain valid.
 
-Outdated sessions must occasionally be cleaned up. Tempest comes with a built-in command to do so, `session:clean`. This command makes use of the [scheduler](/2.x/features/scheduling). If you have scheduling enabled, it will automatically run behind the scenes.
+Outdated sessions must occasionally be cleaned up. Tempest comes with a built-in command to do so, `session:clean`. This command makes use of the [scheduler](../2-features/11-scheduling.md). If you have scheduling enabled, it will automatically run behind the scenes.
 
 ## Deferring tasks
 

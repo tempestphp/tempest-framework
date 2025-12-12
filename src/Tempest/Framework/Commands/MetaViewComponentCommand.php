@@ -60,20 +60,13 @@ final class MetaViewComponentCommand
     private function resolveViewComponent(string $viewComponent): ?ViewComponent
     {
         if (is_file($viewComponent)) {
-            foreach ($this->viewConfig->viewComponents as $registeredViewComponent) {
-                if ($registeredViewComponent->file !== $viewComponent) {
-                    continue;
-                }
-
-                $viewComponent = $registeredViewComponent;
-
-                break;
-            }
-        } else {
-            $viewComponent = $this->viewConfig->viewComponents[$viewComponent] ?? null;
+            return array_find(
+                array: $this->viewConfig->viewComponents,
+                callback: fn ($registeredViewComponent) => $registeredViewComponent->file === $viewComponent,
+            );
         }
 
-        return $viewComponent;
+        return $this->viewConfig->viewComponents[$viewComponent] ?? null;
     }
 
     private function resolveSlots(ViewComponent $viewComponent): ImmutableArray

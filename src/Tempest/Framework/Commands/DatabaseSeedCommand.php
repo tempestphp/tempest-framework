@@ -36,6 +36,12 @@ final class DatabaseSeedCommand
             return;
         }
 
+        if ($this->seederConfig->seeders === []) {
+            $this->console->info('No seeders are configured.');
+
+            return;
+        }
+
         if (count($this->seederConfig->seeders) === 1) {
             $this->runSeeder($this->seederConfig->seeders[0], $database);
             return;

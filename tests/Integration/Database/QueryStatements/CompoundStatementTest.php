@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Database\QueryStatements;
+namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\CompoundStatement;

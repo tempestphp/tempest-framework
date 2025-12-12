@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Console\Middleware;
+namespace Tests\Tempest\Integration\Console\Middleware;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

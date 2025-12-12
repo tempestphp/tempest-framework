@@ -228,7 +228,7 @@ interface DateTimeInterface extends TemporalInterface
     /**
      * Returns the day.
      *
-     * @return int<0, 31>
+     * @return int<1, 31>
      */
     public function getDay(): int;
 

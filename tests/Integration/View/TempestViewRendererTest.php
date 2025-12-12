@@ -8,6 +8,7 @@ use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ElementWasInvalid;
+use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
@@ -800,7 +801,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
                 <x-input
                     name="test"
                     type="text"
-                    class="block dark:bg-neutral-900 disabled:opacity-50 px-4 py-2.5 sm:py-3 border-1 border-gray-500 dark:border-neutral-700 focus:border-blue-500 rounded-lg focus:ring-blue-500 dark:focus:ring-neutral-600 w-full dark:text-neutral-400 sm:text-sm disabled:pointer-events-none dark:placeholder-neutral-500" placeholder="This is placeholder" />
+                    class="block dark:bg-neutral-900 disabled:opacity-50 px-4 py-2.5 sm:py-3 border-1 border-gray-500 focus:border-blue-500 dark:border-neutral-700 rounded-lg focus:ring-blue-500 dark:focus:ring-neutral-600 w-full dark:text-neutral-400 sm:text-sm disabled:pointer-events-none dark:placeholder-neutral-500" placeholder="This is placeholder" />
                 <!-- end -->
             </div>
             --}}
@@ -812,6 +813,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_parse_rss_feed(): void
     {
+        if (ini_get('short_open_tag')) {
+            $this->expectException(XmlDeclarationCouldNotBeParsed::class);
+        }
+
         $rss = <<<'XML'
         <?xml version="1.0" encoding="UTF-8" ?>
         <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">

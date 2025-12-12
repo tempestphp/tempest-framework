@@ -42,8 +42,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $files = [
-            __DIR__ . '/db-main.sqlite',
-            __DIR__ . '/db-backup.sqlite',
+            $this->internalStorage . '/db-main.sqlite',
+            $this->internalStorage . '/db-backup.sqlite',
         ];
 
         foreach ($files as $file) {
@@ -58,12 +58,12 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->container->addInitializer(DatabaseInitializer::class);
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/db-main.sqlite',
+            path: $this->internalStorage . '/db-main.sqlite',
             tag: 'main',
         ));
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/db-backup.sqlite',
+            path: $this->internalStorage . '/db-backup.sqlite',
             tag: 'backup',
         ));
     }

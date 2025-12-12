@@ -30,6 +30,10 @@ final readonly class EnumCaster implements Caster
             return constant("{$this->enum}::{$input}");
         }
 
+        if (! is_a($this->enum, \BackedEnum::class, allow_string: true)) {
+            return null;
+        }
+
         return forward_static_call("{$this->enum}::from", $input);
     }
 }

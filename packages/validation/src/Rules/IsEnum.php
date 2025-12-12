@@ -26,6 +26,7 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
         private string $enum,
         private array $only = [],
         private array $except = [],
+        private bool $orNull = false,
     ) {
         if (! enum_exists($this->enum)) {
             throw new UnexpectedValueException(sprintf(
@@ -37,6 +38,10 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
+        if ($this->orNull && $value === null) {
+            return true;
+        }
+
         if ($value instanceof $this->enum) {
             return $this->isDesirable($value);
         }
@@ -57,6 +62,8 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
                 ...$this->only,
                 ...(is_array($values) ? $values : func_get_args()),
             ],
+            except: $this->except,
+            orNull: $this->orNull,
         );
     }
 

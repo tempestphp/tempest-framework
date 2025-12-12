@@ -18,6 +18,9 @@ final class RouteConfig
         /** @var array<string,\Tempest\Router\Routing\Matching\MatchingRegex> */
         public array $matchingRegexes = [],
 
+        /** @var array<string,string[]> */
+        public array $handlerIndex = [],
+
         /** @var class-string<\Tempest\Router\ResponseProcessor>[] */
         public array $responseProcessors = [],
 
@@ -37,6 +40,7 @@ final class RouteConfig
         $this->staticRoutes = $newConfig->staticRoutes;
         $this->dynamicRoutes = $newConfig->dynamicRoutes;
         $this->matchingRegexes = $newConfig->matchingRegexes;
+        $this->handlerIndex = $newConfig->handlerIndex;
     }
 
     public function addResponseProcessor(string $responseProcessor): void

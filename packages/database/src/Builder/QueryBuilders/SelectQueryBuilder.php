@@ -12,14 +12,15 @@ use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\GroupByStatement;
-use Tempest\Database\QueryStatements\HasWhereStatements;
 use Tempest\Database\QueryStatements\HavingStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
+use Tempest\Database\Relation;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Paginator\PaginatedData;
@@ -32,21 +33,29 @@ use function Tempest\map;
 /**
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsJoins<TModel>
+ * @implements \Tempest\Database\Builder\QueryBuilders\SupportsRelations<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
-final class SelectQueryBuilder implements BuildsQuery
+final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, SupportsJoins, SupportsRelations
 {
     use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
 
-    private ModelInspector $model;
+    public ModelInspector $model;
 
     private SelectStatement $select;
 
-    private array $joins = [];
+    public array $joins = [];
 
-    private array $relations = [];
+    public array $relations = [];
 
-    private array $bindings = [];
+    public array $bindings = [];
+
+    public ImmutableArray $wheres {
+        get => $this->select->where;
+        set => $this->select->where;
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -88,13 +97,13 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /**
-     * Returnd length-aware paginated data for the current query.
+     * Returns length-aware paginated data for the current query.
      *
      * @return PaginatedData<TModel>
      */
     public function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
     {
-        $total = new CountQueryBuilder($this->model->model)->execute();
+        $total = CountQueryBuilder::fromQueryBuilder($this)->execute();
 
         $paginator = new Paginator(
             totalItems: $total,
@@ -120,6 +129,35 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return $this->whereField($this->model->getPrimaryKey(), $id)->first();
+    }
+
+    /**
+     * Creates an instance from another query builder, inheriting conditions and bindings.
+     *
+     * @template TSourceModel of object
+     * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @return SelectQueryBuilder<TSourceModel>
+     */
+    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, mixed ...$fields): SelectQueryBuilder
+    {
+        $builder = new self($source->model->model, ...$fields);
+        $builder->bind(...$source->bindings);
+
+        foreach ($source->wheres as $where) {
+            $builder->wheres[] = $where;
+        }
+
+        if ($source instanceof SupportsJoins) {
+            $builder->joins = $source->joins;
+        }
+
+        if ($source instanceof SupportsRelations) {
+            foreach ($source->getResolvedRelations() as $relation) {
+                $builder->joins[] = $relation->getJoinStatement();
+            }
+        }
+
+        return $builder;
     }
 
     /**
@@ -311,7 +349,7 @@ final class SelectQueryBuilder implements BuildsQuery
             $select = $select->withJoin(new JoinStatement($join));
         }
 
-        foreach ($this->getIncludedRelations() as $relation) {
+        foreach ($this->getResolvedRelations() as $relation) {
             $select = $select
                 ->withFields($relation->getSelectFields())
                 ->withJoin($relation->getJoinStatement());
@@ -325,8 +363,12 @@ final class SelectQueryBuilder implements BuildsQuery
         return clone $this;
     }
 
-    /** @return \Tempest\Database\Relation[] */
-    private function getIncludedRelations(): array
+    /**
+     * Gets all resolved relations with their join statements.
+     *
+     * @return Relation[]
+     */
+    public function getResolvedRelations(): array
     {
         $definition = inspect($this->model->getName());
 
@@ -349,13 +391,15 @@ final class SelectQueryBuilder implements BuildsQuery
         return $relations;
     }
 
-    private function getStatementForWhere(): HasWhereStatements
+    public function setWhereStatements(QueryStatement ...$statements): self
     {
-        return $this->select;
+        $this->select->where = new ImmutableArray($statements);
+
+        return $this;
     }
 
-    private function getModel(): ModelInspector
+    public function getWhereStatements(): ImmutableArray
     {
-        return $this->model;
+        return $this->select->where;
     }
 }

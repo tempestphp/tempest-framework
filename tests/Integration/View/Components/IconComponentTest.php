@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\View\Components;
+namespace Tests\Tempest\Integration\View\Components;
 
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;

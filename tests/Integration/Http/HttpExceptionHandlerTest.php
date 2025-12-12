@@ -56,9 +56,9 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
                     $this->container = $kernel->container;
                 }
 
-                public static function boot(string $root, array $discoveryLocations = [], ?Container $container = null): self
+                public static function boot(string $root, array $discoveryLocations = [], ?Container $container = null, ?string $internalStorage = null): self
                 {
-                    return Kernel::boot($root, $discoveryLocations, $container); // @phpstan-ignore-line
+                    return Kernel::boot($root, $discoveryLocations, $container, $internalStorage); // @phpstan-ignore-line
                 }
 
                 public function shutdown(int|string $status = ''): never

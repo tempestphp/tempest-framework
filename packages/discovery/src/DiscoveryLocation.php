@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use Tempest\Support\Filesystem;
+use Tempest\Support\Namespace\Psr4Namespace;
 
 final class DiscoveryLocation
 {
@@ -21,6 +22,11 @@ final class DiscoveryLocation
     ) {
         $this->namespace = $namespace;
         $this->path = Filesystem\normalize_path(rtrim($path, '\\/'));
+    }
+
+    public static function fromNamespace(Psr4Namespace $namespace): self
+    {
+        return new self($namespace->namespace, $namespace->path);
     }
 
     public function isVendor(): bool
