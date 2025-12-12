@@ -13,7 +13,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class MonitorAsyncCommands
     {
         use HasConsole;

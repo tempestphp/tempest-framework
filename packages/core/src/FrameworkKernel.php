@@ -108,7 +108,7 @@ final class FrameworkKernel implements Kernel
 
     public function loadComposer(): self
     {
-        if (class_exists(GenericProcessExecutor::class, false)) {
+        if (class_exists(GenericProcessExecutor::class)) {
             $processExecutor = new GenericProcessExecutor();
         } else {
             $processExecutor = null;
@@ -249,7 +249,7 @@ final class FrameworkKernel implements Kernel
         }
 
         // TODO: refactor to not have a hard-coded dependency on these exception handlers
-        if (! class_exists(ConsoleExceptionHandler::class, false) || ! class_exists(HttpExceptionHandler::class, false)) {
+        if (! class_exists(ConsoleExceptionHandler::class) || ! class_exists(HttpExceptionHandler::class)) {
             return $this;
         }
 

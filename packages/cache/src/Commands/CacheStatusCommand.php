@@ -22,7 +22,7 @@ use UnitEnum;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class CacheStatusCommand
     {
         use HasConsole;
