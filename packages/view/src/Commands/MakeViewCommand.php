@@ -17,7 +17,7 @@ use Tempest\View\Stubs\ViewStub;
 
 use function Tempest\Support\str;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeViewCommand
     {
         use PublishesFiles;

@@ -12,7 +12,7 @@ use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Router\Stubs\ControllerStub;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeControllerCommand
     {
         use PublishesFiles;

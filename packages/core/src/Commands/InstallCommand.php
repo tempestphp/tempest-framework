@@ -14,7 +14,7 @@ use Tempest\Core\InstallerConfig;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class InstallCommand
     {
         use HasConsole;

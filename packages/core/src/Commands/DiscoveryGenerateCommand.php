@@ -19,7 +19,7 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 
 use function Tempest\env;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
     {
         use HasConsole;
