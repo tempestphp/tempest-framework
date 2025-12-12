@@ -50,8 +50,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     {
         try {
             $this->container->get(Redis::class)->flush();
-        } catch (Throwable) {
-            // Redis not available, nothing to clean up
+        } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
         }
     }
 
