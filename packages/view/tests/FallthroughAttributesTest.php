@@ -10,7 +10,8 @@ use function Tempest\view;
 
 final class FallthroughAttributesTest extends TestCase
 {
-    public function test_render(): void
+    #[Test]
+    public function render(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-fallthrough-test.view.php',
