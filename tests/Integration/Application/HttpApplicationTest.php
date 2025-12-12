@@ -10,6 +10,7 @@ use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithoutSession;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithSession;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Router\uri;
 use function Tempest\Support\arr;
 
