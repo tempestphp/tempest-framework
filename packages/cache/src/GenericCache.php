@@ -23,17 +23,17 @@ final class GenericCache implements Cache
         public null|UnitEnum|string $tag = null,
     ) {}
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock
     {
-        if ($expiration instanceof Duration) {
-            $expiration = DateTime::now()->plus($expiration);
+        if ($duration instanceof DateTimeInterface) {
+            $duration = $duration->since(DateTime::now());
         }
 
         return new GenericLock(
             key: (string) $key,
             owner: $owner ? (string) $owner : Random\secure_string(length: 10),
             cache: $this,
-            expiration: $expiration,
+            duration: $duration,
         );
     }
 

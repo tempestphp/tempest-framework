@@ -61,10 +61,10 @@ final class LockTest extends FrameworkIntegrationTestCase
         $clock = $this->clock();
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
-        $lock = $cache->lock('processing', expiration: Duration::hours(1));
+        $lock = $cache->lock('processing', duration: Duration::hours(1));
 
         $this->assertTrue($lock->acquire());
-        $this->assertTrue($lock->expiration->equals($clock->now()->plusHours(1)));
+        $this->assertTrue($lock->duration->equals(Duration::hours(1)));
 
         // Still locked after 30 min
         $clock->plus(Duration::minutes(30));
@@ -106,7 +106,7 @@ final class LockTest extends FrameworkIntegrationTestCase
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
         // Lock externally for a set duration
-        $externalLock = $cache->lock('processing', expiration: Duration::hours(1));
+        $externalLock = $cache->lock('processing', duration: Duration::hours(1));
         $externalLock->acquire();
 
         // Skip the set duration
@@ -115,5 +115,32 @@ final class LockTest extends FrameworkIntegrationTestCase
         // Try executing a callback for the specified duration
         /** @phpstan-ignore-next-line */
         $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1)));
+    }
+
+    public function test_lock_can_be_reacquired_after_expiration(): void
+    {
+        $clock = $this->clock();
+        $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
+
+        $lock = $cache->lock('processing', duration: Duration::hours(1));
+
+        // Acquire the lock
+        $this->assertTrue($lock->acquire());
+
+        // Skip the lock duration
+        $clock->plus(Duration::hours(1));
+
+        // Lock expired, so we can re-acquire it
+        $this->assertTrue($lock->acquire());
+
+        // Verify the lock is held
+        $this->assertTrue($lock->locked());
+
+        // Skip another hour
+        $clock->plus(Duration::hours(1));
+
+        // Lock expired again, so we can re-acquire it again
+        $this->assertTrue($lock->acquire());
+        $this->assertTrue($lock->release());
     }
 }

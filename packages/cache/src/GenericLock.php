@@ -14,7 +14,7 @@ final class GenericLock implements Lock
         private(set) string $key,
         private(set) string $owner,
         private readonly Cache $cache,
-        private(set) ?DateTimeInterface $expiration = null,
+        private(set) ?Duration $duration = null,
     ) {}
 
     public function locked(null|Stringable|string $by = null): bool
@@ -32,10 +32,14 @@ final class GenericLock implements Lock
             return false;
         }
 
+        $expiration = $this->duration !== null
+            ? DateTime::now()->plus($this->duration)
+            : null;
+
         $this->cache->put(
             key: $this->key,
             value: $this->owner,
-            expiration: $this->expiration,
+            expiration: $expiration,
         );
 
         return $this->cache->get($this->key) === $this->owner;
