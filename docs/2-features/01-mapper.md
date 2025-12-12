@@ -16,7 +16,7 @@ You may map data from a source to a target using the `map()` function. This func
 Calling the `to()` method on this instance will return a new instance of the target class, populated with the mapped data:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $book = map($rawBookAsJson)->to(Book::class);
 ```
@@ -26,7 +26,7 @@ $book = map($rawBookAsJson)->to(Book::class);
 When the source data is an array, you may instruct the mapper to map each item of the collection to an instance of the target class by calling the `collection()` method.
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($rawBooksAsJson)
     ->collection()
@@ -54,7 +54,7 @@ $result = map($rawBooksAsJson)
 Of course, `with()` can also be combined with `collection()` and `to()`.
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($rawBooksAsJson)
     ->collection()
@@ -202,6 +202,38 @@ final readonly class AddressSerializer implements Serializer
 
 Of course, Tempest provides casters and serializers for the most common data types, including arrays, booleans, dates, enumerations, integers and value objects.
 
+### Registering casters and serializers globally
+
+You may register casters and serializers globally, so you don't have to specify them for every property. This is useful for value objects that are used frequently. To do so, you may implement the {`\Tempest\Mapper\DynamicCaster`} or {`\Tempest\Mapper\DynamicSerializer`} interface, which require an `accepts` method:
+
+```php app/AddressSerializer.php
+use Tempest\Mapper\Serializer;
+use Tempest\Mapper\DynamicSerializer;
+
+final readonly class AddressSerializer implements Serializer, DynamicSerializer
+{
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
+    {
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(Address::class);
+    }
+
+    public function serialize(mixed $input): array|string
+    {
+        if (! $input instanceof Address) {
+            throw new CannotSerializeValue(Address::class);
+        }
+
+        return $input->toArray();
+    }
+}
+```
+
+Dynamic serializers and casters will automatically be discovered by Tempest.
+
 ### Specifying casters or serializers for properties
 
 You may use a specific caster or serializer for a property by using the {b`#[Tempest\Mapper\CastWith]`} or {b`#[Tempest\Mapper\SerializeWith]`} attribute, respectively.
@@ -218,21 +250,147 @@ final class User
 
 You may of course use {b`#[Tempest\Mapper\CastWith]`} and {b`#[Tempest\Mapper\SerializeWith]`} together.
 
-### Registering casters and serializers globally
+## Mapping contexts
 
-You may register casters and serializers globally, so you don't have to specify them for every property. This is useful for value objects that are used frequently.
+Contexts allow you to use different casters, serializers, and mappers depending on the situation. For example, you might want to serialize dates differently for an API response versus database storage, or apply different validation rules for different contexts.
+
+### Using contexts
+
+You may specify a context when mapping by using the `in()` method. Contexts can be provided as a string, an enum, or a {b`\Tempest\Mapper\Context`} object.
 
 ```php
-use Tempest\Mapper\Casters\CasterFactory;
-use Tempest\Mapper\Serializers\SerializerFactory;
+use App\SerializationContext;
+use function Tempest\Mapper\map;
 
-// Register a caster globally for a specific type
-$container->get(CasterFactory::class)
-	->addCaster(Address::class, AddressCaster::class);
-
-// Register a serializer globally for a specific type
-$container->get(SerializerFactory::class)
-	->addSerializer(Address::class, AddressSerializer::class);
+$json = map($book)
+    ->in(SerializationContext::API)
+    ->toJson();
 ```
 
-If you're looking for the right place where to put this logic, [provider classes](/docs/extra-topics/package-development#provider-classes) is our recommendation. 
+To create a caster or serializer that only applies in a specific context, use the {b`#[Tempest\Mapper\Attributes\Context]`} attribute on your class:
+
+```php
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\FormatPattern;
+use Tempest\Mapper\Attributes\Context;
+use Tempest\Mapper\Serializer;
+use Tempest\Mapper\DynamicSerializer;
+
+#[Context(SerializationContext::API)]
+final readonly class ApiDateSerializer implements Serializer, DynamicSerializer
+{
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
+    {
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(DateTime::class);
+    }
+
+    public function serialize(mixed $input): string
+    {
+        return $input->format(FormatPattern::ISO8601);
+    }
+}
+```
+
+This serializer will only be used when mapping with `->in(SerializationContext::API)`. Without a context specified, or in other contexts, the default serializers will be used.
+
+### Injecting context into casters and serializers
+
+You may inject the current context into your caster or serializer constructor to adapt behavior dynamically. Note that the context property has to be named `$context`. You may also inject any other dependency from the container.
+
+```php
+use Tempest\Mapper\Context;
+use Tempest\Mapper\Serializer;
+
+#[Context(DatabaseContext::class)]
+final class BooleanSerializer implements Serializer, DynamicSerializer
+{
+    public function __construct(
+        private DatabaseContext $context,
+    ) {}
+
+    public static function accepts(PropertyReflector|TypeReflector $type): bool
+    {
+        $type = $type instanceof PropertyReflector
+            ? $type->getType()
+            : $type;
+
+        return $type->getName() === 'bool' || $type->getName() === 'boolean';
+    }
+
+    public function serialize(mixed $input): string
+    {
+        return match ($this->context->dialect) {
+            DatabaseDialect::POSTGRESQL => $input ? 'true' : 'false',
+            default => $input ? '1' : '0',
+        };
+    }
+}
+```
+
+## Configurable casters and serializers
+
+Sometimes, a caster or serializer needs to be configured based on the property it's applied to. For example, an enum caster needs to know which enum class to use, or an object caster needs to know the target type.
+
+Implement the {b`\Tempest\Mapper\ConfigurableCaster`} or {b`\Tempest\Mapper\ConfigurableSerializer`} interface to create casters/serializers that are configured per property:
+
+```php
+use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
+use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Reflection\PropertyReflector;
+
+final readonly class EnumCaster implements Caster, DynamicCaster, ConfigurableCaster
+{
+    /**
+     * @param class-string<UnitEnum> $enum
+     */
+    public function __construct(
+        private string $enum,
+    ) {}
+
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
+    {
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(UnitEnum::class);
+    }
+
+    public static function configure(PropertyReflector $property, Context $context): self
+    {
+        // Create a new instance configured for this specific property
+        return new self(enum: $property->getType()->getName());
+    }
+
+    public function cast(mixed $input): ?object
+    {
+        if ($input === null) {
+            return null;
+        }
+
+        // Use the configured enum class
+        return $this->enum::from($input);
+    }
+}
+```
+
+The `configure()` method receives the property being mapped and the current context, allowing you to create a caster instance tailored to that specific property.
+
+Note that `ConfigurableSerializer::configure()` can receive either a `PropertyReflector`, `TypeReflector`, or `string`, depending on whether it's being used for property mapping or value serialization.
+
+### When to use configurable casters and serializers
+
+Use configurable casters and serializers when:
+
+- The caster/serializer behavior depends on the specific property type (e.g., enum class, object class)
+- You need access to property attributes or metadata
+- Different properties of the same base type require different handling
+- You want to avoid creating many similar caster/serializer classes
+
+For simple, static behavior that doesn't depend on property information, regular casters and serializers are sufficient.

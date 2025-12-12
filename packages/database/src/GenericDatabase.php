@@ -29,6 +29,10 @@ final class GenericDatabase implements Database
         get => $this->connection->config->tag;
     }
 
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->dialect);
+    }
+
     public function __construct(
         private(set) readonly Connection $connection,
         private(set) readonly TransactionManager $transactionManager,
@@ -128,17 +132,9 @@ final class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
-            // Database handle booleans differently. We might need a database-aware serializer at some point.
-            if (is_bool($value)) {
-                $value = match ($this->dialect) {
-                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
-                    default => $value ? '1' : '0',
-                };
-            }
-
             if ($value instanceof Query) {
                 $value = $value->execute();
-            } elseif ($serializer = $this->serializerFactory->forValue($value)) {
+            } elseif ($serializer = $this->serializerFactory->in($this->context)->forValue($value)) {
                 $value = $serializer->serialize($value);
             }
 

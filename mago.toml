@@ -1,4 +1,4 @@
-php-version = "8.4.0"
+php-version = "8.5.0"
 
 [source]
 paths = ["src", "packages", "tests"]

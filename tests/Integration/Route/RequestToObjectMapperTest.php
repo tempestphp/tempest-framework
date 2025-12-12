@@ -18,7 +18,7 @@ use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithEnum;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
@@ -30,7 +30,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         try {
             map($request)->to(RequestObjectA::class);
         } catch (ValidationFailed $validationFailed) {
-            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['b'][0]);
+            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['b'][0]->rule);
         }
     }
 
@@ -140,7 +140,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         try {
             map($request)->to(RequestWithEnum::class);
         } catch (ValidationFailed $validationFailed) {
-            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['enumParam'][0]);
+            $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['enumParam'][0]->rule);
         }
     }
 }
