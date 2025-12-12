@@ -3,11 +3,7 @@
 namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
-use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
 use Tempest\View\Renderers\TempestViewRenderer;
-use Tempest\View\ViewCache;
-use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
 use function Tempest\view;
