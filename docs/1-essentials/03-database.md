@@ -124,7 +124,7 @@ Finally, you can make your own query builders if you want by implementing the {b
 
 ## Models
 
-A common use case in many applications is to represent persisted data as objects within your codebase. This is where model classes come in. Tempest tries to decouple models as best as possible from the database, so any object with public typed properties can represent a model.
+A common use case in many applications is to represent persisted data as objects within your codebase. This is where model classes come in. Tempest tries to decouple models as best as possible from the database, so any object with public typed properties can represent a table.
 
 These objects don't have to implement any interface—they may be plain-old PHP objects:
 
@@ -432,7 +432,7 @@ final class Book
 }
 ```
 
-Thanks to the {b`Tempest\Database\IsDatabaseModel`} trait, you can directly interact with the database via the model class:
+Thanks to the {b`Tempest\Database\IsDatabaseModel`} trait, you can interact with the database directly via the model class:
 
 ```php
 $book = Book::create(
@@ -454,6 +454,51 @@ $books = Book::select()
 
 $books[0]->chapters[2]->delete();
 ```
+
+### Using UUIDs as primary keys
+
+By default, Tempest uses auto-incrementing integers as primary keys. However, you can use UUIDs as primary keys instead by marking a {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest will automatically generate a UUID v7 value whenever a new model is created:
+
+```php src/Books/Book.php
+use Tempest\Database\PrimaryKey;
+use Tempest\Database\Uuid;
+
+final class Book
+{
+    #[Uuid]
+    public PrimaryKey $uuid;
+
+    public function __construct(
+        public string $title,
+        public string $author_name,
+    ) {}
+}
+```
+
+Within migrations, you may specify `uuid: true` to the `primary()` method, or directly use `uuid()`:
+
+```php src/Books/CreateBooksTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+
+final class CreateBooksTable implements MigratesUp
+{
+    public string $name = '2024-08-12_create_books_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('books')
+            ->primary('uuid', uuid: true)
+            ->text('title')
+            ->text('author_name');
+    }
+}
+```
+
+:::warning
+Currently, the `IsDatabaseModel` trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
+:::
 
 ## Migrations
 
