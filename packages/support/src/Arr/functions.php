@@ -9,6 +9,7 @@ namespace Tempest\Support\Arr {
     use InvalidArgumentException;
     use LogicException;
     use Random\Randomizer;
+    use Tempest\Mapper;
     use Tempest\Support\Str\ImmutableString;
     use Traversable;
 
@@ -1090,14 +1091,14 @@ namespace Tempest\Support\Arr {
     /**
      * Returns a new array with the value of the given array mapped to the given object.
      *
-     * @see Tempest\map()
+     * @see Tempest\Mapper\map()
      *
      * @template T
      * @param class-string<T> $to
      */
     function map_to(iterable $array, string $to): array
     {
-        return \Tempest\map(to_array($array))->collection()->to($to);
+        return Mapper\map(to_array($array))->collection()->to($to);
     }
 
     /**

@@ -11,6 +11,7 @@ use Tempest\Database\HasOne;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
+use Tempest\Database\Uuid;
 use Tempest\Database\Virtual;
 use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\SerializeWith;
@@ -548,5 +549,15 @@ final class ModelInspector
         }
 
         return $primaryKeyProperty->getValue($this->instance);
+    }
+
+    public function hasUuidPrimaryKey(): bool
+    {
+        return $this->getPrimaryKeyProperty()?->hasAttribute(Uuid::class) ?? false;
+    }
+
+    public function isUuidPrimaryKey(PropertyReflector $property): bool
+    {
+        return $property->getType()->matches(PrimaryKey::class) && $property->hasAttribute(Uuid::class);
     }
 }

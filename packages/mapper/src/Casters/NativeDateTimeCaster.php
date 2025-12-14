@@ -8,18 +8,33 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
+use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
+use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
-final readonly class NativeDateTimeCaster implements Caster
+#[Priority(Priority::HIGHEST)]
+final readonly class NativeDateTimeCaster implements Caster, DynamicCaster, ConfigurableCaster
 {
     public function __construct(
         private string $format = 'Y-m-d H:i:s',
         private bool $immutable = true,
     ) {}
 
-    public static function fromProperty(PropertyReflector $property): NativeDateTimeCaster
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
+    {
+        $type = $input instanceof PropertyReflector
+            ? $input->getType()
+            : $input;
+
+        return $type->matches(DateTimeInterface::class);
+    }
+
+    public static function configure(PropertyReflector $property, Context $context): NativeDateTimeCaster
     {
         $format = $property->getAttribute(HasDateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
 

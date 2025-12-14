@@ -38,11 +38,20 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
                 $this->container->get(SessionConfig::class),
             ),
         );
+
+        try {
+            $this->container->get(Redis::class)->connect();
+        } catch (Throwable) {
+            $this->markTestSkipped('Could not connect to Redis.');
+        }
     }
 
     protected function tearDown(): void
     {
-        $this->container->get(Redis::class)->flush();
+        try {
+            $this->container->get(Redis::class)->flush();
+        } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
+        }
     }
 
     #[Test]
