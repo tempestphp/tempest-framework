@@ -1,0 +1,62 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Though this script attempts to simplify, it borrows heavily from Symfony's approach.
+ *
+ * @see https://github.com/symfony/symfony/blob/7.2/.github/build-packages.php
+ */
+
+$output = shell_exec(__DIR__ . '/get-packages');
+$tempestPackages = json_decode($output, associative: true);
+
+// Determine the dev version from inter-package dependencies.
+// This ensures we bundle packages with the same version that deps expect.
+$devVersion = 'dev-main';
+
+foreach ($tempestPackages as $package) {
+    $composerPath = sprintf('%s/composer.json', $package['directory']);
+    $composerFile = json_decode(file_get_contents($composerPath), true);
+
+    foreach ($composerFile['require'] ?? [] as $dep => $version) {
+        if (str_starts_with($dep, 'tempest/') && str_starts_with($version, 'dev-')) {
+            $devVersion = $version;
+            break 2;
+        }
+    }
+}
+
+$composerPackages = [
+    'packages' => [],
+];
+
+foreach ($tempestPackages as $package) {
+    $composerPath = sprintf('%s/composer.json', $package['directory']);
+    $composerFile = json_decode(file_get_contents($composerPath), true);
+
+    // Bundle ALL packages as tar files to ensure consistent versions.
+    // This ensures all inter-package dependencies (e.g., dev-3.x) can be
+    // resolved from the local repository.
+    passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $package['directory']));
+
+    $composerFile['version'] = $devVersion;
+    $composerFile['dist']['type'] = 'tar';
+    $composerFile['dist']['url'] = 'file://'. $package['directory'] . '/package.tar';
+
+    // Add the package details to the root "packages.json."
+    $composerPackages['packages'][$composerFile['name']][$composerFile['version']] = $composerFile;
+
+    // Load the packages from the root "packages.json" file we will write in a second.
+    $composerFile['repositories'] = [
+        [
+            'type' => 'composer',
+            'url' => realpath(__DIR__ . '/../'),
+        ]
+    ];
+
+    file_put_contents($composerPath, json_encode($composerFile, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+}
+
+file_put_contents(__DIR__ . '/../packages.json', json_encode($composerPackages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+var_dump(file_get_contents(__DIR__ . '/../packages.json'));

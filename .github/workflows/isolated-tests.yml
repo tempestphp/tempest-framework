@@ -75,7 +75,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ./bin/build-changed-packages
+          ./bin/build-packages
           cd "packages/${{ matrix.package.basename }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction  --ignore-platform-reqs
 
