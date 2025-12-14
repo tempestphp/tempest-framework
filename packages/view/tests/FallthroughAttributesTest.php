@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewConfig;
