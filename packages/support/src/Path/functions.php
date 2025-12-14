@@ -127,7 +127,7 @@ namespace Tempest\Support\Path {
 
         // Trim forward and backward slashes
         $parts = array_map(fn (string $part) => trim($part, '/\\'), $parts);
-        $parts = array_filter($parts);
+        $parts = array_filter($parts, fn (string $part) => $part !== '');
 
         // Glue parts together
         $path = implode('/', $parts);
