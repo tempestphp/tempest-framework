@@ -289,7 +289,7 @@ final class MageWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'mage_uuid')]
     public ?GrimoireWithUuid $grimoire = null;
@@ -313,7 +313,7 @@ final class GrimoireWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'mage_uuid')]
     public ?MageWithUuid $mage = null;
@@ -330,7 +330,7 @@ final class SpellWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'mage_uuid')]
     public ?MageWithUuid $mage = null;
@@ -348,7 +348,7 @@ final class ArtifactWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'owner_uuid')]
     public ?MageWithUuid $owner = null;
@@ -423,7 +423,7 @@ final class MageSimple
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     /** @var \Tests\Tempest\Integration\Database\SpellSimple[] */
     #[HasMany]
@@ -440,7 +440,7 @@ final class SpellSimple
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[BelongsTo]
     public ?MageSimple $mage = null;
