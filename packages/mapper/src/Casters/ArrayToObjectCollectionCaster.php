@@ -4,15 +4,35 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
+use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\ConfigurableCaster;
+use Tempest\Mapper\Context;
+use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Json;
 
-final readonly class ArrayToObjectCollectionCaster implements Caster
+#[Priority(Priority::HIGHEST)]
+final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCaster, ConfigurableCaster
 {
     public function __construct(
         private PropertyReflector $property,
     ) {}
+
+    public static function accepts(PropertyReflector|TypeReflector $input): bool
+    {
+        if ($input instanceof TypeReflector) {
+            return false;
+        }
+
+        return $input->getIterableType() !== null;
+    }
+
+    public static function configure(PropertyReflector $property, Context $context): self
+    {
+        return new self($property);
+    }
 
     public function cast(mixed $input): mixed
     {

@@ -124,7 +124,7 @@ Finally, you can make your own query builders if you want by implementing the {b
 
 ## Models
 
-A common use case in many applications is to represent persisted data as objects within your codebase. This is where model classes come in. Tempest tries to decouple models as best as possible from the database, so any object with public typed properties can represent a model.
+A common use case in many applications is to represent persisted data as objects within your codebase. This is where model classes come in. Tempest tries to decouple models as best as possible from the database, so any object with public typed properties can represent a table.
 
 These objects don't have to implement any interface—they may be plain-old PHP objects:
 
@@ -147,7 +147,7 @@ final class Book
 Because model objects aren't tied to the database specifically, Tempest's [mapper](../2-features/01-mapper.md) can map data from many different sources to them. For instance, you can persist your models as JSON instead of a database, if you want to:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($json)->collection()->to(Book::class); // from JSON source to Book collection
 $json = map($books)->toJson(); // from Book collection to JSON
@@ -308,34 +308,41 @@ final class User
 
 The encryption key is taken from the `SIGNING_KEY` environment variable.
 
-### DTO properties
+### Data transfer object properties
 
-Sometimes, you might want to store data objects as-is in a table, without there needing to be a relation to another table. To do so, it's enough to add a serializer and caster to the data object's class, and Tempest will know that these objects aren't meant to be treated as database models. Next, you can store the object's data as a json field on the table (see [migrations](#migrations) for more info).
+You can store arbitrary objects directly in a `json` column when they don’t need to be part of the relational schema.
+
+To do this, annotate the class with `⁠#[Tempest\Mapper\SerializeAs]` and provide a unique identifier for the object’s serialized form. The identifier must map to a single, distinct class.
 
 ```php
-use Tempest\Database\IsDatabaseModel;
-use Tempest\Mapper\CastWith;
-use Tempest\Mapper\SerializeWith;
-use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\SerializeAs;
 
-final class DebugItem
+final class User implements Authenticatable
 {
-    use IsDatabaseModel;
-    
-    /* … */
-    
-    public Backtrace $backtrace,
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $email,
+        #[Hashed, SensitiveParameter]
+        public ?string $password,
+        public Settings $settings,
+    ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
-final class Backtrace
+#[SerializeAs('user_settings')]
+final class Settings
 {
-    // This object won't be considered a relation,
-    // but rather serialized and stored in a JSON column.
+    public function __construct(
+        public readonly Theme $theme,
+        public readonly bool $hide_sidebar_by_default,
+    ) {}
+}
 
-    public array $frames = [];
+enum Theme: string
+{
+    case DARK = 'dark';
+    case LIGHT = 'light';
+    case AUTO = 'auto';
 }
 ```
 
@@ -425,7 +432,7 @@ final class Book
 }
 ```
 
-Thanks to the {b`Tempest\Database\IsDatabaseModel`} trait, you can directly interact with the database via the model class:
+Thanks to the {b`Tempest\Database\IsDatabaseModel`} trait, you can interact with the database directly via the model class:
 
 ```php
 $book = Book::create(
@@ -447,6 +454,51 @@ $books = Book::select()
 
 $books[0]->chapters[2]->delete();
 ```
+
+### Using UUIDs as primary keys
+
+By default, Tempest uses auto-incrementing integers as primary keys. However, you can use UUIDs as primary keys instead by marking a {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest will automatically generate a UUID v7 value whenever a new model is created:
+
+```php src/Books/Book.php
+use Tempest\Database\PrimaryKey;
+use Tempest\Database\Uuid;
+
+final class Book
+{
+    #[Uuid]
+    public PrimaryKey $uuid;
+
+    public function __construct(
+        public string $title,
+        public string $author_name,
+    ) {}
+}
+```
+
+Within migrations, you may specify `uuid: true` to the `primary()` method, or directly use `uuid()`:
+
+```php src/Books/CreateBooksTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+
+final class CreateBooksTable implements MigratesUp
+{
+    public string $name = '2024-08-12_create_books_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('books')
+            ->primary('uuid', uuid: true)
+            ->text('title')
+            ->text('author_name');
+    }
+}
+```
+
+:::warning
+Currently, the `IsDatabaseModel` trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
+:::
 
 ## Migrations
 

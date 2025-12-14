@@ -9,7 +9,7 @@ use Tempest\Mapper\SerializerFactory;
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 use function Tempest\get;
-use function Tempest\make;
+use function Tempest\Mapper\make;
 use function Tempest\Support\arr;
 
 /**
@@ -264,7 +264,10 @@ final readonly class QueryBuilder
 
         if ($id !== null && $primaryKeyProperty !== null) {
             $primaryKeyName = $primaryKeyProperty->getName();
-            $model->{$primaryKeyName} = new PrimaryKey($id);
+
+            if (! $inspector->hasUuidPrimaryKey() || $model->{$primaryKeyName} === null) {
+                $model->{$primaryKeyName} = new PrimaryKey($id);
+            }
         }
 
         return $model;

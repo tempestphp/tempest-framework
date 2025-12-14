@@ -5,63 +5,94 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Container\Container;
+use Tempest\Container\Singleton;
 use Tempest\Reflection\PropertyReflector;
+use UnitEnum;
 
-use function Tempest\get;
-
+#[Singleton]
 final class CasterFactory
 {
     /**
-     * @var array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure}[]
+     * @var array<string, array{class-string<\Tempest\Mapper\Caster>, int}[]>
      */
-    private array $casters = [];
+    private(set) array $casters = [];
+
+    private(set) Context|UnitEnum|string|null $context = null;
+
+    public function __construct(
+        private readonly Container $container,
+    ) {}
 
     /**
      * @param class-string<\Tempest\Mapper\Caster> $casterClass
      */
-    public function addCaster(string|Closure $for, string|Closure $casterClass): self
+    public function addCaster(string $casterClass, int $priority = 0, Context|UnitEnum|string|null $context = null): self
     {
-        $this->casters = [[$for, $casterClass], ...$this->casters];
+        $context = MappingContext::from($context);
+
+        $this->casters[$context->name] ??= [];
+        $this->casters[$context->name][] = [$casterClass, $priority];
+
+        usort($this->casters[$context->name], static fn (array $a, array $b) => $a[1] <=> $b[1]);
 
         return $this;
     }
 
+    /**
+     * Sets the context that should be passed to casters.
+     */
+    public function in(Context|UnitEnum|string $context): self
+    {
+        $serializer = clone $this;
+        $serializer->context = $context;
+
+        return $serializer;
+    }
+
     public function forProperty(PropertyReflector $property): ?Caster
     {
+        $context = MappingContext::from($this->context);
         $type = $property->getType();
-
-        // Get CastWith from the property
         $castWith = $property->getAttribute(CastWith::class);
 
-        // Get CastWith from the property's type if there's no property-defined CastWith
         if ($castWith === null && $type->isClass()) {
             $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-
-            if ($castWith === null && $type->asClass()->getAttribute(SerializeAs::class)) {
-                $castWith = new CastWith(DtoCaster::class);
-            }
         }
 
-        // Return the caster if defined with CastWith
-        if ($castWith !== null) {
-            // Resolve the caster from the container
-            return get($castWith->className);
+        if ($castWith) {
+            return $this->container->get($castWith->className, context: $context);
         }
 
         if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
-            return get($casterAttribute->caster);
+            return $this->container->get($casterAttribute->caster, context: $context);
         }
 
-        // Resolve caster from manual additions
-        foreach ($this->casters as [$for, $casterClass]) {
-            if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {
-                return is_callable($casterClass)
-                    ? $casterClass($property)
-                    : get($casterClass);
+        foreach ($this->resolveCasters() as [$casterClass]) {
+            if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
+                if (! $casterClass::accepts($property)) {
+                    continue;
+                }
             }
+
+            if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {
+                return $casterClass::configure($property, $context);
+            }
+
+            return $this->container->get($casterClass, context: $context);
         }
 
         return null;
+    }
+
+    /**
+     * @return array{class-string<\Tempest\Mapper\Caster>|Closure,int}[]
+     */
+    private function resolveCasters(): array
+    {
+        return [
+            ...($this->casters[MappingContext::from($this->context)->name] ?? []),
+            ...($this->casters[MappingContext::default()->name] ?? []),
+        ];
     }
 }

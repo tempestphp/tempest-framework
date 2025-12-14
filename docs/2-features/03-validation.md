@@ -125,7 +125,7 @@ use Tempest\Support\Arr;
 $failures = $this->validator->validateValue('jon@doe.co', new Email());
 
 // Map failures to their message
-$errors = Arr\map($failures, fn (Rule $failure) => $this->validator->getErrorMessage($failure));
+$errors = Arr\map($failures, fn (FailingRule $failure) => $this->validator->getErrorMessage($failure));
 ```
 
 You may also specify the field name of the validation failure to get a localized message for that field.
@@ -145,3 +145,17 @@ validation_error:
     .input {$field :string}
     {$field} must be a valid email address.
 ```
+
+Sometimes though, you may want to have a specific error message for a rule, without overriding the default translation message for that rule.
+
+This can be done by using the {b`#[Tempest\Validation\TranslationKey]`} attribute on the property being validated. For instance, you may have the following object:
+
+```php
+final class Book {
+    #[Rules\HasLength(min: 5, max: 50)]
+    #[TranslationKey('book_management.book_title')]
+    public string $title;
+}
+```
+
+When this rule fails, the `getErrorMessage()` method from the validator will use `validation_error.has_length.book_management.book_title` as the translation key, instead of `validation_error.has_length`.

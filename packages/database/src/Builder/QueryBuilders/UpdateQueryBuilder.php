@@ -4,6 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
+use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
@@ -44,6 +46,14 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     private array $after = [];
 
     private ?PrimaryKey $primaryKeyForRelations = null;
+
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
+    }
 
     public ImmutableArray $wheres {
         get => $this->update->where;
@@ -253,7 +263,9 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function serializeValue(PropertyReflector $property, mixed $value): mixed
     {
-        $serializer = $this->serializerFactory->forProperty($property);
+        $serializer = $this->serializerFactory
+            ->in($this->context)
+            ->forProperty($property);
 
         if ($value !== null && $serializer !== null) {
             return $serializer->serialize($value);

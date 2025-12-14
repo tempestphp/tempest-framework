@@ -12,7 +12,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Validator;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 final readonly class RequestToObjectMapper implements Mapper

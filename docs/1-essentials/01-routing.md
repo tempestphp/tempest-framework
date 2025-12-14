@@ -368,7 +368,7 @@ Once you have created a request class, you may simply inject it into a controlle
 ```php app/AirportController.php
 use Tempest\Router\Post;
 use Tempest\Http\Responses\Redirect;
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Router\uri;
 
 final readonly class AirportController

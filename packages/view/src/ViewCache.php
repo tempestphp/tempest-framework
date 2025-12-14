@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Closure;
+use Throwable;
 
 use function Tempest\internal_storage_path;
 use function Tempest\Support\path;
@@ -16,23 +17,15 @@ final class ViewCache
         private ?ViewCachePool $pool = null,
     ) {
         $this->pool ??= new ViewCachePool(
-            directory: internal_storage_path('cache/views'),
+            directory: self::getCachePath(),
         );
     }
 
-    public static function enabled(?string $path = null): self
+    public static function create(bool $enabled = true, ?string $path = null): self
     {
         return new self(
-            enabled: true,
-            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
-        );
-    }
-
-    public static function disabled(?string $path = null): self
-    {
-        return new self(
-            enabled: false,
-            pool: new ViewCachePool($path ?? __DIR__ . '/../.tempest/cache'),
+            enabled: $enabled,
+            pool: new ViewCachePool($path ?? self::getCachePath()),
         );
     }
 
@@ -54,5 +47,14 @@ final class ViewCache
         }
 
         return path($this->pool->directory, $cacheItem->getKey() . '.php')->toString();
+    }
+
+    private static function getCachePath(): string
+    {
+        try {
+            return internal_storage_path('cache/views');
+        } catch (Throwable) {
+            return __DIR__ . '/../.tempest/cache';
+        }
     }
 }

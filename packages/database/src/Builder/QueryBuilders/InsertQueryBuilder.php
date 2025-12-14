@@ -4,6 +4,8 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Database;
+use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
@@ -19,9 +21,11 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\Random;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Database\inspect;
+use function Tempest\get;
 use function Tempest\Support\str;
 
 /**
@@ -39,6 +43,14 @@ final class InsertQueryBuilder implements BuildsQuery
     public array $bindings = [];
 
     public ModelInspector $model;
+
+    private Database $database {
+        get => get(Database::class, $this->onDatabase);
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->database->dialect);
+    }
 
     /**
      * @param class-string<TModel>|string|TModel $model
@@ -390,15 +402,21 @@ final class InsertQueryBuilder implements BuildsQuery
         $entry = [];
 
         foreach ($modelClass->getPublicProperties() as $property) {
+            $propertyName = $property->getName();
+
             if (! $property->isInitialized($model)) {
+                if ($definition->isUuidPrimaryKey($property)) {
+                    $uuid = new PrimaryKey(Random\uuid());
+                    $property->setValue($model, $uuid);
+                    $entry[$propertyName] = $this->serializeValue($property, $uuid);
+                }
+
                 continue;
             }
 
             if ($property->isVirtual()) {
                 continue;
             }
-
-            $propertyName = $property->getName();
 
             if ($property->hasAttribute(Virtual::class)) {
                 continue;
@@ -469,7 +487,10 @@ final class InsertQueryBuilder implements BuildsQuery
             return null;
         }
 
-        return $this->serializerFactory->forProperty($property)?->serialize($value) ?? $value;
+        return $this->serializerFactory
+            ->in($this->context)
+            ->forProperty($property)
+            ?->serialize($value) ?? $value;
     }
 
     private function serializeIterableValue(string $key, mixed $value): mixed
