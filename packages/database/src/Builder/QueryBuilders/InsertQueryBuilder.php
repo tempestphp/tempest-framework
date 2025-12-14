@@ -442,6 +442,10 @@ final class InsertQueryBuilder implements BuildsQuery
 
             $column = $propertyName;
 
+            if ($property->getType()->getName() === PrimaryKey::class && $value === null) {
+                continue;
+            }
+
             if ($definition->isRelation($property)) {
                 [$column, $value] = $this->resolveRelationProperty($definition, $property, $value);
             } else {
