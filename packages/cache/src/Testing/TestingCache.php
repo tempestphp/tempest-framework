@@ -11,6 +11,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\GenericLock;
+use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\Support\Random;
@@ -33,13 +34,17 @@ final class TestingCache implements Cache
         $this->cache = new GenericCache($this->adapter);
     }
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): TestingLock
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): TestingLock
     {
+        if ($duration instanceof DateTimeInterface) {
+            $duration = $duration->since(DateTime::now());
+        }
+
         return new TestingLock(new GenericLock(
             key: (string) $key,
             owner: $owner ? (string) $owner : Random\secure_string(length: 10),
             cache: $this->cache,
-            expiration: $expiration,
+            duration: $duration,
         ));
     }
 
@@ -186,9 +191,9 @@ final class TestingCache implements Cache
     /**
      * Asserts that the specified lock is being held.
      */
-    public function assertLocked(string|Stringable $key, null|Stringable|string $by = null, null|DateTimeInterface|Duration $until = null): self
+    public function assertLocked(string|Stringable $key, null|Stringable|string $by = null, null|DateTimeInterface|Duration $for = null): self
     {
-        $this->lock($key)->assertLocked($by, $until);
+        $this->lock($key)->assertLocked($by, $for);
 
         return $this;
     }
