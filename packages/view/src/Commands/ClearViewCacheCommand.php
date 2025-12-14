@@ -10,7 +10,7 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\View\ViewCache;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class ClearViewCacheCommand
     {
         use HasConsole;

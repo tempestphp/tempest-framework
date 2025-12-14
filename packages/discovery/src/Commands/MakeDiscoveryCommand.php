@@ -12,7 +12,7 @@ use Tempest\Discovery\Stubs\DiscoveryStub;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeDiscoveryCommand
     {
         use PublishesFiles;

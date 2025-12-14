@@ -17,7 +17,7 @@ use function Tempest\Support\str;
 use function Tempest\Support\Str\after_last;
 use function Tempest\Support\Str\before_last;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class, false)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class RoutesCommand
     {
         public function __construct(
