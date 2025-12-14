@@ -178,4 +178,59 @@ final class CreateTableStatementTest extends TestCase
             SQL,
         ];
     }
+
+    #[DataProvider('provide_uuid_primary_database_dialects')]
+    public function test_create_table_with_uuid_primary(DatabaseDialect $dialect, string $validSql): void
+    {
+        $uuid = new CreateTableStatement('users')
+            ->uuid('uuid')
+            ->text('name')
+            ->text('email')
+            ->compile($dialect);
+
+        $primary = new CreateTableStatement('users')
+            ->primary('uuid', uuid: true)
+            ->text('name')
+            ->text('email')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $uuid);
+        $this->assertSame($validSql, $primary);
+    }
+
+    public static function provide_uuid_primary_database_dialects(): iterable
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `users` (
+                `uuid` VARCHAR(36) PRIMARY KEY, 
+                `name` TEXT NOT NULL, 
+                `email` TEXT NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE `users` (
+                `uuid` UUID PRIMARY KEY, 
+                `name` TEXT NOT NULL, 
+                `email` TEXT NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `users` (
+                `uuid` TEXT PRIMARY KEY, 
+                `name` TEXT NOT NULL, 
+                `email` TEXT NOT NULL
+            );
+            SQL,
+        ];
+    }
 }
