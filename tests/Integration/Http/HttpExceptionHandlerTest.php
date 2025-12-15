@@ -9,9 +9,7 @@ use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
-use Tempest\Http\Method;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
@@ -124,7 +122,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new HttpRequestFailed(new GenericRequest(Method::GET, '/test'), $status));
+            $handler->handle(new HttpRequestFailed($status));
         });
 
         $this->assertSame($status, $this->response->status);

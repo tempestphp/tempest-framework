@@ -31,8 +31,6 @@ final class RouteConfig
             SetCookieMiddleware::class,
             HandleRouteSpecificMiddleware::class,
         ),
-
-        public bool $throwHttpExceptions = true,
     ) {}
 
     public function apply(RouteConfig $newConfig): void

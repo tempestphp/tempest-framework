@@ -13,6 +13,7 @@ use Tempest\Database\Migrations\MigrationFileWasMissing;
 use Tempest\Database\Migrations\MigrationHashMismatched;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationValidationFailed;
+use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventHandler;
 
 #[Singleton]
@@ -23,6 +24,7 @@ final class MigrateValidateCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
+        private readonly EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand(
@@ -33,6 +35,7 @@ final class MigrateValidateCommand
         #[ConsoleArgument(description: 'Use a specific database.')]
         ?string $database = null,
     ): ExitCode {
+        $this->eventBus->listen($this->onMigrationValidationFailed(...));
         $this->console->header('Validating migration files');
         $this->migrationManager->onDatabase($database)->validate();
 
@@ -48,7 +51,6 @@ final class MigrateValidateCommand
         return ExitCode::SUCCESS;
     }
 
-    #[EventHandler]
     public function onMigrationValidationFailed(MigrationValidationFailed $event): void
     {
         $error = match ($event->exception::class) {

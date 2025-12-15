@@ -11,13 +11,12 @@ use Tempest\Http\SensitiveField;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use Tempest\Validation\FailingRule;
-use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 
 use function Tempest\get;
-use function Tempest\Support\arr;
 
 final class Invalid implements Response
 {
@@ -40,21 +39,17 @@ final class Invalid implements Response
             $this->addHeader('Location', $referer);
             $this->status = Status::FOUND;
         } else {
-            $this->status = Status::BAD_REQUEST;
+            $this->status = Status::UNPROCESSABLE_CONTENT;
         }
 
         $this->flash(Session::VALIDATION_ERRORS, $failingRules);
         $this->flash(Session::ORIGINAL_VALUES, $this->filterSensitiveFields($request, $targetClass));
-        $this->addHeader(
-            'x-validation',
-            Json\encode(
-                arr($failingRules)->map(
-                    fn (array $failingRulesForField) => arr($failingRulesForField)->map(
-                        fn (FailingRule $rule) => $this->validator->getErrorMessage($rule),
-                    )->toArray(),
-                )->toArray(),
-            ),
-        );
+        $this->addHeader('x-validation', value: Json\encode(
+            Arr\map_iterable($failingRules, fn (array $failingRulesForField) => Arr\map_iterable(
+                array: $failingRulesForField,
+                map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule),
+            )),
+        ));
     }
 
     /**

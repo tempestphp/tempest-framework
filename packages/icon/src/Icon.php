@@ -64,7 +64,6 @@ final class Icon
 
             if ($response->status !== Status::OK) {
                 throw new HttpRequestFailed(
-                    request: new GenericRequest(Method::GET, $url),
                     status: $response->status,
                     cause: $response,
                 );

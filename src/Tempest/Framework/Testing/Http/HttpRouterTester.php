@@ -11,16 +11,15 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Router\RouteConfig;
+use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Router\Router;
 use Tempest\Support\Uri;
+use Throwable;
 
 use function Tempest\Mapper\map;
 
 final class HttpRouterTester
 {
-    private bool $throwHttpExceptions = false;
-
     public function __construct(
         private Container $container,
     ) {}
@@ -138,23 +137,23 @@ final class HttpRouterTester
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
-        $this->container->get(RouteConfig::class)->throwHttpExceptions = $this->throwHttpExceptions;
+        try {
+            $response = $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do());
+        } catch (Throwable $exception) {
+            $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $exception);
+
+            return new TestResponseHelper(
+                response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $exception),
+                request: $request,
+                container: $this->container,
+            );
+        }
 
         return new TestResponseHelper(
-            response: $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
+            response: $response,
             request: $request,
             container: $this->container,
         );
-    }
-
-    /**
-     * Instructs the router to throw {@see Tempest\Http\HttpException} errors when an error response is returned. This mimics production behavior.
-     */
-    public function throwExceptions(bool $throw = true): self
-    {
-        $this->throwHttpExceptions = $throw;
-
-        return $this;
     }
 
     public function makePsrRequest(
