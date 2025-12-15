@@ -2,10 +2,10 @@
 
 namespace Tempest\Core;
 
-interface HasContext
+interface ProvidesContext
 {
     /**
-     * Provides context for the exception-handling pipeline.
+     * Provides context for debugging.
      */
     public function context(): iterable;
 }

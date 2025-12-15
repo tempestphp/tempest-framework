@@ -3,9 +3,9 @@
 namespace Tempest\Cryptography\Encryption\Exceptions;
 
 use Exception;
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 
-final class DecryptionFailed extends Exception implements EncryptionException, HasContext
+final class DecryptionFailed extends Exception implements EncryptionException, ProvidesContext
 {
     public function __construct(
         string $message,

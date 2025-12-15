@@ -2,25 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Core\Exceptions;
 
-use Tempest\Core\AppConfig;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final class ExceptionProcessorDiscovery implements Discovery
+final class ExceptionReporterDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private readonly AppConfig $appConfig,
+        private readonly ExceptionsConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->implements(ExceptionProcessor::class)) {
+        if ($class->implements(ExceptionReporter::class)) {
             $this->discoveryItems->add($location, $class->getName());
         }
     }
@@ -28,7 +27,7 @@ final class ExceptionProcessorDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as $className) {
-            $this->appConfig->exceptionProcessors[] = $className;
+            $this->config->addReporter($className);
         }
     }
 }

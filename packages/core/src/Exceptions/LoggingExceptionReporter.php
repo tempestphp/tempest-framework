@@ -1,27 +1,28 @@
 <?php
 
-namespace Tempest\Core;
+namespace Tempest\Core\Exceptions;
 
+use Tempest\Core\ProvidesContext;
 use Tempest\Debug\Debug;
 use Tempest\Log\Logger;
 use Throwable;
 
 /**
- * An exception processor that logs exceptions.
+ * An exception reporter that write exceptions through the {@see Logger}.
  */
-final class LogExceptionProcessor implements ExceptionProcessor
+final class LoggingExceptionReporter implements ExceptionReporter
 {
     public function __construct(
         private readonly Logger $logger,
     ) {}
 
-    public function process(Throwable $throwable): void
+    public function report(Throwable $throwable): void
     {
         $items = [
             'class' => $throwable::class,
             'exception' => $throwable->getMessage(),
             'trace' => $throwable->getTraceAsString(),
-            'context' => $throwable instanceof HasContext
+            'context' => $throwable instanceof ProvidesContext
                 ? $throwable->context()
                 : [],
         ];

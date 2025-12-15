@@ -1,66 +1,60 @@
 ---
 title: Exception handling
-description: "Learn how to gracefully handle exceptions in your application by writing exception processors."
+description: "Learn how exception handling works, how to manually report exceptions, and how to customize exception rendering for HTTP responses."
 ---
 
 ## Overview
 
-Tempest comes with its own exception handler, which provides a simple way to catch and process exceptions. During local development, Tempest uses [Whoops](https://github.com/filp/whoops) to display detailed error pages. In production, it will show a generic error page.
+Tempest comes with its own exception handler, which provides a simple way to catch and process exceptions. During local development, Tempest uses [Whoops](https://github.com/filp/whoops) to display detailed error pages. In production, it displays a generic error page.
 
-When an exception is thrown, it will be caught and piped through the registered exception processors. By default, the only registered exception processor, {b`Tempest\Core\LogExceptionProcessor`}, will simply log the exception.
+When an exception is thrown, it is caught and piped through the registered exception reporters. By default, the only registered exception reporter, {b`Tempest\Core\LoggingExceptionReporter`}, logs the exception.
 
-Of course, you may create your own exception processors. This is done by creating a class that implements the {`Tempest\Core\ExceptionProcessor`} interface. Classes implementing this interface are automatically [discovered](../4-internals/02-discovery.md), so you don't need to register them manually.
+Custom exception reporters can be created by implementing the {b`Tempest\Core\Exceptions\ExceptionReporter`} interface. Classes implementing this interface are automatically [discovered](../4-internals/02-discovery.md) and do not require manual registration.
 
-## Reporting exceptions
+## Processing exceptions
 
-Sometimes, you may want to report an exception without necessarily throwing it. For example, you may want to log an exception, but not stop the execution of the application. To do this, you can use the `Tempest\report()` function.
+Exceptions can be reported without throwing them using the `process()` method of the {b`Tempest\Core\Exceptions\ExceptionProcessor`} interface. This allows putting exceptions through the reporting process without stopping the application's execution.
 
-```php
-use function Tempest\report;
+```php app/CreateUser.php
+use Tempest\Core\Exceptions\ExceptionProcessor;
 
-try {
-    // Some code that may throw an exception
-} catch (SomethingFailed $e) {
-    report($e);
+final readonly class CreateUser
+{
+    public function __construct(
+        private ExceptionProcessor $exceptions
+    ) {}
+
+    public function __invoke(): void
+    {
+        try {
+            // Some code that may throw an exception
+        } catch (SomethingFailed $somethingFailed) {
+            $this->exceptions->process($somethingFailed);
+        }
+    }
 }
 ```
 
-## Disabling default logging
+## Disabling exception logging
 
-Exception processors are discovered when Tempest boots, then stored in the `exceptionProcessors` property of {`Tempest\Core\AppConfig`}. The default logging processor, {b`Tempest\Core\LogExceptionProcessor`}, is automatically added to the list of processors.
+The default logging reporter, {b`Tempest\Core\Exceptions\ExceptionReporter`}, is automatically added to the list of reporters. To disable it, create an {b`Tempest\Core\Exceptions\ExceptionsConfig`} [configuration file](../1-essentials/06-configuration.md#configuration-files) and set `logging` to `false`:
 
-To disable exception logging, you may remove it in a `KernelEvent::BOOTED` event handler:
+```php app/exceptions.config.php
+use Tempest\Core\Exceptions\ExceptionsConfig;
 
-```php
-use Tempest\Core\AppConfig;
-use Tempest\Core\KernelEvent;
-use Tempest\Core\LogExceptionProcessor;
-use Tempest\EventBus\EventHandler;
-use Tempest\Support\Arr;
-
-final readonly class DisableExceptionLogging
-{
-    public function __construct(
-        private AppConfig $appConfig,
-    ) {
-    }
-
-    #[EventHandler(KernelEvent::BOOTED)]
-    public function __invoke(): void
-    {
-        Arr\forget_values($this->appConfig->exceptionProcessors, LogExceptionProcessor::class);
-    }
-}
+return new ExceptionsConfig(
+    logging: false,
+);
 ```
 
 ## Adding context to exceptions
 
-Sometimes, an exception may have information that you would like to be logged. By implementing the {`Tempest\Core\HasContext`} interface on an exception class, you can provide additional context that will be logged—and available to other processors.
+Exceptions can provide additional information for logging by implementing the {`Tempest\Core\ProvidesContext`} interface. The context data becomes available to exception processors.
 
 ```php
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 
-final readonly class UserWasNotFound extends Exception implements HasContext
+final readonly class UserWasNotFound extends Exception implements ProvidesContext
 {
     public function __construct(private string $userId)
     {
@@ -76,47 +70,68 @@ final readonly class UserWasNotFound extends Exception implements HasContext
 }
 ```
 
-## Customizing the error page
+## Customizing exception rendering
 
-In production, when an uncaught exception occurs, Tempest displays a minimalistic, generic error page. You may customize this behavior by adding a middleware dedicated to catching {b`Tempest\Http\HttpRequestFailed`} exceptions.
+Exception renderers provide control over how exceptions are rendered in HTTP responses. Custom renderers can be used to display specialized error pages for specific exception types, format errors differently based on content type (JSON, HTML, XML), or provide user-friendly error messages for common scenarios like 404 or validation failures.
 
-For instance, you may display a branded error page by providing a view:
+To create a custom renderer, implement the {b`Tempest\Router\Exceptions\ExceptionRenderer`} interface. It requires a `canRender()` method to determine if the renderer can handle the given exception and request, and a `render()` method to produce the response:
 
-```php
+```php app/NotFoundExceptionRenderer.php
+use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
-use Tempest\Router\HttpMiddleware;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Status;
+use Tempest\Router\Exceptions\ExceptionRenderer;
+use Throwable;
+
 use function Tempest\view;
 
-final class CatchHttpRequestFailuresMiddleware implements HttpMiddleware
+final class NotFoundExceptionRenderer implements ExceptionRenderer
 {
-    public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
+    public function canRender(Throwable $throwable, Request $request): bool
     {
-        try {
-            return $next($request);
-        } catch (HttpRequestFailed $failure) {
-            return new GenericResponse(
-                status: $failure->status,
-                body: view('./error.view.php', failure: $failure),
-            );
+        if (! $request->accepts(ContentType::HTML)) {
+            return false;
         }
+
+        if (! $throwable instanceof HttpRequestFailed) {
+            return false;
+        }
+
+        return $throwable->status === Status::NOT_FOUND;
+    }
+
+    public function render(Throwable $throwable): Response
+    {
+        return new NotFound(
+            body: view('./404.view.php'),
+        );
     }
 }
 ```
 
+:::info
+Exception renderers are automatically [discovered](../4-internals/02-discovery.md) and checked in {b`#[Tempest\Core\Priority]`} order.
+:::
+
 ## Testing
 
-By extending {`Tempest\Framework\Testing\IntegrationTest`} from your test case, you gain access to the exception testing utilities, which allow you to make assertions about reported exceptions.
+By extending {`Tempest\Framework\Testing\IntegrationTest`} from a test case, exception testing utilities may be accessed for making assertions about processed exceptions.
 
 ```php
-// Prevents exceptions from being actually processed
-$this->exceptions->preventReporting();
+// Allows exceptions to be processed during tests
+$this->exceptions->allowProcessing();
 
-// Asserts that the exception was reported
-$this->exceptions->assertReported(UserNotFound::class);
+// Assert that the exception was processed
+$this->exceptions->assertProcessed(UserNotFound::class);
 
-// Asserts that the exception was not reported
-$this->exceptions->assertNotReported(UserNotFound::class);
+// Assert that the exception was not processed
+$this->exceptions->assertNotProcessed(UserNotFound::class);
 
-// Asserts that no exceptions were reported
-$this->exceptions->assertNothingReported();
+// Assert that no exceptions were processed
+$this->exceptions->assertNothingProcessed();
 ```
+
+By default, Tempest disables exception processing during tests. It is recommended to unit-test your own {b`Tempest\Core\Exceptions\ExceptionReporter`} implementations.

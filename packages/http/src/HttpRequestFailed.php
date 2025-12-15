@@ -3,13 +3,13 @@
 namespace Tempest\Http;
 
 use Exception;
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 use Throwable;
 
 /**
  * Represents an HTTP exception.
  */
-final class HttpRequestFailed extends Exception implements HasContext
+final class HttpRequestFailed extends Exception implements ProvidesContext
 {
     public function __construct(
         private(set) readonly Status $status,

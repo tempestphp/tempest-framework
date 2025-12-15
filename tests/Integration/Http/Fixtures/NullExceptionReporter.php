@@ -2,16 +2,18 @@
 
 namespace Tests\Tempest\Integration\Http\Fixtures;
 
-use Tempest\Core\ExceptionProcessor;
+use Tempest\Container\Singleton;
+use Tempest\Core\Exceptions\ExceptionReporter;
 use Tempest\Discovery\SkipDiscovery;
 use Throwable;
 
 #[SkipDiscovery]
-final class NullExceptionProcessor implements ExceptionProcessor
+#[Singleton]
+final class NullExceptionReporter implements ExceptionReporter
 {
     public static array $exceptions = [];
 
-    public function process(Throwable $throwable): void
+    public function report(Throwable $throwable): void
     {
         static::$exceptions[] = $throwable;
     }
