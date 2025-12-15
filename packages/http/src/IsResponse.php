@@ -35,7 +35,10 @@ trait IsResponse
 
     public function getHeader(string $name): ?Header
     {
-        return $this->headers[$name] ?? null;
+        return array_find(
+            array: $this->headers,
+            callback: fn (Header $header) => strcasecmp($header->name, $name) === 0,
+        );
     }
 
     public function addHeader(string $key, string $value): self

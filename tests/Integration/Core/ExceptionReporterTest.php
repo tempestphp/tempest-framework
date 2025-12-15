@@ -2,59 +2,24 @@
 
 namespace Tests\Tempest\Integration\Core;
 
-use Exception;
-use Tempest\Core\AppConfig;
-use Tempest\Core\ExceptionReporter;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\Exceptions\ExceptionsConfig;
+use Tempest\Core\Exceptions\LoggingExceptionReporter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\Http\Fixtures\NullExceptionProcessor;
-
-use function Tempest\report;
 
 final class ExceptionReporterTest extends FrameworkIntegrationTestCase
 {
-    protected function setUp(): void
+    #[Test]
+    public function logging_reporter_is_discovered(): void
     {
-        parent::setUp();
-
-        $this->exceptions->preventReporting(prevent: false);
-        $this->container->get(AppConfig::class)->exceptionProcessors = [NullExceptionProcessor::class];
+        $this->assertContains(LoggingExceptionReporter::class, $this->container->get(ExceptionsConfig::class)->reporters);
     }
 
-    protected function tearDown(): void
+    #[Test]
+    public function logging_reporter_can_be_disabled_through_config(): void
     {
-        parent::tearDown();
+        $this->container->config(new ExceptionsConfig(logging: false));
 
-        NullExceptionProcessor::$exceptions = [];
-    }
-
-    public function test_exception_reporter_processes_exception_processors(): void
-    {
-        /** @var ExceptionReporter $reporter */
-        $reporter = $this->container->get(ExceptionReporter::class);
-        $reporter->report(new Exception('foo'));
-
-        $this->assertCount(1, NullExceptionProcessor::$exceptions);
-        $this->assertInstanceOf(Exception::class, NullExceptionProcessor::$exceptions[0]);
-        $this->assertSame('foo', NullExceptionProcessor::$exceptions[0]->getMessage());
-
-        $this->assertCount(1, $reporter->reported);
-        $this->assertInstanceOf(Exception::class, $reporter->reported[0]);
-        $this->assertSame('foo', $reporter->reported[0]->getMessage());
-    }
-
-    public function test_report_function(): void
-    {
-        report(new Exception('foo'));
-
-        $this->assertCount(1, NullExceptionProcessor::$exceptions);
-        $this->assertInstanceOf(Exception::class, NullExceptionProcessor::$exceptions[0]);
-        $this->assertSame('foo', NullExceptionProcessor::$exceptions[0]->getMessage());
-
-        /** @var ExceptionReporter $reporter */
-        $reporter = $this->container->get(ExceptionReporter::class);
-
-        $this->assertCount(1, $reporter->reported);
-        $this->assertInstanceOf(Exception::class, $reporter->reported[0]);
-        $this->assertSame('foo', $reporter->reported[0]->getMessage());
+        $this->assertEmpty($this->container->get(ExceptionsConfig::class)->reporters);
     }
 }

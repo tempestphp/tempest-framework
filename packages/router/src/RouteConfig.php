@@ -24,6 +24,9 @@ final class RouteConfig
         /** @var class-string<\Tempest\Router\ResponseProcessor>[] */
         public array $responseProcessors = [],
 
+        /** @var array<int,class-string<\Tempest\Router\Exceptions\ExceptionRenderer>> */
+        public array $exceptionRenderers = [],
+
         /** @var Middleware<\Tempest\Router\HttpMiddleware> */
         public Middleware $middleware = new Middleware(
             HandleRouteExceptionMiddleware::class,
@@ -44,5 +47,10 @@ final class RouteConfig
     public function addResponseProcessor(string $responseProcessor): void
     {
         $this->responseProcessors[] = $responseProcessor;
+    }
+
+    public function addExceptionRenderer(string $exceptionRenderer, int $priority): void
+    {
+        $this->exceptionRenderers[$priority] = $exceptionRenderer;
     }
 }

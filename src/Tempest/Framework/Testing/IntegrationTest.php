@@ -16,7 +16,7 @@ use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\ExceptionTester;
+use Tempest\Core\Exceptions\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -149,7 +149,7 @@ abstract class IntegrationTest extends TestCase
         $this->process->disableProcessExecution();
 
         $this->exceptions = $this->container->get(ExceptionTester::class);
-        $this->exceptions->preventReporting();
+        $this->exceptions->preventProcessing();
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();

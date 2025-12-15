@@ -5,6 +5,7 @@ namespace Tempest\Router\Exceptions;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Http\ContentType;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
@@ -20,12 +21,17 @@ use Throwable;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
-final readonly class HtmlExceptionRenderer
+final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
         private AppConfig $appConfig,
         private Container $container,
     ) {}
+
+    public function canRender(Throwable $throwable, Request $request): bool
+    {
+        return $request->accepts(ContentType::HTML, ContentType::XHTML);
+    }
 
     public function render(Throwable $throwable): Response
     {
@@ -44,7 +50,6 @@ final readonly class HtmlExceptionRenderer
 
         return match (true) {
             $throwable instanceof ValidationFailed => new Invalid($throwable->subject, $throwable->failingRules, $throwable->targetClass),
-            $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),

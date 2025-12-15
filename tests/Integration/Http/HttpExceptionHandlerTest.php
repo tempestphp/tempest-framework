@@ -6,7 +6,7 @@ use Closure;
 use Exception;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Exceptions\ExceptionsConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Http\HttpRequestFailed;
@@ -19,7 +19,7 @@ use Tempest\Router\ResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionWithContext;
-use Tests\Tempest\Integration\Http\Fixtures\NullExceptionProcessor;
+use Tests\Tempest\Integration\Http\Fixtures\NullExceptionReporter;
 use Throwable;
 
 final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
@@ -110,7 +110,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         });
 
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $this->response->status);
-        $this->assertStringContainsString('An unexpected server error occurred', $this->render($this->response->body));
+        $this->assertStringContainsString('An unexpected server error occurred', $this->response->body['message']);
     }
 
     #[TestWith([Status::BAD_REQUEST])]
@@ -130,9 +130,9 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
     public function test_exception_handler_runs_exception_processors(): void
     {
-        $this->exceptions->preventReporting(false);
+        $this->exceptions->preventProcessing(false);
 
-        $this->container->get(AppConfig::class)->exceptionProcessors[] = NullExceptionProcessor::class;
+        $this->container->get(ExceptionsConfig::class)->setReporters([NullExceptionReporter::class]);
 
         $thrown = new ExceptionWithContext();
 
@@ -141,10 +141,10 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
             $handler->handle($thrown);
         });
 
-        $this->assertContains($thrown, NullExceptionProcessor::$exceptions);
-        $this->assertArrayHasKey('foo', NullExceptionProcessor::$exceptions[0]->context());
+        $this->assertContains($thrown, NullExceptionReporter::$exceptions);
+        $this->assertArrayHasKey('foo', NullExceptionReporter::$exceptions[0]->context());
 
-        NullExceptionProcessor::$exceptions = [];
+        NullExceptionReporter::$exceptions = [];
     }
 
     public function test_exception_handler_returns_unprocessable_for_csrf_mismatch(): void

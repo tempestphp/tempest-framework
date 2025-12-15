@@ -8,13 +8,11 @@ namespace Tempest {
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\EnvironmentVariableValidationFailed;
-    use Tempest\Core\ExceptionReporter;
     use Tempest\Core\Kernel;
     use Tempest\Intl\Translator;
     use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
     use Tempest\Validation\Rule;
     use Tempest\Validation\Validator;
-    use Throwable;
 
     use function Tempest\Support\Namespace\to_psr4_namespace;
     use function Tempest\Support\Path\to_absolute_path;
@@ -103,13 +101,5 @@ namespace Tempest {
     function defer(Closure $closure): void
     {
         get(DeferredTasks::class)->add($closure);
-    }
-
-    /**
-     * Passes the given exception through registered exception processors.
-     */
-    function report(Throwable $throwable): void
-    {
-        get(ExceptionReporter::class)->report($throwable);
     }
 }

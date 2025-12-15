@@ -4,36 +4,55 @@ namespace Tests\Tempest\Integration\Core;
 
 use Exception;
 use InvalidArgumentException;
-use Tempest\Core\AppConfig;
-use Tempest\Core\ExceptionReporter;
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\Exceptions\ExceptionProcessor;
+use Tempest\Core\Exceptions\ExceptionsConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\Http\Fixtures\NullExceptionProcessor;
-
-use function Tempest\report;
+use Tests\Tempest\Integration\Http\Fixtures\NullExceptionReporter;
 
 final class ExceptionTesterTest extends FrameworkIntegrationTestCase
 {
-    public function test_assert_reported(): void
-    {
-        $this->exceptions->assertNothingReported();
-
-        $this->container->get(ExceptionReporter::class)->report(new Exception('foo'));
-        report(new Exception('bar'));
-
-        $this->exceptions->assertReported(Exception::class, count: 2);
-        $this->exceptions->assertNotReported(InvalidArgumentException::class);
+    private ExceptionProcessor $processor {
+        get => $this->container->get(ExceptionProcessor::class);
     }
 
-    public function test_prevent_reporting(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        $this->container->get(AppConfig::class)->exceptionProcessors = [NullExceptionProcessor::class];
+        $this->container
+            ->get(ExceptionsConfig::class)
+            ->setReporters([NullExceptionReporter::class]);
+    }
 
-        $this->exceptions->preventReporting();
+    #[PostCondition]
+    protected function cleanup(): void
+    {
+        NullExceptionReporter::$exceptions = [];
+    }
 
-        $this->container->get(ExceptionReporter::class)->report(new Exception('foo'));
+    #[Test]
+    public function assert_reported(): void
+    {
+        $this->exceptions->assertNothingProcessed();
 
-        $this->exceptions->assertReported(Exception::class);
+        $this->processor->process(new Exception('foo'));
 
-        $this->assertEmpty(NullExceptionProcessor::$exceptions);
+        $this->exceptions->assertProcessed(Exception::class, count: 1);
+        $this->exceptions->assertNotProcessed(InvalidArgumentException::class);
+    }
+
+    #[Test]
+    public function prevent_reporting(): void
+    {
+        $this->exceptions->preventProcessing();
+
+        $this->processor->process(new Exception('foo'));
+
+        $this->exceptions->assertProcessed(Exception::class);
+        $this->exceptions->assertProcessed(Exception::class, count: 1);
+
+        $this->assertEmpty(NullExceptionReporter::$exceptions);
     }
 }

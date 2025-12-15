@@ -15,9 +15,6 @@ final class AppConfig
 
         ?string $baseUri = null,
 
-        /** @var class-string<\Tempest\Core\ExceptionProcessor>[] */
-        public array $exceptionProcessors = [],
-
         /**
          * @var array<class-string<\Tempest\Core\InsightsProvider>>
          */

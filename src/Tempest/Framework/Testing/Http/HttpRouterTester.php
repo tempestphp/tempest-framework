@@ -139,11 +139,11 @@ final class HttpRouterTester
 
         try {
             $response = $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do());
-        } catch (Throwable $exception) {
-            $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $exception);
+        } catch (Throwable $throwable) {
+            $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable);
 
             return new TestResponseHelper(
-                response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $exception),
+                response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable),
                 request: $request,
                 container: $this->container,
             );

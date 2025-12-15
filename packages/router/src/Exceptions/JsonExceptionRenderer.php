@@ -4,7 +4,9 @@ namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Core\AppConfig;
+use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
@@ -16,20 +18,23 @@ use Tempest\Validation\FailingRule;
 use Tempest\Validation\Validator;
 use Throwable;
 
-final readonly class JsonExceptionRenderer
+final readonly class JsonExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
         private AppConfig $appConfig,
         private Validator $validator,
     ) {}
 
+    public function canRender(Throwable $throwable, Request $request): bool
+    {
+        return $request->accepts(ContentType::JSON);
+    }
+
     public function render(Throwable $throwable): Response
     {
         return match (true) {
-            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
             $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
-            $throwable instanceof RouteBindingFailed => $this->renderErrorResponse(Status::NOT_FOUND),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
             default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, $throwable),
@@ -61,6 +66,7 @@ final readonly class JsonExceptionRenderer
 
         if ($this->appConfig->environment->isLocal() && $exception !== null) {
             $response['debug'] = [
+                'message' => $exception->getMessage(),
                 'exception' => get_class($exception),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
