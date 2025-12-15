@@ -14,7 +14,6 @@ use Tempest\Database\Migrations\MigrationHashMismatched;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationValidationFailed;
 use Tempest\EventBus\EventBus;
-use Tempest\EventBus\EventHandler;
 
 #[Singleton]
 final class MigrateValidateCommand

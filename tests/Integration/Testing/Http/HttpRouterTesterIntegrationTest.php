@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Testing\Http;
 
-use Exception;
 use PHPUnit\Framework\AssertionFailedError;
-use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

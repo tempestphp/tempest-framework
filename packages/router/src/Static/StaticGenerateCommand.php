@@ -16,8 +16,6 @@ use Tempest\EventBus\EventBus;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Method;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Intl;
