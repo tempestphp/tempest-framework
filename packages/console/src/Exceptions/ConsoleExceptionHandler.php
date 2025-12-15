@@ -25,8 +25,6 @@ use function Tempest\Support\str;
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
-        private AppConfig $appConfig,
-        private Container $container,
         private Kernel $kernel,
         #[Tag('console')]
         private Highlighter $highlighter,

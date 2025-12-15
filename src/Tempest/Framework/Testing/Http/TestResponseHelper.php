@@ -274,6 +274,10 @@ final class TestResponseHelper
             $body = $this->container->get(ViewRenderer::class)->render($body);
         }
 
+        if (is_array($body)) {
+            $body = json_encode($body);
+        }
+
         Assert::assertStringContainsString($search, $body);
 
         return $this;
@@ -430,7 +434,7 @@ final class TestResponseHelper
      *
      * @param array<string, mixed> $expected
      */
-    public function assertJson(array $expected): self
+    public function assertJson(array $expected = []): self
     {
         Assert::assertEquals(
             expected: arr($expected)->undot()->toArray(),
@@ -509,9 +513,7 @@ final class TestResponseHelper
     {
         $this->assertHasContainer();
 
-        Assert::assertInstanceOf(Invalid::class, $this->response);
-        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotNull($this->response->getHeader('x-validation'));
+        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND, Status::UNPROCESSABLE_CONTENT]);
 
         $session = $this->container->get(Session::class);
         $validator = $this->container->get(Validator::class);
