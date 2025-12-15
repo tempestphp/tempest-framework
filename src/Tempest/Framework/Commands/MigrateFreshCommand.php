@@ -15,7 +15,6 @@ use Tempest\Database\Migrations\FreshMigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\TableDropped;
 use Tempest\EventBus\EventBus;
-use Tempest\EventBus\EventHandler;
 
 #[Singleton]
 final class MigrateFreshCommand

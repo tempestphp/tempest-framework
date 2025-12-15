@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
-use Exception;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;

@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Http;
 
-use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -11,7 +10,6 @@ use Tempest\Core\Environment;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;

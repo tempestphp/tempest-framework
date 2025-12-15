@@ -8,7 +8,6 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
