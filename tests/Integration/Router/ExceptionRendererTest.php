@@ -93,7 +93,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
-        $this->callExceptionHandler(function () {
+        $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
             $handler->handle(new CustomValidationException('Custom validation failed'));
         });
@@ -117,7 +117,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'text/html']),
         );
 
-        $this->callExceptionHandler(function () {
+        $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
             $handler->handle(new CustomValidationException('Custom validation failed'));
         });
@@ -138,7 +138,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
-        $this->callExceptionHandler(function () {
+        $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
             $handler->handle(new Exception('Regular exception'));
         });
@@ -160,7 +160,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
-        $this->callExceptionHandler(function () {
+        $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
             $handler->handle(new CustomValidationException('Test'));
         });

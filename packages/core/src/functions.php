@@ -7,10 +7,8 @@ namespace Tempest {
     use Stringable;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
-    use Tempest\Core\Exceptions\ExceptionProcessor;
     use Tempest\Core\Kernel;
     use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
-    use Throwable;
 
     use function Tempest\Support\Namespace\to_psr4_namespace;
     use function Tempest\Support\Path\to_absolute_path;

@@ -20,7 +20,6 @@ use Tempest\Http\Status;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use Tempest\Validation\Rule;
-use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 

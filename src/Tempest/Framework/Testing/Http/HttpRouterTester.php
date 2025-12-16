@@ -183,7 +183,7 @@ final class HttpRouterTester
             callback: fn (mixed $_, string $headerKey): bool => strcasecmp($headerKey, 'accept') === 0,
         );
 
-        if ($this->contentType) {
+        if ($this->contentType !== null) {
             $headers[$key ?? 'accept'] = $this->contentType->value;
         }
 
