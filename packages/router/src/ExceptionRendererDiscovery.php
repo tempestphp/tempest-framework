@@ -25,7 +25,7 @@ final class ExceptionRendererDiscovery implements Discovery
             return;
         }
 
-        $priority = $class->getAttribute(Priority::class)?->priority ?? Priority::NORMAL;
+        $priority = $class->getAttribute(Priority::class)->priority ?? Priority::NORMAL;
 
         $this->discoveryItems->add($location, [$class->getName(), $priority]);
     }

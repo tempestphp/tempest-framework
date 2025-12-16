@@ -6,7 +6,6 @@ use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
-use Tempest\Discovery\SkipDiscovery;
 use Tempest\Http\ContentType;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
