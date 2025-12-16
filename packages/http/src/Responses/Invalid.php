@@ -45,9 +45,9 @@ final class Invalid implements Response
         $this->flash(Session::VALIDATION_ERRORS, $failingRules);
         $this->flash(Session::ORIGINAL_VALUES, $this->filterSensitiveFields($request, $targetClass));
         $this->addHeader('x-validation', value: Json\encode(
-            Arr\map_iterable($failingRules, fn (array $failingRulesForField) => Arr\map_iterable(
+            Arr\map_iterable($failingRules, fn (array $failingRulesForField, string $field) => Arr\map_iterable(
                 array: $failingRulesForField,
-                map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule),
+                map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule, $field),
             )),
         ));
     }

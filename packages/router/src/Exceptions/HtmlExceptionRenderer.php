@@ -5,6 +5,8 @@ namespace Tempest\Router\Exceptions;
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Core\Priority;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Http\ContentType;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
@@ -21,6 +23,11 @@ use Throwable;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
+/**
+ * Renders exceptions for HTML content. The priority is lowered by one because
+ * JSON-rendering should be the default for requests without `Accept` header.
+ */
+#[Priority(Priority::LOWEST + 1)]
 final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
@@ -49,6 +56,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         }
 
         return match (true) {
+            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
             $throwable instanceof ValidationFailed => new Invalid($throwable->subject, $throwable->failingRules, $throwable->targetClass),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
