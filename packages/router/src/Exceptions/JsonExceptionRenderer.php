@@ -4,6 +4,7 @@ namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Core\AppConfig;
+use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
@@ -18,6 +19,9 @@ use Tempest\Validation\FailingRule;
 use Tempest\Validation\Validator;
 use Throwable;
 
+use function Tempest\Support\Json\encode;
+
+#[Priority(Priority::LOWEST)]
 final readonly class JsonExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
@@ -33,6 +37,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
     public function render(Throwable $throwable): Response
     {
         return match (true) {
+            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
             $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
@@ -51,7 +56,9 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
         return new Json([
             'message' => Arr\first($errors)[0],
             'errors' => $errors,
-        ])->setStatus(Status::UNPROCESSABLE_CONTENT);
+        ])
+            ->setStatus(Status::UNPROCESSABLE_CONTENT)
+            ->addHeader('x-validation', value: encode($errors));
     }
 
     private function renderErrorResponse(Status $status, ?Throwable $exception = null): Response

@@ -51,6 +51,7 @@ final class RouteConfig
 
     public function addExceptionRenderer(string $exceptionRenderer, int $priority): void
     {
-        $this->exceptionRenderers[$priority] = $exceptionRenderer;
+        $this->exceptionRenderers[$priority] ??= [];
+        $this->exceptionRenderers[$priority][] = $exceptionRenderer;
     }
 }

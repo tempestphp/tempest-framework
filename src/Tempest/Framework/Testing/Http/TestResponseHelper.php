@@ -18,6 +18,7 @@ use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 use Tempest\View\View;
@@ -229,8 +230,11 @@ final class TestResponseHelper
 
     public function assertHasValidationError(string $key, ?Closure $callback = null): self
     {
-        $session = $this->container->get(Session::class);
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+        $validationErrors = $this->response->getHeader('x-validation')->first();
+
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Json\decode($validationErrors);
 
         Assert::assertArrayHasKey(
             key: $key,
@@ -495,9 +499,7 @@ final class TestResponseHelper
     }
 
     /**
-     * Asserts the response contains the given JSON validation errors.
-     *
-     * The keys can also be specified using dot notation.
+     * Asserts the response contains the given JSON validation errors. The keys can be specified using dot notation, and the values may contain `sprintf` placeholders.
      *
      * ### Example
      * ```
@@ -507,7 +509,7 @@ final class TestResponseHelper
      *      ]);
      * ```
      *
-     * @param array<string, string|string[]> $expectedErrors
+     * @param array<string,string|string[]> $expectedErrors
      */
     public function assertHasJsonValidationErrors(array $expectedErrors): self
     {
@@ -515,16 +517,18 @@ final class TestResponseHelper
 
         Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND, Status::UNPROCESSABLE_CONTENT]);
 
-        $session = $this->container->get(Session::class);
-        $validator = $this->container->get(Validator::class);
-        $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
+        $validationErrors = $this->response->getHeader('x-validation')->first();
 
-        arr($expectedErrors)
-            ->dot()
-            ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
-                expected: $expectedErrorValue,
-                actual: $validator->getErrorMessage($validationRules->get($expectedErrorKey)),
-            ));
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Arr\dot(Json\decode($validationErrors));
+
+        foreach (Arr\dot($expectedErrors) as $key => $expectedMessage) {
+            Assert::assertStringMatchesFormat(
+                format: $expectedMessage,
+                string: $validationErrors[$key],
+            );
+        }
 
         return $this;
     }

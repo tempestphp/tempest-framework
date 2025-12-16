@@ -43,7 +43,10 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
 
     public function get(string $name): ?string
     {
-        return $this->headers[strtolower($name)] ?? null;
+        return array_find(
+            array: $this->headers,
+            callback: fn (mixed $_, string $header) => strcasecmp($header, $name) === 0,
+        );
     }
 
     public function has(string $name): bool
@@ -53,7 +56,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
 
     public function getHeader(string $name): Header
     {
-        return new Header(strtolower($name), array_filter([$this->get($name)]));
+        return new Header(mb_strtolower($name), array_filter([$this->get($name)]));
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
