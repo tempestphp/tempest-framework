@@ -9,7 +9,6 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
-use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
 
