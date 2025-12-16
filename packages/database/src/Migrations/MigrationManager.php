@@ -188,11 +188,6 @@ final class MigrationManager
 
     public function executeUp(MigratesUp $migration): void
     {
-
-        if (! $migration instanceof CreateMigrationsTable) {
-            $this->ensureMigrationsTableExists();
-        }
-
         if ($migration instanceof ShouldMigrate && $migration->shouldMigrate($this->database) === false) {
             return;
         }
@@ -292,6 +287,23 @@ final class MigrationManager
         event(new MigrationRolledBack($migration->name));
     }
 
+    public function doesMigrationsTableExist(): bool
+    {
+        try {
+            Migration::select()
+                ->onDatabase($this->onDatabase)
+                ->limit(1)
+                ->all();
+        } catch (QueryWasInvalid $exception) {
+            if ($this->dialect->isTableNotFoundError($exception)) {
+                return false;
+            } else {
+                throw $exception;
+            }
+        }
+        return true;
+    }
+
     /**
      * @return \Tempest\Database\Migrations\TableMigrationDefinition[]
      */
@@ -338,21 +350,5 @@ final class MigrationManager
         $sql = preg_replace('/\s+/', ' ', trim($sql));
 
         return $sql;
-    }
-
-    private function ensureMigrationsTableExists(): void
-    {
-        try {
-            Migration::select()
-                ->onDatabase($this->onDatabase)
-                ->limit(1)
-                ->all();
-        } catch (QueryWasInvalid $exception) {
-            if ($this->dialect->isTableNotFoundError($exception)) {
-                $this->executeUp(new CreateMigrationsTable());
-            } else {
-                throw $exception;
-            }
-        }
     }
 }
