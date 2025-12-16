@@ -287,6 +287,23 @@ final class MigrationManager
         event(new MigrationRolledBack($migration->name));
     }
 
+    public function doesMigrationsTableExist(): bool
+    {
+        try {
+            Migration::select()
+                ->onDatabase($this->onDatabase)
+                ->limit(1)
+                ->all();
+        } catch (QueryWasInvalid $exception) {
+            if ($this->dialect->isTableNotFoundError($exception)) {
+                return false;
+            } else {
+                throw $exception;
+            }
+        }
+        return true;
+    }
+
     /**
      * @return \Tempest\Database\Migrations\TableMigrationDefinition[]
      */

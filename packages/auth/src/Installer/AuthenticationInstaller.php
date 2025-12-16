@@ -9,6 +9,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
 
 use function Tempest\root_path;
@@ -36,6 +37,10 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $this->publishImports();
 
             if ($migration && $this->shouldMigrate()) {
+                if (! $this->migrationManager->doesMigrationsTableExist()) {
+                    $this->migrationManager->executeUp(new CreateMigrationsTable());
+                }
+
                 $this->migrationManager->executeUp(
                     migration: $this->container->get(to_fqcn($migration, root: root_path())),
                 );
