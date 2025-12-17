@@ -16,7 +16,7 @@ use Tempest\Mail\EmailPriority;
 use Tempest\Mail\EmailToSymfonyEmailMapper;
 use Tempest\Support\Arr;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 final class MailTester

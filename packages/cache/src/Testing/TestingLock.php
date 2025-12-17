@@ -17,8 +17,8 @@ final class TestingLock implements Lock
         get => $this->lock->key;
     }
 
-    public ?DateTimeInterface $expiration {
-        get => $this->lock->expiration;
+    public ?Duration $duration {
+        get => $this->lock->duration;
     }
 
     public string $owner {
@@ -52,7 +52,7 @@ final class TestingLock implements Lock
     /**
      * Asserts that the specified lock is being held.
      */
-    public function assertLocked(null|Stringable|string $by = null, null|DateTimeInterface|Duration $until = null): self
+    public function assertLocked(null|Stringable|string $by = null, null|DateTimeInterface|Duration $for = null): self
     {
         Assert::assertTrue(
             condition: $this->locked($by),
@@ -61,19 +61,19 @@ final class TestingLock implements Lock
                 : "Lock `{$this->key}` is not being held.",
         );
 
-        if ($until) {
-            if ($until instanceof Duration) {
-                $until = DateTime::now()->plus($until);
+        if ($for) {
+            if ($for instanceof DateTimeInterface) {
+                $for = $for->since(DateTime::now());
             }
 
             Assert::assertNotNull(
-                actual: $this->expiration,
-                message: "Expected lock `{$this->key}` to have an expiration, but it has none.",
+                actual: $this->duration,
+                message: "Expected lock `{$this->key}` to have a duration, but it has none.",
             );
 
             Assert::assertTrue(
-                condition: $this->expiration->afterOrAtTheSameTime($until),
-                message: "Expected lock `{$this->key}` to expire at or after `{$until}`, but it expires at `{$this->expiration}`.",
+                condition: $this->duration->getTotalSeconds() >= $for->getTotalSeconds(),
+                message: "Expected lock `{$this->key}` to have a duration of at least `{$for->getTotalSeconds()}` seconds, but it has `{$this->duration->getTotalSeconds()}` seconds.",
             );
         }
 

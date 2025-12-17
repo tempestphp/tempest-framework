@@ -1,6 +1,6 @@
 ---
 title: Database
-description: "Tempest's database component allows you to persist data to SQLite, MySQL and PostgreSQL databases. You can use our powerful query builder, or build truly decoupled models to interact with your database of choice."
+description: "Tempest's database component provides data persistence to SQLite, MySQL, and PostgreSQL databases through a query builder and decoupled model architecture."
 keywords: ["experimental", "orm", "database", "sqlite", "postgresql", "pgsql", "mysql", "query", "sql", "connection", "models"]
 ---
 
@@ -10,7 +10,7 @@ Tempest's database component is currently experimental and is not covered by our
 
 ## Connecting to a database
 
-By default, Tempest will connect to a local SQLite database located in its internal storage, `.tempest/database.sqlite`. You may override the default database connection by creating a [configuration file](../1-essentials/06-configuration.md#configuration-files):
+By default, Tempest connects to a local SQLite database located in its internal storage, `.tempest/database.sqlite`. The default database connection can be overridden by creating a [configuration file](../1-essentials/06-configuration.md#configuration-files):
 
 ```php app/Config/database.config.php
 use Tempest\Database\Config\SQLiteConfig;
@@ -21,7 +21,7 @@ return new SQLiteConfig(
 );
 ```
 
-Alternatively, you can connect to another database by returning another configuration object from file. You may choose between {b`Tempest\Database\Config\SQLiteConfig`}, {b`Tempest\Database\Config\MysqlConfig`}, or {b`Tempest\Database\Config\PostgresConfig`}:
+Alternatively, connect to another database by returning a different configuration object from the file. Available configuration classes include {b`Tempest\Database\Config\SQLiteConfig`}, {b`Tempest\Database\Config\MysqlConfig`}, and {b`Tempest\Database\Config\PostgresConfig`}:
 
 ```php app/Config/database.config.php
 use Tempest\Database\Config\PostgresConfig;
@@ -38,7 +38,7 @@ return new PostgresConfig(
 
 ## Querying the database
 
-There are multiple ways to query the database, but all of them eventually do the same thing: execute a {b`Tempest\Database\Query`} on the {b`Tempest\Database\Database`} class. The most straight-forward way to query the database is thus by injecting {b`Tempest\Database\Database`}:
+Multiple approaches exist for querying the database, all of which execute a {b`Tempest\Database\Query`} on the {b`Tempest\Database\Database`} class. The most straightforward approach is to inject {b`Tempest\Database\Database`}:
 
 ```php
 use Tempest\Database\Database;
@@ -60,7 +60,7 @@ final class BookRepository
 }
 ```
 
-Manually building and executing queries gives you the most flexibility. However, using Tempest's query builder is more convenient—it gives you fluent methods to build queries without needing to worry about database-specific syntax differences.
+Manually building and executing queries provides maximum flexibility. Tempest's query builder offers a more convenient approach with fluent methods that abstract database-specific syntax differences.
 
 ```php
 use function Tempest\Database\query;
@@ -71,13 +71,13 @@ final class BookRepository
     {
         return query('books')
             ->select('id', 'title')
-            ->where('id = ?', $id)
+            ->where('id', $id)
             ->first();
     }
 }
 ```
 
-If preferred, you can combine both methods and use the query builder to build a query that's executed on a database:
+Both methods can be combined by using the query builder to construct a query that is then executed on a database:
 
 ```php
 use Tempest\Database\Database;
@@ -100,33 +100,11 @@ final class BookRepository
 }
 ```
 
-### Query builders
-
-There are multiple types of query builders, all of them are available via the `query()` function. If you prefer to manually create a query builder though, you can also instantiate them directly:
-
-```php
-use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-
-$builder = new SelectQueryBuilder('books');
-```
-
-Currently, there are five query builders shipped with Tempest:
-
-- {`Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder`}
-- {`Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder`}
-- {`Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder`}
-- {`Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder`}
-- {`Tempest\Database\Builder\QueryBuilders\CountQueryBuilder`}
-
-Each of them has their own unique methods that work within their scope. You can discover them via your IDE, or check them out on [GitHub](https://github.com/tempestphp/tempest-framework/tree/main/packages/database/src/Builder/QueryBuilders).
-
-Finally, you can make your own query builders if you want by implementing the {b`Tempest\Database\Builder\QueryBuilders\BuildsQuery`} interface.
-
 ## Models
 
-A common use case in many applications is to represent persisted data as objects within your codebase. This is where model classes come in. Tempest tries to decouple models as best as possible from the database, so any object with public typed properties can represent a model.
+A common use case in many applications is to represent persisted data as objects within the codebase. Model classes fulfill this purpose. Tempest decouples models from the database as much as possible, allowing any object with public typed properties to represent a table.
 
-These objects don't have to implement any interface—they may be plain-old PHP objects:
+These objects do not require implementing any interface—they can be plain PHP objects:
 
 ```php app/Book.php
 use Tempest\Validation\Rules\HasLength;
@@ -144,22 +122,20 @@ final class Book
 }
 ```
 
-Because model objects aren't tied to the database specifically, Tempest's [mapper](../2-features/01-mapper.md) can map data from many different sources to them. For instance, you can persist your models as JSON instead of a database, if you want to:
+Because model objects are not tied specifically to the database, Tempest's [mapper](../2-features/01-mapper.md) can map data from many different sources to them. For instance, models can be persisted as JSON:
 
 ```php
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 $books = map($json)->collection()->to(Book::class); // from JSON source to Book collection
 $json = map($books)->toJson(); // from Book collection to JSON
 ```
 
-That being said, persistence most often happens on the database level, so let's take a look at how to deal with models that persist to the database.
-
 ### Models and query builders
 
-The easiest way of persisting models to a database is by using the query builder. Tempest's query builder cannot just deal with tables and arrays, but also knows how to map data from and to model objects. All you need to do is specify which class you want to query, and Tempest will do the rest.
+The query builder provides a straightforward approach to persisting models to a database. It can work with tables and arrays as well as map data to and from model objects. Specify the class to query, and Tempest handles the mapping.
 
-In the following example, we'll query the table related to the `Book` model, we'll select all fields, load its related `chapters` and `author` as well, specify the ID of the book we're searching, and then return the first result:
+The following example selects all fields from the table related to the `Book` model, loads the related `chapters` and `author`, filters by the book ID, and returns the first result:
 
 ```php
 use App\Models\Book;
@@ -172,15 +148,15 @@ final class BookRepository
         return query(Book::class)
             ->select()
             ->with('chapters', 'author')
-            ->where('id = ?', $id)
+            ->where('id', $id)
             ->first();
     }
 }
 ```
 
-Tempest will infer all relation-type information from the model class, specifically by looking at the property types. For example, a property with the `Author` type is assumed to be a "belongs to" relation, while a property with the `/** @var \App\Chapter[] */` docblock is assumed to be a "has many" relation on the `Chapter` model.
+Tempest infers all relation-type information from the model class by analyzing property types. For example, a property with the `Author` type is assumed to be a "belongs to" relation, while a property with the `/** @var \App\Books\Chapter[] */` docblock is assumed to be a "has many" relation on the `Chapter` model.
 
-Apart from selecting models, it's of course possible to use any other query builder with them as well:
+Beyond selecting models, any query builder can be used with model objects:
 
 ```php
 use App\Models\Book;
@@ -197,37 +173,33 @@ final class BookRepository
 }
 ```
 
-:::info
-Currently it's not possible to insert or update {b`Tempest\Database\HasMany`} or {b`Tempest\Database\HasOne`} relations directly by inserting or updating the parent model. You should first insert or update the parent model and then insert or update the child models separately. This shortcoming will be fixed in [the future](https://github.com/tempestphp/tempest-framework/issues/1087).
-:::
-
 ### Model relations
 
-As mentioned before, Tempest will infer relations based on type information it gets from the model class. A public property with a reference to another class will be assumed to be a {b`Tempest\Database\BelongsTo`} relation, while a property with a docblock that defines an array type is assumed to be a {b`Tempest\Database\HasMany`} relation.
+Tempest infers relations based on type information from the model class. A public property with a reference to another class is assumed to be a {b`Tempest\Database\BelongsTo`} relation, while a property with a docblock that defines an array type is assumed to be a {b`Tempest\Database\HasMany`} relation.
 
 ```php
 use App\Author;
 
 final class Book
 {
-    // This is a BelongsTo relation:
     public ?Author $author = null;
+    //      ^ BelongsTo relation
 
-    // This is a HasMany relation:
-    /** @var \App\Chapter[] */
+    /** @var \App\Books\Chapter[] */
     public array $chapters = [];
+    //     ^ HasMany relation
 }
 ```
 
 :::warning
-Relation types in docblocks must always be fully qualified, and not use short class names.
+Due to a restriction with reflection, relation types in docblocks must always be fully qualified. Short class names are not supported.
 :::
-
-Tempest will infer all the information it needs to build the right queries for you. However, there might be cases where property names and type information don't map one-to-one on your database schema. In that case you can use dedicated attributes to define relations.
 
 ### Relation attributes
 
-Tempest will infer relation names based on property names and types. However, you can override these names with the {b`#[Tempest\Database\HasMany]`}, {b`#[Tempest\Database\HasOne]`}, and {b`#[Tempest\Database\BelongsTo]`} attributes. These attributes all take two optional arguments:
+Tempest infers all information needed to build queries. When property names and type information do not map one-to-one to the database schema, dedicated attributes can be used to define relations.
+
+Available attributes are {b`#[Tempest\Database\HasMany]`}, {b`#[Tempest\Database\HasOne]`}, and {b`#[Tempest\Database\BelongsTo]`}. They accept two arguments:
 
 - `ownerJoin`, which is used to build the owner's side of join query,
 - `relationJoin`, which is used to build the relation's side of the join query.
@@ -251,9 +223,11 @@ final class Book
 }
 ```
 
-The **owner** part of the relation resembles the table that _owns_ the relation. In other words: the table which has a column referencing another table. The **relation** part resembles the table that's _being referenced by another table_. This is why the {b`Tempest\Database\BelongsTo`} relation starts with _the owner join_, while both {b`Tempest\Database\HasMany`} and {b`Tempest\Database\HasOne`} start with _the relation join_.
+The _owner_ part of the relation represents the table that _owns_ the relation—the table with a column referencing another table. The _relation_ part represents the table that is _being referenced by another table_.
 
-Finally, it's important to mention that you don't have to write the full owner or relation join including both the table and the field. You can also use the field name without the table name, in which case the table name is inferred from the related model:
+The {b`Tempest\Database\BelongsTo`} relation starts with _the owner join_, while both {b`Tempest\Database\HasMany`} and {b`Tempest\Database\HasOne`} start with _the relation join_.
+
+The full owner or relation join does not need to include both the table and field names. Field names can be specified without the table name, in which case the table name is inferred from the related model:
 
 ```php
 use Tempest\Database\BelongsTo;
@@ -274,74 +248,54 @@ final class Book
 }
 ```
 
-### Hashed properties
+### Using UUIDs as primary keys
 
-The {`#[Tempest\Database\Hashed]`} attribute will hash the model's property during serialization. If the property was already hashed, Tempest will detect that and avoid re-hashing it.
+By default, Tempest uses auto-incrementing integers as primary keys. UUIDs can be used as primary keys instead by annotating the {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest automatically generates a UUID v7 when a new model is created:
 
-```php
-final class User
+```php app/Books/Book.php
+use Tempest\Database\PrimaryKey;
+use Tempest\Database\Uuid;
+
+final class Book
 {
-    public PrimaryKey $id;
+    #[Uuid]
+    public PrimaryKey $uuid;
 
-    public string $email;
-
-    #[Hashed]
-    public ?string $password;
+    public function __construct(
+        public string $title,
+        public string $author_name,
+    ) {}
 }
 ```
 
-Hashing requires the `SIGNING_KEY` environment variable to be set, as it's used as the hashing key.
+Within migrations, specify `uuid: true` to the `primary()` method, or use `uuid()` directly:
 
-### Encrypted properties
+```php app/Books/CreateBooksTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
 
-The {`#[Tempest\Database\Encrypted]`} attribute will encrypt the model's property during serialization and decrypt it during deserialization. If the property was already encrypted, Tempest will detect that and avoid re-encrypting it.
-
-```php
-final class User
+final class CreateBooksTable implements MigratesUp
 {
-    // ...
+    public string $name = '2024-08-12_create_books_table';
 
-    #[Encrypted]
-    public ?string $accessToken;
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('books')
+            ->primary('uuid', uuid: true)
+            ->text('title')
+            ->text('author_name');
+    }
 }
 ```
 
-The encryption key is taken from the `SIGNING_KEY` environment variable.
-
-### DTO properties
-
-Sometimes, you might want to store data objects as-is in a table, without there needing to be a relation to another table. To do so, it's enough to add a serializer and caster to the data object's class, and Tempest will know that these objects aren't meant to be treated as database models. Next, you can store the object's data as a json field on the table (see [migrations](#migrations) for more info).
-
-```php
-use Tempest\Database\IsDatabaseModel;
-use Tempest\Mapper\CastWith;
-use Tempest\Mapper\SerializeWith;
-use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\Serializers\DtoSerializer;
-
-final class DebugItem
-{
-    use IsDatabaseModel;
-    
-    /* … */
-    
-    public Backtrace $backtrace,
-}
-
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
-final class Backtrace
-{
-    // This object won't be considered a relation,
-    // but rather serialized and stored in a JSON column.
-
-    public array $frames = [];
-}
-```
+:::warning
+Currently, the [`IsDatabaseModel`](#the-is-database-model-trait) trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
+:::
 
 ### Table names
 
-Tempest will infer the table name for a model class based on the model's classname. By default the table name will by the pluralized, `snake_cased` version of that classname. You can override this name by using the {b`Tempest\Database\Table`} attribute:
+Tempest infers the table name for a model class based on the model's classname. By default, the table name is the pluralized, `snake_cased` version of the base class name. This can be overridden using the {b`Tempest\Database\Table`} attribute:
 
 ```php
 use Tempest\Database\Table;
@@ -353,9 +307,13 @@ final class Book
 }
 ```
 
-You can also configure a completely new naming strategy for all your models at once by creating a {b`Tempest\Database\Tables\NamingStrategy`} and attaching it to your database config:
+It is possible to define your own convention for naming tables without specifying the {b`Tempest\Database\Table`} attribute on all your models. To do so, set the `namingStrategy` parameter of your database configuration to a {b`Tempest\Database\Tables\NamingStrategy`} instance.
 
-```php
+By default, Tempest provides a {b`Tempest\Database\Tables\PascalCaseStrategy`} and {b`Tempest\Database\Tables\PluralizedSnakeCaseStrategy`} strategy, the latter being the default. Of course, custom strategies can be implemented as needed:
+
+:::code-group
+
+```php app/Database/PrefixedPascalCaseStrategy.php
 use Tempest\Database\Tables\NamingStrategy;
 use function Tempest\Support\str;
 
@@ -371,7 +329,7 @@ final class PrefixedPascalCaseStrategy implements NamingStrategy
 }
 ```
 
-```php app/Config/database.config.php
+```php app/database.config.php
 use Tempest\Database\Config\SQLiteConfig;
 
 return new SQLiteConfig(
@@ -380,9 +338,94 @@ return new SQLiteConfig(
 );
 ```
 
+:::
+
+### Data transfer object properties
+
+Arbitrary objects can be stored in a `json` column when they are not part of the relational schema. Annotate the class with {b`#[Tempest\Mapper\SerializeAs]`} and provide a unique identifier to represent the object. The identifier must map to a single, distinct class.
+
+:::code-group
+
+```php app/User.php
+use Tempest\Mapper\SerializeAs;
+
+final class User implements Authenticatable
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $email,
+        #[Hashed, SensitiveParameter]
+        public ?string $password,
+        public Settings $settings,
+    ) {}
+}
+```
+
+```php app/Settings.php
+#[SerializeAs('user_settings')]
+final class Settings
+{
+    public function __construct(
+        public readonly Theme $theme,
+        public readonly bool $hide_sidebar_by_default,
+    ) {}
+}
+```
+
+```php app/Theme.php
+enum Theme: string
+{
+    case DARK = 'dark';
+    case LIGHT = 'light';
+    case AUTO = 'auto';
+}
+```
+
+:::
+
+### Hashed properties
+
+The {b`#[Tempest\Database\Hashed]`} attribute hashes the model's property during serialization. If the property is already hashed, Tempest detects this and avoids re-hashing. Common use cases include passwords, tokens, and other sensitive values.
+
+```php app/User.php
+final class User
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $email,
+        #[Hashed, SensitiveParameter]
+        public ?string $password,
+    ) {}
+}
+```
+
+:::info
+Hashing requires the `SIGNING_KEY` environment variable to be set, as it is used as the hashing key.
+:::
+
+### Encrypted properties
+
+The {b`#[Tempest\Database\Encrypted]`} attribute encrypts the model's property during serialization and decrypts it during deserialization. If the property is already encrypted, Tempest detects this and avoids re-encrypting.
+
+```php app/User.php
+final class User
+{
+    // ...
+
+    #[Encrypted]
+    public ?string $accessToken,
+}
+```
+
+:::info
+Encryption uses the `SIGNING_KEY` environment variable as the encryption key.
+:::
+
 ### Virtual properties
 
-By default, all public properties are considered to be part of the model's query fields. To exclude a field from the database mapper, you may use the {b`Tempest\Database\Virtual`} attribute.
+By default, all public properties are considered part of the model's query fields. To exclude a field from the database mapper, use the {b`#[Tempest\Database\Virtual]`} attribute.
 
 ```php
 use Tempest\Database\Virtual;
@@ -404,9 +447,11 @@ final class Book
 
 ### The `IsDatabaseModel` trait
 
-People who are used to Eloquent might prefer a more "active record" style to handling their models. In that case, there's the {b`Tempest\Database\IsDatabaseModel`} trait which you can use in your model classes:
+The {b`Tempest\Database\IsDatabaseModel`} trait provides an active record pattern. This trait enables database interaction via static methods on the model class itself.
 
-```php
+:::code-group
+
+```php app/Book.php
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Validation\Rules\HasLength;
 use App\Author;
@@ -425,9 +470,7 @@ final class Book
 }
 ```
 
-Thanks to the {b`Tempest\Database\IsDatabaseModel`} trait, you can directly interact with the database via the model class:
-
-```php
+```php "Query examples"
 $book = Book::create(
     title: 'Timeline Taxi',
     author: $author,
@@ -439,8 +482,8 @@ $book = Book::create(
 );
 
 $books = Book::select()
-    ->where('publishedAt > ?', new DateTimeImmutable())
-    ->orderBy('title DESC')
+    ->whereAfter('publishedAt', DateTime::now())
+    ->orderBy('title', Direction::DESC)
     ->limit(10)
     ->with('author')
     ->all();
@@ -448,22 +491,28 @@ $books = Book::select()
 $books[0]->chapters[2]->delete();
 ```
 
+:::
+
 ## Migrations
 
-When you're persisting objects to the database, you'll need table to store its data in. A migration is a file instructing the framework how to manage that database schema. Tempest uses migrations to create and update databases across different environments.
+When persisting objects to the database, a table is required to store the data. A migration is a file that instructs the framework how to manage the database schema.
+
+Tempest uses migrations to create and update databases across different environments in a consistent way.
 
 ### Writing migrations
 
-Thanks to [discovery](../4-internals/02-discovery), `.sql` files and classes implementing the {b`Tempest\Database\DatabaseMigration`} interface are automatically registered as migrations, which means they can be stored anywhere.
+Classes implementing the {b`Tempest\Database\DatabaseMigration`} interface and `.sql` files are automatically [discovered](../4-internals/02-discovery) and registered as migrations. These files can be stored anywhere in the application.
 
-```php
+:::code-group
+
+```php app/CreateBooksTable.php
 use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 
-final class CreateBookTable implements MigratesUp
+final class CreateBooksTable implements MigratesUp
 {
-    public string $name = '2024-08-12_create_book_table';
+    public string $name = '2024-08-12_create_books_table';
 
     public function up(): QueryStatement
     {
@@ -485,15 +534,19 @@ CREATE TABLE Publisher
 );
 ```
 
-:::info
-The file name of `{txt}.sql` migrations and the `{txt}{:hl-type:$name:}` property of `DatabaseMigration` classes are used to determine the order in which they are applied. A good practice is to use their creation date as a prefix.
 :::
 
-Note that when using migration classes combined with query statements, Tempest will take care of the SQL dialect for you, there's support for MySQL, Postgresql, and SQLite. When using raw sql files, you'll have to pick a hard-coded SQL dialect, depending on your database requirements.
+:::info
+The file name of `{txt}.sql` migrations and the `{txt}{:hl-type:$name:}` property of `DatabaseMigration` classes determine the order in which migrations are applied. Using the creation date as a prefix ensures chronological ordering.
+:::
 
-### Up- and down migrations
+When using migration classes, Tempest handles the SQL dialect automatically with support for MySQL, PostgreSQL, and SQLite. When using raw SQL files, a hard-coded SQL dialect must be chosen based on database requirements.
 
-Tempest's recommendation is to only use up-migrations, which move the database's schema forward. There is also the option to create down-migrations, migrations that can roll back the schema of the database to a previous state. Dealing with down migrations is tricky, though, especially in production environments. That's why you need to explicitly implement another interface to do so: {`Tempest\Database\MigratesDown`}.
+### Up and down migrations
+
+Up-migrations move the database schema forward. Down-migrations roll back the database schema to a previous state.
+
+Down migrations are complex to test and manage, especially in production environments. For this reason, they require explicitly implementing the {`Tempest\Database\MigratesDown`} interface.
 
 ```php
 use Tempest\Database\MigratesDown;
@@ -513,53 +566,52 @@ final class CreateBookTable implements MigratesDown
 
 ### Applying migrations
 
-A few [console commands](../3-console/02-building-console-commands) are provided to work with migrations. They are used to apply, rollback, or erase and re-apply them. When deploying your application to production, you should use the `php tempest migrate:up` to apply the latest migrations.
+Several [console commands](../3-console/02-building-console-commands) are provided to work with migrations. These commands apply, roll back, or erase and re-apply migrations.
+
+When deploying the application to production, use `php tempest migrate:up` to apply the latest migrations.
 
 ```sh
-{:hl-comment:# Applies migrations that have not been run in the current environment:}
+{:hl-comment:# Apply migrations not yet run in the current environment}
 ./tempest migrate:up
 
-{:hl-comment:# Execute the down migrations:}
-./tempest migrate:down
-
-{:hl-comment:# Drops all tables and rerun migrate:up:}
+{:hl-comment:# Drop all tables and rerun migrate:up}
 ./tempest migrate:fresh
 
-{:hl-comment:# Validates the integrity of migration files:}
+{:hl-comment:# Validate the integrity of migration files}
 ./tempest migrate:validate
 ```
 
 ### Validating migrations
 
-By default, an integrity check is done before applying database migrations with the `migrate:up` and `migrate:fresh` commands. This validation works by comparing the current migration hash with the one stored in the `migrations` table, if it was already applied in your environment.
+By default, an integrity check is performed before applying database migrations with the `migrate:up` and `migrate:fresh` commands. This validation compares the current migration hash with the one stored in the `migrations` table, if it was already applied in the environment.
 
-If a migration file has been tampered with, the command will report it as a validation failure. Note that you may opt-out of this behavior by using the `--no-validate` argument.
+If a migration file has been tampered with, the command reports it as a validation failure. This behavior can be disabled using the `--no-validate` argument.
 
-Additionally, you may use the `migrate:validate` command to validate the integrity of migrations at any point, in any environment:
+The `migrate:validate` command can be used to validate the integrity of migrations at any point in any environment:
 
 ```sh
 ./tempest migrate:validate
 ```
 
-:::tip
-Only the actual SQL query of a migration, minified and stripped of comments, is hashed during validation. This means that code-style changes, such as indentation, formatting, and comments will not impact the validation process.
+:::info
+Only the actual SQL query of a migration, minified and stripped of comments, is hashed during validation. Code-style changes, such as indentation, formatting, and comments do not impact the validation process.
 :::
 
 ### Rehashing migrations
 
-You may use the `migrate:rehash` command to bypass migration integrity checks and update the hashes of migrations in the database.
+The `migrate:rehash` command can be used to bypass migration integrity checks and update the hashes of migrations in the database.
 
 ```sh
 ./tempest migrate:rehash
 ```
 
 :::warning
-Note that deliberately bypassing migration integrity checks may result in a broken database state. Only use this command when necessary if you are confident that your migration files are correct and consistent across environments.
+Bypassing migration integrity checks may result in a broken database state. Use this command only when migration files are confirmed to be correct and consistent across environments.
 :::
 
 ## Database seeders
 
-Whenever you need to fill your database with dummy data, you can provide database seeders. These are classes that are used to fill your database with whatever data you want. To get started, you should implement the {`\Tempest\Database\DatabaseSeeder`} interface.
+Database seeders populate the database with data. These classes can fill the database with any required data. To create a seeder, implement the {b`\Tempest\Database\DatabaseSeeder`} interface.
 
 ```php
 use Tempest\Database\DatabaseSeeder;
@@ -570,18 +622,16 @@ final class BookSeeder implements DatabaseSeeder
     public function run(null|string|UnitEnum $database): void
     {
         query(Book::class)
-            ->insert(
-                title: 'Timeline Taxi',
-            )
+            ->insert(title: 'Timeline Taxi')
             ->onDatabase($database)
             ->execute();
     }
 }
 ```
 
-Note how the `$database` property is passed into the `run()` method. In case a user has specified a database for this seeder to run on, this property will reflect that choice.
+The `$database` property is passed into the `run()` method. If a database has been specified for the seeder, this property reflects that choice.
 
-Running database seeders can be done in two ways: either via the `database:seed` command, or via the `migrate:fresh` command. Not that `database:seed` will always append the seeded data on the existing database.
+Database seeders can be run in two ways: via the `database:seed` command or via the `migrate:fresh` command. Note that `database:seed` always _appends_ the seeded data to the existing database.
 
 ```console
 ./tempest database:seed
@@ -590,9 +640,9 @@ Running database seeders can be done in two ways: either via the `database:seed`
 
 ### Multiple seeders
 
-If you want to, you can create multiple seeder classes. Each seeder class could be used to bring the database into a specific state, or you could use multiple seeder classes to seed specific parts of your database.
+Multiple seeder classes can be created. Each seeder class can bring the database into a specific state or seed specific parts of the database.
 
-Whenever you have multiple seeder classes, Tempest will prompt you which ones to run:
+When multiple seeder classes exist, Tempest prompts for selection:
 
 ```console
 ./tempest database:seed
@@ -615,7 +665,7 @@ Both the `database:seed` and `migrate:fresh` commands also allow to pick one spe
 
 ### Seeding on multiple databases
 
-Seeders have built-in support for multiple databases, which you can specify with the `--database` option. Continue reading to learn more about multiple databases.
+Seeders support multiple databases via the `--database` option. See the [Multiple databases](#multiple-databases) section for more information.
 
 ```console
 ./tempest database:seed --database="backup"
@@ -624,17 +674,15 @@ Seeders have built-in support for multiple databases, which you can specify with
 
 ## Multiple databases
 
-Tempest supports connecting to multiple databases at once. This can, for example, be useful to transfer data between databases or build multi-tenant systems.
-
-:::warning
-Multiple database support on Windows is currently untested. We welcome anyone who wants to [contribute](https://github.com/tempestphp/tempest-framework/issues/1271).
-:::
+Tempest supports connecting to multiple databases simultaneously. This is useful for transferring data between databases or building multi-tenant systems.
 
 ### Connecting to multiple databases
 
-If you want to connect to multiple databases, you should make multiple database config files and attach a tag to each database config object:
+To connect to multiple databases, create multiple database config files and attach a tag to each database config object:
 
-```php app/Config/database.config.php
+:::code-group
+
+```php app/database.config.php
 use Tempest\Database\Config\SQLiteConfig;
 
 return new SQLiteConfig(
@@ -643,7 +691,7 @@ return new SQLiteConfig(
 );
 ```
 
-```php app/Config/database-backup.config.php
+```php app/database-backup.config.php
 use Tempest\Database\Config\SQLiteConfig;
 
 return new SQLiteConfig(
@@ -652,9 +700,11 @@ return new SQLiteConfig(
 );
 ```
 
-When preferred, you can use a self-defined enum as the tag as well:
+:::
 
-```php app/Config/database-backup.config.php
+Enums provide better refactorability when used as tags:
+
+```php app/database-backup.config.php
 use Tempest\Database\Config\SQLiteConfig;
 use App\Database\DatabaseType;
 
@@ -665,12 +715,12 @@ return new SQLiteConfig(
 ```
 
 :::info
-Note that the _default_ connection will always be the connection without a tag.
+The default connection is the connection without a tag.
 :::
 
 ### Querying multiple databases
 
-With multiple databases configured, how do you actually use them when working with queries or models? There are several ways of doing so. The first approach is to manually inject separate database instances by using their tag:
+With multiple databases configured, several approaches exist for using them when working with queries or models. The first approach is to inject separate database instances using their tags:
 
 ```php
 use Tempest\Database\Database;
@@ -700,7 +750,7 @@ final class DatabaseBackupCommand
 }
 ```
 
-It might be quite cumbersome to write so much code everywhere if you're working with multiple databases though. That's why there's a shorthand available that doesn't require you to inject multiple database instances:
+A shorthand approach is available that does not require injecting multiple database instances:
 
 ```php
 use App\Database\DatabaseType;
@@ -724,7 +774,7 @@ final class DatabaseBackupCommand
 }
 ```
 
-Note that the same is possible when using active-record style models:
+The same approach works with active-record style models:
 
 ```php
 use App\Database\DatabaseType;
@@ -757,45 +807,41 @@ To run migrations on a specific database, you must specify the `database` flag t
 ```
 
 :::info
-When no database is provided, the default database will be used, this is the database that doesn't have a specific tag attached to it.
+When no database is specified, the default database is used. The default database is the one without a tag.
 :::
 
 ### Database-specific migrations
 
-Sometimes you might only want to run specific migrations on specific databases. Any database migration class may implement the {b`Tempest\Database\ShouldMigrate`}, which adds a `shouldMigrate()` method to determine whether a migration should run or not, based on the database:
+Some migrations may need to run only on specific databases. Any database migration class can implement {b`Tempest\Database\ShouldMigrate`}, which adds a `shouldMigrate()` method to determine whether a migration should run based on the database:
 
 ```php
 use Tempest\Database\Database;
-use Tempest\Database\DatabaseMigration;
+use Tempest\Database\MigratesUp;
 use Tempest\Database\ShouldMigrate;
 
-final class MigrationForBackup implements DatabaseMigration, ShouldMigrate
+final class MigrationForBackup implements MigratesUp, ShouldMigrate
 {
     public string $name = '…';
 
     public function shouldMigrate(Database $database): bool
     {
-        return $database->tag === 'backup';
+        return $database->tag === DatabaseType::BACKUP;
     }
 
     public function up(): QueryStatement
-    { /* … */ }
-
-    public function down(): QueryStatement
     { /* … */ }
 }
 ```
 
 ### Dynamic databases
 
-In systems with dynamic databases, like, for example, multi-tenant systems; you might not always have a hard-coded tag available to configure and resolve the right database. In those cases, it's trivial to add as many dynamic databases as you'd like:
+In systems with dynamic databases, such as multi-tenant systems, a hard-coded tag may not always be available to configure and resolve the correct database. In these cases, dynamic databases can be added as needed:
 
 ```php
 final class ConnectTenant
 {
     public function __invoke(string $tenantId): void
     {
-        // Use any database config you'd like:
         $this->container->config(new SQLiteConfig(
             path: __DIR__ . "/tenant-{$tenantId}.sqlite",
             tag: $tenantId,
@@ -804,7 +850,7 @@ final class ConnectTenant
 }
 ```
 
-Furthermore, you can run migrations programmatically on such dynamically defined databases using the {`Tempest\Database\Migrations\MigrationManager`}:
+Migrations can be run programmatically on dynamically defined databases using the {b`Tempest\Database\Migrations\MigrationManager`}:
 
 ```php
 use Tempest\Database\Migrations\MigrationManager;
@@ -819,7 +865,7 @@ final class OnboardTenant
     {
         $setupMigrations = [
             new CreateMigrationsTable(),
-            // …
+            // Additional migrations
         ];
 
         foreach ($setupMigrations as $migration) {
@@ -829,7 +875,7 @@ final class OnboardTenant
 }
 ```
 
-Finally, you should register your dynamic database connections as well within the entry points of your application. This could be done with [middleware](/main/essentials/routing#route-middleware), or with a [kernel event hook](/main/extra-topics/package-development#provider-classes); that's up to you:
+Dynamic database connections should be registered within the application's entry points. This can be accomplished with [middleware](/main/essentials/routing#route-middleware) or with a [kernel event hook](/main/extra-topics/package-development#provider-classes):
 
 ```php
 use Tempest\Container\Container;
@@ -845,7 +891,7 @@ final class ConnectTenantMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $tenantId = // Resolve tenant ID from the request
+        $tenantId = // Tenant ID resolution from request
 
         (new ConnectTennant)($tenantId);
 

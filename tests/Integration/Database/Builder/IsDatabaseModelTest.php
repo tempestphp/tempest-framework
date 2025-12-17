@@ -51,7 +51,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * @internal
@@ -858,6 +858,11 @@ final class BaseModel
 
 final readonly class CarbonCaster implements Caster
 {
+    public static function for(): false
+    {
+        return false;
+    }
+
     public function cast(mixed $input): mixed
     {
         return new Carbon($input);
@@ -875,6 +880,11 @@ final class CarbonModel
 
 final readonly class CarbonSerializer implements Serializer
 {
+    public static function for(): false
+    {
+        return false;
+    }
+
     public function serialize(mixed $input): string
     {
         if (! $input instanceof Carbon) {

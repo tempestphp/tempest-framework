@@ -5,9 +5,9 @@ description: "Learn how to route requests to controllers. In Tempest, this is do
 
 ## Overview
 
-In Tempest, you may associate a route to any class method. Usually, this is done in dedicated controller classes, but it could be any class of your choice.
+In Tempest, routes can be associated with any class method. This is typically done in dedicated controller classes, but any class can be used.
 
-Tempest provides many attributes, named after HTTP verbs, to attach URIs to controller actions. These attributes implement the {`Tempest\Router\Route`} interface, so you can write your own if you need to.
+Tempest provides attributes, named after HTTP verbs, to attach URIs to controller actions. These attributes implement the {b`Tempest\Router\Route`} interface, allowing custom route attributes to be created.
 
 ```php app/HomeController.php
 use Tempest\Router\Get;
@@ -19,7 +19,7 @@ final readonly class HomeController
     #[Get(uri: '/home')]
     public function __invoke(): View
     {
-        return view('home.view.php');
+        return view('./home.view.php');
     }
 }
 ```
@@ -28,7 +28,7 @@ Out of the box, an attribute for every HTTP verb is available: {b`Tempest\Router
 
 ## Route parameters
 
-You may define dynamic segments in your route URIs by wrapping them in curly braces. The segment name inside the braces will be passed as a parameter to your controller method.
+Dynamic segments can be defined in route URIs by wrapping them in curly braces. The segment name inside the braces is passed as a parameter to the controller method.
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -44,14 +44,14 @@ final readonly class AircraftController
         $aircraft = $this->aircraftRepository->getAircraftById($id);
 
         // Pass the aircraft to the view
-        return view('aircraft.view.php', aircraft: $aircraft);
+        return view('./aircraft.view.php', aircraft: $aircraft);
     }
 }
 ```
 
 ### Optional parameters
 
-Sometimes you may want a route to match both with and without a parameter. For instance, you might want `/aircraft` to show all aircraft, and `/aircraft/123` to show a specific aircraft. This can be achieved by marking route parameters as optional.
+A route can match both with and without a parameter. For instance, `/aircraft` can show all aircraft, while `/aircraft/123` shows a specific aircraft. This is achieved by marking route parameters as optional.
 
 To mark a parameter as optional, prefix it with a question mark `?` inside the curly braces. The corresponding method parameter must either be nullable or have a default value.
 
@@ -66,10 +66,8 @@ final readonly class AircraftController
     public function index(?string $id): View
     {
         if ($id === null) {
-            // Show all aircraft
             $aircraft = $this->aircraftRepository->all();
         } else {
-            // Show specific aircraft
             $aircraft = $this->aircraftRepository->find($id);
         }
 
@@ -78,20 +76,20 @@ final readonly class AircraftController
 }
 ```
 
-In this example, both `/aircraft` and `/aircraft/123` will match the same route. When the parameter is not provided, the method parameter receives `null`.
+In this example, both `/aircraft` and `/aircraft/123` match the same route. When the parameter is not provided, the method parameter receives `null`.
 
-Alternatively, you may provide a default value instead of using a nullable type:
+Alternatively, a default value can be provided instead of using a nullable type:
 
 ```php app/AircraftController.php
 #[Get(uri: '/aircraft/{?type}')]
 public function filter(string $type = 'all'): View
 {
-    // When /aircraft is requested, $type will be 'all'
-    // When /aircraft/commercial is requested, $type will be 'commercial'
+    // $type defaults to 'all' when not provided
+    // $type is set to the provided value otherwise
 }
 ```
 
-You may also combine required and optional parameters. Optional parameters should come after required ones:
+Required and optional parameters can be combined. Optional parameters must come after required ones:
 
 ```php app/FlightController.php
 use Tempest\Router\Get;
@@ -100,10 +98,10 @@ use function Tempest\view;
 
 final readonly class FlightController
 {
-    #[Get(uri: '/flights/{id}/{?segment}')]
-    public function show(string $id, ?string $segment): View
+    #[Get(uri: '/flights/{flightNumber}/{?segment}')]
+    public function show(string $flightNumber, ?string $segment): View
     {
-        // Matches both /flights/AA123 and /flights/AA123/departure
+        // Matches both /flights/JFA123 and /flights/JFA123/departure
     }
 }
 ```
@@ -114,11 +112,11 @@ Multiple optional parameters are also supported:
 #[Get(uri: '/aircraft/{?manufacturer}/{?model}')]
 public function search(?string $manufacturer, ?string $model): View
 {
-    // Matches /aircraft, /aircraft/cessna, and /aircraft/cessna/172
+    // Matches /aircraft, /aircraft/pilatus, and /aircraft/pilatus/pc24
 }
 ```
 
-Optional parameters work seamlessly with [regular expression constraints](#regular-expression-constraints). Simply add the regex pattern after the parameter name:
+Optional parameters work with [regular expression constraints](#regular-expression-constraints). Add the regular expression after the parameter name:
 
 ```php app/AircraftController.php
 #[Get(uri: '/aircraft/{?id:\d+}')]
@@ -130,9 +128,9 @@ public function show(?int $id): View
 
 ### Regular expression constraints
 
-You may constrain the format of a route parameter by specifying a regular expression after its name.
+The format of a route parameter can be constrained by specifying a regular expression after its name.
 
-For instance, you may only accept numeric identifiers for an `id` parameter by using the following dynamic segment: `{regex}{id:[0-9]+}`. In practice, a route may look like this:
+For instance, to accept only numeric identifiers for an `id` parameter, use the following dynamic segment: `{regex}{id:[0-9]+}`. In practice, a route looks like this:
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -151,7 +149,7 @@ final readonly class AircraftController
 
 ### Route binding
 
-In controller actions, you may want to receive an object instead of a scalar value such as an identifier. This is especially useful in the case of [models](./03-database.md#models) to avoid having to write the fetching logic in each controller.
+Controller actions can receive objects instead of scalar values such as identifiers. This is particularly useful for [models](./03-database.md#models) to avoid writing fetching logic in each controller.
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -165,7 +163,7 @@ final class AircraftController
 }
 ```
 
-Route binding may be enabled for any class that implements the {`Tempest\Router\Bindable`} interface, which requires a `resolve()` method responsible for returning the correct instance.
+Route binding can be enabled for any class that implements the {b`Tempest\Router\Bindable`} interface, which requires a static `resolve()` method responsible for returning the correct instance.
 
 ```php
 use Tempest\Router\Bindable;
@@ -173,36 +171,47 @@ use Tempest\Database\IsDatabaseModel;
 
 final class Aircraft implements Bindable
 {
-    use IsDatabaseModel;
-
     public static function resolve(string $input): self
     {
-        return self::findById(id: $input);
+        return query(self::class)->resolve($input);
     }
 }
 ```
 
-By default, `Bindable` objects will be cast to strings when they are passed into the `uri()` function as a route parameter. You can override this default behaviour by tagging a public property on the object with the {b`\Tempest\Router\IsBindingValue`} attribute:
+By default, {b`Tempest\Router\Bindable`} objects are cast to strings when passed into the {b`Tempest\Router\uri()`} function as a route parameter. This means that these objects should implement `Stringable`.
 
-```php
+This default behaviour can be overridden by annotating a public property on the object with the {b`\Tempest\Router\IsBindingValue`} attribute:
+
+:::code-group
+
+```php app/Aircraft.php
 use Tempest\Router\Bindable;
 use Tempest\Router\IsBindingValue;
 
 final class Aircraft implements Bindable
 {
     #[IsBindingValue]
-    public string $callSign;
+    public string $registrationNumber;
 
     public static function resolve(string $input): self
     {
-        return self::findById(id: $input);
+        return query(self::class)
+            ->where('registrationNumber', $input)
+            ->first();
     }
 }
 ```
 
+```php "URI generation"
+uri(ShowAircraftController::class, aircraft: $aircraft);
+// → /aircraft/lxjfa
+```
+
+:::
+
 ### Backed enum binding
 
-You may inject string-backed enumerations to controller actions. Tempest will try to map the corresponding parameter from the URI to an instance of that enum using the [`tryFrom`](https://www.php.net/manual/en/backedenum.tryfrom.php) enum method.
+String-backed enumerations can be injected into controller actions. Tempest maps the corresponding parameter from the URI to an instance of that enum using the [`tryFrom`](https://www.php.net/manual/en/backedenum.tryfrom.php) enum method.
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -216,7 +225,7 @@ final readonly class AircraftController
 }
 ```
 
-In the example above, we inject an `AircraftType` enumeration. If the request's `type` parameter has a value specified in that enumeration, it will be passed to the controller action. Otherwise, a HTTP 404 response will be returned without entering the controller method.
+In the example above, an `AircraftType` enumeration is injected. If the request's `type` parameter has a value specified in that enumeration, it is passed to the controller action. Otherwise, an HTTP 404 response is returned without entering the controller method.
 
 ```php app/AircraftType.php
 enum AircraftType: string
@@ -227,36 +236,24 @@ enum AircraftType: string
 }
 ```
 
-### Regex parameters
-
-You may use regular expressions to match route parameters. This can be useful to create catch-all routes or to match a route parameter to any kind of regex pattern. Add a colon `:` followed by a pattern to the parameter's name to indicate that it should be matched using a regular expression.
-
-```php
-#[Get('/main/{path:.*}')]
-public function docsRedirect(string $path): Redirect
-{
-    // …
-}
-```
-
 ## Generating URIs
 
-Tempest provides a `\Tempest\Router\uri` function that can be used to generate a URI to a controller method. This function accepts the FQCN of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
+Tempest provides a {b`\Tempest\Router\uri()`} function to generate URIs to controller methods. This function accepts the fully-qualified class name of the controller or a callable to a method as its first argument, and named parameters as [the rest of its arguments](https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list).
 
 ```php
 use function Tempest\Router\uri;
 
 // Invokable classes can be referenced directly:
 uri(HomeController::class);
-// /home
+// → /home
 
 // Classes with named methods are referenced using an array
 uri([AircraftController::class, 'store']);
-// /aircraft
+// → /aircraft
 
 // Additional URI parameters are passed in as named arguments:
 uri([AircraftController::class, 'show'], id: $aircraft->id);
-// /aircraft/1
+// → /aircraft/1
 ```
 
 :::info
@@ -265,9 +262,9 @@ URI-related methods are also available by injecting the {b`Tempest\Router\UriGen
 
 ### Signed URIs
 
-A signed URI may be used to ensure that the URI was not modified after it was created. This is useful for implementing login links, or other endpoints that need protection against tampering.
+A signed URI ensures that the URI was not modified after it was created. This is useful for implementing login or unsubscribe links, or other endpoints that need protection against tampering.
 
-To create a signed URI, you may use the `signed_uri` function. This function accepts the same arguments as `uri`, and returns the URI with a `signature` parameter:
+To create a signed URI, use the {b`\Tempest\Router\signed_uri()`} function. This function accepts the same arguments as {b`\Tempest\Router\uri()`} and returns the URI with a `signature` parameter:
 
 ```php
 use function Tempest\Router\signed_uri;
@@ -278,7 +275,7 @@ signed_uri(
 );
 ```
 
-Alternatively, you may use `temporary_signed_uri` to provide a duration after which the signed URI will expire, providing an extra layer of security.
+Alternatively, {b`\Tempest\Router\temporary_signed_uri()`} can be used to provide a duration after which the signed URI expires, providing an extra layer of security.
 
 ```php
 use function Tempest\Router\temporary_signed_uri;
@@ -290,7 +287,7 @@ temporary_signed_uri(
 );
 ```
 
-To ensure the validity of a signed URL, you should call the `hasValidSignature` method on the {`Tempest\Router\UriGenerator`} class.
+To ensure the validity of a signed URL, call the `hasValidSignature` method on the {b`Tempest\Router\UriGenerator`} class.
 
 ```php
 final class PasswordlessAuthenticationController
@@ -305,19 +302,17 @@ final class PasswordlessAuthenticationController
             return new Invalid();
         }
 
-        // ...
+        // …
     }
 }
 ```
 
 ### Matching the current URI
 
-To determine whether the current request matches a specific controller action, Tempest provides the `is_current_uri` function. This function accepts the same arguments as `uri`, and returns a boolean.
+To determine whether the current request matches a specific controller action, Tempest provides the {b`\Tempest\Router\is_current_uri()`} function. This function accepts the same arguments as `uri`, and returns a boolean.
 
-```php
+```php "GET /aircraft/1"
 use function Tempest\Router\is_current_uri;
-
-// Current URI is: /aircraft/1
 
 // Providing no argument to the right controller action will match
 is_current_uri(AircraftController::class); // true
@@ -331,15 +326,19 @@ is_current_uri(AircraftController::class, id: 2); // false
 
 ## Accessing request data
 
-A core pattern of any web application is to access data from the current request. You may do so by injecting {`Tempest\Http\Request`} to a controller action. This class provides access to the request's body, query parameters, method, and other attributes through dedicated class properties.
+Web applications need to process user input—whether it is form submissions, search queries, API payloads, or filter parameters.
+
+Tempest handles this by injecting {b`Tempest\Http\Request`} objects into controller actions, giving access to the request's body, query parameters, method, and headers through dedicated class properties.
 
 ### Using request classes
 
-In most situations, the data you expect to receive from a request is structured. You expect clients to send specific values, and you want them to follow specific rules.
+In most situations, the data expected from a request is structured. Clients are expected to send specific values and follow specific rules.
 
-The idiomatic way to achieve this is by using request classes. They are classes with public properties that correspond to the data you want to retrieve from the request. Tempest will automatically validate these properties using PHP's type system, in addition to optional [validation attributes](../2-features/03-validation) if needed.
+The idiomatic approach is to use request classes. These are classes with public properties that correspond to the data to retrieve from the request. Tempest automatically validates these properties using PHP's type system, in addition to optional [validation attributes](../2-features/03-validation) when needed.
 
-A request class must implement {`Tempest\Http\Request`} and should use the {`Tempest\Http\IsRequest`} trait, which provides the default implementation.
+A request class must implement {b`Tempest\Http\Request`} and use the {b`Tempest\Http\IsRequest`} trait, which provides the default implementation.
+
+:::code-group
 
 ```php app/RegisterAirportRequest.php
 use Tempest\Http\Request;
@@ -353,22 +352,21 @@ final class RegisterAirportRequest implements Request
     #[HasLength(min: 10, max: 120)]
     public string $name;
 
-    public ?DateTimeImmutable $registeredAt = null;
-
+    #[HasLength(min: 2)]
     public string $servedCity;
+
+    #[HasLength(min: 4, max: 4)]
+    public string $icaoCode;
+
+    public ?DateTime $registeredAt = null;
 }
 ```
-
-:::info Interfaces with default implementations
-Tempest uses this pattern a lot. Most classes that interact with the framework need to implement an interface, and a corresponding trait with a default implementation will be provided.
-:::
-
-Once you have created a request class, you may simply inject it into a controller action. Tempest will take care of filling its properties and validating them, leaving you with a properly-typed object to work with.
 
 ```php app/AirportController.php
 use Tempest\Router\Post;
 use Tempest\Http\Responses\Redirect;
-use function Tempest\map;
+
+use function Tempest\Mapper\map;
 use function Tempest\Router\uri;
 
 final readonly class AirportController
@@ -376,12 +374,29 @@ final readonly class AirportController
     #[Post(uri: '/airports/register')]
     public function store(RegisterAirportRequest $request): Redirect
     {
-        $airport = map($request)->to(Airport::class)->save();
+        $airport = map($request)
+            ->to(Airport::class)
+            ->save();
 
         return new Redirect(uri([self::class, 'show'], id: $airport->id));
     }
 }
 ```
+
+```php app/Airport.php
+#[Table('airports')]
+final class Airport
+{
+    public string $name;
+    public string $servedCity;
+    public string $icaoCode;
+    public ?DateTime $registeredAt = null;
+}
+```
+
+:::
+
+Once a request class is created, it can be injected into a controller action. Tempest fills its properties and validates them, providing a properly-typed object.
 
 :::info A note on data mapping
 The `map()` function allows mapping any data from any source into objects of your choice. You may read more about them in [their documentation](../2-features/01-mapper.md).
@@ -389,13 +404,15 @@ The `map()` function allows mapping any data from any source into objects of you
 
 ### Sensitive fields
 
-When handling sensitive data such as passwords or tokens, you may not want these values to be stored in the session or re-displayed in forms after validation errors. You can mark request properties as sensitive using the {b`#[Tempest\Http\SensitiveField]`} attribute:
+When a validation error occurs, Tempest filters out sensitive fields from the original values stored in the session. This prevents sensitive data from being re-populated in forms after a redirect.
+
+Request properties can be marked as sensitive using the {b`#[Tempest\Http\SensitiveField]`} attribute:
 
 ```php app/ResetPasswordRequest.php
 use Tempest\Http\Request;
 use Tempest\Http\IsRequest;
 use Tempest\Http\SensitiveField;
-use Tempest\Validation\Rules\HasMinLength;
+use Tempest\Validation\Rules\HasLength;
 
 final class ResetPasswordRequest implements Request
 {
@@ -404,19 +421,14 @@ final class ResetPasswordRequest implements Request
     public string $email;
 
     #[SensitiveField]
-    #[HasMinLength(8)]
+    #[HasLength(min: 8)]
     public string $password;
-
-    #[SensitiveField]
-    public string $password_confirmation;
 }
 ```
 
-When a validation error occurs, Tempest will filter out sensitive fields from the original values stored in the session. This prevents sensitive data from being re-populated in forms after a redirect.
-
 ### Retrieving data directly
 
-For simpler use cases, you may simply retrieve a value from the body or the query parameter using the request's `get` method.
+For simpler use cases, a value can be retrieved from the body or the query parameter using the {b`Tempest\Http\Request`}'s `get` method. Other methods, such as `hasBody` or `hasQuery`, are also available.
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -435,30 +447,32 @@ final readonly class AircraftController
 
 ## Form validation
 
-Oftentimes you'll want to submit form data from a website to be processed in the backend. In the previous section we've explained that Tempest will automatically map and validate request data unto request objects, but how do you then show validation errors back on the frontend?
+When users submit forms—like updating profile settings, or posting comments—the data needs validation before processing. Tempest automatically validates request objects using type hints and validation attributes, then provides errors back to users when something is wrong.
 
-Whenever a validation error occurs, Tempest will redirect back to the page the request was submitted on, or send a 400 invalid response (in case you're sending API requests). The validation errors can be found in two places:
+On validation failure, Tempest either redirects back to the form (for web pages) or returns a 400 response (for stateless requests). Validation errors are available in two places:
 
 - As a JSON encoded string in the `{txt}X-Validation` header
-- Within the session with the `Session::VALIDATION_ERRORS` key
+- Within the session stored in `Session::VALIDATION_ERRORS`
 
-The JSON encoded header is available for when you're building APIs with Tempest. The session errors are available for when you're building web pages. For web pages, you also need a way to show the errors when they occur; Tempest comes with some built-in view components to help you with that.
+The JSON-encoded header is available for APIs built with Tempest. The session errors are available for web pages. For web pages, Tempest provides built-in view components to display errors when they occur.
 
 ```html
 <x-form :action="uri(StorePostController::class)">
-    <x-input name="name" />
-    
-    <x-input type="email" name="email" />
-    
-    <x-submit />
+  <x-input name="name" />
+  <x-input type="email" name="email" />
+  <x-submit />
 </x-form>
 ```
 
-`{html}<x-form>` is a view component that will automatically include the CSRF token, as well as default to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once. In practice, you'll likely want to make changes to these built-in view components. That's why you can run `./tempest install view-components` and select the components you want to pull into your project. You can [read more about installing view components here](../1-essentials/02-views.md#built-in-components).
+`{html}<x-form>` is a view component that automatically includes the CSRF token and defaults to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once.
+
+:::info
+These built-in view components can be customized. Run `./tempest install view-components` and select the components to pull into the project. [Read more about installing view components here](../1-essentials/02-views.md#built-in-components).
+:::
 
 ## Route middleware
 
-Middleware can be applied to handle tasks in between receiving a request and sending a response. To specify a middleware for a route, add it to the `middleware` argument of a route attribute.
+Middleware can be applied to handle tasks between receiving a request and sending a response. To specify middleware for a route, add it to the `middleware` argument of a route attribute.
 
 ```php app/ReceiveInteractionController.php
 use Tempest\Router\Get;
@@ -474,11 +488,11 @@ final readonly class ReceiveInteractionController
 }
 ```
 
-The middleware class must be an invokable class that implements the {`Tempest\Router\HttpMiddleware`} interface. This interface has an `{:hl-property:__invoke:}()` method that accepts the current request as its first parameter and {`Tempest\Router\HttpMiddlewareCallable`} as its second parameter.
+The middleware class must be an invokable class that implements the {b`Tempest\Router\HttpMiddleware`} interface. This interface has an `{:hl-property:__invoke:}()` method that accepts the current request as its first parameter and {b`Tempest\Router\HttpMiddlewareCallable`} as its second parameter.
 
-`HttpMiddlewareCallable` is an invokable class that forwards the `$request` to its next step in the pipeline.
+{b`Tempest\Router\HttpMiddlewareCallable`} is an invokable class that forwards the `$request` to its next step in the pipeline.
 
-```php
+```php app/ValidateWebhook.php
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Http\Request;
@@ -504,7 +518,7 @@ final readonly class ValidateWebhook implements HttpMiddleware
 
 ### Middleware priority
 
-All middleware classes get sorted based on their priority. By default, each middleware gets the "normal" priority, but you can override it using the `#[Priority]` attribute:
+All middleware classes are sorted based on their priority. By default, each middleware has the "normal" priority, which can be overridden using the {b`#[Tempest\Core\Priority]`} attribute:
 
 ```php
 use Tempest\Core\Priority;
@@ -514,11 +528,11 @@ final readonly class ValidateWebhook implements HttpMiddleware
 { /* … */ }
 ```
 
-Note that priority is defined using an integer. You can however use one of the built-in `Priority` constants: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
+Priority is defined using an integer. However, for consistency reasons, it is recommended to use of the built-in {b`Tempest\Core\Priority`} constants.
 
 ### Middleware discovery
 
-Global middleware classes are discovered and sorted based on their priority. You can make a middleware class non-global by adding the {b`#[Tempest\Discovery\SkipDiscovery]`} attribute:
+Global middleware classes are discovered and sorted based on their priority. A middleware class can be made non-global by annotating it with the {b`#[Tempest\Discovery\SkipDiscovery]`} attribute:
 
 ```php
 use Tempest\Discovery\SkipDiscovery;
@@ -530,7 +544,7 @@ final readonly class ValidateWebhook implements HttpMiddleware
 
 ### Excluding route middleware
 
-Some routes may not require specific global middleware to be applied. For instance, API routes do not need CSRF protection. You may skip specific middleware by using the `without` argument of the route attribute.
+Some routes do not require specific global middleware to be applied. For instance, API routes do not need CSRF protection. Specific middleware can be skipped by using the `without` argument of the route attribute.
 
 ```php app/Slack/ReceiveInteractionController.php
 use Tempest\Router\Post;
@@ -546,13 +560,11 @@ final readonly class ReceiveInteractionController
 }
 ```
 
-## Route decorators (route groups)
+## Route decorators
 
-Route decorators are Tempest's way to manage routes in bulk; it's a feature similar to route groups in other frameworks. Route decorators are attributes that implement the {b`\Tempest\Router\RouteDecorator`} interface. A route decorator's task is to make changes or add functionality to whether route it's associated with. Tempest comes with a few built-in route decorators, and you can make your own as well.
+When building an API or an administration panel, routes often share common configuration—like a URL prefix (`/api`), authentication middleware, or stateless behavior. Route decorators are attributes that can be annotated to controller classes or methods to apply common configuration.
 
-In most cases, you'll want to add route decorators to a controller class, so that they are applied to all actions of that class:
-
-```php
+```php app/Books/ApiController.php
 use Tempest\Router\Prefix;
 use Tempest\Router\Get;
 
@@ -567,27 +579,15 @@ final readonly class ApiController
 }
 ```
 
-However, route decorators may also be applied to individual controller actions:
-
-```php
-use Tempest\Router\Stateless;
-use Tempest\Router\Get;
-
-final readonly class BlogPostController
-{
-    #[Stateless]
-    #[Get('/rss')]
-    public function rss(): Response { /* … */ }
-}
-```
-
 ### Built-in route decorators
 
-These route decorators are provided by Tempest:
+Tempest includes several route decorators to handle common scenarios—like providing routes without session overhead, organizing routes under a common prefix, or applying authentication across an entire controller.
+
+These decorators save you from creating custom implementations for frequently-needed patterns.
 
 #### `#[Stateless]`
 
-When you're building API endpoints, RSS feeds, or any other kind of page that does not require any cookie or session data, you may use the {b`#[Tempest\Router\Stateless]`} attribute, which will remove all state-related logic:
+For API endpoints, RSS feeds, or any other kind of page that does not require cookie or session data, use the {b`#[Tempest\Router\Stateless]`} attribute to remove all state-related logic:
 
 ```php
 use Tempest\Router\Stateless;
@@ -603,7 +603,7 @@ final readonly class BlogPostController
 
 #### `#[Prefix]`
 
-Adds a prefix to all associated routes.
+Adds a prefix to the URI for all associated routes.
 
 ```php
 use Tempest\Router\Prefix;
@@ -628,7 +628,7 @@ Adds middleware to all associated routes.
 use Tempest\Router\WithMiddleware;
 use Tempest\Router\Get;
 
-#[Middleware(AuthMiddleware::class, AdminMiddleware::class)]
+#[WithMiddleware(AuthMiddleware::class, AdminMiddleware::class)]
 final readonly class AdminController { /* … */ }
 ```
 
@@ -646,7 +646,7 @@ final readonly class StatelessController { /* … */ }
 
 ### Custom route decorators
 
-Building your own route decorators is done by implementing the {b`\Tempest\Router\RouteDecorator`} interface and marking your decorator as an attribute.
+Custom route decorators are built by implementing the {b`\Tempest\Router\RouteDecorator`} interface and marking the decorator as an attribute. The `decorate()` method receives the current {b`Tempest\Router\Route`} as a parameter, and must return the modified route.
 
 ```php
 use Attribute;
@@ -657,7 +657,7 @@ final readonly class Auth implements RouteDecorator
 {
     public function decorate(Route $route): Route
     {
-        $route->middleare[] = AuthMiddleware::class;
+        $route->middleware[] = AuthMiddleware::class;
 
         return $route;
     }
@@ -666,11 +666,13 @@ final readonly class Auth implements RouteDecorator
 
 ## Responses
 
-All requests to a controller action expect a response to be returned to the client. This is done by returning a `{php}View` or a `{php}Response` object.
+All requests to a controller action expect a response to be returned to the client. This is done by returning a {b`Tempest\View\View`} or a {b`Tempest\Http\Response`} object.
+
+For simpler use cases or debugging purposes, scalar values and arrays can also be returned directly. Tempest automatically converts these values into proper responses.
 
 ### View responses
 
-Returning a view is a shorthand for returning a successful response with that view. You may as well use the `{php}view()` function directly to construct a view.
+Returning a view is a shorthand for returning a successful response with that view. The {b`Tempest\view()`} function can be used directly to construct a view.
 
 ```php app/Aircraft/AircraftController.php
 use Tempest\Router\Get;
@@ -690,23 +692,23 @@ final readonly class AircraftController
 }
 ```
 
-Tempest has a powerful templating system inspired by modern front-end frameworks. You may read more about views in their [dedicated chapter](./02-views.md).
+Tempest has a templating system inspired by modern front-end frameworks like [Vue](https://vuejs.org). Read more about views in the [dedicated chapter](./02-views.md).
 
 ### Using built-in response classes
 
-Tempest provides several classes, all implementing the {`Tempest\Http\Response`} interface, mostly named after HTTP statuses.
+Tempest provides several response classes for common use cases, all implementing the {b`Tempest\Http\Response`} interface, mostly named after HTTP statuses.
 
-- `{php}Ok` — the 200 response. Accepts an optional body.
-- `{php}Created` — the 201 response. Accepts an optional body.
-- `{php}Redirect` — redirects to the specified URI.
-- `{php}Back` — redirects to previous page, accepts a fallback.
-- `{php}Download` — downloads a file from the browser.
-- `{php}File` — shows a file in the browser.
-- `{php}Invalid` — a response with form validation errors, redirecting to the previous page.
-- `{php}NotFound` — the 404 response. Accepts an optional body.
-- `{php}ServerError` — a 500 server error response.
+- {b`Tempest\Http\Responses\Ok`} — the 200 response. Accepts an optional body.
+- {b`Tempest\Http\Responses\Created`} — the 201 response. Accepts an optional body.
+- {b`Tempest\Http\Responses\Redirect`} — redirects to the specified URI.
+- {b`Tempest\Http\Responses\Back`} — redirects to previous page, accepts a fallback.
+- {b`Tempest\Http\Responses\Download`} — downloads a file from the browser.
+- {b`Tempest\Http\Responses\File`} — shows a file in the browser.
+- {b`Tempest\Http\Responses\Invalid`} — a response with form validation errors, redirecting to the previous page.
+- {b`Tempest\Http\Responses\NotFound`} — the 404 response. Accepts an optional body.
+- {b`Tempest\Http\Responses\ServerError`} — a 500 server error response.
 
-The following example conditionnally returns a `Redirect`, otherwise letting the user download a file by sending a `Download` response:
+The following example conditionnally returns a {b`Tempest\Http\Responses\Redirect`}, otherwise letting the user download a file by sending a {b`Tempest\Http\Responses\Download`} response:
 
 ```php app/FlightPlanController.php
 use Tempest\Router\Get;
@@ -719,9 +721,7 @@ final readonly class FlightPlanController
     #[Get('/{flight}/flight-plan/download')]
     public function download(Flight $flight): Response
     {
-        $allowed = /* … */;
-
-        if (! $allowed) {
+        if (! $this->accessControl->isGranted('view', $flight)) {
             return new Redirect('/');
         }
 
@@ -732,9 +732,7 @@ final readonly class FlightPlanController
 
 ### Sending generic responses
 
-It might happen that you need to dynamically compute the response's status code, and would rather not use a condition to send the corresponding response object.
-
-You may then return an instance of {`Tempest\Http\GenericResponse`}, specifying the status code and an optional body.
+When the response's status code needs to be dynamically computed without using a condition to send the corresponding response object, return an instance of {b`Tempest\Http\GenericResponse`} and specify the status code and an optional body.
 
 ```php app/CreateFlightController.php
 use Tempest\Router\Get;
@@ -761,9 +759,9 @@ final readonly class CreateFlightController
 
 ### Using custom response classes
 
-There are situations where you might send the same kind of response in a lot of places, or you might want to have a proper API for sending a structured response.
+There are situations where the same kind of response is sent in multiple places, or where a proper API is needed for sending a structured response.
 
-You may create your own response class by implementing {`Tempest\Http\Response`}, which default implementation is provided by the {`Tempest\Http\IsResponse`} trait:
+Custom response classes can be created by implementing {b`Tempest\Http\Response`}, which default implementation is provided by the {b`Tempest\Http\IsResponse`} trait:
 
 ```php app/AircraftRegistered.php
 use Tempest\Http\IsResponse;
@@ -787,9 +785,9 @@ final class AircraftRegistered implements Response
 
 ### Specifying content types
 
-Tempest is able to automatically infer the response's content type, usually inferred from the request's `Accept` header.
+Tempest automatically infers the response's content type, typically from the request's `{txt}Accept` header.
 
-However, you may override the content type manually by specifying the `setContentType` method on `Response` clases. This method accepts a case of {`Tempest\Router\ContentType`}.
+However, the content type can be overridden manually by using the `setContentType` method on {b`Tempest\Http\Response`} classes. This method accepts a case of {b`Tempest\Router\ContentType`}.
 
 ```php app/JsonController.php
 use Tempest\Router\Get;
@@ -811,14 +809,14 @@ final readonly class JsonController
 
 ### Post-processing responses
 
-There are some situations in which you may need to act on a response right before it is sent to the client. For instance, you may want to display custom error error pages when an exception occurred, or redirect somewhere instead of displaying the [built-in HTTP 404](/hello-from-the-void){:ssg-ignore="true"} page.
+There are situations where actions need to be taken on a response right before it is sent to the client. For instance, custom error pages can be displayed when an exception occurred, or a redirect can be performed instead of displaying the [built-in HTTP 404](/hello-from-the-void){:ssg-ignore="true"} page.
 
-This may be done using a response processor. Similar to [view processors](./02-views.md#pre-processing-views), they are classes that implement the {`Tempest\Response\ResponseProcessor`} interface. In the `process()` method, you may mutate and return the response object:
+This can be done using a response processor. Similar to [view processors](./02-views.md#pre-processing-views), these are classes that implement the {b`Tempest\Response\ResponseProcessor`} interface. In the `process()` method, the response object can be mutated and returned:
 
 ```php app/ErrorResponseProcessor.php
 use function Tempest\view;
 
-final class ErrorResponseProcessor implements ResponseProcessor
+final readonly class ErrorResponseProcessor implements ResponseProcessor
 {
     public function process(Response $response): Response
     {
@@ -831,41 +829,9 @@ final class ErrorResponseProcessor implements ResponseProcessor
 }
 ```
 
-## Custom route attributes
-
-It is often a requirement to have a bunch of routes following the same specifications—for instance, using the same middleware, or the same URI prefix.
-
-To achieve this, you may create your own route attribute, implementing the {`Tempest\Router\Route`} interface. The constructor of the attribute may hold the logic you want to apply to the routes using it.
-
-```php app/RestrictedRoute.php
-use Attribute;
-use Tempest\Http\Method;
-use Tempest\Router\Route;
-
-#[Attribute]
-final readonly class RestrictedRoute implements Route
-{
-    public function __construct(
-        public string $uri,
-        public Method $method,
-        public array $middleware,
-    ) {
-        $this->uri = $uri;
-        $this->method = $method;
-        $this->middleware = [
-            AuthorizeUserMiddleware::class,
-            LogUserActionsMiddleware::class,
-            ...$middleware,
-        ];
-    }
-}
-```
-
-This attribute can be used in place of the usual route attributes, on controller action methods.
-
 ## Session management
 
-Sessions in Tempest are managed by the {b`Tempest\Http\Session\Session`} class. You can inject it anywhere you need it. As soon as the `Session` is injected, it will be started behind the scenes.
+Sessions in Tempest are managed by the {b`Tempest\Http\Session\Session`} class. It can be injected anywhere needed. As soon as the {b`Tempest\Http\Session\Session`} is injected, it is started behind the scenes.
 
 ```php
 use Tempest\Http\Session\Session;
@@ -892,12 +858,14 @@ final readonly class TodoController
 
 ### Flashing values
 
-When you need to "flash" something to the user — in other words: show something once and clear if after refresh — you can use the `flash()` method on the session:
+After saving data or performing an action, it is often needed to show users a success message, error notification, or status update that appears once and then disappears after they refresh the page.
+
+Use the `flash()` method on the {b`Tempest\Http\Session\Session`} to store a value that lasts for the next request only:
 
 ```php
 public function store(Todo $todo): Redirect
 {
-    $this->session->flash('message', 'Save was successful');
+    $this->session->flash('message', value: 'Save was successful');
     
     return new Redirect('/');
 }
@@ -909,9 +877,9 @@ Tempest supports file and database-based sessions, the former being the default 
 
 #### File sessions
 
-When using file-based sessions, which is the default, session data will be stored in files within the specified directory, relative to `.tempest`. You may configure the path and expiration duration like so:
+When using file-based sessions, which is the default, session data is stored in files within the specified directory, relative to `.tempest`. The path and expiration duration can be configured as follows:
 
-```php app/Config/session.config.php
+```php app/session.config.php
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\DateTime\Duration;
 
@@ -923,15 +891,15 @@ return new FileSessionConfig(
 
 #### Database sessions
 
-Tempest provides a database-based session driver, particularly useful for applications that run on multiple servers, as the session data can be shared across all instances.
+Tempest provides a database-based session driver, particularly useful for applications that run on multiple servers, as session data can be shared across all instances.
 
-Before using database sessions, a dedicated table is needed. Tempest provides a migration, which may be installed in your project using its installer:
+Before using database sessions, a dedicated table is needed. Tempest provides a migration that can be installed using its installer:
 
 ```sh
 ./tempest install sessions:database
 ```
 
-This installer will also suggest creating the configuration file that sets up database sessions, with a default expiration of 30 days:
+This installer also suggests creating the configuration file that sets up database sessions, with a default expiration of 30 days:
 
 ```php app/Sessions/session.config.php
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
@@ -944,15 +912,15 @@ return new DatabaseSessionConfig(
 
 ### Session cleaning
 
-Sessions expire based on the last activity time. This means that as long as a user is actively using your application, their session will remain valid.
+Sessions expire based on the last activity time. This means that as long as a user is actively using the application, their session remains valid.
 
-Outdated sessions must occasionally be cleaned up. Tempest comes with a built-in command to do so, `session:clean`. This command makes use of the [scheduler](../2-features/11-scheduling.md). If you have scheduling enabled, it will automatically run behind the scenes.
+Outdated sessions must occasionally be cleaned up. Tempest provides a built-in command to do so, `session:clean`. This command uses the [scheduler](../2-features/11-scheduling.md): with scheduling enabled, it automatically runs behind the scenes.
 
 ## Deferring tasks
 
-It is sometimes needed, during requests, to perform tasks that would take a few seconds to complete. This could be sending an email, or keeping track of a page visit.
+During requests, tasks that take a few seconds to complete are sometimes needed. This could be sending an email or keeping track of a page visit.
 
-Tempest provides a way to perform that task after the response has been sent, so the client doesn't have to wait until its completion. This is done by passing a callback to the `defer` function:
+Tempest provides a way to perform that task after the response has been sent, so the client does not have to wait until its completion. This is done by passing a callback to the `defer` function:
 
 ```php app/TrackVisitMiddleware.php
 use Tempest\Router\HttpMiddleware;
@@ -974,7 +942,7 @@ final readonly class TrackVisitMiddleware implements HttpMiddleware
 }
 ```
 
-The `defer` callback may accept any parameter that the container can inject.
+The `defer` callback can accept any parameter that the container can inject.
 
 :::warning
 Task deferring only works if [`fastcgi_finish_request()`](https://www.php.net/manual/en/function.fastcgi-finish-request.php) is available within your PHP installation. If it's not available, deferred tasks will still be run, but the client response will only complete after all tasks have been finished.
@@ -982,9 +950,9 @@ Task deferring only works if [`fastcgi_finish_request()`](https://www.php.net/ma
 
 ## Testing
 
-Tempest provides a router testing utility accessible through the `http` property of the [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php) test case. You may learn more about testing in the [dedicated chapter](./07-testing.md).
+Tempest provides a router testing utility accessible through the `http` property of the [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php) test case. Learn more about testing in the [dedicated chapter](./07-testing.md).
 
-The router testing utility provides methods for all HTTP verbs. These method return an instance of [`TestResponseHelper`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/Http/TestResponseHelper.php), giving access to multiple assertion methods.
+The router testing utility provides methods for all HTTP verbs. These methods return an instance of [`TestResponseHelper`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/Http/TestResponseHelper.php), giving access to multiple assertion methods.
 
 ```php tests/ProfileControllerTest.php
 final class ProfileControllerTest extends IntegrationTestCase
