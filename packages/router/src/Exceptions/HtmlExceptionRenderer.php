@@ -38,10 +38,6 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 
     public function render(Throwable $throwable): Response
     {
-        if ($throwable instanceof ConvertsToResponse) {
-            return $throwable->toResponse();
-        }
-
         $response = match (true) {
             $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
             $throwable instanceof ValidationFailed => new Invalid($throwable->subject, $throwable->failingRules, $throwable->targetClass),
