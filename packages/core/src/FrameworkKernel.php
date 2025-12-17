@@ -49,7 +49,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ): self {
         if (! defined('TEMPEST_START')) {
-            define('TEMPEST_START', value: hrtime(true));
+            define('TEMPEST_START', value: hrtime(as_number: true));
         }
 
         return new self(
