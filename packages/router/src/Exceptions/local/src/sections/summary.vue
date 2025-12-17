@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { type ExceptionState } from '../store'
 
 const $props = defineProps<{
