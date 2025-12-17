@@ -12,7 +12,6 @@ export interface Argument {
 }
 
 export interface StacktraceFrame {
-	file: string
 	line: number
 	class?: string
 	function?: string
