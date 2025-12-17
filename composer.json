@@ -212,6 +212,7 @@
             "Tempest\\Cryptography\\Tests\\": "packages/cryptography/tests",
             "Tempest\\Database\\Tests\\": "packages/database/tests",
             "Tempest\\DateTime\\Tests\\": "packages/datetime/tests",
+            "Tempest\\Debug\\Tests\\": "packages/debug/tests",
             "Tempest\\EventBus\\Tests\\": "packages/event-bus/tests",
             "Tempest\\Generation\\Tests\\": "packages/generation/tests",
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",

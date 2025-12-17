@@ -14,13 +14,10 @@ use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
-use Tempest\Router\MatchedRoute;
 use Tempest\Support\Filesystem;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\View\GenericView;
 use Throwable;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Run;
 
 /**
  * Renders exceptions for HTML content. The priority is lowered by one because
@@ -45,16 +42,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             return $throwable->toResponse();
         }
 
-        if ($this->shouldRenderDevelopmentException($throwable)) {
-            $whoops = $this->createHandler();
-
-            return new GenericResponse(
-                status: Status::INTERNAL_SERVER_ERROR,
-                body: $whoops->handleException($throwable),
-            );
-        }
-
-        return match (true) {
+        $response = match (true) {
             $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
             $throwable instanceof ValidationFailed => new Invalid($throwable->subject, $throwable->failingRules, $throwable->targetClass),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
@@ -62,6 +50,16 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
             default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, $throwable),
         };
+
+        if ($this->shouldRenderDevelopmentException($throwable)) {
+            return new DevelopmentException(
+                throwable: $throwable,
+                response: $response,
+                request: $this->container->get(Request::class),
+            );
+        }
+
+        return $response;
     }
 
     private function renderErrorResponse(Status $status, ?Throwable $exception = null): Response
@@ -72,7 +70,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 
         return new GenericResponse(
             status: $status,
-            body: new GenericView(__DIR__ . '/html/error.view.php', [
+            body: new GenericView(__DIR__ . '/production/error.view.php', [
                 'css' => $this->getStyleSheet(),
                 'status' => $status->value,
                 'title' => $status->description(),
@@ -90,7 +88,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 
     private function getStyleSheet(): string
     {
-        return Filesystem\read_file(__DIR__ . '/html/style.css');
+        return Filesystem\read_file(__DIR__ . '/production/style.css');
     }
 
     private function shouldRenderDevelopmentException(Throwable $throwable): bool
@@ -108,42 +106,5 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         }
 
         return true;
-    }
-
-    private function createHandler(): Run
-    {
-        $handler = new PrettyPageHandler();
-
-        $handler->addDataTableCallback('Route', function () {
-            $route = $this->container->get(MatchedRoute::class);
-
-            if (! $route) {
-                return [];
-            }
-
-            return [
-                'Handler' => $route->route->handler->getDeclaringClass()->getFileName() . ':' . $route->route->handler->getName(),
-                'URI' => $route->route->uri,
-                'Allowed parameters' => $route->route->parameters,
-                'Received parameters' => $route->params,
-            ];
-        });
-
-        $handler->addDataTableCallback('Request', function () {
-            $request = $this->container->get(Request::class);
-
-            return [
-                'URI' => $request->uri,
-                'Method' => $request->method->value,
-                'Headers' => $request->headers->toArray(),
-                'Parsed body' => array_filter(array_values($request->body)) ? $request->body : [],
-                'Raw body' => $request->raw,
-            ];
-        });
-
-        $whoops = new Run();
-        $whoops->pushHandler($handler);
-
-        return $whoops;
     }
 }
