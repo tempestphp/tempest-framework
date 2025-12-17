@@ -270,7 +270,8 @@
             "./bin/validate-packages",
             "./tempest discovery:clear --no-interaction",
             "composer phpunit",
-            "composer phpstan"
+            "composer phpstan",
+            "composer exceptions:build"
         ]
     }
 }

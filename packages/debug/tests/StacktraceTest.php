@@ -48,7 +48,7 @@ final class StacktraceTest extends TestCase
             'type' => '->',
         ]);
 
-        $this->assertSame(__FILE__, $frame->file);
+        $this->assertSame(__FILE__, $frame->absoluteFile);
         $this->assertSame(100, $frame->line);
         $this->assertSame(self::class, $frame->class);
         $this->assertSame('testMethod', $frame->function);
@@ -206,17 +206,15 @@ final class StacktraceTest extends TestCase
     public function stacktrace_uses_root_path_for_vendor_detection(): void
     {
         $exception = $this->createException();
-        $rootPath = dirname(__DIR__, 3); // Get project root
+        $rootPath = dirname(__DIR__, levels: 3); // Get project root
 
         $stacktrace = Stacktrace::fromThrowable($exception, rootPath: $rootPath);
+        $frames = $stacktrace->applicationFrames;
 
-        $appFrames = $stacktrace->applicationFrames;
+        $this->assertNotEmpty($frames);
 
-        $this->assertNotEmpty($appFrames);
-
-        foreach ($appFrames as $frame) {
-            // Check that files within the project are not marked as vendor
-            if (str_starts_with($frame->file, $rootPath)) {
+        foreach ($frames as $frame) {
+            if (str_starts_with($frame->absoluteFile, $rootPath)) {
                 $this->assertFalse($frame->isVendor);
             }
         }

@@ -16,7 +16,6 @@ final class Frame
      * @param array<Argument> $arguments
      */
     public function __construct(
-        private(set) string $file,
         private(set) int $line,
         private(set) ?string $class,
         private(set) ?string $function,
@@ -41,7 +40,6 @@ final class Frame
         }
 
         return new self(
-            file: $absoluteFile,
             line: $line,
             class: $frame['class'] ?? null,
             function: $frame['function'] ?? null,

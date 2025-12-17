@@ -10,9 +10,7 @@ use function Tempest\Support\Path\to_relative_path;
 
 final class Stacktrace
 {
-    /**
-     * @param array<int, Frame> $frames
-     */
+    /** @var array<Frame> */
     public array $applicationFrames {
         get => array_values(array_filter(
             array: $this->frames,
@@ -20,9 +18,7 @@ final class Stacktrace
         ));
     }
 
-    /**
-     * @param array<int, Frame> $frames
-     */
+    /** @var array<int,Frame> */
     public array $vendorFrames {
         get => array_values(array_filter(
             array: $this->frames,
@@ -31,13 +27,12 @@ final class Stacktrace
     }
 
     /**
-     * @param array<int, Frame> $frames
+     * @param array<int,Frame> $frames
      */
     public function __construct(
         private(set) string $message,
         private(set) string $exceptionClass,
         private(set) array $frames,
-        private(set) string $file,
         private(set) int $line,
         private(set) string $absoluteFile,
         private(set) string $relativeFile,
@@ -46,10 +41,9 @@ final class Stacktrace
     public static function fromThrowable(Throwable $throwable, int $contextLines = 5, ?string $rootPath = null): self
     {
         $frames = [];
+        $snippet = null;
         $trace = $throwable->getTrace();
         $firstTraceFrame = $trace[0] ?? null;
-        $snippet = null;
-
         $exceptionFile = $throwable->getFile();
         $exceptionLine = $throwable->getLine();
         $isVendor = Frame::isVendorFile($exceptionFile, $rootPath);
@@ -58,39 +52,34 @@ final class Stacktrace
             $snippet = Frame::extractCodeSnippet($exceptionFile, $exceptionLine, $contextLines);
         }
 
-        $absoluteExceptionFile = $exceptionFile;
-        $relativeExceptionFile = $rootPath ? to_relative_path($rootPath, $exceptionFile) : $exceptionFile;
-        $arguments = $firstTraceFrame ? Frame::extractArguments($firstTraceFrame) : [];
-
         $frames[] = new Frame(
-            file: $exceptionFile,
             line: $exceptionLine,
             class: $firstTraceFrame['class'] ?? null,
             function: $firstTraceFrame['function'] ?? null,
             type: $firstTraceFrame['type'] ?? null,
             isVendor: $isVendor,
             snippet: $snippet,
-            absoluteFile: $absoluteExceptionFile,
-            relativeFile: $relativeExceptionFile,
-            arguments: $arguments,
+            absoluteFile: $exceptionFile,
+            relativeFile: $rootPath
+                ? to_relative_path($rootPath, $exceptionFile)
+                : $exceptionFile,
+            arguments: $firstTraceFrame
+                ? Frame::extractArguments($firstTraceFrame)
+                : [],
             index: 1,
         );
 
-        foreach (array_slice($trace, 1) as $i => $frame) {
+        foreach (array_slice($trace, offset: 1) as $i => $frame) {
             $frames[] = Frame::fromArray($frame, $contextLines, $rootPath, $i + 2);
         }
-
-        $absoluteFile = $throwable->getFile();
-        $relativeFile = $rootPath ? to_relative_path($rootPath, $absoluteFile) : $absoluteFile;
 
         return new self(
             message: $throwable->getMessage(),
             exceptionClass: $throwable::class,
             frames: $frames,
-            file: $throwable->getFile(),
             line: $throwable->getLine(),
-            absoluteFile: $absoluteFile,
-            relativeFile: $relativeFile,
+            absoluteFile: $exceptionFile,
+            relativeFile: $rootPath ? to_relative_path($rootPath, $exceptionFile) : $exceptionFile,
         );
     }
 }
