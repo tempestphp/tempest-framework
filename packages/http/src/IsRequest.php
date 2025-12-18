@@ -141,7 +141,7 @@ trait IsRequest
         $header = $this->headers->get(name: 'accept') ?? '';
 
         /** @var array{mediaType:string,subType:string} */
-        $mediaTypes = [];
+        $acceptedMediaTypes = [];
 
         foreach (str($header)->explode(separator: ',') as $acceptedType) {
             $acceptedType = str($acceptedType)->trim();
@@ -150,20 +150,20 @@ trait IsRequest
                 continue;
             }
 
-            $mediaTypes[] = [
+            $acceptedMediaTypes[] = [
                 'mediaType' => $acceptedType->before('/')->toString(),
                 'subType' => $acceptedType->afterFirst('/')->beforeLast(';q')->toString(),
             ];
         }
 
-        if (count($mediaTypes) === 0) {
+        if (count($acceptedMediaTypes) === 0) {
             return true;
         }
 
         foreach ($contentTypes as $contentType) {
-            [$mediaType, $subType] = explode('/', $contentType->value);
+            [$mediaType, $subType] = explode('/', string: $contentType->value);
 
-            foreach ($mediaTypes as $acceptedType) {
+            foreach ($acceptedMediaTypes as $acceptedType) {
                 if (
                     ($acceptedType['mediaType'] === '*' || $acceptedType['mediaType'] === $mediaType)
                     && ($acceptedType['subType'] === '*' || $acceptedType['subType'] === $subType)

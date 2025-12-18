@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Invalid;
+use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Validation\FailingRule;
 
-final class ValidationFailed extends Exception
+final class ValidationFailed extends Exception implements ConvertsToResponse
 {
     /**
      * @template TKey of array-key
@@ -26,5 +29,10 @@ final class ValidationFailed extends Exception
             is_null($subject) => 'Validation failed.',
             default => sprintf('Validation failed for %s.', is_object($subject) ? $subject::class : $subject),
         });
+    }
+
+    public function convertToResponse(): Response
+    {
+        return new Invalid($this->subject, $this->failingRules, $this->targetClass);
     }
 }

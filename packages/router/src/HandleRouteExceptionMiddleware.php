@@ -30,15 +30,12 @@ final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 
     /**
      * Some exceptions are not necessary to be thrown as-is, so we catch them here and convert them to equivalent responses.
-     * - `ConvertsToResponse` is straightforward, this exception is made to return its own response.
      * - `RouteBindingFailed` would require to be handled manually in renderers, it's better DX to simply return a 404.
      */
     private function forward(Request $request, HttpMiddlewareCallable $next): Response
     {
         try {
             return $next($request);
-        } catch (ConvertsToResponse $convertsToResponse) {
-            return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
             return new NotFound();
         }
