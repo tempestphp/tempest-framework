@@ -37,7 +37,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
     public function render(Throwable $throwable): Response
     {
         return match (true) {
-            $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
+            $throwable instanceof ConvertsToResponse => $throwable->convertToResponse(),
             $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
             $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
