@@ -13,11 +13,13 @@ final class Json implements Response
 {
     use IsResponse;
 
-    public function __construct(JsonSerializable|array|null $body = null)
+    public function __construct(JsonSerializable|array|null $body = null, ?Status $status = null, array $headers = [])
     {
-        $this->status = Status::OK;
+        $this->status = $status ?? Status::OK;
         $this->body = $body;
+
         $this->addHeader('Accept', 'application/json');
         $this->addHeader('Content-Type', 'application/json');
+        $this->addHeaders($headers);
     }
 }

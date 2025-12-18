@@ -12,7 +12,7 @@
 				<span style="transform: translateX(-5px)" class="font-light text-neutral-600">HTTP</span>
 				<span>{{ $status }}</span>
 			</h1>
-			<p :if="$message" class="text-neutral-600 uppercase">{{ \Tempest\Support\Str\ensure_ends_with($message, '.') }}</p>
+			<p :if="$message" class="text-neutral-600 uppercase">{{ $message }}</p>
 		</div>
 	</div>
 </body>

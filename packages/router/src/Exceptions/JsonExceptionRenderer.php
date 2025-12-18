@@ -37,69 +37,71 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
     public function render(Throwable $throwable): Response
     {
         return match (true) {
-            $throwable instanceof ConvertsToResponse => $throwable->convertToResponse(),
-            $throwable instanceof HttpRequestFailed => $this->renderErrorResponse($throwable->status, $throwable),
-            $throwable instanceof ValidationFailed => $this->renderValidationErrorResponse($throwable),
-            $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN),
+            $throwable instanceof ValidationFailed => $this->renderValidationFailedResponse($throwable),
+            $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN, message: $throwable->accessDecision->message),
             $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
-            default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, $throwable),
+            $throwable instanceof HttpRequestFailed => $this->renderHttpRequestFailed($throwable),
+            $throwable instanceof ConvertsToResponse => $throwable->convertToResponse(),
+            default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, throwable: $throwable),
         };
     }
 
-    private function renderValidationErrorResponse(ValidationFailed $exception): Response
+    private function renderHttpRequestFailed(HttpRequestFailed $exception): Response
+    {
+        if ($exception->cause && is_string($exception->cause->body)) {
+            return $this->renderErrorResponse($exception->status, message: $exception->cause->body);
+        }
+
+        if ($exception->cause && $exception->cause->body) {
+            return $exception->cause;
+        }
+
+        return $this->renderErrorResponse($exception->status, throwable: $exception);
+    }
+
+    private function renderValidationFailedResponse(ValidationFailed $exception): Response
     {
         $errors = Arr\map_iterable($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map_iterable(
             array: $failingRulesForField,
             map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule, $field),
         ));
 
-        return new Json([
-            'message' => Arr\first($errors)[0],
-            'errors' => $errors,
-        ])
-            ->setStatus(Status::UNPROCESSABLE_CONTENT)
-            ->addHeader('x-validation', value: encode($errors));
+        return new Json(
+            body: [
+                'message' => Arr\first($errors)[0],
+                'errors' => $errors,
+            ],
+            status: Status::UNPROCESSABLE_CONTENT,
+            headers: ['x-validation' => encode($errors)],
+        );
     }
 
-    private function renderErrorResponse(Status $status, ?Throwable $exception = null): Response
+    private function renderErrorResponse(Status $status, ?string $message = null, ?Throwable $throwable = null): Response
     {
         if ($status === Status::NOT_FOUND) {
             return new NotFound();
         }
 
-        $response = [
-            'message' => static::getErrorMessage($status, $exception),
+        $body = [
+            'message' => $message ?? $status->description(),
         ];
 
-        if ($this->appConfig->environment->isLocal() && $exception !== null) {
-            $response['debug'] = [
-                'message' => $exception->getMessage(),
-                'exception' => get_class($exception),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTrace(),
-            ];
+        if ($this->appConfig->environment->isLocal() && $throwable !== null) {
+            $body['debug'] = array_filter([
+                'message' => $throwable->getMessage(),
+                'exception' => get_class($throwable),
+                'file' => $throwable->getFile(),
+                'line' => $throwable->getLine(),
+                'trace' => Arr\map_iterable(
+                    array: $throwable->getTrace(),
+                    map: fn (array $trace) => Arr\remove_keys($trace, 'args'),
+                ),
+            ]);
         }
 
-        return new Json($response)->setStatus($status);
-    }
-
-    private static function getErrorMessage(Status $status, ?Throwable $exception = null): ?string
-    {
-        $message = $exception?->getMessage() ?: match ($status) {
-            Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-            Status::FORBIDDEN => 'You do not have permission to access this endpoint',
-            Status::UNAUTHORIZED => 'You must be authenticated in to access this endpoint',
-            Status::UNPROCESSABLE_CONTENT => 'The request could not be processed due to invalid data',
-            default => $status->description(),
-        };
-
-        if ($exception instanceof HttpRequestFailed) {
-            $message = is_string($exception->cause?->body)
-                ? $exception->cause->body
-                : $message;
-        }
-
-        return $message;
+        return new Json(
+            body: $body,
+            status: $status,
+        );
     }
 }

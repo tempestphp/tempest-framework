@@ -14,7 +14,6 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
@@ -544,7 +543,6 @@ final class TestResponseHelper
     public function assertHasNoJsonValidationErrors(): self
     {
         Assert::assertNotContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotInstanceOf(Invalid::class, $this->response);
         Assert::assertNull($this->response->getHeader('x-validation'));
 
         return $this;

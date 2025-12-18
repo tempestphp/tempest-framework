@@ -12,6 +12,9 @@ use Tempest\Http\Status;
 
 use function Tempest\get;
 
+/**
+ * This response is not fit for stateless requests.
+ */
 final class Back implements Response
 {
     use IsResponse;

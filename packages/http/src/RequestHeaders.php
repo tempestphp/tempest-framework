@@ -41,12 +41,14 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
         return $this->get((string) $offset);
     }
 
-    public function get(string $name): ?string
+    public function get(string $name, ?string $default = null): ?string
     {
-        return array_find(
+        $header = array_find(
             array: $this->headers,
             callback: fn (mixed $_, string $header) => strcasecmp($header, $name) === 0,
         );
+
+        return $header ?? $default;
     }
 
     public function has(string $name): bool

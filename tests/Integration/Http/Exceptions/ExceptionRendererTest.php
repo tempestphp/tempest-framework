@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Router;
+namespace Tests\Tempest\Integration\Http\Exceptions;
 
 use Closure;
 use Exception;
@@ -145,7 +145,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertNotNull($this->response, 'Response should not be null');
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $this->response->status);
-        $this->assertSame('Regular exception', $this->response->body['message']);
+        $this->assertSame('Internal Server Error', $this->response->body['message']);
     }
 
     #[Test]
