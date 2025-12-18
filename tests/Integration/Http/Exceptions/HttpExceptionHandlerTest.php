@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Tempest\Integration\Http;
+namespace Tests\Tempest\Integration\Http\Exceptions;
 
 use Closure;
 use Exception;
@@ -110,7 +110,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         });
 
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $this->response->status);
-        $this->assertStringContainsString('An unexpected server error occurred', $this->response->body['message']);
+        $this->assertStringContainsString('An unexpected server error occurred', $this->response->body->data['message']);
     }
 
     #[TestWith([Status::BAD_REQUEST])]

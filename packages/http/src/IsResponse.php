@@ -41,6 +41,21 @@ trait IsResponse
         );
     }
 
+    public function addHeaders(array $headers): self
+    {
+        foreach ($headers as $key => $values) {
+            if (! is_array($values)) {
+                $values = [$values];
+            }
+
+            foreach ($values as $value) {
+                $this->addHeader($key, $value);
+            }
+        }
+
+        return $this;
+    }
+
     public function addHeader(string $key, string $value): self
     {
         $this->headers[$key] ??= new Header($key);

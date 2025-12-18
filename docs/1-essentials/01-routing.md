@@ -299,7 +299,7 @@ final class PasswordlessAuthenticationController
     public function __invoke(Request $request): Response
     {
         if (! $this->uri->hasValidSignature($request)) {
-            return new Invalid();
+            throw new HttpRequestFailed(Status::UNPROCESSABLE_CONTENT);
         }
 
         // …
@@ -704,7 +704,6 @@ Tempest provides several response classes for common use cases, all implementing
 - {b`Tempest\Http\Responses\Back`} — redirects to previous page, accepts a fallback.
 - {b`Tempest\Http\Responses\Download`} — downloads a file from the browser.
 - {b`Tempest\Http\Responses\File`} — shows a file in the browser.
-- {b`Tempest\Http\Responses\Invalid`} — a response with form validation errors, redirecting to the previous page.
 - {b`Tempest\Http\Responses\NotFound`} — the 404 response. Accepts an optional body.
 - {b`Tempest\Http\Responses\ServerError`} — a 500 server error response.
 

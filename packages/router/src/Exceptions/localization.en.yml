@@ -1,0 +1,6 @@
+http_status_error:
+  500: "An unexpected server error occurred"
+  404: "The requested resource was not found"
+  403: "Access to the requested resource is forbidden"
+  401: "Authentication is required to access the requested resource"
+  422: "The request could not be processed due to validation errors"
