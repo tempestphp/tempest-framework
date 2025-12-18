@@ -48,6 +48,10 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
 
     private function renderHttpRequestFailed(HttpRequestFailed $exception): Response
     {
+        if ($exception->getMessage() !== '') {
+            return $this->renderErrorResponse($exception->status, message: $exception->getMessage());
+        }
+
         if ($exception->cause && is_string($exception->cause->body)) {
             return $this->renderErrorResponse($exception->status, message: $exception->cause->body);
         }

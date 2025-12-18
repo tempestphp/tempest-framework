@@ -177,4 +177,17 @@ final class JsonExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSame("I'm a teapot", $response->body['message']);
     }
+
+    #[Test]
+    public function http_request_failed_with_custom_message(): void
+    {
+        $response = $this->renderer->render(new HttpRequestFailed(
+            status: Status::BAD_REQUEST,
+            message: 'Custom error message',
+        ));
+
+        $this->assertInstanceOf(Json::class, $response);
+        $this->assertSame(Status::BAD_REQUEST, $response->status);
+        $this->assertSame('Custom error message', $response->body['message']);
+    }
 }
