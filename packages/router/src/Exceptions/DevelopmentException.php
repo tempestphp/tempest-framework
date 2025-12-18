@@ -3,6 +3,7 @@
 namespace Tempest\Router\Exceptions;
 
 use Tempest\Core\Kernel;
+use Tempest\Core\ProvidesContext;
 use Tempest\Debug\Stacktrace\Stacktrace;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Request;
@@ -33,6 +34,7 @@ final class DevelopmentException implements Response
                     'css' => Filesystem\read_file(__DIR__ . '/local/dist/style.css'),
                     'hydration' => map([
                         'stacktrace' => Stacktrace::fromThrowable($throwable, rootPath: root_path()),
+                        'context' => $throwable instanceof ProvidesContext ? $throwable->context() : [],
                         'rootPath' => root_path(),
                         'request' => [
                             'uri' => $request->uri,

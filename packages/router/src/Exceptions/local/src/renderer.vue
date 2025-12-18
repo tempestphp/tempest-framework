@@ -3,6 +3,7 @@ import { useFavicon, useTitle } from '@vueuse/core'
 import { onMounted, useTemplateRef } from 'vue'
 import noise from './assets/noise.svg?url'
 import logo from './assets/tempest-logo.svg'
+import Context from './sections/context.vue'
 import Headers from './sections/headers.vue'
 import RequestBody from './sections/request-body.vue'
 import Stacktrace from './sections/stacktrace.vue'
@@ -33,6 +34,7 @@ onMounted(() => background.value!.style.backgroundImage = `url("${noise}")`)
 					class="mb-4"
 				/>
 				<Stacktrace :exception="store.exception" class="mt-12" />
+				<Context :context="store.exception.context" class="mt-12" />
 				<RequestBody :body="store.exception.request.body" class="mt-12" />
 				<Headers
 					:headers="store.exception.request.headers"

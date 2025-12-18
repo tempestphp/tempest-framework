@@ -8,7 +8,7 @@ const $props = defineProps<{
 
 <template>
 	<card title="Request body" icon="tabler:http-post">
-		<div v-if="body" class="p-6" v-html="highlight(body, 'json')" />
+		<div v-if="body" class="p-2" v-html="highlight(body, 'json')" />
 		<div v-else class="flex justify-center items-center p-8 pt-4 font-mono uppercase">
 			<span class="text-muted">No request body</span>
 		</div>
