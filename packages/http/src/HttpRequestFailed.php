@@ -34,7 +34,6 @@ final class HttpRequestFailed extends Exception implements ProvidesContext
             'request_uri' => $this->request?->uri,
             'request_method' => $this->request?->method->value,
             'status_code' => $this->status->value,
-            'message' => $this->message !== '' ? $this->message : null,
             'original_response' => $this->cause ? $this->cause::class : null,
         ]);
     }

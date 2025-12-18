@@ -3,7 +3,6 @@
 namespace Tempest\Core\Exceptions;
 
 use Tempest\Core\ProvidesContext;
-use Tempest\Debug\Debug;
 use Tempest\Log\Logger;
 use Throwable;
 
@@ -18,17 +17,13 @@ final class LoggingExceptionReporter implements ExceptionReporter
 
     public function report(Throwable $throwable): void
     {
-        $items = [
-            'class' => $throwable::class,
-            'exception' => $throwable->getMessage(),
-            'trace' => $throwable->getTraceAsString(),
-            'context' => $throwable instanceof ProvidesContext
+        $this->logger->error(
+            message: $throwable->getMessage() ?: '(no message)',
+            context: $throwable instanceof ProvidesContext
                 ? $throwable->context()
                 : [],
-        ];
+        );
 
-        $this->logger->error($throwable->getMessage(), $items);
-
-        Debug::resolve()->log($items, writeToOut: false);
+        $this->logger->error($throwable->getTraceAsString());
     }
 }

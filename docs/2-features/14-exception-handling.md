@@ -37,7 +37,7 @@ final readonly class CreateUser
 
 ## Disabling exception logging
 
-The default logging reporter, {b`Tempest\Core\Exceptions\ExceptionReporter`}, is automatically added to the list of reporters. To disable it, create an {b`Tempest\Core\Exceptions\ExceptionsConfig`} [configuration file](../1-essentials/06-configuration.md#configuration-files) and set `logging` to `false`:
+The default logging reporter, {b`Tempest\Core\Exceptions\LoggingExceptionReporter`}, is automatically added to the list of reporters. To disable it, create a {b`Tempest\Core\Exceptions\ExceptionsConfig`} [configuration file](../1-essentials/06-configuration.md#configuration-files) and set `logging` to `false`:
 
 ```php app/exceptions.config.php
 use Tempest\Core\Exceptions\ExceptionsConfig;
