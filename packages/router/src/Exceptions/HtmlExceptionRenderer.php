@@ -25,10 +25,6 @@ use Tempest\Validation\Validator;
 use Tempest\View\GenericView;
 use Throwable;
 
-/**
- * Renders exceptions for HTML content. The priority is lowered by one because
- * JSON-rendering should be the default for requests without `Accept` header.
- */
 #[Priority(Priority::LOW)]
 final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 {
