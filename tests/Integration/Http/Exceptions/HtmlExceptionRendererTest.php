@@ -188,4 +188,18 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(View::class, $response->body);
         $this->assertSame('I am a teapot.', $response->body->data['message']);
     }
+
+    #[Test]
+    public function http_request_failed_with_custom_message(): void
+    {
+        $response = $this->renderer->render(new HttpRequestFailed(
+            status: Status::BAD_REQUEST,
+            message: 'Custom error message',
+        ));
+
+        $this->assertSame(Status::BAD_REQUEST, $response->status);
+        $this->assertInstanceOf(GenericResponse::class, $response);
+        $this->assertInstanceOf(GenericView::class, $response->body);
+        $this->assertSame('Custom error message', $response->body->data['message']);
+    }
 }
