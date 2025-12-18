@@ -11,6 +11,7 @@ interface ReadyStore {
 
 export interface ExceptionState {
 	stacktrace: Stacktrace
+	context: Record<string, any>
 	rootPath: string
 	request: {
 		uri: string
@@ -39,6 +40,7 @@ export function initializeExceptionStore(data: ExceptionState) {
 	store.step = 'ready'
 
 	if (store.step === 'ready') {
+		console.log(data)
 		store.exception = data
 	}
 }
