@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UseClipboard } from '@vueuse/components'
 import { type ExceptionState } from '../store'
 
 const $props = defineProps<{
@@ -56,11 +57,21 @@ function toFileSize(
 			<!-- Badges -->
 			<div class="flex flex-col items-end gap-2 font-mono shrink-0">
 				<!-- URL and method -->
-				<u-badge color="neutral" size="md" :label="uri">
-					<template v-slot:leading>
-						<span class="text-muted" v-text="method" />
-					</template>
-				</u-badge>
+				<use-clipboard v-slot="{ copy, copied }" :source="uri">
+					<u-tooltip :text="`Click to copy`">
+						<u-badge
+							:color="copied ? 'success' : 'neutral'"
+							size="md"
+							:label="uri"
+							@click="copy"
+							class="cursor-pointer select-none"
+						>
+							<template v-slot:leading>
+								<span class="text-muted" v-text="method" />
+							</template>
+						</u-badge>
+					</u-tooltip>
+				</use-clipboard>
 				<div class="flex items-center gap-x-2">
 					<!-- Status -->
 					<u-badge
