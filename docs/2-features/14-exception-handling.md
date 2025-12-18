@@ -5,11 +5,9 @@ description: "Learn how exception handling works, how to manually report excepti
 
 ## Overview
 
-Tempest comes with its own exception handler, which provides a simple way to catch and process exceptions. During local development, Tempest uses [Whoops](https://github.com/filp/whoops) to display detailed error pages. In production, it displays a generic error page.
+Tempest comes with an exception handler that provides a simple way to report exceptions and render error responses.
 
-When an exception is thrown, it is caught and piped through the registered exception reporters. By default, the only registered exception reporter, {b`Tempest\Core\LoggingExceptionReporter`}, logs the exception.
-
-Custom exception reporters can be created by implementing the {b`Tempest\Core\Exceptions\ExceptionReporter`} interface. Classes implementing this interface are automatically [discovered](../4-internals/02-discovery.md) and do not require manual registration.
+Custom [exception reporters](#writing-exception-reporters) can be created by implementing the {b`Tempest\Core\Exceptions\ExceptionReporter`} interface, and custom [exception renderers](#customizing-exception-rendering) can be created by implementing {b`Tempest\Router\Exceptions\ExceptionRenderer`}. These classes are automatically [discovered](../4-internals/02-discovery.md) and do not require manual registration.
 
 ## Processing exceptions
 
@@ -66,6 +64,91 @@ final readonly class UserWasNotFound extends Exception implements ProvidesContex
         return [
             'user_id' => $this->userId,
         ];
+    }
+}
+```
+
+## Writing exception reporters
+
+Exception reporters allow defining custom reporting logic for exceptions, such as sending them to external error tracking services like Sentry or logging them to specific destinations.
+
+To create a custom reporter, implement the {b`Tempest\Core\Exceptions\ExceptionReporter`} interface and define a `report()` method:
+
+```php app/SentryExceptionReporter.php
+use Tempest\Core\Exceptions\ExceptionReporter;
+use Throwable;
+
+final class SentryExceptionReporter implements ExceptionReporter
+{
+    public function __construct(
+        private SentryClient $sentry,
+    ) {}
+
+    public function report(Throwable $throwable): void
+    {
+        $this->sentry->captureException($throwable);
+    }
+}
+```
+
+Exception reporters are automatically [discovered](../4-internals/02-discovery.md) and registered. All registered reporters are invoked whenever an exception is processed, allowing multiple reporters to handle the same exception.
+
+For example, the default logging reporter logs to a file, while the reporter above sends the error to Sentry.
+
+If an exception reporter throws an exception during execution, it is silently caught to prevent infinite loops. This ensures that a failing reporter doesn't prevent other reporters from running.
+
+### Accessing exception context
+
+Exceptions can implement the {b`Tempest\Core\ProvidesContext`} interface, which reporters can leverage to provide additional context data during reporting:
+
+```php app/SentryExceptionReporter.php
+use Tempest\Core\Exceptions\ExceptionReporter;
+use Tempest\Core\ProvidesContext;
+use Sentry\State\HubInterface as Sentry;
+use Sentry\State\Scope;
+
+final class SentryExceptionReporter implements ExceptionReporter
+{
+    public function __construct(
+        private readonly Sentry $sentry,
+    ) {}
+
+    public function report(Throwable $throwable): void
+    {
+        $this->sentry->withScope(function (Scope $scope) use ($throwable) {
+            if ($throwable instanceof ProvidesContext) {
+                $scope->withContext($throwable->context());
+            }
+
+            $scope->captureException($throwable);
+        });
+    }
+}
+```
+
+### Conditional reporting
+
+Reporters can implement conditional logic to only report specific exception types or under certain conditions. There is no built-in filtering mechanism; reporters are responsible for determining when to report an exception.
+
+```php app/CriticalErrorReporter.php
+use Tempest\Core\Exceptions\ExceptionReporter;
+use Throwable;
+
+final class CriticalErrorReporter implements ExceptionReporter
+{
+    public function __construct(
+        private AlertService $alerts,
+    ) {}
+
+    public function report(Throwable $throwable): void
+    {
+        if (! $throwable instanceof CriticalException) {
+            return;
+        }
+
+        $this->alerts->sendCriticalAlert(
+            message: $throwable->getMessage(),
+        );
     }
 }
 ```
