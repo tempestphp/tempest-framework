@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { openFileInEditor } from '../../editor'
 import { highlight } from '../../highlight'
+import { openFileInEditor } from '../../settings/settings'
 import type { CodeSnippet } from './stacktrace'
 
 const $props = defineProps<{
