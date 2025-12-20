@@ -8,6 +8,7 @@ import Headers from './sections/headers.vue'
 import RequestBody from './sections/request-body.vue'
 import Stacktrace from './sections/stacktrace.vue'
 import Summary from './sections/summary.vue'
+import { settingsDialog } from './settings/settings'
 import { store } from './store'
 
 const background = useTemplateRef('background')
@@ -41,6 +42,14 @@ onMounted(() => background.value!.style.backgroundImage = `url("${noise}")`)
 					:exception="store.exception"
 					class="mt-12"
 				/>
+				<u-footer class="mt-12">
+					<u-button
+						icon="tabler:adjustments"
+						variant="secondary"
+						class="text-dimmed hover:text-highlighted"
+						@click="settingsDialog.open()"
+					/>
+				</u-footer>
 			</main>
 		</u-container>
 	</u-app>

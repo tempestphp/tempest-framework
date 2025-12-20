@@ -25,7 +25,7 @@ export interface StacktraceFrame {
 }
 
 export interface Stacktrace {
-	message: string
+	message?: string
 	exceptionClass: string
 	frames: StacktraceFrame[]
 	line: number

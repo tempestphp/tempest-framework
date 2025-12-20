@@ -24,11 +24,6 @@ export default defineConfig({
 						variant: 'soft',
 					},
 				},
-				input: {
-					defaultVariants: {
-						variant: 'soft',
-					},
-				},
 				button: {
 					slots: {
 						base: 'not-disabled:cursor-pointer',

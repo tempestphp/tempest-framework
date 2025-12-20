@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { openFileInEditor } from '../../editor'
+import { openFileInEditor } from '../../settings/settings'
 
 const $props = defineProps<{
 	absoluteFile: string
