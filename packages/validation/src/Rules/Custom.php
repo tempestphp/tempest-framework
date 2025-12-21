@@ -10,7 +10,6 @@ use InvalidArgumentException;
 use ReflectionFunction;
 use Tempest\Validation\Rule;
 
-
 /**
  * Custom validation rule defined by a closure.
  *
