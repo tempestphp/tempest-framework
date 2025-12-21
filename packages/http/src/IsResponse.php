@@ -8,7 +8,9 @@ use Generator;
 use JsonSerializable;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Session\Session;
 use Tempest\View\View;
+use UnitEnum;
 
 use function Tempest\get;
 
@@ -24,6 +26,10 @@ trait IsResponse
 
     public CookieManager $cookieManager {
         get => get(CookieManager::class);
+    }
+
+    public Session $session {
+        get => get(Session::class);
     }
 
     private(set) ?View $view = null;
@@ -99,6 +105,13 @@ trait IsResponse
     public function setBody(View|string|array|Generator|null $body): self
     {
         $this->body = $body;
+
+        return $this;
+    }
+
+    public function flash(string|UnitEnum $key, mixed $value): self
+    {
+        $this->session->flash($key, $value);
 
         return $this;
     }
