@@ -12,16 +12,6 @@ use UnitEnum;
 final class Session
 {
     /**
-     * The session key that holds validation errors.
-     */
-    public const string VALIDATION_ERRORS = '#validation_errors';
-
-    /**
-     * The session key that holds original input values.
-     */
-    public const string ORIGINAL_VALUES = '#original_values';
-
-    /**
      * Stores the keys for session values that have expired.
      */
     private array $expiredKeys = [];
@@ -129,24 +119,6 @@ final class Session
     public function clear(): void
     {
         $this->data = [];
-    }
-
-    /**
-     * Gets the failing rules for the specified field.
-     *
-     * @return \Tempest\Validation\FailingRule[]
-     */
-    public function getErrorsFor(string $field): array
-    {
-        return $this->get(self::VALIDATION_ERRORS)[$field] ?? [];
-    }
-
-    /**
-     * Gets the original input value for the specified field.
-     */
-    public function getOriginalValueFor(string $field, mixed $default = ''): mixed
-    {
-        return $this->get(self::ORIGINAL_VALUES)[$field] ?? $default;
     }
 
     public function __serialize(): array

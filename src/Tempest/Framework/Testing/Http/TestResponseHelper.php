@@ -14,6 +14,7 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Http\Session\FormSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
@@ -261,6 +262,55 @@ final class TestResponseHelper
         return $this;
     }
 
+    public function assertHasForm(Closure $closure): self
+    {
+        $this->assertHasContainer();
+
+        $formSession = $this->container->get(FormSession::class);
+
+        if (false === $closure($formSession)) {
+            Assert::fail('Failed validating form session.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the original form values in the session match the given values.
+     */
+    public function assertHasFormOriginalValues(array $values): self
+    {
+        $this->assertHasContainer();
+
+        $formSession = $this->container->get(FormSession::class);
+        $originalValues = $formSession->values();
+
+        foreach ($values as $key => $expectedValue) {
+            Assert::assertArrayHasKey(
+                key: $key,
+                array: $originalValues,
+                message: sprintf(
+                    'No original form value was set for [%s], available original form values: %s',
+                    $key,
+                    implode(', ', array_keys($originalValues)),
+                ),
+            );
+
+            Assert::assertEquals(
+                expected: $expectedValue,
+                actual: $originalValues[$key],
+                message: sprintf(
+                    'Original form value for [%s] does not match expected value. Expected: %s, Actual: %s',
+                    $key,
+                    var_export($expectedValue, return: true),
+                    var_export($originalValues[$key], return: true),
+                ),
+            );
+        }
+
+        return $this;
+    }
+
     public function assertHasSession(string $key, ?Closure $callback = null): self
     {
         $this->assertHasContainer();
@@ -311,8 +361,8 @@ final class TestResponseHelper
 
     public function assertHasNoValidationsErrors(): self
     {
-        $session = $this->container->get(Session::class);
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+        $formSession = $this->container->get(FormSession::class);
+        $validationErrors = $formSession->getErrors();
 
         Assert::assertEmpty(
             actual: $validationErrors,
