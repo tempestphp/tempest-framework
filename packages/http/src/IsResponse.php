@@ -8,7 +8,6 @@ use Generator;
 use JsonSerializable;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Session\Session;
 use Tempest\View\View;
 
 use function Tempest\get;
@@ -22,10 +21,6 @@ trait IsResponse
 
     /** @var \Tempest\Http\Header[] */
     private(set) array $headers = [];
-
-    public Session $session {
-        get => get(Session::class);
-    }
 
     public CookieManager $cookieManager {
         get => get(CookieManager::class);
@@ -72,27 +67,6 @@ trait IsResponse
         return $this;
     }
 
-    public function addSession(string $name, mixed $value): self
-    {
-        $this->session->set($name, $value);
-
-        return $this;
-    }
-
-    public function removeSession(string $name): self
-    {
-        $this->session->remove($name);
-
-        return $this;
-    }
-
-    public function destroySession(): self
-    {
-        $this->session->destroy();
-
-        return $this;
-    }
-
     public function addCookie(Cookie $cookie): self
     {
         $this->cookieManager->add($cookie);
@@ -103,13 +77,6 @@ trait IsResponse
     public function removeCookie(string $key): self
     {
         $this->cookieManager->remove($key);
-
-        return $this;
-    }
-
-    public function flash(string $key, mixed $value): self
-    {
-        $this->session->flash($key, $value);
 
         return $this;
     }

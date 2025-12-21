@@ -30,14 +30,6 @@ interface Response
 
     public function removeHeader(string $key): self;
 
-    public function addSession(string $name, mixed $value): self;
-
-    public function flash(string $key, mixed $value): self;
-
-    public function removeSession(string $name): self;
-
-    public function destroySession(): self;
-
     public function addCookie(Cookie $cookie): self;
 
     public function removeCookie(string $key): self;

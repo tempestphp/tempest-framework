@@ -13,7 +13,6 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Method;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\JsonExceptionRenderer;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -89,15 +88,6 @@ final class JsonExceptionRendererTest extends FrameworkIntegrationTestCase
         $this->assertSame(Status::FORBIDDEN, $response->status);
         $this->assertArrayHasKey('message', $response->body);
         $this->assertSame('Custom access denied message', $response->body['message']);
-    }
-
-    #[Test]
-    public function csrf_mismatch(): void
-    {
-        $response = $this->renderer->render(new CsrfTokenDidNotMatch());
-
-        $this->assertInstanceOf(Json::class, $response);
-        $this->assertSame(Status::UNPROCESSABLE_CONTENT, $response->status);
     }
 
     #[Test]

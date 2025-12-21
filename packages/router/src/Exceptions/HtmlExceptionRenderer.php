@@ -11,7 +11,6 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\SensitiveField;
-use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Intl\Translator;
@@ -46,7 +45,6 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         $response = match (true) {
             $throwable instanceof ValidationFailed => $this->renderValidationFailedResponse($throwable),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN, message: $throwable->accessDecision->message),
-            $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
             $throwable instanceof HttpRequestFailed => $this->renderHttpRequestFailed($throwable),
             $throwable instanceof ConvertsToResponse => $throwable->convertToResponse(),
             default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),

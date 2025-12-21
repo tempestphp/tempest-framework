@@ -7,6 +7,6 @@ use Tempest\Core\AppConfig;
 use function Tempest\env;
 
 return new AppConfig(
-    name: env('APPLICATION_NAME'),
+    name: env('APPLICATION_NAME') ?? 'tempest',
     baseUri: env('BASE_URI'),
 );
