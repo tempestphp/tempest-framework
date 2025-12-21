@@ -3,6 +3,7 @@
 namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
+use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
@@ -11,6 +12,7 @@ use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\SensitiveField;
+use Tempest\Http\Session\FormSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Intl\Translator;
@@ -32,7 +34,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         private Translator $translator,
         private Request $request,
         private Validator $validator,
-        private Session $session,
+        private Container $container,
     ) {}
 
     public function canRender(Throwable $throwable, Request $request): bool
@@ -123,8 +125,10 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             $status = Status::FOUND;
         }
 
-        $this->session->flash(Session::VALIDATION_ERRORS, $exception->failingRules);
-        $this->session->flash(Session::ORIGINAL_VALUES, $this->filterSensitiveFields($this->request, $exception->targetClass));
+        if ($this->container->has(Session::class)) {
+            $this->container->get(FormSession::class)->setErrors($exception->failingRules);
+            $this->container->get(FormSession::class)->setOriginalValues($this->filterSensitiveFields($this->request, $exception->targetClass));
+        }
 
         $errors = Arr\map_iterable($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map_iterable(
             array: $failingRulesForField,

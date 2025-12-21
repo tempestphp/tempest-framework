@@ -449,12 +449,12 @@ final readonly class AircraftController
 
 When users submit forms—like updating profile settings, or posting comments—the data needs validation before processing. Tempest automatically validates request objects using type hints and validation attributes, then provides errors back to users when something is wrong.
 
-On validation failure, Tempest either redirects back to the form (for web pages) or returns a 400 response (for stateless requests). Validation errors are available in two places:
+On validation failure, Tempest either redirects back to the form (for web pages) or returns a 422 response (for stateless requests). Validation errors are available in two places:
 
 - As a JSON encoded string in the `{txt}X-Validation` header
-- Within the session stored in `Session::VALIDATION_ERRORS`
+- Through the `b{Tempest\Http\Session\FormSession}` class
 
-The JSON-encoded header is available for APIs built with Tempest. The session errors are available for web pages. For web pages, Tempest provides built-in view components to display errors when they occur.
+For web pages, Tempest also provides built-in view components to display errors when they occur.
 
 ```html
 <x-form :action="uri(StorePostController::class)">
@@ -464,7 +464,7 @@ The JSON-encoded header is available for APIs built with Tempest. The session er
 </x-form>
 ```
 
-`{html}<x-form>` is a view component that automatically includes the CSRF token and defaults to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once.
+`{html}<x-form>` is a view component that defaults to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once.
 
 :::info
 These built-in view components can be customized. Run `./tempest install view-components` and select the components to pull into the project. [Read more about installing view components here](../1-essentials/02-views.md#built-in-components).

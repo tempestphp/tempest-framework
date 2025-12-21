@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\ContentType;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\FormSession;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -49,9 +49,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             )
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data) use ($values): void {
-                $this->assertEquals($values, $data);
-            });
+            ->assertHasFormOriginalValues($values);
     }
 
     public function test_update_book(): void
@@ -116,9 +114,9 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
                 headers: ['referer' => '/test-sensitive-validation'],
             )
             ->assertHasValidationError('not_sensitive_param')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data): void {
-                $this->assertArrayNotHasKey('sensitive_param', $data);
-                $this->assertArrayHasKey('not_sensitive_param', $data);
+            ->assertHasForm(function (FormSession $form): void {
+                $this->assertNull($form->getOriginalValueFor('sensitive_param'));
+                $this->assertNotNull($form->getOriginalValueFor('not_sensitive_param'));
             });
     }
 }

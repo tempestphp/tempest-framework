@@ -8,7 +8,7 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\FormSession;
 use Tempest\Validation\Rules\IsAlphaNumeric;
 use Tempest\Validation\Rules\IsBetween;
 use Tempest\Validation\Validator;
@@ -218,15 +218,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $between = new IsBetween(min: 1, max: 10);
         $alphaNumeric = new IsAlphaNumeric();
 
-        $session = $this->container->get(Session::class);
-
-        $session->flash(
-            Session::VALIDATION_ERRORS,
+        $formSession = $this->container->get(FormSession::class);
+        $formSession->setErrors(
             ['name' => [$between, $alphaNumeric]],
         );
 
-        $session->flash(
-            Session::ORIGINAL_VALUES,
+        $formSession->setOriginalValues(
             ['name' => 'original name'],
         );
 
