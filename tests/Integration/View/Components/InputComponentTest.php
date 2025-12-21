@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\View\Components;
 
 use Tempest\Http\Session\FormSession;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
@@ -77,11 +78,11 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
     {
         $failingRules = [
             'name' => [
-                new IsString(),
-                new HasLength(min: 5),
+                new FailingRule(new IsString()),
+                new FailingRule(new HasLength(min: 5)),
             ],
             'other' => [
-                new IsInteger(),
+                new FailingRule(new IsInteger()),
             ],
         ];
 
