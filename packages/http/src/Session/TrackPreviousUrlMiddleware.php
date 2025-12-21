@@ -12,12 +12,12 @@ use Tempest\Router\HttpMiddlewareCallable;
 final readonly class TrackPreviousUrlMiddleware implements HttpMiddleware
 {
     public function __construct(
-        private PreviousUrl $previousUrlTracker,
+        private PreviousUrl $previousUrl,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $this->previousUrlTracker->track($request);
+        $this->previousUrl->track($request);
 
         return $next($request);
     }

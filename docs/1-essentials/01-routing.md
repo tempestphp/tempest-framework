@@ -542,20 +542,33 @@ final readonly class ValidateWebhook implements HttpMiddleware
 { /* … */ }
 ```
 
+### Cross-site request forgery protection
+
+Tempest provides [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection based on the presence and values of the [`{txt}Sec-Fetch-Site`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site) and [`{txt}Sec-Fetch-Mode`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) headers through the {b`Tempest\Router\PreventCrossSiteRequestsMiddleware`} middleware, included by default in all requests.
+
+Unlike traditional CSRF tokens, this approach uses browser-generated headers that cannot be forged by external websites:
+
+- [`{txt}Sec-Fetch-Site`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site) indicates whether the request came from the same domain, subdomain, a different site or if it was user-initiated, such as typing the URL directly,
+- [`{txt}Sec-Fetch-Mode`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) allows distinguishing between requests originating from a user navigating between HTML pages, and requests to load images and other resources.
+
+:::info
+This middleware requires browsers that support `{txt}Sec-Fetch-*` headers, which is the case for all modern browsers. You may [exclude this middleware](#excluding-route-middleware) and implement traditional CSRF protection using tokens if you need to support older browsers.
+:::
+
 ### Excluding route middleware
 
-Some routes do not require specific global middleware to be applied. For instance, API routes do not need CSRF protection. Specific middleware can be skipped by using the `without` argument of the route attribute.
+Some routes do not require specific global middleware to be applied. For instance, a publicly accessible health check endpoint could bypass rate limiting that's applied to other routes. Specific middleware can be skipped by using the `without` argument of the route attribute.
 
-```php app/Slack/ReceiveInteractionController.php
-use Tempest\Router\Post;
+```php app/HealthCheckController.php
+use Tempest\Router\Get;
 use Tempest\Http\Response;
 
-final readonly class ReceiveInteractionController
+final readonly class HealthCheckController
 {
-    #[Post('/slack/interaction', without: [VerifyCsrfMiddleware::class, SetCookieMiddleware::class])]
+    #[Get('/health', without: [RateLimitMiddleware::class])]
     public function __invoke(): Response
     {
-        // …
+        return new Ok(['status' => 'healthy']);
     }
 }
 ```
@@ -639,8 +652,9 @@ Explicitly removes middleware to all associated routes.
 ```php
 use Tempest\Router\WithoutMiddleware;
 use Tempest\Router\Get;
+use Tempest\Router\PreventCrossSiteRequestsMiddleware;
 
-#[WithoutMiddleware(VerifyCsrfMiddleware::class, SetCookieMiddleware::class)]
+#[WithoutMiddleware(PreventCrossSiteRequestsMiddleware::class)]
 final readonly class StatelessController { /* … */ }
 ```
 

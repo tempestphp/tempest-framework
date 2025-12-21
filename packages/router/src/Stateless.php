@@ -15,6 +15,7 @@ final class Stateless implements RouteDecorator
     {
         $route->without = [
             ...$route->without,
+            PreventCrossSiteRequestsMiddleware::class,
             ManageSessionLifecycleMiddleware::class,
             SetCookieHeadersMiddleware::class,
         ];
