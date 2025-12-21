@@ -12,19 +12,18 @@ final class AppConfig
 
     public string $baseUri;
 
+    public string $name;
+
+    /** @var array<class-string<\Tempest\Core\InsightsProvider>> */
+    public array $insightsProviders = [];
+
     public function __construct(
-        public ?string $name = null,
-
+        ?string $name = null,
         ?Environment $environment = null,
-
         ?string $baseUri = null,
-
-        /**
-         * @var array<class-string<\Tempest\Core\InsightsProvider>>
-         */
-        public array $insightsProviders = [],
     ) {
+        $this->name = $name ?: env('NAME') ?? 'tempest';
         $this->environment = $environment ?? Environment::fromEnv();
-        $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
+        $this->baseUri = $baseUri ?: env('BASE_URI') ?? '';
     }
 }

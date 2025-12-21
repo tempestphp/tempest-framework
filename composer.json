@@ -250,7 +250,7 @@
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
         "style": "composer fmt && composer lint:fix",
         "test": "composer phpunit",
-        "test:stop": "composer phpunit --stop-on-error --stop-on-failure",
+        "test:stop": "composer phpunit -- --stop-on-error --stop-on-failure",
         "lint": "vendor/bin/mago lint --potentially-unsafe --minimum-fail-level=note",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",

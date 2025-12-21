@@ -9,7 +9,6 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
@@ -239,8 +238,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/stateless')
             ->assertOk()
-            ->assertDoesNotHaveCookie('tempest_session_id')
-            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+            ->assertDoesNotHaveCookie('tempest_session_id');
     }
 
     public function test_prefix_decorator(): void
@@ -263,7 +261,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/without-decorated-middleware')
             ->assertOk()
-            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+            ->assertDoesNotHaveHeader('set-cookie');
     }
 
     public function test_optional_parameter_with_required_parameter(): void

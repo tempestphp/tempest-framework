@@ -62,7 +62,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/')
             ->assertOk()
-            ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0; Path=/');
+            ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0; Path=/; Secure; SameSite=Lax');
     }
 
     public function test_manually_adding_a_cookie(): void

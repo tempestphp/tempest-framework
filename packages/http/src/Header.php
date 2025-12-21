@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use BackedEnum;
+
 final class Header
 {
     public function __construct(
@@ -14,6 +16,10 @@ final class Header
 
     public function add(mixed $value): void
     {
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
+        }
+
         $this->values[] = $value;
     }
 

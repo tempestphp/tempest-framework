@@ -14,6 +14,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionIdResolver;
+use Tempest\Support\Str;
 
 use function Tempest\Support\str;
 
@@ -44,7 +45,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
                 value: $id,
                 expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
                 path: '/',
-                secure: str($this->appConfig->baseUri)->startsWith('https'),
+                secure: Str\starts_with($this->appConfig->baseUri, needles: 'https'),
                 httpOnly: true,
                 sameSite: SameSite::LAX,
             ));
