@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Rules;
 
-use Closure;
 use Attribute;
+use Closure;
 use InvalidArgumentException;
 use ReflectionFunction;
 use Tempest\Validation\Rule;
-
 
 /**
  * Custom validation rule defined by a closure.
@@ -19,7 +18,6 @@ use Tempest\Validation\Rule;
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
 final readonly class Custom implements Rule
 {
-
     private Closure $callback;
 
     public function __construct(
@@ -30,7 +28,7 @@ final readonly class Custom implements Rule
         $reflection = new ReflectionFunction($callback);
 
         // Must be static
-        if (!$reflection->isStatic()) {
+        if (! $reflection->isStatic()) {
             throw new InvalidArgumentException('Validation closures must be static');
         }
 
