@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Session\FormSession;
 use Tempest\Http\Session\Session;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\HasLength;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -27,8 +28,8 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function flash_errors_stores_errors(): void
     {
         $errors = [
-            'name' => [new HasLength(min: 3)],
-            'email' => [new HasLength(min: 5)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
+            'email' => [new FailingRule(new HasLength(min: 5))],
         ];
 
         $this->formSession->setErrors($errors);
@@ -39,8 +40,8 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     #[Test]
     public function errors_for_returns_field_specific_errors(): void
     {
-        $nameError = new HasLength(min: 3);
-        $emailError = new HasLength(min: 5);
+        $nameError = new FailingRule(new HasLength(min: 3));
+        $emailError = new FailingRule(new HasLength(min: 5));
 
         $this->formSession->setErrors([
             'name' => [$nameError],
@@ -55,7 +56,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function errors_for_returns_empty_array_when_field_has_no_errors(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
 
         $this->assertEquals([], $this->formSession->getErrorsFor('email'));
@@ -65,7 +66,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function has_errors_returns_true_when_errors_exist(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
 
         $this->assertTrue($this->formSession->hasErrors());
@@ -81,7 +82,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function has_error_returns_true_when_field_has_errors(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
 
         $this->assertTrue($this->formSession->hasError('name'));
@@ -91,7 +92,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function has_error_returns_false_when_field_has_no_errors(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
 
         $this->assertFalse($this->formSession->hasError('email'));
@@ -143,7 +144,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function clear_removes_errors_and_values(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
         $this->formSession->setOriginalValues([
             'name' => 'John',
@@ -159,7 +160,7 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
     public function errors_are_flashed_and_cleared_after_next_request(): void
     {
         $this->formSession->setErrors([
-            'name' => [new HasLength(min: 3)],
+            'name' => [new FailingRule(new HasLength(min: 3))],
         ]);
 
         // First access - errors exist

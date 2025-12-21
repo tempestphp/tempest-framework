@@ -13,7 +13,6 @@ use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\RedisSessionConfig;
 use Tempest\Http\Session\Managers\RedisSessionManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
@@ -28,7 +27,7 @@ use Throwable;
  */
 final class RedisSessionTest extends FrameworkIntegrationTestCase
 {
-    private RedisSessionManager $manager {
+    private SessionManager $manager {
         get => $this->container->get(SessionManager::class);
     }
 
@@ -47,7 +46,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new RedisSessionManager(
             clock: $this->container->get(Clock::class),
             redis: $this->container->get(Redis::class),
-            config: $this->container->get(SessionConfig::class),
+            config: $this->container->get(RedisSessionConfig::class),
         ));
 
         try {

@@ -29,7 +29,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
 
-    private FileSessionManager $manager {
+    private SessionManager $manager {
         get => $this->container->get(SessionManager::class);
     }
 

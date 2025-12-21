@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\Http;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
-use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
@@ -30,7 +29,7 @@ use function Tempest\Database\query;
  */
 final class DatabaseSessionTest extends FrameworkIntegrationTestCase
 {
-    private DatabaseSessionManager $manager {
+    private SessionManager $manager {
         get => $this->container->get(SessionManager::class);
     }
 
@@ -46,7 +45,6 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new DatabaseSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(SessionConfig::class),
-            $this->container->get(Database::class),
         ));
 
         $this->database->reset(migrate: false);
