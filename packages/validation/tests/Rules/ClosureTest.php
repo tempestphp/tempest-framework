@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\Custom;
+use Tempest\Validation\Rules\Closure;
 
 /**
  * @internal
  */
-final class CustomTest extends TestCase
+final class ClosureTest extends TestCase
 {
     public function test_closure_validation_passes(): void
     {
-        $rule = new Custom(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new Closure(static fn (mixed $value): bool => str_contains((string) $value, '@'));
         $this->assertTrue($rule->isValid('user@example.com'));
         $this->assertTrue($rule->isValid('test@domain.org'));
     }
 
     public function test_closure_validation_fails(): void
     {
-        $rule = new Custom(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new Closure(static fn (mixed $value): bool => str_contains((string) $value, '@'));
 
         $this->assertFalse($rule->isValid('username'));
         $this->assertFalse($rule->isValid('example.com'));
@@ -29,7 +29,7 @@ final class CustomTest extends TestCase
 
     public function test_non_string_value_fails(): void
     {
-        $rule = new Custom(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new Closure(static fn (mixed $value): bool => str_contains((string) $value, '@'));
 
         $this->assertFalse($rule->isValid(12345));
         $this->assertFalse($rule->isValid(null));
@@ -40,6 +40,6 @@ final class CustomTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new Custom(fn (mixed $value): bool => str_contains((string) $value, '@'));
+        new Closure(fn (mixed $value): bool => str_contains((string) $value, '@'));
     }
 }

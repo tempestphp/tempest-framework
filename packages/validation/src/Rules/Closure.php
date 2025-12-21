@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use Closure;
 use InvalidArgumentException;
 use ReflectionFunction;
 use Tempest\Validation\Rule;
@@ -16,12 +15,12 @@ use Tempest\Validation\Rule;
  * The closure receives the value and must return true if it is valid, false otherwise.
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
-final readonly class Custom implements Rule
+final readonly class Closure implements Rule
 {
-    private Closure $callback;
+    private \Closure $callback;
 
     public function __construct(
-        Closure $callback,
+        \Closure $callback,
     ) {
         $this->callback = $callback;
 
