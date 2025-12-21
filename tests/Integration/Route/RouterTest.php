@@ -8,11 +8,14 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\ContentType;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Router\SecFetchMode;
+use Tempest\Router\SecFetchSite;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -161,7 +164,9 @@ final class RouterTest extends FrameworkIntegrationTestCase
             method: 'POST',
             body: new Stream(fopen(__DIR__ . '/request.json', 'r')),
             headers: [
-                'Content-Type' => 'application/json',
+                'Content-Type' => ContentType::JSON->value,
+                'Sec-Fetch-Site' => SecFetchSite::SAME_ORIGIN->value,
+                'Sec-Fetch-Mode' => SecFetchMode::CORS->value,
             ],
         ));
 
