@@ -82,4 +82,43 @@ final class Stacktrace
             relativeFile: $rootPath ? to_relative_path($rootPath, $exceptionFile) : $exceptionFile,
         );
     }
+
+    public function prependFrame(Frame $frame): self
+    {
+        return new self(
+            message: $this->message,
+            exceptionClass: $this->exceptionClass,
+            frames: [
+                // we add our frame
+                new Frame(
+                    line: $frame->line,
+                    class: $frame->class,
+                    function: $frame->function,
+                    type: $frame->type,
+                    isVendor: $frame->isVendor,
+                    snippet: $frame->snippet,
+                    absoluteFile: $frame->absoluteFile,
+                    relativeFile: $frame->relativeFile,
+                    arguments: $frame->arguments,
+                    index: 1,
+                ),
+                // and shift the frame index by one for each frame
+                ...array_map(fn (Frame $frame) => new Frame(
+                    line: $frame->line,
+                    class: $frame->class,
+                    function: $frame->function,
+                    type: $frame->type,
+                    isVendor: $frame->isVendor,
+                    snippet: $frame->snippet,
+                    absoluteFile: $frame->absoluteFile,
+                    relativeFile: $frame->relativeFile,
+                    arguments: $frame->arguments,
+                    index: $frame->index + 1,
+                ), $this->frames),
+            ],
+            line: $this->line,
+            absoluteFile: $this->absoluteFile,
+            relativeFile: $this->relativeFile,
+        );
+    }
 }

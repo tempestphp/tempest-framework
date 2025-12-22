@@ -21,11 +21,12 @@ const $props = defineProps<{
 						:class="open ? 'bg-(--ui-text-muted)/80' : 'bg-(--ui-text-dimmed)/60'"
 					/>
 				</div>
-				<div class="flex justify-between items-center grow">
+				<div class="flex justify-between items-center gap-x-4 grow">
 					<!-- Symbol -->
-					<symbol-call :frame />
+					<symbol-call :frame class="grow" />
 					<!-- File -->
 					<file-label
+						class="min-w-[20%] text-right shrink-0"
 						:relative-file="frame.relativeFile"
 						:absolute-file="frame.absoluteFile"
 						:line="frame.line"

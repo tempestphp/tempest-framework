@@ -47,7 +47,7 @@ const parts = computed<HighlightedPart[]>(() => {
 	// Highlight each argument individually using the grammar state
 	$props.frame.arguments.forEach((argument, index) => {
 		if (index > 0) {
-			result.push({ html: '<span style="color: var(--code-foreground)">,</span>' })
+			result.push({ html: '<span style="color: var(--code-foreground)">, </span>' })
 			if ($props.formatted) {
 				result.push({ html: '<br />    ' })
 			}

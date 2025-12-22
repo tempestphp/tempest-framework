@@ -123,7 +123,7 @@ function toFileSize(
 		<!-- Error -->
 		<span
 			v-if="exception.stacktrace.message"
-			class="font-light text-xl"
+			class="font-light text-xl whitespace-pre-line"
 			v-text="exception.stacktrace.message"
 		/>
 	</div>
