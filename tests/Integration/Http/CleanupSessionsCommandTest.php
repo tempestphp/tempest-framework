@@ -23,7 +23,7 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function destroy_sessions(): void
     {
-        Filesystem\delete_directory(internal_storage_path('/tests/sessions/'));
+        Filesystem\delete(internal_storage_path('/tests/sessions/'));
 
         $clock = $this->clock('2024-01-01 00:00:00');
 
