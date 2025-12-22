@@ -7,8 +7,8 @@ const overlay = useOverlay()
 export const settingsDialog = overlay.create(Dialog)
 
 export const schema = type({
-	editor: type('"vscode" | "phpstorm" | "zed" | "custom"').optional(),
-	openEditorTemplate: type('string').optional(),
+	editor: type('"vscode" | "phpstorm" | "zed" | "custom" | undefined').optional(),
+	openEditorTemplate: type('string | undefined').optional(),
 })
 
 export type Editor = typeof schema.infer['editor']

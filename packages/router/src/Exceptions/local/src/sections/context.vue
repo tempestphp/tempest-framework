@@ -13,7 +13,7 @@ const json = computed(() => JSON.stringify($props.context ?? '', null, 2))
 	<card title="Exception context" icon="tabler:info-circle">
 		<div
 			v-if="Object.values(context ?? {}).length > 0"
-			class="p-2"
+			class="p-2 overflow-auto"
 			v-html="highlight(json, 'json')"
 		/>
 		<div v-else class="flex justify-center items-center p-8 pt-4 font-mono uppercase">
