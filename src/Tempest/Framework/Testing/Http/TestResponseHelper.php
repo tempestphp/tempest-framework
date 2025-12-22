@@ -14,12 +14,11 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
-use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
@@ -229,8 +228,11 @@ final class TestResponseHelper
 
     public function assertHasValidationError(string $key, ?Closure $callback = null): self
     {
-        $session = $this->container->get(Session::class);
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+        $validationErrors = $this->response->getHeader('x-validation')->first();
+
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Json\decode($validationErrors);
 
         Assert::assertArrayHasKey(
             key: $key,
@@ -272,6 +274,10 @@ final class TestResponseHelper
 
         if ($body instanceof View) {
             $body = $this->container->get(ViewRenderer::class)->render($body);
+        }
+
+        if (is_array($body)) {
+            $body = json_encode($body);
         }
 
         Assert::assertStringContainsString($search, $body);
@@ -430,7 +436,7 @@ final class TestResponseHelper
      *
      * @param array<string, mixed> $expected
      */
-    public function assertJson(array $expected): self
+    public function assertJson(array $expected = []): self
     {
         Assert::assertEquals(
             expected: arr($expected)->undot()->toArray(),
@@ -491,9 +497,7 @@ final class TestResponseHelper
     }
 
     /**
-     * Asserts the response contains the given JSON validation errors.
-     *
-     * The keys can also be specified using dot notation.
+     * Asserts the response contains the given JSON validation errors. The keys can be specified using dot notation, and the values may contain `sprintf` placeholders.
      *
      * ### Example
      * ```
@@ -503,26 +507,26 @@ final class TestResponseHelper
      *      ]);
      * ```
      *
-     * @param array<string, string|string[]> $expectedErrors
+     * @param array<string,string|string[]> $expectedErrors
      */
     public function assertHasJsonValidationErrors(array $expectedErrors): self
     {
         $this->assertHasContainer();
 
-        Assert::assertInstanceOf(Invalid::class, $this->response);
-        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotNull($this->response->getHeader('x-validation'));
+        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND, Status::UNPROCESSABLE_CONTENT]);
 
-        $session = $this->container->get(Session::class);
-        $validator = $this->container->get(Validator::class);
-        $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
+        $validationErrors = $this->response->getHeader('x-validation')->first();
 
-        arr($expectedErrors)
-            ->dot()
-            ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
-                expected: $expectedErrorValue,
-                actual: $validator->getErrorMessage($validationRules->get($expectedErrorKey)),
-            ));
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Arr\dot(Json\decode($validationErrors));
+
+        foreach (Arr\dot($expectedErrors) as $key => $expectedMessage) {
+            Assert::assertStringMatchesFormat(
+                format: $expectedMessage,
+                string: $validationErrors[$key],
+            );
+        }
 
         return $this;
     }
@@ -539,7 +543,6 @@ final class TestResponseHelper
     public function assertHasNoJsonValidationErrors(): self
     {
         Assert::assertNotContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotInstanceOf(Invalid::class, $this->response);
         Assert::assertNull($this->response->getHeader('x-validation'));
 
         return $this;

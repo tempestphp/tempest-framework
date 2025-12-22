@@ -212,6 +212,7 @@
             "Tempest\\Cryptography\\Tests\\": "packages/cryptography/tests",
             "Tempest\\Database\\Tests\\": "packages/database/tests",
             "Tempest\\DateTime\\Tests\\": "packages/datetime/tests",
+            "Tempest\\Debug\\Tests\\": "packages/debug/tests",
             "Tempest\\EventBus\\Tests\\": "packages/event-bus/tests",
             "Tempest\\Generation\\Tests\\": "packages/generation/tests",
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",
@@ -249,11 +250,14 @@
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
         "style": "composer fmt && composer lint:fix",
         "test": "composer phpunit",
+        "test:stop": "composer phpunit --stop-on-error --stop-on-failure",
         "lint": "vendor/bin/mago lint --potentially-unsafe --minimum-fail-level=note",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
         "intl:plural": "./packages/intl/bin/plural-rules.php",
+        "exceptions:dev": "cd ./packages/router/src/Exceptions/local && bun i && bun run dev",
+        "exceptions:build": "cd ./packages/router/src/Exceptions/local && bun i && bun run build",
         "release": [
             "composer qa",
             "./bin/release"
@@ -267,7 +271,8 @@
             "./bin/validate-packages",
             "./tempest discovery:clear --no-interaction",
             "composer phpunit",
-            "composer phpstan"
+            "composer phpstan",
+            "composer exceptions:build"
         ]
     }
 }

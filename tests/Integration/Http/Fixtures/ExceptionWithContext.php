@@ -3,9 +3,9 @@
 namespace Tests\Tempest\Integration\Http\Fixtures;
 
 use Exception;
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 
-final class ExceptionWithContext extends Exception implements HasContext
+final class ExceptionWithContext extends Exception implements ProvidesContext
 {
     public function context(): array
     {

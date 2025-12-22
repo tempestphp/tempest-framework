@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Testing\Http;
 
-use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -130,14 +129,6 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
         $this->http
             ->trace('/test')
             ->assertOk();
-    }
-
-    public function test_throw_exceptions(): void
-    {
-        $this->expectException(Exception::class);
-
-        $this->http
-            ->get('/fail');
     }
 
     public function test_trace_requests_failure(): void

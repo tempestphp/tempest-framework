@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\ContentType;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -25,6 +26,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
     public function test_validation_errors_are_listed_in_the_response_body(): void
     {
         $this->http
+            ->as(ContentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: ['number' => 11, 'item.number' => 11],
@@ -39,6 +41,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
         $values = ['number' => 11, 'item.number' => 11];
 
         $this->http
+            ->as(contentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: $values,
@@ -98,7 +101,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
                 uri([ValidationController::class, 'updateBook'], book: 1),
                 body: ['book' => ['title' => 1]],
             )
-            ->assertHasJsonValidationErrors(['title' => ['Value must be between 1 and 120']]);
+            ->assertHasJsonValidationErrors(['title' => ['title must be between 1 and 120', 'title must be a string']]);
 
         $this->assertSame('Timeline Taxi', Book::find(id: 1)->first()->title);
     }
@@ -106,6 +109,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
     public function test_sensitive_fields_are_excluded_from_original_values(): void
     {
         $this->http
+            ->as(ContentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'storeSensitive']),
                 body: ['not_sensitive_param' => '', 'sensitive_param' => 'secret123'],
