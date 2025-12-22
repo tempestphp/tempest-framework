@@ -117,6 +117,8 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
+            ob_end_clean(); // clean buffer before rendering exception
+
             throw new ViewCompilationFailed(
                 path: $_path,
                 content: Filesystem\read_file($_path),
