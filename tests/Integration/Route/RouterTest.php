@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
-use Exception;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\HttpRequestFailed;
+use Tempest\Http\ContentType;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Session\VerifyCsrfMiddleware;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Router\SecFetchMode;
+use Tempest\Router\SecFetchSite;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -164,7 +164,9 @@ final class RouterTest extends FrameworkIntegrationTestCase
             method: 'POST',
             body: new Stream(fopen(__DIR__ . '/request.json', 'r')),
             headers: [
-                'Content-Type' => 'application/json',
+                'Content-Type' => ContentType::JSON->value,
+                'Sec-Fetch-Site' => SecFetchSite::SAME_ORIGIN->value,
+                'Sec-Fetch-Mode' => SecFetchMode::CORS->value,
             ],
         ));
 
@@ -190,40 +192,6 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_error_response_processor_throws_http_exceptions_when_instructed(): void
-    {
-        $this->expectException(HttpRequestFailed::class);
-        $this->expectExceptionCode(404);
-
-        $this->http
-            ->throwExceptions()
-            ->get('/non-existent');
-    }
-
-    public function test_error_response_processor_throws_http_exceptions_if_there_is_a_body(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('oops');
-
-        $this->registerRoute([Http500Controller::class, 'throwsException']);
-
-        $this->http
-            ->throwExceptions()
-            ->get('/throws-exception');
-    }
-
-    public function test_throws_http_exception_when_returning_server_error(): void
-    {
-        $this->expectException(HttpRequestFailed::class);
-        $this->expectExceptionCode(500);
-
-        $this->registerRoute([Http500Controller::class, 'serverError']);
-
-        $this->http
-            ->throwExceptions()
-            ->get('/returns-server-error');
-    }
-
     public function test_error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
     {
         $this->registerRoute([Http500Controller::class, 'serverErrorWithBody']);
@@ -242,6 +210,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/returns-converts-to-response')
             ->assertStatus(Status::FOUND)
             ->assertHeaderContains('Location', 'https://tempestphp.com');
+    }
+
+    public function test_router_returns_json_exception_when_accepts_json(): void
+    {
+        $this->registerRoute([Http500Controller::class, 'throwsException']);
+
+        $this->http
+            ->get('/throws-exception', headers: ['Accept' => 'application/json'])
+            ->assertStatus(Status::INTERNAL_SERVER_ERROR)
+            ->assertJsonHasKeys('message');
     }
 
     public function test_head_requests(): void
@@ -265,8 +243,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/stateless')
             ->assertOk()
-            ->assertDoesNotHaveCookie('tempest_session_id')
-            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+            ->assertDoesNotHaveCookie('tempest_session_id');
     }
 
     public function test_prefix_decorator(): void
@@ -289,7 +266,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/without-decorated-middleware')
             ->assertOk()
-            ->assertDoesNotHaveCookie(VerifyCsrfMiddleware::CSRF_COOKIE_KEY);
+            ->assertDoesNotHaveHeader('set-cookie');
     }
 
     public function test_optional_parameter_with_required_parameter(): void

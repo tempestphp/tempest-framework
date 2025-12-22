@@ -6,14 +6,12 @@ namespace Tempest\Router;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\Router\Exceptions\ControllerActionHadNoReturn;
 use Tempest\Router\Exceptions\MatchedRouteCouldNotBeResolved;
-use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\View\View;
 
 use function Tempest\Mapper\map;
@@ -22,8 +20,6 @@ final readonly class GenericRouter implements Router
 {
     public function __construct(
         private Container $container,
-        private RouteMatcher $routeMatcher,
-        private AppConfig $appConfig,
         private RouteConfig $routeConfig,
     ) {}
 

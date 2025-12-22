@@ -19,8 +19,6 @@ $formMethod = $needsSpoofing ? 'POST' : $method;
 ?>
 
 <form :action="$action" :method="$formMethod" :enctype="$enctype">
-    <x-csrf-token />
-
     <?php if ($needsSpoofing): ?>
         <input type="hidden" name="_method" value="<?= htmlspecialchars($method) ?>">
     <?php endif; ?>

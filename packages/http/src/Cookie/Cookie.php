@@ -28,9 +28,9 @@ final class Cookie implements Stringable
         public ?int $maxAge = null,
         public ?string $domain = null,
         public ?string $path = '/',
-        public bool $secure = false,
+        public bool $secure = true,
         public bool $httpOnly = false,
-        public ?SameSite $sameSite = null,
+        public SameSite $sameSite = SameSite::LAX,
     ) {}
 
     public function withValue(string $value): self

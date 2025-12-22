@@ -8,14 +8,21 @@ use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
 
+/**
+ * This response is not fit for stateless requests.
+ */
 final class Redirect implements Response
 {
     use IsResponse;
 
     public function __construct(
         private(set) string $to,
+        bool $permanent = false,
     ) {
-        $this->status = Status::FOUND;
+        $this->status = $permanent
+            ? Status::MOVED_PERMANENTLY
+            : Status::FOUND;
+
         $this->addHeader('Location', $to);
     }
 

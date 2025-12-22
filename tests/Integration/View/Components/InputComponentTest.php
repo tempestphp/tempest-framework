@@ -2,7 +2,8 @@
 
 namespace Tests\Tempest\Integration\View\Components;
 
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\FormSession;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
@@ -43,7 +44,7 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
 
     public function test_input_original(): void
     {
-        $this->get(Session::class)->set(Session::ORIGINAL_VALUES, [
+        $this->get(FormSession::class)->setOriginalValues([
             'name' => 'original',
             'other' => 'other',
         ]);
@@ -63,7 +64,7 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
 
     public function test_textarea_original(): void
     {
-        $this->get(Session::class)->set(Session::ORIGINAL_VALUES, [
+        $this->get(FormSession::class)->setOriginalValues([
             'name' => 'original',
             'other' => 'other',
         ]);
@@ -77,15 +78,15 @@ final class InputComponentTest extends FrameworkIntegrationTestCase
     {
         $failingRules = [
             'name' => [
-                new IsString(),
-                new HasLength(min: 5),
+                new FailingRule(new IsString()),
+                new FailingRule(new HasLength(min: 5)),
             ],
             'other' => [
-                new IsInteger(),
+                new FailingRule(new IsInteger()),
             ],
         ];
 
-        $this->get(Session::class)->set(Session::VALIDATION_ERRORS, $failingRules);
+        $this->get(FormSession::class)->setErrors($failingRules);
 
         $html = $this->render('<x-input name="name" />');
 

@@ -22,10 +22,12 @@ final readonly class CleanupSessionsCommand
     #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
-        $this->eventBus->listen(function (SessionDestroyed $event): void {
-            $this->console->keyValue((string) $event->id, "<style='bold fg-green'>DESTROYED</style>");
-        });
+        $this->eventBus->listen($this->onSessionDeleted(...));
+        $this->sessionManager->deleteExpiredSessions();
+    }
 
-        $this->sessionManager->cleanup();
+    private function onSessionDeleted(SessionDeleted $event): void
+    {
+        $this->console->keyValue((string) $event->id, "<style='bold fg-green'>DESTROYED</style>");
     }
 }

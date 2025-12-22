@@ -17,11 +17,9 @@ final class CreateSessionsTable implements MigratesUp
     public function up(): QueryStatement
     {
         return new CreateTableStatement('sessions')
-            ->primary('id')
-            ->string('session_id')
-            ->text('data')
+            ->uuid('id')
             ->datetime('created_at')
             ->datetime('last_active_at')
-            ->index('session_id');
+            ->text('data');
     }
 }

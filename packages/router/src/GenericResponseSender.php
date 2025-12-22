@@ -70,7 +70,7 @@ final readonly class GenericResponseSender implements ResponseSender
 
         if (is_array($response->body)) {
             $headers[ContentType::HEADER] ??= new Header(ContentType::HEADER);
-            $headers[ContentType::HEADER]->add(ContentType::JSON->value);
+            $headers[ContentType::HEADER]->add(ContentType::JSON);
         }
 
         foreach ($headers as $key => $header) {

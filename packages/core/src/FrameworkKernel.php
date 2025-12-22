@@ -7,7 +7,6 @@ namespace Tempest\Core;
 use Dotenv\Dotenv;
 use ErrorException;
 use RuntimeException;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -17,7 +16,6 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
-use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Support\Filesystem;
 
 final class FrameworkKernel implements Kernel
@@ -51,7 +49,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ): self {
         if (! defined('TEMPEST_START')) {
-            define('TEMPEST_START', value: hrtime(true));
+            define('TEMPEST_START', value: hrtime(as_number: true));
         }
 
         return new self(
@@ -248,13 +246,9 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
-        // TODO: refactor to not have a hard-coded dependency on these exception handlers
-        if (! class_exists(ConsoleExceptionHandler::class) || ! class_exists(HttpExceptionHandler::class)) {
-            return $this;
-        }
-
         $handler = $this->container->get(ExceptionHandler::class);
 
+        ini_set('display_errors', 'Off'); // @mago-expect lint:no-ini-set
         set_exception_handler($handler->handle(...));
         set_error_handler(function (int $code, string $message, string $filename, int $line) use ($handler): bool {
             $handler->handle(new ErrorException(
@@ -265,7 +259,7 @@ final class FrameworkKernel implements Kernel
             ));
 
             return true;
-        }, error_levels: E_ERROR);
+        }, error_levels: E_ALL);
 
         return $this;
     }

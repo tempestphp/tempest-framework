@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
+use Tempest\Http\Session\CleanupSessionsCommand;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\internal_storage_path;
@@ -17,10 +20,10 @@ use function Tempest\internal_storage_path;
  */
 final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_destroy_sessions(): void
+    #[Test]
+    public function destroy_sessions(): void
     {
-        @unlink(internal_storage_path('/tests/sessions/session_a'));
-        @unlink(internal_storage_path('/tests/sessions/session_b'));
+        Filesystem\delete(internal_storage_path('/tests/sessions/'));
 
         $clock = $this->clock('2024-01-01 00:00:00');
 
@@ -31,16 +34,22 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $sessionManager = $this->container->get(SessionManager::class);
 
-        $sessionManager->set(new SessionId('session_a'), 'test', 'value');
+        $sessionA = $sessionManager->getOrCreate(new SessionId('session_a'));
+        $sessionA->set('test', 'value');
 
-        $clock->plus(9);
+        $sessionManager->save($sessionA);
 
-        $sessionManager->set(new SessionId('session_b'), 'test', 'value');
+        $clock->plus(Duration::seconds(9));
 
-        $clock->plus(2);
+        $sessionB = $sessionManager->getOrCreate(new SessionId('session_b'));
+        $sessionB->set('test', 'value');
+
+        $sessionManager->save($sessionB);
+
+        $clock->plus(Duration::seconds(2));
 
         $this->console
-            ->call('session:clean')
+            ->call(CleanupSessionsCommand::class)
             ->assertContains('session_a')
             ->assertDoesNotContain('session_b');
 

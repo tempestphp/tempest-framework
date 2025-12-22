@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Responses\Ok;
@@ -16,26 +17,18 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class GenericResponseTest extends FrameworkIntegrationTestCase
 {
-    public function test_sessions(): void
+    #[Test]
+    public function sessions(): void
     {
-        $response = new Ok()
-            ->addSession('test', 'test')
-            ->addSession('original', 'original');
+        new Ok()->flash('success', 'Operation successful');
 
         $session = $this->container->get(Session::class);
 
-        $this->assertSame('test', $session->get('test'));
-
-        $response->removeSession('test');
-
-        $this->assertNull($session->get('test'));
-
-        $response->destroySession();
-
-        $this->assertNull($session->get('original'));
+        $this->assertSame('Operation successful', $session->get('success'));
     }
 
-    public function test_cookies(): void
+    #[Test]
+    public function cookies(): void
     {
         $response = new Ok()->addCookie(new Cookie('test'));
 
@@ -48,7 +41,8 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
         $this->assertSame(-1, $cookieManager->get('test')->expiresAt);
     }
 
-    public function test_set_status(): void
+    #[Test]
+    public function set_status(): void
     {
         $response = new Ok()->setStatus(Status::ACCEPTED);
 

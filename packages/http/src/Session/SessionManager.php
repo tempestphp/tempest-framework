@@ -6,19 +6,28 @@ namespace Tempest\Http\Session;
 
 interface SessionManager
 {
-    public function create(SessionId $id): Session;
+    /**
+     * Retrieves or creates a session based on its identifier.
+     */
+    public function getOrCreate(SessionId $id): Session;
 
-    public function set(SessionId $id, string $key, mixed $value): void;
+    /**
+     * Saves the session data to the server.
+     */
+    public function save(Session $session): void;
 
-    public function get(SessionId $id, string $key, mixed $default = null): mixed;
+    /**
+     * Removes the session from the server.
+     */
+    public function delete(Session $session): void;
 
-    public function all(SessionId $id): array;
+    /**
+     * Determines whether the session is still valid.
+     */
+    public function isValid(Session $session): bool;
 
-    public function remove(SessionId $id, string $key): void;
-
-    public function destroy(SessionId $id): void;
-
-    public function isValid(SessionId $id): bool;
-
-    public function cleanup(): void;
+    /**
+     * Removes all expired sessions from the server.
+     */
+    public function deleteExpiredSessions(): void;
 }

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\Session\Session;
+use Tempest\Http\ContentType;
+use Tempest\Http\Session\FormSession;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -25,6 +26,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
     public function test_validation_errors_are_listed_in_the_response_body(): void
     {
         $this->http
+            ->as(ContentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: ['number' => 11, 'item.number' => 11],
@@ -39,6 +41,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
         $values = ['number' => 11, 'item.number' => 11];
 
         $this->http
+            ->as(contentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: $values,
@@ -46,9 +49,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             )
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data) use ($values): void {
-                $this->assertEquals($values, $data);
-            });
+            ->assertHasFormOriginalValues($values);
     }
 
     public function test_update_book(): void
@@ -98,7 +99,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
                 uri([ValidationController::class, 'updateBook'], book: 1),
                 body: ['book' => ['title' => 1]],
             )
-            ->assertHasJsonValidationErrors(['title' => ['Value must be between 1 and 120']]);
+            ->assertHasJsonValidationErrors(['title' => ['title must be between 1 and 120', 'title must be a string']]);
 
         $this->assertSame('Timeline Taxi', Book::find(id: 1)->first()->title);
     }
@@ -106,15 +107,16 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
     public function test_sensitive_fields_are_excluded_from_original_values(): void
     {
         $this->http
+            ->as(ContentType::HTML)
             ->post(
                 uri: uri([ValidationController::class, 'storeSensitive']),
                 body: ['not_sensitive_param' => '', 'sensitive_param' => 'secret123'],
                 headers: ['referer' => '/test-sensitive-validation'],
             )
             ->assertHasValidationError('not_sensitive_param')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data): void {
-                $this->assertArrayNotHasKey('sensitive_param', $data);
-                $this->assertArrayHasKey('not_sensitive_param', $data);
+            ->assertHasForm(function (FormSession $form): void {
+                $this->assertNull($form->getOriginalValueFor('sensitive_param'));
+                $this->assertNotNull($form->getOriginalValueFor('not_sensitive_param'));
             });
     }
 }

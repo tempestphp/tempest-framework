@@ -14,5 +14,5 @@ interface ConvertsToResponse
     /**
      * Gets a response to be sent to the client.
      */
-    public function toResponse(): Response;
+    public function convertToResponse(): Response;
 }

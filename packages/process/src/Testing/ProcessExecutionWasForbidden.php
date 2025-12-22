@@ -3,13 +3,13 @@
 namespace Tempest\Process\Testing;
 
 use Exception;
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 use Tempest\Process\Exceptions\ProcessException;
 use Tempest\Process\PendingProcess;
 
 use function Tempest\Support\arr;
 
-final class ProcessExecutionWasForbidden extends Exception implements ProcessException, HasContext
+final class ProcessExecutionWasForbidden extends Exception implements ProcessException, ProvidesContext
 {
     private function __construct(
         string $message,

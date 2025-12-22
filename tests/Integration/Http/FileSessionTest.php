@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\DateTime\Duration;
@@ -11,12 +14,13 @@ use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
+use Tempest\Http\Session\SessionCreated;
+use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
+use Tempest\Support\Path;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\Support\path;
 
 /**
  * @internal
@@ -25,118 +29,160 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    private SessionManager $manager {
+        get => $this->container->get(SessionManager::class);
+    }
 
+    private Session $session {
+        get => $this->container->get(Session::class);
+    }
+
+    #[PreCondition]
+    protected function configure(): void
+    {
         Filesystem\ensure_directory_empty($this->path);
 
         $this->path = realpath($this->path);
-
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
-        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
-        $this->container->singleton(
-            SessionManager::class,
-            fn () => new FileSessionManager(
-                $this->container->get(Clock::class),
-                $this->container->get(SessionConfig::class),
-            ),
-        );
+
+        $this->container->config(new FileSessionConfig(
+            path: 'sessions',
+            expiration: Duration::hours(2),
+        ));
+
+        $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
+            $this->container->get(Clock::class),
+            $this->container->get(SessionConfig::class),
+        ));
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         Filesystem\delete_directory($this->path);
     }
 
-    public function test_create_session_from_container(): void
+    #[Test]
+    public function get_or_create_creates_new_session(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->eventBus->preventEventHandling();
+
+        $sessionId = new SessionId('new_session');
+        $session = $this->manager->getOrCreate($sessionId);
 
         $this->assertInstanceOf(Session::class, $session);
+        $this->assertEquals($sessionId, $session->id);
+
+        $this->eventBus->assertDispatched(
+            event: SessionCreated::class,
+            callback: function (SessionCreated $event) use ($sessionId): void {
+                $this->assertEquals($sessionId, $event->session->id);
+            },
+            count: 1,
+        );
     }
 
-    public function test_put_get(): void
+    #[Test]
+    public function get_or_create_loads_existing_session(): void
     {
-        $session = $this->container->get(Session::class);
+        $sessionId = new SessionId('existing_session');
+        $session = $this->manager->getOrCreate($sessionId);
+        $session->set('key', 'value');
 
-        $session->set('test', 'value');
+        $this->manager->save($session);
 
-        $value = $session->get('test');
-        $this->assertEquals('value', $value);
+        $loaded = $this->manager->getOrCreate($sessionId);
+
+        $this->assertEquals($sessionId, $loaded->id);
+        $this->assertTrue($session->createdAt->isSameMinute($loaded->createdAt));
+        $this->assertEquals('value', $loaded->get('key'));
     }
 
-    public function test_remove(): void
+    #[Test]
+    public function save_persists_session_to_file(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->session->set('test_key', 'test_value');
+        $this->manager->save($this->session);
 
-        $session->set('test', 'value');
-        $session->remove('test');
-
-        $value = $session->get('test');
-        $this->assertNull($value);
-    }
-
-    public function test_destroy(): void
-    {
-        $session = $this->container->get(Session::class);
-        $path = path($this->path, 'sessions', (string) $session->id)->toString();
+        $path = Path\normalize($this->path, 'sessions', (string) $this->session->id);
 
         $this->assertFileExists($path);
 
-        $session->destroy();
+        $content = unserialize(file_get_contents($path));
+
+        $this->assertInstanceOf(Session::class, $content);
+        $this->assertEquals('test_value', $content->get('test_key'));
+    }
+
+    #[Test]
+    public function save_updates_last_active_timestamp(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+        $original = $this->session->lastActiveAt;
+
+        // session created with current timestamp
+        $this->assertTrue($this->session->lastActiveAt->equals($clock->now()));
+
+        // save it 5 minutes later
+        $clock->plus(Duration::minutes(5));
+        $this->manager->save($this->session);
+
+        // last active at has updated
+        $this->assertTrue($this->session->lastActiveAt->after($original));
+    }
+
+    #[Test]
+    public function delete_removes_session_file(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->manager->save($this->session);
+
+        $path = Path\normalize($this->path, 'sessions', (string) $this->session->id);
+
+        $this->assertFileExists($path);
+
+        $this->manager->delete($this->session);
 
         $this->assertFileDoesNotExist($path);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event): void {
+                $this->assertEquals($this->session->id, $event->id);
+            },
+            count: 1,
+        );
     }
 
-    public function test_set_previous_url(): void
+    #[Test]
+    public function is_valid_checks_expiration(): void
     {
-        $session = $this->container->get(Session::class);
-        $session->setPreviousUrl('http://localhost/previous');
-
-        $this->assertEquals('http://localhost/previous', $session->getPreviousUrl());
-    }
-
-    public function test_is_valid(): void
-    {
-        $clock = $this->clock('2023-01-01 00:00:00');
+        $clock = $this->clock('2025-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
             path: 'test_sessions',
-            expiration: Duration::second(),
+            expiration: Duration::seconds(10),
         ));
 
-        $sessionManager = $this->container->get(SessionManager::class);
+        $session = $this->manager->getOrCreate(new SessionId('expiration_test'));
 
-        $this->assertFalse($sessionManager->isValid(new SessionId('unknown')));
+        $this->manager->save($session);
 
-        $session = $sessionManager->create(new SessionId('new'));
+        $this->assertTrue($this->manager->isValid($session));
 
-        $this->assertTrue($session->isValid());
+        $clock->plus(Duration::seconds(5));
+        $this->assertTrue($this->manager->isValid($session));
 
-        $clock->plus(1);
-
-        $this->assertFalse($session->isValid());
+        $clock->plus(Duration::seconds(6));
+        $this->assertFalse($this->manager->isValid($session));
     }
 
-    public function test_session_reflash(): void
+    #[Test]
+    public function delete_expired_sessions_removes_old_files(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->eventBus->preventEventHandling();
 
-        $session->flash('test', 'value');
-        $session->flash('test2', ['key' => 'value']);
-
-        $this->assertEquals('value', $session->get('test'));
-
-        $session->reflash();
-        $session->cleanup();
-
-        $this->assertEquals('value', $session->get('test'));
-        $this->assertEquals(['key' => 'value'], $session->get('test2'));
-    }
-
-    public function test_session_expires_based_on_last_activity(): void
-    {
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
@@ -144,25 +190,35 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
             expiration: Duration::minutes(30),
         ));
 
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('last_activity_test');
+        $active = $this->manager->getOrCreate(new SessionId('active'));
+        $this->manager->save($active);
 
-        // Create session
-        $session = $manager->create($sessionId);
-        $this->assertTrue($session->isValid());
+        $expired = $this->manager->getOrCreate(new SessionId('expired'));
+        $this->manager->save($expired);
 
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
+        // we expire the $expired one
+        $clock->plus(Duration::minutes(35));
 
-        // Perform activity
-        $session->set('activity', 'user_action');
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
-        $this->assertTrue($manager->isValid($sessionId));
+        // keep active session fresh
+        $this->manager->save($active);
 
-        // Move forward another 10 minutes, now 35 minutes from last activity
-        $clock->plus(Duration::minutes(10));
-        $this->assertFalse($session->isValid());
-        $this->assertFalse($manager->isValid($sessionId));
+        $activePath = Path\normalize($this->path, 'test_sessions', (string) $active->id);
+        $expiredPath = Path\normalize($this->path, 'test_sessions', (string) $expired->id);
+
+        $this->assertFileExists($activePath);
+        $this->assertFileExists($expiredPath);
+
+        $this->manager->deleteExpiredSessions();
+
+        $this->assertFileExists($activePath);
+        $this->assertFileDoesNotExist($expiredPath);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event) use ($expired): void {
+                $this->assertEquals($expired->id, $event->id);
+            },
+            count: 1,
+        );
     }
 }
