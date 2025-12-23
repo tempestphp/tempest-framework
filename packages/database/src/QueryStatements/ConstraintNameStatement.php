@@ -22,7 +22,7 @@ final readonly class ConstraintNameStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return match ($dialect) {
-            DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => sprintf('CONSTRAINT %s', $this->name->compile($dialect)),
+            DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL, DatabaseDialect::SQLITE => sprintf('CONSTRAINT %s', $this->name->compile($dialect)),
             default => throw new DialectWasNotSupported(),
         };
     }

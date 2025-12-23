@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\DialectWasNotSupported;
 use Tempest\Database\QueryStatement;
 
 final readonly class BelongsToStatement implements QueryStatement
@@ -44,7 +43,7 @@ final readonly class BelongsToStatement implements QueryStatement
                     'ON UPDATE ' . $this->onUpdate->value,
                 )),
             ),
-            DatabaseDialect::POSTGRESQL => new ConstraintStatement(
+            DatabaseDialect::POSTGRESQL , DatabaseDialect::SQLITE => new ConstraintStatement(
                 $constraintName,
                 new RawStatement(sprintf(
                     'FOREIGN KEY(%s) REFERENCES %s(%s) %s %s',
@@ -55,7 +54,6 @@ final readonly class BelongsToStatement implements QueryStatement
                     'ON UPDATE ' . $this->onUpdate->value,
                 )),
             ),
-            DatabaseDialect::SQLITE => throw new DialectWasNotSupported(),
         };
 
         return $statement->compile($dialect);

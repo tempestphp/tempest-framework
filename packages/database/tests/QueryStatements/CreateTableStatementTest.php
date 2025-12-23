@@ -98,8 +98,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
@@ -110,8 +110,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` SERIAL PRIMARY KEY, 
                 `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
@@ -122,7 +122,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
                 `author_id` INTEGER  NOT NULL, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
@@ -149,8 +150,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
@@ -161,8 +162,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` SERIAL PRIMARY KEY, 
                 `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
@@ -173,7 +174,8 @@ final class CreateTableStatementTest extends TestCase
             CREATE TABLE `books` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
                 `author_id` INTEGER  NOT NULL, 
-                `name` VARCHAR(255) NOT NULL
+                `name` VARCHAR(255) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION
             );
             SQL,
         ];
