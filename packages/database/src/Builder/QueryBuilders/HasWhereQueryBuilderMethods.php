@@ -11,7 +11,7 @@ use function Tempest\Support\str;
 /**
  * @template TModel of object
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereConditions
+ * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements
  * @use \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
