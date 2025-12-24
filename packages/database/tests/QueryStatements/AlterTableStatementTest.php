@@ -59,6 +59,7 @@ final class AlterTableStatementTest extends TestCase
     }
 
     #[TestWith([DatabaseDialect::POSTGRESQL])]
+    #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_add_belongs_to_postgresql(DatabaseDialect $dialect): void
     {
         $expected = 'ALTER TABLE `table` ADD CONSTRAINT `fk_parent_table_foo` FOREIGN KEY(foo) REFERENCES parent(bar) ON DELETE RESTRICT ON UPDATE NO ACTION ;';
@@ -69,16 +70,6 @@ final class AlterTableStatementTest extends TestCase
         $normalized = self::removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
-    }
-
-    #[TestWith([DatabaseDialect::SQLITE])]
-    public function test_alter_add_belongs_to_unsupported(DatabaseDialect $dialect): void
-    {
-        $this->expectException(DialectWasNotSupported::class);
-
-        new AlterTableStatement('table')
-            ->add(new BelongsToStatement('table.foo', 'parent.bar'))
-            ->compile($dialect);
     }
 
     #[TestWith([DatabaseDialect::MYSQL])]
@@ -98,6 +89,7 @@ final class AlterTableStatementTest extends TestCase
 
     #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` DROP CONSTRAINT `foo` ;'])]
     #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` DROP CONSTRAINT `foo` ;'])]
+    #[TestWith([DatabaseDialect::SQLITE, 'ALTER TABLE `table` DROP CONSTRAINT `foo` ;'])]
     public function test_alter_table_drop_constraint(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
@@ -107,15 +99,6 @@ final class AlterTableStatementTest extends TestCase
         $normalized = self::removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
-    }
-
-    #[TestWith([DatabaseDialect::SQLITE])]
-    public function test_alter_table_drop_constraint_unsupported_dialects(DatabaseDialect $dialect): void
-    {
-        $this->expectException(DialectWasNotSupported::class);
-        new AlterTableStatement('table')
-            ->dropConstraint('foo')
-            ->compile($dialect);
     }
 
     #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
