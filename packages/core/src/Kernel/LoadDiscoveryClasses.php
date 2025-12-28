@@ -198,11 +198,22 @@ final class LoadDiscoveryClasses
                 // Resolve `#[SkipDiscovery]` for this class
                 $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
 
-                if ($skipDiscovery !== null && $skipDiscovery->except === []) {
-                    $this->shouldSkipForClass[$className] = true;
-                } elseif ($skipDiscovery !== null) {
-                    foreach ($skipDiscovery->except as $except) {
-                        $this->shouldSkipForClass[$className][$except] = true;
+                if ($skipDiscovery !== null) {
+                    // Evaluate conditional skip
+                    try {
+                        if (($skipDiscovery->when)() !== true) {
+                            return;
+                        }
+                    } catch (Throwable) {
+                        return;
+                    }
+
+                    if ($skipDiscovery->except === []) {
+                        $this->shouldSkipForClass[$className] = true;
+                    } else {
+                        foreach ($skipDiscovery->except as $except) {
+                            $this->shouldSkipForClass[$className][$except] = true;
+                        }
                     }
                 }
 
