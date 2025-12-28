@@ -10,6 +10,7 @@ namespace Tempest {
     use Tempest\Core\EnvironmentVariableValidationFailed;
     use Tempest\Core\ExceptionReporter;
     use Tempest\Core\Kernel;
+    use Tempest\Intl\Translator;
     use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
     use Tempest\Validation\Rule;
     use Tempest\Validation\Validator;
@@ -77,7 +78,7 @@ namespace Tempest {
             default => $value,
         };
 
-        if ($rules === []) {
+        if ($rules === [] || ! class_exists(Validator::class) || ! class_exists(Translator::class)) {
             return $value;
         }
 

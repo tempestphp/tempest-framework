@@ -17,6 +17,7 @@ use Tempest\Intl\Translator;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsNotNull;
 use Tempest\Validation\Rules\IsNumeric;
+use Tempest\Validation\Validator;
 
 use function Tempest\env;
 
@@ -25,6 +26,14 @@ final class EnvTest extends TestCase
     #[PreCondition]
     protected function configure(): void
     {
+        if (! class_exists(Translator::class)) {
+            $this->markTestSkipped('`tempest/intl` is required for this test.');
+        }
+
+        if (! class_exists(Validator::class)) {
+            $this->markTestSkipped('`tempest/validation` is required for this test.');
+        }
+
         $container = new GenericContainer();
         $container->singleton(Translator::class, new GenericTranslator(
             config: new IntlConfig(currentLocale: Locale::ENGLISH, fallbackLocale: Locale::ENGLISH),

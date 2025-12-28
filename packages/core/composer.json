@@ -14,6 +14,7 @@
         "filp/whoops": "^2.15"
     },
     "require-dev": {
+        "tempest/validation": "dev-main",
         "tempest/intl": "dev-main"
     },
     "autoload": {
