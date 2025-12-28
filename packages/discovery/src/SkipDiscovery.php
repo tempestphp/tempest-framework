@@ -20,6 +20,6 @@ final readonly class SkipDiscovery
          * @param Closure|null
          */
         public array $except = [],
-        public ?Closure $when = null
+        public ?Closure $when = null,
     ) {}
 }
