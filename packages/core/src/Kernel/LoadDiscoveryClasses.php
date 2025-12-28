@@ -201,7 +201,7 @@ final class LoadDiscoveryClasses
                 if ($skipDiscovery !== null) {
                     // Evaluate conditional skip
                     try {
-                        if (($skipDiscovery->when)() !== true) {
+                        if ($skipDiscovery->when !== null && ($skipDiscovery->when)() !== true) {
                             return;
                         }
                     } catch (Throwable) {
