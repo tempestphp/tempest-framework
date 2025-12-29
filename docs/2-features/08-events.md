@@ -194,11 +194,14 @@ Other events include migration-related ones, such as {b`Tempest\Database\Migrati
 
 ## Testing
 
-By extending {`Tempest\Framework\Testing\IntegrationTest`} from your test case, you may gain access to the event bus testing utilities using the `eventBus` property.
+By extending {b`Tempest\Framework\Testing\IntegrationTest`} from your test case, you gain access to the event bus testing utilities through the `eventBus` property.
 
 These utilities include a way to replace the event bus with a testing implementation, as well as a few assertion methods to ensure that events have been dispatched or are being listened to.
 
 ```php
+// Record dispatched events for assertion
+$this->eventBus->recordEventDispatches();
+
 // Prevents events from being handled
 $this->eventBus->preventEventHandling();
 
@@ -222,14 +225,20 @@ $this->eventBus->assertNotDispatched(AircraftRegistered::class);
 $this->eventBus->assertListeningTo(AircraftRegistered::class);
 ```
 
-### Preventing event handling
+### Recording event dispatches
 
 When testing code that dispatches events, you may want to prevent Tempest from handling them. This can be useful when the event’s handlers are tested separately, or when the side-effects of these handlers are not desired for this test case.
 
-To disable event handling, the event bus instance must be replaced with a testing implementation in the container. This may be achieved by calling the `preventEventHandling()` method on the `eventBus` property.
+To disable event handling, the event bus instance must be replaced with a testing implementation in the container. This is achieved by calling the `preventEventHandling()` method on the `eventBus` property.
 
-```php tests/MyServiceTest.php
+```php
 $this->eventBus->preventEventHandling();
+```
+
+If you want to be able to make assertions while still allowing events to be dispatched, you may instead call the `recordEventDispatches()` method.
+
+```php
+$this->eventBus->recordEventDispatches();
 ```
 
 ### Testing a method-based handler
@@ -252,7 +261,7 @@ final readonly class AircraftObserver
 This handler may be tested by resolving the service class from the container, and calling the method with an instance of the event created for this purpose.
 
 ```php app/AircraftObserverTest.php
-// Replace the event bus in the container
+// Prevent events from being handled while allowing assertions
 $this->eventBus->preventEventHandling();
 
 // Resolve the service class
