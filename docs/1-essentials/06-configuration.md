@@ -28,30 +28,30 @@ return new PostgresConfig(
 
 The configuration object above instructs Tempest to use PostgreSQL as its database, replacing the framework's default database, SQLite.
 
-## Accessing configuration objects
+### Accessing configuration objects
 
 To access a configuration object, you may inject it from the container like any other dependency.
 
 ```php
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 
-final readonly class HomeController
+final readonly class AboutController
 {
     public function __construct(
-        private AppConfig $config,
+        private Environment $environment,
     ) {}
 
     #[Get('/')]
     public function __invoke(): View
     {
-        return view('home.view.php', environment: $this->config->environment);
+        return view('about.view.php', environment: $this->environment);
     }
 }
 ```
 
-## Updating configuration objects
+### Updating configuration objects
 
-To update a property in a configuration object, you may simply assign a new value. Due to the object being a singleton, the modification will be persisted throught the rest of the application's lifecycle.
+To update a property in a configuration object, you may simply assign a new value. Due to the object being a singleton, the modification will be persisted through the rest of the application's lifecycle.
 
 ```php
 use Tempest\Support\Random;
@@ -81,7 +81,7 @@ final class SlackConfig
         public string $token,
         public string $baseUrl,
         public string $applicationId,
-        public string $userAgent,
+        public ?string $userAgent = null,
     ) {}
 }
 ```
@@ -120,7 +120,7 @@ final class SlackConnector extends HttpConnector
 
 ## Per-environment configuration
 
-Whenever possible, you should have a single configuration file per feature. You may use the `Tempest\env()` function inside that file to reference credentials and environment-specific values.
+Whenever possible, you should have a single configuration file per feature. You may use the {b`Tempest\env()`} function inside that file to reference credentials and environment-specific values.
 
 However, it's sometimes needed to have completely different configurations in development and in production. For instance, you may use S3 for your [storage](../2-features/05-file-storage.md) in production, but use the local filesystem during development.
 
@@ -134,6 +134,13 @@ return new S3StorageConfig(
     secretAccessKey: env('S3_SECRET_ACCESS_KEY'),
 );
 ```
+
+The following suffixes are supported:
+
+- `.prd.config.php`, `.prod.config.php`, and `.production.config.php` for the production environment.
+- `.stg.config.php` and `.staging.config.php` for the staging environment.
+- `.dev.config.php` and `.local.config.php` for the development environment.
+- `.test.config.php` and `.testing.config.php` for the testing environment.
 
 ## Disabling the configuration cache
 

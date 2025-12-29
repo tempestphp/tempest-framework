@@ -17,6 +17,14 @@ enum Environment: string
     case CONTINUOUS_INTEGRATION = 'ci';
     case TESTING = 'testing';
 
+    /**
+     * Determines if this environment requires caution for destructive operations.
+     */
+    public function requiresCaution(): bool
+    {
+        return in_array($this, [self::PRODUCTION, self::STAGING], strict: true);
+    }
+
     public function isProduction(): bool
     {
         return $this === self::PRODUCTION;

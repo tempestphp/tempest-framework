@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\IsAlphaNumeric;
@@ -497,6 +496,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_empty_slots_are_commented_out(): void
     {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+
         $this->registerViewComponent('x-layout', <<<'HTML'
         <html lang="en">
         <head>
@@ -519,7 +520,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_empty_slots_are_removed_in_production(): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $this->registerViewComponent('x-layout', <<<'HTML'
         <html lang="en">
@@ -886,9 +887,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-b', <<<'HTML'
         <?php 
         use function \Tempest\get;
-        use \Tempest\Core\AppConfig;
+        use \Tempest\Core\Environment;
         ?>
-        {{ get(AppConfig::class)->environment->value }}
+        {{ get(Environment::class)->value }}
         HTML);
 
         $html = $this->render(<<<'HTML'

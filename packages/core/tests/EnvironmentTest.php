@@ -38,8 +38,8 @@ final class EnvironmentTest extends TestCase
         putenv('ENVIRONMENT=staging');
         $this->assertSame(Environment::STAGING, $container->get(Environment::class));
 
-        // ensure it's not a singleton
+        // ensure it's a singleton
         putenv('ENVIRONMENT=production');
-        $this->assertSame(Environment::PRODUCTION, $container->get(Environment::class));
+        $this->assertSame(Environment::STAGING, $container->get(Environment::class));
     }
 }
