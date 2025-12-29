@@ -223,7 +223,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerEmergencyExceptionHandler(): self
     {
-        $environment = Environment::fromEnv();
+        $environment = Environment::guessFromEnvironment();
 
         // During tests, PHPUnit registers its own error handling.
         if ($environment->isTesting()) {

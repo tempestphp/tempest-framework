@@ -27,7 +27,7 @@ final class AppConfig
          */
         public array $insightsProviders = [],
     ) {
-        $this->environment = $environment ?? Environment::fromEnv();
+        $this->environment = $environment ?? Environment::guessFromEnvironment();
         $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
     }
 }
