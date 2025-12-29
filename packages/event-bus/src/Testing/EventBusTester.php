@@ -6,7 +6,6 @@ use Closure;
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
-use Tempest\EventBus\EventBusConfig;
 use Tempest\Support\Str;
 
 final class EventBusTester

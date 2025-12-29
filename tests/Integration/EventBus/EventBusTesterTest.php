@@ -235,7 +235,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->recordEventDispatches();
 
         $handled = false;
-        $this->bus->listen(function (FakeEvent $_) use (&$handled) {
+        $this->bus->listen(function (FakeEvent $_) use (&$handled): void {
             $handled = true;
         });
 
