@@ -17,8 +17,6 @@ use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 
-use function Tempest\env;
-
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
     {
@@ -37,7 +35,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         )]
         public function __invoke(): void
         {
-            $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $this->environment->requiresCaution()));
+            $strategy = DiscoveryCacheStrategy::resolveFromEnvironment();
 
             if ($strategy === DiscoveryCacheStrategy::NONE) {
                 $this->info('Discovery cache disabled, nothing to generate.');

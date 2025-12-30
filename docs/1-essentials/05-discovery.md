@@ -5,11 +5,11 @@ description: "Tempest automatically locates controller actions, event handlers, 
 
 ## Overview
 
-Tempest introduces a unique approach to bootstrapping an application. Instead of requiring manual registration of project code and packages, Tempest automatically scans the codebase and detects the components that should be loaded. This process is called **discovery**.
+Tempest introduces a unique approach to bootstrapping applications. Instead of requiring manual registration of project code and packages, Tempest automatically scans the codebase and detects the components that should be loaded. This process is called **discovery**.
 
-Discovery is powered by composer metadata. Every package that depends on Tempest, along with your application's own code, are included in the discovery process. Tempest applies various rules to determine the purpose of different pieces of code. It can analyze file names, attributes, interfaces, return types, and more.
+Discovery is powered by composer metadata. Every package that depends on Tempest, along with your application's own code, are included in the discovery process.
 
-For instance, web routes are discovered based on route attributes:
+Tempest applies [various rules](#built-in-discovery-classes) to determine the purpose of different pieces of code—it can analyze file names, attributes, interfaces, return types, and more. For instance, web routes are discovered when methods are annotated with route attributes:
 
 ```php app/HomeController.php
 final readonly class HomeController
@@ -22,32 +22,58 @@ final readonly class HomeController
 }
 ```
 
-Note that Tempest is able to cache discovery information to avoid any performance cost in production. You can read more about caching in the [development](#discovery-for-local-development) and [production](#discovery-in-production) sections.
-
-:::info
+:::tip
 Read the [getting started with discovery](/blog/discovery-explained) guide if you want to know more about the philosophy of discovery and how it works.
 :::
 
-## Built-in discovery classes
+## Discovery in production
 
-Most of Tempest's features are built on top of discovery. The following is a non-exhaustive list that describes which discovery class is associated to which feature.
+Discovery comes with performance considerations. In production, it is always cached to avoid scanning files on every request.
 
-- {b`Tempest\Core\DiscoveryDiscovery`} discovers other discovery classes. This class is run manually by the framework when booted.
-- {b`Tempest\CommandBus\CommandBusDiscovery`} discovers methods with the {b`#[Tempest\CommandBus\CommandHandler]`} attribute and registers them into the [command bus](../2-features/10-command-bus.md).
-- {b`Tempest\Console\Discovery\ConsoleCommandDiscovery`} discovers methods with the {b`#[Tempest\Console\ConsoleCommand]`} attribute and registers them as [console commands](../1-essentials/04-console-commands.md).
-- {b`Tempest\Console\Discovery\ScheduleDiscovery`} discovers methods with the {b`#[Tempest\Console\Schedule]`} attribute and registers them as [scheduled tasks](../2-features/11-scheduling.md).
-- {b`Tempest\Container\InitializerDiscovery`} discovers classes that implement {b`\Tempest\Container\Initializer`} or {b`\Tempest\Container\DynamicInitializer`} and registers them as [dependency initializers](./05-container.md#dependency-initializers).
-- {b`Tempest\Database\MigrationDiscovery`} discovers classes that implement {b`Tempest\Database\MigratesUp`} or {b`Tempest\Database\MigratesDown`} and registers them as [migrations](./03-database.md#migrations).
-- {b`Tempest\EventBusDiscovery\EventBusDiscovery`} discovers methods with the {b`#[Tempest\EventBus\EventHandler]`} attribute and registers them in the [event bus](../2-features/08-events.md).
-- {b`Tempest\Router\RouteDiscovery`} discovers route attributes on methods and registers them as [controller actions](./01-routing.md) in the router.
-- {b`Tempest\Mapper\MapperDiscovery`} discovers classes that implement {b`Tempest\Mapper\Mapper`} and registers them for [mapping](../2-features/01-mapper.md#mapper-discovery).
-- {b`Tempest\Mapper\CasterDiscovery`} discovers classes that implement {b`Tempest\Mapper\DynamicCaster`} and registers them as [casters](../2-features/01-mapper.md#casters-and-serializers).
-- {b`Tempest\Mapper\SerializerDiscovery`} discovers classes that implement {b`Tempest\Mapper\DynamicSerializer`} and registers them as [serializers](../2-features/01-mapper.md#casters-and-serializers).
-- {b`Tempest\View\ViewComponentDiscovery`} discovers `x-*.view.php` files and registers them as [view components](../1-essentials/02-views.md#view-components).
-- {b`Tempest\Vite\ViteDiscovery`} discovers `*.entrypoint.{ts,js,css}` files and register them as [entrypoints](../2-features/02-asset-bundling.md#entrypoints).
-- {b`Tempest\Auth\AccessControl\PolicyDiscovery`} discovers methods annotated with the {b`#[Tempest\Auth\AccessControl\Policy]`} attribute and registers them as [access control policies](../2-features/04-authentication.md#access-control).
+To ensure that the discovery cache is up-to-date, add the `discovery:generate` command before any other Tempest command in your deployment pipeline.
+
+```console ">_ ./tempest discovery:generate --no-interaction"
+Clearing discovery cache <dim>.....................................</dim> <strong>2025-12-30 15:51:46</strong>
+Clearing discovery cache <dim>.....................................</dim> <strong>DONE</strong>
+Generating discovery cache using the `full` strategy <dim>.........</dim> <strong>2025-12-30 15:51:46</strong>
+Generating discovery cache using the `full` strategy <dim>.........</dim> <strong>DONE</strong>
+```
+
+## Discovery for local development
+
+During development, discovery is only enabled for application code. This implies that the cache should be regenerated whenever a package is installed or updated.
+
+It is recommended to add the `discovery:generate` command to the `post-package-update` script in `composer.json`:
+
+```json composer.json
+{
+	"scripts": {
+		"post-package-update": [
+			"@php tempest discovery:generate"
+		]
+	}
+}
+```
+
+### Disabling discovery cache
+
+In some situations, you may want to enable discovery even for vendor code. For instance, if you are working on a third-party package that is being developed alongside your application, you may want to have discovery enabled all the time.
+
+To achieve this, set the `DISCOVERY_CACHE` environment variable to `false`:
+
+```env .env
+{:hl-property:DISCOVERY_CACHE:}={:hl-keyword:false:}
+```
+
+### Troubleshooting
+
+The `discovery:clear` command clears the discovery cache, which will be rebuilt the next time the framework boots. `discovery:generate` can be used to manually regenerate the cache.
+
+If the discovery cache gets corrupted and even `discovery:clear` is not enough, the `.tempest/cache/discovery` may be manually deleted from your project.
 
 ## Implementing your own discovery
+
+While Tempest provides a variety of [built-in discovery classes](#built-in-discovery-classes), you may want to implement your own to extend the framework's capabilities in your application or in a package you are building.
 
 ### Discovering code in classes
 
@@ -161,51 +187,34 @@ final class ViteDiscovery implements Discovery, DiscoversPath
 }
 ```
 
-## Discovery in production
-
-Discovery is a really powerful feature, but it comes with performance considerations. At its core, it loops through all files in your project, including vendors. For this reason, discovery information is automatically cached in production environments.
-
-Caching is done by running the `discovery:generate` command, which should be part of your deployment pipeline before any other Tempest command.
-
-```console ">_ ./tempest discovery:generate --no-interaction"
-Clearing discovery cache <dim>.....................................</dim> <strong>2025-12-30 15:51:46</strong>
-Clearing discovery cache <dim>.....................................</dim> <strong>DONE</strong>
-Generating discovery cache using the `full` strategy <dim>.........</dim> <strong>2025-12-30 15:51:46</strong>
-Generating discovery cache using the `full` strategy <dim>.........</dim> <strong>DONE</strong>
-```
-
-## Discovery for local development
-
-During development, discovery is enabled without a cache. Depending on the size of your project, you may benefit from enabling the partial cache strategy:
-
-```env .env
-{:hl-property:DISCOVERY_CACHE:}={:hl-keyword:partial:}
-```
-
-This strategy only caches discovery for vendor files. For this reason, it is recommended to run `discovery:generate` after every composer update:
-
-```json composer.json
-{
-	"scripts": {
-		"post-package-update": [
-			"php tempest discovery:generate"
-		]
-	}
-}
-```
-
-:::info
-If your project was created using {`tempest/app`}, the `post-package-update` script is already included.
-:::
-
 ## Excluding files and classes from discovery
 
-If needed, you can always exclude discovered files and classes by providing a discovery config file:
+Files and classes may be excluded from discovery by providing a {b`Tempest\Core\DiscoveryConfig`} [configuration](./06-configuration.md) file.
 
-```php app/discovery.config.php
+```php src/discovery.config.php
 use Tempest\Core\DiscoveryConfig;
 
 return new DiscoveryConfig()
     ->skipClasses(GlobalHiddenDiscovery::class)
     ->skipPaths(__DIR__ . '/../../Fixtures/GlobalHiddenPathDiscovery.php');
 ```
+
+## Built-in discovery classes
+
+Most of Tempest's features are built on top of discovery. The following is a non-exhaustive list that describes which discovery class is associated to which feature.
+
+- {b`Tempest\Core\DiscoveryDiscovery`} discovers other discovery classes. This class is run manually by the framework when booted.
+- {b`Tempest\CommandBus\CommandBusDiscovery`} discovers methods with the {b`#[Tempest\CommandBus\CommandHandler]`} attribute and registers them into the [command bus](../2-features/10-command-bus.md).
+- {b`Tempest\Console\Discovery\ConsoleCommandDiscovery`} discovers methods with the {b`#[Tempest\Console\ConsoleCommand]`} attribute and registers them as [console commands](../1-essentials/04-console-commands.md).
+- {b`Tempest\Console\Discovery\ScheduleDiscovery`} discovers methods with the {b`#[Tempest\Console\Schedule]`} attribute and registers them as [scheduled tasks](../2-features/11-scheduling.md).
+- {b`Tempest\Container\InitializerDiscovery`} discovers classes that implement {b`\Tempest\Container\Initializer`} or {b`\Tempest\Container\DynamicInitializer`} and registers them as [dependency initializers](./05-container.md#dependency-initializers).
+- {b`Tempest\Database\MigrationDiscovery`} discovers classes that implement {b`Tempest\Database\MigratesUp`} or {b`Tempest\Database\MigratesDown`} and registers them as [migrations](./03-database.md#migrations).
+- {b`Tempest\EventBusDiscovery\EventBusDiscovery`} discovers methods with the {b`#[Tempest\EventBus\EventHandler]`} attribute and registers them in the [event bus](../2-features/08-events.md).
+- {b`Tempest\Router\RouteDiscovery`} discovers route attributes on methods and registers them as [controller actions](./01-routing.md) in the router.
+- {b`Tempest\Mapper\MapperDiscovery`} discovers classes that implement {b`Tempest\Mapper\Mapper`} and registers them for [mapping](../2-features/01-mapper.md#mapper-discovery).
+- {b`Tempest\Mapper\CasterDiscovery`} discovers classes that implement {b`Tempest\Mapper\DynamicCaster`} and registers them as [casters](../2-features/01-mapper.md#casters-and-serializers).
+- {b`Tempest\Mapper\SerializerDiscovery`} discovers classes that implement {b`Tempest\Mapper\DynamicSerializer`} and registers them as [serializers](../2-features/01-mapper.md#casters-and-serializers).
+- {b`Tempest\View\ViewComponentDiscovery`} discovers `x-*.view.php` files and registers them as [view components](../1-essentials/02-views.md#view-components).
+- {b`Tempest\Vite\ViteDiscovery`} discovers `*.entrypoint.{ts,js,css}` files and register them as [entrypoints](../2-features/02-asset-bundling.md#entrypoints).
+- {b`Tempest\Auth\AccessControl\PolicyDiscovery`} discovers methods annotated with the {b`#[Tempest\Auth\AccessControl\Policy]`} attribute and registers them as [access control policies](../2-features/04-authentication.md#access-control).
+- {b`Tempest\Core\InsightsProviderDiscovery`} discovers classes that implement {b`Tempest\Core\InsightsProvider`} and registers them as insights providers, which power the `tempest about` command.
