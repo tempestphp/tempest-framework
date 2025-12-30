@@ -7,7 +7,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\AccessControl\AccessDecision;
 use Tempest\Auth\Exceptions\AccessWasDenied;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
