@@ -220,7 +220,7 @@ function delete(string $path, bool $recursive = true): void
         return;
     }
 
-    if (namespace\is_file($path)) {
+    if (namespace\is_file($path) || namespace\is_symbolic_link($path)) {
         namespace\delete_file($path);
     } elseif (namespace\is_directory($path)) {
         namespace\delete_directory($path, $recursive);
