@@ -11,7 +11,7 @@ Even though the framework is designed to use as little configuration as possible
 
 ## Configuration files
 
-Files ending with `*.config.php` are recognized by Tempest's [discovery](../4-internals/02-discovery) as configuration objects, and will be registered as [singletons](./01-container#singletons) in the container.
+Files ending with `*.config.php` are recognized by Tempest's [discovery](../1-essentials/05-discovery) as configuration objects, and will be registered as [singletons](./01-container#singletons) in the container.
 
 ```php app/postgres.config.php
 use Tempest\Database\Config\PostgresConfig;

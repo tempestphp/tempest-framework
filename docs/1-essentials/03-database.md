@@ -501,7 +501,7 @@ Tempest uses migrations to create and update databases across different environm
 
 ### Writing migrations
 
-Classes implementing the {b`Tempest\Database\DatabaseMigration`} interface and `.sql` files are automatically [discovered](../4-internals/02-discovery) and registered as migrations. These files can be stored anywhere in the application.
+Classes implementing the {b`Tempest\Database\DatabaseMigration`} interface and `.sql` files are automatically [discovered](../1-essentials/05-discovery) and registered as migrations. These files can be stored anywhere in the application.
 
 :::code-group
 

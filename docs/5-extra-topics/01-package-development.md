@@ -5,9 +5,9 @@ description: "Tempest comes with a handful of tools to help third-party package 
 
 ## Overview
 
-Creating a package for Tempest is as simple as adding `tempest/core` as a dependency. When this happens, [discovery](../4-internals/02-discovery.md) will find the package thanks to composer metadata and register discoverable classes.
+Creating a package for Tempest is as simple as adding `tempest/core` as a dependency. When this happens, [discovery](../1-essentials/05-discovery.md) will find the package thanks to composer metadata and register discoverable classes.
 
-Unlike Symfony or Laravel, Tempest doesn't have a dedicated "service provider" concept. Instead, you're encouraged to rely on [discovery](../4-internals/02-discovery.md) and [initializers](../1-essentials/05-container#dependency-initializers).
+Unlike Symfony or Laravel, Tempest doesn't have a dedicated "service provider" concept. Instead, you're encouraged to rely on [discovery](../1-essentials/05-discovery.md) and [initializers](../1-essentials/05-container#dependency-initializers).
 
 ## Preventing discovery
 

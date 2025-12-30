@@ -26,7 +26,7 @@ ConsoleApplication::boot()->run();
 
 ## Registering commands
 
-`tempest/console` relies on [discovery](../4-internals/02-discovery.md) to find and register console commands. That means you don't have to register any commands manually, and any method within your codebase using the `{php}#[ConsoleCommand]` attribute will automatically be discovered by your console application.
+`tempest/console` relies on [discovery](../1-essentials/05-discovery.md) to find and register console commands. That means you don't have to register any commands manually, and any method within your codebase using the `{php}#[ConsoleCommand]` attribute will automatically be discovered by your console application.
 
 You may read more about building commands in the [dedicated documentation](../1-essentials/04-console-commands.md).
 

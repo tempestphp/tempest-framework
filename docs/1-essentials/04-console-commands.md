@@ -5,7 +5,7 @@ description: "Learn how to write console commands with a modern, minimal syntax.
 
 ## Overview
 
-Tempest leverages [discovery](../4-internals/02-discovery.md) to find class methods tagged with the {b`#[Tempest\Console\ConsoleCommand]`} attribute. Such methods will automatically be available as console commands through the `./tempest` executable.
+Tempest leverages [discovery](./05-discovery.md) to find class methods tagged with the {b`#[Tempest\Console\ConsoleCommand]`} attribute. Such methods will automatically be available as console commands through the `./tempest` executable.
 
 Additionally, Tempest supports [console middleware](#middleware), which makes it easier to build some console features.
 
@@ -312,7 +312,7 @@ Tempest provides a few built-in middleware that you may use on your console comm
 
 ## Scheduling
 
-Console commands—or any public class method—may be scheduled by using the {b`#[Tempest\Console\Schedule]`} attribute, which accepts an {b`Tempest\Console\Scheduler\Interval`} or {b`Tempest\Console\Scheduler\Every`} value. Methods with this attributes are automatically [discovered](../4-internals/02-discovery.md), so there is nothing more to add.
+Console commands—or any public class method—may be scheduled by using the {b`#[Tempest\Console\Schedule]`} attribute, which accepts an {b`Tempest\Console\Scheduler\Interval`} or {b`Tempest\Console\Scheduler\Every`} value. Methods with this attributes are automatically [discovered](./05-discovery.md), so there is nothing more to add.
 
 You may read more on the [dedicated chapter](../2-features/11-scheduling.md).
 
@@ -331,4 +331,4 @@ $this->console
     ->assertSee('caution')
     ->submit()
     ->assertSuccess();
-``` 
+```
