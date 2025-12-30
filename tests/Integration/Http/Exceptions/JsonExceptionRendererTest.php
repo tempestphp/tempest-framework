@@ -132,7 +132,7 @@ final class JsonExceptionRendererTest extends FrameworkIntegrationTestCase
     #[Test]
     public function includes_debug_info_in_local_environment(): void
     {
-        $this->container->config(new AppConfig(environment: Environment::LOCAL));
+        $this->container->singleton(Environment::class, Environment::LOCAL);
 
         $exception = new Exception('Test error message');
         $response = $this->renderer->render($exception);
@@ -149,7 +149,7 @@ final class JsonExceptionRendererTest extends FrameworkIntegrationTestCase
     #[Test]
     public function does_not_include_debug_info_in_production_environment(): void
     {
-        $this->container->config(new AppConfig(environment: Environment::PRODUCTION));
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $response = $this->renderer->render(new Exception('Test error'));
 

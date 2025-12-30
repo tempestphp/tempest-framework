@@ -76,7 +76,7 @@ namespace Tempest {
             default => $value,
         };
 
-        if ($rules === [] || ! class_exists(Validator::class) || ! class_exists(Translator::class)) {
+        if ($rules === [] || ! class_exists(Validator::class) || ! interface_exists(Translator::class)) {
             return $value;
         }
 

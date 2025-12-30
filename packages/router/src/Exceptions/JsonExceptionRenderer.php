@@ -3,7 +3,7 @@
 namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
@@ -25,7 +25,7 @@ use function Tempest\Support\Json\encode;
 final readonly class JsonExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
-        private AppConfig $appConfig,
+        private Environment $environment,
         private Validator $validator,
     ) {}
 
@@ -90,7 +90,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
             'message' => $message ?? $status->description(),
         ];
 
-        if ($this->appConfig->environment->isLocal() && $throwable !== null) {
+        if ($this->environment->isLocal() && $throwable !== null) {
             $body['debug'] = array_filter([
                 'message' => $throwable->getMessage(),
                 'exception' => get_class($throwable),

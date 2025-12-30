@@ -7,7 +7,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\AccessControl\AccessDecision;
 use Tempest\Auth\Exceptions\AccessWasDenied;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
@@ -118,7 +117,7 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
     #[Test]
     public function renders_development_exception_in_local_environment(): void
     {
-        $this->container->config(new AppConfig(environment: Environment::LOCAL));
+        $this->container->singleton(Environment::class, Environment::LOCAL);
         $this->container->singleton(GenericRequest::class, new GenericRequest(
             method: Method::GET,
             uri: '/',
@@ -133,7 +132,7 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
     #[Test]
     public function does_not_render_development_exception_for_not_found_in_local(): void
     {
-        $this->container->config(new AppConfig(environment: Environment::LOCAL));
+        $this->container->singleton(Environment::class, Environment::LOCAL);
         $this->container->singleton(GenericRequest::class, new GenericRequest(
             method: Method::GET,
             uri: '/',

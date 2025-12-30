@@ -3,7 +3,7 @@
 namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
 use Tempest\Http\GenericResponse;
@@ -29,7 +29,7 @@ use Throwable;
 final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 {
     public function __construct(
-        private AppConfig $appConfig,
+        private Environment $environment,
         private Translator $translator,
         private Request $request,
         private Validator $validator,
@@ -100,7 +100,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
 
     private function shouldRenderDevelopmentException(Throwable $throwable): bool
     {
-        if (! $this->appConfig->environment->isLocal()) {
+        if (! $this->environment->isLocal()) {
             return false;
         }
 

@@ -26,7 +26,7 @@ final class EnvTest extends TestCase
     #[PreCondition]
     protected function configure(): void
     {
-        if (! class_exists(Translator::class)) {
+        if (! interface_exists(Translator::class)) {
             $this->markTestSkipped('`tempest/intl` is required for this test.');
         }
 
