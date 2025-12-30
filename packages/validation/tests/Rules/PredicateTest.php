@@ -14,7 +14,7 @@ use Tempest\Validation\Tests\Fixtures\ObjectWithPredicateValidation;
  */
 final class PredicateTest extends TestCase
 {
-    public function test_predicate_attribute_on_property_is_applied()
+    public function test_predicate_attribute_on_property_is_applied(): void
     {
         $reflection = new ReflectionProperty(ObjectWithPredicateValidation::class, 'prop');
         $attributes = $reflection->getAttributes(Predicate::class);
