@@ -31,7 +31,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 
         $this->assertFalse(
             collect($migrations)
-                ->contains(fn($m) => $m instanceof HiddenDatabaseMigration)
+                ->contains(fn ($m) => $m instanceof HiddenDatabaseMigration),
         );
     }
 
