@@ -83,7 +83,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_route_binding(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

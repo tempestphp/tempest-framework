@@ -93,7 +93,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_delete_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(

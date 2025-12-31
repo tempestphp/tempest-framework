@@ -46,7 +46,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -74,7 +74,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             DatabaseDialect::POSTGRESQL => $this->expectException(DialectWasNotSupported::class),
         };
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -92,7 +92,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -102,7 +102,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_enum_statement(): void
     {
-        $this->migrate(CreateMigrationsTable::class);
+        $this->database->migrate(CreateMigrationsTable::class);
 
         if ($this->container->get(Database::class)->dialect === DatabaseDialect::POSTGRESQL) {
             $enumTypeMigration = new class() implements MigratesUp {
@@ -117,7 +117,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 }
             };
 
-            $this->migrate($enumTypeMigration);
+            $this->database->migrate($enumTypeMigration);
         }
 
         $tableMigration = new class() implements MigratesUp {
@@ -134,7 +134,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate($tableMigration);
+        $this->database->migrate($tableMigration);
 
         $this->expectNotToPerformAssertions();
     }
@@ -154,7 +154,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectException(DefaultValueWasInvalid::class);
         $this->expectExceptionMessage("Default value '{default: \"invalid json\"}' provided for json is not valid");
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -172,7 +172,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -195,7 +195,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectException(ValueWasInvalid::class);
         $this->expectExceptionMessage("Value '[]' provided for set is not valid");
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             $migration,
         );
@@ -215,7 +215,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $migration);
+        $this->database->migrate(CreateMigrationsTable::class, $migration);
 
         $this->expectNotToPerformAssertions();
     }
@@ -247,7 +247,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $migration);
+        $this->database->migrate(CreateMigrationsTable::class, $migration);
 
         $this->expectNotToPerformAssertions();
     }
@@ -264,7 +264,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $migration);
+        $this->database->migrate(CreateMigrationsTable::class, $migration);
 
         $this->expectNotToPerformAssertions();
     }

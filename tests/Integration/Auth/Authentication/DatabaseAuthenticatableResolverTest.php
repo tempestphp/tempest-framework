@@ -21,7 +21,7 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
     #[Test]
     public function can_resolve_custom_authenticatable_class(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
 
         $this->container->config(new AuthConfig(authenticatables: [ApiToken::class]));
 
@@ -37,7 +37,7 @@ final class DatabaseAuthenticatableResolverTest extends FrameworkIntegrationTest
     #[Test]
     public function can_resolve_id_from_custom_authenticatable_class(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateApiTokensTableMigration::class);
 
         $this->container->config(new AuthConfig(authenticatables: [ApiToken::class]));
 

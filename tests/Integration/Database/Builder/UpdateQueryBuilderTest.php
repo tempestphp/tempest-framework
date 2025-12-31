@@ -227,7 +227,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_update_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(

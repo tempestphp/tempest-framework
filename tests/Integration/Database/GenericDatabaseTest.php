@@ -24,7 +24,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager_execute(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $db = $this->container->get(Database::class);
 
@@ -41,7 +41,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_fails(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $db = $this->container->get(Database::class);
 
@@ -60,7 +60,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 
     public function test_query_with_semicolons(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class);
 
         $db = $this->container->get(Database::class);
         $db->execute(

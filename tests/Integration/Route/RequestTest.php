@@ -123,7 +123,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_custom_request_test_with_validation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -151,7 +151,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_custom_request_test_with_nested_validation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

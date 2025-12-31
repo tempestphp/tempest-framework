@@ -25,7 +25,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function encrypts_value_on_insert(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
@@ -42,7 +42,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function encrypts_value_on_update(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
@@ -62,7 +62,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function does_not_re_encrypt_already_encrypted_values(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',
@@ -75,7 +75,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function handles_null_values(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithNullableEncryptedDataTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithNullableEncryptedDataTable::class);
 
         $user = query(UserWithNullableEncryptedData::class)->create(
             email: 'test@example.com',
@@ -88,7 +88,7 @@ final class EncryptedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function handles_empty_strings(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithEncryptedDataTable::class);
 
         $user = query(UserWithEncryptedData::class)->create(
             email: 'test@example.com',

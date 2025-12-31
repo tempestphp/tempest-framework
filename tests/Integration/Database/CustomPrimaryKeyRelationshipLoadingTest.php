@@ -25,7 +25,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 {
     public function test_has_one_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateGrimoireWithUuidMigration::class,
@@ -57,7 +57,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_has_many_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -100,7 +100,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_belongs_to_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -129,7 +129,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_nested_relationship_loading_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateGrimoireWithUuidMigration::class,
@@ -174,7 +174,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_relationship_with_custom_foreign_key_naming(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateArtifactWithUuidMigration::class,
@@ -209,7 +209,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_relationship_loading_preserves_uuid_integrity(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -253,7 +253,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_automatic_uuid_primary_key_detection(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageSimpleMigration::class,
             CreateSpellSimpleMigration::class,

@@ -28,7 +28,7 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $this->clock = $this->clock('2025-08-02 12:00:00');
 
-        $this->migrate(CreateMigrationsTable::class, CreateEventTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateEventTable::class);
         $this->seedTestData();
     }
 

@@ -22,7 +22,7 @@ final class ExistsRuleTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

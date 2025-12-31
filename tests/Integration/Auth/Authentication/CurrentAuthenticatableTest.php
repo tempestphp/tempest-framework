@@ -22,7 +22,7 @@ final class CurrentAuthenticatableTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateServiceAccountTableMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateServiceAccountTableMigration::class);
 
         $this->container->config(new AuthConfig(authenticatables: [ServiceAccount::class]));
     }

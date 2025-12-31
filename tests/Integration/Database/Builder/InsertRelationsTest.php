@@ -28,7 +28,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 {
     public function test_inserting_has_many_with_arrays(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(
@@ -50,7 +50,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_has_one_with_array(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -75,7 +75,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_has_many_with_objects(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(
@@ -97,7 +97,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_has_one_with_object(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -122,7 +122,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_mixed_relations(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -154,7 +154,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_empty_has_many_relation(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(title: 'Empty Book', chapters: [])
@@ -170,7 +170,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_large_batch_has_many(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $chapters = [];
         for ($i = 1; $i <= 10; $i++) {
@@ -191,7 +191,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_inserting_has_many_preserves_additional_data(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(
@@ -233,7 +233,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_relation_insertion_with_mixed_types(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(
@@ -257,7 +257,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_insertion_with_custom_primary_key_names(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
 
         $id = query(Mage::class)
             ->insert(
@@ -285,7 +285,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_insertion_with_non_standard_relation_names(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePartyTable::class, CreateAdventurerTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePartyTable::class, CreateAdventurerTable::class);
 
         $id = query(Party::class)
             ->insert(
@@ -319,7 +319,7 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
 
     public function test_insertion_with_custom_foreign_key_names(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
 
         $spellId = query(Spell::class)
             ->insert(

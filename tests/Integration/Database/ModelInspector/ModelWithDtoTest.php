@@ -36,7 +36,7 @@ final class ModelWithDtoTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $migration);
+        $this->database->migrate(CreateMigrationsTable::class, $migration);
 
         ModelWithDtoTestModelWithSerializedDto::new(dto: new ModelWithDtoTestDtoForModelWithSerializer('test'))->save();
 

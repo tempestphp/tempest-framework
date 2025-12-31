@@ -20,7 +20,7 @@ final class QueryTest extends FrameworkIntegrationTestCase
 {
     public function test_with_bindings(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         new Author(name: 'A')->save();
         new Author(name: 'B')->save();

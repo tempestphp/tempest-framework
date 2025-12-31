@@ -53,7 +53,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
 
     public function test_update_book(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -81,7 +81,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
 
     public function test_failing_post_request(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

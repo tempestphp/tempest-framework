@@ -19,7 +19,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_seed_with_selected_seeder(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -39,7 +39,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
     public function test_seed_with_manually_selected_seeder(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -68,7 +68,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
     public function test_seed_all(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -95,7 +95,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             TestDatabaseSeeder::class,
         ];
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

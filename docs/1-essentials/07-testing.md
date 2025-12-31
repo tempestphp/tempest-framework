@@ -6,90 +6,52 @@ keywords: ["phpunit", "pest"]
 
 ## Overview
 
-Tempest uses [PHPUnit](https://phpunit.de) for testing and provides an integration through the [`Tempest\Framework\Testing\IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php) test case. This class boots the framework with configuration suitable for testing, and provides access to multiple utilities.
+Tempest uses [PHPUnit](https://phpunit.de) for testing and provides an integration through the [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php) test case. This class boots the framework with configuration suitable for testing, and provides access to multiple utilities.
 
 Testing utilities specific to components are documented in their respective chapters. For instance, testing the router is described in the [routing documentation](./01-routing.md#testing).
 
 ## Running tests
 
-Any test class that wants to interact with Tempest should extend from [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php). Next, any test class should end with the suffix `Test`.
+Any test class that needs to interact with Tempest must extend [`IntegrationTest`](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Framework/Testing/IntegrationTest.php).
 
-Running the test suite is done by running `composer phpunit`.
+By default, Tempest ships with a `phpunit.xml` file that configures PHPUnit to find test files in the `tests` directory. You may run tests using the following command:
 
 ```sh
-composer phpunit
-```
-
-## Test-specific discovery locations
-
-Tempest will only discover non-dev namespaces defined in composer.json automatically. That means that `{:hl-keyword:require-dev:}` namespaces aren't discovered automatically. Whenever you need Tempest to discover test-specific locations, you may specify them within the `discoverTestLocations()` method of the provided `IntegrationTest` class.
-
-On top of that, Tempest _will_ look for files in the `tests/Fixtures` directory and discover them by default. You can override this behavior by providing your own implementation of `discoverTestLocations()`, where you can return an array of `DiscoveryLocation` objects (or nothing).
-
-```php tests/HomeControllerTest.php
-use Tempest\Core\DiscoveryLocation;
-use Tempest\Framework\Testing\IntegrationTest;
-
-final class HomeControllerTest extends IntegrationTest
-{
-    protected function discoverTestLocations(): array
-    {
-        return [
-            new DiscoveryLocation('Tests\\OtherFixtures', __DIR__ . '/OtherFixtures'),
-        ];
-    }
-}
+./vendor/bin/phpunit
 ```
 
 ## Using the database
 
-If you want to test code that interacts with the database, your test class can call the `setupDatabase()` method. This method will create and migrate a clean database for you on the fly.
+By default, tests don't interact with the database. You may manually set up the database for testing in test files by using the `setup()` method on the `database` testing utility.
 
-```php
-final class TodoControllerTest extends IntegrationTest
+```php tests/ShowAircraftControllerTest.php
+final class ShowAircraftControllerTest extends IntegrationTest
 {
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
-        $this->setupDatabase();
+        $this->database->setup();
     }
 }
 ```
 
-Most likely, you'll want to use a test-specific database connection. You can create a `database.config.php` file anywhere within test-specific discovery locations, and Tempest will use that connection instead of the project's default. For example, you can create a file `tests/Fixtures/database.config.php` like so:
+:::info
+The [`PreCondition`](https://docs.phpunit.de/en/12.5/attributes.html#precondition) attribute instructs PHPUnit to run the associated method after the `setUp()` method. We recommend using it instead of overriding `setUp()` directly.
+:::
 
-```php tests/Fixtures/database.config.php
-use Tempest\Database\Config\SQLiteConfig;
+### Runnig migrations
 
-return new SQLiteConfig(
-    path: __DIR__ . '/database-testing.sqlite'
-);
-```
+By default, all migrations are run when setting up the database. However, you may choose to run only specific migrations by using the `migrate()` method instead of `setup()`.
 
-By default, no tables will be migrated. You can choose to provide a list of migrations that will be run for every test that calls `setupDatabase()`, or you can run specific migrations on a per-test basis.
-
-```php
-final class TodoControllerTest extends IntegrationTest
+```php tests/ShowAircraftControllerTest.php
+final class ShowAircraftControllerTest extends IntegrationTest
 {
-    protected function migrateDatabase(): void
+    #[Test]
+    public function shows_aircraft(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateTodosTable::class,
-        );
-    }
-}
-```
-
-```php
-final class TodoControllerTest extends IntegrationTest
-{
-    public function test_create_todo(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateTodosTable::class,
+            CreateAircraftTable::class,
         );
         
         // …
@@ -97,33 +59,19 @@ final class TodoControllerTest extends IntegrationTest
 }
 ```
 
-## Tester utilities
+### Using a dedicated testing database
 
-The `IntegrationTest` provides several utilities to make testing easier. You can read the details about each tester utility on the documentation page of its respective component. For example, there's the [http tester](../1-essentials/01-routing.md#testing) that helps you test HTTP requests:
+To ensure your tests run in isolation and do not affect your main database, you may configure a dedicated test database connection.
 
-```php
-$this->http
-    ->get('/account/profile')
-    ->assertOk()
-    ->assertSee('My Profile');
+To do so, create a `database.testing.config.php` file anywhere—Tempest will [use it](./06-configuration.md#per-environment-configuration) to override the default database settings.
+
+```php tests/database.testing.config.php
+use Tempest\Database\Config\SQLiteConfig;
+
+return new SQLiteConfig(
+    path: __DIR__ . '/testing.sqlite'
+);
 ```
-
-There's the [console tester](../1-essentials/04-console-commands.md#testing):
-
-```php tests/ExportUsersCommandTest.php
-$this->console
-    ->call(ExportUsersCommand::class)
-    ->assertSuccess()
-    ->assertSee('12 users exported');
-
-$this->console
-    ->call(WipeDatabaseCommand::class)
-    ->assertSee('caution')
-    ->submit()
-    ->assertSuccess();
-```
-
-And many, many more.
 
 ## Spoofing the environment
 
@@ -150,6 +98,27 @@ For instance, you may colocate test files and their corresponding class by chang
 +		<directory suffix="Test.php">./app</directory>
 	</testsuite>
 </testsuites>
+```
+
+## Discovering test-specific fixtures
+
+Non-test files created in the `tests` directory are automatically discovered by Tempest when running the test suite.
+
+You can override this behavior by providing your own implementation of `discoverTestLocations()`:
+
+```php tests/Aircraft/ShowAircraftControllerTest.php
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Framework\Testing\IntegrationTest;
+
+final class ShowAircraftControllerTest extends IntegrationTest
+{
+    protected function discoverTestLocations(): array
+    {
+        return [
+            new DiscoveryLocation('Tests\\Aircraft', __DIR__ . '/Aircraft'),
+        ];
+    }
+}
 ```
 
 ## Using Pest as a test runner
