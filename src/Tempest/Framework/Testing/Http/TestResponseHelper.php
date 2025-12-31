@@ -21,15 +21,22 @@ use Tempest\Support\Json;
 use Tempest\Validation\Rule;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+use Throwable;
 
 use function Tempest\Support\arr;
 
 final class TestResponseHelper
 {
+    /**
+     * @param Response $response The original response from the controller.
+     * @param Request $request The original request sent to the controller.
+     * @param null|Throwable $throwable The exception thrown during the request, if any.
+     */
     public function __construct(
         private(set) Response $response,
         private(set) Request $request,
-        private(set) ?Container $container = null,
+        private ?Container $container = null,
+        private(set) ?Throwable $throwable = null,
     ) {}
 
     public Status $status {
@@ -45,23 +52,29 @@ final class TestResponseHelper
         get => $this->response->body;
     }
 
+    /**
+     * Asserts that the response has the given header, case insensitive.
+     */
     public function assertHasHeader(string $name): self
     {
         Assert::assertArrayHasKey(
-            $name,
-            $this->response->headers,
-            sprintf('Failed to assert that response contains header [%s].', $name),
+            mb_strtolower($name),
+            array_change_key_case($this->response->headers, case: CASE_LOWER),
+            sprintf('Failed to assert that response contains the header [%s].', $name),
         );
 
         return $this;
     }
 
+    /**
+     * Asserts that the response does not have the given header, case insensitive.
+     */
     public function assertDoesNotHaveHeader(string $name): self
     {
         Assert::assertArrayNotHasKey(
-            $name,
-            $this->response->headers,
-            sprintf('Failed to assert that response does not contain header [%s].', $name),
+            mb_strtolower($name),
+            array_change_key_case($this->response->headers, case: CASE_LOWER),
+            sprintf('Failed to assert that response does not contain the header [%s].', $name),
         );
 
         return $this;
@@ -108,6 +121,9 @@ final class TestResponseHelper
         Assert::fail(sprintf('Failed to assert that response header [%s] value contains [%s]. These header values were found: %s', $name, $format, $headerString));
     }
 
+    /**
+     * Asserts that the response is a redirect. If a URL is provided, it also asserts that the "Location" header contains the given URL.
+     */
     public function assertRedirect(?string $to = null): self
     {
         Assert::assertTrue(
@@ -120,21 +136,63 @@ final class TestResponseHelper
             : $this->assertHeaderContains('Location', $to);
     }
 
+    /**
+     * Asserts that the response status code is 200.
+     */
     public function assertOk(): self
     {
         return $this->assertStatus(Status::OK);
     }
 
+    /**
+     * Asserts that the response status code is 403.
+     */
     public function assertForbidden(): self
     {
         return $this->assertStatus(Status::FORBIDDEN);
     }
 
+    /**
+     * Asserts that the response status is code 404.
+     */
     public function assertNotFound(): self
     {
         return $this->assertStatus(Status::NOT_FOUND);
     }
 
+    /**
+     * Asserts that the response has a status code in the [200-300[ range.
+     */
+    public function assertSuccessful(): self
+    {
+        Assert::assertTrue($this->status->isSuccessful());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response has a status code in the [400-500[ range.
+     */
+    public function assertClientError(): self
+    {
+        Assert::assertTrue($this->status->isClientError());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response has a status code in the 500 range.
+     */
+    public function assertServerError(): self
+    {
+        Assert::assertTrue($this->status->isServerError());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response status matches the expected status.
+     */
     public function assertStatus(Status $expected): self
     {
         Assert::assertSame(
@@ -549,10 +607,16 @@ final class TestResponseHelper
     }
 
     /**
+     * Dumps the response and die.
+     *
      * @mago-expect lint:no-debug-symbols
      */
     public function dd(): never
     {
+        if ($this->throwable !== null) {
+            dump(sprintf('There was a [%s] exception during this request handling: %s', $this->throwable::class, $this->throwable->getMessage())); // @phpstan-ignore disallowed.function
+        }
+
         dd($this->response); // @phpstan-ignore disallowed.function
     }
 

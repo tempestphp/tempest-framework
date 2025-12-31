@@ -4,22 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Testing\Http;
 
+use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
 
 /**
  * @internal
  */
 final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
 {
-    public function test_get_requests(): void
+    #[Test]
+    public function get_requests(): void
     {
         $this->http
             ->get('/test')
             ->assertOk();
     }
 
-    public function test_get_requests_failure(): void
+    #[Test]
+    public function get_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -28,14 +33,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_head_requests(): void
+    #[Test]
+    public function head_requests(): void
     {
         $this->http
             ->head('/test')
             ->assertOk();
     }
 
-    public function test_head_requests_failure(): void
+    #[Test]
+    public function head_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -44,14 +51,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_post_requests(): void
+    #[Test]
+    public function post_requests(): void
     {
         $this->http
             ->post('/test')
             ->assertOk();
     }
 
-    public function test_post_requests_failure(): void
+    #[Test]
+    public function post_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -60,14 +69,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_put_requests(): void
+    #[Test]
+    public function put_requests(): void
     {
         $this->http
             ->put('/test')
             ->assertOk();
     }
 
-    public function test_put_requests_failure(): void
+    #[Test]
+    public function put_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -76,14 +87,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_delete_requests(): void
+    #[Test]
+    public function delete_requests(): void
     {
         $this->http
             ->delete('/test')
             ->assertOk();
     }
 
-    public function test_delete_requests_failure(): void
+    #[Test]
+    public function delete_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -92,14 +105,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_connect_requests(): void
+    #[Test]
+    public function connect_requests(): void
     {
         $this->http
             ->connect('/test')
             ->assertOk();
     }
 
-    public function test_connect_requests_failure(): void
+    #[Test]
+    public function connect_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -108,14 +123,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_options_requests(): void
+    #[Test]
+    public function options_requests(): void
     {
         $this->http
             ->options('/test')
             ->assertOk();
     }
 
-    public function test_options_requests_failure(): void
+    #[Test]
+    public function options_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -124,14 +141,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_trace_requests(): void
+    #[Test]
+    public function trace_requests(): void
     {
         $this->http
             ->trace('/test')
             ->assertOk();
     }
 
-    public function test_trace_requests_failure(): void
+    #[Test]
+    public function trace_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -140,14 +159,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_patch_requests(): void
+    #[Test]
+    public function patch_requests(): void
     {
         $this->http
             ->patch('/test')
             ->assertOk();
     }
 
-    public function test_patch_requests_failure(): void
+    #[Test]
+    public function patch_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 
@@ -156,7 +177,20 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_query(): void
+    #[Test]
+    public function has_exception(): void
+    {
+        $this->registerRoute([Http500Controller::class, 'throwsException']);
+
+        $response = $this->http
+            ->get('/throws-exception')
+            ->assertServerError();
+
+        $this->assertInstanceOf(Exception::class, $response->throwable);
+    }
+
+    #[Test]
+    public function query(): void
     {
         $this->assertSame($this->http->get('/test?foo=baz', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->get('/test?jon=doe', query: ['foo' => 'bar'])->request->uri, '/test?jon=doe&foo=bar');

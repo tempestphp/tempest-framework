@@ -141,6 +141,7 @@ final class HttpRouterTester
                 response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable),
                 request: $request,
                 container: $this->container,
+                throwable: $throwable,
             );
         }
 
