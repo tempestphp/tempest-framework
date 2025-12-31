@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration;
 use InvalidArgumentException;
 use Stringable;
 use Tempest\Database\DatabaseInitializer;
-use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Reflection\MethodReflector;
@@ -18,6 +17,8 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
+use Tempest\Support\Filesystem;
+use Tempest\Support\Path;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewComponent;
@@ -40,20 +41,19 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         parent::setUp();
 
-        // Database
         $this->container
             ->removeInitializer(DatabaseInitializer::class)
             ->addInitializer(TestingDatabaseInitializer::class);
 
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
+        $defaultDatabaseConfigPath = Path\normalize(__DIR__, '..', 'Fixtures/Config/database.sqlite.php');
+        $databaseConfigPath = Path\normalize(__DIR__, '..', 'Fixtures/Config/database.config.php');
 
-        if (! file_exists($databaseConfigPath)) {
-            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
+        if (! Filesystem\exists($databaseConfigPath)) {
+            Filesystem\copy_file($defaultDatabaseConfigPath, $databaseConfigPath);
         }
 
         $this->container->config(require $databaseConfigPath);
-
-        $this->rollbackDatabase();
+        $this->database->reset(migrate: false);
     }
 
     protected function render(string|View $view, mixed ...$params): string
@@ -77,13 +77,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         );
 
         $this->container->get(ViewConfig::class)->addViewComponent($viewComponent);
-    }
-
-    protected function rollbackDatabase(): void
-    {
-        $migrationManager = $this->container->get(MigrationManager::class);
-
-        $migrationManager->dropAll();
     }
 
     protected function assertStringCount(string $subject, string $search, int $count): void
