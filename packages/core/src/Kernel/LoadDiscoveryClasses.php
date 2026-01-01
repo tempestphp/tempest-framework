@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use Exception;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
@@ -199,20 +200,25 @@ final class LoadDiscoveryClasses
                 $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
 
                 if ($skipDiscovery !== null) {
+                    $when = false;
                     // Evaluate conditional skip
-                    try {
-                        if ($skipDiscovery->when !== null && ($skipDiscovery->when)() !== true) {
-                            return;
+                    if ($skipDiscovery->when !== null) {
+                        try {
+                            $when = (bool) $this->container->invoke($skipDiscovery->when);
+                        } catch (Throwable $throw) {
+                            throw new Exception($throw->getMessage(), 0, $throw);
                         }
-                    } catch (Throwable) {
-                        return;
                     }
 
-                    if ($skipDiscovery->except === []) {
-                        $this->shouldSkipForClass[$className] = true;
-                    } else {
-                        foreach ($skipDiscovery->except as $except) {
-                            $this->shouldSkipForClass[$className][$except] = true;
+                    $shouldApply = $skipDiscovery->when === null || $when;
+
+                    if ($shouldApply) {
+                        if ($skipDiscovery->except === []) {
+                            $this->shouldSkipForClass[$className] = true;
+                        } else {
+                            foreach ($skipDiscovery->except as $except) {
+                                $this->shouldSkipForClass[$className][$except] = true;
+                            }
                         }
                     }
                 }

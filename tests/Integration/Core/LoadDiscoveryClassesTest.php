@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Console\ConsoleApplication;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Arr;
+use Tests\Tempest\Fixtures\Discovery\ConditionallyHiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
@@ -17,6 +19,8 @@ use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscoveryDependency;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\get;
 
 /**
  * @internal
@@ -80,5 +84,12 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertTrue($dependency->discovered);
+    }
+
+    #[Test]
+    public function does_not_load_conditionally_hidden_classes(): void
+    {
+        $migrations = $this->container->get(RunnableMigrations::class);
+        $this->assertFalse(Arr\contains($migrations, fn ($m) => $m instanceof ConditionallyHiddenDatabaseMigration));
     }
 }
