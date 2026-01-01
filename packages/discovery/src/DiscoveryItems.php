@@ -17,7 +17,7 @@ final class DiscoveryItems implements IteratorAggregate, Countable
         private array $items = [],
     ) {}
 
-    public function addForLocation(DiscoveryLocation $location, array $values): self
+    public function addForLocation(DiscoveryLocation $location, iterable $values): self
     {
         $existingValues = $this->items[$location->path] ?? [];
 

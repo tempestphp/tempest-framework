@@ -65,7 +65,7 @@ final readonly class SetLocaleMiddleware implements HttpMiddleware
 
 ## Defining translation messages
 
-Translation messages are usually stored in translation files. Tempest automatically [discovers](../4-internals/02-discovery.md) YAML and JSON translation files that use the `<name>.<locale>.{yaml,json}` naming format, where `<name>` may be any string, and `<locale>` must be an [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) language code.
+Translation messages are usually stored in translation files. Tempest automatically [discovers](../1-essentials/05-discovery.md) YAML and JSON translation files that use the `<name>.<locale>.{yaml,json}` naming format, where `<name>` may be any string, and `<locale>` must be an [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) language code.
 
 For instance, you may store translation files in a `lang` directory:
 

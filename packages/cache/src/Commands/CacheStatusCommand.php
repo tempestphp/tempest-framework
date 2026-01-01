@@ -12,9 +12,9 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\Environment;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
@@ -22,7 +22,7 @@ use UnitEnum;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class CacheStatusCommand
     {
         use HasConsole;
@@ -30,7 +30,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         public function __construct(
             private Console $console,
             private Container $container,
-            private AppConfig $appConfig,
+            private Environment $environment,
             private DiscoveryCache $discoveryCache,
         ) {}
 
@@ -73,7 +73,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                     },
                 );
 
-                if ($this->appConfig->environment->isProduction() && ! $this->discoveryCache->enabled) {
+                if ($this->environment->requiresCaution() && ! $this->discoveryCache->enabled) {
                     $this->console->writeln();
                     $this->console->error('Discovery cache is disabled in production. This is not recommended.');
                 }

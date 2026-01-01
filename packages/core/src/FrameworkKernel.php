@@ -168,10 +168,7 @@ final class FrameworkKernel implements Kernel
     public function loadDiscovery(): self
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
-        $this->container->invoke(
-            LoadDiscoveryClasses::class,
-            discoveryLocations: $this->discoveryLocations,
-        );
+        $this->container->invoke(LoadDiscoveryClasses::class, discoveryLocations: $this->discoveryLocations);
 
         return $this;
     }
@@ -179,7 +176,9 @@ final class FrameworkKernel implements Kernel
     public function loadConfig(): self
     {
         $this->container->addInitializer(ConfigCacheInitializer::class);
-        $this->container->invoke(LoadConfig::class);
+
+        $loadConfig = $this->container->get(LoadConfig::class, environment: Environment::guessFromEnvironment());
+        $loadConfig();
 
         return $this;
     }
@@ -223,7 +222,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerEmergencyExceptionHandler(): self
     {
-        $environment = Environment::fromEnv();
+        $environment = Environment::guessFromEnvironment();
 
         // During tests, PHPUnit registers its own error handling.
         if ($environment->isTesting()) {
@@ -232,7 +231,7 @@ final class FrameworkKernel implements Kernel
 
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
-        if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
+        if (PHP_SAPI !== 'cli' && $environment->isLocal()) {
             new RegisterEmergencyExceptionHandler()->register();
         }
 
@@ -241,10 +240,10 @@ final class FrameworkKernel implements Kernel
 
     public function registerExceptionHandler(): self
     {
-        $appConfig = $this->container->get(AppConfig::class);
+        $environment = $this->container->get(Environment::class);
 
         // During tests, PHPUnit registers its own error handling.
-        if ($appConfig->environment->isTesting()) {
+        if ($environment->isTesting()) {
             return $this;
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View\Components;
 
-use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\DateTime\Duration;
@@ -127,7 +126,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
-        $this->container->singleton(AppConfig::class, fn () => new AppConfig(environment: Environment::LOCAL));
+        $this->container->singleton(Environment::class, Environment::LOCAL);
 
         $this->assertSame(
             '<!-- unknown-icon: ph:eye -->',
@@ -145,7 +144,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
-        $this->container->singleton(AppConfig::class, fn () => new AppConfig(environment: Environment::PRODUCTION));
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $this->assertSame(
             '',

@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\EventBus\EventBus;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
@@ -25,7 +25,7 @@ final readonly class LoggerInitializer implements DynamicInitializer
     {
         return new GenericLogger(
             logConfig: $container->get(LogConfig::class, $tag),
-            appConfig: $container->get(AppConfig::class),
+            environment: $container->get(Environment::class),
             eventBus: $container->get(EventBus::class),
         );
     }

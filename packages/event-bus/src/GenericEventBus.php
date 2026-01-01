@@ -15,7 +15,7 @@ final readonly class GenericEventBus implements EventBus
 {
     public function __construct(
         private Container $container,
-        private EventBusConfig $eventBusConfig,
+        private(set) EventBusConfig $eventBusConfig,
     ) {}
 
     public function listen(Closure $handler, ?string $event = null): void

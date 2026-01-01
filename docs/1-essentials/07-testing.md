@@ -125,6 +125,18 @@ $this->console
 
 And many, many more.
 
+## Spoofing the environment
+
+By default, Tempest provides a `phpunit.xml` that sets the `ENVIRONMENT` variable to `testing`. This is needed so that Tempest can adapt its boot process and load the proper configuration files for the testing environment.
+
+During tests, you may want to test different paths of your application depending on the environment. For instance, you may want to test that certain features are only available in production. To do this, you may override the {b`Tempest\Core\Environment`} singleton:
+
+```php
+use Tempest\Core\Environment;
+
+$this->container->singleton(Environment::class, Environment::PRODUCTION);
+```
+
 ## Changing the location of tests
 
 The `phpunit.xml` file contains a `{html}<testsuite>` element that configures the directory in which PHPUnit looks for test files. This may be changed to follow any rule of your convenience.

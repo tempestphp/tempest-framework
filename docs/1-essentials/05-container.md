@@ -427,7 +427,7 @@ final readonly class CacheRepository implements Repository
 When you request the `Repository` from the container, Tempest will automatically wrap the original implementation with your decorator. The decorated object (the original `Repository`) is injected into the decorator's constructor.
 
 :::info
-Decorators are discovered automatically through Tempest's [discovery](../4-internals/02-discovery.md), so you don't need to manually register them.
+Decorators are discovered automatically through Tempest's [discovery](./05-discovery.md), so you don't need to manually register them.
 :::
 
 ## Proxy loading

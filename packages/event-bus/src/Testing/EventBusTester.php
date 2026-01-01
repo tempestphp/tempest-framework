@@ -6,7 +6,6 @@ use Closure;
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
-use Tempest\EventBus\EventBusConfig;
 use Tempest\Support\Str;
 
 final class EventBusTester
@@ -18,14 +17,28 @@ final class EventBusTester
     ) {}
 
     /**
+     * Records event dispatches, and optionally prevents the registered event handlers from being called.
+     *
+     * @param bool $preventHandling Whether to prevent the registered event handlers from being called while still allowing assertions.
+     */
+    public function recordEventDispatches(bool $preventHandling = false): self
+    {
+        $this->fakeEventBus = new FakeEventBus(
+            genericEventBus: $this->container->get(EventBus::class),
+            preventHandling: $preventHandling,
+        );
+
+        $this->container->singleton(EventBus::class, $this->fakeEventBus);
+
+        return $this;
+    }
+
+    /**
      * Prevents the registered event handlers from being called.
      */
     public function preventEventHandling(): self
     {
-        $this->fakeEventBus = new FakeEventBus($this->container->get(EventBusConfig::class));
-        $this->container->singleton(EventBus::class, $this->fakeEventBus);
-
-        return $this;
+        return $this->recordEventDispatches(preventHandling: true);
     }
 
     /**
@@ -36,7 +49,7 @@ final class EventBusTester
      */
     public function assertDispatched(string|object $event, ?Closure $callback = null, ?int $count = null): self
     {
-        $this->assertFaked();
+        $this->assertRecording();
 
         Assert::assertNotEmpty(
             actual: $dispatches = $this->findDispatches($event),
@@ -61,7 +74,7 @@ final class EventBusTester
      */
     public function assertNotDispatched(string|object $event): self
     {
-        $this->assertFaked();
+        $this->assertRecording();
 
         Assert::assertEmpty($this->findDispatches($event), 'The event was dispatched.');
 
@@ -75,7 +88,7 @@ final class EventBusTester
      */
     public function assertListeningTo(string $event, ?int $count = null): self
     {
-        $this->assertFaked();
+        $this->assertRecording();
 
         Assert::assertNotEmpty(
             actual: $handlers = $this->findHandlersFor($event),
@@ -109,12 +122,15 @@ final class EventBusTester
     {
         $eventName = Str\parse($event) ?: $event::class;
 
-        return $this->fakeEventBus->eventBusConfig->handlers[$eventName] ?? [];
+        return $this->fakeEventBus->handlers[$eventName] ?? [];
     }
 
-    private function assertFaked(): self
+    private function assertRecording(): self
     {
-        Assert::assertTrue(isset($this->fakeEventBus), 'Asserting against the event bus require the `preventEventHandling()` method to be called first.');
+        Assert::assertTrue(
+            isset($this->fakeEventBus),
+            'Asserting against the event bus require the `recordEventHandling()` or `preventEventHandling()` method to be called first.',
+        );
 
         return $this;
     }

@@ -102,6 +102,7 @@ final class PDOConnection implements Connection
             dsn: $this->config->dsn,
             username: $this->config->username,
             password: $this->config->password,
+            options: $this->config->options,
         );
     }
 }

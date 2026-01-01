@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
-use Tempest\Core\AppConfig;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Environment;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -13,17 +14,22 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CautionMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    public function test_in_local(): void
+    #[Test]
+    public function in_local(): void
     {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+
         $this->console
             ->call('caution')
             ->assertContains('CAUTION confirmed');
     }
 
-    public function test_in_production(): void
+    #[Test]
+    #[TestWith([Environment::PRODUCTION])]
+    #[TestWith([Environment::STAGING])]
+    public function in_caution_environments(Environment $environment): void
     {
-        $appConfig = $this->container->get(AppConfig::class);
-        $appConfig->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, $environment);
 
         $this->console
             ->call('caution')

@@ -7,9 +7,13 @@ namespace Tempest {
     use Stringable;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
+    use Tempest\Core\EnvironmentVariableValidationFailed;
     use Tempest\Core\ExceptionReporter;
     use Tempest\Core\Kernel;
+    use Tempest\Intl\Translator;
     use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
+    use Tempest\Validation\Rule;
+    use Tempest\Validation\Validator;
     use Throwable;
 
     use function Tempest\Support\Namespace\to_psr4_namespace;
@@ -61,21 +65,36 @@ namespace Tempest {
 
     /**
      * Retrieves the given `$key` from the environment variables. If `$key` is not defined, `$default` is returned instead.
+     *
+     * @param Rule[] $rules Optional validation rules for the value of this environment variable. If one of the rules don't pass, an exception is thrown, preventing the application from booting.
      */
-    function env(string $key, mixed $default = null): mixed
+    function env(string $key, mixed $default = null, array $rules = []): mixed
     {
         $value = getenv($key);
-
-        if ($value === false) {
-            return $default;
-        }
-
-        return match (strtolower($value)) {
+        $value = match (is_string($value) ? mb_strtolower($value) : $value) {
             'true' => true,
             'false' => false,
-            'null', '' => null,
+            false, 'null', '' => $default,
             default => $value,
         };
+
+        if ($rules === [] || ! class_exists(Validator::class) || ! class_exists(Translator::class)) {
+            return $value;
+        }
+
+        $validator = get(Validator::class);
+        $failures = $validator->validateValue($value, $rules);
+
+        if ($failures === []) {
+            return $value;
+        }
+
+        throw new EnvironmentVariableValidationFailed(
+            name: $key,
+            value: $value,
+            failingRules: $failures,
+            validator: $validator,
+        );
     }
 
     /**

@@ -183,7 +183,7 @@ final class ViewComponentElement implements Element, WithToken
 
                     // A slot doesn't have any content, so we'll comment it out.
                     // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                    return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
+                    return $this->environment->isLocal() ? '<!--' . $matches[0] . '-->' : '';
                 }
 
                 $slotElement = $this->getSlotElement($slot->name);

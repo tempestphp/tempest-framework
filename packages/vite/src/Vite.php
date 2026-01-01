@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Vite;
 
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Json;
 use Tempest\Vite\Exceptions\DevelopmentServerWasNotRunning;
@@ -28,7 +28,7 @@ final class Vite
     private static ?Manifest $manifest = null;
 
     public function __construct(
-        private readonly AppConfig $appConfig,
+        private readonly Environment $environment,
         private readonly ViteConfig $viteConfig,
         private readonly Container $container,
         private readonly TagCompiler $tagCompiler,
@@ -109,7 +109,7 @@ final class Vite
 
     private function shouldUseManifest(): bool
     {
-        if ($this->appConfig->environment->isTesting() && ! $this->viteConfig->useManifestDuringTesting) {
+        if ($this->environment->isTesting() && ! $this->viteConfig->useManifestDuringTesting) {
             return false;
         }
 
