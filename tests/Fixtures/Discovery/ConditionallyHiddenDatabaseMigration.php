@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Discovery;
 
 use Symfony\Component\Console\Application;
+use Tempest\Console\ConsoleApplication;
 use Tempest\Database\MigratesUp;
-use Tempest\Database\MigrationDiscovery;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Discovery\SkipDiscovery;

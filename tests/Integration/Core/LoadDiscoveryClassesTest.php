@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Console\ConsoleApplication;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
@@ -19,8 +18,6 @@ use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscoveryDependency;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\get;
 
 /**
  * @internal
