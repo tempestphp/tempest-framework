@@ -675,7 +675,7 @@ final class GenericContainer implements Container
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
             $decoratorClassReflector = self::$classReflectors[$decoratorClass] ??= new ClassReflector($decoratorClass);
-            ;
+
             $constructor = $decoratorClassReflector->getConstructor();
             $parameters = $constructor?->getParameters();
 
