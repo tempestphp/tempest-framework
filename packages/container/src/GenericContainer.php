@@ -277,8 +277,10 @@ final class GenericContainer implements Container
     public function addInitializer(ClassReflector|string $initializerClass): Container
     {
         if (! $initializerClass instanceof ClassReflector) {
-            $initializerClass = self::$classReflectors[$initializerClass] ??= new ClassReflector($initializerClass);
-            ;
+            if (! isset(self::$classReflectors[$initializerClass])) {
+                self::$classReflectors[$initializerClass] = new ClassReflector($initializerClass);
+            }
+            $initializerClass = self::$classReflectors[$initializerClass];
         }
 
         // First, we check whether this is a DynamicInitializer,
@@ -308,8 +310,10 @@ final class GenericContainer implements Container
     public function removeInitializer(ClassReflector|string $initializerClass): Container
     {
         if (! $initializerClass instanceof ClassReflector) {
-            $initializerClass = self::$classReflectors[$initializerClass] ??= new ClassReflector($initializerClass);
-            ;
+            if (! isset(self::$classReflectors[$initializerClass])) {
+                self::$classReflectors[$initializerClass] = new ClassReflector($initializerClass);
+            }
+            $initializerClass = self::$classReflectors[$initializerClass];
         }
 
         if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
@@ -356,7 +360,10 @@ final class GenericContainer implements Container
 
     private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
-        $class = self::$classReflectors[$className] ??= new ClassReflector($className);
+        if (! isset(self::$classReflectors[$className])) {
+            self::$classReflectors[$className] = new ClassReflector($className);
+        }
+        $class = self::$classReflectors[$className];
 
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
@@ -454,7 +461,10 @@ final class GenericContainer implements Container
 
     private function autowire(string $className, mixed ...$params): object
     {
-        $classReflector = self::$classReflectors[$className] ??= new ClassReflector($className);
+        if (! isset(self::$classReflectors[$className])) {
+            self::$classReflectors[$className] = new ClassReflector($className);
+        }
+        $classReflector = self::$classReflectors[$className];
 
         $constructor = $classReflector->getConstructor();
 
@@ -674,7 +684,10 @@ final class GenericContainer implements Container
     private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
-            $decoratorClassReflector = self::$classReflectors[$decoratorClass] ??= new ClassReflector($decoratorClass);
+            if (! isset(self::$classReflectors[$decoratorClass])) {
+                self::$classReflectors[$decoratorClass] = new ClassReflector($decoratorClass);
+            }
+            $decoratorClassReflector = self::$classReflectors[$decoratorClass];
 
             $constructor = $decoratorClassReflector->getConstructor();
             $parameters = $constructor?->getParameters();
