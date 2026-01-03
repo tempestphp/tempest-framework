@@ -24,6 +24,15 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
+    /** @var array<string, object> */
+    private array $resolved = [];
+
+    /** @var array<string, ClassReflector> */
+    private static array $classReflectors = [];
+
+    /** @var array<string, Initializer|DynamicInitializer|null> */
+    private array $initializerCache = [];
+
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
         private(set) ArrayIterator $definitions = new ArrayIterator(),
@@ -124,7 +133,7 @@ final class GenericContainer implements Container
 
     public function unregister(string $className, bool $tagged = false): self
     {
-        unset($this->definitions[$className], $this->singletons[$className]);
+        unset($this->definitions[$className], $this->singletons[$className], $this->resolved[$className]);
 
         if ($tagged) {
             $singletons = array_filter(
@@ -134,6 +143,12 @@ final class GenericContainer implements Container
             );
 
             $this->setSingletons($singletons);
+
+            foreach (array_keys($this->resolved) as $key) {
+                if (str_starts_with($key, "{$className}#")) {
+                    unset($this->resolved[$key]);
+                }
+            }
         }
 
         return $this;
@@ -262,7 +277,8 @@ final class GenericContainer implements Container
     public function addInitializer(ClassReflector|string $initializerClass): Container
     {
         if (! $initializerClass instanceof ClassReflector) {
-            $initializerClass = new ClassReflector($initializerClass);
+            $initializerClass = self::$classReflectors[$initializerClass] ??= new ClassReflector($initializerClass);
+            ;
         }
 
         // First, we check whether this is a DynamicInitializer,
@@ -292,7 +308,8 @@ final class GenericContainer implements Container
     public function removeInitializer(ClassReflector|string $initializerClass): Container
     {
         if (! $initializerClass instanceof ClassReflector) {
-            $initializerClass = new ClassReflector($initializerClass);
+            $initializerClass = self::$classReflectors[$initializerClass] ??= new ClassReflector($initializerClass);
+            ;
         }
 
         if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
@@ -323,18 +340,23 @@ final class GenericContainer implements Container
 
     private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
+        $key = $this->resolveTaggedName($className, $tag);
+
+        if (isset($this->resolved[$key])) {
+            return $this->resolved[$key];
+        }
         $instance = $this->resolveDependency($className, $tag, ...$params);
 
         if ($this->decorators[$className] ?? null) {
             $instance = $this->resolveDecorator($className, $instance, $tag, ...$params);
         }
 
-        return $instance;
+        return $this->resolved[$key] = $instance;
     }
 
     private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
-        $class = new ClassReflector($className);
+        $class = self::$classReflectors[$className] ??= new ClassReflector($className);
 
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
@@ -397,14 +419,21 @@ final class GenericContainer implements Container
 
     private function initializerForClass(ClassReflector $target, null|string|UnitEnum $tag = null): null|Initializer|DynamicInitializer
     {
+        $key = $this->resolveTaggedName($target->getName(), $tag);
+
+        if (array_key_exists($key, $this->initializerCache)) {
+            return $this->initializerCache[$key];
+        }
+
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
         if ($target->getType()->matches(Initializer::class) || $target->getType()->matches(DynamicInitializer::class)) {
-            return null;
+            return $this->initializerCache[$key] = null;
         }
 
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
-            return $this->resolve($initializerClass);
+            $initializer = $this->resolve($initializerClass);
+            return $this->initializerCache[$key] = $initializer;
         }
 
         // Loop through the registered initializers to see if
@@ -417,15 +446,15 @@ final class GenericContainer implements Container
                 continue;
             }
 
-            return $initializer;
+            return $this->initializerCache[$key] = $initializer;
         }
 
-        return null;
+        return $this->initializerCache[$key] = null;
     }
 
     private function autowire(string $className, mixed ...$params): object
     {
-        $classReflector = new ClassReflector($className);
+        $classReflector = self::$classReflectors[$className] ??= new ClassReflector($className);
 
         $constructor = $classReflector->getConstructor();
 
@@ -645,7 +674,8 @@ final class GenericContainer implements Container
     private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
-            $decoratorClassReflector = new ClassReflector($decoratorClass);
+            $decoratorClassReflector = self::$classReflectors[$decoratorClass] ??= new ClassReflector($decoratorClass);
+            ;
             $constructor = $decoratorClassReflector->getConstructor();
             $parameters = $constructor?->getParameters();
 
