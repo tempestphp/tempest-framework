@@ -10,6 +10,7 @@ final class EnvironmentInsightsProvider implements InsightsProvider
 
     public function __construct(
         private readonly AppConfig $appConfig,
+        private readonly Environment $environment,
     ) {}
 
     public function getInsights(): array
@@ -19,7 +20,7 @@ final class EnvironmentInsightsProvider implements InsightsProvider
             'PHP version' => PHP_VERSION,
             'Composer version' => $this->getComposerVersion(),
             'Operating system' => $this->getOperatingSystem(),
-            'Environment' => $this->appConfig->environment->value,
+            'Environment' => $this->environment->value,
             'Application URL' => $this->appConfig->baseUri ?: new Insight('Not set', Insight::ERROR),
         ];
     }

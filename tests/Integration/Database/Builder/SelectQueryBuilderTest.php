@@ -116,7 +116,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_where_statement(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -135,7 +135,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_join(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -158,7 +158,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_order_by(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -177,7 +177,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_order_by_with_field_and_direction(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -198,7 +198,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_order_by_with_field_defaults_to_asc(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -216,7 +216,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_order_by_raw_shorthand(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -252,7 +252,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_limit(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -273,7 +273,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_offset(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -297,7 +297,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_chunk(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -324,7 +324,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_chunk_with_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -345,7 +345,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_raw(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -392,7 +392,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_first_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(
@@ -411,7 +411,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_all_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(

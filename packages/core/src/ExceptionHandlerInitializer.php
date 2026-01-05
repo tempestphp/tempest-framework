@@ -13,11 +13,11 @@ final class ExceptionHandlerInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): ExceptionHandler
     {
-        $config = $container->get(AppConfig::class);
+        $environment = $container->get(Environment::class);
 
         return match (true) {
             PHP_SAPI === 'cli' => $container->get(ConsoleExceptionHandler::class),
-            $config->environment->isLocal() => $container->get(DevelopmentExceptionHandler::class),
+            $environment->isLocal() => $container->get(DevelopmentExceptionHandler::class),
             default => $container->get(HttpExceptionHandler::class),
         };
     }

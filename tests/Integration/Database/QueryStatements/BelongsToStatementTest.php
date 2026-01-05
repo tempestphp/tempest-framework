@@ -54,7 +54,7 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $customersMigration, $belongsToMigration, $foreignKeyMigration);
+        $this->database->migrate(CreateMigrationsTable::class, $customersMigration, $belongsToMigration, $foreignKeyMigration);
 
         $this->expectNotToPerformAssertions();
     }
@@ -85,7 +85,7 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(CreateMigrationsTable::class, $categoriesMigration, $productsMigration);
+        $this->database->migrate(CreateMigrationsTable::class, $categoriesMigration, $productsMigration);
 
         $this->expectNotToPerformAssertions();
     }

@@ -15,7 +15,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 {
     public function test_model_with_custom_primary_key_name(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
         $frieren = query(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
@@ -32,7 +32,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_with_custom_primary_key(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
         $frieren = query(CustomPrimaryKeyUserModel::class)->create(name: 'Frieren', magic: 'Time Magic');
 
@@ -47,7 +47,7 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 
     public function test_model_without_id_property_still_works(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateModelWithoutIdMigration::class);
 
         $model = query(ModelWithoutId::class)->new(name: 'Test');
         $this->assertInstanceOf(ModelWithoutId::class, $model);

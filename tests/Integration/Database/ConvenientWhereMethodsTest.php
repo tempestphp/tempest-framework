@@ -24,7 +24,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->migrate(CreateMigrationsTable::class, CreateUserTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserTable::class);
         $this->seedTestData();
     }
 

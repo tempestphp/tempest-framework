@@ -19,7 +19,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 
@@ -35,7 +35,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_commit(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 
@@ -51,7 +51,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_commit_rollback(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);
 

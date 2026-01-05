@@ -138,7 +138,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_count(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(

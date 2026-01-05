@@ -6,6 +6,7 @@ namespace Tempest\Http\Session;
 
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Core\Priority;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Cryptography\Encryption\Exceptions\EncryptionException;
@@ -29,6 +30,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
     public function __construct(
         private Session $session,
         private AppConfig $appConfig,
+        private Environment $environment,
         private SessionConfig $sessionConfig,
         private CookieManager $cookies,
         private Clock $clock,
@@ -60,7 +62,7 @@ final readonly class VerifyCsrfMiddleware implements HttpMiddleware
             return true;
         }
 
-        if ($this->appConfig->environment->isTesting()) {
+        if ($this->environment->isTesting()) {
             return true;
         }
 

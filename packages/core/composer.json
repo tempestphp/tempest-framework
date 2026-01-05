@@ -13,6 +13,10 @@
         "symfony/cache": "^7.3",
         "filp/whoops": "^2.15"
     },
+    "require-dev": {
+        "tempest/validation": "dev-main",
+        "tempest/intl": "dev-main"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Core\\": "src"

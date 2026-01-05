@@ -9,23 +9,52 @@ use Tempest\Database\Tables\NamingStrategy;
 
 interface DatabaseConfig extends HasTag
 {
+    /**
+     * PDO data source name connection string.
+     */
     public string $dsn {
         get;
     }
 
+    /**
+     * The naming strategy for database tables and columns.
+     */
     public NamingStrategy $namingStrategy {
         get;
     }
 
+    /**
+     * The database dialect (MySQL, PostgreSQL, SQLite).
+     */
     public DatabaseDialect $dialect {
         get;
     }
 
+    /**
+     * The database username for authentication.
+     */
     public ?string $username {
         get;
     }
 
+    /**
+     * The database password for authentication.
+     */
     public ?string $password {
+        get;
+    }
+
+    /**
+     * Whether to use persistent database connections.
+     */
+    public bool $usePersistentConnection {
+        get;
+    }
+
+    /**
+     * PDO connection options built from configuration properties.
+     */
+    public array $options {
         get;
     }
 }

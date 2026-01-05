@@ -18,7 +18,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_select(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         query(TestUserModel::class)->create(name: 'Frieren');
         query(TestUserModel::class)->create(name: 'Fern');
@@ -53,7 +53,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_insert(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $builderWithId = query(TestUserModel::class)->insert(name: 'Frieren');
         $builderWithoutId = query(TestUserModelWithoutId::class)->insert(name: 'Stark');
@@ -77,7 +77,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_update(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $createdWithId = query(TestUserModel::class)->create(name: 'Frieren');
         query(TestUserModelWithoutId::class)->create(name: 'Stark');
@@ -102,7 +102,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_delete(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $createdWithId = query(TestUserModel::class)->create(name: 'Frieren');
         query(TestUserModel::class)->create(name: 'Fern');
@@ -129,7 +129,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_count(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         query(TestUserModel::class)->create(name: 'Frieren');
         query(TestUserModel::class)->create(name: 'Fern');
@@ -170,7 +170,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_get_with_id_query(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $created = query(TestUserModel::class)->create(name: 'Himmel');
         $retrieved = query(TestUserModel::class)->get($created->id);
@@ -182,7 +182,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_get_throws_for_model_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage(
@@ -194,7 +194,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_all(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         query(TestUserModel::class)->create(name: 'Fern');
         query(TestUserModel::class)->create(name: 'Stark');
@@ -216,7 +216,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_find(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         query(TestUserModel::class)->create(name: 'Frieren');
         query(TestUserModel::class)->create(name: 'Fern');
@@ -242,7 +242,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_create(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $createdWithId = query(TestUserModel::class)->create(name: 'Ubel');
         $createdWithoutId = query(TestUserModelWithoutId::class)->create(name: 'Serie');
@@ -257,7 +257,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_find_or_new_finds_existing(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $existingWithId = query(TestUserModel::class)->create(name: 'Serie');
         $existingWithoutId = query(TestUserModelWithoutId::class)->create(name: 'Macht');
@@ -282,7 +282,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_find_or_new_creates_new(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
         $resultWithId = query(TestUserModel::class)->findOrNew(
             find: ['name' => 'NonExistent'],
@@ -304,7 +304,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_updates_existing(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $existingWithId = query(TestUserModel::class)->create(name: 'Qual');
 
@@ -320,7 +320,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_creates_new(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $resultWithId = query(TestUserModel::class)->updateOrCreate(
             find: ['name' => 'NonExistent'],
@@ -334,7 +334,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_get_with_string_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $created = query(TestUserModel::class)->create(name: 'Heiter');
         $retrieved = query(TestUserModel::class)->get((string) $created->id->value);
@@ -346,7 +346,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_get_with_int_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $created = query(TestUserModel::class)->create(name: 'Eisen');
         $retrieved = query(TestUserModel::class)->get($created->id->value);
@@ -358,7 +358,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_get_returns_null_for_non_existent_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
         $result = query(TestUserModel::class)->get(new PrimaryKey(999));
 
@@ -367,7 +367,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_find_by_id_throws_for_model_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage(
@@ -379,7 +379,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_throws_for_model_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage(
@@ -394,7 +394,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_custom_primary_key_name(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
 
         $created = query(TestUserModelWithCustomPrimaryKey::class)->create(name: 'Fern');
 
@@ -410,7 +410,7 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_custom_primary_key_update_or_create(): void
     {
-        $this->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
 
         $original = query(TestUserModelWithCustomPrimaryKey::class)->create(name: 'Stark');
 

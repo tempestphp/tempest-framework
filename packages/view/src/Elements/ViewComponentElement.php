@@ -103,7 +103,7 @@ final class ViewComponentElement implements Element, WithToken
         $compiled = $compiled
             ->prepend(
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    '<?php (function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
@@ -111,7 +111,7 @@ final class ViewComponentElement implements Element, WithToken
             )
             ->append(
                 sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s) ?>',
+                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s %s) ?>',
                     $this->exportAttributesArray(),
                     ViewObjectExporter::export($slots),
                     $this->scopedVariables->isNotEmpty()
@@ -122,6 +122,9 @@ final class ViewComponentElement implements Element, WithToken
                         : '',
                     $this->expressionAttributes->isNotEmpty()
                         ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
+                        : '',
+                    $this->scopedVariables->isNotEmpty()
+                        ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
                         : '',
                 ),
             );
@@ -143,7 +146,7 @@ final class ViewComponentElement implements Element, WithToken
 
                     // A slot doesn't have any content, so we'll comment it out.
                     // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                    return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
+                    return $this->environment->isLocal() ? '<!--' . $matches[0] . '-->' : '';
                 }
 
                 $slotElement = $this->getSlotElement($slot->name);

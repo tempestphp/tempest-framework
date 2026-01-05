@@ -5,8 +5,7 @@ namespace Tempest\Core;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-
-use function Tempest\env;
+use Tempest\Support\Filesystem;
 
 final class DiscoveryCacheInitializer implements Initializer
 {
@@ -14,25 +13,28 @@ final class DiscoveryCacheInitializer implements Initializer
     public function initialize(Container $container): DiscoveryCache
     {
         return new DiscoveryCache(
-            strategy: $this->resolveDiscoveryCacheStrategy(
-                $container->get(AppConfig::class)->environment->isProduction(),
-            ),
+            strategy: $this->resolveDiscoveryCacheStrategy(),
         );
     }
 
-    private function resolveDiscoveryCacheStrategy(bool $isProduction): DiscoveryCacheStrategy
+    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
         if ($this->isDiscoveryGenerateCommand() || $this->isDiscoveryClearCommand()) {
             return DiscoveryCacheStrategy::NONE;
         }
 
-        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $isProduction));
+        $current = DiscoveryCacheStrategy::resolveFromEnvironment();
 
         if ($current === DiscoveryCacheStrategy::NONE) {
             return $current;
         }
 
-        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryCache::getCurrentDiscoverStrategyCachePath()));
+        $path = DiscoveryCache::getCurrentDiscoverStrategyCachePath();
+        $stored = Filesystem\exists($path)
+            ? Filesystem\read_file($path)
+            : null;
+
+        $original = DiscoveryCacheStrategy::resolveFromInput($stored);
 
         if ($current !== $original) {
             return DiscoveryCacheStrategy::INVALID;

@@ -19,8 +19,6 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
@@ -57,26 +55,59 @@ abstract class IntegrationTest extends TestCase
 
     protected ConsoleTester $console;
 
+    /**
+     * Provides utilities for testing HTTP routes.
+     */
     protected HttpRouterTester $http;
 
+    /**
+     * Provides utilities for testing installers.
+     */
     protected InstallerTester $installer;
 
+    /**
+     * Provides utilities for testing the Vite integration.
+     */
     protected ViteTester $vite;
 
+    /**
+     * Provides utilities for testing the event bus.
+     */
     protected EventBusTester $eventBus;
 
+    /**
+     * Provides utilities for testing storage management.
+     */
     protected StorageTester $storage;
 
+    /**
+     * Provides utilities for testing emails.
+     */
     protected MailTester $mailer;
 
+    /**
+     * Provides utilities for testing the cache.
+     */
     protected CacheTester $cache;
 
+    /**
+     * Provides utilities for testing exception reporting.
+     */
     protected ExceptionTester $exceptions;
 
+    /**
+     * Provides utilities for testing process execution.
+     */
     protected ProcessTester $process;
 
+    /**
+     * Provides utilities for testing OAuth flows.
+     */
     protected OAuthTester $oauth;
 
+    /**
+     * Provides utilities for testing the database.
+     */
     protected DatabaseTester $database;
 
     protected function setUp(): void
@@ -168,41 +199,6 @@ abstract class IntegrationTest extends TestCase
         $this->container->singleton(GenericRequest::class, fn () => $request);
 
         return $this;
-    }
-
-    /**
-     * Cleans up the database and migrates the migrations using `migrateDatabase`.
-     *
-     * @deprecated Use `$this->database->setup()` instead.
-     */
-    protected function setupDatabase(): self
-    {
-        $migrationManager = $this->container->get(MigrationManager::class);
-        $migrationManager->dropAll();
-
-        $this->migrateDatabase();
-
-        return $this;
-    }
-
-    /**
-     * Creates the migration table. You may override this method to provide more migrations to run for every tests in this file.
-     *
-     * @deprecated Use `$this->database->migrate()` instead.
-     */
-    protected function migrateDatabase(): void
-    {
-        $this->migrate(CreateMigrationsTable::class);
-    }
-
-    /**
-     * Migrates the specified migration classes.
-     *
-     * @deprecated Use `$this->database->migrate()` instead.
-     */
-    protected function migrate(string|object ...$migrationClasses): void
-    {
-        $this->database->migrate(...$migrationClasses);
     }
 
     protected function clock(DateTimeInterface|string $now = 'now'): MockClock

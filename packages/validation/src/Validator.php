@@ -10,6 +10,7 @@ use Tempest\Intl\Translator;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr;
+use Tempest\Validation\Exceptions\TranslatorWasRequired;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
@@ -25,7 +26,7 @@ use function Tempest\Support\str;
 final readonly class Validator
 {
     public function __construct(
-        private Translator $translator,
+        private ?Translator $translator = null,
     ) {}
 
     /**
@@ -213,6 +214,10 @@ final readonly class Validator
      */
     public function getErrorMessage(Rule|FailingRule $rule, ?string $field = null): string
     {
+        if (is_null($this->translator)) {
+            throw new TranslatorWasRequired();
+        }
+
         if ($rule instanceof HasErrorMessage) {
             return $rule->getErrorMessage();
         }
@@ -261,7 +266,7 @@ final readonly class Validator
 
     private function getFieldName(string $key, ?string $field = null): string
     {
-        $translatedField = $this->translator->translate("validation_field.{$key}");
+        $translatedField = $this->translator?->translate("validation_field.{$key}");
 
         if ($translatedField === "validation_field.{$key}") {
             return $field ?? 'Value';

@@ -10,6 +10,7 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Support\Filesystem;
 use Throwable;
 
 use function Tempest\internal_storage_path;
@@ -86,13 +87,10 @@ final class DiscoveryCache
 
     public function storeStrategy(DiscoveryCacheStrategy $strategy): void
     {
-        $dir = dirname(self::getCurrentDiscoverStrategyCachePath());
+        $path = self::getCurrentDiscoverStrategyCachePath();
 
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
-        }
-
-        file_put_contents(self::getCurrentDiscoverStrategyCachePath(), $strategy->value);
+        Filesystem\create_directory_for_file($path);
+        Filesystem\write_file($path, $strategy->value);
     }
 
     public static function getCurrentDiscoverStrategyCachePath(): string

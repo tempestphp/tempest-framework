@@ -3,7 +3,6 @@
 namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\GenericRequest;
@@ -20,7 +19,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
 {
     public function test_csrf_is_sent_as_cookie(): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $token = $this->container->get(Session::class)->get(Session::CSRF_TOKEN_KEY);
 
@@ -37,7 +36,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(CsrfTokenDidNotMatch::class);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
         $this->http->sendRequest(new GenericRequest($method, uri: '/test'));
     }
 
@@ -46,7 +45,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     #[TestWith([Method::HEAD])]
     public function test_allows_missing_in_read_verbs(Method $method): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $this->http
             ->sendRequest(new GenericRequest($method, uri: '/test'))
@@ -57,7 +56,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(CsrfTokenDidNotMatch::class);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
         $this->container->get(Session::class)->set(Session::CSRF_TOKEN_KEY, 'abc');
 
         $this->http->post('/test', [Session::CSRF_TOKEN_KEY => 'def']);
@@ -67,7 +66,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(CsrfTokenDidNotMatch::class);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
         $this->container->get(Session::class)->set(Session::CSRF_TOKEN_KEY, 'abc');
 
         $this->http->post('/test', [Session::CSRF_TOKEN_KEY => 'def']);
@@ -75,7 +74,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
 
     public function test_matches_from_body(): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $session = $this->container->get(Session::class);
 
@@ -86,7 +85,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
 
     public function test_matches_from_header_when_encrypted(): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
         $session = $this->container->get(Session::class);
 
         // Encrypt the token as it would be in a real request
@@ -103,7 +102,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     public function test_throws_csrf_exception_when_header_is_non_serialized_hash(): void
     {
         $this->expectException(CsrfTokenDidNotMatch::class);
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
         $session = $this->container->get(Session::class);
 
         // simulate a non-serialized hash

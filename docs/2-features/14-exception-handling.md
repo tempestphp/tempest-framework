@@ -9,7 +9,7 @@ Tempest comes with its own exception handler, which provides a simple way to cat
 
 When an exception is thrown, it will be caught and piped through the registered exception processors. By default, the only registered exception processor, {b`Tempest\Core\LogExceptionProcessor`}, will simply log the exception.
 
-Of course, you may create your own exception processors. This is done by creating a class that implements the {`Tempest\Core\ExceptionProcessor`} interface. Classes implementing this interface are automatically [discovered](../4-internals/02-discovery.md), so you don't need to register them manually.
+Of course, you may create your own exception processors. This is done by creating a class that implements the {`Tempest\Core\ExceptionProcessor`} interface. Classes implementing this interface are automatically [discovered](../1-essentials/05-discovery.md), so you don't need to register them manually.
 
 ## Reporting exceptions
 

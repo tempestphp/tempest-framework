@@ -23,7 +23,7 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function hashes_value_on_insert(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
         $user = query(UserWithHash::class)->create(
             email: 'test@example.com',
@@ -43,7 +43,7 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function hashes_value_on_update(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
         $user = query(UserWithHash::class)
             ->create(
@@ -66,7 +66,7 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function does_not_rehash_already_hashed_values(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithHashTable::class);
 
         $user = query(UserWithHash::class)
             ->create(
@@ -82,7 +82,7 @@ final class HashedAttributeTest extends FrameworkIntegrationTestCase
     #[Test]
     public function handles_null_values(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateUserWithNullablePasswordTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUserWithNullablePasswordTable::class);
 
         $user = query(UserWithNullablePassword::class)
             ->create(

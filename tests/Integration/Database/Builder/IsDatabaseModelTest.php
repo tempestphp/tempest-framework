@@ -60,7 +60,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 {
     public function test_create_and_update_model(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -88,7 +88,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_get_with_non_id_object(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -104,7 +104,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_creating_many_and_saving_preserves_model_id(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -123,7 +123,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_complex_query(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -152,7 +152,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_all_with_relations(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -185,7 +185,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_missing_relation_exception(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -216,7 +216,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_nested_relations(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -238,7 +238,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_load_belongs_to(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -261,7 +261,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_relations(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -290,7 +290,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_has_many_through_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateHasManyParentTable::class,
             CreateHasManyChildTable::class,
@@ -313,7 +313,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_empty_has_many_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -329,7 +329,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_has_one_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -349,7 +349,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_has_one_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateHasManyParentTable::class,
             CreateHasManyChildTable::class,
@@ -372,7 +372,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_lazy_load(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -397,7 +397,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_eager_load(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -417,7 +417,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_no_result(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -468,7 +468,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_select_virtual_property(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -488,7 +488,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_update_with_virtual_property(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateATable::class,
             CreateBTable::class,
@@ -518,7 +518,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -565,7 +565,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_delete(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -586,7 +586,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_delete_via_model_class_with_where_conditions(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -607,7 +607,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_delete_via_model_instance_with_primary_key(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -623,7 +623,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_delete_with_uninitialized_primary_key(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -637,7 +637,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_delete_nonexistent_record(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             FooDatabaseMigration::class,
         );
@@ -656,7 +656,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_nullable_relations(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateBNullableTable::class,
             CreateANullableTable::class,
@@ -673,7 +673,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_nullable_relation_save(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateBNullableTable::class,
             CreateANullableTable::class,

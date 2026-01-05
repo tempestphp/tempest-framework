@@ -4,7 +4,7 @@
  * @var string|null $class
  */
 
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Icon\Icon;
 
 use function Tempest\get;
@@ -12,7 +12,7 @@ use function Tempest\Support\str;
 
 $class ??= null;
 $name ??= null;
-$appConfig = get(AppConfig::class);
+$environment = get(Environment::class);
 
 if ($name) {
     $svg = get(Icon::class)->render($name);
@@ -20,7 +20,7 @@ if ($name) {
     $svg = null;
 }
 
-if ($svg === null && $appConfig->environment->isLocal()) {
+if ($svg === null && $environment->isLocal()) {
     $svg = '<!-- unknown-icon: ' . $name . ' -->';
 }
 

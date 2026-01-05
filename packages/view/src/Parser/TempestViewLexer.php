@@ -22,7 +22,7 @@ final class TempestViewLexer
     {
         $tokens = [];
 
-        while ($this->current) {
+        while ($this->current !== null) {
             if ($this->comesNext('<?xml')) {
                 $tokens[] = $this->lexXml();
             } elseif ($this->comesNext('<?')) {

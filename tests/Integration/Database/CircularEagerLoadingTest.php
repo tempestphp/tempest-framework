@@ -41,7 +41,7 @@ final class CircularEagerLoadingTest extends FrameworkIntegrationTestCase
 
     public function test_it_saves_and_loads_relations_without_causing_infinite_loop(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateUserWithEagerTable::class,
             CreateProfileWithEagerTable::class,

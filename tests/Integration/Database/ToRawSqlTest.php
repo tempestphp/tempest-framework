@@ -263,7 +263,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
 
     public function test_raw_sql_with_model_queries(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -355,7 +355,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
 
     public function test_raw_sql_with_enum_values(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
