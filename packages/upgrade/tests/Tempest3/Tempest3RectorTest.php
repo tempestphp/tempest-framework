@@ -42,4 +42,46 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('use Tempest\Mapper\make;')
             ->assertContains('return make(Author::class)');
     }
+
+    public function test_exception_processor_to_exception_reporter_fully_qualified(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorFullyQualified.input.php')
+            ->assertContains('use Tempest\Core\Exceptions\ExceptionReporter;')
+            ->assertContains('implements \Tempest\Core\Exceptions\ExceptionReporter')
+            ->assertContains('public function report(')
+            ->assertNotContains('use Tempest\Core\ExceptionProcessor')
+            ->assertNotContains('public function process(');
+    }
+
+    public function test_exception_processor_to_exception_reporter_with_constructor(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorWithConstructor.input.php')
+            ->assertContains('use Tempest\Core\Exceptions\ExceptionReporter;')
+            ->assertContains('implements \Tempest\Core\Exceptions\ExceptionReporter')
+            ->assertContains('public function report(')
+            ->assertNotContains('use Tempest\Core\ExceptionProcessor')
+            ->assertNotContains('public function process(');
+    }
+
+    public function test_exception_processor_to_exception_reporter_imported_only(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorImportedOnly.input.php')
+            ->assertContains('use Tempest\Core\Exceptions\ExceptionReporter;')
+            ->assertContains('implements \Tempest\Core\Exceptions\ExceptionReporter')
+            ->assertContains('public function report(')
+            ->assertNotContains('use ExceptionProcessor')
+            ->assertNotContains('public function process(');
+    }
+
+    public function test_has_context_to_provides_context_fully_qualified(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/HasContextFullyQualified.input.php')
+            ->assertContains('use Tempest\Core\ProvidesContext;')
+            ->assertContains('implements \Tempest\Core\ProvidesContext')
+            ->assertNotContains('use Tempest\Core\HasContext');
+    }
 }
