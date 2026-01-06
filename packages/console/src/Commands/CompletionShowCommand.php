@@ -33,6 +33,12 @@ final readonly class CompletionShowCommand
     ): ExitCode {
         $shell ??= $this->resolveShell();
 
+        if ($shell === null) {
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+
+            return ExitCode::ERROR;
+        }
+
         $sourcePath = $this->getSourcePath($shell);
 
         if (! Filesystem\is_file($sourcePath)) {
@@ -46,7 +52,7 @@ final readonly class CompletionShowCommand
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(): Shell
+    private function resolveShell(): ?Shell
     {
         $detected = Shell::detect();
 

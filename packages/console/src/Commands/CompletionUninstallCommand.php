@@ -35,6 +35,12 @@ final readonly class CompletionUninstallCommand
     ): ExitCode {
         $shell ??= $this->resolveShell();
 
+        if ($shell === null) {
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+
+            return ExitCode::ERROR;
+        }
+
         $targetPath = $shell->getInstalledCompletionPath();
 
         if (! Filesystem\is_file($targetPath)) {
@@ -66,7 +72,7 @@ final readonly class CompletionUninstallCommand
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(): Shell
+    private function resolveShell(): ?Shell
     {
         $detected = Shell::detect();
 

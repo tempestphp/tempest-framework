@@ -38,6 +38,12 @@ final readonly class CompletionInstallCommand
     ): ExitCode {
         $shell ??= $this->resolveShell();
 
+        if ($shell === null) {
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+
+            return ExitCode::ERROR;
+        }
+
         $sourcePath = $this->getSourcePath($shell);
         $targetDir = $shell->getCompletionsDirectory();
         $targetPath = $shell->getInstalledCompletionPath();
@@ -81,7 +87,7 @@ final readonly class CompletionInstallCommand
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(): Shell
+    private function resolveShell(): ?Shell
     {
         $detected = Shell::detect();
 

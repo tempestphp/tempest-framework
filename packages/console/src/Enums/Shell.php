@@ -9,18 +9,18 @@ enum Shell: string
     case ZSH = 'zsh';
     case BASH = 'bash';
 
-    public static function detect(): self
+    public static function detect(): ?self
     {
         $shell = getenv('SHELL');
 
         if ($shell === false) {
-            return self::BASH;
+            return null;
         }
 
         return match (true) {
             str_contains($shell, 'zsh') => self::ZSH,
             str_contains($shell, 'bash') => self::BASH,
-            default => self::BASH,
+            default => null,
         };
     }
 
