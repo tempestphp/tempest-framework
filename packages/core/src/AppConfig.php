@@ -17,6 +17,6 @@ final class AppConfig
         public ?string $name = null,
         ?string $baseUri = null,
     ) {
-        $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
+        $this->baseUri = $baseUri ?: env('BASE_URI', default: '');
     }
 }
