@@ -238,6 +238,41 @@ Tempest console comes with a range of interactive components that can be used to
 Interactive components are only supported on Mac and Linux. On Windows, Tempest will fall back to non-interactive versions of these components.
 :::
 
+## Shell completion
+
+Tempest provides shell completion for Zsh and Bash. This allows you to press `Tab` to autocomplete command names and options.
+
+### Installing completions
+
+Run the install command and follow the prompts:
+
+```console
+<dim>./</dim>tempest completion:install
+```
+
+The installer will detect your current shell, copy the completion script to the appropriate location, and provide instructions for enabling it.
+
+For Zsh, you'll need to ensure the completions directory is in your `fpath` and reload completions:
+
+```zsh
+# Add to ~/.zshrc
+fpath=(~/.zsh/completions $fpath)
+autoload -Uz compinit && compinit
+```
+
+For Bash, source the completion file in your `~/.bashrc`:
+
+```bash
+source ~/.bash_completion.d/tempest.bash
+```
+
+### Additional commands
+
+You may also use these related commands:
+
+- `completion:show` — Output the completion script to stdout (useful for custom installation)
+- `completion:uninstall` — Remove the installed completion script
+
 ## Middleware
 
 Console middleware can be applied globally or on a per-command basis. Global console middleware will be discovered and applied automatically, by priority order.
