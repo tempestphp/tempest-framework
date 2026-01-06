@@ -36,7 +36,7 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->withoutPrompting()
             ->call('completion:show --shell=fish')
-            ->assertSee('Could not determine shell')
+            ->assertSee('Invalid argument `fish` for `shell` argument')
             ->assertError();
     }
 }

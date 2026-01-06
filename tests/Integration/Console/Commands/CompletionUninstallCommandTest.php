@@ -38,7 +38,7 @@ final class CompletionUninstallCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->withoutPrompting()
             ->call('completion:uninstall --shell=fish')
-            ->assertSee('Could not determine shell')
+            ->assertSee('Invalid argument `fish` for `shell` argument')
             ->assertError();
     }
 

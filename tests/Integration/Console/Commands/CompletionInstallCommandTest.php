@@ -44,7 +44,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->withoutPrompting()
             ->call('completion:install --shell=fish')
-            ->assertSee('Could not determine shell')
+            ->assertSee('Invalid argument `fish` for `shell` argument')
             ->assertError();
     }
 
