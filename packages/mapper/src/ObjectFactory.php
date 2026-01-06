@@ -6,6 +6,7 @@ namespace Tempest\Mapper;
 
 use Closure;
 use Tempest\Container\Container;
+use Tempest\Container\Singleton;
 use Tempest\Mapper\Exceptions\DataCouldNotBeMapped;
 use Tempest\Mapper\Exceptions\MapperWasMissing;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
@@ -18,6 +19,7 @@ use Tempest\Support\Json;
 use UnitEnum;
 
 /** @template ClassType */
+#[Singleton]
 final class ObjectFactory
 {
     private mixed $from;
@@ -30,10 +32,15 @@ final class ObjectFactory
 
     private Context|UnitEnum|string|null $context = null;
 
+    /** @var \Tempest\Mapper\Mapper[] */
+    private array $mappers;
+
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {}
+    ) {
+        $this->mappers = $this->resolveMappers();
+    }
 
     /**
      * Sets the target class for mapping operations.
@@ -105,8 +112,11 @@ final class ObjectFactory
      */
     public function in(Context|UnitEnum|string|null $context): self
     {
-        $clone = clone $this;
-        $clone->context = $context;
+        $clone = clone($this, [
+            'context' => $context,
+        ]);
+
+        $clone->mappers = $clone->resolveMappers();
 
         return $clone;
     }
@@ -316,10 +326,7 @@ final class ObjectFactory
 
         $context = MappingContext::from($this->context);
 
-        foreach ($this->config->mappers as $mapperClass) {
-            /** @var Mapper $mapper */
-            $mapper = $this->container->get($mapperClass, context: $context);
-
+        foreach ($this->mappers as $mapper) {
             if ($mapper->canMap($from, $to)) {
                 return $mapper->map($from, $to);
             }
@@ -359,5 +366,23 @@ final class ObjectFactory
 
         /** @var Mapper $mapper */
         return $mapper->map($from, $to);
+    }
+
+    /**
+     * We cache mapper instances within the factory so that we prevent mappers being resolved on every mapping call.
+     * Whenever a mapping context changes, we'll have to re-resolve the mapper classes with the new context.
+     */
+    private function resolveMappers(): array
+    {
+        $mappers = [];
+
+        $context = MappingContext::from($this->context);
+
+        foreach ($this->config->mappers as $mapperClass) {
+            /** @var Mapper $mapper */
+            $mappers[] = $this->container->get($mapperClass, context: $context);
+        }
+
+        return $mappers;
     }
 }
