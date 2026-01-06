@@ -15,8 +15,8 @@ const element = document.getElementById('tempest-hydration')
 if (!element) {
 	throw new Error('Hydration element not found')
 }
+
 const hydration = JSON.parse(element.textContent!)
-console.log(hydration)
 initializeExceptionStore(hydration)
 
 app.use(router)

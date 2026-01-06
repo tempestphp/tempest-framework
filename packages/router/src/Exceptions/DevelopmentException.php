@@ -46,7 +46,7 @@ final class DevelopmentException implements Response
                 'script' => Filesystem\read_file(__DIR__ . '/local/dist/main.js'),
                 'css' => Filesystem\read_file(__DIR__ . '/local/dist/style.css'),
                 'hydration' => map([
-                    'stacktrace' => $stacktrace,
+                    'stacktrace' => json_encode($stacktrace),
                     'context' => $throwable instanceof ProvidesContext ? $throwable->context() : [],
                     'rootPath' => root_path(),
                     'request' => [
