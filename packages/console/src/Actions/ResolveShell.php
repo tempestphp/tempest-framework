@@ -18,25 +18,12 @@ final readonly class ResolveShell
         $detected = Shell::detect();
 
         if ($this->console->supportsPrompting()) {
-            $options = [];
-
-            foreach (Shell::cases() as $shellCase) {
-                $label = $shellCase->value;
-
-                if ($shellCase === $detected) {
-                    $label .= ' (current)';
-                }
-
-                $options[$shellCase->value] = $label;
-            }
-
-            $choice = $this->console->ask(
+            /** @var Shell */
+            return $this->console->ask(
                 question: $question,
-                options: $options,
-                default: $detected?->value,
+                options: Shell::class,
+                default: $detected,
             );
-
-            return Shell::from($choice);
         }
 
         return $detected;
