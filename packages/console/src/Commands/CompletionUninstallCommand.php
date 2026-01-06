@@ -26,22 +26,16 @@ final readonly class CompletionUninstallCommand
             description: 'The shell to uninstall completions for (zsh, bash)',
             aliases: ['-s'],
         )]
-        ?string $shell = null,
+        ?Shell $shell = null,
         #[ConsoleArgument(
             description: 'Skip confirmation prompts',
             aliases: ['-f'],
         )]
         bool $force = false,
     ): ExitCode {
-        $shellEnum = $this->resolveShell($shell);
+        $shell ??= $this->resolveShell();
 
-        if ($shellEnum === null) {
-            $this->console->error('Could not determine shell. Please specify with --shell=zsh or --shell=bash');
-
-            return ExitCode::ERROR;
-        }
-
-        $targetPath = $shellEnum->getInstalledCompletionPath();
+        $targetPath = $shell->getInstalledCompletionPath();
 
         if (! Filesystem\is_file($targetPath)) {
             $this->console->warning("Completion file not found: {$targetPath}");
@@ -51,7 +45,7 @@ final readonly class CompletionUninstallCommand
         }
 
         if (! $force) {
-            $this->console->info("Uninstalling {$shellEnum->value} completions");
+            $this->console->info("Uninstalling {$shell->value} completions");
             $this->console->keyValue('File', $targetPath);
             $this->console->writeln();
 
@@ -67,17 +61,13 @@ final readonly class CompletionUninstallCommand
 
         $this->console->writeln();
         $this->console->info('Remember to remove any related lines from your shell configuration:');
-        $this->console->keyValue('Config file', $shellEnum->getRcFile());
+        $this->console->keyValue('Config file', $shell->getRcFile());
 
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(?string $shell): ?Shell
+    private function resolveShell(): Shell
     {
-        if ($shell !== null) {
-            return Shell::tryFrom(strtolower($shell));
-        }
-
         $detected = Shell::detect();
 
         if ($this->console->supportsPrompting()) {
@@ -99,7 +89,7 @@ final readonly class CompletionUninstallCommand
                 default: $detected?->value,
             );
 
-            return Shell::tryFrom($choice);
+            return Shell::from($choice);
         }
 
         return $detected;

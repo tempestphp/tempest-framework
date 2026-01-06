@@ -29,17 +29,11 @@ final readonly class CompletionShowCommand
             description: 'The shell to show completions for (zsh, bash)',
             aliases: ['-s'],
         )]
-        ?string $shell = null,
+        ?Shell $shell = null,
     ): ExitCode {
-        $shellEnum = $this->resolveShell($shell);
+        $shell ??= $this->resolveShell();
 
-        if ($shellEnum === null) {
-            $this->console->error('Could not determine shell. Please specify with --shell=zsh or --shell=bash');
-
-            return ExitCode::ERROR;
-        }
-
-        $sourcePath = $this->getSourcePath($shellEnum);
+        $sourcePath = $this->getSourcePath($shell);
 
         if (! Filesystem\is_file($sourcePath)) {
             $this->console->error("Completion script not found: {$sourcePath}");
@@ -52,12 +46,8 @@ final readonly class CompletionShowCommand
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(?string $shell): ?Shell
+    private function resolveShell(): Shell
     {
-        if ($shell !== null) {
-            return Shell::tryFrom(strtolower($shell));
-        }
-
         $detected = Shell::detect();
 
         if ($this->console->supportsPrompting()) {
@@ -79,7 +69,7 @@ final readonly class CompletionShowCommand
                 default: $detected?->value,
             );
 
-            return Shell::tryFrom($choice);
+            return Shell::from($choice);
         }
 
         return $detected;

@@ -29,24 +29,18 @@ final readonly class CompletionInstallCommand
             description: 'The shell to install completions for (zsh, bash)',
             aliases: ['-s'],
         )]
-        ?string $shell = null,
+        ?Shell $shell = null,
         #[ConsoleArgument(
             description: 'Skip confirmation prompts',
             aliases: ['-f'],
         )]
         bool $force = false,
     ): ExitCode {
-        $shellEnum = $this->resolveShell($shell);
+        $shell ??= $this->resolveShell();
 
-        if ($shellEnum === null) {
-            $this->console->error('Could not determine shell. Please specify with --shell=zsh or --shell=bash');
-
-            return ExitCode::ERROR;
-        }
-
-        $sourcePath = $this->getSourcePath($shellEnum);
-        $targetDir = $shellEnum->getCompletionsDirectory();
-        $targetPath = $shellEnum->getInstalledCompletionPath();
+        $sourcePath = $this->getSourcePath($shell);
+        $targetDir = $shell->getCompletionsDirectory();
+        $targetPath = $shell->getInstalledCompletionPath();
 
         if (! Filesystem\is_file($sourcePath)) {
             $this->console->error("Completion script not found: {$sourcePath}");
@@ -55,7 +49,7 @@ final readonly class CompletionInstallCommand
         }
 
         if (! $force) {
-            $this->console->info("Installing {$shellEnum->value} completions");
+            $this->console->info("Installing {$shell->value} completions");
             $this->console->keyValue('Source', $sourcePath);
             $this->console->keyValue('Target', $targetPath);
             $this->console->writeln();
@@ -67,10 +61,7 @@ final readonly class CompletionInstallCommand
             }
         }
 
-        if (! Filesystem\is_directory($targetDir)) {
-            Filesystem\create_directory($targetDir);
-            $this->console->success("Created directory: {$targetDir}");
-        }
+        Filesystem\ensure_directory_exists($targetDir);
 
         if (Filesystem\is_file($targetPath)) {
             if (! $force && ! $this->console->confirm('Completion file already exists. Overwrite?', default: false)) {
@@ -85,17 +76,13 @@ final readonly class CompletionInstallCommand
 
         $this->console->writeln();
         $this->console->info('Next steps:');
-        $this->console->instructions($shellEnum->getPostInstallInstructions());
+        $this->console->instructions($shell->getPostInstallInstructions());
 
         return ExitCode::SUCCESS;
     }
 
-    private function resolveShell(?string $shell): ?Shell
+    private function resolveShell(): Shell
     {
-        if ($shell !== null) {
-            return Shell::tryFrom(strtolower($shell));
-        }
-
         $detected = Shell::detect();
 
         if ($this->console->supportsPrompting()) {
@@ -117,7 +104,7 @@ final readonly class CompletionInstallCommand
                 default: $detected?->value,
             );
 
-            return Shell::tryFrom($choice);
+            return Shell::from($choice);
         }
 
         return $detected;
