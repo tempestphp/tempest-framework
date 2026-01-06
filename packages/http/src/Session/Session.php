@@ -9,6 +9,12 @@ use Tempest\DateTime\DateTimeInterface;
 use Tempest\Support\Str;
 use UnitEnum;
 
+/**
+ * Represents the current session.
+ *
+ * @see ManageSessionLifecycleMiddleware
+ * @see SessionManager
+ */
 final class Session
 {
     /**

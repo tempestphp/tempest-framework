@@ -12,7 +12,6 @@ use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
-use Throwable;
 
 use function Tempest\event;
 use function Tempest\internal_storage_path;
@@ -69,11 +68,6 @@ final readonly class FileSessionManager implements SessionManager
         );
     }
 
-    private function getPath(SessionId $id): string
-    {
-        return internal_storage_path($this->sessionConfig->path, (string) $id);
-    }
-
     public function deleteExpiredSessions(): void
     {
         $sessionFiles = glob(internal_storage_path($this->sessionConfig->path, '/*'));
@@ -83,7 +77,7 @@ final readonly class FileSessionManager implements SessionManager
         }
 
         foreach ($sessionFiles as $sessionFile) {
-            $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));
+            $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
             $session = $this->load($id);
 
             if ($session === null) {
@@ -107,17 +101,19 @@ final readonly class FileSessionManager implements SessionManager
                 return null;
             }
 
-            $handle = fopen($path, 'rb');
-            flock($handle, operation: LOCK_SH);
-
-            $content = Filesystem\read_file($path);
-
-            flock($handle, operation: LOCK_UN);
-            fclose($handle);
-
-            return unserialize($content, ['allowed_classes' => true]);
-        } catch (Throwable) {
+            return unserialize(
+                data: Filesystem\read_locked_file($path),
+                options: [
+                    'allowed_classes' => true,
+                ],
+            );
+        } catch (Filesystem\Exceptions\FilesystemException) {
             return null;
         }
+    }
+
+    private function getPath(SessionId $id): string
+    {
+        return internal_storage_path($this->sessionConfig->path, (string) $id);
     }
 }

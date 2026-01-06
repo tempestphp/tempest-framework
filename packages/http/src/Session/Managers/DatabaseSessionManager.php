@@ -59,15 +59,17 @@ final readonly class DatabaseSessionManager implements SessionManager
                     last_active_at: $session->lastActiveAt,
                 )
                 ->execute();
-        } else {
-            query(DatabaseSession::class)
-                ->update(
-                    data: serialize($session->data),
-                    last_active_at: $session->lastActiveAt,
-                )
-                ->where('id', (string) $session->id)
-                ->execute();
+
+            return;
         }
+
+        query(DatabaseSession::class)
+            ->update(
+                data: serialize($session->data),
+                last_active_at: $session->lastActiveAt,
+            )
+            ->where('id', (string) $session->id)
+            ->execute();
     }
 
     public function delete(Session $session): void

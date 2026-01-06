@@ -34,11 +34,15 @@ final readonly class PreventCrossSiteRequestsMiddleware implements HttpMiddlewar
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        if ($this->shouldValidate($request) && ! $this->isValidRequest($request)) {
-            return new Forbidden();
+        if (! $this->shouldValidate($request)) {
+            return $next($request);
         }
 
-        return $next($request);
+        if ($this->isValidRequest($request)) {
+            return $next($request);
+        }
+
+        return new Forbidden();
     }
 
     /**
@@ -58,8 +62,8 @@ final readonly class PreventCrossSiteRequestsMiddleware implements HttpMiddlewar
      */
     private function isValidRequest(Request $request): bool
     {
-        $secFetchSite = SecFetchSite::tryFrom($request->headers->get('sec-fetch-site') ?? '');
-        $secFetchMode = SecFetchMode::tryFrom($request->headers->get('sec-fetch-mode') ?? '');
+        $secFetchSite = SecFetchSite::tryFrom($request->headers->get('sec-fetch-site', default: ''));
+        $secFetchMode = SecFetchMode::tryFrom($request->headers->get('sec-fetch-mode', default: ''));
 
         // prevent the request if there is no `sec-fetch-site` header
         if ($secFetchSite === null) {

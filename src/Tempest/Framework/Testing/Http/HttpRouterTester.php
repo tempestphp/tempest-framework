@@ -64,14 +64,12 @@ final class HttpRouterTester
 
     public function head(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
-        return $this->sendRequest(
-            new GenericRequest(
-                method: Method::HEAD,
-                uri: Uri\merge_query($uri, ...$query),
-                body: [],
-                headers: $this->createHeaders($headers),
-            ),
-        );
+        return $this->sendRequest(new GenericRequest(
+            method: Method::HEAD,
+            uri: Uri\merge_query($uri, ...$query),
+            body: [],
+            headers: $this->createHeaders($headers),
+        ));
     }
 
     public function post(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
