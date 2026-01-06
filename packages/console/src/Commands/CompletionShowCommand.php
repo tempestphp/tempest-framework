@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Symfony\Component\Filesystem\Path;
+use Tempest\Console\Actions\ResolveShell;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -18,6 +19,7 @@ final readonly class CompletionShowCommand
 {
     public function __construct(
         private Console $console,
+        private ResolveShell $resolveShell,
     ) {}
 
     #[ConsoleCommand(
@@ -31,7 +33,7 @@ final readonly class CompletionShowCommand
         )]
         ?Shell $shell = null,
     ): ExitCode {
-        $shell ??= $this->resolveShell();
+        $shell ??= ($this->resolveShell)('Which shell completion script do you want to see?');
 
         if ($shell === null) {
             $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
@@ -50,35 +52,6 @@ final readonly class CompletionShowCommand
         $this->console->writeRaw(Filesystem\read_file($sourcePath));
 
         return ExitCode::SUCCESS;
-    }
-
-    private function resolveShell(): ?Shell
-    {
-        $detected = Shell::detect();
-
-        if ($this->console->supportsPrompting()) {
-            $options = [];
-
-            foreach (Shell::cases() as $shellCase) {
-                $label = $shellCase->value;
-
-                if ($shellCase === $detected) {
-                    $label .= ' (current)';
-                }
-
-                $options[$shellCase->value] = $label;
-            }
-
-            $choice = $this->console->ask(
-                question: 'Which shell completion script do you want to see?',
-                options: $options,
-                default: $detected?->value,
-            );
-
-            return Shell::from($choice);
-        }
-
-        return $detected;
     }
 
     private function getSourcePath(Shell $shell): string

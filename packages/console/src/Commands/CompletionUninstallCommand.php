@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
+use Tempest\Console\Actions\ResolveShell;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -15,6 +16,7 @@ final readonly class CompletionUninstallCommand
 {
     public function __construct(
         private Console $console,
+        private ResolveShell $resolveShell,
     ) {}
 
     #[ConsoleCommand(
@@ -33,7 +35,7 @@ final readonly class CompletionUninstallCommand
         )]
         bool $force = false,
     ): ExitCode {
-        $shell ??= $this->resolveShell();
+        $shell ??= ($this->resolveShell)('Which shell completions do you want to uninstall?');
 
         if ($shell === null) {
             $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
@@ -70,34 +72,5 @@ final readonly class CompletionUninstallCommand
         $this->console->keyValue('Config file', $shell->getRcFile());
 
         return ExitCode::SUCCESS;
-    }
-
-    private function resolveShell(): ?Shell
-    {
-        $detected = Shell::detect();
-
-        if ($this->console->supportsPrompting()) {
-            $options = [];
-
-            foreach (Shell::cases() as $shellCase) {
-                $label = $shellCase->value;
-
-                if ($shellCase === $detected) {
-                    $label .= ' (current)';
-                }
-
-                $options[$shellCase->value] = $label;
-            }
-
-            $choice = $this->console->ask(
-                question: 'Which shell completions do you want to uninstall?',
-                options: $options,
-                default: $detected?->value,
-            );
-
-            return Shell::from($choice);
-        }
-
-        return $detected;
     }
 }
