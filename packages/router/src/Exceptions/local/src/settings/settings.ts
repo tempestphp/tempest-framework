@@ -1,6 +1,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import { type } from 'arktype'
 import Dialog from './dialog.vue'
+import { useOverlay, useToast } from '@nuxt/ui/composables';
 
 const overlay = useOverlay()
 
