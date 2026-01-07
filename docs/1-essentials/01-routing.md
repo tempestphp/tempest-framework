@@ -786,7 +786,7 @@ final class AircraftRegistered implements Response
 
 Tempest automatically infers the response's content type, typically from the request's `{txt}Accept` header.
 
-However, the content type can be overridden manually by using the `setContentType` method on {b`Tempest\Http\Response`} classes. This method accepts a case of {b`Tempest\Router\ContentType`}.
+However, the content type can be overridden manually by using the `setContentType` method on {b`Tempest\Http\Response`} classes. This method accepts a case of {b`Tempest\Http\ContentType`}.
 
 ```php app/JsonController.php
 use Tempest\Router\Get;
