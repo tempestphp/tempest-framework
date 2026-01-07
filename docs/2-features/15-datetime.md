@@ -113,9 +113,9 @@ You may format a {b`Tempest\DateTime\DateTime`} instance in a specific format us
 use Tempest\DateTime\FormatPattern;
 use Tempest\Intl\Locale;
 
-$date->format(); // 19 Sept 2025, 02:00:00
-$date->format(pattern: FormatPattern::COOKIE); // Monday, 19-Sept-2025 02:00:00 BST
-$date->format(locale: Locale::FRENCH); // 19 sept. 2025, 02:00:00
+$date->format(); // Jan 7, 2026, 10:30:05 PM
+$date->format(pattern: FormatPattern::COOKIE); // Wednesday, 07-Jan-2026 22:30:46 UTC
+$date->format(locale: Locale::FRENCH); // 7 janv. 2026, 22:32:12
 ```
 
 ## Clock interface
