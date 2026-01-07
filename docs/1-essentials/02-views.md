@@ -92,6 +92,8 @@ To create a view object, implement the {`Tempest\View\View`} interface, and add 
 use Tempest\View\View;
 use Tempest\View\IsView;
 
+use function Tempest\root_path;
+
 final class AircraftView implements View
 {
     use IsView;
