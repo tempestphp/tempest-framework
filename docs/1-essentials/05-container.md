@@ -156,15 +156,17 @@ The {`Tempest\Container\DynamicInitializer`} interface provides a `canInitialize
 ```php app/RouteBindingInitializer.php
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
+use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
-    public function canInitialize(string $className): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return is_a($className, Model::class, true);
     }
 
-    public function initialize(string $className, Container $container): object
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
     {
         // …
     }
