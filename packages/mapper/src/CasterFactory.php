@@ -8,11 +8,14 @@ use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Memoization\HasMemoization;
 use UnitEnum;
 
 #[Singleton]
 final class CasterFactory
 {
+    use HasMemoization;
+
     /**
      * @var array<string, array{class-string<\Tempest\Mapper\Caster>, int}[]>
      */
@@ -44,45 +47,48 @@ final class CasterFactory
      */
     public function in(Context|UnitEnum|string $context): self
     {
-        $serializer = clone $this;
-        $serializer->context = $context;
+        $caster = clone $this;
+        $caster->context = $context;
 
-        return $serializer;
+        return $caster;
     }
 
     public function forProperty(PropertyReflector $property): ?Caster
     {
         $context = MappingContext::from($this->context);
-        $type = $property->getType();
-        $castWith = $property->getAttribute(CastWith::class);
 
-        if ($castWith === null && $type->isClass()) {
-            $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-        }
+        return $this->memoize('[' . $context->name . '] ' . $property->getName(), function () use ($property, $context) {
+            $type = $property->getType();
+            $castWith = $property->getAttribute(CastWith::class);
 
-        if ($castWith) {
-            return $this->container->get($castWith->className, context: $context);
-        }
+            if ($castWith === null && $type->isClass()) {
+                $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
+            }
 
-        if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
-            return $this->container->get($casterAttribute->caster, context: $context);
-        }
+            if ($castWith) {
+                return $this->container->get($castWith->className, context: $context);
+            }
 
-        foreach ($this->resolveCasters() as [$casterClass]) {
-            if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
-                if (! $casterClass::accepts($property)) {
-                    continue;
+            if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
+                return $this->container->get($casterAttribute->caster, context: $context);
+            }
+
+            foreach ($this->resolveCasters() as [$casterClass]) {
+                if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
+                    if (! $casterClass::accepts($property)) {
+                        continue;
+                    }
                 }
+
+                if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {
+                    return $casterClass::configure($property, $context);
+                }
+
+                return $this->container->get($casterClass, context: $context);
             }
 
-            if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {
-                return $casterClass::configure($property, $context);
-            }
-
-            return $this->container->get($casterClass, context: $context);
-        }
-
-        return null;
+            return null;
+        });
     }
 
     /**

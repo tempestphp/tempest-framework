@@ -10,11 +10,14 @@ use Tempest\Container\Singleton;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Memoization\HasMemoization;
 use UnitEnum;
 
 #[Singleton]
 final class SerializerFactory
 {
+    use HasMemoization;
+
     /**
      * @var array<string,array{class-string<\Tempest\Mapper\Serializer>,int}[]>
      */
@@ -55,36 +58,40 @@ final class SerializerFactory
     public function forProperty(PropertyReflector $property): ?Serializer
     {
         $context = MappingContext::from($this->context);
-        $type = $property->getType();
-        $serializeWith = $property->getAttribute(SerializeWith::class);
 
-        if ($serializeWith === null && $type->isClass()) {
-            $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
-        }
+        return $this->memoize('[' . $context->name . '] ' . $property->getName(), function () use ($property, $context) {
+            $context = MappingContext::from($this->context);
+            $type = $property->getType();
+            $serializeWith = $property->getAttribute(SerializeWith::class);
 
-        if ($serializeWith !== null) {
-            return $this->container->get($serializeWith->className, context: $context);
-        }
+            if ($serializeWith === null && $type->isClass()) {
+                $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
+            }
 
-        if ($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) {
-            return $this->container->get($serializerAttribute->serializer, context: $context);
-        }
+            if ($serializeWith !== null) {
+                return $this->container->get($serializeWith->className, context: $context);
+            }
 
-        foreach ($this->resolveSerializers() as [$serializerClass]) {
-            if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
-                if (! $serializerClass::accepts($property)) {
-                    continue;
+            if ($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) {
+                return $this->container->get($serializerAttribute->serializer, context: $context);
+            }
+
+            foreach ($this->resolveSerializers() as [$serializerClass]) {
+                if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
+                    if (! $serializerClass::accepts($property)) {
+                        continue;
+                    }
+                }
+
+                $serializer = $this->resolveSerializer($serializerClass, $property);
+
+                if ($serializer !== null) {
+                    return $serializer;
                 }
             }
 
-            $serializer = $this->resolveSerializer($serializerClass, $property);
-
-            if ($serializer !== null) {
-                return $serializer;
-            }
-        }
-
-        return null;
+            return null;
+        });
     }
 
     public function forValue(mixed $value): ?Serializer

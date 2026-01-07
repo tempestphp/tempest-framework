@@ -26,6 +26,6 @@ namespace Tempest\Database {
      */
     function inspect(string|object $model): ModelInspector
     {
-        return new ModelInspector($model);
+        return ModelInspector::forModel($model);
     }
 }

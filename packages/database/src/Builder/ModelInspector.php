@@ -18,6 +18,7 @@ use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Memoization\HasMemoization;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
@@ -29,14 +30,23 @@ use function Tempest\Support\str;
 
 final class ModelInspector
 {
+    use HasMemoization;
+
+    private static array $inspectors = [];
+
     private(set) ?ClassReflector $reflector;
 
     private(set) object|string $instance;
 
-    private static array $relations = [];
-
     private Validator $validator {
         get => get(Validator::class);
+    }
+
+    public static function forModel(object|string $model): self
+    {
+        $key = is_object($model) ? get_class($model) : $model;
+
+        return self::$inspectors[$key] ??= new self($model);
     }
 
     public function __construct(
@@ -68,27 +78,31 @@ final class ModelInspector
 
     public function getTableDefinition(): TableDefinition
     {
-        if (! $this->isObjectModel()) {
-            return new TableDefinition($this->instance);
-        }
+        return $this->memoize('getTableDefinition', function () {
+            if (! $this->isObjectModel()) {
+                return new TableDefinition($this->instance);
+            }
 
-        $specificName = $this->reflector
-            ->getAttribute(Table::class)
-            ?->name;
+            $specificName = $this->reflector
+                ->getAttribute(Table::class)
+                ?->name;
 
-        $conventionalName = get(DatabaseConfig::class)
-            ->namingStrategy
-            ->getName($this->reflector->getName());
+            $conventionalName = get(DatabaseConfig::class)
+                ->namingStrategy
+                ->getName($this->reflector->getName());
 
-        return new TableDefinition($specificName ?? $conventionalName);
+            return new TableDefinition($specificName ?? $conventionalName);
+        });
     }
 
     public function getFieldDefinition(string $field): FieldDefinition
     {
-        return new FieldDefinition(
-            $this->getTableDefinition(),
-            $field,
-        );
+        return $this->memoize('getFieldDefinition' . $field, function () use ($field) {
+            return new FieldDefinition(
+                $this->getTableDefinition(),
+                $field,
+            );
+        });
     }
 
     public function getTableName(): string
@@ -98,162 +112,174 @@ final class ModelInspector
 
     public function getPropertyValues(): array
     {
-        if (! $this->isObjectModel()) {
-            return [];
-        }
-
-        if (! is_object($this->instance)) {
-            return [];
-        }
-
-        $values = [];
-
-        foreach ($this->reflector->getProperties() as $property) {
-            if ($property->isVirtual()) {
-                continue;
+        return $this->memoize('getPropertyValues', function () {
+            if (! $this->isObjectModel()) {
+                return [];
             }
 
-            if ($property->hasAttribute(Virtual::class)) {
-                continue;
+            if (! is_object($this->instance)) {
+                return [];
             }
 
-            if (! $property->isInitialized($this->instance)) {
-                continue;
+            $values = [];
+
+            foreach ($this->reflector->getProperties() as $property) {
+                if ($property->isVirtual()) {
+                    continue;
+                }
+
+                if ($property->hasAttribute(Virtual::class)) {
+                    continue;
+                }
+
+                if (! $property->isInitialized($this->instance)) {
+                    continue;
+                }
+
+                if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName())) {
+                    continue;
+                }
+
+                $name = $property->getName();
+
+                $values[$name] = $property->getValue($this->instance);
             }
 
-            if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName())) {
-                continue;
-            }
-
-            $name = $property->getName();
-
-            $values[$name] = $property->getValue($this->instance);
-        }
-
-        return $values;
+            return $values;
+        });
     }
 
     public function getBelongsTo(string $name): ?BelongsTo
     {
-        if (! $this->isObjectModel()) {
-            return null;
-        }
+        return $this->memoize('getBelongsTo' . $name, function () use ($name) {
+            if (! $this->isObjectModel()) {
+                return null;
+            }
 
-        $name = str($name)->camel();
+            $name = str($name)->camel();
 
-        $singularizedName = $name->singularizeLastWord();
+            $singularizedName = $name->singularizeLastWord();
 
-        if (! $singularizedName->equals($name)) {
-            return $this->getBelongsTo($singularizedName);
-        }
+            if (! $singularizedName->equals($name)) {
+                return $this->getBelongsTo($singularizedName);
+            }
 
-        if (! $this->reflector->hasProperty($name)) {
-            return null;
-        }
+            if (! $this->reflector->hasProperty($name)) {
+                return null;
+            }
 
-        $property = $this->reflector->getProperty($name);
+            $property = $this->reflector->getProperty($name);
 
-        if ($belongsTo = $property->getAttribute(BelongsTo::class)) {
+            if ($belongsTo = $property->getAttribute(BelongsTo::class)) {
+                return $belongsTo;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
+                return null;
+            }
+
+            if (! $property->getType()->isRelation()) {
+                return null;
+            }
+
+            if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->hasAttribute(SerializeWith::class)) {
+                return null;
+            }
+
+            if ($property->getType()->asClass()->hasAttribute(SerializeAs::class)) {
+                return null;
+            }
+
+            if ($property->hasAttribute(HasOne::class)) {
+                return null;
+            }
+
+            $belongsTo = new BelongsTo();
+            $belongsTo->property = $property;
+
             return $belongsTo;
-        }
-
-        if ($property->hasAttribute(Virtual::class)) {
-            return null;
-        }
-
-        if (! $property->getType()->isRelation()) {
-            return null;
-        }
-
-        if ($property->hasAttribute(SerializeWith::class) || $property->getType()->asClass()->hasAttribute(SerializeWith::class)) {
-            return null;
-        }
-
-        if ($property->getType()->asClass()->hasAttribute(SerializeAs::class)) {
-            return null;
-        }
-
-        if ($property->hasAttribute(HasOne::class)) {
-            return null;
-        }
-
-        $belongsTo = new BelongsTo();
-        $belongsTo->property = $property;
-
-        return $belongsTo;
+        });
     }
 
     public function getHasOne(string $name): ?HasOne
     {
-        if (! $this->isObjectModel()) {
+        return $this->memoize('getHasOne' . $name, function () use ($name) {
+            if (! $this->isObjectModel()) {
+                return null;
+            }
+
+            $name = str($name)->camel();
+
+            $singularizedName = $name->singularizeLastWord();
+
+            if (! $singularizedName->equals($name)) {
+                return $this->getHasOne($singularizedName);
+            }
+
+            if (! $this->reflector->hasProperty($name)) {
+                return null;
+            }
+
+            $property = $this->reflector->getProperty($name);
+
+            if ($hasOne = $property->getAttribute(HasOne::class)) {
+                return $hasOne;
+            }
+
             return null;
-        }
-
-        $name = str($name)->camel();
-
-        $singularizedName = $name->singularizeLastWord();
-
-        if (! $singularizedName->equals($name)) {
-            return $this->getHasOne($singularizedName);
-        }
-
-        if (! $this->reflector->hasProperty($name)) {
-            return null;
-        }
-
-        $property = $this->reflector->getProperty($name);
-
-        if ($hasOne = $property->getAttribute(HasOne::class)) {
-            return $hasOne;
-        }
-
-        return null;
+        });
     }
 
     public function getHasMany(string $name): ?HasMany
     {
-        if (! $this->isObjectModel()) {
-            return null;
-        }
+        return $this->memoize('getHasMany' . $name, function () use ($name) {
+            if (! $this->isObjectModel()) {
+                return null;
+            }
 
-        $name = str($name)->camel();
+            $name = str($name)->camel();
 
-        if (! $this->reflector->hasProperty($name)) {
-            return null;
-        }
+            if (! $this->reflector->hasProperty($name)) {
+                return null;
+            }
 
-        $property = $this->reflector->getProperty($name);
+            $property = $this->reflector->getProperty($name);
 
-        if ($hasMany = $property->getAttribute(HasMany::class)) {
+            if ($hasMany = $property->getAttribute(HasMany::class)) {
+                return $hasMany;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
+                return null;
+            }
+
+            if (! $property->getIterableType()?->isRelation()) {
+                return null;
+            }
+
+            $hasMany = new HasMany();
+            $hasMany->property = $property;
+
             return $hasMany;
-        }
-
-        if ($property->hasAttribute(Virtual::class)) {
-            return null;
-        }
-
-        if (! $property->getIterableType()?->isRelation()) {
-            return null;
-        }
-
-        $hasMany = new HasMany();
-        $hasMany->property = $property;
-
-        return $hasMany;
+        });
     }
 
     public function isRelation(string|PropertyReflector $name): bool
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
-        return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
+        return $this->memoize('isRelation' . $name, function () use ($name) {
+            return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
+        });
     }
 
     public function getRelation(string|PropertyReflector $name): ?Relation
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
-        return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
+        return $this->memoize('getRelation' . $name, function () use ($name) {
+            return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
+        });
     }
 
     /**
@@ -261,25 +287,21 @@ final class ModelInspector
      */
     public function getRelations(): ImmutableArray
     {
-        if (! $this->isObjectModel()) {
-            return arr();
-        }
-
-        if (isset(self::$relations[$this->getName()])) {
-            return self::$relations[$this->getName()];
-        }
-
-        $relationFields = arr();
-
-        foreach ($this->reflector->getPublicProperties() as $property) {
-            if ($relation = $this->getRelation($property->getName())) {
-                $relationFields[] = $relation;
+        return $this->memoize('getRelations', function () {
+            if (! $this->isObjectModel()) {
+                return arr();
             }
-        }
 
-        self::$relations[$this->getName()] = $relationFields;
+            $relationFields = arr();
 
-        return $relationFields;
+            foreach ($this->reflector->getPublicProperties() as $property) {
+                if ($relation = $this->getRelation($property->getName())) {
+                    $relationFields[] = $relation;
+                }
+            }
+
+            return $relationFields;
+        });
     }
 
     /**

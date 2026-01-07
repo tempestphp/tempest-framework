@@ -13,15 +13,18 @@ use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr;
+use Tempest\Support\Memoization\HasMemoization;
 use Throwable;
 
 use function Tempest\Support\arr;
 
-final readonly class ArrayToObjectMapper implements Mapper
+final class ArrayToObjectMapper implements Mapper
 {
+    use HasMemoization;
+
     public function __construct(
-        private CasterFactory $casterFactory,
-        private Context $context,
+        private readonly CasterFactory $casterFactory,
+        private readonly Context $context,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -158,9 +161,11 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        $caster = $this->casterFactory
-            ->in($this->context)
-            ->forProperty($property);
+        $caster = $this->memoize((string) $property, function () use ($property, $value) {
+            return $this->casterFactory
+                ->in($this->context)
+                ->forProperty($property);
+        });
 
         if ($property->isNullable() && $value === null) {
             return null;
