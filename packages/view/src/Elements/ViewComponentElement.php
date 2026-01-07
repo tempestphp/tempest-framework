@@ -252,7 +252,7 @@ final class ViewComponentElement implements Element, WithToken
             $isExpression = isset($this->expressionAttributes[$camelKey]);
 
             $entries[] = $isExpression
-                ? sprintf("'%s' => %s", $key, $value)
+                ? sprintf("'%s' => %s", $key, $value ?: 'true')
                 : sprintf("'%s' => %s", $key, ViewObjectExporter::exportValue($value));
         }
 

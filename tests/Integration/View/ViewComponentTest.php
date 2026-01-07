@@ -998,4 +998,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('a b', $html);
     }
+
+    public function test_fallthrough_attribute_without_value(): void
+    {
+        $this->registerViewComponent('x-test', '<div :if="$flag">hi</div>');
+
+        $this->assertSnippetsMatch('', $this->render('<x-test />'));
+        $this->assertSnippetsMatch('<div>hi</div>', $this->render('<x-test :flag/>'));
+    }
 }
