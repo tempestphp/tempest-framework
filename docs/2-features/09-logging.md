@@ -149,11 +149,11 @@ final readonly class ProcessOrder
 
 Tempest provides a few log channels that correspond to common logging needs:
 
-- {b`Tempest\Log\Channel\AppendLogChannel`} — append all messages to a single file without rotation,
-- {b`Tempest\Log\Channel\DailyLogChannel`} — create a new file each day and remove old files automatically,
-- {b`Tempest\Log\Channel\WeeklyLogChannel`} — create a new file each week and remove old files automatically,
-- {b`Tempest\Log\Channel\SlackLogChannel`} — send messages to a Slack channel via webhook,
-- {b`Tempest\Log\Channel\SysLogChannel`} — write messages to the system log.
+- {b`Tempest\Log\Channels\AppendLogChannel`} — append all messages to a single file without rotation,
+- {b`Tempest\Log\Channels\DailyLogChannel`} — create a new file each day and remove old files automatically,
+- {b`Tempest\Log\Channels\WeeklyLogChannel`} — create a new file each week and remove old files automatically,
+- {b`Tempest\Log\Channels\SlackLogChannel`} — send messages to a Slack channel via webhook,
+- {b`Tempest\Log\Channels\SysLogChannel`} — write messages to the system log.
 
 As a convenient abstraction, a configuration class for each channel is provided:
 
