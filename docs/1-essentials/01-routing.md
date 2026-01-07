@@ -841,7 +841,7 @@ final readonly class TodoController
         private Session $session,
     ) {}
 
-    #[Post('/select/{todo}']
+    #[Post('/select/{todo}')]
     public function select(Todo $todo): View
     {
         if ($this->session->get('selected_todo') === $todo->id) {
