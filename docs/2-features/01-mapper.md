@@ -132,7 +132,7 @@ final class Book
     public string $contents;
 }
 
-// MissingValuesException is thrown
+// MappingValuesWereMissing is thrown
 $book = map(['title' => 'Timeline Taxi'])->to(Book::class);
 ```
 
