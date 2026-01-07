@@ -34,12 +34,17 @@ final class ModelInspector
 
     private static array $inspectors = [];
 
-    private(set) ?ClassReflector $reflector;
+    private(set) ClassReflector|null $reflector = null;
 
-    private(set) object|string $instance;
+    private(set) object|string|null $instance = null;
 
     private Validator $validator {
         get => get(Validator::class);
+    }
+
+    public static function reset(): void
+    {
+        self::$inspectors = [];
     }
 
     public static function forModel(object|string $model): self
@@ -74,12 +79,11 @@ final class ModelInspector
         } else {
             try {
                 $this->reflector = new ClassReflector($model);
+                $this->instance = $model;
             } catch (ReflectionException) {
                 $this->reflector = null;
             }
         }
-
-        $this->instance = $model;
     }
 
     public function isObjectModel(): bool
@@ -91,7 +95,7 @@ final class ModelInspector
     {
         return $this->memoize('getTableDefinition', function () {
             if (! $this->isObjectModel()) {
-                return new TableDefinition($this->instance);
+                return new TableDefinition($this->model);
             }
 
             $specificName = $this->reflector
@@ -532,7 +536,7 @@ final class ModelInspector
             return $this->reflector->getName();
         }
 
-        return $this->instance;
+        return $this->model;
     }
 
     public function getQualifiedPrimaryKey(): ?string

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration;
 
 use InvalidArgumentException;
 use Stringable;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -54,6 +55,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->container->config(require $databaseConfigPath);
         $this->database->reset(migrate: false);
+
+        ModelInspector::reset();
     }
 
     protected function render(string|View $view, mixed ...$params): string
