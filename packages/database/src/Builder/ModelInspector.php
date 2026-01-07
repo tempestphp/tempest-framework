@@ -49,6 +49,7 @@ final class ModelInspector
             $model instanceof HasMany => $model->property->getIterableType()->getName(),
             $model instanceof BelongsTo => $model->property->getType()->getName(),
             $model instanceof HasOne => $model->property->getType()->getName(),
+            $model instanceof ClassReflector => $model->getName(),
             default => $model::class,
         };
 
