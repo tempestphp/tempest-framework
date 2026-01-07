@@ -308,7 +308,7 @@ final readonly class PostController
 }
 ```
 
-Alternatively, you may use the `isGranted()` method. It will return a boolean indicating whether the action is granted for the resource and subject.
+Alternatively, you may use the `isGranted()` method. It will return an {b`Tempest\Auth\AccessControl\AccessDecision`} instance. Check the `granted` property to determine access for the resource and subject.
 
 :::info
 Note that the subject is optional in both methods—if omitted, the [authenticated model](#authentication) is automatically provided.
