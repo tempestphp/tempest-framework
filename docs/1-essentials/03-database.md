@@ -160,11 +160,13 @@ Beyond selecting models, any query builder can be used with model objects:
 
 ```php
 use App\Models\Book;
-use function Tempest\Database\query;
+use Tempest\Database\PrimaryKey
+
+;use function Tempest\Database\query;
 
 final class BookRepository
 {
-    public function create(Book $book): Id
+    public function create(Book $book): PrimaryKey
     {
         return query(Book::class)
             ->insert($book)
