@@ -96,7 +96,7 @@ final readonly class SyncUsersCommand
         $this->console->header('Synchronizing users');
 
         // Listen for the UserSynced to write to the console when it happens
-        $this->eventBus->listen(UserSynced::class, function (UserSynced $event) {
+        $this->eventBus->listen(function (UserSynced $event) {
             $this->console->keyValue($event->fullName, 'SYNCED');
         });
 
