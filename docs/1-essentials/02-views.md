@@ -679,7 +679,7 @@ use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
 
 $renderer = TempestViewRenderer::make(
-    cache: ViewCache::create(),
+    viewCache: ViewCache::create(),
 );
 ```
 
@@ -693,7 +693,7 @@ $viewCache = ViewCache::create();
 $viewCache->clear();
 
 $renderer = TempestViewRenderer::make(
-    cache: $viewCache,
+    viewCache: $viewCache,
 );
 ```
 
