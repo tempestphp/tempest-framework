@@ -810,7 +810,7 @@ final readonly class JsonController
 
 There are situations where actions need to be taken on a response right before it is sent to the client. For instance, custom error pages can be displayed when an exception occurred, or a redirect can be performed instead of displaying the [built-in HTTP 404](/hello-from-the-void){:ssg-ignore="true"} page.
 
-This can be done using a response processor. Similar to [view processors](./02-views.md#pre-processing-views), these are classes that implement the {b`Tempest\Response\ResponseProcessor`} interface. In the `process()` method, the response object can be mutated and returned:
+This can be done using a response processor. Similar to [view processors](./02-views.md#pre-processing-views), these are classes that implement the {b`Tempest\Router\ResponseProcessor`} interface. In the `process()` method, the response object can be mutated and returned:
 
 ```php app/ErrorResponseProcessor.php
 use function Tempest\view;
