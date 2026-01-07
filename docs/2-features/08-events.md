@@ -176,6 +176,7 @@ use Tempest\EventBus\EventHandler;
 
 final class MyHandler 
 {   
+    #[EventHandler]
     #[StopsPropagation]
     public function handle(OtherEvent $event): void
     {
