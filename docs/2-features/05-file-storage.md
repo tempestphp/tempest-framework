@@ -67,12 +67,12 @@ $storage->write($location, $contents);
 $storage->read($location);
 
 /**
- * Deletes the contents of the file at the specified `$location`.
+ * Deletes the file or directory at the specified `$location`.
  */
 $storage->delete($location);
 
 /**
- * Determines whether a file exists at the specified `$location`.
+ * Determines whether a file or a directory exists at the specified `$location`.
  */
 $storage->fileOrDirectoryExists($location);
 ```
