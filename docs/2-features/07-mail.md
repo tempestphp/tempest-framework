@@ -41,8 +41,6 @@ final class UserEventHandlers
                 user: $userCreated->user,
             ),
         ));
-
-        $this->success('Done');
     }
 }
 ```
@@ -63,8 +61,6 @@ final class UserEventHandlers
     public function onCreated(UserCreated $userCreated): void
     {
         $this->mailer->send(new WelcomeEmail($userCreated->user));
-
-        $this->success('Done');
     }
 }
 ```
