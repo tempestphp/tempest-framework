@@ -6,7 +6,7 @@ namespace Tempest\Database\Serializers;
 
 use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\Core\Priority;
-use Tempest\Database\DatabaseContext;
+use Tempest\Database\RawSqlDatabaseContext;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
@@ -18,8 +18,8 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 
 #[Priority(Priority::HIGH)]
-#[Context(DatabaseContext::class)]
-final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
+#[Context(RawSqlDatabaseContext::class)]
+final class RawSqlDateTimeSerializer implements Serializer, DynamicSerializer
 {
     public static function accepts(PropertyReflector|TypeReflector $type): bool
     {
@@ -40,6 +40,6 @@ final readonly class DateTimeSerializer implements Serializer, DynamicSerializer
             throw new ValueCouldNotBeSerialized(DateTimeInterface::class);
         }
 
-        return $input->format(FormatPattern::SQL_DATE_TIME);
+        return "'" . $input->format(FormatPattern::SQL_DATE_TIME) . "'";
     }
 }

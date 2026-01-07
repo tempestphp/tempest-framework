@@ -41,6 +41,7 @@ final class QueryTest extends FrameworkIntegrationTestCase
                 ->toRawSql()
                 ->equals(UnitEnumFixture::FOO->name),
         );
+
         $this->assertTrue(
             new Query('?', [BackedEnumFixture::FOO])
                 ->toRawSql()

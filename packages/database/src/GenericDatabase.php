@@ -13,6 +13,7 @@ use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Support\Str\ImmutableString;
 use Throwable;
 use UnitEnum;
 
@@ -125,6 +126,16 @@ final class GenericDatabase implements Database
         }
 
         return true;
+    }
+
+    public function getRawSql(Query $query): ImmutableString
+    {
+        return new RawSql(
+            dialect: $this->dialect,
+            sql: (string) $query->compile(),
+            bindings: $query->bindings,
+            serializerFactory: $this->serializerFactory,
+        )->toImmutableString();
     }
 
     private function resolveBindings(Query $query): array

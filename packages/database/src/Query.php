@@ -9,6 +9,9 @@ use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\get;
 
+/**
+ * A database query that can be executed.
+ */
 final class Query
 {
     use OnDatabase;
@@ -84,7 +87,7 @@ final class Query
      */
     public function toRawSql(): ImmutableString
     {
-        return new RawSql($this->dialect, (string) $this->compile(), $this->bindings)->toImmutableString();
+        return $this->database->getRawSql($this);
     }
 
     public function append(string $append): self

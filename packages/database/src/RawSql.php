@@ -2,17 +2,21 @@
 
 namespace Tempest\Database;
 
-use BackedEnum;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str\ImmutableString;
-use UnitEnum;
 
 final class RawSql
 {
+    private ?RawSqlDatabaseContext $context {
+        get => $this->context ??= new RawSqlDatabaseContext($this->dialect);
+    }
+
     public function __construct(
         private(set) DatabaseDialect $dialect,
         private(set) string $sql,
         private(set) array $bindings,
+        private SerializerFactory $serializerFactory,
     ) {}
 
     public function compile(): string
@@ -39,9 +43,11 @@ final class RawSql
     private function replaceNamedBindings(string $sql, array $bindings): string
     {
         foreach ($bindings as $key => $value) {
-            $placeholder = ':' . $key;
-            $formattedValue = $this->formatValueForSql($value);
-            $sql = str_replace($placeholder, $formattedValue, $sql);
+            $sql = str_replace(
+                search: ':' . $key,
+                replace: $this->formatValueForSql($value),
+                subject: $sql,
+            );
         }
 
         return $sql;
@@ -71,15 +77,14 @@ final class RawSql
         $bindings = [];
 
         foreach ($this->bindings as $key => $value) {
-            if (is_bool($value)) {
-                $value = match ($this->dialect) {
-                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
-                    default => $value ? '1' : '0',
-                };
+            if ($value instanceof Query) {
+                $bindings[$key] = "({$value->toRawSql()})";
+                continue;
             }
 
-            if ($value instanceof Query) {
-                $value = '(' . $value->toRawSql() . ')';
+            if ($serializer = $this->serializerFactory->in($this->context)->forValue($value)) {
+                $bindings[$key] = $serializer->serialize($value);
+                continue;
             }
 
             $bindings[$key] = $value;
@@ -94,26 +99,6 @@ final class RawSql
             return 'NULL';
         }
 
-        if (is_string($value)) {
-            if (str_starts_with($value, '(') && str_ends_with($value, ')')) {
-                return $value;
-            }
-
-            return "'" . str_replace("'", "''", $value) . "'";
-        }
-
-        if (is_numeric($value)) {
-            return (string) $value;
-        }
-
-        if ($value instanceof BackedEnum) {
-            return $value->value;
-        }
-
-        if ($value instanceof UnitEnum) {
-            return $value->name;
-        }
-
-        return "'" . str_replace("'", "''", (string) $value) . "'";
+        return (string) $value;
     }
 }

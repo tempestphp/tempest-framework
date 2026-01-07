@@ -382,6 +382,37 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(0, $events);
     }
+
+    public function test_datetime_objects_are_properly_serialized_for_database_queries(): void
+    {
+        $targetDate = DateTime::parse('2025-08-01');
+
+        query(Event::class)
+            ->insert(
+                name: 'Datetime serialization test',
+                created_at: $targetDate,
+                event_date: $targetDate,
+            )
+            ->execute();
+
+        query(Event::class)
+            ->insert(
+                name: 'Should not be returned',
+                created_at: $targetDate->plusDays(1),
+                event_date: $targetDate->plusDays(1),
+            )
+            ->execute();
+
+        $events = query(Event::class)
+            ->select()
+            ->whereBefore('event_date', DateTime::parse('2025-08-02'))
+            ->where('name', 'Datetime serialization test')
+            ->all();
+
+        $this->assertCount(1, $events);
+        $this->assertSame('Datetime serialization test', $events[0]->name);
+        $this->assertSame($targetDate->format('Y-m-d H:i:s'), $events[0]->event_date->format('Y-m-d H:i:s'));
+    }
 }
 
 final class CreateEventTable implements MigratesUp

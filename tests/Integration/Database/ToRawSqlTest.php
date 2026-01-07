@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tempest\DateTime\DateTime;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
@@ -455,5 +456,20 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: '19.99', haystack: $rawSql);
         $this->assertStringContainsString(needle: 'deleted_at', haystack: $rawSql);
         $this->assertStringContainsString(needle: 'IS NULL', haystack: $rawSql);
+    }
+
+    public function test_raw_sql_with_date_where_methods(): void
+    {
+        $rawSql = query('books')
+            ->select()
+            ->whereBefore('published_at', DateTime::parse('2024-12-31'))
+            ->whereAfter('created_at', '2024-01-01')
+            ->toRawSql()
+            ->toString();
+
+        $this->assertStringContainsString(needle: 'published_at', haystack: $rawSql);
+        $this->assertStringContainsString(needle: 'created_at', haystack: $rawSql);
+        $this->assertStringContainsString(needle: '2024-12-31', haystack: $rawSql);
+        $this->assertStringContainsString(needle: '2024-01-01', haystack: $rawSql);
     }
 }
