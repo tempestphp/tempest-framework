@@ -152,7 +152,7 @@ final readonly class LdapAuthenticatableResolver implements AuthenticatableResol
         private LdapClient $ldap,
     ) {}
 
-    public function resolve(int|string $id): ?Authenticatable
+    public function resolve(int|string $id, string $class): ?Authenticatable
     {
         $attributes = $this->ldap->findUserByIdentifier($id);
 
