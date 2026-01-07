@@ -19,12 +19,12 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    private PreviousUrl $tracker {
+    private PreviousUrl $previousUrl {
         get => $this->container->get(PreviousUrl::class);
     }
 
     private TrackPreviousUrlMiddleware $middleware {
-        get => new TrackPreviousUrlMiddleware($this->tracker);
+        get => new TrackPreviousUrlMiddleware($this->previousUrl);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
             next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
         );
 
-        $this->assertEquals('/dashboard', $this->tracker->get());
+        $this->assertEquals('/dashboard', $this->previousUrl->get());
     }
 
     #[Test]
@@ -59,7 +59,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
             next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
         );
 
-        $this->assertEquals('/', $this->tracker->get());
+        $this->assertEquals('/', $this->previousUrl->get());
     }
 
     #[Test]
@@ -72,21 +72,21 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
             next: $next,
         );
 
-        $this->assertEquals('/page1', $this->tracker->get());
+        $this->assertEquals('/page1', $this->previousUrl->get());
 
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/page2'),
             next: $next,
         );
 
-        $this->assertEquals('/page2', $this->tracker->get());
+        $this->assertEquals('/page2', $this->previousUrl->get());
 
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/page3'),
             next: $next,
         );
 
-        $this->assertEquals('/page3', $this->tracker->get());
+        $this->assertEquals('/page3', $this->previousUrl->get());
     }
 
     #[Test]
@@ -106,6 +106,6 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
             next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
         );
 
-        $this->assertEquals('/dashboard', $this->tracker->get());
+        $this->assertEquals('/dashboard', $this->previousUrl->get());
     }
 }

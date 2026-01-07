@@ -23,10 +23,10 @@ final class Back implements Response
     {
         $this->status = Status::FOUND;
 
-        $tracker = get(PreviousUrl::class);
+        $previousUrl = get(PreviousUrl::class);
         $request = get(Request::class);
 
-        $url = $tracker->get(
+        $url = $previousUrl->get(
             default: $request->headers['referer'] ?? $fallback ?? '/',
         );
 

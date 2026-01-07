@@ -19,7 +19,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class BackResponseTest extends FrameworkIntegrationTestCase
 {
-    private PreviousUrl $tracker {
+    private PreviousUrl $previousUrl {
         get => $this->container->get(PreviousUrl::class);
     }
 
@@ -35,7 +35,7 @@ final class BackResponseTest extends FrameworkIntegrationTestCase
     #[Test]
     public function back_response_with_tracked_url(): void
     {
-        $this->tracker->track(
+        $this->previousUrl->track(
             request: new GenericRequest(method: Method::GET, uri: '/previous-page'),
         );
 
@@ -57,7 +57,7 @@ final class BackResponseTest extends FrameworkIntegrationTestCase
     #[Test]
     public function back_response_prefers_tracked_url_over_fallback(): void
     {
-        $this->tracker->track(
+        $this->previousUrl->track(
             request: new GenericRequest(method: Method::GET, uri: '/tracked-page'),
         );
 
@@ -85,7 +85,7 @@ final class BackResponseTest extends FrameworkIntegrationTestCase
     #[Test]
     public function back_response_prefers_tracked_url_over_referer(): void
     {
-        $this->tracker->track(new GenericRequest(
+        $this->previousUrl->track(new GenericRequest(
             method: Method::GET,
             uri: '/tracked-page',
             headers: ['referer' => '/referer-page'],
