@@ -12,7 +12,7 @@ use UnitEnum;
 /**
  * Represents the current session.
  *
- * @see ManageSessionLifecycleMiddleware
+ * @see ManageSessionMiddleware
  * @see SessionManager
  */
 final class Session

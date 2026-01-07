@@ -12,7 +12,7 @@ use Tempest\Router\HttpMiddlewareCallable;
  * This middleware is responsible for creating the session and saving it on response.
  */
 #[Priority(Priority::FRAMEWORK - 20)]
-final readonly class ManageSessionLifecycleMiddleware implements HttpMiddleware
+final readonly class ManageSessionMiddleware implements HttpMiddleware
 {
     public function __construct(
         private SessionManager $sessionManager,
