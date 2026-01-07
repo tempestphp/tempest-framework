@@ -91,6 +91,7 @@ return new MultipleChannelsLogConfig(
             minimumLogLevel: LogLevel::CRITICAL,
         ),
     ],
+    prefix: null,
 );
 ```
 
