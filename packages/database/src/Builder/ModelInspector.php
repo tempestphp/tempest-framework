@@ -50,8 +50,12 @@ final class ModelInspector
             $model instanceof BelongsTo => $model->property->getType()->getName(),
             $model instanceof HasOne => $model->property->getType()->getName(),
             $model instanceof ClassReflector => $model->getName(),
-            default => $model::class,
+            default => null,
         };
+
+        if ($key === null) {
+            return new self($model);
+        }
 
         return self::$inspectors[$key] ??= new self($model);
     }
