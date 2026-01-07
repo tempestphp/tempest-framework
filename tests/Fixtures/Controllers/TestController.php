@@ -23,7 +23,7 @@ use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class TestController
 {

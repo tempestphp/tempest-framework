@@ -11,7 +11,7 @@ use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class StandaloneViewRendererTest extends TestCase
 {

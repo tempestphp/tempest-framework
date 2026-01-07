@@ -11,7 +11,7 @@ When a controller action is tagged with {b`#[Tempest\Router\StaticPage]`}, it ca
 use Tempest\Router\Get;
 use Tempest\Router\StaticPage;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class FrontPageController
 {

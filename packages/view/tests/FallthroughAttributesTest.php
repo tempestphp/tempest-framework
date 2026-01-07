@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewConfig;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class FallthroughAttributesTest extends TestCase
 {

@@ -169,7 +169,7 @@ use Tempest\Http\Status;
 use Tempest\Router\Exceptions\ExceptionRenderer;
 use Throwable;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class NotFoundExceptionRenderer implements ExceptionRenderer
 {

@@ -8,7 +8,7 @@ use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\Slot;
 
 use function Tempest\get;
-use function Tempest\view;
+use function Tempest\View\view;
 
 $attributeString = $attributes
     ->map(fn (string $value, string $key) => "{$key}=\"{$value}\"")

@@ -15,7 +15,7 @@ use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Router\uri;
-use function Tempest\view;
+use function Tempest\View\view;
 
 /**
  * @internal

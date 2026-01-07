@@ -18,7 +18,7 @@ use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 /**
  * @internal

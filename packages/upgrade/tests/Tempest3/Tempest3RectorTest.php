@@ -84,4 +84,20 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('implements \Tempest\Core\ProvidesContext')
             ->assertNotContains('use Tempest\Core\HasContext');
     }
+
+    public function test_view_namespace_change(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/ViewNamespaceChange.input.php')
+            ->assertContains('use function Tempest\View\view;')
+            ->assertNotContains('use function Tempest\view;');
+    }
+
+    public function test_fully_qualified_view_call(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedViewCall.input.php')
+            ->assertContains('use Tempest\View\view;')
+            ->assertContains('return view($template);');
+    }
 }

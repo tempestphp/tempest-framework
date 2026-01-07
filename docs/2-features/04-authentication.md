@@ -98,7 +98,7 @@ You may access the currently authenticated model by injecting the {b`Tempest\Aut
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class ProfileController
 {

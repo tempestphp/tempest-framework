@@ -45,7 +45,7 @@ As specified in the documentation about [sending responses](./01-routing.md#view
 ```php app/AircraftController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class AircraftController
 {
@@ -633,7 +633,7 @@ As a bare minimum setup, you can create an instance of the renderer by calling `
 
 ```php
 use Tempest\View\Renderers\TempestViewRenderer;
-use function Tempest\view;
+use function Tempest\View\view;
 
 $renderer = TempestViewRenderer::make();
 

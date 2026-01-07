@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\View;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 /**
  * @internal

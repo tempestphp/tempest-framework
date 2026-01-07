@@ -10,7 +10,7 @@ use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 /**
  * @internal

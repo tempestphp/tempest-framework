@@ -12,7 +12,7 @@ Tempest provides attributes, named after HTTP verbs, to attach URIs to controlle
 ```php app/HomeController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class HomeController
 {
@@ -33,7 +33,7 @@ Dynamic segments can be defined in route URIs by wrapping them in curly braces. 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class AircraftController
 {
@@ -58,7 +58,7 @@ To mark a parameter as optional, prefix it with a question mark `?` inside the c
 ```php app/AircraftController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class AircraftController
 {
@@ -94,7 +94,7 @@ Required and optional parameters can be combined. Optional parameters must come 
 ```php app/FlightController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class FlightController
 {
@@ -135,7 +135,7 @@ For instance, to accept only numeric identifiers for an `id` parameter, use the 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class AircraftController
 {
@@ -677,7 +677,7 @@ Returning a view is a shorthand for returning a successful response with that vi
 ```php app/Aircraft/AircraftController.php
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class AircraftController
 {
@@ -813,7 +813,7 @@ There are situations where actions need to be taken on a response right before i
 This can be done using a response processor. Similar to [view processors](./02-views.md#pre-processing-views), these are classes that implement the {b`Tempest\Response\ResponseProcessor`} interface. In the `process()` method, the response object can be mutated and returned:
 
 ```php app/ErrorResponseProcessor.php
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class ErrorResponseProcessor implements ResponseProcessor
 {

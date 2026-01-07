@@ -7,7 +7,7 @@ description: "Tempest provides a convenient layer built on top of Symfony's exce
 
 Sending emails starts with picking an email transport. Tempest comes with built-in support for SMTP, Amazon SES, and Postmark; but it's trivial to add any other transport you'd like. We'll start with plain SMTP, and explain how to switch to other transports later.
 
-By default, Tempest is configured to use SMTP mailing. You'll need to add these environment variables and the mailer will be ready for use: 
+By default, Tempest is configured to use SMTP mailing. You'll need to add these environment variables and the mailer will be ready for use:
 
 ```dotenv
 MAIL_SMTP_HOST=mail.my_provider.com
@@ -75,7 +75,7 @@ Here's what that `WelcomeEmail` would look like:
 use Tempest\Mail\Email;
 use Tempest\Mail\Envelope;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class WelcomeEmail implements Email
 {
@@ -196,7 +196,7 @@ $attachment = new Attachment(function () {
 
 ## Other transports
 
-As mentioned, Tempest has built-in support for SMTP, Amazon SES, and Postmark. It is however trivial to use a range of other transports as well. First let's talk about switching to one of the built-in transports. 
+As mentioned, Tempest has built-in support for SMTP, Amazon SES, and Postmark. It is however trivial to use a range of other transports as well. First let's talk about switching to one of the built-in transports.
 
 The first step in using any transport is to install the transport-specific driver. You can find a list of all supported transports on [Symfony's documentation](https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport). If we take Postmark as an example, you should install these two dependencies:
 
