@@ -125,6 +125,8 @@ Accessing missing properties after the object has been constructed results in an
 ```php
 use Tempest\Mapper\Strict;
 
+use function Tempest\Mapper\map;
+
 #[Strict]
 final class Book
 {
