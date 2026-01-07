@@ -44,7 +44,7 @@ final class ModelInspector
 
     public static function forModel(object|string $model): self
     {
-        $key = match(true) {
+        $key = match (true) {
             is_string($model) => $model,
             $model instanceof HasMany => $model->property->getIterableType()->getName(),
             $model instanceof BelongsTo => $model->property->getType()->getName(),
