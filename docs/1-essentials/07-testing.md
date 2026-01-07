@@ -107,7 +107,7 @@ Non-test files created in the `tests` directory are automatically discovered by 
 You can override this behavior by providing your own implementation of `discoverTestLocations()`:
 
 ```php tests/Aircraft/ShowAircraftControllerTest.php
-use Tempest\Core\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
 
 final class ShowAircraftControllerTest extends IntegrationTest
