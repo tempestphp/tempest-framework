@@ -67,7 +67,7 @@ const tempest: ThemeInput = {
 				'meta.function-call',
 			],
 			settings: {
-				foreground: 'var(--code-generic)',
+				foreground: 'var(--code-property)',
 			},
 		},
 		{

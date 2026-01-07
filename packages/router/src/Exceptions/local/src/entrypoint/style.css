@@ -47,6 +47,28 @@
 	--ui-bg-elevated: var(--ui-color-neutral-900);
 	--ui-bg-accented: var(--ui-color-neutral-800);
 	--ui-bg-inverted: var(--color-neutral-50);
+	--code-border: var(--ui-border);
+	--code-background: var(--ui-bg-elevated);
+	--code-foreground: var(--ui-text);
+	--code-keyword: #e95678;
+	--code-property: #fab795;
+	--code-type: #25b0bc;
+	--code-generic: #b877db;
+	--code-value: #f09483;
+	--code-variable: #f09483;
+	--code-comment: #6c6f93;
+	--code-highlight: #2e303e;
+	--code-addition: #09f7a052;
+	--code-deletion: #f43e5c52;
+	--code-gutter: #6c6f93;
+	--code-gutter-addition: #27d796;
+	--code-gutter-deletion: #f43e5c;
+	--code-moderate: #fab38e33;
+	--code-complex: #e9567833;
+	--code-adverb: #21bfc280;
+	--code-passive: #b877db80;
+	--code-complex-phrase: #25b0bc33;
+	--code-qualified: #6c6f9333;
 }
 
 /*
