@@ -327,7 +327,7 @@ use Tempest\Container\Tag;
 
 final readonly class BookController
 {
-    public function __constructor(
+    public function __construct(
         #[Tag('book-validators')] private readonly array $contentValidators,
     ) { /* … */ }
 }
