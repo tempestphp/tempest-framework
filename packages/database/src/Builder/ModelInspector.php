@@ -44,7 +44,13 @@ final class ModelInspector
 
     public static function forModel(object|string $model): self
     {
-        $key = is_object($model) ? get_class($model) : $model;
+        $key = match(true) {
+            is_string($model) => $model,
+            $model instanceof HasMany => $model->property->getIterableType()->getName(),
+            $model instanceof BelongsTo => $model->property->getType()->getName(),
+            $model instanceof HasOne => $model->property->getType()->getName(),
+            default => $model::class,
+        };
 
         return self::$inspectors[$key] ??= new self($model);
     }
