@@ -790,7 +790,7 @@ However, the content type can be overridden manually by using the `setContentTyp
 
 ```php app/JsonController.php
 use Tempest\Router\Get;
-use Tempest\Router\ContentType;
+use Tempest\Http\ContentType;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 
