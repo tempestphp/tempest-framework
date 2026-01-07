@@ -6,7 +6,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Environment;
-use Tempest\Core\EnvironmentInitalizer;
+use Tempest\Core\EnvironmentInitializer;
 use Tempest\Core\EnvironmentValueWasInvalid;
 
 final class EnvironmentTest extends TestCase
@@ -33,7 +33,7 @@ final class EnvironmentTest extends TestCase
     public function can_be_resolved_from_container(): void
     {
         $container = new GenericContainer();
-        $container->addInitializer(EnvironmentInitalizer::class);
+        $container->addInitializer(EnvironmentInitializer::class);
 
         putenv('ENVIRONMENT=staging');
         $this->assertSame(Environment::STAGING, $container->get(Environment::class));
