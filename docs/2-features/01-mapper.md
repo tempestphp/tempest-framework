@@ -188,6 +188,7 @@ final readonly class AddressCaster implements Caster
 ```
 
 ```php app/AddressSerializer.php
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
 final readonly class AddressSerializer implements Serializer
@@ -195,7 +196,7 @@ final readonly class AddressSerializer implements Serializer
     public function serialize(mixed $input): array|string
     {
         if (! $input instanceof Address) {
-            throw new CannotSerializeValue(Address::class);
+            throw new ValueCouldNotBeSerialized(Address::class);
         }
 
         return $input->toArray();
