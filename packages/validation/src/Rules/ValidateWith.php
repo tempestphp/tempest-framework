@@ -16,7 +16,7 @@ use Tempest\Validation\Rule;
  * The closure receives the value and must return true if it is valid, false otherwise.
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
-final readonly class Predicate implements Rule
+final readonly class ValidateWith implements Rule
 {
     private Closure $callback;
 

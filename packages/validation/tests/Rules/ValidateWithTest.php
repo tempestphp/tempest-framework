@@ -6,18 +6,18 @@ namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
-use Tempest\Validation\Rules\Predicate;
-use Tempest\Validation\Tests\Fixtures\ObjectWithPredicateValidation;
+use Tempest\Validation\Rules\ValidateWith;
+use Tempest\Validation\Tests\Fixtures\ValidateWithObject;
 
 /**
  * @internal
  */
-final class PredicateTest extends TestCase
+final class ValidateWithTest extends TestCase
 {
     public function test_predicate_attribute_on_property_is_applied(): void
     {
-        $reflection = new ReflectionProperty(ObjectWithPredicateValidation::class, 'prop');
-        $attributes = $reflection->getAttributes(Predicate::class);
+        $reflection = new ReflectionProperty(ValidateWithObject::class, 'prop');
+        $attributes = $reflection->getAttributes(ValidateWith::class);
 
         $this->assertCount(1, $attributes);
 
@@ -28,14 +28,14 @@ final class PredicateTest extends TestCase
 
     public function test_closure_validation_passes(): void
     {
-        $rule = new Predicate(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new ValidateWith(static fn (mixed $value): bool => str_contains((string) $value, '@'));
         $this->assertTrue($rule->isValid('user@example.com'));
         $this->assertTrue($rule->isValid('test@domain.org'));
     }
 
     public function test_closure_validation_fails(): void
     {
-        $rule = new Predicate(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new ValidateWith(static fn (mixed $value): bool => str_contains((string) $value, '@'));
 
         $this->assertFalse($rule->isValid('username'));
         $this->assertFalse($rule->isValid('example.com'));
@@ -43,7 +43,7 @@ final class PredicateTest extends TestCase
 
     public function test_non_string_value_fails(): void
     {
-        $rule = new Predicate(static fn (mixed $value): bool => str_contains((string) $value, '@'));
+        $rule = new ValidateWith(static fn (mixed $value): bool => str_contains((string) $value, '@'));
 
         $this->assertFalse($rule->isValid(12345));
         $this->assertFalse($rule->isValid(null));
@@ -54,6 +54,6 @@ final class PredicateTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new Predicate(fn (mixed $value): bool => str_contains((string) $value, '@'));
+        new ValidateWith(fn (mixed $value): bool => str_contains((string) $value, '@'));
     }
 }
