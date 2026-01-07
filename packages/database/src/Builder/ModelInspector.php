@@ -33,6 +33,8 @@ final class ModelInspector
 
     private(set) object|string $instance;
 
+    private static array $relations = [];
+
     private Validator $validator {
         get => get(Validator::class);
     }
@@ -263,6 +265,10 @@ final class ModelInspector
             return arr();
         }
 
+        if (isset(self::$relations[$this->getName()])) {
+            return self::$relations[$this->getName()];
+        }
+
         $relationFields = arr();
 
         foreach ($this->reflector->getPublicProperties() as $property) {
@@ -270,6 +276,8 @@ final class ModelInspector
                 $relationFields[] = $relation;
             }
         }
+
+        self::$relations[$this->getName()] = $relationFields;
 
         return $relationFields;
     }
