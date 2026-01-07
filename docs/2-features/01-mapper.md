@@ -311,7 +311,7 @@ This serializer is only used when mapping with `->in(SerializationContext::API)`
 To adapt behavior dynamically, inject the current context into the caster or serializer constructor by naming its property `$context`. Other dependencies from the container can also be injected.
 
 ```php
-use Tempest\Mapper\Context;
+use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\Serializer;
 
 #[Context(DatabaseContext::class)]
