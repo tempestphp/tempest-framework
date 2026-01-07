@@ -195,5 +195,5 @@ $cache = $this->cache->fake();
 // Call some application code
 // …
 
-$this->cache->assertNotLocked('processing');
+$cache->assertNotLocked('processing');
 ```
