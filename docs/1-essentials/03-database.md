@@ -442,7 +442,7 @@ final class Book
 
     #[Virtual]
     public DateTime $saleExpiresAt {
-        get => $this->publishedAt->add(Duration::days(5)));
+        get => $this->publishedAt->add(Duration::days(5));
     }
 }
 ```
