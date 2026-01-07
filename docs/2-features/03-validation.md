@@ -120,9 +120,10 @@ When validation fails, a list of fields and their respective failing rules is re
 
 ```php
 use Tempest\Support\Arr;
+use Tempest\Validation\Rules\IsEmail;
 
 // Validate some value
-$failures = $this->validator->validateValue('jon@doe.co', new Email());
+$failures = $this->validator->validateValue('jon@doe.co', new IsEmail());
 
 // Map failures to their message
 $errors = Arr\map($failures, fn (FailingRule $failure) => $this->validator->getErrorMessage($failure));
