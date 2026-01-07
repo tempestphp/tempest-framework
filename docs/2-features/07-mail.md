@@ -145,7 +145,9 @@ final class WelcomeEmail implements Email, HasTextContent
 {
     // …
     
-    public string|View|null $text = view('welcome-text.view.php', user: $this->user);
+    public string|View|null $text {
+        get => view('welcome-text.view.php', user: $this->user);
+    }
 }
 ```
 
