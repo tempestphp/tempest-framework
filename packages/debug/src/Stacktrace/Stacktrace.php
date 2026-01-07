@@ -63,9 +63,7 @@ final class Stacktrace
             relativeFile: $rootPath
                 ? to_relative_path($rootPath, $exceptionFile)
                 : $exceptionFile,
-            arguments: $firstTraceFrame
-                ? Frame::extractArguments($firstTraceFrame)
-                : [],
+            arguments: [],
             index: 1,
         );
 

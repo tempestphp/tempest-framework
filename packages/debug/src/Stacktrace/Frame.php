@@ -48,7 +48,7 @@ final class Frame
             snippet: $snippet,
             absoluteFile: $absoluteFile,
             relativeFile: $rootPath ? to_relative_path($rootPath, $absoluteFile) : $absoluteFile,
-            arguments: self::extractArguments($frame),
+            arguments: [],
             index: $index,
         );
     }
