@@ -87,6 +87,27 @@ trait IsResponse
         return $this;
     }
 
+    public function addSession(string $name, mixed $value): self
+    {
+        $this->session->set($name, $value);
+
+        return $this;
+    }
+
+    public function removeSession(string $name): self
+    {
+        $this->session->remove($name);
+
+        return $this;
+    }
+
+    public function flash(string|UnitEnum $key, mixed $value): self
+    {
+        $this->session->flash($key, $value);
+
+        return $this;
+    }
+
     public function setContentType(ContentType $contentType): self
     {
         $this->removeHeader(ContentType::HEADER)
@@ -105,13 +126,6 @@ trait IsResponse
     public function setBody(View|string|array|Generator|null $body): self
     {
         $this->body = $body;
-
-        return $this;
-    }
-
-    public function flash(string|UnitEnum $key, mixed $value): self
-    {
-        $this->session->flash($key, $value);
 
         return $this;
     }

@@ -51,6 +51,21 @@ interface Response
     public function removeHeader(string $key): self;
 
     /**
+     * Adds a value to the session.
+     */
+    public function addSession(string $name, mixed $value): self;
+
+    /**
+     * Removes a value from the session.
+     */
+    public function removeSession(string $name): self;
+
+    /**
+     * Flash a value to the session for the next request.
+     */
+    public function flash(string|UnitEnum $key, mixed $value): self;
+
+    /**
      * Adds a cookie to the response.
      */
     public function addCookie(Cookie $cookie): self;
@@ -69,9 +84,4 @@ interface Response
      * Sets the body of the response.
      */
     public function setBody(View|string|array|Generator|null $body): self;
-
-    /**
-     * Flash a value to the session for the next request.
-     */
-    public function flash(string|UnitEnum $key, mixed $value): self;
 }
