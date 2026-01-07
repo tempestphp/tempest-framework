@@ -87,7 +87,7 @@ As an example, the following is a simplified version of the event bus discovery:
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\IsDiscovery;
 
-final readonly class EventBusDiscovery implements Discovery
+final class EventBusDiscovery implements Discovery
 {
     // This provides the default implementation for `Discovery`'s internals
     use IsDiscovery;
