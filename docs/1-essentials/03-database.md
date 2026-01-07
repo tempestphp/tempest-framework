@@ -160,7 +160,7 @@ Beyond selecting models, any query builder can be used with model objects:
 
 ```php
 use App\Models\Book;
-use Tempest\Database\PrimaryKey
+use Tempest\Database\PrimaryKey;
 
 ;use function Tempest\Database\query;
 
