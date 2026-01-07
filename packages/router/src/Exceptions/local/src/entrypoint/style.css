@@ -48,7 +48,6 @@
 	--ui-bg-accented: var(--ui-color-neutral-800);
 	--ui-bg-inverted: var(--color-neutral-50);
 	--code-border: var(--ui-border);
-	--code-background: var(--ui-bg-elevated);
 	--code-foreground: var(--ui-text);
 	--code-keyword: #e95678;
 	--code-property: #fab795;

@@ -8,7 +8,6 @@ export interface CodeSnippet {
 export interface Argument {
 	name: string | number
 	compact: string
-	json?: string
 }
 
 export interface StacktraceFrame {

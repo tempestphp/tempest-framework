@@ -84,27 +84,10 @@ const parts = computed<HighlightedPart[]>(() => {
 	<span class="font-mono">
 		<template v-for="(part, index) in parts" :key="index">
 			<!-- Argument with no serialized preview -->
-			<span v-if="part.argument && !part.argument.json" class="whitespace-pre">
+			<span v-if="part.argument" class="whitespace-pre">
 				<span v-if="formatted" v-text="`    `" />
 				<span v-html="part.html" />
 			</span>
-			<!-- Serialized preview -->
-			<u-modal v-else-if="part.argument" :scrollable="true" class="overflow-hidden" :close="false">
-				<span class="whitespace-pre">
-					<span v-if="formatted" v-text="`    `" />
-					<span
-						v-html="part.html"
-						class="decoration-dashed decoration-neutral-400 hover:decoration-neutral-500 dark:decoration-neutral-600 underline underline-offset-4 transition-colors cursor-pointer"
-					/>
-				</span>
-				<template v-slot:body>
-					<div
-						v-if="part.argument.json"
-						v-html="highlight(part.argument.json, 'json')"
-						class="overflow-auto text-sm"
-					/>
-				</template>
-			</u-modal>
 			<!-- Other part -->
 			<span v-else v-html="part.html" />
 		</template>

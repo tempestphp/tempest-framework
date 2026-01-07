@@ -2,14 +2,11 @@
 
 namespace Tempest\Debug\Stacktrace;
 
-use Tempest\Support\Json;
-
 final readonly class Argument
 {
     public function __construct(
         public string|int $name,
         public string $compact,
-        public ?string $json,
     ) {}
 
     public static function make(string|int $name, mixed $value): self
@@ -17,7 +14,6 @@ final readonly class Argument
         return new self(
             name: $name,
             compact: self::serializeToCompactString($value),
-            json: self::serialize($value),
         );
     }
 
@@ -36,16 +32,5 @@ final readonly class Argument
             is_resource($value) => 'resource',
             default => get_debug_type($value),
         };
-    }
-
-    private static function serialize(mixed $value): ?string
-    {
-        $serialized = Json\encode($value, pretty: true);
-
-        if ($serialized === '{}') {
-            return null;
-        }
-
-        return $serialized;
     }
 }
