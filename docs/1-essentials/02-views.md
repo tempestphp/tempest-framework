@@ -823,16 +823,17 @@ use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 final readonly class BladeInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return $class->getName() === Blade::class;
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, Container $container): object
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
     {
         $bladeConfig = $container->get(BladeConfig::class);
 
