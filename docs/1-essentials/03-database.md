@@ -221,7 +221,7 @@ final class Book
     public array $chapters = [];
 
     #[HasOne(relationJoin: 'books.uuid', ownerJoin: 'isbns.book_uuid')]
-    public Isbn $isbn = [];
+    public ?Isbn $isbn = null;
 }
 ```
 
@@ -246,7 +246,7 @@ final class Book
     public array $chapters = [];
 
     #[HasOne(relationJoin: 'uuid', ownerJoin: 'book_uuid')]
-    public Isbn $isbn = [];
+    public ?Isbn $isbn = null;
 }
 ```
 
