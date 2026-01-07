@@ -34,7 +34,7 @@ final class ModelInspector
 
     private static array $inspectors = [];
 
-    private(set) ClassReflector|null $reflector = null;
+    private(set) ?ClassReflector $reflector = null;
 
     private(set) object|string|null $instance = null;
 
