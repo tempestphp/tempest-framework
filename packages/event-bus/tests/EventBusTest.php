@@ -13,6 +13,7 @@ use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\EventHandler;
 use Tempest\EventBus\GenericEventBus;
+use Tempest\EventBus\Tests\Fixtures\EventEnum;
 use Tempest\EventBus\Tests\Fixtures\EventInterface;
 use Tempest\EventBus\Tests\Fixtures\EventInterfaceHandler;
 use Tempest\EventBus\Tests\Fixtures\EventInterfaceImplementation;
@@ -189,5 +190,25 @@ final class EventBusTest extends TestCase
         $eventBus->dispatch(new EventInterfaceImplementation());
 
         $this->assertTrue(EventInterfaceHandler::$itHappened);
+    }
+
+    public function test_closure_based_handlers_using_listen_method_and_enums(): void
+    {
+        $container = new GenericContainer();
+        $config = new EventBusConfig();
+        $eventBus = new GenericEventBus($container, $config);
+        $hasHappened = false;
+
+        $eventBus->listen(function () use (&$hasHappened): void {
+            $hasHappened = true;
+        }, EventEnum::TWO);
+
+        $eventBus->dispatch(EventEnum::ONE);
+
+        $this->assertFalse($hasHappened);
+
+        $eventBus->dispatch(EventEnum::TWO);
+
+        $this->assertTrue($hasHappened);
     }
 }
