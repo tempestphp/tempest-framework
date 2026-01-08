@@ -1,6 +1,7 @@
 <?php
 
 use Rector\Config\RectorConfig;
+use Tempest\Upgrade\Tempest3\UpdateCommandFunctionImportsRector;
 use Tempest\Upgrade\Tempest3\UpdateExceptionProcessorRector;
 use Tempest\Upgrade\Tempest3\UpdateHasContextRector;
 use Tempest\Upgrade\Tempest3\UpdateMapperFunctionImportsRector;
@@ -10,6 +11,7 @@ return static function (RectorConfig $config): void {
     $config->importNames();
     $config->importShortClasses();
 
+    $config->rule(UpdateCommandFunctionImportsRector::class);
     $config->rule(UpdateMapperFunctionImportsRector::class);
     $config->rule(UpdateViewFunctionImportsRector::class);
     $config->rule(UpdateExceptionProcessorRector::class);
