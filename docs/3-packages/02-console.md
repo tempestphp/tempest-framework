@@ -47,7 +47,7 @@ Tempest will discover all console commands within namespaces configured as valid
 In case you need more fine-grained control over which directories to discover, you may provide a custom {`Tempest\Core\AppConfig`} instance to the `{php}ConsoleApplication::boot()` method:
 
 ```php
-use Tempest\AppConfig;
+use Tempest\Core\AppConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Console\ConsoleApplication;
 
