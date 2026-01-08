@@ -25,16 +25,6 @@ final class UpdateViewFunctionImportsRector extends AbstractRector
             return null;
         }
 
-        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
-            $functionName = $node->name->toString();
-
-            if ($functionName === 'Tempest\view') {
-                $node->name = new Node\Name\FullyQualified('Tempest\View\view');
-
-                return null;
-            }
-        }
-
         return null;
     }
 }

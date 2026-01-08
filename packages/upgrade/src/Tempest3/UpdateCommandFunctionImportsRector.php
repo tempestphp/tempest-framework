@@ -21,18 +21,6 @@ final class UpdateCommandFunctionImportsRector extends AbstractRector
             if ($node->name->toString() === 'Tempest\command') {
                 $node->name = new Node\Name('Tempest\CommandBus\command');
             }
-
-            return null;
-        }
-
-        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
-            $functionName = $node->name->toString();
-
-            if ($functionName === 'Tempest\command') {
-                $node->name = new Node\Name\FullyQualified('Tempest\CommandBus\command');
-
-                return null;
-            }
         }
 
         return null;

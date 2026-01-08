@@ -25,24 +25,6 @@ final class UpdateMapperFunctionImportsRector extends AbstractRector
             if ($node->name->toString() === 'Tempest\make') {
                 $node->name = new Node\Name('Tempest\Mapper\make');
             }
-
-            return null;
-        }
-
-        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
-            $functionName = $node->name->toString();
-
-            if ($functionName === 'Tempest\map') {
-                $node->name = new Node\Name\FullyQualified('Tempest\Mapper\map');
-
-                return null;
-            }
-
-            if ($functionName === 'Tempest\make') {
-                $node->name = new Node\Name\FullyQualified('Tempest\Mapper\make');
-
-                return null;
-            }
         }
 
         return null;
