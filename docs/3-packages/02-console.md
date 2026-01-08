@@ -48,7 +48,7 @@ In case you need more fine-grained control over which directories to discover, y
 
 ```php
 use Tempest\AppConfig;
-use Tempest\Core\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Console\ConsoleApplication;
 
 $appConfig = new AppConfig(
