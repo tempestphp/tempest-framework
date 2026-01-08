@@ -35,7 +35,7 @@ final readonly class ConsoleApplication implements Application
         return $application;
     }
 
-    public function run(): void
+    public function run(): never
     {
         $exitCode = $this->container->get(ExecuteConsoleCommand::class)($this->argumentBag->getCommandName());
 
