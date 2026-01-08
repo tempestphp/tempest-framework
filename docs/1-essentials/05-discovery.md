@@ -79,7 +79,7 @@ While Tempest provides a variety of [built-in discovery classes](#built-in-disco
 
 Tempest discovers classes that implement {b`Tempest\Discovery\Discovery`}, which requires implementing the `discover()` and `apply()` methods. The {b`Tempest\Discovery\IsDiscovery`} trait provides the rest of the implementation.
 
-The `discover()` method accepts a {b`Tempest\Core\DiscoveryLocation`} and a {b`Tempest\Reflection\ClassReflector`} parameter. The reflector can be used to loop through a class' attributes, methods, parameters or anything else. If the class matches your expectations, you may register it using `$this->discoveryItems->add()`.
+The `discover()` method accepts a {b`Tempest\Discovery\DiscoveryLocation`} and a {b`Tempest\Reflection\ClassReflector`} parameter. The reflector can be used to loop through a class' attributes, methods, parameters or anything else. If the class matches your expectations, you may register it using `$this->discoveryItems->add()`.
 
 As an example, the following is a simplified version of the event bus discovery:
 
@@ -134,7 +134,7 @@ final class EventBusDiscovery implements Discovery
 
 It is possible to discover files instead of classes. For instance, view files, front-end entrypoints or SQL migrations are not PHP classes, but still need to be discovered.
 
-In this case, you may implement the additional {b`\Tempest\Discovery\DiscoversPath`} interface. It requires a `discoverPath()` method that accepts a {b`Tempest\Core\DiscoveryLocation`} and a string path.
+In this case, you may implement the additional {b`\Tempest\Discovery\DiscoversPath`} interface. It requires a `discoverPath()` method that accepts a {b`Tempest\Discovery\DiscoveryLocation`} and a string path.
 
 The example below shows a simplified version of the Vite entrypoint discovery:
 
