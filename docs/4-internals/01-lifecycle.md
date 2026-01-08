@@ -10,8 +10,8 @@ Tempest's entry point is usually `public/index.php` or `./tempest`. The former u
 When created, the application boots by creating the {b`\Tempest\Core\FrameworkKernel`}:
 
 - it loads the environment, the exception handler, and configures the container,
-- it then starts discovery through the {b`\Tempest\Core\LoadDiscoveryLocations`} and {b`\Tempest\Core\LoadDiscoveryClasses`} classes,
-- and finally registers configuration files through the {b`\Tempest\Core\LoadConfig`} class.
+- it then starts discovery through the {b`\Tempest\Core\Kernel\LoadDiscoveryLocations`} and {b`\Tempest\Core\Kernel\LoadDiscoveryClasses`} classes,
+- and finally registers configuration files through the {b`\Tempest\Core\Kernel\LoadConfig`} class.
 
 When bootstrapping is completed, the `Tempest\Core\KernelEvent::BOOTED` event is fired.
 
