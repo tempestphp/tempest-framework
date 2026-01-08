@@ -14,7 +14,7 @@ use Tempest\Http\Response;
  * Adds the `Set-Cookie` headers to the response based on the cookie manager.
  */
 #[Priority(Priority::FRAMEWORK)]
-final readonly class SetCookieMiddleware implements HttpMiddleware
+final readonly class SetCookieHeadersMiddleware implements HttpMiddleware
 {
     public function __construct(
         private Encrypter $encrypter,
@@ -26,7 +26,10 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
         $response = $next($request);
 
         foreach ($this->cookies->all() as $cookie) {
-            $cookieValue = $cookie->value === '' ? '' : $this->encrypter->encrypt($cookie->value)->serialize();
+            $cookieValue = $cookie->value === ''
+                ? ''
+                : $this->encrypter->encrypt($cookie->value)->serialize();
+
             $response->addHeader('set-cookie', (string) $cookie->withValue($cookieValue));
         }
 

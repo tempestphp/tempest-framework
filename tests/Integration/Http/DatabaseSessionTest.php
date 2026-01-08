@@ -7,19 +7,19 @@ namespace Tests\Tempest\Integration\Http;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
-use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\DateTime\Duration;
-use Tempest\EventBus\EventBus;
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
 use Tempest\Http\Session\Installer\CreateSessionsTable;
 use Tempest\Http\Session\Managers\DatabaseSession;
 use Tempest\Http\Session\Managers\DatabaseSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionDestroyed;
+use Tempest\Http\Session\SessionCreated;
+use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
+use Tempest\Support\Random;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -29,7 +29,11 @@ use function Tempest\Database\query;
  */
 final class DatabaseSessionTest extends FrameworkIntegrationTestCase
 {
-    public Session $session {
+    private SessionManager $manager {
+        get => $this->container->get(SessionManager::class);
+    }
+
+    private Session $session {
         get => $this->container->get(Session::class);
     }
 
@@ -41,7 +45,6 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         $this->container->singleton(SessionManager::class, fn () => new DatabaseSessionManager(
             $this->container->get(Clock::class),
             $this->container->get(SessionConfig::class),
-            $this->container->get(Database::class),
         ));
 
         $this->database->reset(migrate: false);
@@ -49,25 +52,56 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function create_session_from_container(): void
+    public function get_or_create_creates_new_session(): void
     {
-        $this->assertInstanceOf(Session::class, $this->session);
-        $this->assertSessionExistsInDatabase($this->session->id);
+        $this->eventBus->preventEventHandling();
+
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+
+        $this->assertInstanceOf(Session::class, $session);
+        $this->assertEquals($sessionId, $session->id);
+
+        $this->manager->save($session);
+        $this->assertSessionExistsInDatabase($sessionId);
+
+        $this->eventBus->assertDispatched(
+            event: SessionCreated::class,
+            callback: function (SessionCreated $event) use ($sessionId): void {
+                $this->assertEquals($sessionId, $event->session->id);
+            },
+            count: 1,
+        );
     }
 
     #[Test]
-    public function put_get(): void
+    public function get_or_create_loads_existing_session(): void
+    {
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+        $session->set('key', 'value');
+
+        $this->manager->save($session);
+
+        $loaded = $this->manager->getOrCreate($sessionId);
+
+        $this->assertEquals($sessionId, $loaded->id);
+        $this->assertTrue($session->createdAt->isSameMinute($loaded->createdAt));
+        $this->assertEquals('value', $loaded->get('key'));
+    }
+
+    #[Test]
+    public function save_persists_session_to_database(): void
     {
         $this->session->set('frieren', 'elf_mage');
+        $this->manager->save($this->session);
 
-        $this->assertEquals('elf_mage', $this->session->get('frieren'));
+        $this->assertSessionExistsInDatabase($this->session->id);
         $this->assertSessionDataInDatabase($this->session->id, ['frieren' => 'elf_mage']);
-
-        $this->assertEquals('deceased_hero', $this->session->get('himmel', 'deceased_hero'));
     }
 
     #[Test]
-    public function put_nested_data(): void
+    public function save_persists_nested_data(): void
     {
         $data = [
             'members' => ['Frieren', 'Fern', 'Stark'],
@@ -80,93 +114,62 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         ];
 
         $this->session->set('party', $data);
+        $this->manager->save($this->session);
 
-        $this->assertEquals($data, $this->session->get('party'));
         $this->assertSessionDataInDatabase($this->session->id, ['party' => $data]);
     }
 
     #[Test]
-    public function remove(): void
+    public function save_updates_last_active_timestamp(): void
     {
-        $this->session->set('spell', 'Zoltraak');
-        $this->session->set('caster', 'Frieren');
+        $clock = $this->clock('2025-01-01 00:00:00');
 
-        $this->assertEquals('Zoltraak', $this->session->get('spell'));
+        $this->manager->save($this->session);
+        $originalTimestamp = $this->getSessionLastActiveTimestamp($this->session->id);
 
-        $this->session->remove('spell');
+        $clock->plus(Duration::minutes(5));
 
-        $this->assertNull($this->session->get('spell'));
-        $this->assertEquals('Frieren', $this->session->get('caster'));
-        $this->assertSessionDataInDatabase($this->session->id, ['caster' => 'Frieren']);
+        $this->session->set('action', 'spell_cast');
+        $this->manager->save($this->session);
+        $updatedTimestamp = $this->getSessionLastActiveTimestamp($this->session->id);
+
+        $this->assertTrue($updatedTimestamp->after($originalTimestamp));
     }
 
     #[Test]
-    public function all(): void
+    public function delete_removes_session_from_database(): void
     {
-        $data = [
-            'mage' => 'Frieren',
-            'apprentice' => 'Fern',
-            'warrior' => 'Stark',
-        ];
+        $this->eventBus->preventEventHandling();
 
-        foreach ($data as $key => $value) {
-            $this->session->set($key, $value);
-        }
-
-        $this->assertEquals($data, $this->session->all());
-    }
-
-    #[Test]
-    public function destroy(): void
-    {
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('test_session_destroy');
-
-        $session = $manager->create($sessionId);
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
         $session->set('magic_type', 'offensive');
+
+        $this->manager->save($session);
 
         $this->assertSessionExistsInDatabase($sessionId);
 
-        $events = [];
-        $eventBus = $this->container->get(EventBus::class);
-        $eventBus->listen(function (SessionDestroyed $event) use (&$events): void {
-            $events[] = $event;
-        });
-
-        $session->destroy();
+        $this->manager->delete($session);
 
         $this->assertSessionNotExistsInDatabase($sessionId);
-        $this->assertCount(1, $events);
-        $this->assertEquals((string) $sessionId, (string) $events[0]->id);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event) use ($sessionId): void {
+                $this->assertEquals($sessionId, $event->id);
+            },
+            count: 1,
+        );
     }
 
     #[Test]
-    public function set_previous_url(): void
+    public function is_valid_checks_expiration(): void
     {
-        $session = $this->container->get(Session::class);
-        $session->setPreviousUrl('https://frieren.wiki/magic-academy');
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+        $this->manager->save($session);
 
-        $this->assertEquals('https://frieren.wiki/magic-academy', $session->getPreviousUrl());
-    }
-
-    #[Test]
-    public function is_valid(): void
-    {
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('new_session_validity');
-
-        $session = $manager->create($sessionId);
-
-        $this->assertTrue($session->isValid());
-        $this->assertTrue($manager->isValid($sessionId));
-    }
-
-    #[Test]
-    public function is_valid_for_unknown_session(): void
-    {
-        $manager = $this->container->get(SessionManager::class);
-
-        $this->assertFalse($manager->isValid(new SessionId('unknown_session')));
+        $this->assertTrue($this->manager->isValid($session));
     }
 
     #[Test]
@@ -176,128 +179,66 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new DatabaseSessionConfig(expiration: Duration::second()));
 
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('expired_session');
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+        $this->manager->save($session);
 
-        $session = $manager->create($sessionId);
-
-        $this->assertTrue($session->isValid());
+        $this->assertTrue($this->manager->isValid($session));
 
         $clock->plus(2);
 
-        $this->assertFalse($session->isValid());
-        $this->assertFalse($manager->isValid($sessionId));
+        $this->assertFalse($this->manager->isValid($session));
     }
 
     #[Test]
-    public function session_expires_based_on_last_activity(): void
+    public function delete_expired_sessions_removes_old_records(): void
     {
-        $clock = $this->clock('2023-01-01 00:00:00');
+        $this->eventBus->preventEventHandling();
+
+        $clock = $this->clock('2025-01-01 00:00:00');
 
         $this->container->config(new DatabaseSessionConfig(expiration: Duration::minutes(30)));
 
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('last_activity_test');
+        $activeId = $this->createSessionId();
+        $active = $this->manager->getOrCreate($activeId);
+        $active->set('status', 'active');
 
-        // Create session
-        $session = $manager->create($sessionId);
-        $this->assertTrue($session->isValid());
+        $this->manager->save($active);
 
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
+        $expiredId = $this->createSessionId();
+        $expired = $this->manager->getOrCreate($expiredId);
+        $expired->set('status', 'expired');
 
-        // Perform activity
-        $session->set('activity', 'user_action');
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
-        $this->assertTrue($manager->isValid($sessionId));
+        $this->manager->save($expired);
 
-        // Move forward another 10 minutes, now 35 minutes from last activity
-        $clock->plus(Duration::minutes(10));
-        $this->assertFalse($session->isValid());
-        $this->assertFalse($manager->isValid($sessionId));
-    }
+        // expire the second session
+        $clock->plus(Duration::minutes(35));
 
-    #[Test]
-    public function session_reflash(): void
-    {
-        $session = $this->container->get(Session::class);
+        // keep active session fresh
+        $this->manager->save($active);
 
-        $session->flash('success', 'Spell learned: Zoltraak');
+        $this->assertSessionExistsInDatabase($activeId);
+        $this->assertSessionExistsInDatabase($expiredId);
 
-        $this->assertEquals('Spell learned: Zoltraak', $session->get('success'));
+        $this->manager->deleteExpiredSessions();
 
-        $session->reflash();
-        $session->cleanup();
+        $this->assertSessionExistsInDatabase($activeId);
+        $this->assertSessionNotExistsInDatabase($expiredId);
 
-        $this->assertEquals('Spell learned: Zoltraak', $session->get('success'));
-    }
-
-    #[Test]
-    public function cleanup_removes_expired_sessions(): void
-    {
-        $clock = $this->clock('2023-01-01 00:00:00');
-
-        $this->container->config(new DatabaseSessionConfig(expiration: Duration::minutes(30)));
-
-        $manager = $this->container->get(SessionManager::class);
-
-        $activeSessionId = new SessionId('active_session');
-        $activeSession = $manager->create($activeSessionId);
-        $activeSession->set('status', 'active');
-
-        $clock->minus(Duration::hour());
-        $expiredSessionId = new SessionId('expired_session');
-        $expiredSession = $manager->create($expiredSessionId);
-        $expiredSession->set('status', 'expired');
-
-        $clock->plus(Duration::hour());
-
-        $this->assertSessionExistsInDatabase($activeSessionId);
-        $this->assertSessionExistsInDatabase($expiredSessionId);
-
-        $manager->cleanup();
-
-        $this->assertSessionExistsInDatabase($activeSessionId);
-        $this->assertSessionNotExistsInDatabase($expiredSessionId);
-    }
-
-    #[Test]
-    public function session_updates_last_active_timestamp(): void
-    {
-        $clock = $this->clock('2023-01-01 12:00:00');
-
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('timestamp_test');
-
-        $session = $manager->create($sessionId);
-        $originalTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
-
-        $clock->plus(Duration::minutes(5));
-
-        $session->set('action', 'spell_cast');
-        $updatedTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
-
-        $this->assertTrue($updatedTimestamp->after($originalTimestamp));
-    }
-
-    #[Test]
-    public function session_persists_csrf_token(): void
-    {
-        $session = $this->container->get(Session::class);
-        $token = $session->token;
-
-        $data = $this->getSessionDataFromDatabase($session->id);
-
-        $this->assertEquals($token, $data[Session::CSRF_TOKEN_KEY]);
-        $this->assertEquals($token, $session->token);
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event) use ($expiredId): void {
+                $this->assertEquals($expiredId, $event->id);
+            },
+            count: 1,
+        );
     }
 
     private function assertSessionExistsInDatabase(SessionId $sessionId): void
     {
         $session = query(DatabaseSession::class)
             ->select()
-            ->where('session_id', (string) $sessionId)
+            ->where('id', (string) $sessionId)
             ->first();
 
         $this->assertNotNull($session, "Session {$sessionId} should exist in database");
@@ -307,7 +248,7 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
     {
         $session = query(DatabaseSession::class)
             ->select()
-            ->where('session_id', (string) $sessionId)
+            ->where('id', (string) $sessionId)
             ->first();
 
         $this->assertNull($session, "Session {$sessionId} should not exist in database");
@@ -317,7 +258,7 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
     {
         $session = query(DatabaseSession::class)
             ->select()
-            ->where('session_id', (string) $sessionId)
+            ->where('id', (string) $sessionId)
             ->first();
 
         $this->assertNotNull($session, "Session {$sessionId} should exist in database");
@@ -329,25 +270,20 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         }
     }
 
-    private function getSessionDataFromDatabase(SessionId $sessionId): array
-    {
-        $session = query(DatabaseSession::class)
-            ->select()
-            ->where('session_id', (string) $sessionId)
-            ->first();
-
-        return unserialize($session->data ?? '');
-    }
-
     private function getSessionLastActiveTimestamp(SessionId $sessionId): \Tempest\DateTime\DateTime
     {
         $session = query(DatabaseSession::class)
             ->select()
-            ->where('session_id', (string) $sessionId)
+            ->where('id', (string) $sessionId)
             ->first();
 
         $this->assertNotNull($session, "Session {$sessionId} should exist in database");
 
         return $session->last_active_at;
+    }
+
+    private function createSessionId(): SessionId
+    {
+        return new SessionId(Random\uuid());
     }
 }

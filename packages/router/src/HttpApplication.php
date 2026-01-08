@@ -10,7 +10,6 @@ use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use Tempest\Http\RequestFactory;
-use Tempest\Http\Session\SessionManager;
 
 #[Singleton]
 final readonly class HttpApplication implements Application
@@ -25,19 +24,15 @@ final readonly class HttpApplication implements Application
         return Tempest::boot($root, $discoveryLocations)->get(HttpApplication::class);
     }
 
-    public function run(): void
+    public function run(): never
     {
         $router = $this->container->get(Router::class);
-
         $psrRequest = $this->container->get(RequestFactory::class)->make();
-
         $responseSender = $this->container->get(ResponseSender::class);
 
         $responseSender->send(
-            $router->dispatch($psrRequest),
+            response: $router->dispatch($psrRequest),
         );
-
-        $this->container->get(SessionManager::class)->cleanup();
 
         $this->container->get(Kernel::class)->shutdown();
     }

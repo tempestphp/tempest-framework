@@ -7,7 +7,7 @@ namespace Tempest\Http\Responses;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\PreviousUrl;
 use Tempest\Http\Status;
 
 use function Tempest\get;
@@ -22,20 +22,14 @@ final class Back implements Response
     public function __construct(?string $fallback = null)
     {
         $this->status = Status::FOUND;
+
+        $previousUrl = get(PreviousUrl::class);
         $request = get(Request::class);
 
-        $url = $request->headers['referer'] ?? $request->getSessionValue(Session::PREVIOUS_URL);
+        $url = $previousUrl->get(
+            default: $request->headers['referer'] ?? $fallback ?? '/',
+        );
 
-        if ($url) {
-            $this->addHeader('Location', $url);
-            return;
-        }
-
-        if ($fallback) {
-            $this->addHeader('Location', $fallback);
-            return;
-        }
-
-        $this->addHeader('Location', '/');
+        $this->addHeader('Location', value: $url);
     }
 }

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
-use Tempest\Database\Database;
+use Tempest\DateTime\FormatPattern;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionDestroyed;
+use Tempest\Http\Session\SessionCreated;
+use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
-use Tempest\Support\Arr;
-use Tempest\Support\Arr\ArrayInterface;
 
 use function Tempest\Database\query;
 use function Tempest\event;
@@ -22,83 +21,100 @@ final readonly class DatabaseSessionManager implements SessionManager
     public function __construct(
         private Clock $clock,
         private SessionConfig $config,
-        private Database $database,
     ) {}
 
-    public function create(SessionId $id): Session
+    public function getOrCreate(SessionId $id): Session
     {
-        return $this->persist($id);
-    }
+        $now = $this->clock->now();
+        $session = $this->load($id);
 
-    public function set(SessionId $id, string $key, mixed $value): void
-    {
-        $this->persist($id, [...$this->getData($id), ...[$key => $value]]);
-    }
+        if ($session === null) {
+            $session = new Session(
+                id: $id,
+                createdAt: $now,
+                lastActiveAt: $now,
+            );
 
-    public function get(SessionId $id, string $key, mixed $default = null): mixed
-    {
-        $value = Arr\get_by_key($this->getData($id), $key, $default);
-
-        if ($value instanceof ArrayInterface) {
-            return $value->toArray();
+            event(new SessionCreated($session));
         }
 
-        return $value;
+        return $session;
     }
 
-    public function all(SessionId $id): array
+    public function save(Session $session): void
     {
-        return $this->getData($id);
+        $session->lastActiveAt = $this->clock->now();
+
+        $existing = query(DatabaseSession::class)
+            ->select()
+            ->where('id', (string) $session->id)
+            ->first();
+
+        if ($existing === null) {
+            query(DatabaseSession::class)
+                ->insert(
+                    id: (string) $session->id,
+                    data: serialize($session->data),
+                    created_at: $session->createdAt,
+                    last_active_at: $session->lastActiveAt,
+                )
+                ->execute();
+
+            return;
+        }
+
+        query(DatabaseSession::class)
+            ->update(
+                data: serialize($session->data),
+                last_active_at: $session->lastActiveAt,
+            )
+            ->where('id', (string) $session->id)
+            ->execute();
     }
 
-    public function remove(SessionId $id, string $key): void
-    {
-        $data = $this->getData($id);
-        $data = Arr\remove_keys($data, $key);
-
-        $this->persist($id, $data);
-    }
-
-    public function destroy(SessionId $id): void
+    public function delete(Session $session): void
     {
         query(DatabaseSession::class)
             ->delete()
-            ->where('session_id', (string) $id)
+            ->where('id', (string) $session->id)
             ->execute();
 
-        event(new SessionDestroyed($id));
+        event(new SessionDeleted($session->id));
     }
 
-    public function isValid(SessionId $id): bool
+    public function isValid(Session $session): bool
     {
-        $session = $this->resolve($id);
-
-        if ($session === null) {
-            return false;
-        }
-
         return $this->clock->now()->before(
             other: $session->lastActiveAt->plus($this->config->expiration),
         );
     }
 
-    public function cleanup(): void
+    public function deleteExpiredSessions(): void
     {
         $expired = $this->clock
             ->now()
             ->minus($this->config->expiration);
 
-        query(DatabaseSession::class)
-            ->delete()
-            ->whereBefore('last_active_at', $expired)
-            ->execute();
+        $expiredSessions = query(DatabaseSession::class)
+            ->select()
+            ->where('last_active_at < ?', $expired->format(FormatPattern::SQL_DATE_TIME))
+            ->all();
+
+        foreach ($expiredSessions as $expiredSession) {
+            query(DatabaseSession::class)
+                ->delete()
+                ->where('id', $expiredSession->id)
+                ->execute();
+
+            event(new SessionDeleted(new SessionId((string) $expiredSession->id)));
+        }
     }
 
-    private function resolve(SessionId $id): ?Session
+    private function load(SessionId $id): ?Session
     {
         $session = query(DatabaseSession::class)
             ->select()
-            ->where('session_id', (string) $id)
+            ->where('id', (string) $id)
             ->first();
 
         if ($session === null) {
@@ -111,40 +127,5 @@ final readonly class DatabaseSessionManager implements SessionManager
             lastActiveAt: $session->last_active_at,
             data: unserialize($session->data),
         );
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function getData(SessionId $id): array
-    {
-        return $this->resolve($id)->data ?? [];
-    }
-
-    /**
-     * @param array<mixed>|null $data
-     */
-    private function persist(SessionId $id, ?array $data = null): Session
-    {
-        $now = $this->clock->now();
-        $session = $this->resolve($id) ?? new Session(
-            id: $id,
-            createdAt: $now,
-            lastActiveAt: $now,
-        );
-
-        if ($data !== null) {
-            $session->data = $data;
-        }
-
-        query(DatabaseSession::class)->updateOrCreate([
-            'session_id' => (string) $id,
-        ], [
-            'data' => serialize($session->data),
-            'created_at' => $session->createdAt,
-            'last_active_at' => $now,
-        ]);
-
-        return $session;
     }
 }

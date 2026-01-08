@@ -4,59 +4,46 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session;
 
+use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
-use Tempest\Support\Random;
+use Tempest\Support\Str;
+use UnitEnum;
 
-use function Tempest\get;
-
+/**
+ * Represents the current session.
+ *
+ * @see ManageSessionMiddleware
+ * @see SessionManager
+ */
 final class Session
 {
-    public const string VALIDATION_ERRORS = '#validation_errors';
-
-    public const string ORIGINAL_VALUES = '#original_values';
-
-    public const string PREVIOUS_URL = '#previous_url';
-
-    public const string CSRF_TOKEN_KEY = '#csrf_token';
-
+    /**
+     * Stores the keys for session values that have expired.
+     */
     private array $expiredKeys = [];
 
-    private SessionManager $manager {
-        get => get(SessionManager::class);
-    }
-
-    /**
-     * Session token used for cross-site request forgery protection.
-     */
-    public string $token {
-        get {
-            if (! $this->get(self::CSRF_TOKEN_KEY)) {
-                $this->set(self::CSRF_TOKEN_KEY, Random\uuid());
-            }
-
-            return $this->get(self::CSRF_TOKEN_KEY);
-        }
-    }
-
     public function __construct(
-        public SessionId $id,
-        public DateTimeInterface $createdAt,
+        private(set) SessionId $id,
+        private(set) DateTimeInterface $createdAt,
         public DateTimeInterface $lastActiveAt,
-        /** @var array<array-key, mixed> */
-        public array $data = [],
+        /** @var array<array-key,mixed> */
+        private(set) array $data = [],
     ) {}
 
-    public function set(string $key, mixed $value): void
+    /**
+     * Sets a value in the session.
+     */
+    public function set(string|UnitEnum $key, mixed $value): void
     {
-        $this->manager->set($this->id, $key, $value);
+        $this->data[Str\parse($key)] = $value;
     }
 
     /**
      * Stores a value in the session that will be available for the next request only.
      */
-    public function flash(string $key, mixed $value): void
+    public function flash(string|UnitEnum $key, mixed $value): void
     {
-        $this->manager->set($this->id, $key, new FlashValue($value));
+        $this->data[Str\parse($key)] = new FlashValue($value);
     }
 
     /**
@@ -64,7 +51,7 @@ final class Session
      */
     public function reflash(): void
     {
-        foreach ($this->manager->all($this->id) as $key => $value) {
+        foreach ($this->data as $key => $value) {
             if (! $value instanceof FlashValue) {
                 continue;
             }
@@ -73,9 +60,13 @@ final class Session
         }
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    /**
+     * Retrieves a value from the session.
+     */
+    public function get(string|UnitEnum $key, mixed $default = null): mixed
     {
-        $value = $this->manager->get($this->id, $key, $default);
+        $key = Str\parse($key);
+        $value = $this->data[$key] ?? $default;
 
         if ($value instanceof FlashValue) {
             $this->expiredKeys[$key] = $key;
@@ -85,32 +76,12 @@ final class Session
         return $value;
     }
 
-    /** @return \Tempest\Validation\Rule[] */
-    public function getErrorsFor(string $name): array
-    {
-        return $this->get(self::VALIDATION_ERRORS)[$name] ?? [];
-    }
-
-    public function getOriginalValueFor(string $name, mixed $default = ''): mixed
-    {
-        return $this->get(self::ORIGINAL_VALUES)[$name] ?? $default;
-    }
-
-    public function getPreviousUrl(): string
-    {
-        return $this->get(self::PREVIOUS_URL, default: '');
-    }
-
-    public function setPreviousUrl(string $url): void
-    {
-        $this->set(self::PREVIOUS_URL, $url);
-    }
-
     /**
      * Retrieves the value for the given key and removes it from the session.
      */
-    public function consume(string $key, mixed $default = null): mixed
+    public function consume(string|UnitEnum $key, mixed $default = null): mixed
     {
+        $key = Str\parse($key);
         $value = $this->get($key, $default);
 
         $this->remove($key);
@@ -118,30 +89,61 @@ final class Session
         return $value;
     }
 
+    /**
+     * Retrieves all values from the session.
+     */
     public function all(): array
     {
-        return $this->manager->all($this->id);
+        return $this->data;
     }
 
-    public function remove(string $key): void
+    /**
+     * Removes a value from the session.
+     */
+    public function remove(string|UnitEnum $key): void
     {
-        $this->manager->remove($this->id, $key);
+        $key = Str\parse($key);
+
+        if (isset($this->data[$key])) {
+            unset($this->data[$key]);
+        }
     }
 
-    public function destroy(): void
-    {
-        $this->manager->destroy($this->id);
-    }
-
-    public function isValid(): bool
-    {
-        return $this->manager->isValid($this->id);
-    }
-
+    /**
+     * Cleans up expired session values.
+     */
     public function cleanup(): void
     {
         foreach ($this->expiredKeys as $key) {
-            $this->manager->remove($this->id, $key);
+            $this->remove($key);
         }
+    }
+
+    /**
+     * Clears all values from the session.
+     */
+    public function clear(): void
+    {
+        $this->data = [];
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => (string) $this->id,
+            'created_at' => $this->createdAt->getTimestamp()->getSeconds(),
+            'last_active_at' => $this->lastActiveAt->getTimestamp()->getSeconds(),
+            'data' => $this->data,
+            'expired_keys' => $this->expiredKeys,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = new SessionId($data['id']);
+        $this->createdAt = DateTime::fromTimestamp($data['created_at']);
+        $this->lastActiveAt = DateTime::fromTimestamp($data['last_active_at']);
+        $this->data = $data['data'];
+        $this->expiredKeys = $data['expired_keys'];
     }
 }

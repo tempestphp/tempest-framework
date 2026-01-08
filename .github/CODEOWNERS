@@ -1,0 +1,41 @@
+/.github/                                            @brendt @innocenzi
+/.github/workflows/create-gh-release.yml             @innocenzi
+/.github/workflows/lint-pr-title.yml                 @innocenzi
+/.github/workflows/publish-javascript-packages.yml   @innocenzi
+/.github/workflows/deploy-docs.yml                   @innocenzi
+/src/                                                @brendt
+/docs/                                               @brendt @innocenzi
+/packages/auth/                                      @innocenzi
+/packages/cache/                                     @innocenzi
+/packages/clock/                                     @aidan-casey
+/packages/command-bus/                               @brendt @aidan-casey
+/packages/console/                                   @brendt
+/packages/container/                                 @brendt
+/packages/core/                                      @brendt
+/packages/cryptography/                              @innocenzi
+/packages/database/                                  @brendt @innocenzi
+/packages/datetime/                                  @innocenzi
+/packages/debug/                                     @innocenzi
+/packages/discovery/                                 @brendt @aidan-casey
+/packages/event-bus/                                 @brendt @aidan-casey
+/packages/generation/                                @brendt
+/packages/http/                                      @brendt @aidan-casey
+/packages/http-client/                               @aidan-casey
+/packages/icon/                                      @innocenzi
+/packages/kv-store/                                  @innocenzi
+/packages/log/                                       @brendt
+/packages/mail/                                      @innocenzi
+/packages/mapper/                                    @brendt
+/packages/process/                                   @innocenzi
+/packages/reflection/                                @brendt @aidan-casey
+/packages/router/                                    @brendt @aidan-casey
+/packages/router/src/Exceptions/local                @innocenzi
+/packages/storage/                                   @innocenzi
+/packages/support/                                   @innocenzi @brendt
+/packages/upgrade/                                   @brendt
+/packages/validation/                                @brendt @innocenzi
+/packages/view/                                      @brendt
+/packages/vite/                                      @innocenzi
+/packages/vite-plugin-tempest/                       @innocenzi
+*.ts                                                 @innocenzi
+*.vue                                                @innocenzi

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Testing\Http;
 
+use BackedEnum;
 use InvalidArgumentException;
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
@@ -19,6 +20,8 @@ use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\RouteDecorator;
 use Tempest\Router\Router;
+use Tempest\Router\SecFetchMode;
+use Tempest\Router\SecFetchSite;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Static\StaticPageConfig;
@@ -31,6 +34,8 @@ use function Tempest\Mapper\map;
 final class HttpRouterTester
 {
     private(set) ?ContentType $contentType = null;
+
+    private(set) bool $includeSecFetchHeaders = true;
 
     public function __construct(
         private Container $container,
@@ -107,6 +112,16 @@ final class HttpRouterTester
         return $this;
     }
 
+    /**
+     * Specifies that subsequent requests should be sent without Sec-Fetch headers.
+     */
+    public function withoutSecFetchHeaders(): self
+    {
+        $this->includeSecFetchHeaders = false;
+
+        return $this;
+    }
+
     public function get(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(
@@ -119,14 +134,12 @@ final class HttpRouterTester
 
     public function head(string $uri, array $query = [], array $headers = []): TestResponseHelper
     {
-        return $this->sendRequest(
-            new GenericRequest(
-                method: Method::HEAD,
-                uri: Uri\merge_query($uri, ...$query),
-                body: [],
-                headers: $this->createHeaders($headers),
-            ),
-        );
+        return $this->sendRequest(new GenericRequest(
+            method: Method::HEAD,
+            uri: Uri\merge_query($uri, ...$query),
+            body: [],
+            headers: $this->createHeaders($headers),
+        ));
     }
 
     public function post(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
@@ -233,8 +246,12 @@ final class HttpRouterTester
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['REQUEST_METHOD'] = $method->value;
 
-        foreach ($headers as $key => $value) {
-            $key = strtoupper($key);
+        foreach ($this->createHeaders($headers) as $key => $value) {
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+
+            $key = strtoupper(str_replace('-', '_', $key));
 
             $_SERVER["HTTP_{$key}"] = $value;
         }
@@ -254,6 +271,16 @@ final class HttpRouterTester
 
         if ($this->contentType !== null) {
             $headers[$key ?? 'accept'] = $this->contentType->value;
+        }
+
+        if ($this->includeSecFetchHeaders === true) {
+            if (! array_key_exists('sec-fetch-site', array_change_key_case($headers, case: CASE_LOWER))) {
+                $headers['sec-fetch-site'] = SecFetchSite::SAME_ORIGIN;
+            }
+
+            if (! array_key_exists('sec-fetch-mode', array_change_key_case($headers, case: CASE_LOWER))) {
+                $headers['sec-fetch-mode'] = SecFetchMode::CORS;
+            }
         }
 
         return $headers;

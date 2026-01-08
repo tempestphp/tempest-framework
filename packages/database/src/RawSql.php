@@ -4,6 +4,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Support\Str;
 use Tempest\Support\Str\ImmutableString;
 
 final class RawSql
@@ -99,6 +100,6 @@ final class RawSql
             return 'NULL';
         }
 
-        return (string) $value;
+        return Str\parse($value);
     }
 }

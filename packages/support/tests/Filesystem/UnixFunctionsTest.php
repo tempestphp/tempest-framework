@@ -15,6 +15,7 @@ use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotFound;
 use Tempest\Support\Filesystem\Exceptions\PathWasNotReadable;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
+use Tempest\Support\Filesystem\LockType;
 
 final class UnixFunctionsTest extends TestCase
 {
@@ -735,6 +736,53 @@ final class UnixFunctionsTest extends TestCase
         $file = $this->fixtures . '/file.txt';
 
         Filesystem\read_file($file);
+    }
+
+    #[Test]
+    public function read_file_locked(): void
+    {
+        $file = $this->fixtures . '/file.txt';
+
+        file_put_contents($file, 'Hello');
+
+        $content = Filesystem\read_locked_file($file);
+
+        $this->assertEquals('Hello', $content);
+    }
+
+    #[Test]
+    public function read_file_locked_with_exclusive_lock(): void
+    {
+        $file = $this->fixtures . '/file.txt';
+
+        file_put_contents($file, 'World');
+
+        $content = Filesystem\read_locked_file($file, LockType::EXCLUSIVE);
+
+        $this->assertEquals('World', $content);
+    }
+
+    #[Test]
+    public function read_file_locked_not_found(): void
+    {
+        $this->expectException(PathWasNotFound::class);
+
+        $file = $this->fixtures . '/file.txt';
+
+        Filesystem\read_locked_file($file);
+    }
+
+    #[Test]
+    public function read_file_locked_non_readable(): void
+    {
+        $this->expectException(PathWasNotReadable::class);
+
+        $file = $this->fixtures . '/file.txt';
+
+        file_put_contents($file, 'Hello');
+        chmod($file, 0o000);
+
+        Filesystem\read_locked_file($file);
     }
 
     #[Test]

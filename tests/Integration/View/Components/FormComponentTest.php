@@ -13,7 +13,6 @@ final class FormComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('<form', $html);
         $this->assertStringContainsString('method="POST"', $html);
-        $this->assertStringContainsString('#csrf_token', $html);
     }
 
     public function test_form_with_body(): void

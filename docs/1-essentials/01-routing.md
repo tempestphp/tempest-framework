@@ -449,12 +449,12 @@ final readonly class AircraftController
 
 When users submit forms—like updating profile settings, or posting comments—the data needs validation before processing. Tempest automatically validates request objects using type hints and validation attributes, then provides errors back to users when something is wrong.
 
-On validation failure, Tempest either redirects back to the form (for web pages) or returns a 400 response (for stateless requests). Validation errors are available in two places:
+On validation failure, Tempest either redirects back to the form (for web pages) or returns a 422 response (for stateless requests). Validation errors are available in two places:
 
 - As a JSON encoded string in the `{txt}X-Validation` header
-- Within the session stored in `Session::VALIDATION_ERRORS`
+- Through the `b{Tempest\Http\Session\FormSession}` class
 
-The JSON-encoded header is available for APIs built with Tempest. The session errors are available for web pages. For web pages, Tempest provides built-in view components to display errors when they occur.
+For web pages, Tempest also provides built-in view components to display errors when they occur.
 
 ```html
 <x-form :action="uri(StorePostController::class)">
@@ -464,7 +464,7 @@ The JSON-encoded header is available for APIs built with Tempest. The session er
 </x-form>
 ```
 
-`{html}<x-form>` is a view component that automatically includes the CSRF token and defaults to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once.
+`{html}<x-form>` is a view component that defaults to sending `POST` requests. `{html}<x-input>` is a view component that renders a label, input field, and validation errors all at once.
 
 :::info
 These built-in view components can be customized. Run `./tempest install view-components` and select the components to pull into the project. [Read more about installing view components here](../1-essentials/02-views.md#built-in-components).
@@ -542,20 +542,33 @@ final readonly class ValidateWebhook implements HttpMiddleware
 { /* … */ }
 ```
 
+### Cross-site request forgery protection
+
+Tempest provides [cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection based on the presence and values of the [`{txt}Sec-Fetch-Site`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site) and [`{txt}Sec-Fetch-Mode`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) headers through the {b`Tempest\Router\PreventCrossSiteRequestsMiddleware`} middleware, included by default in all requests.
+
+Unlike traditional CSRF tokens, this approach uses browser-generated headers that cannot be forged by external websites:
+
+- [`{txt}Sec-Fetch-Site`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site) indicates whether the request came from the same domain, subdomain, a different site or if it was user-initiated, such as typing the URL directly,
+- [`{txt}Sec-Fetch-Mode`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode) allows distinguishing between requests originating from a user navigating between HTML pages, and requests to load images and other resources.
+
+:::info
+This middleware requires browsers that support `{txt}Sec-Fetch-*` headers, which is the case for all modern browsers. You may [exclude this middleware](#excluding-route-middleware) and implement traditional CSRF protection using tokens if you need to support older browsers.
+:::
+
 ### Excluding route middleware
 
-Some routes do not require specific global middleware to be applied. For instance, API routes do not need CSRF protection. Specific middleware can be skipped by using the `without` argument of the route attribute.
+Some routes do not require specific global middleware to be applied. For instance, a publicly accessible health check endpoint could bypass rate limiting that's applied to other routes. Specific middleware can be skipped by using the `without` argument of the route attribute.
 
-```php app/Slack/ReceiveInteractionController.php
-use Tempest\Router\Post;
+```php app/HealthCheckController.php
+use Tempest\Router\Get;
 use Tempest\Http\Response;
 
-final readonly class ReceiveInteractionController
+final readonly class HealthCheckController
 {
-    #[Post('/slack/interaction', without: [VerifyCsrfMiddleware::class, SetCookieMiddleware::class])]
+    #[Get('/health', without: [RateLimitMiddleware::class])]
     public function __invoke(): Response
     {
-        // …
+        return new Ok(['status' => 'healthy']);
     }
 }
 ```
@@ -639,8 +652,9 @@ Explicitly removes middleware to all associated routes.
 ```php
 use Tempest\Router\WithoutMiddleware;
 use Tempest\Router\Get;
+use Tempest\Router\PreventCrossSiteRequestsMiddleware;
 
-#[WithoutMiddleware(VerifyCsrfMiddleware::class, SetCookieMiddleware::class)]
+#[WithoutMiddleware(PreventCrossSiteRequestsMiddleware::class)]
 final readonly class StatelessController { /* … */ }
 ```
 

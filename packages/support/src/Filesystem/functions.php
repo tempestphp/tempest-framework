@@ -10,8 +10,11 @@ use Tempest\Support\Str;
 
 use function copy as php_copy;
 use function dirname;
+use function fclose;
 use function file_exists;
 use function fileperms;
+use function flock;
+use function fopen;
 use function is_dir;
 use function is_executable as php_is_executable;
 use function is_file as php_is_file;
@@ -131,6 +134,54 @@ function read_file(string $filename): string
     }
 
     return $result;
+}
+
+/**
+ * Reads the content of the specified `$filename` with an advisory lock.
+ */
+function read_locked_file(string $filename, LockType $type = LockType::SHARED): string
+{
+    if (! namespace\exists($filename)) {
+        throw Exceptions\PathWasNotFound::forFile($filename);
+    }
+
+    if (! namespace\is_readable($filename)) {
+        throw Exceptions\PathWasNotReadable::forFile($filename);
+    }
+
+    [$handle, $openMessage] = box(static fn () => fopen($filename, 'rb'));
+
+    if ($handle === false) {
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to open file "%s": %s',
+            $filename,
+            $openMessage ?? 'internal error',
+        ));
+    }
+
+    if (! flock($handle, $type->value)) {
+        fclose($handle);
+
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to acquire lock on file "%s"',
+            $filename,
+        ));
+    }
+
+    [$content, $readMessage] = box(static fn (): false|string => stream_get_contents($handle));
+
+    flock($handle, LOCK_UN);
+    fclose($handle);
+
+    if ($content === false) {
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to read file "%s": %s',
+            $filename,
+            $readMessage ?? 'internal error',
+        ));
+    }
+
+    return $content;
 }
 
 /**

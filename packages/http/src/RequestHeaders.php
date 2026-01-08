@@ -8,6 +8,7 @@ use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
 use LogicException;
+use Tempest\Support\Str;
 use Traversable;
 
 final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
@@ -17,11 +18,10 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
      */
     public static function normalizeFromArray(array $headers): self
     {
-        $normalized = array_combine(
+        return new self(array_combine(
             array_map(strtolower(...), array_keys($headers)),
-            array_values($headers),
-        );
-        return new self($normalized);
+            array_values(array_map(fn (mixed $value) => Str\parse($value), $headers)),
+        ));
     }
 
     /** @param array<string, string> $headers */
