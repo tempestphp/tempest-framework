@@ -63,7 +63,7 @@ The following loop:
 Will be compiled to:
 
 ```html
-<?php if (iterator_count$items) { ?>
+<?php if (iterator_count($items)) { ?>
     <?php foreach ($items as $key => $item) { ?>
         <div>A</div>
     <?php } ?>
