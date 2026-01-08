@@ -134,7 +134,7 @@ $commandBus = $container->get(\Tempest\CommandBus\CommandBus::class);
 $commandBus->dispatch(new MyCommand());
 
 // Or use the `command` function, which is shipped with the package
-\Tempest\command(new \Brendt\MyEvent());
+\Tempest\command(new MyCommand());
 ```
 
 ## `tempest/mapper`
