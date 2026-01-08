@@ -9,7 +9,8 @@
         "symfony/yaml": "^7.3",
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
-        "tempest/support": "dev-main"
+        "tempest/support": "dev-main",
+        "ext-intl": "*"
     },
     "suggest": {
         "tempest/datetime": "In order to use the `datetime` function",
