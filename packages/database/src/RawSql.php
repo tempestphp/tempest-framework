@@ -6,6 +6,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str;
+use UnitEnum;
 
 final class RawSql
 {
