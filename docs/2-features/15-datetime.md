@@ -92,10 +92,10 @@ $duration = $date1->between($date2);
 The {b`Tempest\DateTime\DateTime`} instance provides multiple methods to compare dates against each other, or against the current time. For instance, you may check if a date is before or after another date using the `isBefore()` and `isAfter()` methods, respectively.
 
 ```php
-// Check if a date is before another date, inclusively
+// Check if a date is before another date (exclusive - does not include the comparison date)
 $date->isBefore($other);
 
-// Check if a date is before another date, exclusively
+// Check if a date is before or at another date (inclusive - includes the comparison date)
 $date->isBeforeOrAt($other);
 
 // Check if a date between two other dates, inclusively
