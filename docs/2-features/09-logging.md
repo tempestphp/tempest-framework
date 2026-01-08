@@ -102,7 +102,7 @@ In situations where you would like to log different types of information to diff
 For instance, you could have a logger dedicated to critical alerts, while each of your application's module have its own logger:
 
 ```php src/Monitoring/logging.config.php
-use Tempest\Log\Config\DailyLogConfig;
+use Tempest\Log\Config\SlackLogConfig;
 use Modules\Monitoring\Logging;
 use Tempest;
 
