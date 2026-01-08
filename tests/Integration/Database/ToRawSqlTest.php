@@ -14,8 +14,8 @@ use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
 use Tests\Tempest\Integration\Validator\UnitEnumFixture;
+
 use function Tempest\Database\query;
 
 /**
