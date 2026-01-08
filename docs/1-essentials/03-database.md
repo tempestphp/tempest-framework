@@ -217,10 +217,10 @@ final class Book
     public ?Author $author = null;
 
     /** @var \App\Chapter[] */
-    #[HasMany(relationJoin: 'chapters.uuid', ownerJoin: 'books.chapter_uuid')]
+    #[HasMany(ownerJoin: 'chapters.book_uuid', relationJoin: 'books.uuid')]
     public array $chapters = [];
 
-    #[HasOne(relationJoin: 'books.uuid', ownerJoin: 'isbns.book_uuid')]
+    #[HasOne(ownerJoin: 'isbns.book_uuid', relationJoin: 'books.uuid')]
     public ?Isbn $isbn = null;
 }
 ```
@@ -242,10 +242,10 @@ final class Book
     public ?Author $author = null;
 
     /** @var \App\Chapter[] */
-    #[HasMany(relationJoin: 'uuid', ownerJoin: 'chapter_uuid')]
+    #[HasMany(ownerJoin: 'chapter_uuid', relationJoin: 'uuid')]
     public array $chapters = [];
 
-    #[HasOne(relationJoin: 'uuid', ownerJoin: 'book_uuid')]
+    #[HasOne(ownerJoin: 'book_uuid', relationJoin: 'uuid')]
     public ?Isbn $isbn = null;
 }
 ```
