@@ -13,6 +13,7 @@ use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 
+use Throwable;
 use function Tempest\event;
 use function Tempest\internal_storage_path;
 
@@ -107,7 +108,7 @@ final readonly class FileSessionManager implements SessionManager
                     'allowed_classes' => true,
                 ],
             );
-        } catch (Filesystem\Exceptions\FilesystemException) {
+        } catch (Throwable) {
             return null;
         }
     }
