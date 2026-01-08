@@ -7,6 +7,9 @@ namespace Tests\Tempest\Integration\Testing\Http;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Http\Request;
+use Tempest\Http\Responses\Ok;
+use Tempest\Router\Post;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
 
@@ -202,5 +205,28 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
         $this->assertSame($this->http->delete('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->patch('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->head('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+    }
+
+    #[Test]
+    public function raw_body_string(): void
+    {
+        $this->registerRoute([TestController::class, 'handleRawBody']);
+
+        $response = $this->http
+            ->post('/raw-body', body: 'ok')
+            ->assertOk();
+
+        $this->assertSame('ok', $response->body);
+        $this->assertSame('ok', $response->request->raw);
+        $this->assertSame([], $response->request->body);
+    }
+}
+
+final class TestController
+{
+    #[Post('/raw-body')]
+    public function handleRawBody(Request $request): Ok
+    {
+        return new Ok($request->raw ?? '');
     }
 }

@@ -72,33 +72,36 @@ final class HttpRouterTester
         ));
     }
 
-    public function post(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
+    public function post(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(
             method: Method::POST,
             uri: Uri\merge_query($uri, ...$query),
-            body: $body,
+            body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
+            raw: is_string($body) ? $body : null,
         ));
     }
 
-    public function put(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
+    public function put(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(
             method: Method::PUT,
             uri: Uri\merge_query($uri, ...$query),
-            body: $body,
+            body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
+            raw: is_string($body) ? $body : null,
         ));
     }
 
-    public function delete(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
+    public function delete(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(
             method: Method::DELETE,
             uri: Uri\merge_query($uri, ...$query),
-            body: $body,
+            body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
+            raw: is_string($body) ? $body : null,
         ));
     }
 
@@ -132,13 +135,14 @@ final class HttpRouterTester
         ));
     }
 
-    public function patch(string $uri, array $body = [], array $query = [], array $headers = []): TestResponseHelper
+    public function patch(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(
             method: Method::PATCH,
             uri: Uri\merge_query($uri, ...$query),
-            body: $body,
+            body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
+            raw: is_string($body) ? $body : null,
         ));
     }
 
@@ -168,7 +172,7 @@ final class HttpRouterTester
     public function makePsrRequest(
         string $uri,
         Method $method = Method::GET,
-        array $body = [],
+        array|string $body = [],
         array $headers = [],
         array $cookies = [],
         array $files = [],
@@ -187,7 +191,12 @@ final class HttpRouterTester
         }
 
         $_COOKIE = $cookies;
-        $_POST = $body;
+
+        if (is_array($body)) {
+            $_POST = $body;
+        } else {
+            $_POST = [];
+        }
 
         return ServerRequestFactory::fromGlobals()->withUploadedFiles($files);
     }
