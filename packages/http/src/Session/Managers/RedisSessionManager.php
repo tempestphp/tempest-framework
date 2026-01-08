@@ -15,7 +15,7 @@ use Tempest\KeyValue\Redis\Redis;
 use Tempest\Support\Str;
 use Throwable;
 
-use function Tempest\event;
+use function Tempest\EventBus\event;
 
 final readonly class RedisSessionManager implements SessionManager
 {

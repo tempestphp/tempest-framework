@@ -16,7 +16,7 @@ use Tests\Tempest\Fixtures\Events\TestEventHandler;
 use Tests\Tempest\Fixtures\Handlers\EventInterfaceHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\event;
+use function Tempest\EventBus\event;
 
 /**
  * @internal

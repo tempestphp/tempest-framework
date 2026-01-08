@@ -14,7 +14,7 @@ use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 
 use function Tempest\Database\query;
-use function Tempest\event;
+use function Tempest\EventBus\event;
 
 final readonly class DatabaseSessionManager implements SessionManager
 {

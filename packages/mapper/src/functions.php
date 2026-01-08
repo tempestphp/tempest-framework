@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use Tempest;
+use Tempest\Container;
 use Tempest\Mapper\ObjectFactory;
 
 /**
@@ -24,7 +24,7 @@ use Tempest\Mapper\ObjectFactory;
  */
 function make(object|string $objectOrClass): ObjectFactory
 {
-    return Tempest\get(ObjectFactory::class)->forClass($objectOrClass);
+    return Container\get(ObjectFactory::class)->forClass($objectOrClass);
 }
 
 /**
@@ -40,5 +40,5 @@ function make(object|string $objectOrClass): ObjectFactory
  */
 function map(mixed $data): ObjectFactory
 {
-    return Tempest\get(ObjectFactory::class)->withData($data);
+    return Container\get(ObjectFactory::class)->withData($data);
 }

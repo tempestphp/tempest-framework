@@ -7,7 +7,7 @@
 use Tempest\Core\Environment;
 use Tempest\Icon\Icon;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 use function Tempest\Support\str;
 
 $class ??= null;

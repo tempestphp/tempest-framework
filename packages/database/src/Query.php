@@ -7,7 +7,7 @@ namespace Tempest\Database;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * A database query that can be executed.

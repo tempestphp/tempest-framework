@@ -5,7 +5,7 @@ namespace Tempest\Storage\Config;
 use League\Flysystem\FilesystemAdapter;
 use UnitEnum;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 final class CustomStorageConfig implements StorageConfig
 {

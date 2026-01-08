@@ -47,10 +47,10 @@ The `{php}\Tempest\invoke()` function serves the same purpose when the container
 
 ### Locating a dependency
 
-There are situations where it may not be possible to inject a dependency on a constructor. To work around this, Tempest provides the `{php}\Tempest\get()` function, which can resolve an object from the container.
+There are situations where it may not be possible to inject a dependency on a constructor. To work around this, Tempest provides the `{php}\Tempest\Container\get()` function, which can resolve an object from the container.
 
 ```php
-use function Tempest\get;
+use function Tempest\Container\get;
 
 $config = get(AppConfig::class);
 ```

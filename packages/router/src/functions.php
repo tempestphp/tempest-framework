@@ -9,7 +9,7 @@ use Tempest\DateTime\Duration;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\UriGenerator;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * Creates a valid URI to the given `$action`.

@@ -6,6 +6,7 @@ namespace Tempest;
 
 use Closure;
 use Stringable;
+use Tempest\Container;
 use Tempest\Core\Composer;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\EnvironmentVariableValidationFailed;
@@ -23,7 +24,7 @@ use function Tempest\Support\Path\to_absolute_path;
  */
 function root_path(Stringable|string ...$parts): string
 {
-    return to_absolute_path(get(Kernel::class)->root, ...$parts);
+    return to_absolute_path(Container\get(Kernel::class)->root, ...$parts);
 }
 
 /**
@@ -31,7 +32,7 @@ function root_path(Stringable|string ...$parts): string
  */
 function src_path(Stringable|string ...$parts): string
 {
-    return root_path(get(Composer::class)->mainNamespace->path, ...$parts);
+    return root_path(Container\get(Composer::class)->mainNamespace->path, ...$parts);
 }
 
 /**
@@ -39,7 +40,7 @@ function src_path(Stringable|string ...$parts): string
  */
 function internal_storage_path(Stringable|string ...$parts): string
 {
-    return to_absolute_path(get(Kernel::class)->internalStorage, ...$parts);
+    return to_absolute_path(Container\get(Kernel::class)->internalStorage, ...$parts);
 }
 
 /**
@@ -49,7 +50,7 @@ function internal_storage_path(Stringable|string ...$parts): string
  */
 function registered_namespace(Stringable|string ...$parts): string
 {
-    return to_psr4_namespace(get(Composer::class)->namespaces, root_path(...$parts), root: root_path());
+    return to_psr4_namespace(Container\get(Composer::class)->namespaces, root_path(...$parts), root: root_path());
 }
 
 /**
@@ -59,7 +60,7 @@ function registered_namespace(Stringable|string ...$parts): string
  */
 function src_namespace(Stringable|string ...$parts): string
 {
-    return to_psr4_namespace(get(Composer::class)->mainNamespace, root_path(...$parts), root: root_path());
+    return to_psr4_namespace(Container\get(Composer::class)->mainNamespace, root_path(...$parts), root: root_path());
 }
 
 /**
@@ -81,7 +82,7 @@ function env(string $key, mixed $default = null, array $rules = []): mixed
         return $value;
     }
 
-    $validator = get(Validator::class);
+    $validator = Container\get(Validator::class);
     $failures = $validator->validateValue($value, $rules);
 
     if ($failures === []) {
@@ -101,5 +102,5 @@ function env(string $key, mixed $default = null, array $rules = []): mixed
  */
 function defer(Closure $closure): void
 {
-    get(DeferredTasks::class)->add($closure);
+    Container\get(DeferredTasks::class)->add($closure);
 }

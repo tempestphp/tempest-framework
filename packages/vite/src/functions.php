@@ -6,7 +6,7 @@ namespace Tempest\Vite;
 
 use Tempest\Vite\Vite;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * Gets tags for the specified or configured `$entrypoints`.

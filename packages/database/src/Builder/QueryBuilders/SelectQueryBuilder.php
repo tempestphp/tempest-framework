@@ -29,8 +29,8 @@ use Tempest\Support\Paginator\PaginatedData;
 use Tempest\Support\Paginator\Paginator;
 use Tempest\Support\Str\ImmutableString;
 
+use function Tempest\Container\get;
 use function Tempest\Database\inspect;
-use function Tempest\get;
 use function Tempest\Mapper\map;
 
 /**

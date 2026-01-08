@@ -10,7 +10,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Session\PreviousUrl;
 use Tempest\Http\Status;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * This response is not fit for stateless requests.

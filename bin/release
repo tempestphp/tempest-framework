@@ -18,11 +18,10 @@ use Composer\Semver\VersionParser;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Exceptions\InterruptException;
-use Tempest\Http\Response;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Json;
+use Tempest\Container;
 
-use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -178,7 +177,7 @@ function updateBranchProtection(bool $enabled): void
     $token = Tempest\env('RELEASE_GITHUB_TOKEN');
     $uri = "https://api.github.com/repos/tempestphp/tempest-framework/rulesets/{$ruleset}";
 
-    $httpClient = Tempest\get(HttpClient::class);
+    $httpClient = Container\get(HttpClient::class);
     $response = $httpClient->put(
         uri: $uri,
         headers: ['Authorization' => "Bearer {$token}"],
@@ -196,7 +195,7 @@ function triggerSubsplit(): void
     $token = Tempest\env('RELEASE_GITHUB_TOKEN');
     $uri = 'https://api.github.com/repos/tempestphp/tempest-framework/actions/workflows/subsplit-packages.yml/dispatches';
 
-    $httpClient = Tempest\get(HttpClient::class);
+    $httpClient = Container\get(HttpClient::class);
 
     $response = $httpClient->post(
         uri: $uri,
@@ -346,7 +345,7 @@ try {
 
     performPreReleaseChecks('origin', 'main');
 
-    $console = get(Console::class);
+    $console = Container\get(Console::class);
     $console->writeln();
     $console->info(sprintf('Current version is <em>%s</em>.', $current = getCurrentVersion()));
 

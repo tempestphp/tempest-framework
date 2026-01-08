@@ -7,7 +7,7 @@ use Tempest\Mail\Email;
 use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Mailer;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 final class TestingMailer implements Mailer
 {

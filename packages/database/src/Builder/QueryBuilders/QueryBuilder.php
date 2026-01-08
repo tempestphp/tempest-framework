@@ -6,9 +6,9 @@ use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\PrimaryKey;
 use Tempest\Mapper\SerializerFactory;
 
+use function Tempest\Container\get;
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
-use function Tempest\get;
 use function Tempest\Mapper\make;
 use function Tempest\Support\arr;
 

@@ -7,7 +7,7 @@
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\Slot;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 use function Tempest\View\view;
 
 $attributeString = $attributes

@@ -22,8 +22,8 @@ use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\EventBus\Tests\Fixtures\MyService;
 use Tempest\Reflection\MethodReflector;
 
-use function Tempest\get;
-use function Tempest\listen;
+use function Tempest\Container\get;
+use function Tempest\EventBus\listen;
 
 /**
  * @internal

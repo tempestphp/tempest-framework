@@ -10,7 +10,7 @@ use Tempest\Console\Scheduler;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Filesystem;
 
-use function Tempest\event;
+use function Tempest\EventBus\event;
 use function Tempest\internal_storage_path;
 
 final readonly class GenericScheduler implements Scheduler

@@ -21,7 +21,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject;
 
-use function Tempest\reflect;
+use function Tempest\Reflection\reflect;
 
 final class SerializerFactoryTest extends FrameworkIntegrationTestCase
 {

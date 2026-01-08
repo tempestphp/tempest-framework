@@ -12,7 +12,7 @@ use Tempest\Mapper\Casters\NativeDateTimeCaster;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 
-use function Tempest\reflect;
+use function Tempest\Reflection\reflect;
 
 final class CasterFactoryTest extends FrameworkIntegrationTestCase
 {

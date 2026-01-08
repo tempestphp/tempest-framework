@@ -23,8 +23,8 @@ use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
+use function Tempest\Container\get;
 use function Tempest\Database\inspect;
-use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

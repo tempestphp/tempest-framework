@@ -9,7 +9,7 @@ use Tempest\Intl\Locale;
 use Tempest\Intl\Pluralizer\Pluralizer;
 use Tempest\Intl\Translator;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * Translates the given key with optional arguments.

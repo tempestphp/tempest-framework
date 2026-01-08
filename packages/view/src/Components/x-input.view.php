@@ -10,7 +10,7 @@
 use Tempest\Http\Session\FormSession;
 use Tempest\Validation\Validator;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 use function Tempest\Support\str;
 
 /** @var FormSession $formSession */

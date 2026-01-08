@@ -11,7 +11,7 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Integration\Core\Fixtures\TestDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\reflect;
+use function Tempest\Reflection\reflect;
 
 final class DiscoveryCacheTest extends FrameworkIntegrationTestCase
 {

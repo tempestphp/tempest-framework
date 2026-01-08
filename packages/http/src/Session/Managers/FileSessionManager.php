@@ -14,7 +14,7 @@ use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Throwable;
 
-use function Tempest\event;
+use function Tempest\EventBus\event;
 use function Tempest\internal_storage_path;
 
 final readonly class FileSessionManager implements SessionManager

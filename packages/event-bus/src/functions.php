@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Closure;
+use Tempest\Container;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
 
@@ -13,7 +14,7 @@ use Tempest\EventBus\EventBusConfig;
  */
 function event(string|object $event): void
 {
-    $eventBus = get(EventBus::class);
+    $eventBus = Container\get(EventBus::class);
 
     $eventBus->dispatch($event);
 }
@@ -23,7 +24,7 @@ function event(string|object $event): void
  */
 function listen(Closure $handler, ?string $event = null): void
 {
-    $config = get(EventBusConfig::class);
+    $config = Container\get(EventBusConfig::class);
 
     $config->addClosureHandler($handler, $event);
 }

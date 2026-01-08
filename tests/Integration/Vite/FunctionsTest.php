@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\Vite;
 
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Support\Html\HtmlString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Vite\get_tags;

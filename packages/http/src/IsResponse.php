@@ -12,7 +12,7 @@ use Tempest\Http\Session\Session;
 use Tempest\View\View;
 use UnitEnum;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /** @phpstan-require-implements \Tempest\Http\Response */
 trait IsResponse

@@ -24,8 +24,8 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
 
+use function Tempest\Container\get;
 use function Tempest\Database\inspect;
-use function Tempest\get;
 
 /**
  * @template TModel of object
