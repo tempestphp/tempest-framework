@@ -831,6 +831,10 @@ final readonly class BladeInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
+        if (! class_exists(Blade::class)) {
+            return false;
+        }
+
         return $class->getName() === Blade::class;
     }
 
