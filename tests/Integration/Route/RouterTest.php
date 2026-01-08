@@ -190,7 +190,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
     {
-        $this->registerRoute([Http500Controller::class, 'serverErrorWithBody']);
+        $this->http->registerRoute([Http500Controller::class, 'serverErrorWithBody']);
 
         $this->http
             ->get('/returns-server-error-with-body')
@@ -200,7 +200,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_converts_to_response(): void
     {
-        $this->registerRoute([Http500Controller::class, 'convertsToResponse']);
+        $this->http->registerRoute([Http500Controller::class, 'convertsToResponse']);
 
         $this->http
             ->get('/returns-converts-to-response')
@@ -210,7 +210,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_router_returns_json_exception_when_accepts_json(): void
     {
-        $this->registerRoute([Http500Controller::class, 'throwsException']);
+        $this->http->registerRoute([Http500Controller::class, 'throwsException']);
 
         $this->http
             ->get('/throws-exception', headers: ['Accept' => 'application/json'])
@@ -220,8 +220,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_head_requests(): void
     {
-        $this->registerRoute([HeadController::class, 'implicitHead']);
-        $this->registerRoute([HeadController::class, 'explicitHead']);
+        $this->http->registerRoute([HeadController::class, 'implicitHead']);
+        $this->http->registerRoute([HeadController::class, 'explicitHead']);
 
         $this->http
             ->head('/implicit-head')

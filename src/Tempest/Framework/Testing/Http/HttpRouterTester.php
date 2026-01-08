@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Testing\Http;
 
+use InvalidArgumentException;
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
@@ -12,8 +13,16 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
+use Tempest\Router\Route;
+use Tempest\Router\RouteConfig;
+use Tempest\Router\RouteDecorator;
 use Tempest\Router\Router;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
+use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Static\StaticPageConfig;
+use Tempest\Router\StaticPage;
 use Tempest\Support\Uri;
 use Throwable;
 
@@ -26,6 +35,67 @@ final class HttpRouterTester
     public function __construct(
         private Container $container,
     ) {}
+
+    /**
+     * Registers a route for testing purposes.
+     *
+     * @param array{0: class-string, 1: string}|class-string|MethodReflector $action
+     */
+    public function registerRoute(array|string|MethodReflector $action): self
+    {
+        $reflector = match (true) {
+            $action instanceof MethodReflector => $action,
+            is_array($action) => MethodReflector::fromParts(...$action),
+            default => MethodReflector::fromParts($action, '__invoke'),
+        };
+
+        if ($reflector->getAttribute(Route::class) === null) {
+            throw new InvalidArgumentException('Missing route attribute');
+        }
+
+        $configurator = $this->container->get(RouteConfigurator::class);
+
+        $configurator->addRoute(
+            DiscoveredRoute::fromRoute(
+                $reflector->getAttribute(Route::class),
+                [
+                    ...$reflector->getDeclaringClass()->getAttributes(RouteDecorator::class),
+                    ...$reflector->getAttributes(RouteDecorator::class),
+                ],
+                $reflector,
+            ),
+        );
+
+        $routeConfig = $this->container->get(RouteConfig::class);
+        $routeConfig->apply($configurator->toRouteConfig());
+
+        return $this;
+    }
+
+    /**
+     * Registers a static page for testing purposes.
+     *
+     * @param array{0: class-string, 1: string}|class-string|MethodReflector $action
+     */
+    public function registerStaticPage(array|string|MethodReflector $action): self
+    {
+        $reflector = match (true) {
+            $action instanceof MethodReflector => $action,
+            is_array($action) => MethodReflector::fromParts(...$action),
+            default => MethodReflector::fromParts($action, '__invoke'),
+        };
+
+        if ($reflector->getAttribute(StaticPage::class) === null) {
+            throw new InvalidArgumentException('Missing static page attribute');
+        }
+
+        $this->container->get(StaticPageConfig::class)->addHandler(
+            $reflector->getAttribute(StaticPage::class),
+            $reflector,
+        );
+
+        return $this;
+    }
 
     /**
      * Specifies the "Accept" header for subsequent requests.

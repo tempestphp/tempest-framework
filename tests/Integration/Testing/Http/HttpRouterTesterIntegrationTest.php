@@ -180,7 +180,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     #[Test]
     public function has_exception(): void
     {
-        $this->registerRoute([Http500Controller::class, 'throwsException']);
+        $this->http->registerRoute([Http500Controller::class, 'throwsException']);
 
         $response = $this->http
             ->get('/throws-exception')
