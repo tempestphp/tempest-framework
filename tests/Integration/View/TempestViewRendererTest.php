@@ -887,4 +887,40 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<div>Hi</div>', $html);
     }
+
+    /**
+     * @see https://github.com/tempestphp/tempest-framework/issues/1867
+     */
+    public function test_whitespace_between_inline_elements_is_preserved(): void
+    {
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $this->render('<p><strong>Test</strong> <em>Test</em></p>'),
+        );
+    }
+
+    /**
+     * @see https://github.com/tempestphp/tempest-framework/issues/1867
+     */
+    public function test_whitespace_introduced_by_line_breaks_is_preserved(): void
+    {
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $this->render('<p><strong>Test</strong>
+<em>Test</em></p>'),
+        );
+    }
+
+    /**
+     * @see https://github.com/tempestphp/tempest-framework/issues/1867
+     */
+    public function test_whitespace_with_blank_lines_between_inline_elements_is_preserved(): void
+    {
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $this->render('<p><strong>Test</strong>
+            
+<em>Test</em></p>'),
+        );
+    }
 }

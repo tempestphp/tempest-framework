@@ -63,7 +63,11 @@ final class ElementFactory
             $text = $token->compile();
 
             if (trim($text) === '') {
-                return null;
+                if (preg_match('/\R[ \t]+\z/', $text) === 1) {
+                    return null;
+                }
+
+                return new TextElement(text: ' ');
             }
 
             return new TextElement(text: $text);

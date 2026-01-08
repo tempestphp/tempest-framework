@@ -110,7 +110,13 @@ trait IsElement
 
     public function getPrevious(): ?Element
     {
-        return $this->previous;
+        $previous = $this->previous;
+
+        while ($previous instanceof TextElement && trim($previous->compile()) === '') {
+            $previous = $previous->getPrevious();
+        }
+
+        return $previous;
     }
 
     public function setParent(?Element $parent): self
