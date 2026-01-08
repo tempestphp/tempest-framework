@@ -25,6 +25,24 @@ final class UpdateEventFunctionImportsRector extends AbstractRector
             if ($node->name->toString() === 'Tempest\listen') {
                 $node->name = new Node\Name('Tempest\EventBus\listen');
             }
+
+            return null;
+        }
+
+        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
+            $functionName = $node->name->toString();
+
+            if ($functionName === 'Tempest\event') {
+                $node->name = new Node\Name\FullyQualified('Tempest\EventBus\event');
+
+                return null;
+            }
+
+            if ($functionName === 'Tempest\listen') {
+                $node->name = new Node\Name\FullyQualified('Tempest\EventBus\listen');
+
+                return null;
+            }
         }
 
         return null;
