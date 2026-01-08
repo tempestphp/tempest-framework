@@ -19,7 +19,7 @@ final class EnvironmentVariableValidationFailed extends Exception
         private(set) array $failingRules,
         private(set) Validator $validator,
     ) {
-        return parent::__construct(vsprintf("Environment variable [%s] is not valid:\n- %s", [
+        parent::__construct(vsprintf("Environment variable [%s] is not valid:\n- %s", [
             $name,
             arr($failingRules)
                 ->map(fn (FailingRule $failingRule) => $validator->getErrorMessage($failingRule, $name))
