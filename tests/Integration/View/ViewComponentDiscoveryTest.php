@@ -29,7 +29,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
             isVendorComponent: false,
         ));
 
-        $this->assertSame('overwritten', $this->render('<x-form />'));
+        $this->assertSame('overwritten', $this->view->render('<x-form />'));
     }
 
     public function test_project_view_components_cannot_be_overwritten_by_other_project_view_component(): void
@@ -76,7 +76,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
             isVendorComponent: true,
         ));
 
-        $this->assertSame('overwritten', $this->render('<x-form />'));
+        $this->assertSame('overwritten', $this->view->render('<x-form />'));
     }
 
     public function test_auto_registration(): void
@@ -86,7 +86,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/x-auto-registered.view.php');
         $discovery->apply();
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-auto-registered></x-auto-registered>
         HTML);
 
@@ -100,7 +100,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/x-auto-registered-with-declaration.view.php');
         $discovery->apply();
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-auto-registered-with-declaration></x-auto-registered-with-declaration>
         HTML);
 

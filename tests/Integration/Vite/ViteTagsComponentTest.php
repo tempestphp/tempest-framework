@@ -29,7 +29,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags entrypoint="src/foo.ts" />
@@ -62,7 +62,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags :entrypoint="['src/foo.ts', 'src/bar.css']" />
@@ -95,7 +95,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags />
@@ -128,7 +128,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags :entrypoint="['src/foo.ts', 'src/bar.css']" />
@@ -172,7 +172,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags />
@@ -200,7 +200,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags entrypoint="src/bar.ts" />
@@ -228,7 +228,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     entrypoints: ['src/foo.ts'],
                 ));
 
-                $html = $this->render(<<<'HTML'
+                $html = $this->view->render(<<<'HTML'
                 <html lang="en">
                 <head>
                     <x-vite-tags :entrypoints="['src/bar.ts', 'src/foo.ts']" />

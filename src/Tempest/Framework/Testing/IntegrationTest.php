@@ -24,6 +24,7 @@ use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
+use Tempest\Framework\Testing\View\ViewTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
@@ -110,6 +111,11 @@ abstract class IntegrationTest extends TestCase
      */
     protected DatabaseTester $database;
 
+    /**
+     * Provides utilities for testing views.
+     */
+    protected ViewTester $view;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -188,6 +194,7 @@ abstract class IntegrationTest extends TestCase
 
         $this->oauth = new OAuthTester($this->container);
         $this->database = new DatabaseTester($this->container);
+        $this->view = new ViewTester($this->container);
 
         return $this;
     }

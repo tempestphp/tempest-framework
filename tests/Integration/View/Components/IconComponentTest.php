@@ -42,7 +42,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '<svg></svg>',
-            $this->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -64,7 +64,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '<svg></svg>',
-            $this->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -72,7 +72,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             '',
-            $this->render('<x-icon />'),
+            $this->view->render('<x-icon />'),
         );
     }
 
@@ -87,7 +87,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
-        $this->render('<x-icon name="ph:eye" />');
+        $this->view->render('<x-icon name="ph:eye" />');
 
         $iconCache = $this->container->get(IconCache::class);
         $cachedIcon = $iconCache->get('icon-ph-eye');
@@ -108,11 +108,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         // Trigger first render, which should cache the icon
-        $this->render('<x-icon name="ph:eye" />');
+        $this->view->render('<x-icon name="ph:eye" />');
 
         $this->assertSame(
             '<svg></svg>',
-            $this->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -130,7 +130,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '<!-- unknown-icon: ph:eye -->',
-            $this->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -148,7 +148,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '',
-            $this->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="ph:eye" />'),
         );
     }
 
@@ -165,7 +165,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '<svg class="size-5"></svg>',
-            $this->render(
+            $this->view->render(
                 '<x-icon name="ph:eye" class="size-5" />',
             ),
         );
@@ -182,7 +182,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
-        $rendered = $this->render(
+        $rendered = $this->view->render(
             '<x-icon :name="$iconName" class="size-5" />',
             iconName: 'ph:eye',
         );
@@ -195,7 +195,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
     public function test_icon_renders_inside_named_slot_in_a_layout(): void
     {
-        $this->registerViewComponent('x-test-layout', '<x-index><div><x-slot name="icon" /></div><x-slot /></x-index>');
+        $this->view->registerViewComponent('x-test-layout', '<x-index><div><x-slot name="icon" /></div><x-slot /></x-index>');
 
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -207,7 +207,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $view = view(__DIR__ . '/../../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
-        $html = $this->render($view);
+        $html = $this->view->render($view);
 
         $this->assertSnippetsMatch(
             '<html lang="en"><head><title></title></head><body><div><svg class="size-5"></svg></div>Test</body></html>',

@@ -24,14 +24,14 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
             )
             ->setRoot($this->internalStorage . '/install');
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             name: 'x-vendor-a',
             html: 'vendor a',
             file: __DIR__ . '/Fixtures/x-vendor-a.view.php',
             isVendor: true,
         );
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             name: 'x-vendor-b',
             html: 'vendor b',
             file: __DIR__ . '/Fixtures/x-vendor-b.view.php',
@@ -72,7 +72,7 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
 
     public function test_installed_vendor_components_are_not_listed_anymore(): void
     {
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             name: 'x-vendor-b',
             html: 'vendor b',
             file: __DIR__ . '/Fixtures/x-vendor-b.view.php',

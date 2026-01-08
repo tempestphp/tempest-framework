@@ -114,7 +114,7 @@ final class CsrfTest extends FrameworkIntegrationTestCase
         $session = $this->container->get(Session::class);
         $session->set(Session::CSRF_TOKEN_KEY, 'test');
 
-        $rendered = $this->render(<<<HTML
+        $rendered = $this->view->render(<<<HTML
         <x-csrf-token />
         HTML);
 
@@ -138,14 +138,14 @@ final class CsrfTest extends FrameworkIntegrationTestCase
     {
         $this->get(ViewCache::class)->enabled = true;
 
-        $oldVersion = $this->render(<<<HTML
+        $oldVersion = $this->view->render(<<<HTML
         <x-csrf-token />
         HTML);
 
         $session = $this->container->get(Session::class);
         $session->destroy();
 
-        $newVersion = $this->render(<<<HTML
+        $newVersion = $this->view->render(<<<HTML
         <x-csrf-token />
         HTML);
 

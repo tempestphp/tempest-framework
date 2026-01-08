@@ -33,20 +33,20 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         <div :else>Nothing</div>
         HTML;
 
-        $html = $this->render(view($view, href: '#', label: 'Label'));
+        $html = $this->view->render(view($view, href: '#', label: 'Label'));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <a href="#">
             Label</a>
         HTML, $html);
 
-        $html = $this->render(view($view, label: 'Label'));
+        $html = $this->view->render(view($view, label: 'Label'));
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <span>
             Label</span>
         HTML, $html);
 
-        $html = $this->render(view($view));
+        $html = $this->view->render(view($view));
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div>Nothing</div>
         HTML, $html);
@@ -63,11 +63,11 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         </span>
         HTML;
 
-        $html = $this->render(view($view, items: ['a', 'b'], label: 'Label'));
+        $html = $this->view->render(view($view, items: ['a', 'b'], label: 'Label'));
         $this->assertStringContainsString('Label a', $html);
         $this->assertStringContainsString('Label b', $html);
 
-        $html = $this->render(view($view, items: ['a', 'b']));
+        $html = $this->view->render(view($view, items: ['a', 'b']));
         $this->assertStringNotContainsString('Label a', $html);
         $this->assertStringNotContainsString('Label b', $html);
         $this->assertStringContainsString('No label', $html);
@@ -87,17 +87,17 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         </span>
         HTML;
 
-        $html = $this->render(view($view));
+        $html = $this->view->render(view($view));
         $this->assertStringNotContainsString('Label a', $html);
         $this->assertStringNotContainsString('Label b', $html);
         $this->assertStringNotContainsString('No items', $html);
         $this->assertStringContainsString('No label', $html);
 
-        $html = $this->render(view($view, items: ['a', 'b'], label: 'Label'));
+        $html = $this->view->render(view($view, items: ['a', 'b'], label: 'Label'));
         $this->assertStringContainsString('Label a', $html);
         $this->assertStringContainsString('Label b', $html);
 
-        $html = $this->render(view($view), label: 'Label');
+        $html = $this->view->render(view($view), label: 'Label');
         $this->assertStringNotContainsString('Label a', $html);
         $this->assertStringNotContainsString('Label b', $html);
         $this->assertStringContainsString('No items', $html);
