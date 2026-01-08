@@ -417,7 +417,7 @@ final class User
     // ...
 
     #[Encrypted]
-    public ?string $accessToken,
+    public ?string $accessToken;
 }
 ```
 
