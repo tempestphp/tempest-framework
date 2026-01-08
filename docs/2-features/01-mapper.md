@@ -232,7 +232,7 @@ final readonly class AddressSerializer implements Serializer, DynamicSerializer
     public function serialize(mixed $input): array|string
     {
         if (! $input instanceof Address) {
-            throw new CannotSerializeValue(Address::class);
+            throw new ValueCouldNotBeSerialized(Address::class);
         }
 
         return $input->toArray();
