@@ -31,7 +31,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         #[ConsoleCommand(
             name: 'discovery:generate',
             description: 'Compile and cache all discovery according to the configured discovery caching strategy',
-            aliases: ['d:g'],
+            aliases: ['d:g', 'dg'],
         )]
         public function __invoke(): void
         {

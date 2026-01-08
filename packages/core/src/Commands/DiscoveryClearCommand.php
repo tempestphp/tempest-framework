@@ -16,7 +16,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             private Console $console,
         ) {}
 
-        #[ConsoleCommand(name: 'discovery:clear', description: 'Clears all cached discovery files')]
+        #[ConsoleCommand(
+            name: 'discovery:clear',
+            description: 'Clears all cached discovery files',
+            aliases: ['d:c', 'dc'],
+        )]
         public function __invoke(): void
         {
             $this->console->task(
