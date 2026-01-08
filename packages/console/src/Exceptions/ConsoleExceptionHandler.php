@@ -55,12 +55,15 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
                 $this->console->writeln();
             } else {
-                $this->console
-                    ->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]))
-                    ->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]))
-                    ->writeln()
-                    ->writeln('   <style="dim">Run with -v to show more.</style>')
-                    ->writeln();
+                $this->console->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]));
+
+                if (count($throwable->getTrace()) > 1) {
+                    $this->console->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]));
+                }
+
+                $this->console->writeln();
+                $this->console->writeln('   <style="dim">Run with -v to show more.</style>');
+                $this->console->writeln();
             }
         } finally {
             $exitCode = $throwable instanceof HasExitCode

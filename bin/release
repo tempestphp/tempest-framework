@@ -87,9 +87,11 @@ function bumpPhpPackages(string $version, bool $isMajor): void
  */
 function cleanUpAfterRelease(): void
 {
-    // We want to still be able to `require tempest/package:dev-main`, so we need
-    // to update back all composer files to use `dev-main` instead of a fixed version.
-    executeCommands('./vendor/bin/monorepo-builder bump-interdependency dev-main');
+    $devVersion = sprintf("%s-dev", getCurrentBranch());
+    
+    // We want to still be able to `require tempest/package:X.x-dev`, so we need
+    // to update back all composer files to use the dev version instead of a fixed version.
+    executeCommands("./vendor/bin/monorepo-builder bump-interdependency {$devVersion}");
 
     // Finds all `composer.json` files in `packages/`, and revert the `tempest/highlight` dependency to the saved version
     setPhpDependencyVersion(
@@ -145,7 +147,7 @@ function updateChangelog(string $version): void
 /**
  * Ensure the release script can run.
  */
-function performPreReleaseChecks(string $remote, string $branch): void
+function performPreReleaseChecks(string $remote): void
 {
     if (empty(shell_exec('which bun'))) {
         throw new Exception('This script requires `bun` to be installed.');
@@ -153,6 +155,12 @@ function performPreReleaseChecks(string $remote, string $branch): void
 
     if (! empty(shell_exec('git status --porcelain 2>&1'))) {
         throw new Exception('Repository must be in a clean state to release.');
+    }
+
+    $branch = getCurrentBranch();
+    
+    if (! preg_match('/^\d+\.x$/', $branch)) {
+        throw new Exception("You must be on a version branch to release. Current branch is {$branch}.");
     }
 
     if (! str_starts_with(shell_exec('git rev-parse --abbrev-ref --symbolic-full-name @{u}'), "{$remote}/{$branch}")) {
@@ -205,7 +213,7 @@ function triggerSubsplit(): void
             'Accept' => 'application/vnd.github+json',
             'X-GitHub-Api-Version' => '2022-11-28',
         ],
-        body: Json\encode(['ref' => 'main']),
+        body: Json\encode(['ref' => getCurrentBranch()]),
     );
 
     if (! $response->status->isSuccessful()) {
@@ -220,6 +228,14 @@ function triggerSubsplit(): void
 function getCurrentVersion(): string
 {
     return exec('git describe --tags --abbrev=0');
+}
+
+/**
+ * Gets the current git branch name.
+ */
+function getCurrentBranch(): string
+{
+    return trim(shell_exec('git rev-parse --abbrev-ref HEAD') ?? '');
 }
 
 /**
@@ -344,7 +360,7 @@ function ensureTagDoesNotExist(string $version): void
 try {
     ConsoleApplication::boot();
 
-    performPreReleaseChecks('origin', 'main');
+    performPreReleaseChecks('origin');
 
     $console = get(Console::class);
     $console->writeln();
