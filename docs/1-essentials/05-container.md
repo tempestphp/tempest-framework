@@ -163,7 +163,7 @@ final class RouteBindingInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
-        return is_a($className, Model::class, true);
+        return is_a($class, Model::class, true);
     }
 
     public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
