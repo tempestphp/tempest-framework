@@ -845,6 +845,7 @@ final readonly class BladeInitializer implements DynamicInitializer
 
         return new Blade(
             viewPaths: $bladeConfig->viewPaths,
+            cachePath: Tempest\internal_storage_path($bladeConfig->cachePath ?? 'cache/blade'),
         );
     }
 }
