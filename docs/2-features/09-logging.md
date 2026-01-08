@@ -11,7 +11,7 @@ The system supports file logging, Slack integration, system logs, and custom cha
 
 ## Writing logs
 
-To start logging messsages, you may inject the {b`Tempest\Log\Logger`} interface in any class. By default, log messages will be written to a daily rotating log file stored in `.tempest/logs`. This may be customized by providing a different [logging configuration](#configuration).
+To start logging messages, you may inject the {b`Tempest\Log\Logger`} interface in any class. By default, log messages will be written to a daily rotating log file stored in `.tempest/logs`. This may be customized by providing a different [logging configuration](#configuration).
 
 ```php app/Services/UserService.php
 use Tempest\Log\Logger;

@@ -73,7 +73,7 @@ return view('views/home.view.php');
 
 A view object is a dedicated class that represent a specific view.
 
-Using view objects will improve static insights in your controllers and view files, and may offer more flexibiltiy regarding how the data may be constructed before being passed on to a view file.
+Using view objects will improve static insights in your controllers and view files, and may offer more flexibility regarding how the data may be constructed before being passed on to a view file.
 
 ```php
 final class AircraftController
@@ -377,7 +377,7 @@ When a single slot is not enough, names can be attached to them. When using a co
 </html>
 ```
 
-The above example uses a slot named `styles` in its `<head>` element. The `<body>` element has a default, unnamed slot. A view component may use `<x-base>` and optionally refer to the `styles` slot using the syntax mentionned above, or simply provide content that will be injected in the default slot:
+The above example uses a slot named `styles` in its `<head>` element. The `<body>` element has a default, unnamed slot. A view component may use `<x-base>` and optionally refer to the `styles` slot using the syntax mentioned above, or simply provide content that will be injected in the default slot:
 
 ```html index.view.php
 <x-base title="Hello World">
@@ -674,7 +674,7 @@ You can choose whichever way you prefer. Chances are that, if you use the minima
 
 ### A note on caching
 
-When you're using the minimal setup, view caching can be enabled by passing in a `$viewCache` paremeter into `TempestViewRenderer::make()`:
+When you're using the minimal setup, view caching can be enabled by passing in a `$viewCache` parameter into `TempestViewRenderer::make()`:
 
 ```php
 use Tempest\View\Renderers\TempestViewRenderer;

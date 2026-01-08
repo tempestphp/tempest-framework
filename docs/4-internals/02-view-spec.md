@@ -340,7 +340,7 @@ When a single slot is not enough, names can be attached to them. When using a co
 </html>
 ```
 
-The above example uses a slot named `styles` in its `<head>` element. The `<body>` element has a default, unnamed slot. A view component may use `<x-base>` and optionally refer to the `styles` slot using the syntax mentionned above, or simply provide content that will be injected in the default slot:
+The above example uses a slot named `styles` in its `<head>` element. The `<body>` element has a default, unnamed slot. A view component may use `<x-base>` and optionally refer to the `styles` slot using the syntax mentioned above, or simply provide content that will be injected in the default slot:
 
 ```html index.view.php
 <x-base title="Hello World">

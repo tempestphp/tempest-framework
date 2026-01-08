@@ -20,7 +20,7 @@ Most utilities provided by Tempest have a function-based implementation under th
 - [Pluralization](https://github.com/tempestphp/tempest-intl)
 - [PHP namespaces](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Namespace/functions.php)
 
-Tempest also provids the {`Tempest\Support\IsEnumHelper`} trait to work with enumerations, since a functional API is not useful in this case.
+Tempest also provides the {`Tempest\Support\IsEnumHelper`} trait to work with enumerations, since a functional API is not useful in this case.
 
 ## String utilities
 

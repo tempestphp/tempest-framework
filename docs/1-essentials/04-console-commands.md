@@ -120,7 +120,7 @@ final readonly class TrackOperatingAircraft
 }
 ```
 
-Argument description are visible when using the `--help` flag during command invokation.
+Argument description are visible when using the `--help` flag during command invocation.
 
 ```console
 <dim>./</dim>tempest aircraft:track --help
@@ -320,7 +320,7 @@ final readonly class InspireMiddleware implements ConsoleMiddleware
 { /* … */ }
 ```
 
-Note that priority is defined using an integer. However, the {b`Tempest\Core\Priority`} class provides a few constant with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
+Note that priority is defined using an integer. However, the {b`Tempest\Core\Priority`} class provides a few constants with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
 
 #### Middleware discovery
 

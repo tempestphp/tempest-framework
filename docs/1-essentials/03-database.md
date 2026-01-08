@@ -895,7 +895,7 @@ final class ConnectTenantMiddleware implements HttpMiddleware
     {
         $tenantId = // Tenant ID resolution from request
 
-        (new ConnectTennant)($tenantId);
+        (new ConnectTenant)($tenantId);
 
         return $next($request);
     }

@@ -67,7 +67,7 @@ Initializers are classes that know how to construct a specific class or interfac
 
 ### Implementing an initializer
 
-Initializers are classes that implement the {`Tempest\Container\Initializer`} interface. The `initialize()` method receives the container as its only parameter, and returns an instanciated object.
+Initializers are classes that implement the {`Tempest\Container\Initializer`} interface. The `initialize()` method receives the container as its only parameter, and returns an instantiated object.
 
 **Most importantly**, Tempest knows which object this initializer is tied to thanks to the return type of the `initialize()` method, which needs to be typed.
 
@@ -245,7 +245,7 @@ final readonly class MarkdownInitializer implements Initializer
 
 In some cases, you want more control over singleton definitions.
 
-Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured CLI highlighting. In this situation, you can differenciate them using the `tag` parameter of the `#[Singleton]` attribute:
+Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured CLI highlighting. In this situation, you can differentiate them using the `tag` parameter of the `#[Singleton]` attribute:
 
 ```php app/WebHighlighterInitializer.php
 use Tempest\Container\Container;

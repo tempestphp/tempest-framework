@@ -707,7 +707,7 @@ Tempest provides several response classes for common use cases, all implementing
 - {b`Tempest\Http\Responses\NotFound`} — the 404 response. Accepts an optional body.
 - {b`Tempest\Http\Responses\ServerError`} — a 500 server error response.
 
-The following example conditionnally returns a {b`Tempest\Http\Responses\Redirect`}, otherwise letting the user download a file by sending a {b`Tempest\Http\Responses\Download`} response:
+The following example conditionally returns a {b`Tempest\Http\Responses\Redirect`}, otherwise letting the user download a file by sending a {b`Tempest\Http\Responses\Download`} response:
 
 ```php app/FlightPlanController.php
 use Tempest\Router\Get;

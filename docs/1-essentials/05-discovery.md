@@ -162,7 +162,7 @@ final class ViteDiscovery implements Discovery, DiscoversPath
     // We can use the `$path` to determine whether we are interested in it.
     public function discoverPath(DiscoveryLocation $location, string $path): void
     {
-        // We are insterested in `.ts`, `.css` and `.js` files only.
+        // We are interested in `.ts`, `.css` and `.js` files only.
         if (! Str\ends_with($path, ['.ts', '.css', '.js'])) {
             return;
         }
