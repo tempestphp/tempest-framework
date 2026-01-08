@@ -63,7 +63,11 @@ final class ElementFactory
             $text = $token->compile();
 
             if (trim($text) === '') {
-                if (preg_match('/\R[ \t]+\z/', $text) === 1) {
+                if (preg_match('/\R[ \t]+\z|^[ \t]+\R/', $text) === 1) {
+                    return null;
+                }
+
+                if ($parent === null && preg_match('/^[\r\n]+$/', $text) === 1) {
                     return null;
                 }
 
@@ -125,7 +129,7 @@ final class ElementFactory
         foreach ($token->children as $child) {
             $childElement = $this->clone()->makeElement(
                 token: $child,
-                parent: $parent,
+                parent: $element,
             );
 
             if ($childElement === null) {
