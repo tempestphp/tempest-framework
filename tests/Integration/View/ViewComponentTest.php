@@ -7,7 +7,8 @@ namespace Tests\Tempest\Integration\View;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Core\Environment;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\FormSession;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\IsAlphaNumeric;
 use Tempest\Validation\Rules\IsBetween;
 use Tempest\Validation\Validator;
@@ -214,18 +215,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_view_component_with_injected_view(): void
     {
-        $between = new IsBetween(min: 1, max: 10);
-        $alphaNumeric = new IsAlphaNumeric();
+        $between = new FailingRule(new IsBetween(min: 1, max: 10));
+        $alphaNumeric = new FailingRule(new IsAlphaNumeric());
 
-        $session = $this->container->get(Session::class);
-
-        $session->flash(
-            Session::VALIDATION_ERRORS,
+        $formSession = $this->container->get(FormSession::class);
+        $formSession->setErrors(
             ['name' => [$between, $alphaNumeric]],
         );
 
-        $session->flash(
-            Session::ORIGINAL_VALUES,
+        $formSession->setOriginalValues(
             ['name' => 'original name'],
         );
 

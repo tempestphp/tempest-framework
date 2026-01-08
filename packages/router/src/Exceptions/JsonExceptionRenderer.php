@@ -11,7 +11,6 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -39,7 +38,6 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
         return match (true) {
             $throwable instanceof ValidationFailed => $this->renderValidationFailedResponse($throwable),
             $throwable instanceof AccessWasDenied => $this->renderErrorResponse(Status::FORBIDDEN, message: $throwable->accessDecision->message),
-            $throwable instanceof CsrfTokenDidNotMatch => $this->renderErrorResponse(Status::UNPROCESSABLE_CONTENT),
             $throwable instanceof HttpRequestFailed => $this->renderHttpRequestFailed($throwable),
             $throwable instanceof ConvertsToResponse => $throwable->convertToResponse(),
             default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR, throwable: $throwable),

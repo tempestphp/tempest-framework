@@ -13,7 +13,6 @@ use Tempest\Http\GenericResponse;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Method;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Session\CsrfTokenDidNotMatch;
 use Tempest\Http\Status;
 use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Locale;
@@ -88,14 +87,6 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(Status::FORBIDDEN, $response->status);
         $this->assertSame('Access denied', $response->body->data['message']);
-    }
-
-    #[Test]
-    public function csrf_mismatch(): void
-    {
-        $response = $this->renderer->render(new CsrfTokenDidNotMatch());
-
-        $this->assertSame(Status::UNPROCESSABLE_CONTENT, $response->status);
     }
 
     #[Test]

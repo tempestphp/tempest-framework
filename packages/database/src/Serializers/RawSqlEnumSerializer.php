@@ -31,11 +31,11 @@ final class RawSqlEnumSerializer implements Serializer, DynamicSerializer
     public function serialize(mixed $input): string
     {
         if ($input instanceof BackedEnum) {
-            return (string) $input->value;
+            return sprintf('"%s"', $input->value);
         }
 
         if ($input instanceof UnitEnum) {
-            return $input->name;
+            return sprintf('"%s"', $input->name);
         }
 
         throw new ValueCouldNotBeSerialized('enum');

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Authentication;
 
-use Tempest\Auth\AuthConfig;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 
 final readonly class AuthenticatorInitializer implements Initializer
 {
@@ -16,7 +16,7 @@ final readonly class AuthenticatorInitializer implements Initializer
     public function initialize(Container $container): Authenticator
     {
         return new SessionAuthenticator(
-            authConfig: $container->get(AuthConfig::class),
+            sessionManager: $container->get(SessionManager::class),
             session: $container->get(Session::class),
             authenticatableResolver: $container->get(AuthenticatableResolver::class),
         );

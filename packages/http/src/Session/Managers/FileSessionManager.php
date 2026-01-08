@@ -7,7 +7,8 @@ namespace Tempest\Http\Session\Managers;
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionDestroyed;
+use Tempest\Http\Session\SessionCreated;
+use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
@@ -23,60 +24,76 @@ final readonly class FileSessionManager implements SessionManager
         private SessionConfig $sessionConfig,
     ) {}
 
-    public function create(SessionId $id): Session
+    public function getOrCreate(SessionId $id): Session
     {
-        return $this->persist($id);
-    }
-
-    public function set(SessionId $id, string $key, mixed $value): void
-    {
-        $this->persist($id, [...$this->getData($id), ...[$key => $value]]);
-    }
-
-    public function get(SessionId $id, string $key, mixed $default = null): mixed
-    {
-        return $this->getData($id)[$key] ?? $default;
-    }
-
-    public function remove(SessionId $id, string $key): void
-    {
-        $data = $this->getData($id);
-
-        unset($data[$key]);
-
-        $this->persist($id, $data);
-    }
-
-    public function destroy(SessionId $id): void
-    {
-        unlink($this->getPath($id));
-
-        event(new SessionDestroyed($id));
-    }
-
-    public function isValid(SessionId $id): bool
-    {
-        $session = $this->resolve($id);
+        $now = $this->clock->now();
+        $session = $this->load($id);
 
         if ($session === null) {
-            return false;
+            $session = new Session(
+                id: $id,
+                createdAt: $now,
+                lastActiveAt: $now,
+            );
+
+            event(new SessionCreated($session));
         }
 
-        if (! ($session->lastActiveAt ?? null)) {
-            return false;
-        }
+        return $session;
+    }
 
+    public function save(Session $session): void
+    {
+        $session->lastActiveAt = $this->clock->now();
+
+        Filesystem\write_file(
+            filename: $this->getPath($session->id),
+            content: serialize($session),
+            flags: LOCK_EX,
+        );
+    }
+
+    public function delete(Session $session): void
+    {
+        $path = $this->getPath($session->id);
+
+        Filesystem\delete($path);
+
+        event(new SessionDeleted($session->id));
+    }
+
+    public function isValid(Session $session): bool
+    {
         return $this->clock->now()->before(
             other: $session->lastActiveAt->plus($this->sessionConfig->expiration),
         );
     }
 
-    private function getPath(SessionId $id): string
+    public function deleteExpiredSessions(): void
     {
-        return internal_storage_path($this->sessionConfig->path, (string) $id);
+        $sessionFiles = glob(internal_storage_path($this->sessionConfig->path, '/*'));
+
+        if ($sessionFiles === false) {
+            return;
+        }
+
+        foreach ($sessionFiles as $sessionFile) {
+            $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
+            $session = $this->load($id);
+
+            if ($session === null) {
+                continue;
+            }
+
+            if ($this->isValid($session)) {
+                continue;
+            }
+
+            $this->delete($session);
+        }
     }
 
-    private function resolve(SessionId $id): ?Session
+    private function load(SessionId $id): ?Session
     {
         $path = $this->getPath($id);
 
@@ -85,74 +102,19 @@ final readonly class FileSessionManager implements SessionManager
                 return null;
             }
 
-            $file_pointer = fopen($path, 'rb');
-            flock($file_pointer, LOCK_SH);
-
-            $content = Filesystem\read_file($path);
-
-            flock($file_pointer, LOCK_UN);
-            fclose($file_pointer);
-
-            return unserialize($content, ['allowed_classes' => true]);
+            return unserialize(
+                data: Filesystem\read_locked_file($path),
+                options: [
+                    'allowed_classes' => true,
+                ],
+            );
         } catch (Throwable) {
             return null;
         }
     }
 
-    public function all(SessionId $id): array
+    private function getPath(SessionId $id): string
     {
-        return $this->getData($id);
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function getData(SessionId $id): array
-    {
-        return $this->resolve($id)->data ?? [];
-    }
-
-    /**
-     * @param array<mixed>|null $data
-     */
-    private function persist(SessionId $id, ?array $data = null): Session
-    {
-        $now = $this->clock->now();
-        $session = $this->resolve($id) ?? new Session(
-            id: $id,
-            createdAt: $now,
-            lastActiveAt: $now,
-        );
-
-        $session->lastActiveAt = $now;
-
-        if ($data !== null) {
-            $session->data = $data;
-        }
-
-        Filesystem\write_file($this->getPath($id), serialize($session), LOCK_EX);
-
-        return $session;
-    }
-
-    public function cleanup(): void
-    {
-        $sessionFiles = glob(internal_storage_path($this->sessionConfig->path, '/*'));
-
-        foreach ($sessionFiles as $sessionFile) {
-            $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));
-
-            $session = $this->resolve($id);
-
-            if ($session === null) {
-                continue;
-            }
-
-            if ($this->isValid($session->id)) {
-                continue;
-            }
-
-            $session->destroy();
-        }
+        return internal_storage_path($this->sessionConfig->path, (string) $id);
     }
 }

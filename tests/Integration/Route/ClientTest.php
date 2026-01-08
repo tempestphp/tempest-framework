@@ -53,6 +53,8 @@ final class ClientTest extends FrameworkIntegrationTestCase
             ->withHeader('Referer', 'http://localhost:8088/request-test/form')
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
+            ->withHeader('Sec-Fetch-Site', 'same-origin')
+            ->withHeader('Sec-Fetch-Mode', 'cors')
             ->withBody(new StreamFactory()->createStream('name=a a&b.name=b'));
 
         try {
@@ -72,6 +74,8 @@ final class ClientTest extends FrameworkIntegrationTestCase
             ->createRequest('POST', new Uri('http://localhost:8088/request-test/form'))
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Sec-Fetch-Site', 'same-origin')
+            ->withHeader('Sec-Fetch-Mode', 'cors')
             ->withBody(new StreamFactory()->createStream('{"name": "a a", "b": {"name": "b"}}'));
 
         try {

@@ -10,16 +10,13 @@ final class AppConfig
 {
     public string $baseUri;
 
+    /** @var array<class-string<\Tempest\Core\InsightsProvider>> */
+    public array $insightsProviders = [];
+
     public function __construct(
         public ?string $name = null,
-
         ?string $baseUri = null,
-
-        /**
-         * @var array<class-string<\Tempest\Core\InsightsProvider>>
-         */
-        public array $insightsProviders = [],
     ) {
-        $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
+        $this->baseUri = $baseUri ?: env('BASE_URI', default: '');
     }
 }

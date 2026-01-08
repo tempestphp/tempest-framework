@@ -39,13 +39,13 @@ final class QueryTest extends FrameworkIntegrationTestCase
         $this->assertTrue(
             new Query('?', [UnitEnumFixture::FOO])
                 ->toRawSql()
-                ->equals(UnitEnumFixture::FOO->name),
+                ->equals('"' . UnitEnumFixture::FOO->name . '"'),
         );
 
         $this->assertTrue(
             new Query('?', [BackedEnumFixture::FOO])
                 ->toRawSql()
-                ->equals(BackedEnumFixture::FOO->value),
+                ->equals('"' . BackedEnumFixture::FOO->value . '"'),
         );
     }
 }

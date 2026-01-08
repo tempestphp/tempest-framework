@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
-use Tempest\EventBus\EventBus;
 use Tempest\Http\Session\Config\RedisSessionConfig;
 use Tempest\Http\Session\Managers\RedisSessionManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionDestroyed;
+use Tempest\Http\Session\SessionCreated;
+use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
+use Tempest\Support\Random;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Throwable;
 
@@ -25,19 +27,27 @@ use Throwable;
  */
 final class RedisSessionTest extends FrameworkIntegrationTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    private SessionManager $manager {
+        get => $this->container->get(SessionManager::class);
+    }
 
-        $this->container->config(new RedisSessionConfig(expiration: Duration::hours(2), prefix: 'test_session:'));
-        $this->container->singleton(
-            SessionManager::class,
-            fn () => new RedisSessionManager(
-                $this->container->get(Clock::class),
-                $this->container->get(Redis::class),
-                $this->container->get(SessionConfig::class),
-            ),
-        );
+    private Session $session {
+        get => $this->container->get(Session::class);
+    }
+
+    #[PreCondition]
+    protected function configure(): void
+    {
+        $this->container->config(new RedisSessionConfig(
+            expiration: Duration::hours(2),
+            prefix: 'test_session:',
+        ));
+
+        $this->container->singleton(SessionManager::class, fn () => new RedisSessionManager(
+            clock: $this->container->get(Clock::class),
+            redis: $this->container->get(Redis::class),
+            config: $this->container->get(RedisSessionConfig::class),
+        ));
 
         try {
             $this->container->get(Redis::class)->connect();
@@ -46,7 +56,8 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         }
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         try {
             $this->container->get(Redis::class)->flush();
@@ -55,112 +66,140 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function create_session_from_container(): void
+    public function get_or_create_creates_new_session(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->eventBus->preventEventHandling();
+
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+        $this->manager->save($session);
 
         $this->assertInstanceOf(Session::class, $session);
+        $this->assertEquals($sessionId, $session->id);
+
+        $this->eventBus->assertDispatched(
+            event: SessionCreated::class,
+            callback: function (SessionCreated $event) use ($sessionId): void {
+                $this->assertEquals($sessionId, $event->session->id);
+            },
+            count: 1,
+        );
     }
 
     #[Test]
-    public function put_get(): void
+    public function get_or_create_loads_existing_session(): void
     {
-        $session = $this->container->get(Session::class);
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
+        $session->set('key', 'value');
 
-        $session->set('test', 'value');
+        $this->manager->save($session);
 
-        $value = $session->get('test');
-        $this->assertEquals('value', $value);
+        $loaded = $this->manager->getOrCreate($sessionId);
+
+        $this->assertEquals($sessionId, $loaded->id);
+        $this->assertTrue($session->createdAt->isSameMinute($loaded->createdAt));
+        $this->assertEquals('value', $loaded->get('key'));
     }
 
     #[Test]
-    public function remove(): void
+    public function save_persists_session_to_redis(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->session->set('frieren', 'elf_mage');
+        $this->manager->save($this->session);
 
-        $session->set('test', 'value');
-        $session->remove('test');
-
-        $value = $session->get('test');
-        $this->assertNull($value);
+        $this->assertSessionExistsInRedis($this->session->id);
+        $this->assertSessionDataInRedis($this->session->id, ['frieren' => 'elf_mage']);
     }
 
     #[Test]
-    public function destroy(): void
+    public function save_persists_nested_data(): void
     {
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('test_session_destroy');
+        $data = [
+            'members' => ['Frieren', 'Fern', 'Stark'],
+            'location' => 'Northern Plateau',
+            'quest' => [
+                'name' => 'Journey to Ende',
+                'progress' => 0.75,
+            ],
+        ];
 
-        $session = $manager->create($sessionId);
+        $this->session->set('party', $data);
+        $this->manager->save($this->session);
+
+        $this->assertSessionDataInRedis($this->session->id, ['party' => $data]);
+    }
+
+    #[Test]
+    public function save_updates_last_active_timestamp(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+
+        $this->manager->save($this->session);
+        $originalTimestamp = $this->getSessionLastActiveTimestamp($this->session->id);
+
+        $clock->plus(Duration::minutes(5));
+
+        $this->session->set('action', 'spell_cast');
+        $this->manager->save($this->session);
+        $updatedTimestamp = $this->getSessionLastActiveTimestamp($this->session->id);
+
+        $this->assertTrue($updatedTimestamp->after($originalTimestamp));
+    }
+
+    #[Test]
+    public function delete_removes_session_from_redis(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $sessionId = $this->createSessionId();
+        $session = $this->manager->getOrCreate($sessionId);
         $session->set('magic_type', 'offensive');
 
-        $this->assertTrue($manager->isValid($sessionId));
+        $this->manager->save($session);
 
-        $events = [];
-        $eventBus = $this->container->get(EventBus::class);
-        $eventBus->listen(function (SessionDestroyed $event) use (&$events): void {
-            $events[] = $event;
-        });
+        $this->assertSessionExistsInRedis($sessionId);
 
-        $session->destroy();
+        $this->manager->delete($session);
 
-        $this->assertFalse($manager->isValid($sessionId));
-        $this->assertCount(1, $events);
-        $this->assertEquals((string) $sessionId, (string) $events[0]->id);
+        $this->assertSessionNotExistsInRedis($sessionId);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event) use ($sessionId): void {
+                $this->assertEquals($sessionId, $event->id);
+            },
+            count: 1,
+        );
     }
 
     #[Test]
-    public function set_previous_url(): void
-    {
-        $session = $this->container->get(Session::class);
-        $session->setPreviousUrl('http://localhost/previous');
-
-        $this->assertEquals('http://localhost/previous', $session->getPreviousUrl());
-    }
-
-    #[Test]
-    public function is_valid(): void
+    public function is_valid_checks_expiration(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new RedisSessionConfig(
-            expiration: Duration::second(),
+            expiration: Duration::seconds(10),
             prefix: 'test_session:',
         ));
 
-        $sessionManager = $this->container->get(SessionManager::class);
+        $session = $this->manager->getOrCreate(new SessionId('expiration_test'));
+        $this->manager->save($session);
 
-        $this->assertFalse($sessionManager->isValid(new SessionId('unknown')));
+        $this->assertTrue($this->manager->isValid($session));
 
-        $session = $sessionManager->create(new SessionId('new'));
+        $clock->plus(Duration::seconds(5));
+        $this->assertTrue($this->manager->isValid($session));
 
-        $this->assertTrue($session->isValid());
-
-        $clock->plus(1);
-
-        $this->assertFalse($session->isValid());
+        $clock->plus(Duration::seconds(6));
+        $this->assertFalse($this->manager->isValid($session));
     }
 
     #[Test]
-    public function session_reflash(): void
+    public function delete_expired_sessions_removes_old_records(): void
     {
-        $session = $this->container->get(Session::class);
+        $this->eventBus->preventEventHandling();
 
-        $session->flash('test', 'value');
-        $session->flash('test2', ['key' => 'value']);
-
-        $this->assertEquals('value', $session->get('test'));
-
-        $session->reflash();
-        $session->cleanup();
-
-        $this->assertEquals('value', $session->get('test'));
-        $this->assertEquals(['key' => 'value'], $session->get('test2'));
-    }
-
-    #[Test]
-    public function session_expires_based_on_last_activity(): void
-    {
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new RedisSessionConfig(
@@ -168,112 +207,76 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
             prefix: 'test_session:',
         ));
 
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('last_activity_test');
+        $activeSessionId = $this->createSessionId();
+        $active = $this->manager->getOrCreate($activeSessionId);
+        $active->set('status', 'active');
 
-        // Create session
-        $session = $manager->create($sessionId);
-        $this->assertTrue($session->isValid());
+        $this->manager->save($active);
 
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
+        $expiredSessionId = $this->createSessionId();
+        $expired = $this->manager->getOrCreate($expiredSessionId);
+        $expired->set('status', 'expired');
 
-        // Perform activity
-        $session->set('activity', 'user_action');
-        $clock->plus(Duration::minutes(25));
-        $this->assertTrue($session->isValid());
-        $this->assertTrue($manager->isValid($sessionId));
+        $this->manager->save($expired);
 
-        // Move forward another 10 minutes, now 35 minutes from last activity
-        $clock->plus(Duration::minutes(10));
-        $this->assertFalse($session->isValid());
-        $this->assertFalse($manager->isValid($sessionId));
+        // expire the $expired one
+        $clock->plus(Duration::minutes(35));
+
+        // keep the first one active
+        $this->manager->save($active);
+
+        $this->assertSessionExistsInRedis($activeSessionId);
+        $this->assertSessionExistsInRedis($expiredSessionId);
+
+        $this->manager->deleteExpiredSessions();
+
+        $this->assertSessionExistsInRedis($activeSessionId);
+        $this->assertSessionNotExistsInRedis($expiredSessionId);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event) use ($expiredSessionId): void {
+                $this->assertEquals($expiredSessionId, $event->id);
+            },
+            count: 1,
+        );
     }
 
-    #[Test]
-    public function cleanup_removes_expired_sessions(): void
+    private function assertSessionExistsInRedis(SessionId $sessionId): void
     {
-        $clock = $this->clock('2023-01-01 00:00:00');
+        $session = $this->getSessionFromRedis($sessionId);
 
-        $this->container->config(new RedisSessionConfig(expiration: Duration::minutes(30), prefix: 'test_session:'));
-
-        $manager = $this->container->get(SessionManager::class);
-
-        $activeSessionId = new SessionId('active_session');
-        $activeSession = $manager->create($activeSessionId);
-        $activeSession->set('status', 'active');
-
-        $clock->minus(Duration::hour());
-        $expiredSessionId = new SessionId('expired_session');
-        $expiredSession = $manager->create($expiredSessionId);
-        $expiredSession->set('status', 'expired');
-
-        $clock->plus(Duration::hour());
-
-        $this->assertSessionExistsInDatabase($activeSessionId);
-        $this->assertSessionExistsInDatabase($expiredSessionId);
-
-        $manager->cleanup();
-
-        $this->assertSessionExistsInDatabase($activeSessionId);
-        $this->assertSessionNotExistsInDatabase($expiredSessionId);
+        $this->assertNotNull($session, "Session {$sessionId} should exist in Redis");
     }
 
-    #[Test]
-    public function session_updates_last_active_timestamp(): void
+    private function assertSessionNotExistsInRedis(SessionId $sessionId): void
     {
-        $clock = $this->clock('2023-01-01 12:00:00');
+        $session = $this->getSessionFromRedis($sessionId);
 
-        $manager = $this->container->get(SessionManager::class);
-        $sessionId = new SessionId('timestamp_test');
-
-        $session = $manager->create($sessionId);
-        $originalTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
-
-        $clock->plus(Duration::minutes(5));
-
-        $session->set('action', 'spell_cast');
-        $updatedTimestamp = $this->getSessionLastActiveTimestamp($sessionId);
-
-        $this->assertTrue($updatedTimestamp->after($originalTimestamp));
+        $this->assertNull($session, "Session {$sessionId} should not exist in Redis");
     }
 
-    #[Test]
-    public function session_persists_csrf_token(): void
+    private function assertSessionDataInRedis(SessionId $sessionId, array $data): void
     {
-        $session = $this->container->get(Session::class);
-        $token = $session->token;
+        $session = $this->getSessionFromRedis($sessionId);
 
-        $data = $this->getSessionDataFromDatabase($session->id);
+        $this->assertNotNull($session, "Session {$sessionId} should exist in Redis");
 
-        $this->assertEquals($token, $data[Session::CSRF_TOKEN_KEY]);
-        $this->assertEquals($token, $session->token);
-    }
-
-    private function assertSessionExistsInDatabase(SessionId $sessionId): void
-    {
-        $session = $this->getSessionFromDatabase($sessionId);
-
-        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
-    }
-
-    private function assertSessionNotExistsInDatabase(SessionId $sessionId): void
-    {
-        $session = $this->getSessionFromDatabase($sessionId);
-
-        $this->assertNull($session, "Session {$sessionId} should not exist in database");
+        foreach ($data as $key => $value) {
+            $this->assertEquals($value, $session->data[$key], "Session data key '{$key}' should match expected value");
+        }
     }
 
     private function getSessionLastActiveTimestamp(SessionId $sessionId): DateTimeInterface
     {
-        $session = $this->getSessionFromDatabase($sessionId);
+        $session = $this->getSessionFromRedis($sessionId);
 
-        $this->assertNotNull($session, "Session {$sessionId} should exist in database");
+        $this->assertNotNull($session, "Session {$sessionId} should exist in Redis");
 
         return $session->lastActiveAt;
     }
 
-    private function getSessionFromDatabase(SessionId $id): ?Session
+    private function getSessionFromRedis(SessionId $id): ?Session
     {
         $redis = $this->container->get(Redis::class);
 
@@ -285,11 +288,8 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
         }
     }
 
-    /**
-     * @return array<mixed>
-     */
-    private function getSessionDataFromDatabase(SessionId $id): array
+    private function createSessionId(): SessionId
     {
-        return $this->getSessionFromDatabase($id)->data ?? [];
+        return new SessionId(Random\uuid());
     }
 }
