@@ -32,7 +32,11 @@ You may read more about building commands in the [dedicated documentation](../1-
 
 ## Configuring discovery
 
-Tempest will discover all console commands within namespaces configured as valid PSR-4 namespaces, as well as all third-party packages that require Tempest.
+Tempest will automatically discover all console commands from multiple sources:
+
+1. **Core Tempest packages** — Built-in commands from Tempest itself
+2. **Vendor packages** — Third-party packages that require `tempest/framework` or `tempest/core`
+3. **App namespaces** — All namespaces configured as PSR-4 autoload paths in your `composer.json`
 
 ```json
 {
@@ -44,21 +48,24 @@ Tempest will discover all console commands within namespaces configured as valid
 }
 ```
 
-In case you need more fine-grained control over which directories to discover, you may provide a custom {`Tempest\Core\AppConfig`} instance to the `{php}ConsoleApplication::boot()` method:
+In case you need more fine-grained control over which directories to discover, you may provide additional discovery locations to the `{php}ConsoleApplication::boot()` method:
 
 ```php
-use Tempest\Core\AppConfig;
-use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Console\ConsoleApplication;
+use Tempest\Discovery\DiscoveryLocation;
 
-$appConfig = new AppConfig(
+ConsoleApplication::boot(
     discoveryLocations: [
         new DiscoveryLocation(
-            namespace: 'App\\',
-            path: __DIR__ . '/app/',
+            namespace: 'MyApp\\',
+            path: __DIR__ . '/src',
         ),
     ],
-);
-
-ConsoleApplication::boot(appConfig: $appConfig)->run();
+)->run();
 ```
+
+The `{php}boot()` method accepts the following parameters:
+
+- `{php}$name` — The application name (default: `'Tempest'`)
+- `{php}$root` — The root directory (default: current working directory)
+- `{php}$discoveryLocations` — Additional discovery locations to append to the auto-discovered ones
