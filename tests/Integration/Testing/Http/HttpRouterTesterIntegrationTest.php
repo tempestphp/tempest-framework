@@ -210,7 +210,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     #[Test]
     public function raw_body_string(): void
     {
-        $this->registerRoute([TestController::class, 'handleRawBody']);
+        $this->http->registerRoute([TestController::class, 'handleRawBody']);
 
         $response = $this->http
             ->post('/raw-body', body: 'ok')
