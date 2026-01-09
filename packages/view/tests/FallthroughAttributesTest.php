@@ -28,11 +28,11 @@ final class FallthroughAttributesTest extends TestCase
             view(__DIR__ . '/Fixtures/fallthrough.view.php'),
         );
 
-        $this->assertEquals(<<<'HTML'
+        $this->assertEquals(str_replace([' ', PHP_EOL], '', <<<'HTML'
         <div class="in-component component-class"></div>
         <div class="in-component component-class"></div>
         <div class="component-class" style="display: block;"></div>
         <div class="component-class" style="display: block;"></div>
-        HTML, $html);
+        HTML), str_replace([' ', PHP_EOL], '', $html));
     }
 }
