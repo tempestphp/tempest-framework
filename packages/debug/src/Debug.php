@@ -12,6 +12,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\EventBus\EventBus;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Support\Filesystem;
+use Throwable;
 
 final readonly class Debug
 {
@@ -27,7 +28,7 @@ final readonly class Debug
                 config: GenericContainer::instance()->get(DebugConfig::class),
                 eventBus: GenericContainer::instance()->get(EventBus::class),
             );
-        } catch (Exception) {
+        } catch (Throwable) {
             return new self();
         }
     }

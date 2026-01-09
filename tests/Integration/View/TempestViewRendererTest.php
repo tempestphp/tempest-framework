@@ -292,7 +292,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_implicit_default_slot(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
             <div class="base">
                 
@@ -890,5 +890,41 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $renderer->render(view('discovered-view.view.php'));
 
         $this->assertSnippetsMatch('<div>Hi</div>', $html);
+    }
+
+    public function test_whitespace_between_inline_elements_is_preserved(): void
+    {
+        /** @var TempestViewRenderer $renderer */
+        $renderer = $this->get(TempestViewRenderer::class);
+
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $renderer->render('<p><strong>Test</strong> <em>Test</em></p>'),
+        );
+    }
+
+    public function test_whitespace_introduced_by_line_breaks_is_preserved(): void
+    {
+        /** @var TempestViewRenderer $renderer */
+        $renderer = $this->get(TempestViewRenderer::class);
+
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $renderer->render('<p><strong>Test</strong>
+<em>Test</em></p>'),
+        );
+    }
+
+    public function test_whitespace_with_blank_lines_between_inline_elements_is_preserved(): void
+    {
+        /** @var TempestViewRenderer $renderer */
+        $renderer = $this->get(TempestViewRenderer::class);
+
+        $this->assertSame(
+            '<p><strong>Test</strong> <em>Test</em></p>',
+            $renderer->render('<p><strong>Test</strong>
+            
+<em>Test</em></p>'),
+        );
     }
 }

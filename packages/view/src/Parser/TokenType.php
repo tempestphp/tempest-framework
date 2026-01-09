@@ -18,4 +18,5 @@ enum TokenType
     case DOCTYPE;
     case CHARACTER_DATA_OPEN;
     case CHARACTER_DATA_CLOSE;
+    case WHITESPACE;
 }

@@ -69,6 +69,10 @@ final class ElementFactory
             return new TextElement(text: $text);
         }
 
+        if ($token->type === TokenType::WHITESPACE) {
+            return new WhitespaceElement($token->content);
+        }
+
         if (! $token->tag || $token->type === TokenType::COMMENT || $token->type === TokenType::PHP) {
             return new RawElement(token: $token, tag: null, content: $token->compile());
         }

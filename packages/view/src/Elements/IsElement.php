@@ -110,6 +110,10 @@ trait IsElement
 
     public function getPrevious(): ?Element
     {
+        if ($this->previous instanceof WhitespaceElement) {
+            return $this->previous->getPrevious();
+        }
+
         return $this->previous;
     }
 
