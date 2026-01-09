@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Closure;
+use UnitEnum;
 
 interface EventBus
 {
@@ -16,5 +17,5 @@ interface EventBus
     /**
      * Adds a listener for the given event. The closure accepts the event object as its first parameter, so the `$event` parameter is optional.
      */
-    public function listen(Closure $handler, ?string $event = null): void;
+    public function listen(Closure $handler, string|UnitEnum|null $event = null): void;
 }

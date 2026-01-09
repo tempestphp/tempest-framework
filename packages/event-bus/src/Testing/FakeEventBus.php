@@ -6,6 +6,7 @@ use Closure;
 use Tempest\EventBus\CallableEventHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\GenericEventBus;
+use UnitEnum;
 
 final class FakeEventBus implements EventBus
 {
@@ -31,7 +32,7 @@ final class FakeEventBus implements EventBus
         }
     }
 
-    public function listen(Closure $handler, ?string $event = null): void
+    public function listen(Closure $handler, string|UnitEnum|null $event = null): void
     {
         $this->genericEventBus->listen($handler, $event);
     }

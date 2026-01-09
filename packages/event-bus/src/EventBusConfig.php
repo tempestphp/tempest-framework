@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Tempest\Core\Middleware;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
+use UnitEnum;
 
 final class EventBusConfig
 {
@@ -20,8 +21,12 @@ final class EventBusConfig
         public Middleware $middleware = new Middleware(),
     ) {}
 
-    public function addClosureHandler(Closure $handler, ?string $event = null): self
+    public function addClosureHandler(Closure $handler, string|UnitEnum|null $event = null): self
     {
+        if ($event instanceof UnitEnum) {
+            $event = $event::class . '::' . $event->name;
+        }
+
         $event ??= new FunctionReflector($handler)
             ->getParameter(key: 0)
             ?->getType()
