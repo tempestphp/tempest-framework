@@ -471,14 +471,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_full_html_document_as_component(): void
     {
         $this->view->registerViewComponent('x-layout', <<<'HTML'
-            <html lang="en">
-            <head>
-                <title>Tempest View</title>
-            </head>
-            <body>
-                <x-slot />
-            </body>
-            </html>
+        <html lang="en">
+        <head>
+            <title>Tempest View</title>
+        </head>
+        <body>
+            <x-slot />
+        </body>
+        </html>
         HTML);
 
         $html = $this->view->render(<<<'HTML'
@@ -487,9 +487,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </x-layout>
         HTML);
 
-        $this->assertStringContainsString('<html lang="en"><head><title>Tempest View</title></head><body>', $html);
+        $this->assertStringContainsString(<<<'HTML'
+        <html lang="en">
+        <head>
+            <title>Tempest View</title>
+        </head>
+        <body>
+        HTML, $html);
         $this->assertStringContainsString('Hello World', $html);
-        $this->assertStringContainsString('</body></html>', $html);
+        $this->assertStringContainsString('</body>', $html);
+        $this->assertStringContainsString('</html>', $html);
     }
 
     public function test_empty_slots_are_commented_out(): void

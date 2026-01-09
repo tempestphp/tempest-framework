@@ -14,8 +14,7 @@ final class TempestViewLexer
 
     public function __construct(
         private readonly string $html,
-    )
-    {
+    ) {
         $this->current = $this->html[$this->position] ?? null;
     }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Debug;
 
-use Exception;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\VarDumper;

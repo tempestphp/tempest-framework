@@ -183,8 +183,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_whitespace(): void
     {
         $html = <<<'HTML'
-<p><strong>Test</strong> <em>Test</em></p>
-HTML;
+        <p><strong>Test</strong> <em>Test</em></p>
+        HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -201,7 +201,7 @@ HTML;
                 new Token('>', TokenType::OPEN_TAG_END),
                 new Token('Test', TokenType::CONTENT),
                 new Token('</em>', TokenType::CLOSING_TAG),
-                new Token('</p>', TokenType::CLOSING_TAG)
+                new Token('</p>', TokenType::CLOSING_TAG),
             ],
             actual: $tokens,
         );
@@ -344,8 +344,7 @@ HTML;
     {
         $tokens = new TempestViewLexer(<<<'RSS'
         <title><![CDATA[ {{ $post['title'] }} ]]></title>
-        RSS,
-        )->lex();
+        RSS)->lex();
 
         $this->assertTokens(
             expected: [
@@ -364,8 +363,7 @@ HTML;
     {
         $tokens = new TempestViewLexer(<<<'XML'
         <?xml version="1.0" encoding="UTF-8" ?>
-        XML,
-        )->lex();
+        XML)->lex();
 
         $this->assertTokens(
             expected: [
