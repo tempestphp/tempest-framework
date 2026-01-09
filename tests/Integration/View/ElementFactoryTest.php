@@ -11,6 +11,7 @@ use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\WhitespaceElement;
 use Tempest\View\Parser\TempestViewParser;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\arr;
 
 /**
