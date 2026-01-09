@@ -909,7 +909,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $renderer = $this->get(TempestViewRenderer::class);
 
         $this->assertSame(
-            '<p><strong>Test</strong> <em>Test</em></p>',
+            '<p><strong>Test</strong>
+<em>Test</em></p>',
             $renderer->render('<p><strong>Test</strong>
 <em>Test</em></p>'),
         );
@@ -921,7 +922,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $renderer = $this->get(TempestViewRenderer::class);
 
         $this->assertSame(
-            '<p><strong>Test</strong> <em>Test</em></p>',
+            '<p><strong>Test</strong>
+            
+<em>Test</em></p>',
             $renderer->render('<p><strong>Test</strong>
             
 <em>Test</em></p>'),
