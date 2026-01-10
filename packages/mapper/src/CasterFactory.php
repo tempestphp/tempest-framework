@@ -61,7 +61,7 @@ final class CasterFactory
             $type = $property->getType();
             $castWith = $property->getAttribute(CastWith::class);
 
-            if ($castWith === null && $type->isClass()) {
+            if ($castWith === null && ($type->isClass() || $type->isInterface())) {
                 $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
             }
 

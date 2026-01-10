@@ -16,8 +16,10 @@ use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\DoubleStringSerializer;
+use Tests\Tempest\Integration\Mapper\Fixtures\InterfaceValueSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\JsonSerializableObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithInterfaceTypedProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject;
 
@@ -65,5 +67,13 @@ final class SerializerFactoryTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(NativeDateTimeSerializer::class, $factory->forProperty($class->getProperty('nativeDateTimeProp')));
         $this->assertInstanceOf(NativeDateTimeSerializer::class, $factory->forProperty($class->getProperty('nativeDateTimeInterfaceProp')));
         $this->assertInstanceOf(DateTimeSerializer::class, $factory->forProperty($class->getProperty('dateTimeProp')));
+    }
+
+    public function test_serializer_from_interface_attribute(): void
+    {
+        $factory = $this->container->get(SerializerFactory::class);
+        $class = reflect(ObjectWithInterfaceTypedProperties::class);
+
+        $this->assertInstanceOf(InterfaceValueSerializer::class, $factory->forProperty($class->getProperty('serializable')));
     }
 }
