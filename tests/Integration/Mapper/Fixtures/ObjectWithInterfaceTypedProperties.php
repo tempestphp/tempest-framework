@@ -9,6 +9,5 @@ final class ObjectWithInterfaceTypedProperties
     public function __construct(
         public InterfaceWithCastWith $castable,
         public InterfaceWithSerializeWith $serializable,
-    ) {
-    }
+    ) {}
 }
