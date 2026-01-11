@@ -737,7 +737,7 @@ function each(iterable $array, Closure $each): array
  *
  * @return array<TKey, TMapValue>
  */
-function map_iterable(iterable $array, Closure $map): array
+function map(iterable $array, Closure $map): array
 {
     $result = [];
 
@@ -1086,7 +1086,7 @@ function group_by(iterable $array, Closure $keyExtracor): array
  */
 function flat_map(iterable $array, Closure $map, int|float $depth = 1): array
 {
-    return namespace\flatten(namespace\map_iterable(to_array($array), $map), $depth);
+    return namespace\flatten(map(to_array($array), $map), $depth);
 }
 
 /**

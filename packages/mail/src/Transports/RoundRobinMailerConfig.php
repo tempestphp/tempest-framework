@@ -42,6 +42,6 @@ final class RoundRobinMailerConfig implements MailerConfig
     /** @return TransportInterface[] */
     private function buildTransports(): array
     {
-        return Arr\map_iterable($this->transports, fn (MailerConfig $config) => $config->createTransport());
+        return Arr\map($this->transports, fn (MailerConfig $config) => $config->createTransport());
     }
 }

@@ -494,7 +494,7 @@ trait ManipulatesArray
      */
     public function map(Closure $map): self
     {
-        return $this->createOrModify(namespace\map_iterable($this->value, $map));
+        return $this->createOrModify(map($this->value, $map));
     }
 
     /**

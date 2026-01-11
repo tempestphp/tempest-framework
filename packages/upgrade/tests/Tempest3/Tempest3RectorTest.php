@@ -100,4 +100,20 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('use Tempest\View\view;')
             ->assertContains('return view($template);');
     }
+
+    public function test_map_iterable_namespace_change(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/MapIterableNamespaceChange.input.php')
+            ->assertContains('use function Tempest\Support\Arr\map;')
+            ->assertNotContains('use function Tempest\Support\Arr\map_iterable;');
+    }
+
+    public function test_fully_qualified_map_iterable_call(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedMapIterableCall.input.php')
+            ->assertContains('use Tempest\Support\Arr\map;')
+            ->assertContains('return map($data, fn ($item) => $item * 2);');
+    }
 }

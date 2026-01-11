@@ -64,8 +64,8 @@ final readonly class Validator
         return new ValidationFailed(
             failingRules: $failingRules,
             subject: $subject,
-            errorMessages: Arr\map_iterable($failingRules, function (array $rules, string $field) {
-                return Arr\map_iterable($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field));
+            errorMessages: Arr\map($failingRules, function (array $rules, string $field) {
+                return Arr\map($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field));
             }),
             targetClass: $targetClass,
         );
@@ -151,7 +151,7 @@ final readonly class Validator
 
         $key = $property->getAttribute(TranslationKey::class)?->key;
 
-        return Arr\map_iterable(
+        return Arr\map(
             array: $this->validateValue($value, $rules),
             map: fn (FailingRule $rule) => $rule->withKey($key),
         );

@@ -85,7 +85,7 @@ final readonly class DataTransferObjectSerializer implements Serializer, Dynamic
         }
 
         if (is_array($input)) {
-            return Arr\map_iterable($input, $this->serializeWithType(...));
+            return Arr\map($input, $this->serializeWithType(...));
         }
 
         return $input;

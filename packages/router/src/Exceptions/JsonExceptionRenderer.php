@@ -63,7 +63,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
 
     private function renderValidationFailedResponse(ValidationFailed $exception): Response
     {
-        $errors = Arr\map_iterable($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map_iterable(
+        $errors = Arr\map($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map(
             array: $failingRulesForField,
             map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule, $field),
         ));
@@ -94,7 +94,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
                 'exception' => get_class($throwable),
                 'file' => $throwable->getFile(),
                 'line' => $throwable->getLine(),
-                'trace' => Arr\map_iterable(
+                'trace' => Arr\map(
                     array: $throwable->getTrace(),
                     map: fn (array $trace) => Arr\remove_keys($trace, 'args'),
                 ),

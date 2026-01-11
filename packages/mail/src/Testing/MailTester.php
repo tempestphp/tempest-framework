@@ -92,21 +92,21 @@ final class MailTester
     }
 
     public array $from {
-        get => Arr\map_iterable(
+        get => Arr\map(
             array: $this->sentSymfonyEmail->getFrom(),
             map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
     public array $to {
-        get => Arr\map_iterable(
+        get => Arr\map(
             array: $this->sentSymfonyEmail->getTo(),
             map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
     public array $attachments {
-        get => Arr\map_iterable(
+        get => Arr\map(
             array: $this->sentSymfonyEmail->getAttachments(),
             map: fn (DataPart $attachment) => new Attachment(
                 resolve: fn () => $attachment->getBody(),
@@ -383,7 +383,7 @@ final class MailTester
         Assert::fail(sprintf(
             'Failed asserting that the email has an attachment named `%s`. Existing attachments: %s.',
             $filename,
-            Arr\join(Arr\map_iterable($attachments, fn (DataPart $attachment) => $attachment->getName())),
+            Arr\join(Arr\map($attachments, fn (DataPart $attachment) => $attachment->getName())),
         ));
 
         return $this;

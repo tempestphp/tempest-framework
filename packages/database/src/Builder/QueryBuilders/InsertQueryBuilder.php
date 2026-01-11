@@ -222,7 +222,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 ? $this->removeTablePrefix($hasMany->ownerJoin)
                 : $this->getDefaultForeignKeyName();
 
-            $insert = Arr\map_iterable(
+            $insert = Arr\map(
                 array: $relations,
                 map: fn ($item) => $this->prepareRelationItem($item, $foreignKey, $parentId),
             );
@@ -306,7 +306,7 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private function resolveData(): array
     {
-        return Arr\map_iterable(
+        return Arr\map(
             array: $this->rows,
             map: fn (object|iterable $model) => $this->resolveModelData($model),
         );

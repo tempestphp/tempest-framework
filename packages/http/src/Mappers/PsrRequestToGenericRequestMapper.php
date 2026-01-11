@@ -63,7 +63,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            'cookies' => Arr\filter(Arr\map_iterable(
+            'cookies' => Arr\filter(Arr\map(
                 array: $_COOKIE,
                 map: function (string $value, string $key) {
                     try {

@@ -130,7 +130,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             $this->container->get(FormSession::class)->setOriginalValues($this->filterSensitiveFields($this->request, $exception->targetClass));
         }
 
-        $errors = Arr\map_iterable($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map_iterable(
+        $errors = Arr\map($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map(
             array: $failingRulesForField,
             map: fn (FailingRule $rule) => $this->validator->getErrorMessage($rule, $field),
         ));
