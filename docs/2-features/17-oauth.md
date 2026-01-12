@@ -220,6 +220,7 @@ Tempest provides a different configuration object for each OAuth provider. Below
 - **Microsoft** authentication using {b`Tempest\Auth\OAuth\Config\MicrosoftOAuthConfig`},
 - **Slack** authentication using {b`Tempest\Auth\OAuth\Config\SlackOAuthConfig`},
 - **Apple** authentication using {b`Tempest\Auth\OAuth\Config\AppleOAuthConfig`},
+- **Twitch** authentication using {b`Tempest\Auth\OAuth\Config\TwitchOAuthConfig`},
 - Any other OAuth platform using {b`Tempest\Auth\OAuth\Config\GenericOAuthConfig`}.
 
 ## Testing
