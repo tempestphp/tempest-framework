@@ -67,7 +67,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
     private function convertPsrResponseToTempestResponse(ResponseInterface $response): Response
     {
         return new GenericResponse(
-            status: Status::code($response->getStatusCode()),
+            status: Status::fromCode($response->getStatusCode()),
             body: $response->getBody()->getContents(),
             headers: $response->getHeaders(),
         );

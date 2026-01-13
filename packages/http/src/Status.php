@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use ValueError;
+
 enum Status: int
 {
     // Informational
@@ -79,9 +81,19 @@ enum Status: int
     case NOT_EXTENDED = 510;
     case NETWORK_AUTHENTICATION_REQUIRED = 511;
 
-    public static function code(int $code): self
+    public static function fromCode(int $code): self
     {
-        return self::from($code);
+        try {
+            return self::from($code);
+        } catch (ValueError) {
+            return match (intdiv($code, 100) * 100) {
+                100 => self::CONTINUE,
+                200 => self::OK,
+                300 => self::MULTIPLE_CHOICES,
+                400 => self::BAD_REQUEST,
+                default => self::INTERNAL_SERVER_ERROR,
+            };
+        }
     }
 
     public function description(): string
