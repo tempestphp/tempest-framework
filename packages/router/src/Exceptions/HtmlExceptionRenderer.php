@@ -104,6 +104,10 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             return false;
         }
 
+        if ($throwable instanceof ValidationFailed) {
+            return false;
+        }
+
         if (! $throwable instanceof HttpRequestFailed) {
             return true;
         }
