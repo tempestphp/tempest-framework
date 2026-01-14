@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\Environment;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
