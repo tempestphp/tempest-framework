@@ -28,6 +28,6 @@ final class ViewCacheInitializer implements Initializer
             return false;
         }
 
-        return (bool) env('VIEW_CACHE', default: Environment::guessFromEnvironment());
+        return (bool) env('VIEW_CACHE', default: Environment::guessFromEnvironment()->requiresCaution());
     }
 }
