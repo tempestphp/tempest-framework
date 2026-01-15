@@ -10,6 +10,8 @@ use Tempest\Http\Request;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionIdResolver;
 
+use function Tempest\Support\str;
+
 final readonly class HeaderSessionIdResolver implements SessionIdResolver
 {
     public function __construct(

@@ -106,6 +106,19 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->body);
     }
 
+    public function test_headers_with_underscores(): void
+    {
+        $this->http
+            ->get(
+                uri: '/header-with-underscores',
+                headers: [
+                    'tempest_session_id' => 'test',
+                ],
+            )
+            ->assertOk()
+            ->assertHeaderMatches('tempest_session_id', 'test');
+    }
+
     public function test_generic_request_can_map_to_custom_request(): void
     {
         $response = $this->http
