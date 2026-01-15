@@ -37,10 +37,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $this->publishImports();
 
             if ($migration && $this->shouldMigrate()) {
-                if (! $this->migrationManager->doesMigrationsTableExist()) {
-                    $this->migrationManager->executeUp(new CreateMigrationsTable());
-                }
-
+                $this->migrationManager->up();
                 $this->migrationManager->executeUp(
                     migration: $this->container->get(to_fqcn($migration, root: root_path())),
                 );
