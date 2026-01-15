@@ -9,7 +9,6 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
-use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationManager;
 
 use function Tempest\root_path;
@@ -35,6 +34,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
             $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
             $this->publishImports();
+
 
             if ($migration && $this->shouldMigrate()) {
                 $this->migrationManager->up();
