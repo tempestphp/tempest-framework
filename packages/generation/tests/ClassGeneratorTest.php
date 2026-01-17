@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Tempest\Generation\ClassGenerator;
 use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
 use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
@@ -14,6 +15,8 @@ use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
  */
 final class ClassGeneratorTest extends TestCase
 {
+    use MatchesSnapshots;
+
     #[Test]
     public function creates_class_from_scratch(): void
     {
