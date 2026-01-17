@@ -65,6 +65,11 @@ final readonly class TypeReflector implements Reflector
         return new ClassReflector($this->cleanDefinition);
     }
 
+    public function asEnum(): EnumReflector
+    {
+        return new EnumReflector($this->cleanDefinition);
+    }
+
     public function equals(string|TypeReflector $type): bool
     {
         if (is_string($type)) {
