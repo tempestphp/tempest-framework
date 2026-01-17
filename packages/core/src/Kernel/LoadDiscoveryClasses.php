@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use AssertionError;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
@@ -185,13 +186,19 @@ final class LoadDiscoveryClasses
             // Discovery errors (syntax errors, missing imports, etc.)
             // are ignored when they happen in vendor files,
             // but they are allowed to be thrown in project code
-            if ($location->isVendor()) {
-                try {
+            try {
+                if ($location->isVendor()) {
+                    try {
+                        $input = new ClassReflector($className);
+                    } catch (Throwable) {
+                        // @mago-expect lint:no-empty-catch-clause
+                    }
+                } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
-                } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
                 }
-            } elseif (class_exists($className)) {
-                $input = new ClassReflector($className);
+            } catch (AssertionError) {
+                // Workaround for Pest test files autoloading.
+                // @mago-expect lint:no-empty-catch-clause
             }
 
             if ($input instanceof ClassReflector) {
