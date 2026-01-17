@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Core\PublishesFiles;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
+use Tempest\Generation\Php\DataObjects\StubFile;
+use Tempest\Generation\Php\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Php\Exceptions\FileGenerationWasAborted;
 
 use function Tempest\Support\str;
 

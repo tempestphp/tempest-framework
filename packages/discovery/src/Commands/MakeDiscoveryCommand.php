@@ -9,8 +9,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Discovery\Stubs\DiscoveryStub;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeDiscoveryCommand

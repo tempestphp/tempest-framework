@@ -9,8 +9,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\CommandStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
 
 use function Tempest\Support\str;
 

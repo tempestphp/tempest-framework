@@ -8,10 +8,10 @@ use InvalidArgumentException;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
+use Tempest\Generation\Php\DataObjects\StubFile;
+use Tempest\Generation\Php\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Php\Exceptions\FileGenerationWasAborted;
+use Tempest\Generation\Php\StubFileType;
 use Tempest\View\Enums\ViewType;
 use Tempest\View\Stubs\ViewStub;
 

@@ -10,8 +10,8 @@ use Tempest\Container\Singleton;
 use Tempest\Container\Stubs\InitializerStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class MakeInitializerCommand
