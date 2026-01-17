@@ -2,7 +2,7 @@
 
 namespace Tempest\Generation\Tests\TypeScript\Fixtures;
 
-use Tempest\DateTime\DateTime;
+use DateTimeInterface;
 
 final class User
 {
@@ -10,7 +10,7 @@ final class User
         public string $full_name,
         public string $email,
         public int $age,
-        public DateTime $created_at,
+        public DateTimeInterface $created_at,
         /** @var \Tempest\Generation\Tests\TypeScript\Fixtures\Security\Role[] */
         public array $roles,
         public Settings $settings,
