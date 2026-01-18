@@ -10,6 +10,8 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
+use function Tempest\Support\arr;
+
 final class TypeResolverDiscovery implements Discovery
 {
     use IsDiscovery;
@@ -30,16 +32,9 @@ final class TypeResolverDiscovery implements Discovery
 
     public function apply(): void
     {
-        // Collect all resolvers with their priorities
-        $resolvers = [];
-        foreach ($this->discoveryItems as [$className, $priority]) {
-            $resolvers[] = ['class' => $className, 'priority' => $priority];
-        }
-
-        // Sort by priority (lower values first - framework uses ascending priority)
-        usort($resolvers, fn ($a, $b) => $a['priority'] <=> $b['priority']);
-
-        // Extract just the class names
-        $this->config->resolvers = array_column($resolvers, 'class');
+        $this->config->resolvers = arr([...$this->discoveryItems])
+            ->sortByCallback(fn (array $a, array $b) => $a[1] <=> $b[1])
+            ->map(fn (array $item) => $item[0])
+            ->toArray();
     }
 }
