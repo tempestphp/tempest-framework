@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript;
 
 /**
- * Interface for writing TypeScript type definitions to different output formats.
- * Implementations receive their configuration (destination, options, etc.) via constructor injection.
+ * Responsible for writing TypeScript type definitions to different output formats.
  */
 interface TypeScriptWriter
 {
     /**
-     * Write the TypeScript output.
+     * Writes the TypeScript output.
      */
     public function write(TypeScriptOutput $output): void;
 }

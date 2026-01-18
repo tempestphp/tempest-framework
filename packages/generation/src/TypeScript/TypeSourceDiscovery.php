@@ -22,11 +22,12 @@ final class TypeSourceDiscovery implements Discovery
             $this->discoveryItems->add($location, [$class->getName()]);
         }
 
+        // TODO(innocenzi): other heuristics for implicit opt-in
+        // eg. automatically convert DTOs, excluding vendor ones
+
         if ($location->isVendor()) {
             return;
         }
-
-        // TODO(innocenzi): other heuristics for implicit opt-in
 
         if ($class->implements(UnitEnum::class)) {
             $this->discoveryItems->add($location, [$class->getName()]);

@@ -11,9 +11,6 @@ use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
 
-/**
- * Resolves enum cases to TypeScript types.
- */
 #[Priority(Priority::LOW)]
 final class EnumCaseTypeResolver implements TypeResolver
 {

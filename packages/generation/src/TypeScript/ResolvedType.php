@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript;
 
 /**
- * Result of resolving a PHP type to TypeScript.
+ * Represents a PHP type resolved to a TypeScript one as a string.
  */
 final readonly class ResolvedType
 {

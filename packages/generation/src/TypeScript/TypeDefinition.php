@@ -9,7 +9,6 @@ use Tempest\Support\Str;
 
 /**
  * Represents a TypeScript type alias definition.
- * Example: export type Status = 'active' | 'inactive';
  */
 final class TypeDefinition
 {
