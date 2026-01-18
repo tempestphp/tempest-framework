@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript\TypeResolvers;
 
+use BackedEnum;
 use Tempest\Core\Priority;
 use Tempest\Generation\TypeScript\ResolvedType;
 use Tempest\Generation\TypeScript\TypeResolver;
@@ -11,27 +12,23 @@ use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
 
 /**
- * Resolves references to PHP classes and interfaces into TypeScript type references.
+ * Resolves enum cases to TypeScript types.
  */
 #[Priority(Priority::LOW)]
-final class ClassReferenceTypeResolver implements TypeResolver
+final class EnumCaseTypeResolver implements TypeResolver
 {
     public function canResolve(TypeReflector $type): bool
     {
-        if ($type->isEnum() || $type->isEnumCase()) {
-            return false;
-        }
-
-        return $type->isClass() || $type->isInterface();
+        return $type->isEnumCase();
     }
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
     {
-        $generator->include($type->getName());
+        $case = $type->asEnumCase()->getValue();
+        $value = $case instanceof BackedEnum
+            ? $case->value
+            : $case->name;
 
-        return new ResolvedType(
-            type: $type->getShortName(),
-            fqcn: $type->getName(),
-        );
+        return new ResolvedType(is_string($value) ? "'{$value}'" : $value);
     }
 }

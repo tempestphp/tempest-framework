@@ -42,7 +42,7 @@ final class ClassStructureResolverTest extends TestCase
         $this->generator = new GenericTypeScriptGenerator(
             config: $config,
             classResolver: $this->resolver,
-            enumResolver: new EnumStructureResolver(),
+            enumResolver: new EnumStructureResolver($config, $container),
         );
     }
 

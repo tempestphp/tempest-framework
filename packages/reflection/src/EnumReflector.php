@@ -89,9 +89,17 @@ final class EnumReflector implements Reflector
             key: 'cases',
             closure: fn () => array_map(
                 callback: fn (ReflectionEnumUnitCase $case) => $case->getValue(),
-                array: $this->reflectionEnum->getCases(),
+                array: $this->getReflectionCases(),
             ),
         );
+    }
+
+    /**
+     * @return \ReflectionEnumUnitCase[]|\ReflectionEnumBackedCase[]
+     */
+    public function getReflectionCases(): array
+    {
+        return $this->reflectionEnum->getCases();
     }
 
     public function hasCase(string $name): bool

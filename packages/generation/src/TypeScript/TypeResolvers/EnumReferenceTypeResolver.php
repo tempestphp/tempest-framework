@@ -13,12 +13,12 @@ use Tempest\Reflection\TypeReflector;
 /**
  * Resolves references to PHP enums into TypeScript type references.
  */
-#[Priority(Priority::HIGH)]
+#[Priority(Priority::LOW)]
 final class EnumReferenceTypeResolver implements TypeResolver
 {
     public function canResolve(TypeReflector $type): bool
     {
-        return $type->isEnum();
+        return $type->isEnum() && ! $type->isEnumCase();
     }
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
@@ -26,7 +26,7 @@ final class EnumReferenceTypeResolver implements TypeResolver
         $generator->include($type->getName());
 
         return new ResolvedType(
-            type: $type->asEnum()->getShortName(),
+            type: $type->getShortName(),
             fqcn: $type->getName(),
         );
     }

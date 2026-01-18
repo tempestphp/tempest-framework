@@ -15,6 +15,7 @@ use Tempest\Generation\TypeScript\StructureResolvers\ClassStructureResolver;
 use Tempest\Generation\TypeScript\StructureResolvers\EnumStructureResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\ClassReferenceTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\DateTimeTypeResolver;
+use Tempest\Generation\TypeScript\TypeResolvers\EnumCaseTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\EnumReferenceTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\MixedTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\ScalarTypeResolver;
@@ -50,6 +51,7 @@ final class TypeScriptGenerationTest extends TestCase
         $config->resolvers = [
             ScalarTypeResolver::class,
             DateTimeTypeResolver::class,
+            EnumCaseTypeResolver::class,
             EnumReferenceTypeResolver::class,
             ClassReferenceTypeResolver::class,
             MixedTypeResolver::class,
@@ -59,7 +61,7 @@ final class TypeScriptGenerationTest extends TestCase
         $generator = new GenericTypeScriptGenerator(
             config: $config,
             classResolver: new ClassStructureResolver($config, $container),
-            enumResolver: new EnumStructureResolver(),
+            enumResolver: new EnumStructureResolver($config, $container),
         );
 
         new NamespacedFileWriter($config)->write($generator->generate());

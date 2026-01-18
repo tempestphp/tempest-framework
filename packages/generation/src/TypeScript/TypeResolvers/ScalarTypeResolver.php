@@ -10,7 +10,7 @@ use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
 
-#[Priority(Priority::HIGH)]
+#[Priority(Priority::LOW)]
 final class ScalarTypeResolver implements TypeResolver
 {
     public function canResolve(TypeReflector $type): bool
