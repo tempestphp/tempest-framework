@@ -13,18 +13,18 @@ use UnitEnum;
 use Vertisan\OAuth2\Client\Provider\TwitchHelix;
 use Vertisan\OAuth2\Client\Provider\TwitchHelixResourceOwner;
 
-final class TwitchHelixOAuthConfig implements OAuthConfig
+final class TwitchOAuthConfig implements OAuthConfig
 {
     public string $provider = TwitchHelix::class;
 
     public function __construct(
         /**
-         * The client ID for the TwitchHelix OAuth application.
+         * The client ID for the Twitch OAuth application.
          */
         public string $clientId,
 
         /**
-         * The client secret for the TwitchHelix OAuth application.
+         * The client secret for the Twitch OAuth application.
          */
         public string $clientSecret,
 
@@ -34,7 +34,7 @@ final class TwitchHelixOAuthConfig implements OAuthConfig
         public string|array $redirectTo,
 
         /**
-         * The scopes to request from TwitchHelix.
+         * The scopes to request from Twitch.
          *
          * @var string[]
          */

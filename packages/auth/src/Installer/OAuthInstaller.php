@@ -93,8 +93,8 @@ final class OAuthInstaller
 
     private function publishController(SupportedOAuthProvider $provider): void
     {
-        $fileName = str($provider->value)
-            ->classBasename()
+        $fileName = str($provider->name)
+            ->sentence()
             ->replace('Provider', '')
             ->append('Controller.php')
             ->toString();
