@@ -215,6 +215,26 @@ function create_directory(string $directory, int $permissions = 0o777): void
 }
 
 /**
+ * Creates and returns a unique empty temporary directory.
+ *
+ * @return non-empty-string
+ */
+function create_temporary_directory(?string $prefix = null): string
+{
+    $temporaryDirectory = sys_get_temp_dir();
+    $uniqueDirectory = $temporaryDirectory . '/' . uniqid(prefix: $prefix ?? '');
+
+    if ($uniqueDirectory === false) {
+        throw new Exceptions\RuntimeException('Failed to create a temporary directory.');
+    }
+
+    namespace\ensure_directory_exists($uniqueDirectory);
+    namespace\ensure_directory_empty($uniqueDirectory);
+
+    return $uniqueDirectory;
+}
+
+/**
  * Creates the directory where the $filename is or will be stored.
  *
  * @return non-empty-string

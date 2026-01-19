@@ -79,6 +79,57 @@ final class UnixFunctionsTest extends TestCase
     }
 
     #[Test]
+    public function create_temporary_directory(): void
+    {
+        $tmp = Filesystem\create_temporary_directory();
+
+        $this->assertNotEmpty($tmp);
+        $this->assertTrue(is_dir($tmp));
+        $this->assertDirectoryIsWritable($tmp);
+
+        Filesystem\delete_directory($tmp);
+    }
+
+    #[Test]
+    public function create_temporary_directory_with_prefix(): void
+    {
+        $tmp = Filesystem\create_temporary_directory('test_prefix');
+
+        $this->assertNotEmpty($tmp);
+        $this->assertTrue(is_dir($tmp));
+        $this->assertStringContainsString('test_prefix', basename($tmp));
+
+        Filesystem\delete_directory($tmp);
+    }
+
+    #[Test]
+    public function create_temporary_directory_is_empty(): void
+    {
+        $tmp = Filesystem\create_temporary_directory();
+
+        $files = scandir($tmp);
+
+        $this->assertCount(2, $files);
+        $this->assertEquals(['.', '..'], $files);
+
+        Filesystem\delete_directory($tmp);
+    }
+
+    #[Test]
+    public function create_temporary_directory_is_unique(): void
+    {
+        $tmp1 = Filesystem\create_temporary_directory();
+        $tmp2 = Filesystem\create_temporary_directory();
+
+        $this->assertNotEquals($tmp1, $tmp2);
+        $this->assertTrue(is_dir($tmp1));
+        $this->assertTrue(is_dir($tmp2));
+
+        Filesystem\delete_directory($tmp1);
+        Filesystem\delete_directory($tmp2);
+    }
+
+    #[Test]
     public function create_file(): void
     {
         $file = $this->fixtures . '/tmp/file.txt';
