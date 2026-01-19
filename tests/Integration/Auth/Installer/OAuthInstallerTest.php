@@ -121,6 +121,11 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
                 'expectedConfigPath' => 'App/Authentication/OAuth/slack.config.php',
                 'expectedControllerPath' => 'App/Authentication/OAuth/SlackController.php',
             ],
+            'twitchhelix' => [
+                'provider' => SupportedOAuthProvider::TWITCHHELIX,
+                'expectedConfigPath' => 'App/Authentication/OAuth/twitchhelix.config.php',
+                'expectedControllerPath' => 'App/Authentication/OAuth/TwitchHelixController.php',
+            ],
         ];
     }
 }
