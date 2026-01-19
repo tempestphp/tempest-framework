@@ -29,6 +29,28 @@ enum SupportedOAuthProvider: string
     case TWITCH = TwitchHelix::class;
 
     /**
+     * Returns the canonical name for the given OAuth provider. Required because some of the providers have mixed-case names.
+     *
+     * @return string|null The canonical name, or null if the provider is generic.
+     */
+    public function getName(): ?string
+    {
+        return match ($this) {
+            self::APPLE => 'Apple',
+            self::DISCORD => 'Discord',
+            self::FACEBOOK => 'Facebook',
+            self::GENERIC => null,
+            self::GITHUB => 'GitHub',
+            self::GOOGLE => 'Google',
+            self::INSTAGRAM => 'Instagram',
+            self::LINKEDIN => 'LinkedIn',
+            self::MICROSOFT => 'Microsoft',
+            self::SLACK => 'Slack',
+            self::TWITCH => 'Twitch',
+        };
+    }
+
+    /**
      * Returns the Composer package name for the given OAuth provider.
      *
      * @return string|null The Composer package name, or null if the provider is generic.
