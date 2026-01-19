@@ -26,8 +26,13 @@ enum SupportedOAuthProvider: string
     case LINKEDIN = LinkedIn::class;
     case MICROSOFT = Microsoft::class;
     case SLACK = Slack::class;
-    case TWITCHHELIX = TwitchHelix::class;
+    case TWITCH = TwitchHelix::class;
 
+    /**
+     * Returns the Composer package name for the given OAuth provider.
+     *
+     * @return string|null The Composer package name, or null if the provider is generic.
+     */
     public function composerPackage(): ?string
     {
         return match ($this) {
@@ -41,7 +46,7 @@ enum SupportedOAuthProvider: string
             self::LINKEDIN => 'league/oauth2-linkedin',
             self::MICROSOFT => 'stevenmaguire/oauth2-microsoft',
             self::SLACK => 'adam-paterson/oauth2-slack',
-            self::TWITCHHELIX => 'vertisan/oauth2-twitch-helix',
+            self::TWITCH => 'vertisan/oauth2-twitch-helix',
         };
     }
 }
