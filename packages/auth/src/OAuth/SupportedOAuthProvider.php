@@ -40,7 +40,7 @@ enum SupportedOAuthProvider: string
             self::DISCORD => 'Discord',
             self::FACEBOOK => 'Facebook',
             self::GENERIC => null,
-            self::GITHUB => 'GitHub',
+            self::GITHUB => 'Github',
             self::GOOGLE => 'Google',
             self::INSTAGRAM => 'Instagram',
             self::LINKEDIN => 'LinkedIn',
