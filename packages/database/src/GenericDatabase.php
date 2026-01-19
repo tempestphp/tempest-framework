@@ -147,7 +147,7 @@ final class GenericDatabase implements Database
         foreach ($query->bindings as $key => $value) {
             if ($value instanceof Query) {
                 $value = $value->execute();
-            } elseif ($serializer = $serializerFactory->forValue($value)) {
+            } elseif (! is_scalar($value) && ($serializer = $serializerFactory->forValue($value))) {
                 $value = $serializer->serialize($value);
             }
 
