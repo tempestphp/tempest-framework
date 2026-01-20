@@ -35,8 +35,15 @@ final readonly class LoginController
     public function login(LoginRequest $request): Redirect
     {
         // TODO: implement, the code below is an example, customise to suit your application
-    
-        // Database query here to check for your user //
+
+        $user = query(User::class)
+            ->select()
+            ->where('email', $request->email)
+            ->first();
+
+        if (! $user || ! $this->passwordHasher->verify($request->password, $user->password)) {
+            return new Redirect('/login')->flash('error', 'Invalid credentials');
+        }
 
         $this->authenticator->authenticate($user);
 
