@@ -10,6 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
+use Tempest\Support\Str;
 
 final readonly class ConsoleApplication implements Application
 {
@@ -18,13 +19,22 @@ final readonly class ConsoleApplication implements Application
         private ConsoleArgumentBag $argumentBag,
     ) {}
 
-    /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
+    /**
+     * Boots the console application.
+     *
+     * @param string $name The name of the console application.
+     * @param string|null $root The root directory of the application. By default, the current working directory.
+     * @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations The locations to use for class discovery.
+     * @param string|null $internalStorage The *absolute* internal storage directory for Tempest.
+     */
     public static function boot(
         string $name = 'Tempest',
         ?string $root = null,
         array $discoveryLocations = [],
+        ?string $internalStorage = null,
     ): self {
-        $container = Tempest::boot($root, $discoveryLocations);
+        $internalStorage ??= '.' . Str\to_kebab_case($name);
+        $container = Tempest::boot($root, $discoveryLocations, $internalStorage);
 
         $application = $container->get(ConsoleApplication::class);
 
