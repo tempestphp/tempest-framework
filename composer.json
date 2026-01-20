@@ -33,7 +33,7 @@
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0|^2.0",
         "psr/log": "^3.0.0",
-        "rector/rector": "^2.2.5",
+        "rector/rector": "^2.3.2",
         "symfony/cache": "^7.3",
         "symfony/mailer": "^7.2.6",
         "symfony/process": "^7.3",
