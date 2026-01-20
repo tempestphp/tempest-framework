@@ -28,6 +28,10 @@ final class ConsoleCommandDiscovery implements Discovery
                 continue;
             }
 
+            if (! $this->consoleConfig->loadBuiltInCommands && $location->isTempest()) {
+                continue;
+            }
+
             $this->discoveryItems->add($location, [$method, $consoleCommand]);
         }
     }
