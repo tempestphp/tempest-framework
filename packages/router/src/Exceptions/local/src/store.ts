@@ -40,10 +40,11 @@ export function initializeExceptionStore(data: ExceptionState) {
 	store.step = 'ready'
 
 	if (store.step === 'ready') {
-		console.log(data)
 		store.exception = {
 			...data,
 			stacktrace: JSON.parse(data.stacktrace as any) as unknown as ExceptionState['stacktrace'],
 		}
+
+		console.log(store.exception)
 	}
 }

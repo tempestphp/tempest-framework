@@ -10,10 +10,17 @@ const $props = defineProps<{
 </script>
 
 <template>
-	<u-collapsible class="border border-default rounded-md overflow-hidden" default-open>
+	<u-collapsible
+		class="border border-default rounded-md overflow-hidden"
+		default-open
+		:disabled="!frame.snippet"
+	>
 		<!-- Folder header -->
 		<template v-slot="{ open }">
-			<div class="flex items-center gap-x-2 bg-accented/60 data-[state=open]:bg-accented/80 hover:bg-accented/80 px-4 py-3 text-dimmed text-sm transition-colors cursor-pointer">
+			<div
+				class="flex items-center gap-x-2 bg-accented/60 data-[state=open]:bg-accented/80 hover:bg-accented/80 px-4 py-3 text-dimmed text-sm transition-colors"
+				:class="{ 'cursor-pointer': frame.snippet }"
+			>
 				<!-- Open indicator -->
 				<div class="mr-1 shrink-0">
 					<div
@@ -26,6 +33,7 @@ const $props = defineProps<{
 					<symbol-call :frame class="grow" />
 					<!-- File -->
 					<file-label
+						v-if="frame.absoluteFile"
 						class="min-w-[20%] text-right shrink-0"
 						:relative-file="frame.relativeFile"
 						:absolute-file="frame.absoluteFile"
@@ -36,8 +44,8 @@ const $props = defineProps<{
 		</template>
 		<!-- Folder content -->
 		<template v-slot:content>
-			<div class="bg-muted py-1 border-default border-t">
-				<code-snippet v-if="frame.snippet" :snippet="frame.snippet" :file="frame.absoluteFile" />
+			<div class="bg-muted py-1 border-default border-t" v-if="frame.snippet">
+				<code-snippet :snippet="frame.snippet" :file="frame.absoluteFile" />
 			</div>
 		</template>
 	</u-collapsible>

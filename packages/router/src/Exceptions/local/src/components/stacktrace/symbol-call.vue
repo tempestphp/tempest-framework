@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { highlight, highlighter } from '../../highlight'
+import { highlighter } from '../../highlight'
 import type { Argument, StacktraceFrame } from './stacktrace'
 
 const $props = defineProps<{
@@ -45,35 +45,41 @@ const parts = computed<HighlightedPart[]>(() => {
 	result.push({ html: '<span style="color: var(--code-foreground)">(</span>' })
 
 	// Highlight each argument individually using the grammar state
-	$props.frame.arguments.forEach((argument, index) => {
-		if (index > 0) {
-			result.push({ html: '<span style="color: var(--code-foreground)">, </span>' })
-			if ($props.formatted) {
+	if ($props.formatted) {
+		$props.frame.arguments.forEach((argument, index) => {
+			if (index > 0) {
+				result.push({ html: '<span style="color: var(--code-foreground)">, </span>' })
+				result.push({ html: '<br />    ' })
+			} else {
 				result.push({ html: '<br />    ' })
 			}
-		} else if ($props.formatted) {
-			result.push({ html: '<br />    ' })
-		}
 
-		const argCode = `${argument.name}: ${argument.compact}`
-		const argHtml = highlighter.codeToHtml(argCode, {
-			lang: 'php',
-			theme: 'tempest',
-			grammarState,
-		})
+			const argCode = `${argument.name}: ${argument.compact}`
+			const argHtml = highlighter.codeToHtml(argCode, {
+				lang: 'php',
+				theme: 'tempest',
+				grammarState,
+			})
 
-		// Extract just the inner HTML
-		const argMatch = argHtml.match(/<code[^>]*>(.*?)<\/code>/s)
-		result.push({
-			html: (argMatch?.[1] ?? argCode),
-			argument,
+			// Extract just the inner HTML
+			const argMatch = argHtml.match(/<code[^>]*>(.*?)<\/code>/s)
+			result.push({
+				html: (argMatch?.[1] ?? argCode),
+				argument,
+			})
 		})
-	})
+	}
+
+	// Add spread to indicate that there are arguments
+	if (!$props.formatted && $props.frame.arguments.length > 0) {
+		result.push({ html: '<span style="color: var(--code-foreground)">...</span>' })
+	}
 
 	// Add closing parenthesis and semicolon
 	if ($props.formatted && $props.frame.arguments.length > 0) {
 		result.push({ html: '<br />' })
 	}
+
 	result.push({ html: '<span style="color: var(--code-foreground)">);</span>' })
 
 	return result
