@@ -43,7 +43,7 @@ final readonly class ConsoleApplication implements Application
 
         $consoleConfig = $container->get(ConsoleConfig::class);
         $consoleConfig->name ??= $name;
-        $consoleConfig->loadBuiltInCommands ??= $loadBuiltInCommands;
+        $consoleConfig->loadBuiltInCommands = $loadBuiltInCommands ?? $consoleConfig->loadBuiltInCommands;
 
         return $container->get(ConsoleApplication::class);
     }
