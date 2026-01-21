@@ -341,7 +341,8 @@ final class GenericContainer implements Container
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$dependencyName] ?? null) {
             if ($instance instanceof Closure) {
-                $instance = $instance($this);
+                // TODO: test
+                $instance = $instance($this, ...$params);
                 $this->singletons[$className] = $instance;
             }
 
@@ -354,7 +355,8 @@ final class GenericContainer implements Container
         if ($definition = $this->definitions[$dependencyName] ?? null) {
             $this->resolveChain()->add(new FunctionReflector($definition));
 
-            return $definition($this);
+            // TODO: test
+            return $definition($this, ...$params);
         }
 
         // Next we check if any of our default initializers can initialize this class.

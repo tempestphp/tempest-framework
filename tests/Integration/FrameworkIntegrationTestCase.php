@@ -21,6 +21,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         return [
             new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
             new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
+            new DiscoveryLocation('App\\', __DIR__ . '/../../app'),
         ];
     }
 

@@ -28,13 +28,13 @@ final class AutowireDiscovery implements Discovery
             return;
         }
 
-        $this->discoveryItems->add($location, [$class, $autowire]);
+        $this->discoveryItems->add($location, [$class, $autowire, $class->getAttribute(Singleton::class)]);
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as [$class, $autowire]) {
-            if ($autowire !== null) {
+        foreach ($this->discoveryItems as [$class, $autowire, $singleton]) {
+            if ($singleton !== null) {
                 $this->discoverAsSingleton($class);
             } else {
                 $this->discoverAsDefinition($class);
@@ -49,7 +49,7 @@ final class AutowireDiscovery implements Discovery
         foreach ($interfaces as $interface) {
             $this->container->singleton(
                 $interface,
-                static fn (Container $container) => $container->get($class->getName()),
+                static fn (Container $container, mixed ...$params) => $container->get($class->getName(), ...$params),
             );
         }
     }
@@ -61,7 +61,7 @@ final class AutowireDiscovery implements Discovery
         foreach ($interfaces as $interface) {
             $this->container->register(
                 $interface,
-                static fn (Container $container) => $container->get($class->getName()),
+                static fn (Container $container, mixed ...$params) => $container->get($class->getName(), ...$params),
             );
         }
     }
