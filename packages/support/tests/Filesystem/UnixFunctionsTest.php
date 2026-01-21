@@ -40,6 +40,11 @@ final class UnixFunctionsTest extends TestCase
             return;
         }
 
+        // restore permissions for cleanup
+        if (Filesystem\exists($this->fixtures)) {
+            exec(sprintf('chmod -R 0755 %s 2>/dev/null', escapeshellarg($this->fixtures)));
+        }
+
         Filesystem\delete_directory($this->fixtures);
 
         $this->assertFalse(is_dir($this->fixtures));
@@ -481,17 +486,38 @@ final class UnixFunctionsTest extends TestCase
     }
 
     #[Test]
-    public function copy_directory(): void
+    public function copy_delegates_to_copy_file(): void
     {
-        $this->expectException(PathWasNotAFile::class);
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/file_copy.txt';
 
-        $source = $this->fixtures . '/tmp';
-        $destination = $this->fixtures . '/tmp2';
+        file_put_contents($source, 'Hello');
+
+        Filesystem\copy($source, $destination);
+
+        $this->assertTrue(is_file($destination));
+        $this->assertEquals('Hello', file_get_contents($destination));
+    }
+
+    #[Test]
+    public function copy_delegates_to_copy_directory(): void
+    {
+        $source = $this->fixtures . '/source';
+        $destination = $this->fixtures . '/destination';
 
         mkdir($source);
-        file_put_contents($source . '/file.txt', '');
+        file_put_contents($source . '/file.txt', 'Hello');
+        mkdir($source . '/subdir');
+        file_put_contents($source . '/subdir/nested.txt', 'World');
 
-        Filesystem\copy_file($source, $destination);
+        Filesystem\copy($source, $destination);
+
+        $this->assertTrue(is_dir($destination));
+        $this->assertTrue(is_file($destination . '/file.txt'));
+        $this->assertEquals('Hello', file_get_contents($destination . '/file.txt'));
+        $this->assertTrue(is_dir($destination . '/subdir'));
+        $this->assertTrue(is_file($destination . '/subdir/nested.txt'));
+        $this->assertEquals('World', file_get_contents($destination . '/subdir/nested.txt'));
     }
 
     #[Test]
@@ -531,6 +557,112 @@ final class UnixFunctionsTest extends TestCase
         Filesystem\copy_file($source, $destination, overwrite: true);
 
         $this->assertEquals('Hello', file_get_contents($destination));
+    }
+
+    #[Test]
+    public function copy_directory(): void
+    {
+        $source = $this->fixtures . '/source';
+        $destination = $this->fixtures . '/destination';
+
+        mkdir($source);
+        file_put_contents($source . '/file.txt', 'Hello');
+        mkdir($source . '/subdir');
+        file_put_contents($source . '/subdir/nested.txt', 'World');
+
+        Filesystem\copy_directory($source, $destination);
+
+        $this->assertTrue(is_dir($destination));
+        $this->assertTrue(is_file($destination . '/file.txt'));
+        $this->assertEquals('Hello', file_get_contents($destination . '/file.txt'));
+        $this->assertTrue(is_dir($destination . '/subdir'));
+        $this->assertTrue(is_file($destination . '/subdir/nested.txt'));
+        $this->assertEquals('World', file_get_contents($destination . '/subdir/nested.txt'));
+    }
+
+    #[Test]
+    public function copy_directory_non_existing(): void
+    {
+        $this->expectException(PathWasNotFound::class);
+
+        $source = $this->fixtures . '/non-existing';
+        $destination = $this->fixtures . '/destination';
+
+        Filesystem\copy_directory($source, $destination);
+    }
+
+    #[Test]
+    public function copy_directory_file_as_source(): void
+    {
+        $this->expectException(PathWasNotADirectory::class);
+
+        $source = $this->fixtures . '/file.txt';
+        $destination = $this->fixtures . '/destination';
+
+        file_put_contents($source, '');
+
+        Filesystem\copy_directory($source, $destination);
+    }
+
+    #[Test]
+    public function copy_directory_non_readable(): void
+    {
+        $this->expectException(PathWasNotReadable::class);
+
+        $source = $this->fixtures . '/source';
+        $destination = $this->fixtures . '/destination';
+
+        mkdir($source);
+        chmod($source, 0o000);
+
+        Filesystem\copy_directory($source, $destination);
+    }
+
+    #[Test]
+    public function copy_directory_no_overwrite(): void
+    {
+        $source = $this->fixtures . '/source';
+        $destination = $this->fixtures . '/destination';
+
+        mkdir($source);
+        file_put_contents($source . '/file.txt', 'Hello');
+        mkdir($destination);
+        file_put_contents($destination . '/existing.txt', 'World');
+
+        Filesystem\copy_directory($source, $destination, overwrite: false);
+
+        $this->assertFalse(is_file($destination . '/file.txt'));
+        $this->assertTrue(is_file($destination . '/existing.txt'));
+    }
+
+    #[Test]
+    public function copy_directory_overwrite(): void
+    {
+        $source = $this->fixtures . '/source';
+        $destination = $this->fixtures . '/destination';
+
+        mkdir($source);
+        file_put_contents($source . '/file.txt', 'New');
+        mkdir($destination);
+        file_put_contents($destination . '/file.txt', 'Old');
+
+        Filesystem\copy_directory($source, $destination, overwrite: true);
+
+        $this->assertEquals('New', file_get_contents($destination . '/file.txt'));
+    }
+
+    #[Test]
+    public function copy_file_throws_when_source_is_directory(): void
+    {
+        $this->expectException(PathWasNotAFile::class);
+
+        $source = $this->fixtures . '/tmp';
+        $destination = $this->fixtures . '/tmp2';
+
+        mkdir($source);
+        file_put_contents($source . '/file.txt', '');
+
+        Filesystem\copy_file($source, $destination);
     }
 
     #[Test]
