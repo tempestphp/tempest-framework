@@ -23,9 +23,6 @@ final class TempestSubsplitCommand
     #[ConsoleCommand(middleware: [ForceMiddleware::class])]
     public function __invoke(?string $package = null): void
     {
-        ld($this->container->get(Git::class, path: root_path()));
-
-
         $packages = Package::all();
 
         if ($package) {
@@ -40,7 +37,6 @@ final class TempestSubsplitCommand
         $total = $packages->count();
 
         $currentBranch = $this->container->get(Git::class, path: root_path())->getCurrentBranch();
-        ld($currentBranch);
 
         $this->confirm("Subsplitting on `{$currentBranch}`, continue?");
 
@@ -48,7 +44,7 @@ final class TempestSubsplitCommand
             $this->info("{$i}/{$total} <em>tempest/{$package->name}</em>");
 
             try {
-                $git = new GenericGit($package->buildPath);
+                $git = $this->container->get(Git::class, path: $package->buildPath);
 
                 Filesystem\ensure_directory_exists($package->buildPath);
 
