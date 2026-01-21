@@ -202,6 +202,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "App\\": "app/",
             "Tempest\\Auth\\Tests\\": "packages/auth/tests",
             "Tempest\\Cache\\Tests\\": "packages/cache/tests",
             "Tempest\\Clock\\Tests\\": "packages/clock/tests",

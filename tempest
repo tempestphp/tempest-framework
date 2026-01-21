@@ -7,8 +7,7 @@ use Tempest\Discovery\DiscoveryLocation;
 require_once getcwd() . '/vendor/autoload.php';
 
 ConsoleApplication::boot(discoveryLocations: [
-        new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
-        new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', getcwd() . '/tests/Integration/Console/Fixtures'),
+//        new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
+//        new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', getcwd() . '/tests/Integration/Console/Fixtures'),
+        new DiscoveryLocation('App', __DIR__ . '/app/'),
 ])->run();
-
-exit;
