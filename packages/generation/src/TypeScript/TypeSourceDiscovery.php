@@ -18,7 +18,7 @@ final class TypeSourceDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->getAttribute(TypeScript::class)) {
+        if ($class->getAttribute(AsType::class)) {
             $this->discoveryItems->add($location, [$class->getName()]);
         }
 
