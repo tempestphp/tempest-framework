@@ -9,7 +9,7 @@ use Tempest\Console\HasConsole;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Support\Filesystem;
-use App\Git\GitClient;
+use App\Git\GenericGit;
 use function Tempest\root_path;
 
 final class TempestSubsplitCommand
@@ -48,7 +48,7 @@ final class TempestSubsplitCommand
             $this->info("{$i}/{$total} <em>tempest/{$package->name}</em>");
 
             try {
-                $git = new GitClient($package->buildPath);
+                $git = new GenericGit($package->buildPath);
 
                 Filesystem\ensure_directory_exists($package->buildPath);
 

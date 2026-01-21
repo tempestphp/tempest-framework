@@ -2,7 +2,7 @@
 
 namespace App\Git;
 
-final class FakeGitClient implements Git
+final class FakeGit implements Git
 {
     public array $commands = [];
     private string $branch = 'test';

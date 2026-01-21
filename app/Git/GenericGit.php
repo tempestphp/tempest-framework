@@ -7,7 +7,7 @@ use function Tempest\Support\path;
 use Tempest\Support\Filesystem;
 
 #[Autowire]
-final readonly class GitClient implements Git
+final readonly class GenericGit implements Git
 {
     public function __construct(
         private string $path,
