@@ -12,6 +12,8 @@ final class TempestReleaseCommand
     #[ConsoleCommand]
     public function __invoke(): void
     {
+        // Move all logic of the `bin/release` script into here
+
         $this->info('Todo');
     }
 }
