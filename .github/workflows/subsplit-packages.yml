@@ -48,8 +48,9 @@ jobs:
         uses: actions/setup-python@v6
         with:
           cache: 'pip'
-          pip-install: git-filter-repo
+          pip-install: "git-filter-repo"
 
       - name: Split Package
         run:
-          ./bin/split "cache"
+          git filter-repo
+#          ./bin/split "cache"
