@@ -44,11 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          cache: 'pip'
-          pip-install: "git-filter-repo"
+      - name: Set up git-filter-repo
+        run: pip install git-filter-repo
 
       - name: Split Package
         run:
