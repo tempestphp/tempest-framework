@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+PACKAGE_NAME=$1
+SUBSPLIT_DIR="${PACKAGE_NAME}_subsplit"
+
+echo "Would have split ${PACKAGE_NAME} in the directory ${SUBSPLIT_DIR}."
