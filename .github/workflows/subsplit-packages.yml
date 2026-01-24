@@ -48,4 +48,4 @@ jobs:
         env:
           SUBSPLIT_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run:
-          ./bin/split "cache"
+          ./bin/split "${{ matrix.package.name }}"
