@@ -14,7 +14,7 @@ DEFAULT_BRANCH=$(git branch --show-current)
 git filter-repo --subdirectory-filter "packages/${PACKAGE_NAME}"
 
 # Setup our remote repository we are splitting to.
-git remote add origin "https://github.com/tempestphp/testing-${PACKAGE_NAME}.git"
+git remote add origin "https://x-access-token:${SUBSPLIT_TOKEN}@github.com/tempestphp/testing-${PACKAGE_NAME}.git"
 git branch -m "$DEFAULT_BRANCH"
 
 # Push all branches + history to the repo.

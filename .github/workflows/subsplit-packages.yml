@@ -7,9 +7,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
 jobs:
   get_packages:
     name: Get packages
@@ -48,6 +45,7 @@ jobs:
         run: pip install git-filter-repo
 
       - name: Split Package
+        env:
+          SUBSPLIT_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run:
-          git filter-repo
-#          ./bin/split "cache"
+          ./bin/split "cache"
