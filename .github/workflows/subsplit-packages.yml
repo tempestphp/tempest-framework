@@ -32,12 +32,12 @@ jobs:
 
   packages_split:
     name: Split package ${{ matrix.package.name }}
-#    needs: get_packages
+    needs: get_packages
     runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
 
