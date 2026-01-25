@@ -49,4 +49,5 @@ jobs:
       - name: Split Package
         env:
           SUBSPLIT_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./bin/split "${{ matrix.package.name }}"
