@@ -2,6 +2,21 @@
 
 PACKAGE_NAME=$1
 SUBSPLIT_DIR="${PACKAGE_NAME}_subsplit"
+ORG_NAME="tempestphp"
+REPOSITORY_NAME="tempest-${PACKAGE_NAME}"
+
+# Check if the split repository exists, if not create it
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+  -H "Authorization: token ${SUBSPLIT_TOKEN}" \
+  "https://api.github.com/repos/${ORG_NAME}/${REPOSITORY_NAME}")
+
+if [ "$HTTP_STATUS" -eq 404 ]; then
+  curl -s -X POST \
+    -H "Authorization: token ${SUBSPLIT_TOKEN}" \
+    -H "Accept: application/vnd.github.v3+json" \
+    "https://api.github.com/orgs/${ORG_NAME}/repos" \
+    -d "{\"name\":\"${REPOSITORY_NAME}\",\"private\":false,\"description\":\"[READ ONLY] Sub split of the Tempest ${PACKAGE_NAME} component.\",\"has_issues\":false,\"has_projects\":false,\"has_wiki\":false}"
+fi
 
 # Clone our Tempest repository and jump into it.
 git clone https://github.com/tempestphp/tempest-framework "$SUBSPLIT_DIR"
@@ -14,7 +29,7 @@ DEFAULT_BRANCH=$(git branch --show-current)
 git filter-repo --subdirectory-filter "packages/${PACKAGE_NAME}"
 
 # Setup our remote repository we are splitting to.
-git remote add origin "https://x-access-token:${SUBSPLIT_TOKEN}@github.com/tempestphp/tempest-${PACKAGE_NAME}.git"
+git remote add origin "https://x-access-token:${SUBSPLIT_TOKEN}@github.com/${ORG_NAME}/${REPOSITORY_NAME}.git"
 git branch -m "$DEFAULT_BRANCH"
 
 # Push all branches + history to the repo.
