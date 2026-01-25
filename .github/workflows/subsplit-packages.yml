@@ -2,7 +2,7 @@ name: "Sub-split packages"
 
 on:
   push:
-    branches: ["[0-9]+.x", "[0-9]+.[0-9]+-[a-z]+.[0-9]+"]
+    branches: ["[0-9]+.x", "v[0-9]+.[0-9]+-[a-z]+.[0-9]+"]
     tags: ["v*"]
   workflow_dispatch:
 
