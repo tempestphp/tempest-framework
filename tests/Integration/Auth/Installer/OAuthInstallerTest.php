@@ -48,6 +48,7 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
             ->deny() // Publish MustBeAuthenticated?
             ->deny() // Publish LoginController?
             ->input($provider->value) // Pick provider
+            ->confirm() // Confirm provider
             ->confirm() // Publish $ProviderController
             ->confirm() // Publish $provider.config.php
             ->confirm() // Add to .env
