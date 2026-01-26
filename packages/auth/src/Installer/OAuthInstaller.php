@@ -114,14 +114,12 @@ final class OAuthInstaller
                             'redirect-route',
                             'callback-route',
                             "'user-model-fqcn'",
-                            'provider_db_column',
                         ],
                         replace: [
                             "\\{$providerFqcn}::{$provider->name}",
                             "/auth/{$name}",
                             "/auth/{$name}/callback",
                             "\\{$userModelFqcn}::class",
-                            "{$name}_id",
                         ],
                     ),
                 );

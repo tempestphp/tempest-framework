@@ -19,6 +19,8 @@ if (class_exists(ConsoleCommand::class)) {
     {
         use PublishesFiles;
 
+        public bool $installOAuth = false;
+
         private(set) string $name = 'auth';
 
         public function __construct(
@@ -30,15 +32,26 @@ if (class_exists(ConsoleCommand::class)) {
 
         public function install(): void
         {
-            $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
-            $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
+            // First question, ask whether to also install OAuth, as it changes the stubs to publish
+            $this->installOAuth = $this->shouldInstallOAuth();
+
+            // Get the appropriate stubs
+            $stubPath = $this->installOAuth ? 'oauth' : 'basic-user';
+
+            // Publish the stubs
+            $migration = $this->publish(__DIR__ . "/{$stubPath}/CreateUsersTableMigration.stub.php", src_path('Authentication/CreateUsersTable.php'));
+            $this->publish(__DIR__ . "/{$stubPath}/UserModel.stub.php", src_path('Authentication/User.php'));
+            $this->publish(__DIR__ . '/basic-user/MustBeAuthenticated.stub.php', src_path('Authentication/MustBeAuthenticated.php'));
+            $this->publish(__DIR__ . '/basic-user/LoginController.stub.php', src_path('Authentication/LoginController.php'));
             $this->publishImports();
 
+            // Offer to migrate
             if ($migration && $this->shouldMigrate()) {
                 $this->migrationManager->up();
             }
 
-            if ($this->shouldInstallOAuth()) {
+            // Run the OAuth installer now
+            if ($this->installOAuth) {
                 $this->container->get(OAuthInstaller::class)->install();
             }
         }
