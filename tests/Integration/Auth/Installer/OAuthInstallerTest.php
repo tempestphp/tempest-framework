@@ -42,15 +42,16 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
     ): void {
         $this->console
             ->call('install auth --oauth')
-            ->confirm()
-            ->deny()
-            ->deny()
-            ->input($provider->value)
-            ->confirm()
-            ->confirm()
-            ->confirm()
-            ->confirm()
-            ->confirm()
+            ->confirm() // Running the installer, continue?
+            ->deny() // Publish CreateUsersTable?
+            ->deny() // Publish User?
+            ->deny() // Publish MustBeAuthenticated?
+            ->deny() // Publish LoginController?
+            ->input($provider->value) // Pick provider
+            ->confirm() // Publish $ProviderController
+            ->confirm() // Publish $provider.config.php
+            ->confirm() // Add to .env
+            ->confirm() // Install dependencies
             ->assertSee('The selected OAuth provider is installed in your project')
             ->assertSuccess();
 
