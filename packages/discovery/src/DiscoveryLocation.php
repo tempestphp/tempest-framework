@@ -13,7 +13,7 @@ final class DiscoveryLocation
     public readonly string $path;
 
     public string $key {
-        get => (string) crc32($this->path);
+        get => hash('xxh64', $this->path);
     }
 
     public function __construct(
