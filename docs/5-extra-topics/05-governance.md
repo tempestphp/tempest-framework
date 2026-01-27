@@ -78,7 +78,7 @@ In principle, the BDFL stays on the project forever. A new BDFL can be appointed
 
 - When the BDFL decides to step down or retire.
 - When the BDFL fails to perform their duties or ceases to perform their duties in a manner of benevolence. (TODO: must be clarified what this means)
-- When the BDFL has been inactive for a prolonged period of time. After 180 days of inactivity, the BDFL can be considered inactive; the First Officer will step in as acting BDFL. After a full year of inactivity, the BDFL will be considered retired and the First Officer will be the new BDFL. 
+- When the BDFL has been inactive for a prolonged period of time, the BDFL will be considered inactive and replaced by the current First Officer. After another 90 days of inactivity, the inactive BDFL will be declared retired and replaced by the acting BDFL. At this point the new BDFL will assign a new First Officer and ensure a minimum of three Council Members.
 
 "Activity" is measured by:
 
@@ -86,19 +86,13 @@ In principle, the BDFL stays on the project forever. A new BDFL can be appointed
 - Community interactions (Discord, socials, etc.).
 - Issue and PR activity.
 
-The BDFL is expected to have reasonable contributions in all areas, although prolonged inactivity in one of three areas is permitted. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the Standing Council. The new BDFL will always be the current First Office. 
+The BDFL is expected to have reasonable contributions in all areas, although "inactivity" only means being inactive on all fronts. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the Standing Council and they must take reasonable attempts to inform the inactive BDFL of this upcoming vote. The new BDFL will always be the current First Office. 
 
 ### Appointing Council Members
 
-New Council Members may be put forward by an existing Council Member or the BDFL. Like the BDFL, Council Members must demonstrate benevolence. New Council Members require a 2/3 majority vote by the standing Council to be accepted. If the number of Council Members drops below the minimum threshold of three members, the BDFL may appoint new members at their discretion.
+New Council Members may be put forward by an existing Council Member or the BDFL. Like the BDFL, Council Members must demonstrate benevolence. New Council Members require a 2/3 majority vote by the standing Council to be accepted. If the number of Council Members drops below the minimum threshold of three members (the BDFL included), the BDFL may appoint new members at their discretion.
 
-Council Members are bound to the same activity standards as the BDFL. Activity is measured by:
-
-- Code contributions.
-- Community interactions (Discord, socials, etc.).
-- Issue and PR activity.
-
-Unless specified otherwise by the BDFL, a council member is expected to have reasonable contributions in all areas, although prolonged inactivity in one of these three areas is permitted.
+Council Members are bound to the same activity standards as the BDFL. They will become inactive after 90 days of inactivity and become retired after another 90 days of inactivity.
 
 ### Removal of a Council Member
 
@@ -113,4 +107,4 @@ Core Contributors are also expected to be active, although their activity is onl
 - Code contributions.
 - Issue and PR activity.
 
-When a Core Contributor has been inactive for 180 days, they will become inactive. A Core Contributor can be made active again per decision by the BDFL.
+When a Core Contributor has been inactive for 90 days, they may become inactive, per the Council or the BDFL's decision. A Core Contributor can be made active again per decision by the BDFL.
