@@ -19,8 +19,8 @@ This document defines the governance process for the Tempest project and communi
 
 The Benevolent Dictator for Life (from here on, BDFL) is ultimately responsible and has final say for project decisions. The BDFL’s responsibilities include:
 
-- Setting project scope.
-- Setting project timeline.
+- Setting the project scope.
+- Setting the project timeline.
 - Approving releases.
 - Approving new Team Members, Core Contributors, or Moderators.
 - Suggesting changes in governance to the Council Members.
@@ -29,7 +29,7 @@ Current BDFL: [Brent Roose](http://github.com/brendt)
 
 ### Council Members
 
-Council Members are appointed delegates who are responsible for helping in governance decisions and ensuring fair decisions are made regarding project governance rules and the BDFL role. The Council Members responsibilities include:
+Council Members are appointed delegates who are responsible for helping in governance decisions and ensuring fair decisions are made regarding project governance rules and the BDFL role. The Council Members' responsibilities include:
 
 - Suggesting new Team Members, Core Contributors, or Moderators.
 - Suggesting and approving new Council Members.
@@ -44,12 +44,6 @@ Current Council Members: [Aidan Casey](https://github.com/aidan-casey), [Enzo In
 The First Officer is a Council Member, appointed by the BDFL, as successor in the case of their prolonged or permanent absence.
 
 Current First Officer: [TODO](#)
-
-### Team Members
-
-Team Members are members of the project who have volunteered for specific teams and are consistent contributors. See [here] for the current Teams and members.
-
-TODO: link to team members. Also unclear to me what "teams" are?
 
 ### Core Contributors
 
