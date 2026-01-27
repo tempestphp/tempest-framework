@@ -30,8 +30,6 @@ enum SupportedOAuthProvider: string
 
     /**
      * Returns the canonical name for the given OAuth provider. Required because some of the providers have mixed-case names.
-     *
-     * @return string|null The canonical name, or null if the provider is generic.
      */
     public function getName(): string
     {
