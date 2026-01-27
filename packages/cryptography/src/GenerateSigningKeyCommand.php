@@ -21,7 +21,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             private Console $console,
         ) {}
 
-        #[ConsoleCommand('key:generate', description: 'Generates the signing key required to sign and verify data.')]
+        #[ConsoleCommand(
+            name: 'key:generate',
+            description: 'Generates the signing key required to sign and verify data.',
+            aliases: ['generate:key'],
+        )]
         public function __invoke(bool $override = true): ExitCode
         {
             $key = EncryptionKey::generate($this->encryptionConfig->algorithm);
