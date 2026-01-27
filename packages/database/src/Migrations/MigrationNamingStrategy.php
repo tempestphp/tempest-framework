@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
+/**
+ * Represents a strategy for naming database migrations. This is used to create sortable, unique migration identifiers.
+ */
 interface MigrationNamingStrategy
 {
     /**
-     * Generate the prefix for a migration name.
-     *
-     * This is used to create sortable, unique migration identifiers.
-     * For example: '2026-01-27' or '20260127143022'.
+     * Generates the prefix for a migration name.
      */
     public function generatePrefix(): string;
 }
