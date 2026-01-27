@@ -87,8 +87,7 @@ jobs:
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-reqs
 
       - name: "Setup Redis"
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: supercharge/redis-github-action@1.7.0
+        run: composer require predis/predis
 
       - name: "Setup MySQL"
         if: ${{ matrix.database == 'mysql' }}
