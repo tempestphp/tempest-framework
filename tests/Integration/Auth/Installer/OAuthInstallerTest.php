@@ -33,6 +33,16 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
+
+    #[Test]
+    public function install_oauth_provider_with_migrations(): void
+    {
+        $this->console
+            ->call('install auth --oauth --force --migrate')
+            ->input(0)
+            ->assertSuccess();
+    }
+
     #[Test]
     #[DataProvider('oauthProvider')]
     public function install_oauth_provider(
