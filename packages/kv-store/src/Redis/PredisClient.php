@@ -23,7 +23,13 @@ final readonly class PredisClient implements Redis
             return;
         }
 
-        $this->client->connect();
+        set_error_handler(static fn () => true);
+
+        try {
+            $this->client->connect();
+        } finally {
+            restore_error_handler();
+        }
     }
 
     public function disconnect(): void
