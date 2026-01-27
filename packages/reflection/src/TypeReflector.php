@@ -270,9 +270,10 @@ final readonly class TypeReflector implements Reflector
                 return true;
             }
 
-            $types = explode('|', $this->definition);
-
-            return in_array('null', $types, strict: true);
+            return array_any(
+                array: preg_split('/[&|]/', $this->definition),
+                callback: static fn (string $type) => $type === 'null',
+            );
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
