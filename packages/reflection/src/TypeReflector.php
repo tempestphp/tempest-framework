@@ -266,7 +266,13 @@ final readonly class TypeReflector implements Reflector
     private function resolveIsNullable(PHPReflectionType|PHPReflector|string $reflector): bool
     {
         if (is_string($reflector)) {
-            return str_contains($this->definition, '?') || str_contains($this->definition, 'null');
+            if (str_contains($this->definition, '?')) {
+                return true;
+            }
+
+            $types = explode('|', $this->definition);
+
+            return in_array('null', $types, strict: true);
         }
 
         if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
