@@ -47,7 +47,7 @@ Current First Officer: [TODO](#)
 
 ### Core Contributors
 
-Core Contributors are Team Members who have shown wisdom, discretion, and provide consistent and prolonged contributions to the project. Core Contributors are appointed by the BDFL and must be active members of the project. Core Contributors responsibilities include:
+Core Contributors are Tempest community members who have shown wisdom, discretion, and provide consistent and prolonged contributions to the project. Core Contributors are appointed by the BDFL and must be active members of the project. Core Contributors responsibilities include:
 
 - Promoting Tempest Core Values.
 - Collective care for the Tempest project.
@@ -72,22 +72,45 @@ Current Moderators: [iamDadmin](https://github.com/iamdadmin), [Aidan Casey](htt
 
 ## Governance
 
-### Appointment of the BDFL
+### Appointing the BDFL
 
-The successor to the BDFL is appointed by the standing BDFL as First Officer.
+In principle, the BDFL stays on the project forever. A new BDFL can be appointed, though, in a limited number of cases:
 
-A new BDFL can be appointed in a limited number of cases:
+- When the BDFL decides to step down or retire.
+- When the BDFL fails to perform their duties or ceases to perform their duties in a manner of benevolence. (TODO: must be clarified what this means)
+- When the BDFL has been inactive for a prolonged period of time. After 180 days of inactivity, the BDFL can be considered inactive; the First Officer will step in as acting BDFL. After a full year of inactivity, the BDFL will be considered retired and the First Officer will be the new BDFL. 
 
-- When the current BDFL decides to step down. 
-- When the current BDFL fails to perform their duties or ceases to perform their duties in a manner of benevolence. (TODO: must be clarified what this means)
-- When the BDFL has been inactive for a prolonged period of time. (TODO: must be clarified how long exactly this is)
+"Activity" is measured by:
 
-The decision to appoint a new BDFL must be approved by a 2/3 majority vote of the Standing Council. The new BDFL will always be the current First Office. 
+- Code contributions.
+- Community interactions (Discord, socials, etc.).
+- Issue and PR activity.
 
-### Appointment of a Council Member
+The BDFL is expected to have reasonable contributions in all areas, although prolonged inactivity in one of three areas is permitted. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the Standing Council. The new BDFL will always be the current First Office. 
 
-New Council Members may be put forward by an existing Council Member or the standing BDFL. Council Members must demonstrate benevolence. New Council Members are ratified by a 2/3 majority vote by the standing Council. If the number of Council Members drops below the minimum threshold of three members, the BDFL may appoint new members at their discretion.
+### Appointing Council Members
 
-### Removal of an Active Member
+New Council Members may be put forward by an existing Council Member or the BDFL. Like the BDFL, Council Members must demonstrate benevolence. New Council Members require a 2/3 majority vote by the standing Council to be accepted. If the number of Council Members drops below the minimum threshold of three members, the BDFL may appoint new members at their discretion.
+
+Council Members are bound to the same activity standards as the BDFL. Activity is measured by:
+
+- Code contributions.
+- Community interactions (Discord, socials, etc.).
+- Issue and PR activity.
+
+Unless specified otherwise by the BDFL, a council member is expected to have reasonable contributions in all areas, although prolonged inactivity in one of these three areas is permitted.
+
+### Removal of a Council Member
 
 Council Members can be removed by a 2/3 majority vote by the standing Council.
+
+### Appointment of a Core Contributor
+
+New Core Contributors may be put forward by an existing Core Contributor, Council Member, or the BDFL. Core Contributors are approved by the BDFL. 
+
+Core Contributors are also expected to be active, although their activity is only measured by:
+
+- Code contributions.
+- Issue and PR activity.
+
+When a Core Contributor has been inactive for 180 days, they will become inactive. A Core Contributor can be made active again per decision by the BDFL.
