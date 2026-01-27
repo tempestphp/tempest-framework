@@ -33,7 +33,6 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-
     #[Test]
     public function install_oauth_provider_with_migrations(): void
     {

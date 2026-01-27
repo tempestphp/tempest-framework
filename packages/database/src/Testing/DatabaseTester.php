@@ -4,7 +4,6 @@ namespace Tempest\Database\Testing;
 
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
-use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Migrations\MigrationManager;
 
 use function Tempest\Database\query;
