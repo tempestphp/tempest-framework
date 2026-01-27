@@ -33,7 +33,7 @@ enum SupportedOAuthProvider: string
      *
      * @return string|null The canonical name, or null if the provider is generic.
      */
-    public function getName(): ?string
+    public function getName(): string
     {
         return match ($this) {
             self::APPLE => 'Apple',
