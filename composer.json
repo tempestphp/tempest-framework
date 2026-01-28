@@ -75,7 +75,7 @@
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^12.2.3",
+        "phpunit/phpunit": "^12.5.8",
         "predis/predis": "^3.0.0",
         "riskio/oauth2-auth0": "^2.4",
         "smolblog/oauth2-twitter": "^1.0",
