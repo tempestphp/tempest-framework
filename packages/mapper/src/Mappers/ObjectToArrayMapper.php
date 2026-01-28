@@ -6,6 +6,7 @@ namespace Tempest\Mapper\Mappers;
 
 use JsonSerializable;
 use Tempest\Mapper\Context;
+use Tempest\Mapper\Hidden;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
 use Tempest\Mapper\SerializerFactory;
@@ -38,6 +39,10 @@ final readonly class ObjectToArrayMapper implements Mapper
             $mappedProperties = [];
 
             foreach ($class->getPublicProperties() as $property) {
+                if ($property->hasAttribute(Hidden::class)) {
+                    continue;
+                }
+
                 $propertyName = $this->resolvePropertyName($property);
                 $propertyValue = $this->resolvePropertyValue($property, $from);
                 $mappedProperties[$propertyName] = $propertyValue;
