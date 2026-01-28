@@ -42,7 +42,7 @@ if (class_exists(ConsoleCommand::class)) {
             $migration = $this->publish(__DIR__ . "/{$stubPath}/CreateUsersTableMigration.stub.php", src_path('Authentication/CreateUsersTable.php'));
             $this->publish(__DIR__ . "/{$stubPath}/UserModel.stub.php", src_path('Authentication/User.php'));
             $this->publish(__DIR__ . '/basic-user/MustBeAuthenticated.stub.php', src_path('Authentication/MustBeAuthenticated.php'));
-            $this->publish(__DIR__ . '/basic-user/LoginController.stub.php', src_path('Authentication/LoginController.php'));
+            $this->publish(__DIR__ . '/basic-user/AuthenticateUserController.stub.php', src_path('Authentication/AuthenticateUserController.php'));
             $this->publishImports();
 
             // Offer to migrate

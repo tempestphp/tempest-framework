@@ -14,7 +14,7 @@ use Tempest\View\View;
 use function Tempest\Database\query;
 use function Tempest\View\view;
 
-final readonly class LoginController
+final readonly class AuthenticateUserController
 {
     public function __construct(
         private Authenticator $authenticator,
@@ -22,10 +22,16 @@ final readonly class LoginController
         private PreviousUrl $previousUrl,
     ) {}
 
+    // TODO: Customise route paths to suit your application
     #[Get('/auth/login')]
     public function showLoginForm(): View
     {
         // TODO: implement, the code below is an example, and does not include a login form, customise to suit your application
+
+        // HINTS & TIPS:
+        // If using Tempest|Auth\OAuth your view would include links to login with your OAuth providers
+        // i.e. <a href="/auth/generic">Login with Generic</a>
+        // In an OAuth-only situation, you can remove the #[Post('/auth/login')] and public function login(..) entirely
 
         return view('./your.login.view.php');
     }
