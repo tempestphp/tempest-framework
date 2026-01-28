@@ -447,6 +447,57 @@ final class Book
 }
 ```
 
+### Hidden properties
+
+Sensitive properties can be marked with the {b`#[Tempest\Mapper\Hidden]`} attribute to exclude them from SELECT queries. This is useful for properties like passwords, API keys, or other sensitive data that should not be fetched or exposed by default.
+
+```php
+use Tempest\Database\IsDatabaseModel;
+use Tempest\Mapper\Hidden;
+
+final class User
+{
+    use IsDatabaseModel;
+
+    public string $email;
+
+    #[Hidden]
+    public string $password;
+
+    #[Hidden]
+    public ?string $apiKey = null;
+}
+```
+
+Hidden properties are still included in INSERT and UPDATE queries, allowing them to be persisted to the database.
+
+To explicitly include hidden fields in a query, use the `include()` method on the query builder:
+
+```php
+// Password is not included in the query
+$user = User::select()->where('email', $email)->first();
+
+// Password is explicitly included
+$user = User::select()
+    ->include('password')
+    ->where('email', $email)
+    ->first();
+
+// Multiple hidden fields can be included
+$user = User::select()
+    ->include('password', 'apiKey')
+    ->where('email', $email)
+    ->first();
+```
+
+:::info
+Unlike {b`#[Virtual]`} which marks computed properties that don't exist in the database, {b`#[Hidden]`} is for real database columns that should be protected from accidental exposure.
+:::
+
+:::info
+The {b`#[Hidden]`} attribute also excludes properties from serialization. See the [mapper documentation](../2-features/01-mapper.md#hiding-properties-from-serialization) for more information.
+:::
+
 ### The `IsDatabaseModel` trait
 
 The {b`Tempest\Database\IsDatabaseModel`} trait provides an active record pattern. This trait enables database interaction via static methods on the model class itself.
