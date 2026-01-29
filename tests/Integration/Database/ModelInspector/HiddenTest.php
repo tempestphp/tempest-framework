@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
@@ -14,7 +15,8 @@ use function Tempest\Mapper\map;
 
 final class HiddenTest extends FrameworkIntegrationTestCase
 {
-    public function test_hidden_property_is_excluded_from_select_fields(): void
+    #[Test]
+    public function hidden_property_is_excluded_from_select_fields(): void
     {
         $model = inspect(HiddenTestModel::class);
         $selectFields = $model->getSelectFields();
@@ -25,7 +27,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertNotContains('secret', $selectFields->toArray());
     }
 
-    public function test_hidden_property_is_included_in_property_values(): void
+    #[Test]
+    public function hidden_property_is_included_in_property_values(): void
     {
         $instance = new HiddenTestModel();
         $instance->id = new PrimaryKey(1);
@@ -44,7 +47,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertSame('my-secret', $propertyValues['secret']);
     }
 
-    public function test_hidden_property_is_excluded_from_serialization(): void
+    #[Test]
+    public function hidden_property_is_excluded_from_serialization(): void
     {
         $object = new HiddenTestModel();
         $object->id = new PrimaryKey(1);
@@ -60,7 +64,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertArrayNotHasKey('secret', $array);
     }
 
-    public function test_hidden_property_is_excluded_from_json_serialization(): void
+    #[Test]
+    public function hidden_property_is_excluded_from_json_serialization(): void
     {
         $object = new HiddenTestModel();
         $object->id = new PrimaryKey(1);
@@ -75,7 +80,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertStringNotContainsString('secret', $json);
     }
 
-    public function test_include_adds_hidden_fields_to_query(): void
+    #[Test]
+    public function include_adds_hidden_fields_to_query(): void
     {
         $sql = HiddenTestModel::select()->compile()->toString();
 
@@ -99,7 +105,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('secret', $sql);
     }
 
-    public function test_include_with_already_selected_field_is_ignored(): void
+    #[Test]
+    public function include_with_already_selected_field_is_ignored(): void
     {
         $sql = HiddenTestModel::select()
             ->include('name')
@@ -109,7 +116,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, substr_count($sql, 'name'));
     }
 
-    public function test_include_with_duplicate_selected_field_is_filtered(): void
+    #[Test]
+    public function include_with_duplicate_selected_field_is_filtered(): void
     {
         $sql = HiddenTestModel::select()
             ->include('password', 'password')
@@ -119,7 +127,8 @@ final class HiddenTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, substr_count($sql, 'password'));
     }
 
-    public function test_select_with_duplicate_selected_field_is_filtered(): void
+    #[Test]
+    public function select_with_duplicate_selected_field_is_filtered(): void
     {
         $sql = query(HiddenTestModel::class)->select('name', 'name')->include('name')->compile()->toString();
 
