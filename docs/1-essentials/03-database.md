@@ -342,6 +342,44 @@ return new SQLiteConfig(
 
 :::
 
+### Migration prefixes
+
+When generating a migration file via `make:migration`, Tempest prefixes the file name with a sortable identifier so that migrations run in the correct order. By default, a date-based prefix is used (e.g. `2025-06-15_create_books_table`).
+
+The prefix format is determined by the `migrationPrefixStrategy` property of your database configuration, which accepts any {b`Tempest\Database\Migrations\MigrationPrefixStrategy`} instance.
+
+Tempest ships with two built-in strategies:
+
+- {b`Tempest\Database\Migrations\DatePrefixStrategy`} — generates a `Y-m-d` date prefix (default). Pass `useTime: true` to include hours, minutes and seconds (`Y-m-d_His`).
+- {b`Tempest\Database\Migrations\Uuidv7PrefixStrategy`} — generates a UUIDv7 prefix, which is both unique and time-ordered.
+
+You can also implement your own strategy:
+
+:::code-group
+
+```php app/Database/IncrementingPrefixStrategy.php
+use Tempest\Database\Migrations\MigrationPrefixStrategy;
+
+final class IncrementingPrefixStrategy implements MigrationPrefixStrategy
+{
+    public function generatePrefix(): string
+    {
+        return sprintf('%06d', /* resolve the next sequence number */);
+    }
+}
+```
+
+```php app/database.config.php
+use Tempest\Database\Config\SQLiteConfig;
+
+return new SQLiteConfig(
+    path: __DIR__ . '/../database.sqlite',
+    migrationPrefixStrategy: new IncrementingPrefixStrategy(),
+);
+```
+
+:::
+
 ### Data transfer object properties
 
 Arbitrary objects can be stored in a `json` column when they are not part of the relational schema. Annotate the class with {b`#[Tempest\Mapper\SerializeAs]`} and provide a unique identifier to represent the object. The identifier must map to a single, distinct class.
