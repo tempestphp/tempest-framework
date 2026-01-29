@@ -7,25 +7,21 @@ namespace Tempest\Database\Stubs;
 use Tempest\Database\MigratesDown;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final class ObjectMigrationStub implements MigratesUp, MigratesDown
+final class ObjectAlterMigrationStub implements MigratesUp, MigratesDown
 {
     public string $name = 'dummy-date_dummy-migration-name';
 
     public function up(): QueryStatement
     {
-        return new CreateTableStatement('dummy-table-name')
-            ->primary()
-            ->datetime('created_at')
-            ->datetime('updated_at');
+        return new AlterTableStatement('dummy-table-name');
     }
 
     public function down(): QueryStatement
     {
-        return new DropTableStatement('dummy-table-name');
+        return new AlterTableStatement('dummy-table-name');
     }
 }
