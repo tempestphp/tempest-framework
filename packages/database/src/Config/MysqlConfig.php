@@ -8,7 +8,7 @@ use PDO;
 use Pdo\Mysql;
 use SensitiveParameter;
 use Tempest\Database\Migrations\DatePrefixStrategy;
-use Tempest\Database\Migrations\MigrationNamingStrategy;
+use Tempest\Database\Migrations\MigrationPrefixStrategy;
 use Tempest\Database\Tables\NamingStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
 use UnitEnum;
@@ -32,7 +32,7 @@ final class MysqlConfig implements DatabaseConfig
         get => $this->persistent;
     }
 
-    public MigrationNamingStrategy $migrationNamingStrategy {
+    public MigrationPrefixStrategy $migrationPrefixStrategy {
         get => $this->migrationNaming;
     }
 
@@ -76,7 +76,7 @@ final class MysqlConfig implements DatabaseConfig
      * @param string|null $clientCertificate Path to the client's SSL certificate file. Used for mutual TLS authentication.
      * @param string|null $clientKey Path to the client's SSL private key file. Used for mutual TLS authentication.
      * @param NamingStrategy $namingStrategy The naming strategy for database tables and columns.
-     * @param MigrationNamingStrategy $migrationNaming The naming strategy for migration file prefixes.
+     * @param MigrationPrefixStrategy $migrationNaming The naming strategy for migration file prefixes.
      * @param string|UnitEnum|null $tag An optional tag to identify this database configuration.
      */
     public function __construct(
@@ -96,7 +96,7 @@ final class MysqlConfig implements DatabaseConfig
         public ?string $clientCertificate = null,
         public ?string $clientKey = null,
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
-        public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
+        public MigrationPrefixStrategy $migrationNaming = new DatePrefixStrategy(),
         public null|string|UnitEnum $tag = null,
     ) {}
 }
