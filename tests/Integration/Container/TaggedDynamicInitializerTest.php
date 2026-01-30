@@ -7,6 +7,9 @@ use Tempest\Container\GenericContainer;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\EventBus\EventBus;
+use Tempest\EventBus\EventBusConfig;
+use Tempest\EventBus\GenericEventBus;
 use Tempest\Mapper\SerializerFactory;
 
 final class TaggedDynamicInitializerTest extends TestCase
@@ -15,6 +18,7 @@ final class TaggedDynamicInitializerTest extends TestCase
     {
         $container = new GenericContainer();
         $container->singleton(SerializerFactory::class, new SerializerFactory($container));
+        $container->singleton(EventBus::class, new GenericEventBus($container, new EventBusConfig()));
         $container->addInitializer(DatabaseInitializer::class);
 
         $container->config(new SQLiteConfig(

@@ -13,6 +13,7 @@ use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Str;
@@ -54,6 +55,7 @@ final class TestingDatabaseInitializer implements DynamicInitializer
             $connection,
             new GenericTransactionManager($connection),
             $container->get(SerializerFactory::class),
+            $container->get(EventBus::class),
         );
     }
 }

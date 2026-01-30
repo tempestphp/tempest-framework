@@ -12,6 +12,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
+use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
@@ -38,6 +39,7 @@ final class GenericDatabase implements Database
         private(set) readonly Connection $connection,
         private(set) readonly TransactionManager $transactionManager,
         private(set) readonly SerializerFactory $serializerFactory,
+        private readonly EventBus $eventBus,
     ) {}
 
     public function execute(BuildsQuery|Query $query): void
@@ -47,15 +49,27 @@ final class GenericDatabase implements Database
         }
 
         $bindings = $this->resolveBindings($query);
+        $sql = $query->compile()->toString();
+        $failed = true;
+        $startTime = hrtime(true);
 
         try {
-            $statement = $this->connection->prepare($query->compile()->toString());
+            $statement = $this->connection->prepare($sql);
             $statement->execute($bindings);
 
             $this->lastStatement = $statement;
             $this->lastQuery = $query;
+            $failed = false;
         } catch (PDOException $pdoException) {
             throw new QueryWasInvalid($query, $bindings, $pdoException);
+        } finally {
+            $this->eventBus->dispatch(new QueryExecuted(
+                sql: $sql,
+                bindings: $bindings,
+                durationMs: (hrtime(true) - $startTime) / 1_000_000,
+                connectionName: $this->tag,
+                failed: $failed,
+            ));
         }
     }
 
@@ -91,14 +105,26 @@ final class GenericDatabase implements Database
         }
 
         $bindings = $this->resolveBindings($query);
+        $sql = $query->compile()->toString();
+        $failed = true;
+        $startTime = hrtime(true);
 
         try {
-            $pdoQuery = $this->connection->prepare($query->compile()->toString());
+            $pdoQuery = $this->connection->prepare($sql);
             $pdoQuery->execute($bindings);
+            $failed = false;
 
             return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
         } catch (PDOException $pdoException) {
             throw new QueryWasInvalid($query, $bindings, $pdoException);
+        } finally {
+            $this->eventBus->dispatch(new QueryExecuted(
+                sql: $sql,
+                bindings: $bindings,
+                durationMs: (hrtime(true) - $startTime) / 1_000_000,
+                connectionName: $this->tag,
+                failed: $failed,
+            ));
         }
     }
 
