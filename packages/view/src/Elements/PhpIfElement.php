@@ -47,7 +47,6 @@ final class PhpIfElement implements Element, WrapsElement
     public function compile(): string
     {
         if ($condition = $this->wrappingElement->consumeAttribute(':isset')) {
-            // $condition = sprintf('isset(%s)', $condition);
             $condition = preg_replace('/\$\w+/', 'isset($0)', $condition);
         } else {
             $condition = $this->wrappingElement->consumeAttribute(':if');

@@ -80,7 +80,6 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_isset_attribute(): void
     {
-        // Single cases
         $this->assertSame(
             '',
             $this->view->render(view('<div :isset="$foo">Hello</div>')),
