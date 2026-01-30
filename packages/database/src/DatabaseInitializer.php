@@ -11,7 +11,6 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Transactions\GenericTransactionManager;
-use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
@@ -45,7 +44,7 @@ final readonly class DatabaseInitializer implements DynamicInitializer
             connection: $connection,
             transactionManager: new GenericTransactionManager($connection),
             serializerFactory: $container->get(SerializerFactory::class),
-            eventBus: $container->get(EventBus::class),
+            eventDispatcher: $container->get(QueryEventDispatcher::class),
         );
     }
 }

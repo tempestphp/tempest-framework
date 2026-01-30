@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
+use Tempest\Database\QueryEventDispatcher;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\GenericEventBus;
@@ -41,7 +42,7 @@ final class GenericDatabaseTest extends TestCase
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
-            $eventBus,
+            new QueryEventDispatcher($eventBus),
         );
 
         $result = $database->withinTransaction(function () {
@@ -72,7 +73,7 @@ final class GenericDatabaseTest extends TestCase
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
-            $eventBus,
+            new QueryEventDispatcher($eventBus),
         );
 
         $result = $database->withinTransaction(function (): never {
