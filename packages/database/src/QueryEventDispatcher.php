@@ -17,8 +17,7 @@ final readonly class QueryEventDispatcher
     {
         try {
             $this->eventBus->dispatch($event);
-        } catch (Throwable $throwable) {
-            unset($throwable);
+        } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause
         }
     }
 }
