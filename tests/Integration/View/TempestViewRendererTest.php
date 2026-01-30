@@ -80,6 +80,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_isset_attribute(): void
     {
+        // Single cases
         $this->assertSame(
             '',
             $this->view->render(view('<div :isset="$foo">Hello</div>')),
@@ -103,6 +104,44 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '<div>Hello</div>',
             $this->view->render(view('<div :isset="$foo">Hello</div>', foo: true)),
+        );
+    }
+
+    public function test_isset_attribute_dual_cases(): void
+    {
+        $this->assertSame(
+            '',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>elseif</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :elseif="true">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :elseif="false">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: true, bar: false)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: false, bar: true)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: true, bar: true)),
         );
     }
 
