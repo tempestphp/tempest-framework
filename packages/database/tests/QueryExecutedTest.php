@@ -13,7 +13,6 @@ use Tempest\Database\Database;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Query;
-use Tempest\Database\QueryEventDispatcher;
 use Tempest\Database\QueryExecuted;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\EventBus\EventBusConfig;
@@ -53,7 +52,7 @@ final class QueryExecutedTest extends TestCase
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
-            new QueryEventDispatcher($eventBus),
+            $eventBus,
         );
 
         $container = new GenericContainer();

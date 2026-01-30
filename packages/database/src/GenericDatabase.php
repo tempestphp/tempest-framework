@@ -12,6 +12,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
+use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
@@ -38,7 +39,7 @@ final class GenericDatabase implements Database
         private(set) readonly Connection $connection,
         private(set) readonly TransactionManager $transactionManager,
         private(set) readonly SerializerFactory $serializerFactory,
-        private readonly QueryEventDispatcher $eventDispatcher,
+        private readonly EventBus $eventBus,
     ) {}
 
     public function execute(BuildsQuery|Query $query): void
@@ -168,13 +169,16 @@ final class GenericDatabase implements Database
         } catch (PDOException $pdoException) {
             throw new QueryWasInvalid($query, $bindings, $pdoException);
         } finally {
-            $this->eventDispatcher->dispatch(new QueryExecuted(
-                sql: $sql,
-                bindings: $bindings,
-                durationMs: (hrtime(true) - $startTime) / 1_000_000,
-                connectionName: $this->tag,
-                failed: $failed,
-            ));
+            try {
+                $this->eventBus->dispatch(new QueryExecuted(
+                    sql: $sql,
+                    bindings: $bindings,
+                    durationMs: (hrtime(true) - $startTime) / 1_000_000,
+                    connectionName: $this->tag,
+                    failed: $failed,
+                ));
+            } catch (Throwable) { // @mago-ignore lint:no-empty-catch-clause
+            }
         }
     }
 }

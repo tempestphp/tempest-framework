@@ -13,7 +13,6 @@ use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\QueryAnalyzer;
-use Tempest\Database\QueryEventDispatcher;
 use Tempest\Database\QueryExecuted;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\EventBus\EventBusConfig;
@@ -48,7 +47,7 @@ final class QueryAnalyzerTest extends TestCase
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
-            new QueryEventDispatcher($this->eventBus),
+            $this->eventBus,
         );
 
         $container = new GenericContainer();
