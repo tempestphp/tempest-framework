@@ -95,8 +95,8 @@ The {b`Tempest\DateTime\DateTime`} instance provides multiple methods to compare
 // Check if a date is before another date (exclusive - does not include the comparison date)
 $date->isBefore($other);
 
-// Check if a date is before or at another date (inclusive - includes the comparison date)
-$date->isBeforeOrAt($other);
+// Check if a date is before or at the same time as another date (inclusive - includes the comparison date)
+$date->isBeforeOrAtTheSameTime($other);
 
 // Check if a date between two other dates, inclusively
 $date->betweenTimeInclusive($otherDate1, $otherDate2);
