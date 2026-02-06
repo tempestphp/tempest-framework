@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\RateLimiting;
+namespace Tempest\Cache\RateLimiting;
 
 /**
  * The result of a rate limit check.

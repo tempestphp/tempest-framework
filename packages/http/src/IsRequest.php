@@ -94,6 +94,30 @@ trait IsRequest
         return $this->cookies[$name] ?? null;
     }
 
+    public function getClientIp(): string
+    {
+        $forwardedFor = $this->headers->get('X-Forwarded-For');
+
+        if ($forwardedFor !== null) {
+            $ips = explode(',', $forwardedFor);
+
+            return trim($ips[0]);
+        }
+
+        $realIp = $this->headers->get('X-Real-IP');
+
+        if ($realIp !== null) {
+            return $realIp;
+        }
+
+        if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] !== '') {
+            return (string) $_SERVER['REMOTE_ADDR'];
+        }
+
+        // Avoid a shared global fallback key when the client IP cannot be resolved.
+        return 'unknown:' . spl_object_id($this);
+    }
+
     private function resolvePath(): string
     {
         $decodedUri = rawurldecode($this->uri);

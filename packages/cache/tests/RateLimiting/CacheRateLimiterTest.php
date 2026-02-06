@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\Tests\RateLimiting;
+namespace Tempest\Cache\Tests\RateLimiting;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Cache\RateLimiting\CacheRateLimiter;
 use Tempest\Cache\Testing\TestingCache;
 use Tempest\Clock\GenericClock;
-use Tempest\Router\RateLimiting\CacheRateLimiter;
 
 /**
  * @internal

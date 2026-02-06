@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\Tests\RateLimiting;
+namespace Tempest\Cache\Tests\RateLimiting;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Router\RateLimiting\RateLimitResult;
+use Tempest\Cache\RateLimiting\RateLimitResult;
 
 /**
  * @internal

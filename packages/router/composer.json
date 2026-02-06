@@ -5,6 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
+        "tempest/cache": "dev-main",
         "tempest/http": "dev-main",
         "tempest/view": "dev-main",
         "tempest/highlight": "^2.11.4",

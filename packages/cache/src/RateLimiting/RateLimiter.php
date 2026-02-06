@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\RateLimiting;
+namespace Tempest\Cache\RateLimiting;
+
+use Tempest\DateTime\DateTime;
 
 /**
  * A rate limiter tracks and enforces request limits.
@@ -39,7 +41,7 @@ interface RateLimiter
     public function clear(string $key): void;
 
     /**
-     * Get the Unix timestamp when the rate limit resets for the given key.
+     * Get the date-time when the rate limit resets for the given key.
      */
-    public function availableAt(string $key): int;
+    public function availableAt(string $key): DateTime;
 }

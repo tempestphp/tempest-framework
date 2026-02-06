@@ -180,4 +180,74 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::AVIF, ContentType::PNG));
         $this->assertFalse($request->accepts(ContentType::HTML, ContentType::PNG));
     }
+
+    public function test_get_client_ip_uses_x_forwarded_for_first_value(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'X-Forwarded-For' => '203.0.113.10, 198.51.100.5',
+                'X-Real-IP' => '192.0.2.20',
+            ],
+        );
+
+        $this->assertSame('203.0.113.10', $request->getClientIp());
+    }
+
+    public function test_get_client_ip_uses_x_real_ip_when_x_forwarded_for_is_missing(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            headers: [
+                'X-Real-IP' => '192.0.2.20',
+            ],
+        );
+
+        $this->assertSame('192.0.2.20', $request->getClientIp());
+    }
+
+    public function test_get_client_ip_falls_back_to_remote_addr(): void
+    {
+        $previousRemoteAddr = $_SERVER['REMOTE_ADDR'] ?? null;
+        $_SERVER['REMOTE_ADDR'] = '198.51.100.42';
+
+        try {
+            $request = new GenericRequest(
+                method: Method::GET,
+                uri: '/',
+            );
+
+            $this->assertSame('198.51.100.42', $request->getClientIp());
+        } finally {
+            if ($previousRemoteAddr === null) {
+                unset($_SERVER['REMOTE_ADDR']);
+            } else {
+                $_SERVER['REMOTE_ADDR'] = $previousRemoteAddr;
+            }
+        }
+    }
+
+    public function test_get_client_ip_returns_request_scoped_unknown_when_unavailable(): void
+    {
+        $previousRemoteAddr = $_SERVER['REMOTE_ADDR'] ?? null;
+        unset($_SERVER['REMOTE_ADDR']);
+
+        try {
+            $request = new GenericRequest(
+                method: Method::GET,
+                uri: '/',
+            );
+
+            $resolvedIp = $request->getClientIp();
+
+            $this->assertStringStartsWith('unknown:', $resolvedIp);
+            $this->assertSame($resolvedIp, $request->getClientIp());
+        } finally {
+            if ($previousRemoteAddr !== null) {
+                $_SERVER['REMOTE_ADDR'] = $previousRemoteAddr;
+            }
+        }
+    }
 }

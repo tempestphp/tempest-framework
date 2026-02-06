@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router\RateLimiting;
 
 use Tempest\Cache\Cache;
+use Tempest\Cache\RateLimiting\CacheRateLimiter;
+use Tempest\Cache\RateLimiting\RateLimiter;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;

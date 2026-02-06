@@ -19,22 +19,16 @@ final class TooManyRequests implements Response
 
     public function __construct(
         /** The number of seconds until the rate limit resets. */
-        ?int $retryAfter = null,
+        private(set) ?int $retryAfter = null,
         /** The maximum number of requests allowed in the time window. */
-        ?int $limit = null,
+        private(set) ?int $limit = null,
         /** The number of requests remaining in the current time window. */
-        ?int $remaining = null,
+        private(set) ?int $remaining = null,
         /** The Unix timestamp when the rate limit resets. */
-        ?int $resetAt = null,
+        private(set) ?int $resetAt = null,
     ) {
         $this->status = Status::TOO_MANY_REQUESTS;
-
-        // Set body as array to ensure the original response is returned by exception handlers
-        // when this response is wrapped in HttpRequestFailed (see JsonExceptionRenderer)
-        $this->body = [
-            'error' => 'Too Many Requests',
-            'retry_after' => $retryAfter,
-        ];
+        $this->body = 'Too Many Requests';
 
         if ($retryAfter !== null) {
             $this->addHeader('Retry-After', (string) $retryAfter);

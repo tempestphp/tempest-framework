@@ -58,6 +58,8 @@ interface Request
 
     public function getCookie(string $name): ?Cookie;
 
+    public function getClientIp(): string;
+
     /**
      * Determines if the request's "Content-Type" header matches the given content type.
      * If multiple content types are provided, the method returns true if any of them matches.

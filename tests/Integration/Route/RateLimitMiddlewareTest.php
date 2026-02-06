@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Cache\RateLimiting\RateLimiter;
 use Tempest\Container\GenericContainer;
 use Tempest\Http\Status;
-use Tempest\Router\RateLimiting\RateLimiter;
 use Tempest\Router\RateLimiting\RateLimiterInitializer;
 use Tempest\Router\RateLimiting\Testing\TestingRateLimiter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -18,10 +19,14 @@ use Tests\Tempest\Integration\Route\Fixtures\RateLimitedController;
 final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
 {
     private TestingRateLimiter $rateLimiter;
+    private ?string $previousRemoteAddr = null;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->previousRemoteAddr = $_SERVER['REMOTE_ADDR'] ?? null;
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
         // Use a testing rate limiter that is isolated per test
         $this->rateLimiter = new TestingRateLimiter();
@@ -34,7 +39,19 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $this->container->singleton(RateLimiter::class, fn () => $this->rateLimiter);
     }
 
-    public function test_allows_requests_within_limit(): void
+    protected function tearDown(): void
+    {
+        if ($this->previousRemoteAddr === null) {
+            unset($_SERVER['REMOTE_ADDR']);
+        } else {
+            $_SERVER['REMOTE_ADDR'] = $this->previousRemoteAddr;
+        }
+
+        parent::tearDown();
+    }
+
+    #[Test]
+    public function allows_requests_within_limit(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
 
@@ -46,7 +63,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_blocks_requests_exceeding_limit(): void
+    #[Test]
+    public function blocks_requests_exceeding_limit(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
 
@@ -60,7 +78,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $this->assertSame(Status::TOO_MANY_REQUESTS, $response->status);
     }
 
-    public function test_includes_rate_limit_headers(): void
+    #[Test]
+    public function includes_rate_limit_headers(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
 
@@ -74,7 +93,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $response->assertHeaderContains('X-RateLimit-Remaining', '2');
     }
 
-    public function test_includes_retry_after_header_when_limited(): void
+    #[Test]
+    public function includes_retry_after_header_when_limited(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
 
@@ -91,7 +111,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $response->assertHeaderContains('X-RateLimit-Remaining', '0');
     }
 
-    public function test_routes_without_rate_limit_are_not_affected(): void
+    #[Test]
+    public function routes_without_rate_limit_are_not_affected(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'noLimit']);
 
@@ -102,7 +123,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_different_routes_have_separate_limits(): void
+    #[Test]
+    public function different_routes_have_separate_limits(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
         $this->http->registerRoute([RateLimitedController::class, 'limitedCustomKey']);
@@ -117,7 +139,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $this->assertSame(Status::OK, $response->status);
     }
 
-    public function test_custom_key_is_used(): void
+    #[Test]
+    public function custom_key_is_used(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limitedCustomKey']);
 
@@ -133,7 +156,8 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
         $this->assertSame(Status::TOO_MANY_REQUESTS, $response3->status);
     }
 
-    public function test_remaining_count_decrements(): void
+    #[Test]
+    public function remaining_count_decrements(): void
     {
         $this->http->registerRoute([RateLimitedController::class, 'limited']);
 
@@ -145,5 +169,25 @@ final class RateLimitMiddlewareTest extends FrameworkIntegrationTestCase
 
         $response3 = $this->http->get('/rate-limited');
         $response3->assertHeaderContains('X-RateLimit-Remaining', '0');
+    }
+
+    #[Test]
+    public function unauthenticated_user_limits_are_scoped_per_client_ip(): void
+    {
+        $this->http->registerRoute([RateLimitedController::class, 'limitedByUser']);
+
+        $firstClientHeaders = ['X-Forwarded-For' => '203.0.113.10'];
+        $secondClientHeaders = ['X-Forwarded-For' => '198.51.100.15'];
+
+        for ($i = 0; $i < 5; $i++) {
+            $response = $this->http->get('/rate-limited-by-user', headers: $firstClientHeaders);
+            $this->assertSame(Status::OK, $response->status);
+        }
+
+        $limitedResponse = $this->http->get('/rate-limited-by-user', headers: $firstClientHeaders);
+        $this->assertSame(Status::TOO_MANY_REQUESTS, $limitedResponse->status);
+
+        $differentIpResponse = $this->http->get('/rate-limited-by-user', headers: $secondClientHeaders);
+        $this->assertSame(Status::OK, $differentIpResponse->status);
     }
 }

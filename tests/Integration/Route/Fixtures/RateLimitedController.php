@@ -8,6 +8,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\Router\Get;
 use Tempest\Router\RateLimit;
+use Tempest\Router\RateLimitBy;
 
 final class RateLimitedController
 {
@@ -19,7 +20,7 @@ final class RateLimitedController
     }
 
     #[Get('/rate-limited-by-user')]
-    #[RateLimit(maxAttempts: 5, decaySeconds: 60, by: 'user')]
+    #[RateLimit(maxAttempts: 5, decaySeconds: 60, by: RateLimitBy::USER)]
     public function limitedByUser(): Response
     {
         return new Ok('success');

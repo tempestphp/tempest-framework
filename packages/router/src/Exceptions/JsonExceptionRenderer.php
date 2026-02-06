@@ -50,6 +50,11 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
             return $this->renderErrorResponse($exception->status, message: $exception->getMessage());
         }
 
+        // Preserve explicit error responses that carry meaningful headers (e.g. Retry-After).
+        if ($exception->cause && count($exception->cause->headers) > 0) {
+            return $exception->cause;
+        }
+
         if ($exception->cause && is_string($exception->cause->body)) {
             return $this->renderErrorResponse($exception->status, message: $exception->cause->body);
         }

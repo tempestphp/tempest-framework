@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\RateLimiting;
+namespace Tempest\Cache\RateLimiting;
 
 use Tempest\Cache\Cache;
+use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;
 
 /**
@@ -69,9 +70,11 @@ final readonly class CacheRateLimiter implements RateLimiter
         $this->cache->remove($this->getTimerKey($key));
     }
 
-    public function availableAt(string $key): int
+    public function availableAt(string $key): DateTime
     {
-        return (int) ($this->cache->get($this->getTimerKey($key)) ?? time());
+        $timestamp = (int) ($this->cache->get($this->getTimerKey($key)) ?? time());
+
+        return DateTime::fromTimestamp($timestamp);
     }
 
     private function getCacheKey(string $key): string

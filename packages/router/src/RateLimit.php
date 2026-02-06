@@ -9,9 +9,6 @@ use Attribute;
 /**
  * Apply rate limiting to a route or controller.
  *
- * Rate limiting protects your API from abuse by limiting how many requests
- * a client can make within a time window.
- *
  * ```php
  * #[Get('/api/users')]
  * #[RateLimit(maxAttempts: 60, decaySeconds: 60)]
@@ -47,20 +44,17 @@ final readonly class RateLimit implements RouteDecorator
         public ?string $key = null,
         /**
          * How to resolve the client identifier.
-         * - 'ip': Use client IP address (default)
-         * - 'user': Use authenticated user ID
-         * - 'session': Use session ID
+         * Can be a RateLimitBy enum or a class-string implementing RateLimitIdentifierResolver.
          *
-         * @var 'ip'|'user'|'session'
+         * @var RateLimitBy|class-string<RateLimitIdentifierResolver>
          */
-        public string $by = 'ip',
+        public RateLimitBy|string $by = RateLimitBy::IP,
     ) {}
 
     public function decorate(Route $route): Route
     {
-        // RateLimitMiddleware intentionally doesn't implement HttpMiddleware to prevent
-        // auto-discovery as a global middleware. It follows the same callable signature
-        // and is invoked via HandleRouteSpecificMiddleware.
+        // RateLimitMiddleware uses #[SkipDiscovery] to prevent auto-discovery
+        // as a global middleware. It is only applied to routes with this attribute.
         $route->middleware = [
             ...$route->middleware,
             RateLimitMiddleware::class,

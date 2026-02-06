@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Tempest\Auth\Authentication\Authenticator;
+use Tempest\Cache\RateLimiting\RateLimiter;
+use Tempest\Cache\RateLimiting\RateLimitResult;
 use Tempest\Container\Container;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\TooManyRequests;
 use Tempest\Http\Session\Session;
-use Tempest\Router\RateLimiting\RateLimiter;
-use Tempest\Router\RateLimiting\RateLimitResult;
 
 /**
  * Middleware that enforces rate limiting on routes decorated with #[RateLimit].
@@ -23,11 +24,11 @@ use Tempest\Router\RateLimiting\RateLimitResult;
  *
  * When rate limit is exceeded, returns 429 Too Many Requests with Retry-After header.
  *
- * Note: This class intentionally does NOT implement HttpMiddleware to prevent
- * it from being auto-discovered as a global middleware. It should only run
- * on routes that have the #[RateLimit] attribute, via HandleRouteSpecificMiddleware.
+ * This middleware uses #[SkipDiscovery] to prevent auto-registration as a global middleware.
+ * It should only run on routes that have the #[RateLimit] attribute.
  */
-final readonly class RateLimitMiddleware
+#[SkipDiscovery]
+final readonly class RateLimitMiddleware implements HttpMiddleware
 {
     public function __construct(
         private MatchedRoute $matchedRoute,
@@ -84,47 +85,30 @@ final readonly class RateLimitMiddleware
     /**
      * Resolve the client identifier based on the rate limit strategy.
      */
-    private function resolveIdentifier(string $by, Request $request): string
+    private function resolveIdentifier(RateLimitBy|string $by, Request $request): string
     {
+        // Handle custom resolver class
+        if (is_string($by)) {
+            /** @var RateLimitIdentifierResolver $resolver */
+            $resolver = $this->container->get($by);
+
+            return $resolver->resolve($request);
+        }
+
         return match ($by) {
-            'user' => $this->resolveUserIdentifier(),
-            'session' => $this->resolveSessionIdentifier(),
-            default => $this->resolveIpIdentifier($request),
+            RateLimitBy::USER => $this->resolveUserIdentifier($request),
+            RateLimitBy::SESSION => $this->resolveSessionIdentifier($request),
+            RateLimitBy::IP => $request->getClientIp(),
         };
     }
 
     /**
-     * Resolve the client IP address from the request.
+     * Resolve the authenticated user ID, falling back to IP if not authenticated.
      */
-    private function resolveIpIdentifier(Request $request): string
-    {
-        // Check for proxy headers first
-        $forwardedFor = $request->headers->get('X-Forwarded-For');
-
-        if ($forwardedFor !== null) {
-            // X-Forwarded-For can contain multiple IPs, the first one is the client
-            $ips = explode(',', $forwardedFor);
-
-            return trim($ips[0]);
-        }
-
-        $realIp = $request->headers->get('X-Real-IP');
-
-        if ($realIp !== null) {
-            return $realIp;
-        }
-
-        // Fall back to REMOTE_ADDR
-        return (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-    }
-
-    /**
-     * Resolve the authenticated user ID.
-     */
-    private function resolveUserIdentifier(): string
+    private function resolveUserIdentifier(Request $request): string
     {
         if (! $this->container->has(Authenticator::class)) {
-            return 'anonymous';
+            return $request->getClientIp();
         }
 
         /** @var Authenticator $authenticator */
@@ -132,25 +116,25 @@ final readonly class RateLimitMiddleware
         $user = $authenticator->current();
 
         if ($user === null) {
-            return 'anonymous';
+            return $request->getClientIp();
         }
 
         // Try to get an identifier from the authenticatable
-        // Use the object's hash as a fallback if no id property exists
+        // Fall back to IP if the user doesn't have an id property
         if (property_exists($user, 'id')) {
             return 'user:' . (string) $user->id;
         }
 
-        return 'user:' . spl_object_id($user);
+        return $request->getClientIp();
     }
 
     /**
-     * Resolve the session ID.
+     * Resolve the session ID, falling back to IP if no session is available.
      */
-    private function resolveSessionIdentifier(): string
+    private function resolveSessionIdentifier(Request $request): string
     {
         if (! $this->container->has(Session::class)) {
-            return 'no-session';
+            return $request->getClientIp();
         }
 
         $session = $this->container->get(Session::class);
