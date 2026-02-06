@@ -285,7 +285,7 @@ All pull requests will be renamed to the conventional commit convention if neces
 
 ## Release cycles
 
-Tempest current does not follow a fixed release cycle. In general, bug fixes and minor features can be released as soon as possible. For breaking changes, though, we aim to bundle as many as possible in a single major release. 
+Tempest currently does not follow a fixed release cycle. In general, bug fixes and minor features can be released as soon as possible. For breaking changes, though, we aim to bundle as many as possible in a single major release. 
 
 ### Milestones
 
