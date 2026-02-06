@@ -65,11 +65,7 @@ final readonly class RateLimitMiddleware
         $handler = $this->matchedRoute->route->handler;
 
         // Check method first, then class
-        $rateLimit = $handler->getAttribute(RateLimit::class);
-
-        if ($rateLimit === null) {
-            $rateLimit = $handler->getDeclaringClass()->getAttribute(RateLimit::class);
-        }
+        $rateLimit = $handler->getAttribute(RateLimit::class) ?? $handler->getDeclaringClass()->getAttribute(RateLimit::class);
 
         return $rateLimit;
     }
