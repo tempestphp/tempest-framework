@@ -131,6 +131,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
+            "Tempest\\AI\\": "packages/ai/src",
             "Tempest\\Auth\\": "packages/auth/src",
             "Tempest\\Cache\\": "packages/cache/src",
             "Tempest\\Clock\\": "packages/clock/src",
@@ -165,6 +166,7 @@
             "Tempest\\Vite\\": "packages/vite/src"
         },
         "files": [
+            "packages/ai/src/functions.php",
             "packages/clock/src/functions.php",
             "packages/command-bus/src/functions.php",
             "packages/container/src/functions.php",
@@ -202,6 +204,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Tempest\\AI\\Tests\\": "packages/ai/tests",
             "Tempest\\Auth\\Tests\\": "packages/auth/tests",
             "Tempest\\Cache\\Tests\\": "packages/cache/tests",
             "Tempest\\Clock\\Tests\\": "packages/clock/tests",

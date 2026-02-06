@@ -1,0 +1,28 @@
+{
+    "name": "tempest/ai",
+    "description": "A component for integrating AI capabilities into Tempest applications.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/container": "dev-main",
+        "tempest/http-client": "dev-main",
+        "tempest/support": "dev-main"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\AI\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\AI\\Tests\\": "tests"
+        }
+    }
+}
