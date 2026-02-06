@@ -14,7 +14,7 @@ use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class SentEmailTest extends FrameworkIntegrationTestCase
 {

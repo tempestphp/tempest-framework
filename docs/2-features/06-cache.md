@@ -36,7 +36,7 @@ final readonly class OrderService
     {
         return $this->cache->resolve(
             key: 'orders_count',
-            resolve: fn () => $this->fetchOrdersCountFromDatabase(),
+            callback: fn () => $this->fetchOrdersCountFromDatabase(),
             expiration: Duration::hours(12)
         );
     }
@@ -195,5 +195,5 @@ $cache = $this->cache->fake();
 // Call some application code
 // …
 
-$this->cache->assertNotLocked('processing');
+$cache->assertNotLocked('processing');
 ```

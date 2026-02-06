@@ -10,8 +10,11 @@ use Tempest\Support\Str;
 
 use function copy as php_copy;
 use function dirname;
+use function fclose;
 use function file_exists;
 use function fileperms;
+use function flock;
+use function fopen;
 use function is_dir;
 use function is_executable as php_is_executable;
 use function is_file as php_is_file;
@@ -65,6 +68,50 @@ function copy_file(string $source, string $destination, bool $overwrite = false)
         throw new Exceptions\RuntimeException(
             sprintf('Failed to copy source file "%s" to destination "%s": %s', $source, $destination, $errorMessage),
         );
+    }
+}
+
+/**
+ * Recursively opies a directory from `$source` to `$destination`.
+ */
+function copy_directory(string $source, string $destination, bool $overwrite = false): void
+{
+    if (! namespace\exists($source)) {
+        throw Exceptions\PathWasNotFound::forDirectory($source);
+    }
+
+    if (! namespace\is_directory($source)) {
+        throw new Exceptions\PathWasNotADirectory($source);
+    }
+
+    if (! namespace\is_readable($source)) {
+        throw Exceptions\PathWasNotReadable::forDirectory($source);
+    }
+
+    if (! $overwrite && namespace\is_directory($destination)) {
+        return;
+    }
+
+    namespace\create_directory($destination);
+
+    foreach (namespace\list_directory($source) as $node) {
+        namespace\copy(
+            source: $node,
+            destination: $destination . '/' . basename($node),
+            overwrite: $overwrite,
+        );
+    }
+}
+
+/**
+ * Copies a file or directory from `$source` to `$destination`.
+ */
+function copy(string $source, string $destination, bool $overwrite = false): void
+{
+    if (namespace\is_directory($source)) {
+        namespace\copy_directory($source, $destination, $overwrite);
+    } else {
+        namespace\copy_file($source, $destination, $overwrite);
     }
 }
 
@@ -134,6 +181,54 @@ function read_file(string $filename): string
 }
 
 /**
+ * Reads the content of the specified `$filename` with an advisory lock.
+ */
+function read_locked_file(string $filename, LockType $type = LockType::SHARED): string
+{
+    if (! namespace\exists($filename)) {
+        throw Exceptions\PathWasNotFound::forFile($filename);
+    }
+
+    if (! namespace\is_readable($filename)) {
+        throw Exceptions\PathWasNotReadable::forFile($filename);
+    }
+
+    [$handle, $openMessage] = box(static fn () => fopen($filename, 'rb'));
+
+    if ($handle === false) {
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to open file "%s": %s',
+            $filename,
+            $openMessage ?? 'internal error',
+        ));
+    }
+
+    if (! flock($handle, $type->value)) {
+        fclose($handle);
+
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to acquire lock on file "%s"',
+            $filename,
+        ));
+    }
+
+    [$content, $readMessage] = box(static fn (): false|string => stream_get_contents($handle));
+
+    flock($handle, LOCK_UN);
+    fclose($handle);
+
+    if ($content === false) {
+        throw new Exceptions\RuntimeException(sprintf(
+            'Failed to read file "%s": %s',
+            $filename,
+            $readMessage ?? 'internal error',
+        ));
+    }
+
+    return $content;
+}
+
+/**
  * Ensures that the specified directory exists.
  */
 function ensure_directory_exists(string $directory): void
@@ -161,6 +256,26 @@ function create_directory(string $directory, int $permissions = 0o777): void
             $errorMessage ?? 'internal error',
         ));
     }
+}
+
+/**
+ * Creates and returns a unique empty temporary directory.
+ *
+ * @return non-empty-string
+ */
+function create_temporary_directory(?string $prefix = null): string
+{
+    $temporaryDirectory = sys_get_temp_dir();
+    $uniqueDirectory = $temporaryDirectory . '/' . uniqid(prefix: $prefix ?? '');
+
+    if ($uniqueDirectory === false) {
+        throw new Exceptions\RuntimeException('Failed to create a temporary directory.');
+    }
+
+    namespace\ensure_directory_exists($uniqueDirectory);
+    namespace\ensure_directory_empty($uniqueDirectory);
+
+    return $uniqueDirectory;
 }
 
 /**
@@ -220,7 +335,7 @@ function delete(string $path, bool $recursive = true): void
         return;
     }
 
-    if (namespace\is_file($path)) {
+    if (namespace\is_file($path) || namespace\is_symbolic_link($path)) {
         namespace\delete_file($path);
     } elseif (namespace\is_directory($path)) {
         namespace\delete_directory($path, $recursive);

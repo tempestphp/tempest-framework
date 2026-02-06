@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Filesystem;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\path;
 
 final readonly class JsonFileToObjectMapper implements Mapper
 {
+    public function __construct(
+        private Context $context,
+    ) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         if (! is_string($from)) {
@@ -25,6 +30,9 @@ final readonly class JsonFileToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array
     {
-        return map(Filesystem\read_json($from))->collection()->to($to);
+        return map(Filesystem\read_json($from))
+            ->in($this->context)
+            ->collection()
+            ->to($to);
     }
 }

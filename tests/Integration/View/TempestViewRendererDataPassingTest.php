@@ -26,7 +26,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a href="http://"                    💯 <a href="https://"
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 '<a href="https://">a</a>',
             ),
         );
@@ -37,7 +37,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="$href"                     💯 <a href="https://"
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 '<a :href="$href">a</a>',
                 href: 'https://',
             ),
@@ -49,7 +49,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="strtoupper('string')"      💯 <a href="HTTPS://"
         $this->assertSame(
             '<a href="HTTPS://">a</a>',
-            $this->render(
+            $this->view->render(
                 '<a :href="strtoupper($href)">a</a>',
                 href: 'https://',
             ),
@@ -61,7 +61,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a href="<?= $href "                 💯 <a href="https://"
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <a href="<?= $href ?>">a</a>
                 HTML,
@@ -75,7 +75,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a href="{{ $href }}"                💯 <a href="https://&amp;"
         $this->assertSame(
             '<a href="https://&amp;">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <a href="{{ $href }}">a</a>
                 HTML,
@@ -89,7 +89,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a href="{!! $href !!}"                💯 <a href="https://&"
         $this->assertSame(
             '<a href="https://&">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <a href="{!! $href !!}">a</a>
                 HTML,
@@ -103,7 +103,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="{{ $href }}"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
 
-        $this->render(
+        $this->view->render(
             <<<'HTML'
             <a :href="{{ $href }}">a</a>
             HTML,
@@ -115,7 +115,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="{!! $href !!}"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
 
-        $this->render(
+        $this->view->render(
             <<<'HTML'
             <a :href="{!! $href !!}">a</a>
             HTML,
@@ -127,7 +127,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="<?= $href …"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
 
-        $this->render(
+        $this->view->render(
             <<<'HTML'
             <a :href="<?= $href ?>">a</a>
             HTML,
@@ -139,7 +139,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <a :href="$object"                   ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
 
-        $this->render(
+        $this->view->render(
             <<<'HTML'
             <a :href="<?= $object ?>">a</a>
             HTML,
@@ -151,7 +151,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             'x-link',
             <<<'HTML'
             <a :href="$object->url"><x-slot/></a>
@@ -160,7 +160,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <x-link :object="$object">a</x-link>
                 HTML,
@@ -175,7 +175,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$href" />        💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             'x-link',
             <<<'HTML'
             <a :href="$href"><x-slot/></a>
@@ -184,7 +184,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <x-link :href="$href">a</x-link>
                 HTML,
@@ -197,7 +197,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button href="http://…" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             'x-link',
             <<<'HTML'
             <a :href="$href"><x-slot/></a>
@@ -206,7 +206,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <x-link href="https://">a</x-link>
                 HTML,
@@ -218,7 +218,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             'x-link',
             <<<'HTML'
             <a :href="$href->url"><x-slot/></a>
@@ -235,7 +235,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame(
             '<a href="https://">a</a>',
-            $this->render(
+            $this->view->render(
                 <<<'HTML'
                 <x-link :href="$object">a</x-link>
                 HTML,
@@ -250,21 +250,21 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         $this->assertSame(
             '<option value="value" selected>name</option>',
-            $this->render(<<<'HTML'
+            $this->view->render(<<<'HTML'
             <option value="<?= $value ?>" :selected="$selected"><?= $name ?></option>
             HTML, value: 'value', selected: true, name: 'name'),
         );
 
         $this->assertSame(
             '<option value="value" >name</option>',
-            $this->render(<<<'HTML'
+            $this->view->render(<<<'HTML'
             <option value="<?= $value ?>" :selected="$selected"><?= $name ?></option>
             HTML, value: 'value', selected: false, name: 'name'),
         );
 
         $this->assertSame(
             '<textarea autofocus></textarea>',
-            $this->render('<textarea autofocus></textarea>'),
+            $this->view->render('<textarea autofocus></textarea>'),
         );
     }
 
@@ -274,7 +274,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     #[TestWith(['$show'])]
     public function test_falsy_bool_attribute(mixed $value): void
     {
-        $html = $this->render(<<<HTML
+        $html = $this->view->render(<<<HTML
         <div :data-active="{$value}"></div>
         HTML, show: false);
 
@@ -287,7 +287,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     #[TestWith(['$show'])]
     public function test_truthy_bool_attribute(mixed $value): void
     {
-        $html = $this->render(<<<HTML
+        $html = $this->view->render(<<<HTML
         <div :data-active="{$value}"></div>
         HTML, show: true);
 
@@ -298,7 +298,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     public function test_multiple_boolean_attribute(): void
     {
-        $html = $this->render(<<<HTML
+        $html = $this->view->render(<<<HTML
         <div :data-a="false" :data-b="false" :data-c="true"></div>
         HTML);
 
@@ -309,14 +309,14 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     public function test_expression_attribute_in_raw_element(): void
     {
-        $this->registerViewComponent(
+        $this->view->registerViewComponent(
             'x-test',
             <<<'HTML'
             <div><x-slot/></div>
             HTML,
         );
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-test :language="$language">
             <pre :data-lang="$language"><hello></hello>foo<p>bar</p></pre>
         </x-test>
@@ -334,14 +334,14 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         $this->assertSame(
             '<div class="hi hi hi"></div>',
-            $this->render(<<<HTML
+            $this->view->render(<<<HTML
             <div class="hi {{ 'hi' }} hi">
             HTML),
         );
 
         $this->assertSame(
             '<div class="hi hi hi"></div>',
-            $this->render(<<<HTML
+            $this->view->render(<<<HTML
             <div class="hi {!! 'hi' !!} hi">
             HTML),
         );
@@ -349,13 +349,13 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     public function test_boolean_attributes_in_view_component(): void
     {
-        $this->registerViewComponent('x-test', <<<HTML
+        $this->view->registerViewComponent('x-test', <<<HTML
         <div>
             <x-slot/>
         </div>
         HTML);
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-test>
             <a :href="'hi'"></a>
         </x-test>
@@ -366,11 +366,11 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     public function test_global_variables_are_kept(): void
     {
-        $this->registerViewComponent('x-test', <<<'HTML'
+        $this->view->registerViewComponent('x-test', <<<'HTML'
         <div>{{ $item }}</div>
         HTML);
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-test :item="$item"></x-test>
         <x-test :item="$item"></x-test>
         <x-test :item="$item"></x-test>

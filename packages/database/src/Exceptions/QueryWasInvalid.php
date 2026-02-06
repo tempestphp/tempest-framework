@@ -6,10 +6,10 @@ namespace Tempest\Database\Exceptions;
 
 use Exception;
 use PDOException;
-use Tempest\Core\HasContext;
+use Tempest\Core\ProvidesContext;
 use Tempest\Database\Query;
 
-final class QueryWasInvalid extends Exception implements HasContext
+final class QueryWasInvalid extends Exception implements ProvidesContext
 {
     public readonly PDOException $pdoException;
 

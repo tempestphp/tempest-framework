@@ -4,9 +4,7 @@ namespace Tempest\Icon;
 
 use Exception;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
-use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Str;
@@ -64,7 +62,6 @@ final class Icon
 
             if ($response->status !== Status::OK) {
                 throw new HttpRequestFailed(
-                    request: new GenericRequest(Method::GET, $url),
                     status: $response->status,
                     cause: $response,
                 );

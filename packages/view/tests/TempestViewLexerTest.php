@@ -173,8 +173,35 @@ final class TempestViewLexerTest extends TestCase
                 new Token("\n>", TokenType::OPEN_TAG_END),
                 new Token('
 
-', TokenType::CONTENT),
+', TokenType::WHITESPACE),
                 new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    public function test_whitespace(): void
+    {
+        $html = <<<'HTML'
+        <p><strong>Test</strong> <em>Test</em></p>
+        HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<p', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('<strong', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('Test', TokenType::CONTENT),
+                new Token('</strong>', TokenType::CLOSING_TAG),
+                new Token(' ', TokenType::WHITESPACE),
+                new Token('<em', TokenType::OPEN_TAG_START),
+                new Token('>', TokenType::OPEN_TAG_END),
+                new Token('Test', TokenType::CONTENT),
+                new Token('</em>', TokenType::CLOSING_TAG),
+                new Token('</p>', TokenType::CLOSING_TAG),
             ],
             actual: $tokens,
         );

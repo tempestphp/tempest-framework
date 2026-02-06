@@ -13,6 +13,7 @@ use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Support\Str\ImmutableString;
 use Throwable;
 use UnitEnum;
 
@@ -27,6 +28,10 @@ final class GenericDatabase implements Database
 
     public null|string|UnitEnum $tag {
         get => $this->connection->config->tag;
+    }
+
+    private DatabaseContext $context {
+        get => new DatabaseContext(dialect: $this->dialect);
     }
 
     public function __construct(
@@ -123,22 +128,28 @@ final class GenericDatabase implements Database
         return true;
     }
 
+    public function getRawSql(Query $query): ImmutableString
+    {
+        return new RawSql(
+            dialect: $this->dialect,
+            sql: (string) $query->compile(),
+            bindings: $query->bindings,
+            serializerFactory: $this->serializerFactory,
+        )->toImmutableString();
+    }
+
     private function resolveBindings(Query $query): array
     {
         $bindings = [];
 
-        foreach ($query->bindings as $key => $value) {
-            // Database handle booleans differently. We might need a database-aware serializer at some point.
-            if (is_bool($value)) {
-                $value = match ($this->dialect) {
-                    DatabaseDialect::POSTGRESQL => $value ? 'true' : 'false',
-                    default => $value ? '1' : '0',
-                };
-            }
+        $serializerFactory = $this->serializerFactory->in($this->context);
 
+        foreach ($query->bindings as $key => $value) {
             if ($value instanceof Query) {
                 $value = $value->execute();
-            } elseif ($serializer = $this->serializerFactory->forValue($value)) {
+            } elseif (is_string($value) || is_numeric($value)) {
+                // Keep value as is
+            } elseif ($serializer = $serializerFactory->forValue($value)) {
                 $value = $serializer->serialize($value);
             }
 

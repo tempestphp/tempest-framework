@@ -17,7 +17,7 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
 {
     public function test_update_with_serialize_as_dto(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_create_users_table_for_dto_update';
 
             public function up(): QueryStatement
@@ -29,11 +29,10 @@ final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
             }
         });
 
-        $user = query(UserWithDtoSettings::class)
-            ->create(
-                name: 'John',
-                settings: new DtoSettings(DtoTheme::LIGHT),
-            );
+        $user = query(UserWithDtoSettings::class)->create(
+            name: 'John',
+            settings: new DtoSettings(DtoTheme::LIGHT),
+        );
 
         query(UserWithDtoSettings::class)
             ->update(

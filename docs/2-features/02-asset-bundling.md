@@ -189,7 +189,7 @@ export default defineConfig({
 
 ## Testing
 
-By default, Tempest is intructed to not generate any tag during tests. This behavior is in place to prevent triggering `ManifestNotFoundException` exceptions in your test suite.
+By default, Tempest is instructed to not generate any tag during tests. This behavior is in place to prevent triggering `ManifestNotFoundException` exceptions in your test suite.
 
 If, for any reason, you wish to restore tag resolution in a test, you may call the `{php}allowTagResolution()` method on the `ViteTester` instance:
 

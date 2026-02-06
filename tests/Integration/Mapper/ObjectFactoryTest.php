@@ -13,8 +13,8 @@ use Tempest\Mapper\ObjectFactory;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
-use function Tempest\make;
-use function Tempest\map;
+use function Tempest\Mapper\make;
+use function Tempest\Mapper\map;
 
 /**
  * @internal

@@ -17,7 +17,7 @@ final class RefreshModelTest extends FrameworkIntegrationTestCase
 {
     public function test_refresh_works_for_models_with_unloaded_relation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -65,7 +65,7 @@ final class RefreshModelTest extends FrameworkIntegrationTestCase
 
     public function test_load_method_only_refreshes_relations_and_nothing_else(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

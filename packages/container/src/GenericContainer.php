@@ -177,11 +177,7 @@ final class GenericContainer implements Container
     {
         $this->resolveChain();
 
-        $dependency = $this->resolve(
-            className: $className,
-            tag: $tag,
-            params: $params,
-        );
+        $dependency = $this->resolve($className, $tag, ...$params);
 
         $this->stopChain();
 

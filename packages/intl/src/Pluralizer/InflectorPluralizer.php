@@ -26,7 +26,7 @@ final class InflectorPluralizer implements Pluralizer
 
         // @mago-expect lint:identity-comparison
         if (abs($count) === 1 || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', (string) $value) == 0) {
-            return $value;
+            return (string) $value;
         }
 
         return $this->matchCase($this->inflector->pluralize((string) $value), $value);

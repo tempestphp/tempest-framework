@@ -19,7 +19,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * @internal

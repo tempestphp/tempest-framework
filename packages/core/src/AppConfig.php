@@ -8,26 +8,15 @@ use function Tempest\env;
 
 final class AppConfig
 {
-    public Environment $environment;
-
     public string $baseUri;
+
+    /** @var array<class-string<\Tempest\Core\InsightsProvider>> */
+    public array $insightsProviders = [];
 
     public function __construct(
         public ?string $name = null,
-
-        ?Environment $environment = null,
-
         ?string $baseUri = null,
-
-        /** @var class-string<\Tempest\Core\ExceptionProcessor>[] */
-        public array $exceptionProcessors = [],
-
-        /**
-         * @var array<class-string<\Tempest\Core\InsightsProvider>>
-         */
-        public array $insightsProviders = [],
     ) {
-        $this->environment = $environment ?? Environment::fromEnv();
-        $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
+        $this->baseUri = $baseUri ?: env('BASE_URI', default: '');
     }
 }

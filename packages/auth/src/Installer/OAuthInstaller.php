@@ -93,8 +93,7 @@ final class OAuthInstaller
 
     private function publishController(SupportedOAuthProvider $provider): void
     {
-        $fileName = str($provider->value)
-            ->classBasename()
+        $fileName = str($provider->getName())
             ->replace('Provider', '')
             ->append('Controller.php')
             ->toString();
@@ -104,7 +103,7 @@ final class OAuthInstaller
             destination: src_path("Authentication/OAuth/{$fileName}"),
             callback: function (string $source, string $destination) use ($provider) {
                 $providerFqcn = $provider::class;
-                $name = strtolower($provider->name);
+                $name = strtolower($provider->getName());
                 $userModelFqcn = to_fqcn(src_path('Authentication/User.php'), root: root_path());
 
                 $this->update(

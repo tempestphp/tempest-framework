@@ -9,7 +9,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithJsonSerialize;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNullableProperties;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  *

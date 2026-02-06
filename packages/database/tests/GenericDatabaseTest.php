@@ -6,6 +6,7 @@ namespace Tempest\Database\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\GenericContainer;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
@@ -33,7 +34,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            new SerializerFactory(),
+            new SerializerFactory(new GenericContainer()),
         );
 
         $result = $database->withinTransaction(function () {
@@ -60,7 +61,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            new SerializerFactory(),
+            new SerializerFactory(new GenericContainer()),
         );
 
         $result = $database->withinTransaction(function (): never {

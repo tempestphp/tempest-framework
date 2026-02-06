@@ -11,7 +11,7 @@ When a controller action is tagged with {b`#[Tempest\Router\StaticPage]`}, it ca
 use Tempest\Router\Get;
 use Tempest\Router\StaticPage;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class FrontPageController
 {
@@ -61,7 +61,7 @@ In this case, the {b`#[Tempest\Router\StaticPage]`} attribute gets a reference t
 ```php app/Documentation/ChapterDataProvider.php
 use Tempest\Router\DataProvider;
 
-final readonly class DocsDataProvider implements DataProvider
+final readonly class ChapterDataProvider implements DataProvider
 {
     public function provide(): Generator
     {
@@ -79,7 +79,7 @@ In other words: we want to generate a page for every documentation chapter. We c
 ```php app/Documentation/ChapterDataProvider.php
 use Tempest\Router\DataProvider;
 
-final readonly class DocsDataProvider implements DataProvider
+final readonly class ChapterDataProvider implements DataProvider
 {
     public function __construct(
         private ChapterRepository $chapters

@@ -7,12 +7,14 @@ use Tempest\Container\GenericContainer;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
+use Tempest\Mapper\SerializerFactory;
 
 final class TaggedDynamicInitializerTest extends TestCase
 {
     public function test_resolve(): void
     {
         $container = new GenericContainer();
+        $container->singleton(SerializerFactory::class, new SerializerFactory($container));
         $container->addInitializer(DatabaseInitializer::class);
 
         $container->config(new SQLiteConfig(

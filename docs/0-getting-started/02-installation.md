@@ -5,7 +5,7 @@ description: Tempest can be installed as a standalone PHP project, as well as a 
 
 ## Prerequisites
 
-Tempest requires PHP [8.4+](https://www.php.net/downloads.php) and [Composer](https://getcomposer.org/) to be installed. Optionally, you may install either [Bun](https://bun.sh) or [Node](https://nodejs.org) if you chose to bundle front-end assets.
+Tempest requires PHP [8.5+](https://www.php.net/downloads.php) and [Composer](https://getcomposer.org/) to be installed. Optionally, you may install either [Bun](https://bun.sh) or [Node](https://nodejs.org) if you chose to bundle front-end assets.
 
 For a better experience, it is recommended to have a complete development environment, such as [ServBay](https://www.servbay.com), [Herd](https://herd.laravel.com/docs), or [Valet](https://laravel.com/docs/valet). However, Tempest can serve applications using PHP's built-in server just fine.
 
@@ -24,7 +24,7 @@ If you have a dedicated development environment, you may then access your applic
 
 ```sh
 {:hl-keyword:php:} tempest serve
-{:hl-comment:PHP 8.4.5 Development Server (http://localhost:8000) started:}
+{:hl-comment:PHP 8.5.1 Development Server (http://localhost:8000) started:}
 ```
 
 ### Scaffolding front-end assets
@@ -73,7 +73,7 @@ Tempest won't impose any file structure on you: one of its core features is that
 For instance, Tempest is able to differentiate between a controller method and a console command by looking at the code, instead of relying on naming conventions or configuration files.
 
 :::info
-This concept is called [discovery](../4-internals/02-discovery), and is one of Tempest's most powerful features.
+This concept is called [discovery](../1-essentials/05-discovery), and is one of Tempest's most powerful features.
 :::
 
 The following project structures work the same way in Tempest, without requiring any specific configuration:
@@ -98,9 +98,11 @@ The following project structures work the same way in Tempest, without requiring
 
 ## About discovery
 
-Discovery works by scanning your project code, and looking at each file and method individually to determine what that code does. In production environments, [Tempest will cache the discovery process](../4-internals/02-discovery#discovery-in-production), avoiding any performance overhead.
+Discovery works by scanning your project code and looking at each file and method individually to determine what that code does. In production environments, [Tempest caches the discovery process](../1-essentials/05-discovery#discovery-in-production), avoiding any performance overhead.
 
-As an example, Tempest is able to determine which methods are controller methods based on their route attributes, such as `#[Get]` or `#[Post]`:
+As an example, Tempest is able to determine which methods are controller methods based on their [route attributes](../1-essentials/01-routing.md), or to detect console commands based on methods annotated with {b`#[Tempest\Console\ConsoleCommand]`}:
+
+:::code-group
 
 ```php app/BlogPostController.php
 use Tempest\Router\Get;
@@ -119,18 +121,22 @@ final readonly class BlogPostController
 }
 ```
 
-Likewise, it is able to detect console commands based on the `#[ConsoleCommand]` attribute:
-
 ```php app/RssSyncCommand.php
 use Tempest\Console\HasConsole;
 use Tempest\Console\ConsoleCommand;
 
 final readonly class RssSyncCommand
 {
-    use HasConsole;
-
     #[ConsoleCommand('rss:sync')]
     public function __invoke(bool $force = false): void
-    { /* … */ }
+    {
+        // …
+    }
 }
 ```
+
+:::
+
+:::tip{tabler:link}
+Learn more about discovery in the [dedicated documentation](../1-essentials/05-discovery.md).
+:::

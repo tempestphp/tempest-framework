@@ -1,9 +1,0 @@
-<?php
-
-namespace App;
-
-use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
-
-class CreateUsersTable implements FakeMigration
-{
-}

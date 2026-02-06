@@ -85,7 +85,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals(Method::POST->value, $request->getMethod());
         $this->assertEquals('/test', $request->getUri()->getPath());
         $this->assertEquals(['test' => 'test'], $request->getParsedBody());
-        $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
+        $this->assertArrayIsEqualToArrayIgnoringListOfKeys(['x-test' => ['test']], $request->getHeaders(), ['sec-fetch-site', 'sec-fetch-mode']);
         $this->assertCount(1, $request->getCookieParams());
         $this->assertArrayHasKey('test', $request->getCookieParams());
         $this->assertSame('test', $this->container->get(Encrypter::class)->decrypt($request->getCookieParams()['test']));
@@ -106,6 +106,19 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->body);
     }
 
+    public function test_headers_with_underscores(): void
+    {
+        $this->http
+            ->get(
+                uri: '/header-with-underscores',
+                headers: [
+                    'tempest_session_id' => 'test',
+                ],
+            )
+            ->assertOk()
+            ->assertHeaderMatches('tempest_session_id', 'test');
+    }
+
     public function test_generic_request_can_map_to_custom_request(): void
     {
         $response = $this->http
@@ -123,7 +136,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_custom_request_test_with_validation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -151,7 +164,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_custom_request_test_with_nested_validation(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,

@@ -129,7 +129,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_then_method(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
@@ -154,7 +154,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_insert_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')
             ->insert(

@@ -5,7 +5,7 @@ description: "Learn how to write console commands with a modern, minimal syntax.
 
 ## Overview
 
-Tempest leverages [discovery](../4-internals/02-discovery.md) to find class methods tagged with the {b`#[Tempest\Console\ConsoleCommand]`} attribute. Such methods will automatically be available as console commands through the `./tempest` executable.
+Tempest leverages [discovery](./05-discovery.md) to find class methods tagged with the {b`#[Tempest\Console\ConsoleCommand]`} attribute. Such methods will automatically be available as console commands through the `./tempest` executable.
 
 Additionally, Tempest supports [console middleware](#middleware), which makes it easier to build some console features.
 
@@ -120,7 +120,7 @@ final readonly class TrackOperatingAircraft
 }
 ```
 
-Argument description are visible when using the `--help` flag during command invokation.
+Argument description are visible when using the `--help` flag during command invocation.
 
 ```console
 <dim>./</dim>tempest aircraft:track --help
@@ -238,6 +238,41 @@ Tempest console comes with a range of interactive components that can be used to
 Interactive components are only supported on Mac and Linux. On Windows, Tempest will fall back to non-interactive versions of these components.
 :::
 
+## Shell completion
+
+Tempest provides shell completion for Zsh and Bash. This allows you to press `Tab` to autocomplete command names and options.
+
+### Installing completions
+
+Run the install command and follow the prompts:
+
+```console
+<dim>./</dim>tempest completion:install
+```
+
+The installer will detect your current shell, copy the completion script to the appropriate location, and provide instructions for enabling it.
+
+For Zsh, you'll need to ensure the completions directory is in your `fpath` and reload completions:
+
+```zsh
+# Add to ~/.zshrc
+fpath=(~/.zsh/completions $fpath)
+autoload -Uz compinit && compinit
+```
+
+For Bash, source the completion file in your `~/.bashrc`:
+
+```bash
+source ~/.bash_completion.d/tempest.bash
+```
+
+### Additional commands
+
+You may also use these related commands:
+
+- `completion:show` — Output the completion script to stdout (useful for custom installation)
+- `completion:uninstall` — Remove the installed completion script
+
 ## Middleware
 
 Console middleware can be applied globally or on a per-command basis. Global console middleware will be discovered and applied automatically, by priority order.
@@ -285,7 +320,7 @@ final readonly class InspireMiddleware implements ConsoleMiddleware
 { /* … */ }
 ```
 
-Note that priority is defined using an integer. However, the {b`Tempest\Core\Priority`} class provides a few constant with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
+Note that priority is defined using an integer. However, the {b`Tempest\Core\Priority`} class provides a few constants with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
 
 #### Middleware discovery
 
@@ -312,7 +347,7 @@ Tempest provides a few built-in middleware that you may use on your console comm
 
 ## Scheduling
 
-Console commands—or any public class method—may be scheduled by using the {b`#[Tempest\Console\Schedule]`} attribute, which accepts an {b`Tempest\Console\Scheduler\Interval`} or {b`Tempest\Console\Scheduler\Every`} value. Methods with this attributes are automatically [discovered](../4-internals/02-discovery.md), so there is nothing more to add.
+Console commands—or any public class method—may be scheduled by using the {b`#[Tempest\Console\Schedule]`} attribute, which accepts an {b`Tempest\Console\Scheduler\Interval`} or {b`Tempest\Console\Scheduler\Every`} value. Methods with this attributes are automatically [discovered](./05-discovery.md), so there is nothing more to add.
 
 You may read more on the [dedicated chapter](../2-features/11-scheduling.md).
 
@@ -331,4 +366,4 @@ $this->console
     ->assertSee('caution')
     ->submit()
     ->assertSuccess();
-``` 
+```

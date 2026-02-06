@@ -8,10 +8,7 @@ use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DtoSerializer;
-use Tempest\Mapper\SerializeWith;
+use Tempest\Mapper\SerializeAs;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -20,7 +17,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_deeply_nested_dtos(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_structure';
 
             public function up(): QueryStatement
@@ -82,7 +79,7 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_nested_dtos_with_mixed_types(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_grimoire';
 
             public function up(): QueryStatement
@@ -201,8 +198,7 @@ final class Spell
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class SpellStructure
 {
     public function __construct(
@@ -211,8 +207,7 @@ final class SpellStructure
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class Incantation
 {
     public function __construct(
@@ -221,8 +216,7 @@ final class Incantation
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class Pronunciation
 {
     public function __construct(
@@ -231,8 +225,7 @@ final class Pronunciation
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class EmphasisPattern
 {
     public function __construct(
@@ -242,8 +235,7 @@ final class EmphasisPattern
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class SpellComponents
 {
     public function __construct(
@@ -253,8 +245,7 @@ final class SpellComponents
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class MaterialComponent
 {
     public function __construct(
@@ -264,8 +255,7 @@ final class MaterialComponent
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class ItemProperties
 {
     public function __construct(
@@ -282,8 +272,7 @@ final class Grimoire
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class GrimoireMetadata
 {
     public function __construct(
@@ -293,8 +282,7 @@ final class GrimoireMetadata
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class Author
 {
     public function __construct(
@@ -304,8 +292,7 @@ final class Author
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class GrimoireContents
 {
     public function __construct(
@@ -316,8 +303,7 @@ final class GrimoireContents
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class IndexingSystem
 {
     public function __construct(
@@ -327,8 +313,7 @@ final class IndexingSystem
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class PreservationInfo
 {
     public function __construct(

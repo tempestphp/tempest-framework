@@ -14,6 +14,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
@@ -88,6 +89,10 @@ final class StaticGenerateCommand
                     "<style='fg-gray'>{$event->path}</style>",
                     sprintf("<style='fg-red'>%s DEAD %s</style>", count($event->exception->links), Intl\pluralize('LINK', count($event->exception->links))),
                 ),
+                $event->exception instanceof HttpRequestFailed => $this->keyValue(
+                    "<style='fg-gray'>{$event->path}</style>",
+                    "<style='fg-red'>HTTP {$event->exception->status->value}</style>",
+                ),
                 $event->exception instanceof InvalidStatusCodeException => $this->keyValue(
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>HTTP {$event->exception->status->value}</style>",
@@ -100,8 +105,6 @@ final class StaticGenerateCommand
                 default => $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-red'>FAILED</style>"),
             };
         });
-
-        $this->routeConfig->throwHttpExceptions = false;
 
         foreach ($this->staticPageConfig->staticPages as $staticPage) {
             /** @var DataProvider $dataProvider */
@@ -125,12 +128,10 @@ final class StaticGenerateCommand
                 $file = path($publicPath, $fileName);
 
                 try {
-                    $response = $this->router->dispatch(
-                        new GenericRequest(
-                            method: Method::GET,
-                            uri: $uri,
-                        ),
-                    );
+                    $response = $this->router->dispatch(new GenericRequest(
+                        method: Method::GET,
+                        uri: $uri,
+                    ));
 
                     if ($response->status !== Status::OK) {
                         throw new InvalidStatusCodeException($uri, $response->status);
@@ -169,8 +170,9 @@ final class StaticGenerateCommand
                         ob_clean();
                     }
 
-                    if ($exception instanceof ViewCompilationFailed && $exception->getPrevious() instanceof ManifestWasNotFound) {
+                    if ($this->isFailureBecauseOfMissingManifest($exception)) {
                         $this->error("A Vite build is needed for [{$uri}]. Run <code>vite build</code> first.");
+
                         return ExitCode::ERROR;
                     }
 
@@ -200,6 +202,15 @@ final class StaticGenerateCommand
         return $failures > 0 || count($deadlinks) > 0
             ? ExitCode::ERROR
             : ExitCode::SUCCESS;
+    }
+
+    private function isFailureBecauseOfMissingManifest(Throwable $exception): bool
+    {
+        if (! $exception instanceof ViewCompilationFailed) {
+            return false;
+        }
+
+        return $exception->getPrevious() instanceof ManifestWasNotFound;
     }
 
     private function detectDeadLinks(string $uri, string $html, bool $checkExternal = false): array
@@ -237,22 +248,28 @@ final class StaticGenerateCommand
             // Check internal links with router (/ or same base uri)
             if (Str\starts_with($link, '/') || Str\starts_with($this->getLinkWithoutProtocol($link), $this->getLinkWithoutProtocol($this->appConfig->baseUri))) {
                 do {
+                    $response = null;
                     $target ??= match (true) {
                         ! Str\starts_with($link, '/') => str($link)->stripStart($this->appConfig->baseUri)->finish('/')->toString(),
                         default => $link,
                     };
 
-                    $response = $this->router->dispatch(new GenericRequest(
-                        method: Method::GET,
-                        uri: $target,
-                    ));
+                    try {
+                        $response = $this->router->dispatch(new GenericRequest(
+                            method: Method::GET,
+                            uri: $target,
+                        ));
+                    } catch (HttpRequestFailed) {
+                        $deadlinks[] = $link;
+                        continue;
+                    }
 
-                    if ($response->status->isRedirect()) {
+                    if ($response?->status->isRedirect()) {
                         $target = Arr\first($response->getHeader('Location')->values);
                     }
-                } while ($response->status->isRedirect());
+                } while ($response?->status->isRedirect());
 
-                if ($response->status->isClientError() || $response->status->isServerError()) {
+                if ($response?->status->isClientError() || $response?->status->isServerError()) {
                     $deadlinks[] = $link;
                 }
 

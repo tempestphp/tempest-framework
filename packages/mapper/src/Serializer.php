@@ -6,5 +6,8 @@ namespace Tempest\Mapper;
 
 interface Serializer
 {
-    public function serialize(mixed $input): array|string;
+    /**
+     * Serializes the given input into a string, array, or integer.
+     */
+    public function serialize(mixed $input): array|string|int;
 }

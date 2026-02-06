@@ -2,7 +2,7 @@
 
 namespace Tempest\Icon;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 /**
  * Renders an icon as an SVG snippet. If the icon is not cached, it will be

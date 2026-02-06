@@ -40,7 +40,9 @@ final class ViewComponentElement implements Element, WithToken
         array $attributes,
     ) {
         $this->attributes = $attributes;
-        $this->viewComponentAttributes = arr($attributes);
+
+        $this->viewComponentAttributes = arr($attributes)
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->ltrim(':')->toString() => $value);
 
         $this->dataAttributes = arr($attributes)
             ->filter(fn (string $_, string $key) => ! str_starts_with($key, ':'))
@@ -96,62 +98,21 @@ final class ViewComponentElement implements Element, WithToken
 
         $compiled = str($this->viewComponent->contents);
 
-        // Fallthrough attributes
-        $compiled = $compiled
-            ->replaceRegex(
-                regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/', // Match the very first opening tag, this will never fail.
-                replace: function ($matches) {
-                    /** @var \Tempest\View\Parser\Token $token */
-                    $token = TempestViewParser::ast($matches[0])[0];
+        $compiled = $this->applyFallthroughAttributes($compiled);
 
-                    $attributes = arr($token->htmlAttributes)->map(fn (string $value) => new MutableString($value));
-
-                    foreach (['class', 'style', 'id'] as $attributeName) {
-                        if (! isset($this->dataAttributes[$attributeName])) {
-                            continue;
-                        }
-
-                        $attributes[$attributeName] ??= new MutableString();
-
-                        if ($attributeName === 'id') {
-                            $attributes[$attributeName] = new MutableString(' ' . $this->dataAttributes[$attributeName]);
-                        } else {
-                            $attributes[$attributeName]->append(' ' . $this->dataAttributes[$attributeName]);
-                        }
-                    }
-
-                    return sprintf(
-                        '<%s%s>',
-                        $matches['tag'],
-                        $attributes
-                            ->map(function (MutableString $value, string $key) {
-                                return sprintf('%s="%s"', $key, $value->trim());
-                            })
-                            ->implode(' ')
-                            ->when(
-                                fn (ImmutableString $string) => $string->isNotEmpty(),
-                                fn (ImmutableString $string) => $string->prepend(' '),
-                            ),
-                    );
-                },
-            );
-
-        // Add scoped variables
         $compiled = $compiled
             ->prepend(
-                // Open the current scope
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    '<?php (function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
                 ),
             )
             ->append(
-                // Close and call the current scope
                 sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s) ?>',
-                    ViewObjectExporter::export($this->viewComponentAttributes),
+                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s %s) ?>',
+                    $this->exportAttributesArray(),
                     ViewObjectExporter::export($slots),
                     $this->scopedVariables->isNotEmpty()
                         ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
@@ -162,10 +123,12 @@ final class ViewComponentElement implements Element, WithToken
                     $this->expressionAttributes->isNotEmpty()
                         ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
                         : '',
+                    $this->scopedVariables->isNotEmpty()
+                        ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
+                        : '',
                 ),
             );
 
-        // Compile slots
         $compiled = $compiled->replaceRegex(
             regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
             replace: function ($matches) use ($slots) {
@@ -183,7 +146,7 @@ final class ViewComponentElement implements Element, WithToken
 
                     // A slot doesn't have any content, so we'll comment it out.
                     // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                    return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
+                    return $this->environment->isLocal() ? '<!--' . $matches[0] . '-->' : '';
                 }
 
                 $slotElement = $this->getSlotElement($slot->name);
@@ -221,5 +184,78 @@ final class ViewComponentElement implements Element, WithToken
         }
 
         return null;
+    }
+
+    private function applyFallthroughAttributes(ImmutableString $compiled): ImmutableString
+    {
+        return $compiled->replaceRegex(
+            regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/',
+            replace: function (array $matches): string {
+                /** @var Token $token */
+                $token = TempestViewParser::ast($matches[0])[0];
+
+                $attributes = arr($token->htmlAttributes)
+                    ->map(fn (string $value) => new MutableString($value));
+
+                foreach (['class', 'style', 'id'] as $name) {
+                    $attributes = $this->applyFallthroughAttribute($attributes, $name);
+                }
+
+                $attributeString = $attributes
+                    ->map(fn (MutableString $value, string $key) => sprintf('%s="%s"', $key, $value->trim()))
+                    ->implode(' ')
+                    ->when(
+                        fn (ImmutableString $s) => $s->isNotEmpty(),
+                        fn (ImmutableString $s) => $s->prepend(' '),
+                    );
+
+                return sprintf('<%s%s>', $matches['tag'], $attributeString);
+            },
+        );
+    }
+
+    private function applyFallthroughAttribute(ImmutableArray $attributes, string $name): ImmutableArray
+    {
+        $hasDataAttribute = isset($this->dataAttributes[$name]);
+        $hasExpressionAttribute = isset($this->expressionAttributes[$name]);
+
+        if (! $hasDataAttribute && ! $hasExpressionAttribute) {
+            return $attributes;
+        }
+
+        $attributes[$name] ??= new MutableString();
+
+        if ($name === 'id') {
+            if ($hasDataAttribute) {
+                $attributes[$name] = new MutableString($this->dataAttributes[$name]);
+            } elseif ($hasExpressionAttribute) {
+                $attributes[$name] = new MutableString(sprintf('<?= $%s ?>', $name));
+            }
+        } else {
+            if ($hasDataAttribute) {
+                $attributes[$name]->append(' ' . $this->dataAttributes[$name]);
+            }
+            if ($hasExpressionAttribute) {
+                $attributes[$name]->append(sprintf(' <?= $%s ?>', $name));
+            }
+        }
+
+        return $attributes;
+    }
+
+    private function exportAttributesArray(): string
+    {
+        $entries = [];
+
+        foreach ($this->viewComponentAttributes as $key => $value) {
+            $camelKey = str($key)->camel()->toString();
+            $isExpression = isset($this->expressionAttributes[$camelKey]);
+
+            $entries[] = $isExpression
+                ? sprintf("'%s' => %s", $key, $value ?: 'true')
+                : sprintf("'%s' => %s", $key, ViewObjectExporter::exportValue($value));
+        }
+
+        return sprintf('new \%s([%s])', ImmutableArray::class, implode(', ', $entries));
     }
 }

@@ -9,11 +9,9 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\GlobalFlags;
 use Tempest\Console\HasExitCode;
 use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Container\Container;
 use Tempest\Container\Tag;
-use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionHandler;
-use Tempest\Core\ExceptionReporter;
+use Tempest\Core\Exceptions\ExceptionProcessor;
 use Tempest\Core\Kernel;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
@@ -25,20 +23,18 @@ use function Tempest\Support\str;
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
-        private AppConfig $appConfig,
-        private Container $container,
         private Kernel $kernel,
         #[Tag('console')]
         private Highlighter $highlighter,
         private Console $console,
         private ConsoleArgumentBag $argumentBag,
-        private ExceptionReporter $exceptionReporter,
+        private ExceptionProcessor $exceptionProcessor,
     ) {}
 
     public function handle(Throwable $throwable): void
     {
         try {
-            $this->exceptionReporter->report($throwable);
+            $this->exceptionProcessor->process($throwable);
 
             $this->console
                 ->writeln()
@@ -59,12 +55,15 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
                 $this->console->writeln();
             } else {
-                $this->console
-                    ->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]))
-                    ->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]))
-                    ->writeln()
-                    ->writeln('   <style="dim">Run with -v to show more.</style>')
-                    ->writeln();
+                $this->console->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]));
+
+                if (count($throwable->getTrace()) > 1) {
+                    $this->console->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]));
+                }
+
+                $this->console->writeln();
+                $this->console->writeln('   <style="dim">Run with -v to show more.</style>');
+                $this->console->writeln();
             }
         } finally {
             $exitCode = $throwable instanceof HasExitCode

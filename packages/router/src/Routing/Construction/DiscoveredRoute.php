@@ -25,16 +25,16 @@ final class DiscoveredRoute implements Route
             $route = $decorator->decorate($route);
         }
 
-        $paramInfo = self::getRouteParams($route->uri);
+        $uri = self::parseUriAndParameters($route->uri, $methodReflector);
 
         return new self(
-            $route->uri,
-            $route->method,
-            $paramInfo['names'],
-            $paramInfo['optional'],
-            $route->middleware,
-            $methodReflector,
-            $route->without ?? [],
+            uri: $uri['uri'],
+            method: $route->method,
+            parameters: $uri['names'],
+            optionalParameters: $uri['optional'],
+            middleware: $route->middleware,
+            handler: $methodReflector,
+            without: $route->without ?? [],
         );
     }
 
@@ -55,26 +55,60 @@ final class DiscoveredRoute implements Route
     }
 
     /**
+     * Parses route parameters and infers type constraints from method signature.
+     *
      * @return array{
+     *     uri: string,
      *     names: string[],
      *     optional: array<string, bool>
      * }
      */
-    private static function getRouteParams(string $uriPart): array
+    private static function parseUriAndParameters(string $uri, MethodReflector $methodReflector): array
     {
         $regex = '#\{' . self::ROUTE_PARAM_OPTIONAL_REGEX . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
-        preg_match_all($regex, $uriPart, $matches);
-
-        $optionalMarkers = $matches[1] ?? [];
-        $names = $matches[2] ?? [];
-
+        $names = [];
         $optional = [];
-        foreach ($names as $i => $name) {
-            $optional[$name] = $optionalMarkers[$i] === '?';
-        }
+
+        $modifiedUri = preg_replace_callback(
+            pattern: $regex,
+            callback: static function (array $matches) use ($methodReflector, &$names, &$optional) {
+                $isOptional = $matches[1] === '?';
+                $paramName = $matches[2];
+                $providedRegExp = $matches[3] ?? '';
+
+                $names[] = $paramName;
+                $optional[$paramName] = $isOptional;
+
+                // Skip if there was already a constraint
+                if ($providedRegExp !== '') {
+                    return $matches[0];
+                }
+
+                $parameter = $methodReflector->getParameter($paramName);
+
+                if ($parameter === null) {
+                    return $matches[0];
+                }
+
+                $constraint = match ($parameter->getType()->getName()) {
+                    'int', 'integer' => ':\d+',
+                    'float', 'double' => ':[\d.]+',
+                    'bool', 'boolean' => ':(0|1|true|false)',
+                    default => null,
+                };
+
+                if ($constraint !== null) {
+                    return sprintf('{%s%s%s}', $isOptional ? '?' : '', $paramName, $constraint);
+                }
+
+                return $matches[0];
+            },
+            subject: $uri,
+        );
 
         return [
+            'uri' => $modifiedUri,
             'names' => $names,
             'optional' => $optional,
         ];

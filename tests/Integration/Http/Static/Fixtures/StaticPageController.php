@@ -14,7 +14,7 @@ use Tempest\View\View;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 
 use function Tempest\Router\uri;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class StaticPageController
 {

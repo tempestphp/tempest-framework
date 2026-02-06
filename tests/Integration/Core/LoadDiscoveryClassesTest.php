@@ -9,6 +9,7 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Support\Arr;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
@@ -16,8 +17,6 @@ use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscovery;
 use Tests\Tempest\Integration\Core\Fixtures\ManualTestDiscoveryDependency;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\get;
 
 /**
  * @internal
@@ -27,9 +26,9 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
     #[Test]
     public function do_not_discover(): void
     {
-        $migrations = get(RunnableMigrations::class);
+        $migrations = $this->container->get(RunnableMigrations::class);
 
-        $this->assertNotContains(HiddenDatabaseMigration::class, $migrations);
+        $this->assertFalse(Arr\contains($migrations, fn ($m) => $m instanceof HiddenDatabaseMigration));
     }
 
     #[Test]
@@ -47,11 +46,11 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
     #[Test]
     public function do_not_discover_except(): void
     {
-        $migrations = get(RunnableMigrations::class);
+        $migrations = $this->container->get(RunnableMigrations::class);
 
-        $foundMigrations = array_filter(
-            iterator_to_array($migrations),
-            static fn (MigratesUp $migration) => $migration instanceof HiddenMigratableDatabaseMigration,
+        $foundMigrations = Arr\filter(
+            array: iterator_to_array($migrations),
+            filter: static fn (MigratesUp $migration) => $migration instanceof HiddenMigratableDatabaseMigration,
         );
 
         $this->assertCount(1, $foundMigrations, 'Expected one hidden migration to be found');

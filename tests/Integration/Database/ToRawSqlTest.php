@@ -7,12 +7,14 @@ namespace Tests\Tempest\Integration\Database;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tempest\DateTime\DateTime;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Validator\UnitEnumFixture;
 
 use function Tempest\Database\query;
 
@@ -263,7 +265,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
 
     public function test_raw_sql_with_model_queries(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -353,9 +355,9 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: "('draft','archived')", haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_enum_values(): void
+    public function test_raw_sql_with_backed_enum_values(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -363,11 +365,22 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
 
         $rawSql = query('authors')
             ->select()
-            ->where('type', AuthorType::A->value)
+            ->where('type', AuthorType::A)
             ->toRawSql()
             ->toString();
 
-        $this->assertStringContainsString(needle: "'a'", haystack: $rawSql);
+        $this->assertStringContainsString(needle: '"a"', haystack: $rawSql);
+    }
+
+    public function test_raw_sql_with_unit_enum_values(): void
+    {
+        $rawSql = query('authors')
+            ->select()
+            ->where('type', UnitEnumFixture::FOO)
+            ->toRawSql()
+            ->toString();
+
+        $this->assertStringContainsString(needle: '"FOO"', haystack: $rawSql);
     }
 
     public function test_raw_sql_consistency_across_database_dialects(): void
@@ -455,5 +468,20 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: '19.99', haystack: $rawSql);
         $this->assertStringContainsString(needle: 'deleted_at', haystack: $rawSql);
         $this->assertStringContainsString(needle: 'IS NULL', haystack: $rawSql);
+    }
+
+    public function test_raw_sql_with_date_where_methods(): void
+    {
+        $rawSql = query('books')
+            ->select()
+            ->whereBefore('published_at', DateTime::parse('2024-12-31'))
+            ->whereAfter('created_at', '2024-01-01')
+            ->toRawSql()
+            ->toString();
+
+        $this->assertStringContainsString(needle: 'published_at', haystack: $rawSql);
+        $this->assertStringContainsString(needle: 'created_at', haystack: $rawSql);
+        $this->assertStringContainsString(needle: '2024-12-31', haystack: $rawSql);
+        $this->assertStringContainsString(needle: '2024-01-01', haystack: $rawSql);
     }
 }

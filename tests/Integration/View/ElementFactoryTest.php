@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
+use Tempest\View\Elements\WhitespaceElement;
 use Tempest\View\Parser\TempestViewParser;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -37,33 +41,41 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
         $a = $elementFactory->make(iterator_to_array($ast)[0]);
 
         $this->assertInstanceOf(GenericElement::class, $a);
-        $this->assertCount(1, $a->getChildren());
+        $this->assertCount(1, $this->withoutWhitespace($a->getChildren()));
         $this->assertNull($a->getParent());
 
-        $b = $a->getChildren()[0];
+        $b = $this->withoutWhitespace($a->getChildren())[0];
         $this->assertInstanceOf(GenericElement::class, $b);
-        $this->assertCount(3, $b->getChildren());
+        $this->assertCount(3, $this->withoutWhitespace($b->getChildren()));
         $this->assertSame($b->getParent(), $a);
 
-        $c = $b->getChildren()[0];
+        $c = $this->withoutWhitespace($b->getChildren())[0];
         $this->assertInstanceOf(GenericElement::class, $c);
-        $this->assertCount(1, $c->getChildren());
+        $this->assertCount(1, $this->withoutWhitespace($c->getChildren()));
         $this->assertSame($c->getParent(), $b);
 
-        $text = $c->getChildren()[0];
+        $text = $this->withoutWhitespace($c->getChildren())[0];
         $this->assertInstanceOf(TextElement::class, $text);
         $this->assertSame($text->getParent(), $c);
 
-        $d = $b->getChildren()[1];
+        $d = $this->withoutWhitespace($b->getChildren())[1];
         $this->assertInstanceOf(GenericElement::class, $d);
-        $this->assertCount(0, $d->getChildren());
+        $this->assertCount(0, $this->withoutWhitespace($d->getChildren()));
         $this->assertSame($d->getParent(), $b);
         $this->assertSame($d->getPrevious(), $c);
 
-        $e = $b->getChildren()[2];
+        $e = $this->withoutWhitespace($b->getChildren())[2];
         $this->assertInstanceOf(GenericElement::class, $e);
-        $this->assertCount(0, $e->getChildren());
+        $this->assertCount(0, $this->withoutWhitespace($e->getChildren()));
         $this->assertSame($e->getParent(), $b);
         $this->assertSame($e->getPrevious(), $d);
+    }
+
+    private function withoutWhitespace(array $elements): array
+    {
+        return arr($elements)
+            ->filter(fn (Element $element) => ! $element instanceof WhitespaceElement)
+            ->values()
+            ->toArray();
     }
 }

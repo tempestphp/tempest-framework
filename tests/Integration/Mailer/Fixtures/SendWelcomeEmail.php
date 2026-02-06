@@ -6,7 +6,7 @@ use Tempest\Mail\Email;
 use Tempest\Mail\Envelope;
 use Tempest\View\View;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class SendWelcomeEmail implements Email
 {

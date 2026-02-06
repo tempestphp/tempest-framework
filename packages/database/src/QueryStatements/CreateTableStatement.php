@@ -33,11 +33,28 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     }
 
     /**
-     * Adds a primary key column to the table. MySQL and SQLite use an auto-incrementing `INTEGER` column, and PostgreSQL uses `SERIAL`.
+     * Adds a primary key column to the table.
+     *
+     * By default, MySQL and SQLite use an auto-incrementing `INTEGER` column, and PostgreSQL uses `SERIAL`.
+     * When setting `uuid` to `true`, MySQL will use `VARCHAR(36)`, PostgreSQL will use `UUID`, and SQLite will use `TEXT`.
      */
-    public function primary(string $name = 'id'): self
+    public function primary(string $name = 'id', bool $uuid = false): self
     {
-        $this->statements[] = new PrimaryKeyStatement($name);
+        if ($uuid) {
+            $this->uuid($name);
+        } else {
+            $this->statements[] = new PrimaryKeyStatement($name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a UUID v7 primary key column to the table. Uses `VARCHAR(36)` for MySQL, `UUID` for PostgreSQL, and `TEXT` for SQLite.
+     */
+    public function uuid(string $name = 'id'): self
+    {
+        $this->statements[] = new UuidPrimaryKeyStatement($name);
 
         return $this;
     }

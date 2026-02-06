@@ -9,15 +9,13 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\AppConfig;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
+use Tempest\Core\Environment;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
-
-use function Tempest\env;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
@@ -27,17 +25,17 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         public function __construct(
             private Kernel $kernel,
             private DiscoveryCache $discoveryCache,
-            private AppConfig $appConfig,
+            private Environment $environment,
         ) {}
 
         #[ConsoleCommand(
             name: 'discovery:generate',
             description: 'Compile and cache all discovery according to the configured discovery caching strategy',
-            aliases: ['d:g'],
+            aliases: ['d:g', 'dg'],
         )]
         public function __invoke(): void
         {
-            $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $this->appConfig->environment->isProduction()));
+            $strategy = DiscoveryCacheStrategy::resolveFromEnvironment();
 
             if ($strategy === DiscoveryCacheStrategy::NONE) {
                 $this->info('Discovery cache disabled, nothing to generate.');

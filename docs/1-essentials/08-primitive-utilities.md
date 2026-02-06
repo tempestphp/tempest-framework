@@ -17,14 +17,14 @@ Most utilities provided by Tempest have a function-based implementation under th
 - [Filesystem paths](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Path/functions.php)
 - [Json manipulation](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Json/functions.php)
 - [Random values](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Random/functions.php)
-- [Pluralization](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Language/functions.php)
+- [Pluralization](https://github.com/tempestphp/tempest-intl)
 - [PHP namespaces](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Namespace/functions.php)
 
-Tempest also provids the {`Tempest\Support\IsEnumHelper`} trait to work with enumerations, since a functional API is not useful in this case.
+Tempest also provides the {`Tempest\Support\IsEnumHelper`} trait to work with enumerations, since a functional API is not useful in this case.
 
 ## String utilities
 
-Tempest provides string utilities through [namespaced functions](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Support/src/Str/functions.php) or a fluent, object-oriented API, which comes in an immutable and a mutable flavor.
+Tempest provides string utilities through [namespaced functions](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Str/functions.php) or a fluent, object-oriented API, which comes in an immutable and a mutable flavor.
 
 Providing a string value, you may create an instance of {`\Tempest\Support\Str\ImmutableString`} or {`\Tempest\Support\Str\MutableString`}:
 
@@ -48,7 +48,7 @@ Note that you may use the `str()` function as a shorthand to create an {b`\Tempe
 
 ## Array utilities
 
-Tempest provides array utilities through [namespaced functions](https://github.com/tempestphp/tempest-framework/blob/main/src/Tempest/Support/src/Arr/functions.php) or a fluent, object-oriented API, which comes in an immutable and a mutable flavor.
+Tempest provides array utilities through [namespaced functions](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Arr/functions.php) or a fluent, object-oriented API, which comes in an immutable and a mutable flavor.
 
 Providing an iterable value, you may create an instance of {`\Tempest\Support\Arr\ImmutableArray`} or {`\Tempest\Support\Arr\MutableArray`}:
 

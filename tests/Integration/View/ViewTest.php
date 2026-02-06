@@ -10,7 +10,7 @@ use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Router\uri;
-use function Tempest\view;
+use function Tempest\View\view;
 
 /**
  * @internal
@@ -21,7 +21,7 @@ final class ViewTest extends FrameworkIntegrationTestCase
     {
         $view = view(__DIR__ . '/../../Fixtures/Views/overview.view.php')->data(name: 'Brent');
 
-        $html = $this->render($view);
+        $html = $this->view->render($view);
 
         $this->assertStringContainsString(
             'Brent!',
@@ -38,7 +38,7 @@ final class ViewTest extends FrameworkIntegrationTestCase
     {
         $view = new ViewModel('Brent');
 
-        $html = $this->render($view);
+        $html = $this->view->render($view);
 
         $expected = <<<HTML
         ViewModel Brent, 2020-01-01

@@ -5,7 +5,7 @@ namespace Tempest\View\Initializers;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\ViewConfig;
 
@@ -15,8 +15,8 @@ final class ElementFactoryInitializer implements Initializer
     public function initialize(Container $container): ElementFactory
     {
         return new ElementFactory(
-            $container->get(ViewConfig::class),
-            $container->get(AppConfig::class)->environment,
+            viewConfig: $container->get(ViewConfig::class),
+            environment: $container->get(Environment::class),
         );
     }
 }

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
-use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
+use Tempest\Core\Environment;
 use Tempest\Core\Kernel;
 use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Str;
+
+use function Tempest\root_path;
 
 /** @internal */
 final readonly class LoadConfig
@@ -17,7 +19,7 @@ final readonly class LoadConfig
     public function __construct(
         private Kernel $kernel,
         private ConfigCache $cache,
-        private AppConfig $appConfig,
+        private Environment $environment,
     ) {}
 
     public function __invoke(): void
@@ -52,14 +54,15 @@ final readonly class LoadConfig
 
         return $configPaths
             ->filter(fn (string $path) => match (true) {
-                $this->appConfig->environment->isLocal() => ! Str\contains($path, [...$suffixes['production'], ...$suffixes['staging'], ...$suffixes['testing']]),
-                $this->appConfig->environment->isProduction() => ! Str\contains($path, [...$suffixes['staging'], ...$suffixes['testing'], ...$suffixes['development']]),
-                $this->appConfig->environment->isStaging() => ! Str\contains($path, [...$suffixes['testing'], ...$suffixes['development'], ...$suffixes['production']]),
+                $this->environment->isLocal() => ! Str\contains($path, [...$suffixes['production'], ...$suffixes['staging'], ...$suffixes['testing']]),
+                $this->environment->isProduction() => ! Str\contains($path, [...$suffixes['staging'], ...$suffixes['testing'], ...$suffixes['development']]),
+                $this->environment->isStaging() => ! Str\contains($path, [...$suffixes['testing'], ...$suffixes['development'], ...$suffixes['production']]),
                 default => true,
             })
             ->sortByCallback(function (string $path1, string $path2) use ($suffixes): int {
                 $getPriority = fn (string $path): int => match (true) {
                     Str\contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) => 0,
+                    ! Str\contains($path, root_path()) => 0,
                     Str\contains($path, $suffixes['testing']) => 6,
                     Str\contains($path, $suffixes['development']) => 5,
                     Str\contains($path, $suffixes['production']) => 4,

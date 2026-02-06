@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Stringable;
-use Tempest\Database\Casters\PrimaryKeyCaster;
-use Tempest\Mapper\CastWith;
 
-#[CastWith(PrimaryKeyCaster::class)]
 final readonly class PrimaryKey implements Stringable
 {
     public string|int $value;

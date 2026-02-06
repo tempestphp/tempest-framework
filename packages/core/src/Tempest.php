@@ -8,19 +8,15 @@ use Tempest\Container\Container;
 
 final readonly class Tempest
 {
-    public static function boot(
-        ?string $root = null,
-        /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
-        array $discoveryLocations = [],
-        ?string $internalStorage = null,
-    ): Container {
-        $root ??= getcwd();
-
-        // Kernel
-        return FrameworkKernel::boot(
-            root: $root,
+    /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
+    public static function boot(?string $root = null, array $discoveryLocations = [], ?string $internalStorage = null): Container
+    {
+        $kernel = FrameworkKernel::boot(
+            root: $root ?? getcwd(),
             discoveryLocations: $discoveryLocations,
             internalStorage: $internalStorage,
-        )->container;
+        );
+
+        return $kernel->container;
     }
 }

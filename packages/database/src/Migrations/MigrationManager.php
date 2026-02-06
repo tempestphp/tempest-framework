@@ -24,7 +24,7 @@ use Throwable;
 
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
-use function Tempest\event;
+use function Tempest\EventBus\event;
 
 final class MigrationManager
 {

@@ -12,7 +12,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 #[Priority(Priority::FRAMEWORK - 9)]
 final readonly class MatchRouteMiddleware implements HttpMiddleware

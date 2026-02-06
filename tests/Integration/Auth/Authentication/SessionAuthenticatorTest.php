@@ -50,7 +50,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
             $this->container->get(SessionConfig::class),
         ));
 
-        $this->migrate(CreateMigrationsTable::class, CreateUsersTableMigration::class, CreateApiKeysTableMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUsersTableMigration::class, CreateApiKeysTableMigration::class);
     }
 
     #[PostCondition]

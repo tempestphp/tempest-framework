@@ -5,7 +5,7 @@ description: 'Tempest provides a modern and convenient way of scheduling tasks, 
 
 ## Overview
 
-Dealing with repeating, scheduled tasks is as simple as adding the {`#[Tempest\Console\Schedule]`} attribute to any class method. As with console commands, [discovery](../4-internals/02-discovery.md) takes care of finding these methods and registering them.
+Dealing with repeating, scheduled tasks is as simple as adding the {`#[Tempest\Console\Schedule]`} attribute to any class method. As with console commands, [discovery](../1-essentials/05-discovery.md) takes care of finding these methods and registering them.
 
 ## Using the scheduler
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
+use Tempest\Database\Serializers\DataTransferObjectSerializer;
 use Tempest\Mapper\CastWith;
-use Tempest\Mapper\Serializers\DtoSerializer;
+use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -20,7 +21,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_top_level_array_of_simple_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_array_containers';
 
             public function up(): QueryStatement
@@ -62,7 +63,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_top_level_array_of_nested_dtos_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_array_containers_nested';
 
             public function up(): QueryStatement
@@ -105,7 +106,7 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 
     public function test_empty_top_level_array(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_array_containers_empty';
 
             public function up(): QueryStatement
@@ -138,11 +139,13 @@ final readonly class ArrayContainerModel
 {
     public function __construct(
         public string $name,
-        #[SerializeWith(DtoSerializer::class), CastWith(DtoCaster::class)]
+        #[SerializeWith(DataTransferObjectSerializer::class)]
+        #[CastWith(DataTransferObjectCaster::class)]
         public array $data,
     ) {}
 }
 
+#[SerializeAs(self::class)]
 final readonly class SimpleArrayItem
 {
     public function __construct(
@@ -151,6 +154,7 @@ final readonly class SimpleArrayItem
     ) {}
 }
 
+#[SerializeAs(self::class)]
 final readonly class ItemWithNestedArray
 {
     public function __construct(

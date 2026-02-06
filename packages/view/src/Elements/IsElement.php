@@ -60,11 +60,7 @@ trait IsElement
     {
         $attributes = $this->getAttributes();
 
-        $originalName = $name;
-
-        $name = ltrim($name, ':');
-
-        return $attributes[$originalName] ?? $this->attributes[":{$name}"] ?? $this->attributes[$name] ?? null;
+        return $attributes[$name] ?? null;
     }
 
     public function setAttribute(string $name, string $value): self
@@ -114,6 +110,10 @@ trait IsElement
 
     public function getPrevious(): ?Element
     {
+        if ($this->previous instanceof WhitespaceElement) {
+            return $this->previous->getPrevious();
+        }
+
         return $this->previous;
     }
 

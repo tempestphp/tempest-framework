@@ -7,7 +7,7 @@ namespace Tests\Tempest\Fixtures\Controllers;
 use Tempest\Router\Get;
 use Tempest\View\View;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class FormController
 {

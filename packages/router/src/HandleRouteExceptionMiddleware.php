@@ -6,48 +6,37 @@ use Tempest\Core\Priority;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
-use Tempest\Router\Exceptions\ConvertsToResponse;
 use Tempest\Router\Exceptions\RouteBindingFailed;
-use Tempest\Validation\Exceptions\ValidationFailed;
 
 #[Priority(Priority::FRAMEWORK - 10)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 {
-    public function __construct(
-        private RouteConfig $routeConfig,
-    ) {}
-
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        if ($this->routeConfig->throwHttpExceptions === true) {
-            $response = $this->forward($request, $next);
+        $response = $this->forward($request, $next);
 
-            if ($response->status->isServerError() || $response->status->isClientError()) {
-                throw new HttpRequestFailed(
-                    request: $request,
-                    status: $response->status,
-                    cause: $response,
-                );
-            }
-
+        if (! $response->status->isClientError() && ! $response->status->isServerError()) {
             return $response;
         }
 
-        return $this->forward($request, $next);
+        throw new HttpRequestFailed(
+            status: $response->status,
+            cause: $response,
+            request: $request,
+        );
     }
 
+    /**
+     * Some exceptions are not necessary to be thrown as-is, so we catch them here and convert them to equivalent responses.
+     * - `RouteBindingFailed` would require to be handled manually in renderers, it's better DX to simply return a 404.
+     */
     private function forward(Request $request, HttpMiddlewareCallable $next): Response
     {
         try {
             return $next($request);
-        } catch (ConvertsToResponse $convertsToResponse) {
-            return $convertsToResponse->toResponse();
         } catch (RouteBindingFailed) {
             return new NotFound();
-        } catch (ValidationFailed $validationException) {
-            return new Invalid($validationException->subject, $validationException->failingRules, $validationException->targetClass);
         }
     }
 }

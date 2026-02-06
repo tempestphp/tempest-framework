@@ -98,7 +98,7 @@ You may access the currently authenticated model by injecting the {b`Tempest\Aut
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Router\Get;
 use Tempest\View\View;
-use function Tempest\view;
+use function Tempest\View\view;
 
 final readonly class ProfileController
 {
@@ -152,7 +152,7 @@ final readonly class LdapAuthenticatableResolver implements AuthenticatableResol
         private LdapClient $ldap,
     ) {}
 
-    public function resolve(int|string $id): ?Authenticatable
+    public function resolve(int|string $id, string $class): ?Authenticatable
     {
         $attributes = $this->ldap->findUserByIdentifier($id);
 
@@ -308,7 +308,7 @@ final readonly class PostController
 }
 ```
 
-Alternatively, you may use the `isGranted()` method. It will return a boolean indicating whether the action is granted for the resource and subject.
+Alternatively, you may use the `isGranted()` method. It will return an {b`Tempest\Auth\AccessControl\AccessDecision`} instance. Check the `granted` property to determine access for the resource and subject.
 
 :::info
 Note that the subject is optional in both methods—if omitted, the [authenticated model](#authentication) is automatically provided.

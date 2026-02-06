@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Tempest {
-    use Closure;
-    use Tempest\EventBus\EventBus;
-    use Tempest\EventBus\EventBusConfig;
+namespace Tempest\EventBus;
 
-    /**
-     * Dispatches the given `$event`, triggering all associated event listeners.
-     */
-    function event(string|object $event): void
-    {
-        $eventBus = get(EventBus::class);
+use Closure;
+use Tempest\Container;
+use Tempest\EventBus\EventBus;
+use Tempest\EventBus\EventBusConfig;
 
-        $eventBus->dispatch($event);
-    }
+/**
+ * Dispatches the given `$event`, triggering all associated event listeners.
+ */
+function event(string|object $event): void
+{
+    $eventBus = Container\get(EventBus::class);
 
-    /**
-     * Registers a closure-based event listener for the given `$event`.
-     */
-    function listen(Closure $handler, ?string $event = null): void
-    {
-        $config = get(EventBusConfig::class);
+    $eventBus->dispatch($event);
+}
 
-        $config->addClosureHandler($handler, $event);
-    }
+/**
+ * Registers a closure-based event listener for the given `$event`.
+ */
+function listen(Closure $handler, ?string $event = null): void
+{
+    $config = Container\get(EventBusConfig::class);
+
+    $config->addClosureHandler($handler, $event);
 }

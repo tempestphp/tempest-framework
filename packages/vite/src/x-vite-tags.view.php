@@ -4,14 +4,15 @@
  * @var string|null $entrypoint
  */
 
+use Tempest\Support\Html\HtmlString;
+use Tempest\Vite;
 use Tempest\Vite\ViteConfig;
 
-use function Tempest\get;
-use function Tempest\vite_tags;
+use function Tempest\Container\get;
 
 $viteConfig = get(ViteConfig::class);
-
-$html = vite_tags($entrypoints ?? $entrypoint ?? $viteConfig->entrypoints);
+$tags = Vite\get_tags($entrypoints ?? $entrypoint ?? $viteConfig->entrypoints);
+$html = new HtmlString(implode('', $tags));
 ?>
 
 {!! $html !!}

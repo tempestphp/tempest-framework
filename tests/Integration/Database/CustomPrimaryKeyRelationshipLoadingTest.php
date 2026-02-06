@@ -25,7 +25,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 {
     public function test_has_one_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateGrimoireWithUuidMigration::class,
@@ -57,7 +57,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_has_many_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -100,7 +100,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_belongs_to_relationship_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -129,7 +129,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_nested_relationship_loading_with_uuid_primary_keys(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateGrimoireWithUuidMigration::class,
@@ -174,7 +174,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_relationship_with_custom_foreign_key_naming(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateArtifactWithUuidMigration::class,
@@ -209,7 +209,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_relationship_loading_preserves_uuid_integrity(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageWithUuidMigration::class,
             CreateSpellWithUuidMigration::class,
@@ -253,7 +253,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
     public function test_automatic_uuid_primary_key_detection(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateMageSimpleMigration::class,
             CreateSpellSimpleMigration::class,
@@ -289,7 +289,7 @@ final class MageWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'mage_uuid')]
     public ?GrimoireWithUuid $grimoire = null;
@@ -313,7 +313,7 @@ final class GrimoireWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'mage_uuid')]
     public ?MageWithUuid $mage = null;
@@ -330,7 +330,7 @@ final class SpellWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'mage_uuid')]
     public ?MageWithUuid $mage = null;
@@ -348,7 +348,7 @@ final class ArtifactWithUuid
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[HasOne(ownerJoin: 'uuid', relationJoin: 'owner_uuid')]
     public ?MageWithUuid $owner = null;
@@ -423,7 +423,7 @@ final class MageSimple
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     /** @var \Tests\Tempest\Integration\Database\SpellSimple[] */
     #[HasMany]
@@ -440,7 +440,7 @@ final class SpellSimple
 {
     use IsDatabaseModel;
 
-    public ?PrimaryKey $uuid = null;
+    public PrimaryKey $uuid;
 
     #[BelongsTo]
     public ?MageSimple $mage = null;

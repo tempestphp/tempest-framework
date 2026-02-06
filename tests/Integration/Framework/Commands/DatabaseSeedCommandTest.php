@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
-use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Database\Config\SeederConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -20,7 +19,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_seed_with_selected_seeder(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -40,7 +39,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
     public function test_seed_with_manually_selected_seeder(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -69,7 +68,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
     public function test_seed_all(): void
     {
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -96,7 +95,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
             TestDatabaseSeeder::class,
         ];
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreatePublishersTable::class,
             CreateAuthorTable::class,
@@ -129,8 +128,7 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 
     public function test_db_seed_caution(): void
     {
-        $appConfig = $this->container->get(AppConfig::class);
-        $appConfig->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $this->console
             ->call('migrate:fresh --seed --all')

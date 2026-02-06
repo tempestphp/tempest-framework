@@ -6,6 +6,7 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Tempest\Container;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
@@ -65,7 +66,7 @@ use Tempest\Container\Tests\Fixtures\UnionInterfaceB;
 use Tempest\Container\Tests\Fixtures\UnionTypesClass;
 use Tempest\Reflection\ClassReflector;
 
-use function Tempest\reflect;
+use function Tempest\Reflection\reflect;
 
 /**
  * @internal
@@ -411,7 +412,7 @@ final class ContainerTest extends TestCase
         GenericContainer::setInstance($container = new GenericContainer());
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
 
-        $result = \Tempest\invoke(fn (SingletonClass $class) => $class::class);
+        $result = Container\invoke(fn (SingletonClass $class) => $class::class);
 
         $this->assertEquals(SingletonClass::class, $result);
     }

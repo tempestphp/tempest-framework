@@ -8,7 +8,7 @@ use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tests\Tempest\Fixtures\Events\ItHappened;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\event;
+use function Tempest\EventBus\event;
 
 /**
  * @internal

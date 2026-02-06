@@ -27,7 +27,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
     {
         $migration = $this->getAlterTableMigration();
 
-        $this->migrate(
+        $this->database->migrate(
             CreateMigrationsTable::class,
             CreateUserDatabaseMigration::class,
         );
@@ -53,7 +53,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
             $this->assertStringContainsString($message, $queryWasInvalid->getMessage());
         }
 
-        $this->migrate($migration::class);
+        $this->database->migrate($migration::class);
         $this->assertCount(3, MigrationModel::all());
 
         $this->assertSame(

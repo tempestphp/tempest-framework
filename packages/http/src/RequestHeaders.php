@@ -8,6 +8,7 @@ use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
 use LogicException;
+use Tempest\Support\Str;
 use Traversable;
 
 final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
@@ -17,11 +18,10 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
      */
     public static function normalizeFromArray(array $headers): self
     {
-        $normalized = array_combine(
+        return new self(array_combine(
             array_map(strtolower(...), array_keys($headers)),
-            array_values($headers),
-        );
-        return new self($normalized);
+            array_values(array_map(fn (mixed $value) => Str\parse($value), $headers)),
+        ));
     }
 
     /** @param array<string, string> $headers */
@@ -41,9 +41,14 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
         return $this->get((string) $offset);
     }
 
-    public function get(string $name): ?string
+    public function get(string $name, ?string $default = null): ?string
     {
-        return $this->headers[strtolower($name)] ?? null;
+        $header = array_find(
+            array: $this->headers,
+            callback: fn (mixed $_, string $header) => strcasecmp($header, $name) === 0,
+        );
+
+        return $header ?? $default;
     }
 
     public function has(string $name): bool
@@ -53,7 +58,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
 
     public function getHeader(string $name): Header
     {
-        return new Header(strtolower($name), array_filter([$this->get($name)]));
+        return new Header(mb_strtolower($name), array_filter([$this->get($name)]));
     }
 
     public function offsetSet(mixed $offset, mixed $value): void

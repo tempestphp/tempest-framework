@@ -55,7 +55,7 @@ $this->executor
 
 ## Process pools
 
-It is possible to execute multiple tasks simultaneously using a process pool. To do so, you may call the `pool()` method on the {`Tempest\Process\ProcessExecutor`}. This returns a {b`Tempest\Process\InvokedProcessPool`} instance, which provides convenient methods for managing the processes.
+It is possible to execute multiple tasks simultaneously using a process pool. To do so, you may call the `pool()` method on the {`Tempest\Process\ProcessExecutor`}. This returns a {b`Tempest\Process\Pool`} instance, which provides convenient methods for managing the processes.
 
 ```php
 $pool = $this->executor->pool([

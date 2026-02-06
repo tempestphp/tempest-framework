@@ -8,7 +8,7 @@ use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\SkipValidation;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 use function Tempest\Support\Arr\get_by_key;
 use function Tempest\Support\Arr\has_key;
 use function Tempest\Support\str;
@@ -141,7 +141,7 @@ trait IsRequest
         $header = $this->headers->get(name: 'accept') ?? '';
 
         /** @var array{mediaType:string,subType:string} */
-        $mediaTypes = [];
+        $acceptedMediaTypes = [];
 
         foreach (str($header)->explode(separator: ',') as $acceptedType) {
             $acceptedType = str($acceptedType)->trim();
@@ -150,20 +150,20 @@ trait IsRequest
                 continue;
             }
 
-            $mediaTypes[] = [
+            $acceptedMediaTypes[] = [
                 'mediaType' => $acceptedType->before('/')->toString(),
                 'subType' => $acceptedType->afterFirst('/')->beforeLast(';q')->toString(),
             ];
         }
 
-        if (count($mediaTypes) === 0) {
+        if (count($acceptedMediaTypes) === 0) {
             return true;
         }
 
         foreach ($contentTypes as $contentType) {
-            [$mediaType, $subType] = explode('/', $contentType->value);
+            [$mediaType, $subType] = explode('/', string: $contentType->value);
 
-            foreach ($mediaTypes as $acceptedType) {
+            foreach ($acceptedMediaTypes as $acceptedType) {
                 if (
                     ($acceptedType['mediaType'] === '*' || $acceptedType['mediaType'] === $mediaType)
                     && ($acceptedType['subType'] === '*' || $acceptedType['subType'] === $subType)

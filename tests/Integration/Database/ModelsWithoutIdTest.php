@@ -24,7 +24,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 {
     public function test_update_model_without_id_with_specific_conditions(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         query(LogEntry::class)->create(
             level: 'INFO',
@@ -47,7 +47,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_delete_operations_on_models_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         query(LogEntry::class)->create(
             level: 'TEMP',
@@ -75,7 +75,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_model_without_id_with_unique_constraints(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateCacheEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateCacheEntryMigration::class);
 
         query(CacheEntry::class)->create(
             cache_key: 'spell_fire',
@@ -97,7 +97,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_relationship_methods_throw_for_models_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `findById` method');
@@ -107,7 +107,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_get_method_throws_for_models_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `get` method');
@@ -117,7 +117,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_update_or_create_throws_for_models_without_id(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
         $this->expectException(ModelDidNotHavePrimaryColumn::class);
         $this->expectExceptionMessage('does not have a primary column defined, which is required for the `updateOrCreate` method');
@@ -130,7 +130,7 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 
     public function test_model_with_mixed_id_and_non_id_properties(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
 
         $mixed = query(MixedModel::class)->create(
             regular_field: 'test',

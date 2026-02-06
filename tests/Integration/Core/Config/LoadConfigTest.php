@@ -2,7 +2,6 @@
 
 namespace Tests\Tempest\Integration\Core\Config;
 
-use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\Core\Kernel\LoadConfig;
@@ -64,7 +63,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
             'db.config.php',
         ]);
 
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->container->singleton(Environment::class, Environment::PRODUCTION);
+
         $config = $this->container->get(LoadConfig::class)->find();
 
         $this->assertCount(2, $config);
@@ -82,7 +82,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
             'db.config.php',
         ]);
 
-        $this->container->get(AppConfig::class)->environment = Environment::STAGING;
+        $this->container->singleton(Environment::class, Environment::STAGING);
+
         $config = $this->container->get(LoadConfig::class)->find();
 
         $this->assertCount(2, $config);
@@ -100,7 +101,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
             'db.config.php',
         ]);
 
-        $this->container->get(AppConfig::class)->environment = Environment::LOCAL;
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+
         $config = $this->container->get(LoadConfig::class)->find();
 
         $this->assertCount(3, $config);

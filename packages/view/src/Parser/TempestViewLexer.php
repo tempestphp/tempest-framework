@@ -22,7 +22,7 @@ final class TempestViewLexer
     {
         $tokens = [];
 
-        while ($this->current) {
+        while ($this->current !== null) {
             if ($this->comesNext('<?xml')) {
                 $tokens[] = $this->lexXml();
             } elseif ($this->comesNext('<?')) {
@@ -35,6 +35,8 @@ final class TempestViewLexer
                 $tokens = [...$tokens, ...$this->lexCharacterData()];
             } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
+            } elseif ($this->comesNext(' ') || $this->comesNext(PHP_EOL)) {
+                $tokens[] = $this->lexWhitespace();
             } else {
                 $tokens[] = $this->lexContent();
             }
@@ -212,6 +214,23 @@ final class TempestViewLexer
         $buffer = $this->consumeIncluding('>');
 
         return new Token($buffer, TokenType::DOCTYPE);
+    }
+
+    private function lexWhitespace(): Token
+    {
+        $buffer = '';
+
+        while ($this->current !== null) {
+            $seek = $this->seek();
+
+            if ($seek !== ' ' && $seek !== PHP_EOL) {
+                break;
+            }
+
+            $buffer .= $this->consume();
+        }
+
+        return new Token($buffer, TokenType::WHITESPACE);
     }
 
     private function lexCharacterData(): array

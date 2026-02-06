@@ -4,8 +4,8 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
-        "rector/rector": "^2.2.5"
+        "php": "^8.5",
+        "rector/rector": "^2.3.2"
     },
     "autoload": {
         "psr-4": {

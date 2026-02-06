@@ -24,10 +24,10 @@ interface Cache
      * Returns a lock for the specified key. The lock is not acquired until `acquire()` is called.
      *
      * @param Stringable|string $key The identifier of the lock.
-     * @param null|Duration|DateTimeInterface $expiration The expiration time for the lock. If not specified, the lock will not expire.
+     * @param null|Duration|DateTimeInterface $duration The duration for the lock, or an expiration date from which the duration will be calculated. If not specified, the lock will not expire.
      * @param null|Stringable|string $owner The owner of the lock, which will be used to identify the process releasing it. If not specified, a random string will be used.
      */
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock;
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock;
 
     /**
      * Sets the specified key to the specified value in the cache. Optionally, specify an expiration.

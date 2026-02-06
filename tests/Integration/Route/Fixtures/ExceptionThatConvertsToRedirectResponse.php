@@ -12,7 +12,7 @@ use Tempest\Router\Exceptions\ConvertsToResponse;
  */
 final class ExceptionThatConvertsToRedirectResponse extends Exception implements ConvertsToResponse
 {
-    public function toResponse(): Response
+    public function convertToResponse(): Response
     {
         return new Redirect('https://tempestphp.com');
     }

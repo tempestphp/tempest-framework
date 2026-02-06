@@ -12,7 +12,7 @@ use Tests\Tempest\Fixtures\Commands\MyCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommandBusMiddleware;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\command;
+use function Tempest\CommandBus\command;
 
 /**
  * @internal

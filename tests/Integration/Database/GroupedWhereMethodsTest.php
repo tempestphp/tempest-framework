@@ -24,7 +24,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->migrate(CreateMigrationsTable::class, CreateProductTable::class);
+        $this->database->migrate(CreateMigrationsTable::class, CreateProductTable::class);
         $this->seedTestData();
     }
 

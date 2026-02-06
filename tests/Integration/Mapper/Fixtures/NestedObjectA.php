@@ -2,6 +2,9 @@
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
+use Tempest\Mapper\SerializeAs;
+
+#[SerializeAs(self::class)]
 final class NestedObjectA
 {
     public function __construct(

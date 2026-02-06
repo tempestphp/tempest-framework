@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tempest {
-    use Tempest\CommandBus\CommandBus;
+namespace Tempest\CommandBus;
 
-    /**
-     * Dispatches the given `$command` to the {@see CommandBus}, triggering all associated command handlers.
-     */
-    function command(object $command): void
-    {
-        $commandBus = get(CommandBus::class);
+use Tempest\CommandBus\CommandBus;
+use Tempest\Container;
 
-        $commandBus->dispatch($command);
-    }
+/**
+ * Dispatches the given `$command` to the {@see CommandBus}, triggering all associated command handlers.
+ */
+function command(object $command): void
+{
+    $commandBus = Container\get(CommandBus::class);
+
+    $commandBus->dispatch($command);
 }

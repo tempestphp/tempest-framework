@@ -21,8 +21,8 @@ final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registerRoute(StaticPageController::class);
-        $this->registerStaticPage(StaticPageController::class);
+        $this->http->registerRoute(StaticPageController::class);
+        $this->http->registerStaticPage(StaticPageController::class);
     }
 
     public function test_generate(): void

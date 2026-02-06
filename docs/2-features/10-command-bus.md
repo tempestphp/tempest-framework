@@ -62,7 +62,7 @@ Alternatively to using the `command()` function, you can inject the `CommandBus`
 
 use Tempest\CommandBus\CommandBus;
 
-final readonly class UserController()
+final readonly class UserController
 {
     public function __construct(
         private CommandBus $commandBus,

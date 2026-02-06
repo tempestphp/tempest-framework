@@ -53,6 +53,10 @@ final readonly class FileCommandRepository implements CommandRepository
     {
         return arr(glob(__DIR__ . '/../stored-commands/*.pending.txt'))
             ->mapWithKeys(function (string $path) {
+                if (! Filesystem\is_file($path)) {
+                    return;
+                }
+
                 $uuid = str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
                 $payload = Filesystem\read_file($path);
 

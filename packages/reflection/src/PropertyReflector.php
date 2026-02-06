@@ -157,4 +157,9 @@ final class PropertyReflector implements Reflector
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }
+
+    public function __toString(): string
+    {
+        return $this->getClass()->getName() . '::' . $this->getName();
+    }
 }

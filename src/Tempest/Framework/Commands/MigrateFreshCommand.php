@@ -14,7 +14,7 @@ use Tempest\Container\Singleton;
 use Tempest\Database\Migrations\FreshMigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\TableDropped;
-use Tempest\EventBus\EventHandler;
+use Tempest\EventBus\EventBus;
 
 #[Singleton]
 final class MigrateFreshCommand
@@ -24,6 +24,7 @@ final class MigrateFreshCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
+        private readonly EventBus $eventBus,
     ) {}
 
     #[ConsoleCommand(
@@ -43,6 +44,9 @@ final class MigrateFreshCommand
         #[ConsoleArgument(description: 'Select one specific seeder to run')]
         ?string $seeder = null,
     ): ExitCode {
+        $this->eventBus->listen($this->onTableDropped(...));
+        $this->eventBus->listen($this->onFreshMigrationFailed(...));
+
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
 
@@ -78,7 +82,6 @@ final class MigrateFreshCommand
         return ExitCode::SUCCESS;
     }
 
-    #[EventHandler]
     public function onTableDropped(TableDropped $event): void
     {
         $this->count += 1;
@@ -88,7 +91,6 @@ final class MigrateFreshCommand
         );
     }
 
-    #[EventHandler]
     public function onFreshMigrationFailed(FreshMigrationFailed $event): void
     {
         $this->console->error($event->throwable->getMessage());

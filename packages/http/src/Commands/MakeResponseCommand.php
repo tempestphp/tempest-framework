@@ -7,7 +7,7 @@ namespace Tempest\Http\Commands;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\DataObjects\StubFile;
 use Tempest\Http\Stubs\ResponseStub;
 
 final class MakeResponseCommand

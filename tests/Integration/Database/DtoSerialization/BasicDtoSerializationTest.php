@@ -8,11 +8,7 @@ use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Mapper\Casters\DtoCaster;
-use Tempest\Mapper\CastWith;
 use Tempest\Mapper\SerializeAs;
-use Tempest\Mapper\Serializers\DtoSerializer;
-use Tempest\Mapper\SerializeWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -21,7 +17,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 {
     public function test_simple_dto_serialization(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character';
 
             public function up(): QueryStatement
@@ -53,7 +49,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_simple_dto_serialization_with_named_arguments(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character_named_args';
 
             public function up(): QueryStatement
@@ -85,7 +81,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_dto_with_enums(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_character_class_infos';
 
             public function up(): QueryStatement
@@ -121,7 +117,7 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 
     public function test_dto_with_custom_serialization_name(): void
     {
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_settings';
 
             public function up(): QueryStatement
@@ -191,8 +187,7 @@ final class Character
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class CharacterStats
 {
     public function __construct(
@@ -210,8 +205,7 @@ final class CharacterClassInfo
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
+#[SerializeAs(self::class)]
 final class ClassDetails
 {
     public function __construct(
@@ -229,8 +223,6 @@ final class UserPreferences
     ) {}
 }
 
-#[CastWith(DtoCaster::class)]
-#[SerializeWith(DtoSerializer::class)]
 #[SerializeAs('app-settings')]
 final class ApplicationSettings
 {

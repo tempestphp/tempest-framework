@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * @internal

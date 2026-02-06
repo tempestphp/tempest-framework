@@ -22,7 +22,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_library';
 
             public function up(): QueryStatement
@@ -65,7 +65,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config->serializeAs(MageProfile::class, 'mage-profile');
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_mage_profiles';
 
             public function up(): QueryStatement
@@ -113,7 +113,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config->serializeAs(SpellCollection::class, 'spell-collection');
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_collections';
 
             public function up(): QueryStatement
@@ -166,7 +166,7 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(MagicItem::class, 'magic-item');
 
-        $this->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
+        $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '004_inventory';
 
             public function up(): QueryStatement

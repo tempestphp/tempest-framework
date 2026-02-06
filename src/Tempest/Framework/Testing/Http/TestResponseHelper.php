@@ -14,23 +14,30 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Session\FormSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
+use Tempest\Support\Json;
 use Tempest\Validation\Rule;
-use Tempest\Validation\Validator;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+use Throwable;
 
 use function Tempest\Support\arr;
 
 final class TestResponseHelper
 {
+    /**
+     * @param Response $response The original response from the controller.
+     * @param Request $request The original request sent to the controller.
+     * @param null|Throwable $throwable The exception thrown during the request, if any.
+     */
     public function __construct(
         private(set) Response $response,
         private(set) Request $request,
-        private(set) ?Container $container = null,
+        private ?Container $container = null,
+        private(set) ?Throwable $throwable = null,
     ) {}
 
     public Status $status {
@@ -46,23 +53,29 @@ final class TestResponseHelper
         get => $this->response->body;
     }
 
+    /**
+     * Asserts that the response has the given header, case insensitive.
+     */
     public function assertHasHeader(string $name): self
     {
         Assert::assertArrayHasKey(
-            $name,
-            $this->response->headers,
-            sprintf('Failed to assert that response contains header [%s].', $name),
+            mb_strtolower($name),
+            array_change_key_case($this->response->headers, case: CASE_LOWER),
+            sprintf('Failed to assert that response contains the header [%s].', $name),
         );
 
         return $this;
     }
 
+    /**
+     * Asserts that the response does not have the given header, case insensitive.
+     */
     public function assertDoesNotHaveHeader(string $name): self
     {
         Assert::assertArrayNotHasKey(
-            $name,
-            $this->response->headers,
-            sprintf('Failed to assert that response does not contain header [%s].', $name),
+            mb_strtolower($name),
+            array_change_key_case($this->response->headers, case: CASE_LOWER),
+            sprintf('Failed to assert that response does not contain the header [%s].', $name),
         );
 
         return $this;
@@ -109,6 +122,9 @@ final class TestResponseHelper
         Assert::fail(sprintf('Failed to assert that response header [%s] value contains [%s]. These header values were found: %s', $name, $format, $headerString));
     }
 
+    /**
+     * Asserts that the response is a redirect. If a URL is provided, it also asserts that the "Location" header contains the given URL.
+     */
     public function assertRedirect(?string $to = null): self
     {
         Assert::assertTrue(
@@ -121,21 +137,63 @@ final class TestResponseHelper
             : $this->assertHeaderContains('Location', $to);
     }
 
+    /**
+     * Asserts that the response status code is 200.
+     */
     public function assertOk(): self
     {
         return $this->assertStatus(Status::OK);
     }
 
+    /**
+     * Asserts that the response status code is 403.
+     */
     public function assertForbidden(): self
     {
         return $this->assertStatus(Status::FORBIDDEN);
     }
 
+    /**
+     * Asserts that the response status is code 404.
+     */
     public function assertNotFound(): self
     {
         return $this->assertStatus(Status::NOT_FOUND);
     }
 
+    /**
+     * Asserts that the response has a status code in the [200-300[ range.
+     */
+    public function assertSuccessful(): self
+    {
+        Assert::assertTrue($this->status->isSuccessful());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response has a status code in the [400-500[ range.
+     */
+    public function assertClientError(): self
+    {
+        Assert::assertTrue($this->status->isClientError());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response has a status code in the 500 range.
+     */
+    public function assertServerError(): self
+    {
+        Assert::assertTrue($this->status->isServerError());
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the response status matches the expected status.
+     */
     public function assertStatus(Status $expected): self
     {
         Assert::assertSame(
@@ -204,6 +262,55 @@ final class TestResponseHelper
         return $this;
     }
 
+    public function assertHasForm(Closure $closure): self
+    {
+        $this->assertHasContainer();
+
+        $formSession = $this->container->get(FormSession::class);
+
+        if (false === $closure($formSession)) {
+            Assert::fail('Failed validating form session.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the original form values in the session match the given values.
+     */
+    public function assertHasFormOriginalValues(array $values): self
+    {
+        $this->assertHasContainer();
+
+        $formSession = $this->container->get(FormSession::class);
+        $originalValues = $formSession->values();
+
+        foreach ($values as $key => $expectedValue) {
+            Assert::assertArrayHasKey(
+                key: $key,
+                array: $originalValues,
+                message: sprintf(
+                    'No original form value was set for [%s], available original form values: %s',
+                    $key,
+                    implode(', ', array_keys($originalValues)),
+                ),
+            );
+
+            Assert::assertEquals(
+                expected: $expectedValue,
+                actual: $originalValues[$key],
+                message: sprintf(
+                    'Original form value for [%s] does not match expected value. Expected: %s, Actual: %s',
+                    $key,
+                    var_export($expectedValue, return: true),
+                    var_export($originalValues[$key], return: true),
+                ),
+            );
+        }
+
+        return $this;
+    }
+
     public function assertHasSession(string $key, ?Closure $callback = null): self
     {
         $this->assertHasContainer();
@@ -229,8 +336,11 @@ final class TestResponseHelper
 
     public function assertHasValidationError(string $key, ?Closure $callback = null): self
     {
-        $session = $this->container->get(Session::class);
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+        $validationErrors = $this->response->getHeader('x-validation')->first();
+
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Json\decode($validationErrors);
 
         Assert::assertArrayHasKey(
             key: $key,
@@ -251,8 +361,8 @@ final class TestResponseHelper
 
     public function assertHasNoValidationsErrors(): self
     {
-        $session = $this->container->get(Session::class);
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+        $formSession = $this->container->get(FormSession::class);
+        $validationErrors = $formSession->getErrors();
 
         Assert::assertEmpty(
             actual: $validationErrors,
@@ -272,6 +382,10 @@ final class TestResponseHelper
 
         if ($body instanceof View) {
             $body = $this->container->get(ViewRenderer::class)->render($body);
+        }
+
+        if (is_array($body)) {
+            $body = json_encode($body);
         }
 
         Assert::assertStringContainsString($search, $body);
@@ -430,7 +544,7 @@ final class TestResponseHelper
      *
      * @param array<string, mixed> $expected
      */
-    public function assertJson(array $expected): self
+    public function assertJson(array $expected = []): self
     {
         Assert::assertEquals(
             expected: arr($expected)->undot()->toArray(),
@@ -491,9 +605,7 @@ final class TestResponseHelper
     }
 
     /**
-     * Asserts the response contains the given JSON validation errors.
-     *
-     * The keys can also be specified using dot notation.
+     * Asserts the response contains the given JSON validation errors. The keys can be specified using dot notation, and the values may contain `sprintf` placeholders.
      *
      * ### Example
      * ```
@@ -503,26 +615,26 @@ final class TestResponseHelper
      *      ]);
      * ```
      *
-     * @param array<string, string|string[]> $expectedErrors
+     * @param array<string,string|string[]> $expectedErrors
      */
     public function assertHasJsonValidationErrors(array $expectedErrors): self
     {
         $this->assertHasContainer();
 
-        Assert::assertInstanceOf(Invalid::class, $this->response);
-        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotNull($this->response->getHeader('x-validation'));
+        Assert::assertContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND, Status::UNPROCESSABLE_CONTENT]);
 
-        $session = $this->container->get(Session::class);
-        $validator = $this->container->get(Validator::class);
-        $validationRules = arr($session->get(Session::VALIDATION_ERRORS))->dot();
+        $validationErrors = $this->response->getHeader('x-validation')->first();
 
-        arr($expectedErrors)
-            ->dot()
-            ->each(fn ($expectedErrorValue, $expectedErrorKey) => Assert::assertEquals(
-                expected: $expectedErrorValue,
-                actual: $validator->getErrorMessage($validationRules->get($expectedErrorKey)),
-            ));
+        Assert::assertNotNull($validationErrors, 'The response does not have a x-validation header.');
+
+        $validationErrors = Arr\dot(Json\decode($validationErrors));
+
+        foreach (Arr\dot($expectedErrors) as $key => $expectedMessage) {
+            Assert::assertStringMatchesFormat(
+                format: $expectedMessage,
+                string: $validationErrors[$key],
+            );
+        }
 
         return $this;
     }
@@ -539,17 +651,22 @@ final class TestResponseHelper
     public function assertHasNoJsonValidationErrors(): self
     {
         Assert::assertNotContains($this->response->status, [Status::BAD_REQUEST, Status::FOUND]);
-        Assert::assertNotInstanceOf(Invalid::class, $this->response);
         Assert::assertNull($this->response->getHeader('x-validation'));
 
         return $this;
     }
 
     /**
+     * Dumps the response and die.
+     *
      * @mago-expect lint:no-debug-symbols
      */
     public function dd(): never
     {
+        if ($this->throwable !== null) {
+            dump(sprintf('There was a [%s] exception during this request handling: %s', $this->throwable::class, $this->throwable->getMessage())); // @phpstan-ignore disallowed.function
+        }
+
         dd($this->response); // @phpstan-ignore disallowed.function
     }
 

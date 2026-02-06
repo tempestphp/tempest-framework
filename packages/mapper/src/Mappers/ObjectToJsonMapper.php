@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use Tempest\Mapper\Context;
 use Tempest\Mapper\Mapper;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 final readonly class ObjectToJsonMapper implements Mapper
 {
+    public function __construct(
+        private Context $context,
+    ) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return false;
@@ -17,6 +22,12 @@ final readonly class ObjectToJsonMapper implements Mapper
 
     public function map(mixed $from, mixed $to): string
     {
-        return map(map($from)->toArray())->toJson();
+        $array = map($from)
+            ->in($this->context)
+            ->toArray();
+
+        return map($array)
+            ->in($this->context)
+            ->toJson();
     }
 }

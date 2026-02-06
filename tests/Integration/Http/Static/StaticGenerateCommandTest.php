@@ -21,8 +21,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registerRoute(StaticPageController::class);
-        $this->registerStaticPage(StaticPageController::class);
+        $this->http->registerRoute(StaticPageController::class);
+        $this->http->registerStaticPage(StaticPageController::class);
     }
 
     public function test_static_site_generate_command(): void
@@ -52,8 +52,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_failure_status_code(): void
     {
-        $this->registerRoute([StaticPageController::class, 'http500']);
-        $this->registerStaticPage([StaticPageController::class, 'http500']);
+        $this->http->registerRoute([StaticPageController::class, 'http500']);
+        $this->http->registerStaticPage([StaticPageController::class, 'http500']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -65,8 +65,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_failure_no_textual_content(): void
     {
-        $this->registerRoute([StaticPageController::class, 'noTextualContent']);
-        $this->registerStaticPage([StaticPageController::class, 'noTextualContent']);
+        $this->http->registerRoute([StaticPageController::class, 'noTextualContent']);
+        $this->http->registerStaticPage([StaticPageController::class, 'noTextualContent']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -78,8 +78,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_failure_no_build(): void
     {
-        $this->registerRoute([StaticPageController::class, 'vite']);
-        $this->registerStaticPage([StaticPageController::class, 'vite']);
+        $this->http->registerRoute([StaticPageController::class, 'vite']);
+        $this->http->registerStaticPage([StaticPageController::class, 'vite']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -91,8 +91,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_dead_link(): void
     {
-        $this->registerRoute([StaticPageController::class, 'deadLink']);
-        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+        $this->http->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -105,9 +105,9 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_dead_link_with_redirect(): void
     {
-        $this->registerRoute([StaticPageController::class, 'redirectingRoute']);
-        $this->registerRoute([StaticPageController::class, 'hasRedirect']);
-        $this->registerStaticPage([StaticPageController::class, 'hasRedirect']);
+        $this->http->registerRoute([StaticPageController::class, 'redirectingRoute']);
+        $this->http->registerRoute([StaticPageController::class, 'hasRedirect']);
+        $this->http->registerStaticPage([StaticPageController::class, 'hasRedirect']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -118,8 +118,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_allow_dead_links(): void
     {
-        $this->registerRoute([StaticPageController::class, 'deadLink']);
-        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+        $this->http->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -130,8 +130,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_external_dead_links(): void
     {
-        $this->registerRoute([StaticPageController::class, 'deadLink']);
-        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+        $this->http->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -145,8 +145,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_ignore_dead_links(): void
     {
-        $this->registerRoute([StaticPageController::class, 'allowedDeadLink']);
-        $this->registerStaticPage([StaticPageController::class, 'allowedDeadLink']);
+        $this->http->registerRoute([StaticPageController::class, 'allowedDeadLink']);
+        $this->http->registerStaticPage([StaticPageController::class, 'allowedDeadLink']);
 
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 

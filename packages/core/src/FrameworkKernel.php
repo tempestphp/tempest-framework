@@ -7,7 +7,6 @@ namespace Tempest\Core;
 use Dotenv\Dotenv;
 use ErrorException;
 use RuntimeException;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -17,7 +16,6 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
-use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Support\Filesystem;
 
 final class FrameworkKernel implements Kernel
@@ -51,7 +49,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ): self {
         if (! defined('TEMPEST_START')) {
-            define('TEMPEST_START', value: hrtime(true));
+            define('TEMPEST_START', value: hrtime(as_number: true));
         }
 
         return new self(
@@ -168,10 +166,7 @@ final class FrameworkKernel implements Kernel
     public function loadDiscovery(): self
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
-        $this->container->invoke(
-            LoadDiscoveryClasses::class,
-            discoveryLocations: $this->discoveryLocations,
-        );
+        $this->container->invoke(LoadDiscoveryClasses::class, discoveryLocations: $this->discoveryLocations);
 
         return $this;
     }
@@ -179,7 +174,9 @@ final class FrameworkKernel implements Kernel
     public function loadConfig(): self
     {
         $this->container->addInitializer(ConfigCacheInitializer::class);
-        $this->container->invoke(LoadConfig::class);
+
+        $loadConfig = $this->container->get(LoadConfig::class, environment: Environment::guessFromEnvironment());
+        $loadConfig();
 
         return $this;
     }
@@ -223,7 +220,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerEmergencyExceptionHandler(): self
     {
-        $environment = Environment::fromEnv();
+        $environment = Environment::guessFromEnvironment();
 
         // During tests, PHPUnit registers its own error handling.
         if ($environment->isTesting()) {
@@ -232,7 +229,7 @@ final class FrameworkKernel implements Kernel
 
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
-        if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
+        if (PHP_SAPI !== 'cli' && $environment->isLocal()) {
             new RegisterEmergencyExceptionHandler()->register();
         }
 
@@ -241,20 +238,14 @@ final class FrameworkKernel implements Kernel
 
     public function registerExceptionHandler(): self
     {
-        $appConfig = $this->container->get(AppConfig::class);
-
         // During tests, PHPUnit registers its own error handling.
-        if ($appConfig->environment->isTesting()) {
-            return $this;
-        }
-
-        // TODO: refactor to not have a hard-coded dependency on these exception handlers
-        if (! class_exists(ConsoleExceptionHandler::class) || ! class_exists(HttpExceptionHandler::class)) {
+        if (Environment::guessFromEnvironment()->isTesting()) {
             return $this;
         }
 
         $handler = $this->container->get(ExceptionHandler::class);
 
+        ini_set('display_errors', 'Off'); // @mago-expect lint:no-ini-set
         set_exception_handler($handler->handle(...));
         set_error_handler(function (int $code, string $message, string $filename, int $line) use ($handler): bool {
             $handler->handle(new ErrorException(
@@ -265,7 +256,7 @@ final class FrameworkKernel implements Kernel
             ));
 
             return true;
-        }, error_levels: E_ERROR);
+        }, error_levels: E_ALL);
 
         return $this;
     }

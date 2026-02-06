@@ -48,7 +48,7 @@ interface Request
 
     public function has(string $key): bool;
 
-    public function hasBody(string $key): bool;
+    public function hasBody(?string $key = null): bool;
 
     public function hasQuery(string $key): bool;
 

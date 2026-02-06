@@ -17,7 +17,7 @@ use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 use Throwable;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
 
 final readonly class PsrRequestToGenericRequestMapper implements Mapper
@@ -63,7 +63,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            'cookies' => Arr\filter(Arr\map_iterable(
+            'cookies' => Arr\filter(Arr\map(
                 array: $_COOKIE,
                 map: function (string $value, string $key) {
                     try {

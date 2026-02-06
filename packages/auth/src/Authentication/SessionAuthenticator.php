@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Authentication;
 
-use Tempest\Auth\AuthConfig;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 
 final readonly class SessionAuthenticator implements Authenticator
 {
@@ -13,7 +13,7 @@ final readonly class SessionAuthenticator implements Authenticator
     public const string AUTHENTICATABLE_CLASS = '#authenticatable:class';
 
     public function __construct(
-        private AuthConfig $authConfig,
+        private SessionManager $sessionManager,
         private Session $session,
         private AuthenticatableResolver $authenticatableResolver,
     ) {}
@@ -34,7 +34,8 @@ final readonly class SessionAuthenticator implements Authenticator
     public function deauthenticate(): void
     {
         $this->session->remove(self::AUTHENTICATABLE_KEY);
-        $this->session->destroy();
+        $this->session->remove(self::AUTHENTICATABLE_CLASS);
+        $this->sessionManager->save($this->session);
     }
 
     public function current(): ?Authenticatable

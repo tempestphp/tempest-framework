@@ -47,10 +47,10 @@ The `{php}\Tempest\invoke()` function serves the same purpose when the container
 
 ### Locating a dependency
 
-There are situations where it may not be possible to inject a dependency on a constructor. To work around this, Tempest provides the `{php}\Tempest\get()` function, which can resolve an object from the container.
+There are situations where it may not be possible to inject a dependency on a constructor. To work around this, Tempest provides the `{php}\Tempest\Container\get()` function, which can resolve an object from the container.
 
 ```php
-use function Tempest\get;
+use function Tempest\Container\get;
 
 $config = get(AppConfig::class);
 ```
@@ -67,7 +67,7 @@ Initializers are classes that know how to construct a specific class or interfac
 
 ### Implementing an initializer
 
-Initializers are classes that implement the {`Tempest\Container\Initializer`} interface. The `initialize()` method receives the container as its only parameter, and returns an instanciated object.
+Initializers are classes that implement the {`Tempest\Container\Initializer`} interface. The `initialize()` method receives the container as its only parameter, and returns an instantiated object.
 
 **Most importantly**, Tempest knows which object this initializer is tied to thanks to the return type of the `initialize()` method, which needs to be typed.
 
@@ -156,15 +156,17 @@ The {`Tempest\Container\DynamicInitializer`} interface provides a `canInitialize
 ```php app/RouteBindingInitializer.php
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
+use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
-    public function canInitialize(string $className): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
-        return is_a($className, Model::class, true);
+        return $class->getType()->matches(Model::class);
     }
 
-    public function initialize(string $className, Container $container): object
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
     {
         // …
     }
@@ -243,7 +245,7 @@ final readonly class MarkdownInitializer implements Initializer
 
 In some cases, you want more control over singleton definitions.
 
-Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured CLI highlighting. In this situation, you can differenciate them using the `tag` parameter of the `#[Singleton]` attribute:
+Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured CLI highlighting. In this situation, you can differentiate them using the `tag` parameter of the `#[Singleton]` attribute:
 
 ```php app/WebHighlighterInitializer.php
 use Tempest\Container\Container;
@@ -325,7 +327,7 @@ use Tempest\Container\Tag;
 
 final readonly class BookController
 {
-    public function __constructor(
+    public function __construct(
         #[Tag('book-validators')] private readonly array $contentValidators,
     ) { /* … */ }
 }
@@ -427,7 +429,7 @@ final readonly class CacheRepository implements Repository
 When you request the `Repository` from the container, Tempest will automatically wrap the original implementation with your decorator. The decorated object (the original `Repository`) is injected into the decorator's constructor.
 
 :::info
-Decorators are discovered automatically through Tempest's [discovery](../4-internals/02-discovery.md), so you don't need to manually register them.
+Decorators are discovered automatically through Tempest's [discovery](./05-discovery.md), so you don't need to manually register them.
 :::
 
 ## Proxy loading

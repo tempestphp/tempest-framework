@@ -24,7 +24,5 @@ final class Insight
     public function __construct(
         private(set) string $value,
         private string $type = self::NORMAL,
-    ) {
-        $this->value = $value;
-    }
+    ) {}
 }

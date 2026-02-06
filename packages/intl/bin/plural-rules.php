@@ -13,7 +13,7 @@ use Tempest\Console\ConsoleApplication;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Json;
 
-use function Tempest\get;
+use function Tempest\Container\get;
 
 final class PluralRulesMatcherGenerator
 {

@@ -5,7 +5,7 @@ namespace Tempest\Mail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\EventBus\EventBus;
 
-use function Tempest\map;
+use function Tempest\Mapper\map;
 
 /**
  * Generic mailer based on Symfony transports.

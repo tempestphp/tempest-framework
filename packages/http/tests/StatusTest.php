@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Status;
 
@@ -25,7 +27,7 @@ final class StatusTest extends TestCase
     #[DataProvider('provide_status_code_cases')]
     public function test_status_code(int $code, string $description): void
     {
-        $status = Status::code($code);
+        $status = Status::fromCode($code);
 
         $this->assertSame(
             self::descriptionToStatus($description),
@@ -142,5 +144,17 @@ final class StatusTest extends TestCase
             [510, 'Not Extended'],
             [511, 'Network Authentication Required'],
         ];
+    }
+
+    #[TestWith([150, Status::CONTINUE])]
+    #[TestWith([250, Status::OK])]
+    #[TestWith([399, Status::MULTIPLE_CHOICES])]
+    #[TestWith([450, Status::BAD_REQUEST])]
+    #[TestWith([550, Status::INTERNAL_SERVER_ERROR])]
+    #[TestWith([650, Status::INTERNAL_SERVER_ERROR])]
+    #[Test]
+    public function unknown_status_code_maps_to_class_base(int $code, Status $expected): void
+    {
+        $this->assertSame($expected, Status::fromCode($code));
     }
 }

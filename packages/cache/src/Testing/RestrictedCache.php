@@ -25,7 +25,7 @@ final class RestrictedCache implements Cache
         return $this->tag instanceof UnitEnum ? $this->tag->name : $this->tag;
     }
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock
     {
         throw new CacheUsageWasForbidden($this->resolveTag());
     }

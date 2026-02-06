@@ -10,7 +10,7 @@ final class SubmitComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             '<input type="submit" value="Submit">',
-            $this->render('<x-submit />'),
+            $this->view->render('<x-submit />'),
         );
     }
 
@@ -18,7 +18,7 @@ final class SubmitComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             '<input type="submit" value="Test">',
-            $this->render('<x-submit label="Test"/>'),
+            $this->view->render('<x-submit label="Test"/>'),
         );
     }
 }

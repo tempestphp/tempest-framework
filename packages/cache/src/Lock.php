@@ -17,9 +17,9 @@ interface Lock
     }
 
     /**
-     * The expiration date of the lock. If null, the lock will not expire.
+     * The duration of the lock. If null, the lock will not expire.
      */
-    public ?DateTimeInterface $expiration {
+    public ?Duration $duration {
         get;
     }
 

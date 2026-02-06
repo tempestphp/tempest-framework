@@ -11,7 +11,7 @@ use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
-use function Tempest\view;
+use function Tempest\View\view;
 
 final class StandaloneViewRendererTest extends TestCase
 {
@@ -71,7 +71,7 @@ final class StandaloneViewRendererTest extends TestCase
 
     public function test_with_cache_enabled(): void
     {
-        $viewCache = ViewCache::enabled();
+        $viewCache = ViewCache::create();
         $viewCache->clear();
 
         $renderer =
@@ -93,7 +93,7 @@ final class StandaloneViewRendererTest extends TestCase
     public function test_with_cache_disabled(): void
     {
         $renderer = TempestViewRenderer::make(
-            viewCache: ViewCache::disabled(),
+            viewCache: ViewCache::create(enabled: false),
         );
 
         $html = $renderer->render(

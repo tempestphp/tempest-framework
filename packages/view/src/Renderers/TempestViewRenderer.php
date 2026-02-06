@@ -51,7 +51,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $elementFactory->setViewCompiler($compiler);
 
-        $viewCache ??= ViewCache::disabled();
+        $viewCache ??= ViewCache::create(enabled: false);
 
         return new self(
             compiler: $compiler,
@@ -117,6 +117,8 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
+            ob_end_clean(); // clean buffer before rendering exception
+
             throw new ViewCompilationFailed(
                 path: $_path,
                 content: Filesystem\read_file($_path),
@@ -135,7 +137,11 @@ final class TempestViewRenderer implements ViewRenderer
             return (string) $value;
         }
 
-        return htmlentities((string) $value);
+        return htmlentities(
+            string: (string) $value,
+            flags: ENT_QUOTES | ENT_SUBSTITUTE,
+            encoding: 'UTF-8',
+        );
     }
 
     private function validateView(View $view): void

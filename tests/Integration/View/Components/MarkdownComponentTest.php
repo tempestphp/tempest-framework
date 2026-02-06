@@ -8,7 +8,7 @@ final class MarkdownComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_render_markdown_as_content(): void
     {
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-markdown># hi</x-markdown>
         HTML);
 
@@ -17,7 +17,7 @@ final class MarkdownComponentTest extends FrameworkIntegrationTestCase
 
     public function test_render_markdown_as_variable(): void
     {
-        $html = $this->render(<<<'HTML'
+        $html = $this->view->render(<<<'HTML'
         <x-markdown :content="$text"></x-markdown>
         HTML, text: '# hi');
 

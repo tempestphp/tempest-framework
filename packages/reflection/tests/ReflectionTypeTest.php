@@ -100,4 +100,24 @@ final class ReflectionTypeTest extends TestCase
         $this->assertFalse(new TypeReflector(ImmutableString::class)->isRelation());
         $this->assertFalse(new TypeReflector(DateTimeImmutable::class)->isRelation());
     }
+
+    public function test_is_union(): void
+    {
+        $this->assertTrue(new TypeReflector('string|int')->isUnion());
+        $this->assertTrue(new TypeReflector(A::class . '|' . B::class)->isUnion());
+        $this->assertFalse(new TypeReflector('?string')->isUnion());
+        $this->assertFalse(new TypeReflector('string')->isUnion());
+        $this->assertFalse(new TypeReflector(A::class)->isUnion());
+        $this->assertFalse(new TypeReflector('string&Stringable')->isUnion());
+    }
+
+    public function test_is_intersection(): void
+    {
+        $this->assertTrue(new TypeReflector('string&Stringable')->isIntersection());
+        $this->assertTrue(new TypeReflector(A::class . '&' . B::class)->isIntersection());
+        $this->assertFalse(new TypeReflector('?string')->isIntersection());
+        $this->assertFalse(new TypeReflector('string')->isIntersection());
+        $this->assertFalse(new TypeReflector(A::class)->isIntersection());
+        $this->assertFalse(new TypeReflector('string|int')->isIntersection());
+    }
 }
