@@ -239,7 +239,12 @@ final class FrameworkKernel implements Kernel
     public function registerExceptionHandler(): self
     {
         // During tests, PHPUnit registers its own error handling.
-        if (Environment::guessFromEnvironment()->isTesting()) {
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        // TODO: refactor to not have a hard-coded dependency on these exception handlers
+        if (! class_exists(ConsoleExceptionHandler::class) || ! class_exists(HttpExceptionHandler::class)) {
             return $this;
         }
 

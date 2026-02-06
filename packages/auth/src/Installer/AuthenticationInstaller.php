@@ -14,7 +14,7 @@ use Tempest\Database\Migrations\MigrationManager;
 
 use function Tempest\src_path;
 
-if (class_exists(ConsoleCommand::class)) {
+if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final class AuthenticationInstaller implements Installer
     {
         use PublishesFiles;
