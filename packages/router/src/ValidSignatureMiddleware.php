@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Container\Container;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Forbidden;
@@ -17,21 +17,19 @@ use Tempest\Http\Responses\Forbidden;
  * - The signature is invalid (tampered URL)
  * - The signature has expired (for temporary signed URLs)
  *
- * Note: This class intentionally does NOT implement HttpMiddleware to prevent
- * it from being auto-discovered as a global middleware. It should only run
- * on routes that have the #[ValidSignature] attribute, via HandleRouteSpecificMiddleware.
+ * This middleware uses #[SkipDiscovery] to prevent auto-registration as a global middleware.
+ * It should only run on routes that have the #[ValidSignature] attribute.
  */
-final readonly class ValidSignatureMiddleware
+#[SkipDiscovery]
+final readonly class ValidSignatureMiddleware implements HttpMiddleware
 {
     public function __construct(
-        private Container $container,
+        private UriGenerator $uriGenerator,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $uriGenerator = $this->container->get(UriGenerator::class);
-
-        if (! $uriGenerator->hasValidSignature($request)) {
+        if (! $this->uriGenerator->hasValidSignature($request)) {
             return new Forbidden();
         }
 

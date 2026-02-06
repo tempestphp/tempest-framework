@@ -31,9 +31,8 @@ final class ValidSignature implements RouteDecorator
 {
     public function decorate(Route $route): Route
     {
-        // ValidSignatureMiddleware intentionally doesn't implement HttpMiddleware to prevent
-        // auto-discovery as a global middleware. It follows the same callable signature
-        // and is invoked via HandleRouteSpecificMiddleware.
+        // ValidSignatureMiddleware uses #[SkipDiscovery] to prevent auto-discovery
+        // as a global middleware. It is only applied to routes with this attribute.
         $route->middleware = [
             ...$route->middleware,
             ValidSignatureMiddleware::class,

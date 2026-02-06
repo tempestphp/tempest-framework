@@ -21,8 +21,8 @@ final class ValidSignatureMiddlewareTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registerRoute([SignedUrlController::class, 'signedAction']);
-        $this->registerRoute([SignedUrlController::class, 'unsignedAction']);
+        $this->http->registerRoute([SignedUrlController::class, 'signedAction']);
+        $this->http->registerRoute([SignedUrlController::class, 'unsignedAction']);
     }
 
     #[Test]
