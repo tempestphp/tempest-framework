@@ -78,7 +78,7 @@ In principle, the BDFL stays on the project forever. A new BDFL can be appointed
 
 - When the BDFL decides to step down or retire.
 - When the BDFL fails to perform their duties or ceases to perform their duties in a manner of benevolence. (TODO: must be clarified what this means)
-- When the BDFL has been inactive for a prolonged period of time, the BDFL will be considered inactive and replaced by the current First Officer. After another 90 days of inactivity, the inactive BDFL will be declared retired and replaced by the acting BDFL. At this point the new BDFL will assign a new First Officer and ensure a minimum of three Council Members.
+- When the BDFL has been inactive for a prolonged period of time — 90 days — the BDFL will be considered inactive and replaced by the current First Officer. After an additional 90 days of inactivity, the inactive BDFL will be declared retired and replaced by the acting BDFL. At this point the new BDFL will assign a new First Officer and ensure a minimum of three Council Members.
 
 "Activity" is measured by:
 
