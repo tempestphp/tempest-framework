@@ -37,7 +37,6 @@ final readonly class GenericResponseSender implements ResponseSender
         $this->sendHeaders($response);
 
         if ($this->shouldSendContent()) {
-            ob_flush();
             $this->sendContent($response);
         }
 
@@ -108,8 +107,6 @@ final readonly class GenericResponseSender implements ResponseSender
         } else {
             echo $body;
         }
-
-        ob_flush();
     }
 
     private function sendEventStream(EventStream $response): void
