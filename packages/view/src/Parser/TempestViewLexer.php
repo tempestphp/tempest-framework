@@ -4,7 +4,7 @@ namespace Tempest\View\Parser;
 
 final class TempestViewLexer
 {
-    private const string WHITESPACE = PHP_EOL . "\n\t\f ";
+    private const string WHITESPACE = "\r\n\t\f ";
 
     private int $position = 0;
 
@@ -35,7 +35,7 @@ final class TempestViewLexer
                 $tokens = [...$tokens, ...$this->lexCharacterData()];
             } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
-            } elseif ($this->comesNext(' ') || $this->comesNext(PHP_EOL)) {
+            } elseif ($this->isWhitespace($this->current)) {
                 $tokens[] = $this->lexWhitespace();
             } else {
                 $tokens[] = $this->lexContent();
@@ -59,6 +59,15 @@ final class TempestViewLexer
         }
 
         return $seek;
+    }
+
+    private function isWhitespace(?string $value): bool
+    {
+        if ($value === null) {
+            return false;
+        }
+
+        return str_contains(self::WHITESPACE, $value);
     }
 
     private function seekIgnoringWhitespace(int $length = 1): ?string
@@ -220,13 +229,7 @@ final class TempestViewLexer
     {
         $buffer = '';
 
-        while ($this->current !== null) {
-            $seek = $this->seek();
-
-            if ($seek !== ' ' && $seek !== PHP_EOL) {
-                break;
-            }
-
+        while ($this->isWhitespace($this->seek())) {
             $buffer .= $this->consume();
         }
 

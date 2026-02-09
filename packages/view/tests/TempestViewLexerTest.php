@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
@@ -310,6 +311,22 @@ final class TempestViewLexerTest extends TestCase
                 new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
                 new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
                 new Token("\n>", TokenType::OPEN_TAG_END),
+                new Token('</div>', TokenType::CLOSING_TAG),
+            ],
+            actual: $tokens,
+        );
+    }
+
+    #[Test]
+    public function lexer_handles_crlf_attribute_boundaries(): void
+    {
+        $tokens = new TempestViewLexer("<div hidden\r\n></div>")->lex();
+
+        $this->assertTokens(
+            expected: [
+                new Token('<div', TokenType::OPEN_TAG_START),
+                new Token(' hidden', TokenType::ATTRIBUTE_NAME),
+                new Token("\r\n>", TokenType::OPEN_TAG_END),
                 new Token('</div>', TokenType::CLOSING_TAG),
             ],
             actual: $tokens,
