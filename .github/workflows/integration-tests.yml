@@ -23,7 +23,9 @@ jobs:
           - 8.5
         os:
           - ubuntu-latest
-#          - windows-latest
+          - windows-latest
+    env:
+      POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
 
     name: "Run tests: ${{ matrix.os }}"
 
@@ -57,7 +59,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-#          - windows-latest
+          - windows-latest
         php:
           - 8.5
         database:
@@ -67,9 +69,8 @@ jobs:
         stability:
           - prefer-stable
           - prefer-lowest
-#        exclude:
-#          - os: windows-latest
-#            database: postgres
+    env:
+      POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
