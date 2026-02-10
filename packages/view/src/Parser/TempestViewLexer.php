@@ -35,7 +35,7 @@ final class TempestViewLexer
                 $tokens = [...$tokens, ...$this->lexCharacterData()];
             } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
-            } elseif ($this->comesNext("\r") || $this->comesNext("\n") || $this->comesNext("\t") || $this->comesNext("\f") || $this->comesNext(' ')) {
+            } elseif (str_contains(self::WHITESPACE, $this->current)) {
                 $tokens[] = $this->lexWhitespace();
             } else {
                 $tokens[] = $this->lexContent();
