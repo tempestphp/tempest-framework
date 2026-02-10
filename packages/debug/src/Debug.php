@@ -43,7 +43,7 @@ final readonly class Debug
         static $isDispatchingItemsDebuggedEvent = false;
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $callPath = $trace[1]['file'] . ':' . $trace[1]['line'];
+        $callPath = ($trace[1]['file'] ?? 'unknown') . ':' . ($trace[1]['line'] ?? 0);
 
         if ($writeToLog) {
             $this->writeToLog($items, $callPath);
