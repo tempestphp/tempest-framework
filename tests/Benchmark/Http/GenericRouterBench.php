@@ -19,6 +19,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Responses\Ok;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\GenericRouter;
+use Tempest\Router\Get;
 use Tempest\Router\HandleRouteExceptionMiddleware;
 use Tempest\Router\MatchRouteMiddleware;
 use Tempest\Router\RouteConfig;
@@ -111,22 +112,22 @@ final class GenericRouterBench
 
         foreach (range(1, 100) as $i) {
             $configurator->addRoute(DiscoveredRoute::fromRoute(
-                new \Tempest\Router\Get("/test/{$i}"),
+                new Get("/test/{$i}"),
                 [],
                 $handler,
             ));
             $configurator->addRoute(DiscoveredRoute::fromRoute(
-                new \Tempest\Router\Get("/test/{id}/{$i}"),
+                new Get("/test/{id}/{$i}"),
                 [],
                 $handlerWithParam,
             ));
             $configurator->addRoute(DiscoveredRoute::fromRoute(
-                new \Tempest\Router\Get("/test/{id}/{$i}/delete"),
+                new Get("/test/{id}/{$i}/delete"),
                 [],
                 $handlerWithParam,
             ));
             $configurator->addRoute(DiscoveredRoute::fromRoute(
-                new \Tempest\Router\Get("/test/{id}/{$i}/edit"),
+                new Get("/test/{id}/{$i}/edit"),
                 [],
                 $handlerWithParam,
             ));
