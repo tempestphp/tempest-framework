@@ -1,4 +1,9 @@
 {
-	"$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
-	"runner.bootstrap": "vendor/autoload.php"
+    "$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.path": "tests/Benchmark",
+    "runner.file_pattern": "*Bench.php",
+    "core.extensions": [
+        "Tests\\Tempest\\Benchmark\\Extension\\MarkdownExtension"
+    ]
 }
