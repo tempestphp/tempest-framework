@@ -1,0 +1,59 @@
+name: Benchmark
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: benchmark-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Performance Regression Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Benchmark base branch
+        run: |
+          git checkout ${{ github.event.pull_request.base.sha }}
+          composer install --no-interaction --prefer-dist --quiet
+          vendor/bin/phpbench run --tag=base --store --progress=none
+
+      - name: Benchmark PR branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.sha }}
+          composer install --no-interaction --prefer-dist --quiet
+          vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=markdown | tee benchmark-result.txt || true
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p benchmark-artifact
+          cp benchmark-result.txt benchmark-artifact/
+          echo "${{ github.event.pull_request.number }}" > benchmark-artifact/pr-number.txt
+          echo "${{ github.head_ref }}" > benchmark-artifact/head-ref.txt
+          echo "${{ github.base_ref }}" > benchmark-artifact/base-ref.txt
+          echo "${{ github.event.pull_request.base.sha }}" > benchmark-artifact/base-sha.txt
+          echo "${{ github.event.pull_request.head.sha }}" > benchmark-artifact/head-sha.txt
+
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: benchmark-result
+          path: benchmark-artifact/
+          retention-days: 1
