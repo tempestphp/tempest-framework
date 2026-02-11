@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Benchmark\Http\Routing\Construction;
 
 use PhpBench\Attributes\BeforeMethods;
+use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
@@ -20,6 +21,7 @@ final class RouteConfiguratorBench
     }
 
     #[BeforeMethods('setupRouteConfig')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchRouteConfigConstructionToConfig(): void
@@ -27,6 +29,7 @@ final class RouteConfiguratorBench
         $this->subject->toRouteConfig();
     }
 
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchRouteConfigConstructionRouteAdding(): void

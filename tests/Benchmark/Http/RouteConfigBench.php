@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Benchmark\Http;
 
+use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Router\RouteConfig;
@@ -19,6 +20,7 @@ final class RouteConfigBench
         $this->config = self::makeRouteConfig();
     }
 
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchSerialization(): void

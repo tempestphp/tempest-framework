@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Benchmark\Container;
 
 use PhpBench\Attributes\BeforeMethods;
+use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Container\GenericContainer;
@@ -26,6 +27,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchAutowireSimple(): void
@@ -34,6 +36,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchAutowireNested(): void
@@ -42,6 +45,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchSingletonResolution(): void
@@ -51,6 +55,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchSingletonAttribute(): void
@@ -59,6 +64,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchDefinitionResolution(): void
@@ -68,6 +74,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchInitializerResolution(): void
@@ -77,6 +84,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchDynamicInitializerResolution(): void
@@ -86,6 +94,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchClosureSingletonResolution(): void
@@ -95,6 +104,7 @@ final class ContainerBench
     }
 
     #[BeforeMethods('setUp')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchInvokeClosure(): void
