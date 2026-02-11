@@ -72,7 +72,7 @@
         "nyholm/psr7": "^1.8",
         "patrickbussmann/oauth2-apple": "^0.3",
         "phpat/phpat": "^0.11.0",
-        "phpbench/phpbench": "84.x-dev",
+        "phpbench/phpbench": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^12.5.8",
         "predis/predis": "^3.0.0",
