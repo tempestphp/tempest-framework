@@ -273,6 +273,7 @@
             "composer phpunit",
             "composer phpstan",
             "composer exceptions:build"
-        ]
+        ],
+        "bench": "vendor/bin/phpbench run --report=aggregate"
     }
 }
