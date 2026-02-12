@@ -19,7 +19,7 @@ foreach ($tempestPackages as $package) {
     $composerFile = json_decode(file_get_contents($composerPath), true);
 
     foreach ($composerFile['require'] ?? [] as $dep => $version) {
-        if (str_starts_with($dep, 'tempest/') && str_starts_with($version, 'dev-')) {
+        if (str_starts_with($dep, 'tempest/') && (str_starts_with($version, 'dev-') || str_ends_with($version, '-dev'))) {
             $devVersion = $version;
             break 2;
         }
