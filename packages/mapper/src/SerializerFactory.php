@@ -64,7 +64,7 @@ final class SerializerFactory
             $type = $property->getType();
             $serializeWith = $property->getAttribute(SerializeWith::class);
 
-            if ($serializeWith === null && $type->isClass()) {
+            if ($serializeWith === null && ($type->isClass() || $type->isInterface())) {
                 $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
             }
 

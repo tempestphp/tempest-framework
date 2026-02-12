@@ -14,6 +14,7 @@ use Tempest\Http\Response;
 use Tempest\Http\SensitiveField;
 use Tempest\Http\Session\FormSession;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Status;
 use Tempest\Intl\Translator;
 use Tempest\Reflection\ClassReflector;
@@ -104,6 +105,10 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             return false;
         }
 
+        if ($throwable instanceof ValidationFailed) {
+            return false;
+        }
+
         if (! $throwable instanceof HttpRequestFailed) {
             return true;
         }
@@ -128,6 +133,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         if ($this->container->has(Session::class)) {
             $this->container->get(FormSession::class)->setErrors($exception->failingRules);
             $this->container->get(FormSession::class)->setOriginalValues($this->filterSensitiveFields($this->request, $exception->targetClass));
+            $this->container->get(SessionManager::class)->save($this->container->get(FormSession::class)->session);
         }
 
         $errors = Arr\map($exception->failingRules, fn (array $failingRulesForField, string $field) => Arr\map(

@@ -72,6 +72,50 @@ function copy_file(string $source, string $destination, bool $overwrite = false)
 }
 
 /**
+ * Recursively opies a directory from `$source` to `$destination`.
+ */
+function copy_directory(string $source, string $destination, bool $overwrite = false): void
+{
+    if (! namespace\exists($source)) {
+        throw Exceptions\PathWasNotFound::forDirectory($source);
+    }
+
+    if (! namespace\is_directory($source)) {
+        throw new Exceptions\PathWasNotADirectory($source);
+    }
+
+    if (! namespace\is_readable($source)) {
+        throw Exceptions\PathWasNotReadable::forDirectory($source);
+    }
+
+    if (! $overwrite && namespace\is_directory($destination)) {
+        return;
+    }
+
+    namespace\create_directory($destination);
+
+    foreach (namespace\list_directory($source) as $node) {
+        namespace\copy(
+            source: $node,
+            destination: $destination . '/' . basename($node),
+            overwrite: $overwrite,
+        );
+    }
+}
+
+/**
+ * Copies a file or directory from `$source` to `$destination`.
+ */
+function copy(string $source, string $destination, bool $overwrite = false): void
+{
+    if (namespace\is_directory($source)) {
+        namespace\copy_directory($source, $destination, $overwrite);
+    } else {
+        namespace\copy_file($source, $destination, $overwrite);
+    }
+}
+
+/**
  * Writes the specified `$content` to the specified `$filename` after encoding it to JSON.
  */
 function write_json(string $filename, mixed $content, bool $pretty = true): void
@@ -212,6 +256,26 @@ function create_directory(string $directory, int $permissions = 0o777): void
             $errorMessage ?? 'internal error',
         ));
     }
+}
+
+/**
+ * Creates and returns a unique empty temporary directory.
+ *
+ * @return non-empty-string
+ */
+function create_temporary_directory(?string $prefix = null): string
+{
+    $temporaryDirectory = sys_get_temp_dir();
+    $uniqueDirectory = $temporaryDirectory . '/' . uniqid(prefix: $prefix ?? '');
+
+    if ($uniqueDirectory === false) {
+        throw new Exceptions\RuntimeException('Failed to create a temporary directory.');
+    }
+
+    namespace\ensure_directory_exists($uniqueDirectory);
+    namespace\ensure_directory_empty($uniqueDirectory);
+
+    return $uniqueDirectory;
 }
 
 /**

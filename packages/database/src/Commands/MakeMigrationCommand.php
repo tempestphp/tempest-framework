@@ -8,14 +8,15 @@ use InvalidArgumentException;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
+use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Enums\MigrationType;
 use Tempest\Database\Stubs\ObjectMigrationStub;
 use Tempest\Database\Stubs\UpMigrationStub;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationWasAborted;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
+use Tempest\Generation\Php\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Php\Exceptions\FileGenerationWasAborted;
 use Tempest\Support\Str;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\IsNotEmptyString;
@@ -25,6 +26,10 @@ use function Tempest\Support\str;
 final class MakeMigrationCommand
 {
     use PublishesFiles;
+
+    public function __construct(
+        private DatabaseConfig $databaseConfig,
+    ) {}
 
     #[ConsoleCommand(
         name: 'make:migration',
@@ -73,7 +78,7 @@ final class MakeMigrationCommand
         $suggestedPath = Str\replace(
             string: $this->getSuggestedPath('Dummy'),
             search: ['Dummy', '.php'],
-            replace: [date('Y-m-d') . '_' . $filename, '.sql'],
+            replace: [$this->databaseConfig->migrationNamingStrategy->generatePrefix() . '_' . $filename, '.sql'],
         );
 
         $targetPath = $this->promptTargetPath($suggestedPath, rules: [
@@ -120,7 +125,7 @@ final class MakeMigrationCommand
             targetPath: $targetPath,
             shouldOverride: $this->askForOverride($targetPath),
             replacements: [
-                'dummy-date' => date('Y-m-d'),
+                'dummy-date' => $this->databaseConfig->migrationNamingStrategy->generatePrefix(),
                 'dummy-table-name' => $tableName,
             ],
             manipulations: [

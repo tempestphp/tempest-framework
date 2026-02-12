@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -42,7 +43,63 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
             rmdir(self::DIRECTORY);
         }
 
+        putenv('ENVIRONMENT=testing');
+        putenv('VIEW_CACHE=');
+        putenv('INTERNAL_CACHES=');
+
         parent::tearDown();
+    }
+
+    #[Test]
+    public function enabled_by_default_in_production(): void
+    {
+        putenv('ENVIRONMENT=production');
+
+        $this->container->unregister(ViewCache::class);
+
+        $this->assertTrue($this->container->get(ViewCache::class)->enabled);
+    }
+
+    #[Test]
+    public function enabled_by_default_in_staging(): void
+    {
+        putenv('ENVIRONMENT=staging');
+
+        $this->container->unregister(ViewCache::class);
+
+        $this->assertTrue($this->container->get(ViewCache::class)->enabled);
+    }
+
+    #[Test]
+    public function disabled_by_default_locally(): void
+    {
+        putenv('ENVIRONMENT=local');
+
+        $this->container->unregister(ViewCache::class);
+
+        $this->assertFalse($this->container->get(ViewCache::class)->enabled);
+    }
+
+    #[Test]
+    public function overriden_by_internal_caches_in_production(): void
+    {
+        putenv('ENVIRONMENT=production');
+        putenv('INTERNAL_CACHES=false');
+
+        $this->container->unregister(ViewCache::class);
+
+        $this->assertFalse($this->container->get(ViewCache::class)->enabled);
+    }
+
+    #[Test]
+    public function overriden_by_view_cache_locally(): void
+    {
+        putenv('ENVIRONMENT=local');
+        putenv('VIEW_CACHE=true');
+
+        $this->container->unregister(ViewCache::class);
+
+        $this->assertTrue($this->container->get(ViewCache::class)->enabled);
     }
 
     public function test_view_cache(): void

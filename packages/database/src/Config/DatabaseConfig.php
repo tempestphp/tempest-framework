@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Config;
 
 use Tempest\Container\HasTag;
+use Tempest\Database\Migrations\MigrationNamingStrategy;
 use Tempest\Database\Tables\NamingStrategy;
 
 interface DatabaseConfig extends HasTag
@@ -20,6 +21,13 @@ interface DatabaseConfig extends HasTag
      * The naming strategy for database tables and columns.
      */
     public NamingStrategy $namingStrategy {
+        get;
+    }
+
+    /**
+     * The naming strategy for migration file prefixes.
+     */
+    public MigrationNamingStrategy $migrationNamingStrategy {
         get;
     }
 

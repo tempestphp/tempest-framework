@@ -17,7 +17,7 @@ final readonly class FormSession
     private const string ORIGINAL_VALUES_KEY = '#original_values';
 
     public function __construct(
-        private Session $session,
+        private(set) Session $session,
     ) {}
 
     /**

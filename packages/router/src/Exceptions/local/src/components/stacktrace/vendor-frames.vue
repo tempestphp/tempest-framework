@@ -30,7 +30,7 @@ const $props = defineProps<{
 					:key="`vendor_${frame.index}`"
 					class="flex flex-col gap-y-5 px-4 py-3 border-b border-b-default"
 				>
-					<symbol-call :frame :formatted="true" class="text-sm" />
+					<symbol-call :frame formatted class="text-sm" />
 					<div class="flex justify-between items-center">
 						<file-label
 							:relative-file="frame.relativeFile"

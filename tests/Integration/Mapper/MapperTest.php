@@ -18,6 +18,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithInterfaceTypedProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
@@ -387,5 +388,21 @@ final class MapperTest extends FrameworkIntegrationTestCase
             ],
             actual: $array,
         );
+    }
+
+    public function test_cast_with_and_serialize_with_from_interface(): void
+    {
+        $object = make(ObjectWithInterfaceTypedProperties::class)->from([
+            'castable' => 'test-value',
+            'serializable' => 'another-value',
+        ]);
+
+        $this->assertSame('casted:test-value', $object->castable->getValue());
+        $this->assertSame('casted:another-value', $object->serializable->getValue());
+
+        $array = map($object)->toArray();
+
+        $this->assertSame('serialized:casted:test-value', $array['castable']);
+        $this->assertSame('serialized:casted:another-value', $array['serializable']);
     }
 }

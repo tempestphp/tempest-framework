@@ -1,8 +1,16 @@
-/.github/                                            @brendt @innocenzi
+/.github/                                            @brendt @innocenzi @aidan-casey
+/.github/workflows/coding-conventions.yml            @aidan-casey
 /.github/workflows/create-gh-release.yml             @innocenzi
+/.github/workflows/deploy-docs.yml                   @innocenzi
+/.github/workflows/integration-tests.yml             @aidan-casey
+/.github/workflows/integration-tests-windows.yml     @aidan-casey @brendt
+/.github/workflows/isolated-tests.yml                @aidan-casey
 /.github/workflows/lint-pr-title.yml                 @innocenzi
 /.github/workflows/publish-javascript-packages.yml   @innocenzi
-/.github/workflows/deploy-docs.yml                   @innocenzi
+/.github/workflows/subsplit-packages.yml             @aidan-casey
+/.github/workflows/trigger-tempest-app-qa.yml        @brendt
+/.github/workflows/trigger-tempest-clean-qa.yml      @brendt
+/.github/workflows/validate-packages.yml             @aidan-casey
 /src/                                                @brendt
 /docs/                                               @brendt @innocenzi
 /packages/auth/                                      @innocenzi

@@ -282,3 +282,34 @@ Pull request titles and descriptions should be as explicit as possible to ease t
 Contributors are not required to respect conventional commits within pull requests, but doing so will ease the review process by removing some overhead for core contributors.
 
 All pull requests will be renamed to the conventional commit convention if necessary before being squash-merged to keep the commit history and changelog clean.
+
+## Release cycles
+
+Tempest current does not follow a fixed release cycle. In general, bug fixes and minor features can be released as soon as possible. For breaking changes, though, we aim to bundle as many as possible in a single major release. 
+
+### Milestones
+
+Even though bug fixes and minor features can be released whenever available, we do some level of long-term planning to ensure Tempest stays on track. There should always be two active milestones, and one for future versions.
+
+- The **current minor milestone** includes all issues that should be addressed as patch or minor versions within the current major version. Anything in this milestone should be considered "ready to work on" and can be done at any point in time before the next major release.
+- The **next major milestone** includes all issues that are planned for the next major release, many will be breaking changes. Oftentimes, we'll work on both current minor and next major milestones at the same time. 
+- The **next minor milestone** includes all issues that should be addressed as patch or minor versions after the next major release has been tagged.
+- All other issues that don't get assigned a milestone are considered to be "unplanned". They might at one point be added to a milestone, but there's no guarantee on timing.
+
+As an example:
+
+- The current Tempest version is `2.14`, that means that the current minor milestone is `2.x`
+- The next major release is planned for `3.0`, so the next major milestone is `3.0`
+- The next minor milestone includes features that are planned after 3.0 is released, and thus go in the `3.x` milestone
+
+For clarity, each milestone will get its corresponding name, with the target branch or tag at the end. For the previous example, the milestones are called:
+
+- `current minor (2.x)`
+- `next major (3.0)`
+- `next minor (3.x)`
+
+Finally, as we close in on tagging `next major`, features that would usually go in `current minor` can be targeted to `next major` instead, in order to avoid too many merge conflicts between the two milestones.
+
+### Milestone deadlines
+
+Even though we release on a non-fixed schedule, we do assign deadlines to the `next major` version. This gives all contributors a clear goal to work towards, and helps us stay on track. The dealine for `next major` also determines the end date of `current minor`

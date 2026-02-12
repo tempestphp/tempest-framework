@@ -8,8 +8,8 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
 
 #[SkipDiscovery]
 final class GeneratorCommandStub

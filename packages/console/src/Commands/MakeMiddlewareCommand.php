@@ -14,8 +14,8 @@ use Tempest\Console\Stubs\EventBusMiddlewareStub;
 use Tempest\Console\Stubs\HttpMiddlewareStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
 
 final class MakeMiddlewareCommand
 {

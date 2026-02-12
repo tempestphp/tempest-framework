@@ -36,7 +36,7 @@ final class ViewCache
 
     public function getCachedViewPath(string $path, Closure $compiledView): string
     {
-        $cacheKey = (string) crc32($path);
+        $cacheKey = hash('xxh64', $path);
 
         $cacheItem = $this->pool->getItem($cacheKey);
 
