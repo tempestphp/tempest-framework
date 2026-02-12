@@ -9,6 +9,7 @@ use Tempest\Core\Environment;
 use Tempest\Core\Kernel;
 use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Filesystem;
+use Tempest\Support\Path;
 use Tempest\Support\Str;
 
 use function Tempest\root_path;
@@ -95,6 +96,8 @@ final readonly class LoadConfig
         if ($input === null) {
             return;
         }
+
+        $input = Path\normalize($input);
 
         // Directories are scanned recursively
         if (is_dir($input)) {

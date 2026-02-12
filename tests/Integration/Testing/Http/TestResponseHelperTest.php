@@ -226,6 +226,17 @@ final class TestResponseHelperTest extends TestCase
         $helper->assertJson(['title' => 'Timeline Taxi', 'author.name' => 'John']);
     }
 
+    public function test_assert_json_subset(): void
+    {
+        $helper = new TestResponseHelper(
+            new GenericResponse(status: Status::OK, body: ['title' => 'Timeline Taxi', 'author' => ['name' => 'John', 'country' => 'NL']]),
+            new GenericRequest(Method::GET, '/'),
+        );
+
+        $helper->assertJsonSubset(['title' => 'Timeline Taxi', 'author' => ['country' => 'NL']]);
+        $helper->assertJsonSubset(['title' => 'Timeline Taxi', 'author.country' => 'NL']);
+    }
+
     public static function provide_assert_status_cases(): iterable
     {
         return [
