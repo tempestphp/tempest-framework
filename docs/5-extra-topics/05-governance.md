@@ -105,6 +105,10 @@ Core Contributors are also expected to be active, although their activity is onl
 
 When a Core Contributor has been inactive for 90 days, they may become inactive, per the BDFL's decision. A Core Contributor can be made active again per decision by the BDFL.
 
+### Changes to this document
+
+This document can be changed via PRs on GitHub, but it must always be approved by a 2/3 majority of the standing council. They must give their approval via a PR review. The BDFL can deny a change but not force a change to be made.
+
 ## Clarifications
 
 "**Tempest's core values**" have been mentioned throughout this document, so we want to list them here:
@@ -115,3 +119,4 @@ When a Core Contributor has been inactive for 90 days, they may become inactive,
 4. Tempest originated as a project that wanted to think outside the box, and we continue to encourage this mindset
 
 Furthermore, this document has mentioned "**a manner of benevolence**" when it comes to the BDFL and council members. With this phrase we mean that we'll put the welfare of the project and wellbeing of its community first, above our own ambitions, as well as the expectation to follow and enforce previously mentioned core values.
+
