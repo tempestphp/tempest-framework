@@ -81,7 +81,7 @@ In principle, the BDFL stays on the project forever. A new BDFL can be appointed
 - Community interactions (Discord, socials, etc.).
 - Issue and pull request activity.
 
-The BDFL is expected to have reasonable contributions in all areas, although "inactivity" only means being inactive on all fronts. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the standing council and they must take reasonable attempts to inform the inactive BDFL of this upcoming vote. The new BDFL will always be the current First Officer.
+The BDFL is expected to have reasonable contributions in all areas, although "inactivity" only means being inactive on all fronts. Council members must take reasonable attempts to inform the inactive BDFL of his inactive status. The new BDFL will always be the current First Officer.
 
 ### Appointing council members
 
