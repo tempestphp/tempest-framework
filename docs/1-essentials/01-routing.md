@@ -452,7 +452,7 @@ When users submit forms—like updating profile settings, or posting comments—
 On validation failure, Tempest either redirects back to the form (for web pages) or returns a 422 response (for stateless requests). Validation errors are available in two places:
 
 - As a JSON encoded string in the `{txt}X-Validation` header
-- Through the `b{Tempest\Http\Session\FormSession}` class
+- Through the {b`Tempest\Http\Session\FormSession`} class
 
 For web pages, Tempest also provides built-in view components to display errors when they occur.
 

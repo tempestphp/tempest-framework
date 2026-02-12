@@ -6,9 +6,9 @@
     "require": {
         "php": "^8.5",
         "symfony/process": "^7.3",
-        "tempest/container": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/datetime": "dev-main"
+        "tempest/container": "3.x-dev",
+        "tempest/support": "3.x-dev",
+        "tempest/datetime": "3.x-dev"
     },
     "autoload": {
         "psr-4": {
