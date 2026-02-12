@@ -14,7 +14,7 @@ use Tempest\View\View;
 use function Tempest\Database\query;
 use function Tempest\View\view;
 
-final readonly class AuthenticateUserController
+final readonly class AuthController
 {
     public function __construct(
         private Authenticator $authenticator,
