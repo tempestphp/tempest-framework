@@ -106,6 +106,39 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_isset_attribute_array_and_object_cases(): void
+    {
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\']">Hello</div>', foo: ['bar' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo">Hello</div>', foo: true)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\']">Hello</div>', foo: ['bar' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\'][\'baz\']">Hello</div>', foo: ['bar' => ['baz' => true]])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$obj->property">Hello</div>', obj: (object) ['property' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$obj->data[\'key\']">Hello</div>', obj: (object) ['data' => ['key' => true]])),
+        );
+    }
+
     public function test_isset_attribute_dual_cases(): void
     {
         $this->assertSame(
