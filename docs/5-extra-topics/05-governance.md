@@ -54,7 +54,7 @@ Core Contributors are Tempest community members who have shown wisdom, discretio
 - Feedback and collaboration on issues.
 - Review, approving, and merging of pull requests.
 
-Current Core Contributors: [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), and [Brent Roose](http://github.com/brendt).
+Current Core Contributors: [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), [Márk Magyar](https://github.com/xHeaven), and [Brent Roose](http://github.com/brendt).
 
 ### Moderators
 
@@ -114,4 +114,4 @@ When a Core Contributor has been inactive for 90 days, they may become inactive,
 3. Contributors are expected to follow [our contributing guidelines](../extra-topics/contributing)
 4. Tempest originated as a project that wanted to think outside the box, and we continue to encourage this mindset
 
-Furthermore, this document has mentioned "**a manner of benevolence**" when it comes to the BDFL and council members. With this phrase we mean that we'll put the welfare of the project and wellbeing of its community first, above our own ambitions; as well as the expectation to follow and enforce previously mentioned core values.
+Furthermore, this document has mentioned "**a manner of benevolence**" when it comes to the BDFL and council members. With this phrase we mean that we'll put the welfare of the project and wellbeing of its community first, above our own ambitions, as well as the expectation to follow and enforce previously mentioned core values.
