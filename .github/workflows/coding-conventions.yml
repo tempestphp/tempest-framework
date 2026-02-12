@@ -52,7 +52,7 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan --error-format=github
+        run: vendor/bin/phpstan
 
 #  rector:
 #    name: "Run static analysis: Rector"
