@@ -5,17 +5,17 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/container": "dev-main",
-        "tempest/discovery": "dev-main",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
+        "tempest/container": "3.x-dev",
+        "tempest/discovery": "3.x-dev",
+        "tempest/reflection": "3.x-dev",
+        "tempest/support": "3.x-dev",
         "vlucas/phpdotenv": "^5.6.1",
         "symfony/cache": "^7.3",
         "filp/whoops": "^2.15"
     },
     "require-dev": {
-        "tempest/validation": "dev-main",
-        "tempest/intl": "dev-main"
+        "tempest/validation": "3.x-dev",
+        "tempest/intl": "3.x-dev"
     },
     "autoload": {
         "psr-4": {
