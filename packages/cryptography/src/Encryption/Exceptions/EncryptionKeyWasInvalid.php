@@ -16,14 +16,17 @@ final class EncryptionKeyWasInvalid extends Exception implements EncryptionExcep
 
     public static function becauseItIsMissing(EncryptionAlgorithm $algorithm): self
     {
-        return new self('The encryption key is missing or empty. Ensure you have a `SIGNING_KEY` environment variable.', $algorithm);
+        return new self(
+            message: 'The encryption key is missing or empty. Generate a valid `SIGNING_KEY` with `php tempest key:generate`.',
+            algorithm: $algorithm,
+        );
     }
 
-    public static function becauseLengthMismatched(EncryptionAlgorithm $algorithm): self
+    public static function becauseLengthMismatched(EncryptionAlgorithm $algorithm, int $actualLength): self
     {
         return new self(
-            "The encryption key length does not match the expected length ({$algorithm->getKeyLength()}).",
-            $algorithm,
+            message: "The encryption key length ({$actualLength}) does not match the expected length ({$algorithm->getKeyLength()}). Generate a valid `SIGNING_KEY` with `php tempest key:generate`.",
+            algorithm: $algorithm,
         );
     }
 }

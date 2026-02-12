@@ -555,6 +555,54 @@ final class TestResponseHelper
     }
 
     /**
+     * Assert that the JSON response contains the given subset.
+     *
+     * The keys can also be specified using dot notation.
+     *
+     * ### Example
+     * ```
+     * // using dot notation
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJsonSubset([
+     *         'id' => 1,
+     *         'title' => 'Timeline Taxi',
+     *         'author.name' => 'Brent',
+     *     ]);
+     *
+     * // using nested arrays
+     * $this->http->get(uri([BookController::class, 'index']))
+     *     ->assertJsonSubset([
+     *         'id' => 1,
+     *         'title' => 'Timeline Taxi',
+     *         'author' => [
+     *             'name' => 'Brent',
+     *         ],
+     *     ]);
+     * ```
+     *
+     * @param array<string, mixed> $expected
+     */
+    public function assertJsonSubset(array $expected): self
+    {
+        $expected = arr($expected)->undot()->dot()->toArray();
+        $actual = arr($this->response->body)->dot()->toArray();
+
+        foreach ($expected as $key => $value) {
+            Assert::assertArrayHasKey(
+                key: $key,
+                array: $actual,
+            );
+
+            Assert::assertEquals(
+                expected: $value,
+                actual: $actual[$key],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Asserts the response contains the given keys.
      *
      * The keys can also be specified using dot notation.

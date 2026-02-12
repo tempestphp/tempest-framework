@@ -2,12 +2,12 @@ name: "Sub-split packages"
 
 on:
   push:
-    branches: [main]
+    branches:
+      - "[0-9]+.x"
+      - "v[0-9]+.[0-9]+-alpha.[0-9]+"
+      - "v[0-9]+.[0-9]+-beta.[0-9]+"
     tags: ["v*"]
   workflow_dispatch:
-
-env:
-  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
 jobs:
   get_packages:
@@ -24,10 +24,11 @@ jobs:
 
       - name: Get packages
         id: get_json
-        run: echo "::set-output name=json::$(bin/get-packages)"
+        run: echo "json=$(bin/get-packages)" >> $GITHUB_OUTPUT
 
       - name: Output packages
         run: echo "${{ steps.get_json.outputs.json }}"
+
     outputs:
       matrix: ${{ steps.get_json.outputs.json }}
 
@@ -41,34 +42,11 @@ jobs:
         package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
-      # no tag
-      - if: "!startsWith(github.ref, 'refs/tags/')"
-        uses: "symplify/monorepo-split-github-action@v2.3.0"
-        with:
-          # ↓ split "packages/console" directory
-          package_directory: "${{ matrix.package.directory }}"
 
-          # ↓ into https://github.com/tempestphp/tempest-console repository
-          repository_organization: "${{ matrix.package.organization }}"
-          repository_name: "${{ matrix.package.repository }}"
+      - name: Set up git-filter-repo
+        run: pip install git-filter-repo
 
-          # ↓ the user signed under the split commit
-          user_name: "aidan-casey"
-          user_email: "aidan@caseyhouse.net"
-
-      # with tag
-      - if: "startsWith(github.ref, 'refs/tags/')"
-        uses: "symplify/monorepo-split-github-action@v2.3.0"
-        with:
-          tag: ${GITHUB_REF#refs/tags/}
-
-          # ↓ split "packages/console" directory
-          package_directory: "${{ matrix.package.directory }}"
-
-          # ↓ into https://github.com/tempestphp/tempest-console repository
-          repository_organization: "${{ matrix.package.organization }}"
-          repository_name: "${{ matrix.package.repository }}"
-
-          # ↓ the user signed under the split commit
-          user_name: "aidan-casey"
-          user_email: "aidan@caseyhouse.net"
+      - name: Split Package
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: ./bin/split "${{ matrix.package.name }}"

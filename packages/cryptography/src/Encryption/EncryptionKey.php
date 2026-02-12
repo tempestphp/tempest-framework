@@ -16,7 +16,7 @@ final readonly class EncryptionKey implements Stringable
         }
 
         if (strlen($value) !== $algorithm->getKeyLength()) {
-            throw EncryptionKeyWasInvalid::becauseLengthMismatched($algorithm);
+            throw EncryptionKeyWasInvalid::becauseLengthMismatched($algorithm, strlen($value));
         }
     }
 

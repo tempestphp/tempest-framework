@@ -3,10 +3,10 @@
     "description": "A flexible authentication package for Tempest, providing authentication and authorization.",
     "require": {
         "php": "^8.5",
-        "tempest/core": "dev-main",
-        "tempest/router": "dev-main",
-        "tempest/database": "dev-main",
-        "tempest/mapper": "dev-main",
+        "tempest/core": "3.x-dev",
+        "tempest/router": "3.x-dev",
+        "tempest/database": "3.x-dev",
+        "tempest/mapper": "3.x-dev",
         "league/oauth2-client": "^2.8"
     },
     "require-dev": {
@@ -22,7 +22,7 @@
         "adam-paterson/oauth2-slack": "^1.1",
         "wohali/oauth2-discord-new": "^1.2",
         "smolblog/oauth2-twitter": "^1.0",
-        "depotwarehouse/oauth2-twitch": "^1.3"
+        "vertisan/oauth2-twitch-helix": "^2.0"
     },
     "autoload": {
         "psr-4": {

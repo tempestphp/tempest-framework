@@ -8,24 +8,23 @@
 	},
 	"devDependencies": {
 		"@nuxt/ui": "^4.3.0",
-		"@shikijs/langs-precompiled": "^3.20.0",
+		"@shikijs/langs-precompiled": "^3.21.0",
 		"@tailwindcss/vite": "^4.1.18",
 		"@vitejs/plugin-vue": "^6.0.3",
 		"@vue/tsconfig": "^0.8.1",
 		"@vueuse/components": "^14.1.0",
 		"@vueuse/core": "^14.1.0",
 		"arktype": "^2.1.29",
-		"motion-v": "^1.7.4",
-		"shiki": "^3.20.0",
-		"sql-formatter": "^15.6.12",
+		"shiki": "^3.21.0",
+		"sql-formatter": "^15.7.0",
 		"tailwindcss": "^4.1.18",
 		"temporal-polyfill": "^0.3.0",
 		"typescript": "~5.9.3",
 		"vite": "8.0.0-beta.2",
 		"vite-plugin-singlefile": "^2.3.0",
-		"vue": "^3.5.26",
+		"vue": "^3.5.27",
 		"vue-router": "^4.6.4",
-		"vue-tsc": "^3.2.1"
+		"vue-tsc": "^3.2.2"
 	},
 	"trustedDependencies": [
 		"@tailwindcss/oxide"

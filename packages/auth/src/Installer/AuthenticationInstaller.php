@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Auth\Installer;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Migrations\MigrationManager;
 
-use function Tempest\root_path;
 use function Tempest\src_path;
-use function Tempest\Support\Namespace\to_fqcn;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final class AuthenticationInstaller implements Installer
     {
         use PublishesFiles;
@@ -36,9 +35,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $this->publishImports();
 
             if ($migration && $this->shouldMigrate()) {
-                $this->migrationManager->executeUp(
-                    migration: $this->container->get(to_fqcn($migration, root: root_path())),
-                );
+                $this->migrationManager->up();
             }
 
             if ($this->shouldInstallOAuth()) {

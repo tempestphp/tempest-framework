@@ -12,6 +12,7 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\AppConfig;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Priority;
 
@@ -23,6 +24,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 {
     public function __construct(
         private Console $console,
+        private AppConfig $appConfig,
         private ConsoleConfig $consoleConfig,
         private DiscoveryCache $discoveryCache,
     ) {}
@@ -41,7 +43,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     private function renderOverview(bool $showHidden = false): void
     {
         $this->console->header(
-            header: $this->consoleConfig->name,
+            header: $this->consoleConfig->name ?? $this->appConfig->name ?? 'Tempest',
             subheader: 'This is an overview of available commands.' . PHP_EOL . 'Type <em><command> --help</em> to get more help about a specific command.',
         );
 

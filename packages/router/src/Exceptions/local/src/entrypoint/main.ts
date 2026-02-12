@@ -16,8 +16,7 @@ if (!element) {
 	throw new Error('Hydration element not found')
 }
 
-const hydration = JSON.parse(element.textContent!)
-initializeExceptionStore(hydration)
+initializeExceptionStore(JSON.parse(element.textContent!))
 
 app.use(router)
 app.use(ui)

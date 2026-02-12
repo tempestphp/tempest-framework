@@ -20,6 +20,7 @@ use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Highlight\Highlighter;
+use Tempest\Validation\Validator;
 
 final class ConsoleTester
 {
@@ -174,7 +175,7 @@ final class ConsoleTester
 
     public function useInteractiveTerminal(): self
     {
-        $this->componentRenderer = new InteractiveComponentRenderer();
+        $this->componentRenderer = new InteractiveComponentRenderer($this->container->get(Validator::class));
 
         return $this;
     }
