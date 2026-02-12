@@ -346,7 +346,7 @@ return new SQLiteConfig(
 
 When generating a migration file via `make:migration`, Tempest prefixes the file name with a sortable identifier so that migrations run in the correct order. By default, a date-based prefix is used (e.g. `2025-06-15_create_books_table`).
 
-The prefix format is determined by the `migrationPrefixStrategy` property of your database configuration, which accepts any {b`Tempest\Database\Migrations\MigrationPrefixStrategy`} instance.
+The prefix format is determined by the `migrationNamingStrategy` property of your database configuration, which accepts any {b`Tempest\Database\Migrations\MigrationNamingStrategy`} instance.
 
 Tempest ships with two built-in strategies:
 
@@ -358,9 +358,9 @@ You can also implement your own strategy:
 :::code-group
 
 ```php app/Database/IncrementingPrefixStrategy.php
-use Tempest\Database\Migrations\MigrationPrefixStrategy;
+use Tempest\Database\Migrations\MigrationNamingStrategy;
 
-final class IncrementingPrefixStrategy implements MigrationPrefixStrategy
+final class IncrementingPrefixStrategy implements MigrationNamingStrategy
 {
     public function generatePrefix(): string
     {
@@ -374,7 +374,7 @@ use Tempest\Database\Config\SQLiteConfig;
 
 return new SQLiteConfig(
     path: __DIR__ . '/../database.sqlite',
-    migrationPrefixStrategy: new IncrementingPrefixStrategy(),
+    migrationNaming: new IncrementingPrefixStrategy(),
 );
 ```
 
