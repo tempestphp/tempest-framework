@@ -183,6 +183,24 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals(1, $book->author->id->value);
     }
 
+    public function test_create_with_hasone_relation(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateIsbnTable::class,
+        );
+
+        $book = Book::create(
+            title: 'Book Title',
+            isbn: Isbn::new(value: '123-456-789'),
+        );
+
+        $book = Book::findById($book->id)->load('isbn');
+
+        $this->assertSame('123-456-789', $book->isbn->value);
+    }
+
     public function test_missing_relation_exception(): void
     {
         $this->database->migrate(
