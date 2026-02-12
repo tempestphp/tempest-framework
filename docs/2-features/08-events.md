@@ -161,7 +161,7 @@ final readonly class EventLoggerMiddleware implements EventBusMiddleware
 
 ## Stopping event propagation
 
-In rare cases you might want an event only to be handled by a single handler. You can use the `b{Tempest\EventBus\StopsPropagation}` attribute on both events and event handlers to achieve this:
+In rare cases you might want an event only to be handled by a single handler. You can use the {b`Tempest\EventBus\StopsPropagation`} attribute on both events and event handlers to achieve this:
 
 ```php
 use Tempest\EventBus\StopsPropagation;

@@ -40,8 +40,10 @@ final readonly class Debug
      */
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
+        static $isDispatchingItemsDebuggedEvent = false;
+
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $callPath = $trace[1]['file'] . ':' . $trace[1]['line'];
+        $callPath = ($trace[1]['file'] ?? 'unknown') . ':' . ($trace[1]['line'] ?? 0);
 
         if ($writeToLog) {
             $this->writeToLog($items, $callPath);
@@ -51,7 +53,17 @@ final readonly class Debug
             $this->writeToOut($items, $callPath);
         }
 
-        $this->eventBus?->dispatch(new ItemsDebugged($items));
+        if (! $this->eventBus || $isDispatchingItemsDebuggedEvent) {
+            return;
+        }
+
+        $isDispatchingItemsDebuggedEvent = true;
+
+        try {
+            $this->eventBus->dispatch(new ItemsDebugged($items));
+        } finally {
+            $isDispatchingItemsDebuggedEvent = false;
+        }
     }
 
     private function writeToLog(array $items, string $callPath): void
