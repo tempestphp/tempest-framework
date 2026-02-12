@@ -11,6 +11,8 @@
 /.github/workflows/trigger-tempest-app-qa.yml        @brendt
 /.github/workflows/trigger-tempest-clean-qa.yml      @brendt
 /.github/workflows/validate-packages.yml             @aidan-casey
+/.github/workflows/benchmark.yml                     @xHeaven
+/.github/workflows/benchmark-comment.yml             @xHeaven
 /src/                                                @brendt
 /docs/                                               @brendt @innocenzi
 /packages/auth/                                      @innocenzi
