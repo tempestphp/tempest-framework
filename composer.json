@@ -74,7 +74,7 @@
         "patrickbussmann/oauth2-apple": "^0.3",
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
-        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan": "2.1.38",
         "phpunit/phpunit": "^12.5.8",
         "predis/predis": "^3.0.0",
         "riskio/oauth2-auth0": "^2.4",
