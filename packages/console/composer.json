@@ -5,14 +5,15 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/generation": "dev-main",
+        "symfony/filesystem": "^7.3",
+        "tempest/core": "3.x-dev",
+        "tempest/container": "3.x-dev",
+        "tempest/generation": "3.x-dev",
         "tempest/highlight": "^2.11.4",
-        "tempest/log": "dev-main",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/validation": "dev-main",
+        "tempest/log": "3.x-dev",
+        "tempest/reflection": "3.x-dev",
+        "tempest/support": "3.x-dev",
+        "tempest/validation": "3.x-dev",
         "ext-readline": "*"
     },
     "suggest": {

@@ -5,13 +5,13 @@
         "php": "^8.5",
         "psr/cache": "^3.0",
         "symfony/cache": "^7.3",
-        "tempest/core": "dev-main",
-        "tempest/clock": "dev-main",
-        "tempest/kv-store": "dev-main",
-        "tempest/container": "dev-main"
+        "tempest/core": "3.x-dev",
+        "tempest/clock": "3.x-dev",
+        "tempest/kv-store": "3.x-dev",
+        "tempest/container": "3.x-dev"
     },
     "require-dev": {
-        "tempest/clock": "dev-main"
+        "tempest/clock": "3.x-dev"
     },
     "autoload": {
         "psr-4": {
