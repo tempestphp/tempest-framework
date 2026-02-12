@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.0](https://github.com/tempestphp/tempest-framework/compare/v2.13.0..3.0.0)  —  2026-02-12
+## [3.0.1](https://github.com/tempestphp/tempest-framework/compare/v3.0.0..3.0.1)  —  2026-02-12
+
+### 🐛 Bug fixes
+
+- fix post-release dependency issues (#1960) ([d62c48d](https://github.com/tempestphp/tempest-framework/commit/d62c48db331a9647239695ae5a3b5da11422e676))
+
+
+## [3.0.0](https://github.com/tempestphp/tempest-framework/compare/v2.13.0..v3.0.0)  —  2026-02-12
 
 ### 🚨 Breaking changes
 
