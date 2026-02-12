@@ -289,11 +289,12 @@ final class InsertQueryBuilder implements BuildsQuery
         }
 
         // TODO: we might need to bake this into the naming strategy class
-        $foreignKeyColumn = Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+        $foreignKeyProperty = Intl\singularize_last_word($ownerModel->getTableName());
+        $foreignKeyColumn = $foreignKeyProperty . '_' . $ownerModel->getPrimaryKey();
 
         $preparedData = is_array($relation)
             ? [...$relation, ...[$foreignKeyColumn => $parentId->value]]
-            : [...$this->convertObjectToArray($relation), ...[$foreignKeyColumn => $parentId->value]];
+            : [...$this->convertObjectToArray($relation, [$foreignKeyProperty]), ...[$foreignKeyColumn => $parentId->value]];
 
         $relatedModelQuery = new InsertQueryBuilder(
             model: $hasOne->property->getType()->asClass(),

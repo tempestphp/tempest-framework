@@ -187,6 +187,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
             CreateBookTable::class,
             CreateIsbnTable::class,
         );
