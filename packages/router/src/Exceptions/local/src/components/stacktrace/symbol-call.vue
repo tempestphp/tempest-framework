@@ -87,7 +87,7 @@ const parts = computed<HighlightedPart[]>(() => {
 </script>
 
 <template>
-	<span class="font-mono">
+	<span class="font-mono truncate text-nowrap">
 		<template v-for="(part, index) in parts" :key="index">
 			<!-- Argument with no serialized preview -->
 			<span v-if="part.argument" class="whitespace-pre">
