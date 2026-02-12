@@ -148,7 +148,7 @@ final class MakeMigrationCommand
 
     private function generateRawFile(StubFile $stub, string $migrationName, string $tableName, bool $skipPrompts = false): string
     {
-        $prefix = $this->databaseConfig->migrationPrefixStrategy->generatePrefix();
+        $prefix = $this->databaseConfig->migrationNamingStrategy->generatePrefix();
         $suggestedPath = str($this->getSuggestedPath('Dummy'))
             ->replace(['Dummy', '.php'], ["{$prefix}_{$migrationName}", '.sql'])
             ->toString();
@@ -187,7 +187,7 @@ final class MakeMigrationCommand
             targetPath: $targetPath,
             shouldOverride: $skipPrompts || $this->askForOverride($targetPath),
             replacements: [
-                'dummy-date' => $this->databaseConfig->migrationPrefixStrategy->generatePrefix(),
+                'dummy-date' => $this->databaseConfig->migrationNamingStrategy->generatePrefix(),
                 'dummy-migration-name' => $migrationName,
                 'dummy-table-name' => $tableName,
             ],

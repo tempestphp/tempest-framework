@@ -7,7 +7,7 @@ namespace Tempest\Database\Config;
 use PDO;
 use SensitiveParameter;
 use Tempest\Database\Migrations\DatePrefixStrategy;
-use Tempest\Database\Migrations\MigrationPrefixStrategy;
+use Tempest\Database\Migrations\MigrationNamingStrategy;
 use Tempest\Database\Tables\NamingStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
 use UnitEnum;
@@ -33,7 +33,7 @@ final class PostgresConfig implements DatabaseConfig
         get => $this->persistent;
     }
 
-    public MigrationPrefixStrategy $migrationPrefixStrategy {
+    public MigrationNamingStrategy $migrationNamingStrategy {
         get => $this->migrationNaming;
     }
 
@@ -57,7 +57,7 @@ final class PostgresConfig implements DatabaseConfig
      * @param string $database The database name to connect to.
      * @param bool $persistent Whether to use persistent connections. Persistent connections are not closed at the end of the script and are cached for reuse when another script requests a connection using the same credentials.
      * @param NamingStrategy $namingStrategy The naming strategy for database tables and columns.
-     * @param MigrationPrefixStrategy $migrationNaming The naming strategy for migration file prefixes.
+     * @param MigrationNamingStrategy $migrationNaming The naming strategy for migration file prefixes.
      * @param string|UnitEnum|null $tag An optional tag to identify this database configuration.
      */
     public function __construct(
@@ -73,7 +73,7 @@ final class PostgresConfig implements DatabaseConfig
         public string $database = 'app',
         public bool $persistent = false,
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
-        public MigrationPrefixStrategy $migrationNaming = new DatePrefixStrategy(),
+        public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
         public null|string|UnitEnum $tag = null,
     ) {}
 }

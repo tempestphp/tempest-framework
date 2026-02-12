@@ -7,7 +7,7 @@ namespace Tempest\Database\Migrations;
 /**
  * Generates a date-based prefix for migration names.
  */
-final class DatePrefixStrategy implements MigrationPrefixStrategy
+final class DatePrefixStrategy implements MigrationNamingStrategy
 {
     public function __construct(
         private bool $useTime = false,

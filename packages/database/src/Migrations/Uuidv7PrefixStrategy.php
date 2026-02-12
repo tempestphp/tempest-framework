@@ -9,7 +9,7 @@ use Tempest\Support\Random;
 /**
  * Generates a UUIDv7 prefix for migration names.
  */
-final class Uuidv7PrefixStrategy implements MigrationPrefixStrategy
+final class Uuidv7PrefixStrategy implements MigrationNamingStrategy
 {
     public function generatePrefix(): string
     {
