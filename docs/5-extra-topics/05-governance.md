@@ -31,7 +31,7 @@ Current BDFL: [Brent Roose](http://github.com/brendt)
 
 Council Members are appointed delegates who are responsible for helping in governance decisions and ensuring fair decisions are made regarding project governance rules and the BDFL role. The Council Members' responsibilities include:
 
-- Suggesting new Team Members, Core Contributors, or Moderators.
+- Suggesting other Council Members, Core Contributors, or Moderators.
 - Suggesting and approving new Council Members.
 - Ratifying governance laws.
 - Appointing a new BDFL. 
