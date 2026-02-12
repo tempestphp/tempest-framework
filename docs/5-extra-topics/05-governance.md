@@ -13,7 +13,7 @@ Tempest, being an open-source project, recognizes the need for a clear governanc
 
 This document defines the governance process for the Tempest project and community.
 
-## Roles & Responsibilities
+## Roles & responsibilities
 
 ### Benevolent Dictator for Life
 
@@ -22,39 +22,38 @@ The Benevolent Dictator for Life (from here on, BDFL) is ultimately responsible 
 - Setting the project scope.
 - Setting the project timeline.
 - Approving releases.
-- Approving new Team Members, Core Contributors, or Moderators.
-- Suggesting changes in governance to the Council Members.
+- Approving new council members, core contributors, or moderators.
+- Suggesting changes in governance to the council members.
 
-Current BDFL: [Brent Roose](http://github.com/brendt)
+The current BDFL is [Brent Roose](http://github.com/brendt).
 
-### Council Members
+### Council members
 
-Council Members are appointed delegates who are responsible for helping in governance decisions and ensuring fair decisions are made regarding project governance rules and the BDFL role. The Council Members' responsibilities include:
+Council members are appointed delegates who are responsible for helping in governance decisions and ensuring fair decisions are made regarding project governance rules and the BDFL role. The council members' responsibilities include:
 
-- Suggesting other Council Members, Core Contributors, or Moderators.
-- Suggesting and approving new Council Members.
+- Suggesting new council members, core contributors, or moderators.
 - Ratifying governance laws.
-- Appointing a new BDFL. 
-- Three standing Council Members must always exist (including the BDFL). If the number of Council Members drops below this minimum count, the BDFL is responsible for appointing new members.
+- Appointing a new BDFL.
+- Three standing council members must always exist, including the BDFL. If the number of council members drops below this minimum count, the BDFL is responsible for appointing new members.
 
-Current Council Members: [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), and [Brent Roose](http://github.com/brendt).
+The current council members are [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), and [Brent Roose](http://github.com/brendt).
 
-### First Officer
+### First officer
 
-The First Officer is a Council Member, appointed by the BDFL, as successor in the case of their prolonged or permanent absence.
+The first officer is a council member, appointed by the BDFL, as successor in the case of their prolonged or permanent absence.
 
-Current First Officer: [Enzo Innocenzi](https://github.com/innocenzi)
+The current first officer is [Enzo Innocenzi](https://github.com/innocenzi).
 
-### Core Contributors
+### Core contributors
 
-Core Contributors are Tempest community members who have shown wisdom, discretion, and provide consistent and prolonged contributions to the project. Core Contributors are appointed by the BDFL and must be active members of the project. Core Contributors responsibilities include:
+Core contributors are Tempest community members who have shown wisdom, discretion, and provide consistent and prolonged contributions to the project. Core contributors are appointed by the BDFL and must be active members of the project. Core contributors' responsibilities include:
 
-- Promoting Tempest Core Values.
+- Promoting Tempest's core values.
 - Collective care for the Tempest project.
 - Feedback and collaboration on issues.
 - Review, approving, and merging of pull requests.
 
-Current Core Contributors: [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), [Márk Magyar](https://github.com/xHeaven), and [Brent Roose](http://github.com/brendt).
+The current core contributors are [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), [Márk Magyar](https://github.com/xHeaven), and [Brent Roose](http://github.com/brendt).
 
 ### Moderators
 
@@ -64,7 +63,7 @@ Moderators hold a special role amongst the Tempest community, ensuring its tone 
 - Collective care for the Tempest community through editing and removal of inappropriate messages.
 - Collective care for the Tempest community through removal of spam, promotions, and banning of such members.
 
-Current Moderators: [iamDadmin](https://github.com/iamdadmin), [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), and [Brent Roose](http://github.com/brendt).
+The current moderators are [iamDadmin](https://github.com/iamdadmin), [Aidan Casey](https://github.com/aidan-casey), [Enzo Innocenzi](https://github.com/innocenzi), and [Brent Roose](http://github.com/brendt).
 
 ## Governance
 
@@ -74,49 +73,48 @@ In principle, the BDFL stays on the project forever. A new BDFL can be appointed
 
 - When the BDFL decides to step down or retire.
 - When the BDFL fails to perform their duties or ceases to perform their duties in a manner of benevolence.
-- When the BDFL has been inactive for a prolonged period of 90 days, the BDFL will be considered inactive and replaced by the current First Officer. After an additional 90 days of inactivity, the inactive BDFL will be declared retired and replaced by the acting BDFL. At this point the new BDFL will assign a new First Officer and ensure a minimum of three Council Members.
+- When the BDFL has been inactive for a prolonged period of 90 days, the BDFL will be considered inactive and replaced by the current First Officer. After an additional 90 days of inactivity, the inactive BDFL will be declared retired and replaced by the acting BDFL. At this point the new BDFL will assign a new First Officer and ensure a minimum of three council members.
 
 "Activity" is measured by:
 
 - Code contributions.
 - Community interactions (Discord, socials, etc.).
-- Issue and PR activity.
+- Issue and pull request activity.
 
-The BDFL is expected to have reasonable contributions in all areas, although "inactivity" only means being inactive on all fronts. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the Standing Council and they must take reasonable attempts to inform the inactive BDFL of this upcoming vote. The new BDFL will always be the current First Officer.
+The BDFL is expected to have reasonable contributions in all areas, although "inactivity" only means being inactive on all fronts. The decision to mark the current BDFL as "inactive" must be approved by a 2/3 majority vote of the standing council and they must take reasonable attempts to inform the inactive BDFL of this upcoming vote. The new BDFL will always be the current First Officer.
 
-### Appointing Council Members
+### Appointing council members
 
-New Council Members may be put forward by an existing Council Member or the BDFL. Like the BDFL, Council Members must demonstrate benevolence. New Council Members require a 2/3 majority vote by the standing Council to be accepted. If the number of Council Members drops below the minimum threshold of three members (the BDFL included), the BDFL may appoint new members at their discretion.
+New council members may be put forward by an existing council member or the BDFL. Like the BDFL, council members must demonstrate benevolence. New council members require a 2/3 majority vote by the standing council to be accepted. If the number of council members drops below the minimum threshold of three members (the BDFL included), the BDFL may appoint new members at their discretion.
 
-Council Members are bound to the same activity standards as the BDFL. They will become inactive after 90 days of inactivity and become retired after another 90 days of inactivity.
+Council members are bound to the same activity standards as the BDFL. They will become inactive after 90 days of inactivity and become retired after another 90 days of inactivity.
 
-### Removal of a Council Member
+### Removal of a council member
 
-Council Members can be removed by a 2/3 majority vote by the standing Council.
+Council members can be removed by a 2/3 majority vote by the standing council.
 
-### Appointment of a Core Contributor
+### Appointment of a core contributor
 
-New Core Contributors may be put forward by an existing Core Contributor, Council Member, or the BDFL. Core Contributors are approved by the BDFL. 
+New core contributors may be put forward by an existing core contributor, council member, or the BDFL. core contributors are approved by the BDFL.
 
-Core Contributors are also expected to be active, although their activity is only measured by:
+Core contributors are also expected to be active, although their activity is only measured by:
 
 - Code contributions.
 - Issue and PR activity.
 
-When a Core Contributor has been inactive for 90 days, they may become inactive, per the BDFL's decision. A Core Contributor can be made active again per decision by the BDFL.
+When a core contributor has been inactive for 90 days, they may become inactive, per the BDFL's decision. A core contributor can be made active again per decision by the BDFL.
 
 ### Changes to this document
 
-This document can be changed via PRs on GitHub, but it must always be approved by a 2/3 majority of the standing council. They must give their approval via a PR review. The BDFL can deny a change but not force a change to be made.
+This document can be changed via pull requests on GitHub, but it must always be approved by a 2/3 majority of the standing council. They must give their approval via a pull request review. The BDFL can deny a change but not force a change to be made.
 
 ## Clarifications
 
-"**Tempest's core values**" have been mentioned throughout this document, so we want to list them here:
+"Tempest's core values" have been mentioned throughout this document, so we want to list them here:
 
 1. We always act in a manner of respect towards each other
 2. Everyone is welcome to contribute, regardless of their background or experience
 3. Contributors are expected to follow [our contributing guidelines](../extra-topics/contributing)
 4. Tempest originated as a project that wanted to think outside the box, and we continue to encourage this mindset
 
-Furthermore, this document has mentioned "**a manner of benevolence**" when it comes to the BDFL and council members. With this phrase we mean that we'll put the welfare of the project and wellbeing of its community first, above our own ambitions, as well as the expectation to follow and enforce previously mentioned core values.
-
+Furthermore, this document has mentioned **a manner of benevolence** when it comes to the BDFL and council members. With this, we mean that we'll put the welfare of the project and wellbeing of its community first, above our own ambitions, as well as the expectation to follow and enforce previously mentioned core values.
