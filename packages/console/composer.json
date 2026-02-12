@@ -5,6 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
+        "symfony/filesystem": "^7.3",
         "tempest/core": "3.x-dev",
         "tempest/container": "3.x-dev",
         "tempest/generation": "3.x-dev",
