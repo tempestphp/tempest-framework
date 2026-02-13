@@ -1,3 +1,5 @@
 console.log
 debug.log
 tempest.log
+completion-helper/target/
+tempest-complete_*
