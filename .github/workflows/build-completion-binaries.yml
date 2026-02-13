@@ -1,0 +1,111 @@
+name: Build Completion Helper Binaries
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/console/completion-helper/**"
+      - ".github/workflows/build-completion-binaries.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-darwin:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26-large
+            target: x86_64-apple-darwin
+            bundle: tempest-complete_darwin_x86_64
+          - runner: macos-26
+            target: aarch64-apple-darwin
+            bundle: tempest-complete_darwin_arm64
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build completion helper binary
+        working-directory: packages/console/completion-helper
+        run: ./build-binaries "${{ matrix.target }}"
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v6
+        with:
+          name: completion-helper-${{ matrix.bundle }}
+          path: packages/console/bin/${{ matrix.bundle }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Install cargo-zigbuild
+        run: cargo install cargo-zigbuild --locked
+
+      - name: Build completion helper binaries
+        working-directory: packages/console/completion-helper
+        env:
+          TEMPEST_COMPLETION_BUILD_TOOL: zigbuild
+        run: |
+          ./build-binaries \
+            "x86_64-unknown-linux-musl" \
+            "aarch64-unknown-linux-musl"
+
+      - name: Upload Linux x86_64 binary
+        uses: actions/upload-artifact@v6
+        with:
+          name: completion-helper-tempest-complete_linux_x86_64
+          path: packages/console/bin/tempest-complete_linux_x86_64
+
+      - name: Upload Linux arm64 binary
+        uses: actions/upload-artifact@v6
+        with:
+          name: completion-helper-tempest-complete_linux_arm64
+          path: packages/console/bin/tempest-complete_linux_arm64
+
+  bundle:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - build-darwin
+      - build-linux
+
+    steps:
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: completion-helper-*
+          merge-multiple: true
+          path: completion-helper-bin
+
+      - name: Upload combined binaries artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: completion-helper-binaries
+          path: completion-helper-bin/
+
+      - name: Upload binaries to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" completion-helper-bin/* --clobber
