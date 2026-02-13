@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Symfony\Component\Filesystem\Path;
+use Tempest\Console\Actions\RenderCompletionScript;
 use Tempest\Console\Actions\ResolveShell;
+use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -20,6 +22,7 @@ final readonly class CompletionShowCommand
     public function __construct(
         private Console $console,
         private ResolveShell $resolveShell,
+        private RenderCompletionScript $renderCompletionScript,
     ) {}
 
     #[ConsoleCommand(
@@ -33,6 +36,12 @@ final readonly class CompletionShowCommand
         )]
         ?Shell $shell = null,
     ): ExitCode {
+        if (! CompletionRuntime::isSupportedPlatform()) {
+            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+
+            return ExitCode::ERROR;
+        }
+
         $shell ??= ($this->resolveShell)('Which shell completion script do you want to see?');
 
         if ($shell === null) {
@@ -49,7 +58,9 @@ final readonly class CompletionShowCommand
             return ExitCode::ERROR;
         }
 
-        $this->console->writeRaw(Filesystem\read_file($sourcePath));
+        $this->console->writeRaw(
+            ($this->renderCompletionScript)(Filesystem\read_file($sourcePath)),
+        );
 
         return ExitCode::SUCCESS;
     }

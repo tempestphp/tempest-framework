@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Enums\Shell;
 use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -16,11 +17,62 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $installedFile = null;
 
+    private ?string $metadataFile = null;
+
+    private ?string $helperBinary = null;
+
+    private ?string $bundledHelperBinary = null;
+
+    private bool $bundledHelperBinaryCreated = false;
+
+    private string $profileDirectory;
+
+    private ?string $originalHome = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->originalHome = getenv('HOME') ?: null;
+        $this->profileDirectory = $this->internalStorage . '/profile';
+
+        Filesystem\ensure_directory_exists($this->profileDirectory);
+        putenv("HOME={$this->profileDirectory}");
+        $_ENV['HOME'] = $this->profileDirectory;
+        $_SERVER['HOME'] = $this->profileDirectory;
+    }
+
     protected function tearDown(): void
     {
         if ($this->installedFile !== null && Filesystem\is_file($this->installedFile)) {
             Filesystem\delete_file($this->installedFile);
             $this->installedFile = null;
+        }
+
+        if ($this->metadataFile !== null && Filesystem\is_file($this->metadataFile)) {
+            Filesystem\delete_file($this->metadataFile);
+            $this->metadataFile = null;
+        }
+
+        if ($this->helperBinary !== null && Filesystem\is_file($this->helperBinary)) {
+            Filesystem\delete_file($this->helperBinary);
+            $this->helperBinary = null;
+        }
+
+        if ($this->bundledHelperBinaryCreated && $this->bundledHelperBinary !== null && Filesystem\is_file($this->bundledHelperBinary)) {
+            Filesystem\delete_file($this->bundledHelperBinary);
+        }
+
+        $this->bundledHelperBinary = null;
+        $this->bundledHelperBinaryCreated = false;
+
+        if ($this->originalHome === null) {
+            putenv('HOME');
+            unset($_ENV['HOME'], $_SERVER['HOME']);
+        } else {
+            putenv("HOME={$this->originalHome}");
+            $_ENV['HOME'] = $this->originalHome;
+            $_SERVER['HOME'] = $this->originalHome;
         }
 
         parent::tearDown();
@@ -29,13 +81,19 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function install_with_explicit_shell_flag(): void
     {
+        $this->prepareCompletionRuntime();
+
         $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
 
         $this->console
             ->call('completion:install --shell=zsh --force')
             ->assertSee('Installed completion script to:')
-            ->assertSee('_tempest')
             ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('/.tempest/completion/tempest-complete', $installedScript);
+        $this->assertStringContainsString('/.tempest/completion/commands.json', $installedScript);
     }
 
     #[Test]
@@ -51,30 +109,36 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function install_shows_post_install_instructions_for_zsh(): void
     {
+        $this->prepareCompletionRuntime();
+
         $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
 
         $this->console
             ->call('completion:install --shell=zsh --force')
-            ->assertSee('fpath=')
-            ->assertSee('compinit')
+            ->assertSee('source')
+            ->assertSee('.zshrc')
             ->assertSuccess();
     }
 
     #[Test]
     public function install_shows_post_install_instructions_for_bash(): void
     {
+        $this->prepareCompletionRuntime();
+
         $this->installedFile = Shell::BASH->getInstalledCompletionPath();
 
         $this->console
             ->call('completion:install --shell=bash --force')
             ->assertSee('source')
-            ->assertSee('tempest.bash')
+            ->assertSee('.bashrc')
             ->assertSuccess();
     }
 
     #[Test]
     public function install_cancelled_when_user_denies_confirmation(): void
     {
+        $this->prepareCompletionRuntime();
+
         $this->console
             ->call('completion:install --shell=zsh')
             ->assertSee('Installing zsh completions')
@@ -84,26 +148,10 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function install_creates_directory_if_not_exists(): void
-    {
-        $targetDir = Shell::ZSH->getCompletionsDirectory();
-        $dirExisted = Filesystem\is_directory($targetDir);
-
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
-
-        $result = $this->console
-            ->call('completion:install --shell=zsh --force');
-
-        if (! $dirExisted) {
-            $result->assertSee('Created directory:');
-        }
-
-        $result->assertSuccess();
-    }
-
-    #[Test]
     public function install_asks_for_overwrite_when_file_exists(): void
     {
+        $this->prepareCompletionRuntime();
+
         $targetPath = Shell::ZSH->getInstalledCompletionPath();
         $targetDir = Shell::ZSH->getCompletionsDirectory();
 
@@ -119,5 +167,91 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             ->deny()
             ->assertSee('Installation cancelled')
             ->assertCancelled();
+    }
+
+    #[Test]
+    public function install_overwrites_existing_file_when_user_accepts_overwrite_default(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $targetPath = Shell::ZSH->getInstalledCompletionPath();
+        $targetDir = Shell::ZSH->getCompletionsDirectory();
+
+        Filesystem\create_directory($targetDir);
+        Filesystem\write_file($targetPath, '# existing content');
+
+        $this->installedFile = $targetPath;
+
+        $this->console
+            ->call('completion:install --shell=zsh')
+            ->confirm()
+            ->assertSee('Completion file already exists')
+            ->submit()
+            ->assertSee('Installed completion script to:')
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function install_copies_bundled_helper_binary_when_runtime_binary_is_missing(): void
+    {
+        $this->prepareCompletionRuntime(withRuntimeHelperBinary: false);
+        $this->prepareBundledHelperBinary();
+
+        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
+
+        $this->console
+            ->call('completion:install --shell=zsh --force')
+            ->assertSuccess();
+
+        $this->assertTrue(Filesystem\is_file($this->helperBinary));
+        $this->assertSame(Filesystem\read_file($this->bundledHelperBinary), Filesystem\read_file($this->helperBinary));
+    }
+
+    #[Test]
+    public function install_overwrites_runtime_helper_binary_when_hashes_do_not_match(): void
+    {
+        $this->prepareCompletionRuntime();
+        $this->prepareBundledHelperBinary();
+
+        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
+        Filesystem\write_file($this->helperBinary, "#!/bin/sh\necho stale\n");
+        chmod($this->helperBinary, 0o755);
+
+        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+
+        $this->console
+            ->call('completion:install --shell=zsh --force')
+            ->assertSuccess();
+
+        $this->assertSame(Filesystem\read_file($this->bundledHelperBinary), Filesystem\read_file($this->helperBinary));
+    }
+
+    private function prepareCompletionRuntime(bool $withRuntimeHelperBinary = true): void
+    {
+        $directory = CompletionRuntime::getDirectory();
+
+        Filesystem\ensure_directory_exists($directory);
+
+        $this->metadataFile = CompletionRuntime::getMetadataPath();
+        Filesystem\write_json($this->metadataFile, ['version' => 1, 'commands' => []]);
+
+        if ($withRuntimeHelperBinary) {
+            $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
+            Filesystem\write_file($this->helperBinary, "#!/bin/sh\nexit 0\n");
+            chmod($this->helperBinary, 0o755);
+        }
+    }
+
+    private function prepareBundledHelperBinary(): void
+    {
+        $this->bundledHelperBinary = CompletionRuntime::getBundledHelperBinaryPath();
+
+        if (! Filesystem\is_file($this->bundledHelperBinary)) {
+            Filesystem\ensure_directory_exists(dirname($this->bundledHelperBinary));
+            Filesystem\write_file($this->bundledHelperBinary, "#!/bin/sh\nexit 0\n");
+            chmod($this->bundledHelperBinary, 0o755);
+            $this->bundledHelperBinaryCreated = true;
+        }
     }
 }

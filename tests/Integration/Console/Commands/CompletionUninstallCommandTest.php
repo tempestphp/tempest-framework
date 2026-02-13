@@ -14,6 +14,37 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CompletionUninstallCommandTest extends FrameworkIntegrationTestCase
 {
+    private string $profileDirectory;
+
+    private ?string $originalHome = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->originalHome = getenv('HOME') ?: null;
+        $this->profileDirectory = $this->internalStorage . '/profile';
+
+        Filesystem\ensure_directory_exists($this->profileDirectory);
+        putenv("HOME={$this->profileDirectory}");
+        $_ENV['HOME'] = $this->profileDirectory;
+        $_SERVER['HOME'] = $this->profileDirectory;
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->originalHome === null) {
+            putenv('HOME');
+            unset($_ENV['HOME'], $_SERVER['HOME']);
+        } else {
+            putenv("HOME={$this->originalHome}");
+            $_ENV['HOME'] = $this->originalHome;
+            $_SERVER['HOME'] = $this->originalHome;
+        }
+
+        parent::tearDown();
+    }
+
     #[Test]
     public function uninstall_with_explicit_shell_flag(): void
     {
@@ -26,7 +57,7 @@ final class CompletionUninstallCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('completion:uninstall --shell=zsh --force')
             ->assertSee('Removed completion script:')
-            ->assertSee('_tempest')
+            ->assertSee('tempest.zsh')
             ->assertSuccess();
 
         $this->assertFalse(Filesystem\is_file($targetPath));

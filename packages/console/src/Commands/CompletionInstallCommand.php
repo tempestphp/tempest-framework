@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
+use RuntimeException;
 use Symfony\Component\Filesystem\Path;
+use Tempest\Console\Actions\BuildCompletionMetadata;
+use Tempest\Console\Actions\EnsureCompletionHelperBinary;
+use Tempest\Console\Actions\RenderCompletionScript;
 use Tempest\Console\Actions\ResolveShell;
+use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Enums\Shell;
 use Tempest\Console\ExitCode;
+use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Support\Filesystem;
 
 use function Tempest\Support\path;
@@ -20,11 +26,15 @@ final readonly class CompletionInstallCommand
     public function __construct(
         private Console $console,
         private ResolveShell $resolveShell,
+        private BuildCompletionMetadata $buildCompletionMetadata,
+        private EnsureCompletionHelperBinary $ensureCompletionHelperBinary,
+        private RenderCompletionScript $renderCompletionScript,
     ) {}
 
     #[ConsoleCommand(
         name: 'completion:install',
         description: 'Install shell completion for Tempest',
+        middleware: [ForceMiddleware::class],
     )]
     public function __invoke(
         #[ConsoleArgument(
@@ -32,12 +42,13 @@ final readonly class CompletionInstallCommand
             aliases: ['-s'],
         )]
         ?Shell $shell = null,
-        #[ConsoleArgument(
-            description: 'Skip confirmation prompts',
-            aliases: ['-f'],
-        )]
-        bool $force = false,
     ): ExitCode {
+        if (! CompletionRuntime::isSupportedPlatform()) {
+            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+
+            return ExitCode::ERROR;
+        }
+
         $shell ??= ($this->resolveShell)('Which shell do you want to install completions for?');
 
         if ($shell === null) {
@@ -56,7 +67,7 @@ final readonly class CompletionInstallCommand
             return ExitCode::ERROR;
         }
 
-        if (! $force) {
+        if (! $this->console->isForced) {
             $this->console->info("Installing {$shell->value} completions");
             $this->console->keyValue('Source', $sourcePath);
             $this->console->keyValue('Target', $targetPath);
@@ -69,17 +80,30 @@ final readonly class CompletionInstallCommand
             }
         }
 
-        Filesystem\ensure_directory_exists($targetDir);
+        Filesystem\write_json(CompletionRuntime::getMetadataPath(), ($this->buildCompletionMetadata)(), pretty: false);
 
-        if (Filesystem\is_file($targetPath)) {
-            if (! $force && ! $this->console->confirm('Completion file already exists. Overwrite?', default: false)) {
-                $this->console->warning('Installation cancelled.');
+        try {
+            ($this->ensureCompletionHelperBinary)();
+        } catch (RuntimeException $runtimeException) {
+            $this->console->error($runtimeException->getMessage());
 
-                return ExitCode::CANCELLED;
-            }
+            return ExitCode::ERROR;
         }
 
-        Filesystem\copy_file($sourcePath, $targetPath, overwrite: true);
+        Filesystem\ensure_directory_exists($targetDir);
+
+        if (Filesystem\is_file($targetPath) && ! $this->console->confirm('Completion file already exists. Overwrite?', default: true)) {
+            $this->console->warning('Installation cancelled.');
+
+            return ExitCode::CANCELLED;
+        }
+
+        $script = Filesystem\read_file($sourcePath);
+        Filesystem\write_file(
+            $targetPath,
+            ($this->renderCompletionScript)($script),
+        );
+
         $this->console->success("Installed completion script to: {$targetPath}");
 
         $this->console->writeln();

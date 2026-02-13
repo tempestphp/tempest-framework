@@ -17,7 +17,10 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('completion:show --shell=zsh')
-            ->assertSee('_tempest')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('_tempest_php_original_compdef')
+            ->assertSee('_compskip=all')
             ->assertSuccess();
     }
 
@@ -26,7 +29,13 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('completion:show --shell=bash')
-            ->assertSee('_tempest')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('if [[ "$current_word" == *[=:]* ]] && [[ "$current_segment" != "$current_word" ]]; then')
+            ->assertSee('if [[ -z "$current_segment" || "$current_segment" == "=" ]]; then')
+            ->assertSee('__tempest_php_original_completion')
+            ->assertSee('complete -o bashdefault -o default -F _tempest tempest')
+            ->assertSee('compopt +o default +o bashdefault')
             ->assertSuccess();
     }
 
