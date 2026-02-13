@@ -240,7 +240,7 @@ Interactive components are only supported on Mac and Linux. On Windows, Tempest 
 
 ## Shell completion
 
-Tempest provides shell completion for Zsh and Bash on Linux and macOS. This allows you to press `Tab` to autocomplete command names and options. On Windows, use WSL.
+Tempest provides shell completion for Zsh and Bash on Linux and macOS (Apple Silicon). This allows you to press `Tab` to autocomplete command names and options. On Windows, use WSL.
 
 Completion relies on two things: a **completion script** sourced by your shell, and a **helper binary** that performs the actual matching. The helper binary is not bundled with Tempest. It is downloaded from the GitHub release matching your installed Tempest version.
 
