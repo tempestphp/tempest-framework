@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Enums;
 
+use Tempest\Console\CompletionRuntime;
+
 enum Shell: string
 {
     case ZSH = 'zsh';
@@ -26,18 +28,13 @@ enum Shell: string
 
     public function getCompletionsDirectory(): string
     {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        return match ($this) {
-            self::ZSH => $home . '/.zsh/completions',
-            self::BASH => $home . '/.bash_completion.d',
-        };
+        return CompletionRuntime::getInstallationDirectory();
     }
 
     public function getCompletionFilename(): string
     {
         return match ($this) {
-            self::ZSH => '_tempest',
+            self::ZSH => 'tempest.zsh',
             self::BASH => 'tempest.bash',
         };
     }
@@ -70,24 +67,19 @@ enum Shell: string
      */
     public function getPostInstallInstructions(): array
     {
+        $rcFile = $this->getRcFile();
+        $installedPath = $this->getInstalledCompletionPath();
+
         return match ($this) {
             self::ZSH => [
-                'Add the completions directory to your fpath in ~/.zshrc:',
+                "Add this line to {$rcFile} and restart your terminal:",
                 '',
-                '  fpath=(~/.zsh/completions $fpath)',
-                '',
-                'Then reload completions:',
-                '',
-                '  autoload -Uz compinit && compinit',
-                '',
-                'Or restart your terminal.',
+                "  source {$installedPath}",
             ],
             self::BASH => [
-                'Source the completion file in your ~/.bashrc:',
+                "Add this line to {$rcFile} and restart your terminal:",
                 '',
-                '  source ~/.bash_completion.d/tempest.bash',
-                '',
-                'Or restart your terminal.',
+                "  source {$installedPath}",
             ],
         };
     }
