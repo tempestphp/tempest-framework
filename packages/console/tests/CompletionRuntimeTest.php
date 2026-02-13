@@ -27,7 +27,6 @@ final class CompletionRuntimeTest extends TestCase
             'linux x86_64' => ['Linux', 'x86_64', true],
             'linux arm64' => ['Linux', 'arm64', true],
             'darwin arm64' => ['Darwin', 'arm64', true],
-
             'darwin x86_64' => ['Darwin', 'x86_64', false],
             'windows' => ['Windows', 'x86_64', false],
         ];
