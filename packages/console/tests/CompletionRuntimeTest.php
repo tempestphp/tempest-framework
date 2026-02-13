@@ -37,20 +37,20 @@ final class CompletionRuntimeTest extends TestCase
     }
 
     #[Test]
-    public function getBundledHelperBinaryFilename(): void
+    public function getHelperBinaryAssetFilename(): void
     {
         $this->assertMatchesRegularExpression(
             '/^tempest-complete_[a-z0-9]+_[a-z0-9_]+$/',
-            CompletionRuntime::getBundledHelperBinaryFilename(),
+            CompletionRuntime::getHelperBinaryAssetFilename(),
         );
     }
 
     #[Test]
-    public function getBundledHelperBinaryPath(): void
+    public function getHelperBinaryReleaseTag_throws_for_dev_versions(): void
     {
-        $path = str_replace('\\', '/', CompletionRuntime::getBundledHelperBinaryPath());
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('tagged releases');
 
-        $this->assertStringContainsString('/packages/console/bin/', $path);
-        $this->assertStringEndsWith('/' . CompletionRuntime::getBundledHelperBinaryFilename(), $path);
+        CompletionRuntime::getHelperBinaryReleaseTag();
     }
 }

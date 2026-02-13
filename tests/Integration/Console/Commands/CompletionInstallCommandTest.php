@@ -21,10 +21,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
     private ?string $helperBinary = null;
 
-    private ?string $bundledHelperBinary = null;
-
-    private bool $bundledHelperBinaryCreated = false;
-
     private string $profileDirectory;
 
     private ?string $originalHome = null;
@@ -58,13 +54,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             Filesystem\delete_file($this->helperBinary);
             $this->helperBinary = null;
         }
-
-        if ($this->bundledHelperBinaryCreated && $this->bundledHelperBinary !== null && Filesystem\is_file($this->bundledHelperBinary)) {
-            Filesystem\delete_file($this->bundledHelperBinary);
-        }
-
-        $this->bundledHelperBinary = null;
-        $this->bundledHelperBinaryCreated = false;
 
         if ($this->originalHome === null) {
             putenv('HOME');
@@ -191,42 +180,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
     }
 
-    #[Test]
-    public function install_copies_bundled_helper_binary_when_runtime_binary_is_missing(): void
-    {
-        $this->prepareCompletionRuntime(withRuntimeHelperBinary: false);
-        $this->prepareBundledHelperBinary();
-
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
-        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
-
-        $this->console
-            ->call('completion:install --shell=zsh --force')
-            ->assertSuccess();
-
-        $this->assertTrue(Filesystem\is_file($this->helperBinary));
-        $this->assertSame(Filesystem\read_file($this->bundledHelperBinary), Filesystem\read_file($this->helperBinary));
-    }
-
-    #[Test]
-    public function install_overwrites_runtime_helper_binary_when_hashes_do_not_match(): void
-    {
-        $this->prepareCompletionRuntime();
-        $this->prepareBundledHelperBinary();
-
-        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
-        Filesystem\write_file($this->helperBinary, "#!/bin/sh\necho stale\n");
-        chmod($this->helperBinary, 0o755);
-
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
-
-        $this->console
-            ->call('completion:install --shell=zsh --force')
-            ->assertSuccess();
-
-        $this->assertSame(Filesystem\read_file($this->bundledHelperBinary), Filesystem\read_file($this->helperBinary));
-    }
-
     private function prepareCompletionRuntime(bool $withRuntimeHelperBinary = true): void
     {
         $directory = CompletionRuntime::getDirectory();
@@ -240,18 +193,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
             Filesystem\write_file($this->helperBinary, "#!/bin/sh\nexit 0\n");
             chmod($this->helperBinary, 0o755);
-        }
-    }
-
-    private function prepareBundledHelperBinary(): void
-    {
-        $this->bundledHelperBinary = CompletionRuntime::getBundledHelperBinaryPath();
-
-        if (! Filesystem\is_file($this->bundledHelperBinary)) {
-            Filesystem\ensure_directory_exists(dirname($this->bundledHelperBinary));
-            Filesystem\write_file($this->bundledHelperBinary, "#!/bin/sh\nexit 0\n");
-            chmod($this->bundledHelperBinary, 0o755);
-            $this->bundledHelperBinaryCreated = true;
         }
     }
 }

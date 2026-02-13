@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use RuntimeException;
 use Tempest\Console\Actions\BuildCompletionMetadata;
-use Tempest\Console\Actions\EnsureCompletionHelperBinary;
 use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
@@ -19,7 +17,6 @@ final readonly class CompletionGenerateCommand
     public function __construct(
         private Console $console,
         private BuildCompletionMetadata $buildCompletionMetadata,
-        private EnsureCompletionHelperBinary $ensureCompletionHelperBinary,
     ) {}
 
     #[ConsoleCommand(
@@ -35,14 +32,6 @@ final readonly class CompletionGenerateCommand
     ): ExitCode {
         if (! CompletionRuntime::isSupportedPlatform()) {
             $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
-
-            return ExitCode::ERROR;
-        }
-
-        try {
-            ($this->ensureCompletionHelperBinary)();
-        } catch (RuntimeException $runtimeException) {
-            $this->console->error($runtimeException->getMessage());
 
             return ExitCode::ERROR;
         }

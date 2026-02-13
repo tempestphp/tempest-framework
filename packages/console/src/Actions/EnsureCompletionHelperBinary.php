@@ -8,39 +8,23 @@ use RuntimeException;
 use Tempest\Console\CompletionRuntime;
 use Tempest\Support\Filesystem;
 
+use function Tempest\Support\box;
+
 final readonly class EnsureCompletionHelperBinary
 {
     public function __invoke(): string
     {
         $binaryPath = CompletionRuntime::getHelperBinaryPath();
-        $bundledBinaryPath = CompletionRuntime::getBundledHelperBinaryPath();
 
-        if (! Filesystem\is_file($bundledBinaryPath)) {
-            $platform = CompletionRuntime::getHelperBinaryPlatform();
-
-            throw new RuntimeException("Completion helper binary for platform `{$platform}` was not found: {$bundledBinaryPath}");
+        if (Filesystem\is_file($binaryPath) && Filesystem\is_executable($binaryPath)) {
+            return $binaryPath;
         }
 
-        $mustCopyBinary = true;
+        $downloadUrl = CompletionRuntime::getHelperBinaryDownloadUrl();
+        $binaryContents = $this->downloadBinary($downloadUrl);
 
-        if (Filesystem\is_file($binaryPath)) {
-            if (! Filesystem\is_executable($binaryPath)) {
-                chmod($binaryPath, 0o755);
-            }
-
-            if ($this->hasMatchingHash($binaryPath, $bundledBinaryPath)) {
-                $mustCopyBinary = false;
-            }
-
-            if (! $mustCopyBinary && Filesystem\is_executable($binaryPath)) {
-                return $binaryPath;
-            }
-        }
-
-        if ($mustCopyBinary) {
-            Filesystem\ensure_directory_exists(dirname($binaryPath));
-            Filesystem\copy_file($bundledBinaryPath, $binaryPath, overwrite: true);
-        }
+        Filesystem\ensure_directory_exists(dirname($binaryPath));
+        Filesystem\write_file($binaryPath, $binaryContents);
 
         chmod($binaryPath, 0o755);
 
@@ -48,22 +32,28 @@ final readonly class EnsureCompletionHelperBinary
             return $binaryPath;
         }
 
-        throw new RuntimeException("Completion helper binary could not be made executable: {$binaryPath}");
+        throw new RuntimeException("Downloaded completion helper binary could not be made executable: {$binaryPath}");
     }
 
-    private function hasMatchingHash(string $runtimeBinaryPath, string $bundledBinaryPath): bool
+    private function downloadBinary(string $downloadUrl): string
     {
-        if (! Filesystem\is_readable($runtimeBinaryPath) || ! Filesystem\is_readable($bundledBinaryPath)) {
-            return false;
+        $context = stream_context_create([
+            'http' => [
+                'follow_location' => 1,
+                'max_redirects' => 10,
+                'timeout' => 30,
+                'user_agent' => 'tempest-completion-installer',
+            ],
+        ]);
+
+        [$contents, $errorMessage] = box(static fn (): false|string => file_get_contents($downloadUrl, false, $context));
+
+        if (! is_string($contents) || $contents === '') {
+            $platform = CompletionRuntime::getHelperBinaryPlatform();
+
+            throw new RuntimeException("Failed to download completion helper binary for platform `{$platform}` from {$downloadUrl}. {$errorMessage}");
         }
 
-        $runtimeHash = hash_file('xxh128', $runtimeBinaryPath);
-        $bundledHash = hash_file('xxh128', $bundledBinaryPath);
-
-        if (! is_string($runtimeHash) || ! is_string($bundledHash)) {
-            return false;
-        }
-
-        return hash_equals($runtimeHash, $bundledHash);
+        return $contents;
     }
 }

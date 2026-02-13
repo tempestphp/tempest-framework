@@ -14,6 +14,7 @@ final class CompletionRuntime
 {
     public const string HELPER_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_BINARY__';
     public const string METADATA_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_METADATA__';
+    public const string RELEASE_DOWNLOAD_BASE_URL = 'https://github.com/tempestphp/tempest-framework/releases/download';
 
     public static function getInstallationDirectory(): string
     {
@@ -35,10 +36,32 @@ final class CompletionRuntime
         return internal_storage_path('completion', self::getHelperBinaryFilename());
     }
 
-    public static function getBundledHelperBinaryPath(): string
+    public static function getHelperBinaryAssetFilename(): string
     {
-        return Path::canonicalize(
-            path(__DIR__, '..', 'bin', self::getBundledHelperBinaryFilename())->toString(),
+        return self::getHelperBinaryFilename() . '_' . str_replace('-', '_', self::getHelperBinaryPlatform());
+    }
+
+    public static function getHelperBinaryReleaseTag(): string
+    {
+        $releaseTag = self::resolveInstalledReleaseVersion();
+
+        if (str_contains($releaseTag, 'dev')) {
+            throw new RuntimeException("Completion helper binaries are only available for tagged releases. Current version is `{$releaseTag}`.");
+        }
+
+        if (str_starts_with($releaseTag, 'v')) {
+            return $releaseTag;
+        }
+
+        return "v{$releaseTag}";
+    }
+
+    public static function getHelperBinaryDownloadUrl(): string
+    {
+        return sprintf(
+            self::RELEASE_DOWNLOAD_BASE_URL . '/%s/%s',
+            self::getHelperBinaryReleaseTag(),
+            self::getHelperBinaryAssetFilename(),
         );
     }
 
@@ -77,9 +100,25 @@ final class CompletionRuntime
         return 'tempest-complete';
     }
 
-    public static function getBundledHelperBinaryFilename(): string
+    private static function resolveInstalledReleaseVersion(): string
     {
-        return self::getHelperBinaryFilename() . '_' . str_replace('-', '_', self::getHelperBinaryPlatform());
+        if (! class_exists(\Composer\InstalledVersions::class)) {
+            throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
+        }
+
+        foreach (['tempest/framework', 'tempest/console'] as $package) {
+            if (! \Composer\InstalledVersions::isInstalled($package)) {
+                continue;
+            }
+
+            $version = \Composer\InstalledVersions::getPrettyVersion($package);
+
+            if (is_string($version) && $version !== '') {
+                return $version;
+            }
+        }
+
+        throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
     }
 
     private static function getProfileDirectory(): string

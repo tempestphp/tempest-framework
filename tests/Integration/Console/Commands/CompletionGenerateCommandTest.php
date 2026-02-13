@@ -13,30 +13,12 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $generatedPath = null;
 
-    private ?string $helperBinary = null;
-
-    private ?string $bundledHelperBinary = null;
-
-    private bool $bundledHelperBinaryCreated = false;
-
     protected function tearDown(): void
     {
         if ($this->generatedPath !== null && Filesystem\is_file($this->generatedPath)) {
             Filesystem\delete_file($this->generatedPath);
             $this->generatedPath = null;
         }
-
-        if ($this->helperBinary !== null && Filesystem\is_file($this->helperBinary)) {
-            Filesystem\delete_file($this->helperBinary);
-            $this->helperBinary = null;
-        }
-
-        if ($this->bundledHelperBinaryCreated && $this->bundledHelperBinary !== null && Filesystem\is_file($this->bundledHelperBinary)) {
-            Filesystem\delete_file($this->bundledHelperBinary);
-        }
-
-        $this->bundledHelperBinary = null;
-        $this->bundledHelperBinaryCreated = false;
 
         parent::tearDown();
     }
@@ -64,6 +46,7 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(['--flag', '--items=', '--value='], $flags);
         $this->assertSame('Install shell completion for Tempest', $metadata['commands']['completion:install']['description']);
+        $this->assertSame('Update the completion helper binary', $metadata['commands']['completion:update-bin']['description']);
         $this->assertSame(['-s'], $installFlags['shell']['aliases']);
         $this->assertSame('The shell to install completions for (zsh, bash)', $installFlags['shell']['description']);
         $this->assertSame(['bash', 'zsh'], $installFlags['shell']['value_options']);
@@ -84,27 +67,18 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function generate_overwrites_runtime_helper_binary_when_hashes_do_not_match(): void
+    public function generate_does_not_create_runtime_helper_binary(): void
     {
-        $this->generatedPath = CompletionRuntime::getMetadataPath();
-        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
-        $this->bundledHelperBinary = CompletionRuntime::getBundledHelperBinaryPath();
+        $helperBinary = CompletionRuntime::getHelperBinaryPath();
 
-        if (! Filesystem\is_file($this->bundledHelperBinary)) {
-            Filesystem\ensure_directory_exists(dirname($this->bundledHelperBinary));
-            Filesystem\write_file($this->bundledHelperBinary, "#!/bin/sh\nexit 0\n");
-            chmod($this->bundledHelperBinary, 0o755);
-            $this->bundledHelperBinaryCreated = true;
+        if (Filesystem\is_file($helperBinary)) {
+            Filesystem\delete_file($helperBinary);
         }
-
-        Filesystem\ensure_directory_exists(dirname($this->helperBinary));
-        Filesystem\write_file($this->helperBinary, "#!/bin/sh\necho stale\n");
-        chmod($this->helperBinary, 0o755);
 
         $this->console
             ->call('completion:generate')
             ->assertSuccess();
 
-        $this->assertSame(Filesystem\read_file($this->bundledHelperBinary), Filesystem\read_file($this->helperBinary));
+        $this->assertFalse(Filesystem\is_file($helperBinary));
     }
 }
