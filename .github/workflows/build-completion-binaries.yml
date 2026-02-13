@@ -15,18 +15,7 @@ concurrency:
 
 jobs:
   build-darwin:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-26-large
-            target: x86_64-apple-darwin
-            bundle: tempest-complete_darwin_x86_64
-          - runner: macos-26
-            target: aarch64-apple-darwin
-            bundle: tempest-complete_darwin_arm64
-
-    runs-on: ${{ matrix.runner }}
+    runs-on: macos-26
 
     steps:
       - name: Checkout
@@ -37,13 +26,13 @@ jobs:
 
       - name: Build completion helper binary
         working-directory: packages/console/completion-helper
-        run: ./build-binaries "${{ matrix.target }}"
+        run: ./build-binaries "aarch64-apple-darwin"
 
       - name: Upload binary
         uses: actions/upload-artifact@v6
         with:
-          name: completion-helper-${{ matrix.bundle }}
-          path: packages/console/bin/${{ matrix.bundle }}
+          name: completion-helper-tempest-complete_darwin_arm64
+          path: packages/console/bin/tempest-complete_darwin_arm64
 
   build-linux:
     runs-on: ubuntu-latest
