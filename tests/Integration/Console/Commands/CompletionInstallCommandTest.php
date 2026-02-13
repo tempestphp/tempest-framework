@@ -29,6 +29,10 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+
         $this->originalHome = getenv('HOME') ?: null;
         $this->profileDirectory = $this->internalStorage . '/profile';
 

@@ -13,6 +13,15 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $generatedPath = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     protected function tearDown(): void
     {
         if ($this->generatedPath !== null && Filesystem\is_file($this->generatedPath)) {

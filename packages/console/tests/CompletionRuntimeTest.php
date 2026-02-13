@@ -14,6 +14,15 @@ use Tempest\Console\CompletionRuntime;
  */
 final class CompletionRuntimeTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     #[Test]
     #[DataProvider('supportedPlatformDataProvider')]
     public function isSupportedPlatform(string $osFamily, string $architecture, bool $expected): void

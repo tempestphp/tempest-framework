@@ -12,6 +12,15 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     #[Test]
     public function show_zsh_completion_script(): void
     {

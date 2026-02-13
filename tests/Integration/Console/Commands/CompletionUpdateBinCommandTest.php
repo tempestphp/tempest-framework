@@ -16,6 +16,15 @@ final class CompletionUpdateBinCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $helperBinary = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     protected function tearDown(): void
     {
         if ($this->helperBinary !== null && Filesystem\is_file($this->helperBinary)) {

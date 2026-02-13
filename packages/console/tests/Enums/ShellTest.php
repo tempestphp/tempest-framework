@@ -14,6 +14,15 @@ use Tempest\Console\Enums\Shell;
  */
 final class ShellTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     #[Test]
     #[DataProvider('detectDataProvider')]
     public function detect(string|false $shellEnv, ?Shell $expected): void
