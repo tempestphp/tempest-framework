@@ -16,17 +16,20 @@ final class CompletionRuntimeTest extends TestCase
 {
     #[Test]
     #[DataProvider('supportedPlatformDataProvider')]
-    public function isSupportedPlatform(string $osFamily, bool $expected): void
+    public function isSupportedPlatform(string $osFamily, string $architecture, bool $expected): void
     {
-        $this->assertSame($expected, CompletionRuntime::isSupportedPlatform($osFamily));
+        $this->assertSame($expected, CompletionRuntime::isSupportedPlatform($osFamily, $architecture));
     }
 
     public static function supportedPlatformDataProvider(): array
     {
         return [
-            'linux' => ['Linux', true],
-            'darwin' => ['Darwin', true],
-            'windows' => ['Windows', false],
+            'linux x86_64' => ['Linux', 'x86_64', true],
+            'linux arm64' => ['Linux', 'arm64', true],
+            'darwin arm64' => ['Darwin', 'arm64', true],
+
+            'darwin x86_64' => ['Darwin', 'x86_64', false],
+            'windows' => ['Windows', 'x86_64', false],
         ];
     }
 

@@ -6,7 +6,6 @@ cd "$root_dir"
 package_dir="$(cd -- "$root_dir/.." && pwd)"
 
 default_targets=(
-  "x86_64-apple-darwin"
   "aarch64-apple-darwin"
   "x86_64-unknown-linux-musl"
   "aarch64-unknown-linux-musl"
@@ -20,7 +19,6 @@ fi
 
 platform_for_target() {
   case "$1" in
-    x86_64-apple-darwin) echo "darwin_x86_64" ;;
     aarch64-apple-darwin) echo "darwin_arm64" ;;
     x86_64-unknown-linux-musl|x86_64-unknown-linux-gnu) echo "linux_x86_64" ;;
     aarch64-unknown-linux-musl|aarch64-unknown-linux-gnu) echo "linux_arm64" ;;

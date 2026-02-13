@@ -65,17 +65,21 @@ final class CompletionRuntime
         );
     }
 
-    public static function isSupportedPlatform(?string $osFamily = null): bool
+    public static function isSupportedPlatform(?string $osFamily = null, ?string $architecture = null): bool
     {
-        return match ($osFamily ?? PHP_OS_FAMILY) {
-            'Darwin', 'Linux' => true,
+        $osFamily ??= PHP_OS_FAMILY;
+        $architecture ??= strtolower((string) php_uname('m'));
+
+        return match ($osFamily) {
+            'Darwin' => $architecture === 'arm64',
+            'Linux' => true,
             default => false,
         };
     }
 
     public static function getUnsupportedPlatformMessage(): string
     {
-        return 'Completion commands are supported on Linux and macOS. Use WSL if you are on Windows.';
+        return 'Completion commands are supported on Linux and macOS (Apple Silicon). Use WSL if you are on Windows.';
     }
 
     public static function getHelperBinaryPlatform(): string
