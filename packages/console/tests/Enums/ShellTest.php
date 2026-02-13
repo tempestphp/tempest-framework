@@ -56,14 +56,14 @@ final class ShellTest extends TestCase
     {
         $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
 
-        $this->assertSame($home . '/.zsh/completions', Shell::ZSH->getCompletionsDirectory());
-        $this->assertSame($home . '/.bash_completion.d', Shell::BASH->getCompletionsDirectory());
+        $this->assertSame($home . '/.tempest/completion', Shell::ZSH->getCompletionsDirectory());
+        $this->assertSame($home . '/.tempest/completion', Shell::BASH->getCompletionsDirectory());
     }
 
     #[Test]
     public function getCompletionFilename(): void
     {
-        $this->assertSame('_tempest', Shell::ZSH->getCompletionFilename());
+        $this->assertSame('tempest.zsh', Shell::ZSH->getCompletionFilename());
         $this->assertSame('tempest.bash', Shell::BASH->getCompletionFilename());
     }
 
@@ -72,8 +72,8 @@ final class ShellTest extends TestCase
     {
         $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
 
-        $this->assertSame($home . '/.zsh/completions/_tempest', Shell::ZSH->getInstalledCompletionPath());
-        $this->assertSame($home . '/.bash_completion.d/tempest.bash', Shell::BASH->getInstalledCompletionPath());
+        $this->assertSame($home . '/.tempest/completion/tempest.zsh', Shell::ZSH->getInstalledCompletionPath());
+        $this->assertSame($home . '/.tempest/completion/tempest.bash', Shell::BASH->getInstalledCompletionPath());
     }
 
     #[Test]
@@ -98,11 +98,11 @@ final class ShellTest extends TestCase
         $zshInstructions = Shell::ZSH->getPostInstallInstructions();
         $this->assertIsArray($zshInstructions);
         $this->assertNotEmpty($zshInstructions);
-        $this->assertStringContainsString('fpath', $zshInstructions[0]);
+        $this->assertStringContainsStringIgnoringCase('source', implode("\n", $zshInstructions));
 
         $bashInstructions = Shell::BASH->getPostInstallInstructions();
         $this->assertIsArray($bashInstructions);
         $this->assertNotEmpty($bashInstructions);
-        $this->assertStringContainsStringIgnoringCase('source', $bashInstructions[0]);
+        $this->assertStringContainsStringIgnoringCase('source', implode("\n", $bashInstructions));
     }
 }
