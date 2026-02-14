@@ -155,7 +155,7 @@ function remove_keys(iterable $array, string|int|array $keys): array
  * @param TValue|array<TValue> $values The values to remove.
  * @return array<TKey,TValue>
  */
-function remove_values(array $array, string|int|array $values): array
+function remove_values(array $array, mixed $values): array
 {
     $array = to_array($array);
 
@@ -193,7 +193,7 @@ function forget_keys(array &$array, string|int|array $keys): array
  * @param TValue|array<TValue> $values The values to remove.
  * @return array<TKey,TValue>
  */
-function forget_values(array &$array, string|int|array $values): array
+function forget_values(array &$array, mixed $values): array
 {
     $values = is_array($values) ? $values : [$values];
 
@@ -670,18 +670,38 @@ function implode(iterable $array, string $glue): ImmutableString
 
 /**
  * Returns a copy of the given array with the keys of this array as values.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey, TValue> $array
+ *
+ * @return list<TKey>
  */
 function keys(iterable $array): array
 {
-    return array_keys(to_array($array));
+    /** @var list<TKey> $result */
+    $result = array_keys(to_array($array));
+
+    return $result;
 }
 
 /**
  * Returns a copy of the given array without its keys.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey, TValue> $array
+ *
+ * @return list<TValue>
  */
 function values(iterable $array): array
 {
-    return array_values(to_array($array));
+    /** @var list<TValue> $result */
+    $result = array_values(to_array($array));
+
+    return $result;
 }
 
 /**
@@ -1143,7 +1163,7 @@ function sort(iterable $array, bool $desc = false, ?bool $preserveKeys = null, i
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param \Closure(TValue $a, TValue $b) $callback The function to use for comparing values. It should accept two parameters and return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+ * @param \Closure(TValue, TValue): int $callback The function to use for comparing values.
  * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`. Defaults to `null`, which auto-detects preservation based on array type (associative or list).
  * @return array<array-key, TValue> Key type depends on whether array keys are preserved or not.
  */
@@ -1267,10 +1287,6 @@ function range(int|float $start, int|float $end, int|float|null $step = null): a
 
         $result = [];
 
-        /**
-         * @var int|float $start
-         * @var int|float $step
-         */
         for ($i = $start; $i <= $end; $i += $step) {
             $result[] = $i;
         }
@@ -1289,10 +1305,6 @@ function range(int|float $start, int|float $end, int|float|null $step = null): a
 
     $result = [];
 
-    /**
-     * @var int|float $start
-     * @var int|float $step
-     */
     for ($i = $start; $i >= $end; $i += $step) {
         $result[] = $i;
     }
