@@ -544,11 +544,13 @@ function equals(iterable $array, iterable $other): bool
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TDefault
  *
  * @param iterable<TKey,TValue> $array
  * @param null|Closure(TValue $value, TKey $key): bool $filter
+ * @param TDefault $default
  *
- * @return TValue
+ * @return TValue|TDefault
  */
 function first(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
 {
@@ -593,11 +595,13 @@ function at(iterable $array, int $index, mixed $default = null): mixed
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TDefault
  *
  * @param iterable<TKey,TValue> $array
  * @param null|Closure(TValue $value, TKey $key): bool $filter
+ * @param TDefault $default
  *
- * @return TValue
+ * @return TValue|TDefault
  */
 function last(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
 {

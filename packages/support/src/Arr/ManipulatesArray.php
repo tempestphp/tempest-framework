@@ -347,9 +347,12 @@ trait ManipulatesArray
      * Returns the first item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the first item.
      *
-     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @template TDefault
      *
-     * @return TValue
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     public function first(?Closure $filter = null, mixed $default = null): mixed
     {
@@ -360,9 +363,12 @@ trait ManipulatesArray
      * Returns the last item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
-     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @template TDefault
      *
-     * @return TValue
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     public function last(?Closure $filter = null, mixed $default = null): mixed
     {
