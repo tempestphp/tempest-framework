@@ -16,9 +16,9 @@ use Tempest\Support\Str;
 use UnitEnum;
 
 /**
- * @template Subject of object
- * @template Resource of object
- * @implements AccessControl<Subject, Resource>
+ * @template TSubject of object
+ * @template TResource of object
+ * @implements AccessControl<TSubject, TResource>
  */
 final readonly class PolicyBasedAccessControl implements AccessControl
 {
