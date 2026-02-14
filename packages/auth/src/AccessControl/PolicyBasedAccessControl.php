@@ -119,11 +119,9 @@ final readonly class PolicyBasedAccessControl implements AccessControl
             return;
         }
 
-        if (! ($type = $reflector?->getType())) {
-            return;
-        }
+        $type = $reflector->getType();
 
-        if ($type?->accepts($input)) {
+        if ($type->accepts($input)) {
             return;
         }
 
