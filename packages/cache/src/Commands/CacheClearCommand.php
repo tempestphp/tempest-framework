@@ -30,7 +30,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         private const string DEFAULT_CACHE = 'default';
 
         public function __construct(
-            private Cache $cache,
             private Container $container,
         ) {}
 
@@ -59,7 +58,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $caches = [ConfigCache::class, ViewCache::class, IconCache::class, DiscoveryCache::class];
 
-            if ($all === false && count($caches) > 1) {
+            if (! $all) {
                 $caches = $this->ask(
                     question: 'Which caches do you want to clear?',
                     options: $caches,
