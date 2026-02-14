@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -36,7 +38,9 @@ final class UserCacheInsightsProvider implements InsightsProvider
             ->toArray();
     }
 
-    /** @var Insight[] */
+    /**
+     * @return array{0: ?Insight, 1: Insight}
+     */
     private function getInsight(Cache $cache): array
     {
         $type = $cache instanceof GenericCache
