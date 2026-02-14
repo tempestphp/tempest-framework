@@ -209,6 +209,14 @@ final class LockAcquisitionTimedOut extends Exception implements CacheException
 }
 ```
 
+## AI contributions
+
+Behind Tempest is a small group of humans who are passionate about code and this project. We welcome anyone who's passionate about PHP and programming to join Tempest, regardless of the tools they are using. At the same time, we expect a level of respect between each other.
+
+As an example, PRs that were AI-generated without any self-review from the contributor's side don't show mutual respect, as it puts the burden of reviewing LLM-generated code on the maintainer's side. We expect each contributor to take a level of ownership and responsibility over their contributions (before they are merged), to make sure the submitted code is clean and understandable, well-tested and adhering to our code style. In turn, from our side, we will be happy to guide anyone who's eager to learn, as long as it goes both ways. We also expect each contributor to ensure that code they are contributing is compatible with the Tempest License.
+
+In other words, you may use whatever tools you want to write code (editors, IDEs, AI chat, agents, …), but you must take ownership and responsibility over your PRs. The least we ask is that you yourself understand the code you've written or generated and are able to explain it in full.
+
 ## Release workflow
 
 Tempest uses sub-splits to allow components to be installed as individual packages. The following outlines how this process works.

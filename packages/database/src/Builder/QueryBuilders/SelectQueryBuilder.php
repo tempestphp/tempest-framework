@@ -315,6 +315,28 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     }
 
     /**
+     * Includes additional fields in the query. Useful for including hidden fields.
+     *
+     * @return self<TModel>
+     */
+    public function include(string ...$fields): self
+    {
+        $tableName = $this->model->getTableName();
+        $existingFields = $this->model->getSelectFields()->toArray();
+
+        foreach ($fields as $field) {
+            if (in_array($field, $existingFields, true)) {
+                continue;
+            }
+
+            $existingFields[] = $field;
+            $this->select->fields[] = new FieldStatement("{$tableName}.{$field}")->withAlias();
+        }
+
+        return $this;
+    }
+
+    /**
      * Adds a raw SQL statement to the query.
      *
      * @return self<TModel>

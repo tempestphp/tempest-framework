@@ -106,6 +106,77 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_isset_attribute_array_and_object_cases(): void
+    {
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\']">Hello</div>', foo: ['bar' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo">Hello</div>', foo: true)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\']">Hello</div>', foo: ['bar' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo[\'bar\'][\'baz\']">Hello</div>', foo: ['bar' => ['baz' => true]])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$obj->property">Hello</div>', obj: (object) ['property' => true])),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$obj->data[\'key\']">Hello</div>', obj: (object) ['data' => ['key' => true]])),
+        );
+    }
+
+    public function test_isset_attribute_dual_cases(): void
+    {
+        $this->assertSame(
+            '',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>elseif</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :elseif="true">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>else</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div><div :elseif="false">elseif</div><div :else>else</div>')),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: true, bar: false)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: false, bar: true)),
+        );
+
+        $this->assertSame(
+            '<div>Hello</div>',
+            $this->view->render(view('<div :isset="$foo || $bar">Hello</div>', foo: true, bar: true)),
+        );
+    }
+
     public function test_if_with_other_expression_attributes(): void
     {
         $html = $this->view->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');

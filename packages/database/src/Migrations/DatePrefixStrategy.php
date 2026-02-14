@@ -9,8 +9,12 @@ namespace Tempest\Database\Migrations;
  */
 final class DatePrefixStrategy implements MigrationNamingStrategy
 {
+    public function __construct(
+        private bool $useTime = false,
+    ) {}
+
     public function generatePrefix(): string
     {
-        return date('Y-m-d');
+        return date($this->useTime ? 'Y-m-d_His' : 'Y-m-d');
     }
 }

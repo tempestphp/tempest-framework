@@ -63,7 +63,7 @@ jobs:
 
       - name: Setup Redis
         if: ${{ matrix.os != 'windows-latest' && matrix.package.name == 'kv-store' }}
-        uses: supercharge/redis-github-action@1.7.0
+        uses: supercharge/redis-github-action@1.8.1
 
       - name: Install PHPUnit
         run: composer global require phpunit/phpunit:12.5.8

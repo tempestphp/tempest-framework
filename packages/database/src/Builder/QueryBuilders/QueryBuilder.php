@@ -40,7 +40,7 @@ final readonly class QueryBuilder
     {
         return new SelectQueryBuilder(
             model: $this->model,
-            fields: $columns !== [] ? arr($columns) : null,
+            fields: $columns !== [] ? arr($columns)->unique() : null,
         );
     }
 

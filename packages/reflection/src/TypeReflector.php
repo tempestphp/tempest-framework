@@ -9,6 +9,8 @@ use DateTimeInterface;
 use Generator;
 use Iterator;
 use ReflectionClass as PHPReflectionClass;
+use ReflectionClassConstant as PHPReflectionClassConstant;
+use ReflectionEnumUnitCase as PHPReflectionEnumUnitCase;
 use ReflectionIntersectionType as PHPReflectionIntersectionType;
 use ReflectionNamedType as PHPReflectionNamedType;
 use ReflectionParameter as PHPReflectionParameter;
@@ -63,6 +65,11 @@ final readonly class TypeReflector implements Reflector
     public function asClass(): ClassReflector
     {
         return new ClassReflector($this->cleanDefinition);
+    }
+
+    public function asEnum(): EnumReflector
+    {
+        return new EnumReflector($this->cleanDefinition);
     }
 
     public function equals(string|TypeReflector $type): bool
@@ -157,6 +164,16 @@ final readonly class TypeReflector implements Reflector
         return $this->isUnitEnum() || $this->isBackedEnum();
     }
 
+    public function isEnumCase(): bool
+    {
+        return $this->reflector instanceof PHPReflectionEnumUnitCase;
+    }
+
+    public function asEnumCase(): PHPReflectionEnumUnitCase
+    {
+        return $this->reflector;
+    }
+
     public function isUnitEnum(): bool
     {
         return $this->matches(UnitEnum::class);
@@ -242,6 +259,10 @@ final readonly class TypeReflector implements Reflector
 
         if ($reflector instanceof PHPReflectionNamedType) {
             return $reflector->getName();
+        }
+
+        if ($reflector instanceof PHPReflectionClassConstant) {
+            return $reflector->getDeclaringClass()->getName();
         }
 
         if ($reflector instanceof PHPReflectionUnionType) {
