@@ -20,7 +20,6 @@ use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Intl;
 use Tempest\Router\DataProvider;
-use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
@@ -47,7 +46,6 @@ final class StaticGenerateCommand
 
     public function __construct(
         private readonly AppConfig $appConfig,
-        private readonly RouteConfig $routeConfig,
         private readonly Console $console,
         private readonly Kernel $kernel,
         private readonly Container $container,
@@ -264,7 +262,7 @@ final class StaticGenerateCommand
                         continue;
                     }
 
-                    if ($response?->status->isRedirect()) {
+                    if ($response->status->isRedirect()) {
                         $target = Arr\first($response->getHeader('Location')->values);
                     }
                 } while ($response?->status->isRedirect());
