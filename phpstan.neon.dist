@@ -44,6 +44,8 @@ parameters:
         #- packages/upgrade - 51 errors
         - packages/validation
         - packages/view
+        - packages/vite
+        - packages/vite-plugin-tempest
         - tests
     reportUnmatchedIgnoredErrors: true
 
