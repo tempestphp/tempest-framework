@@ -36,6 +36,8 @@ parameters:
         - packages/log
         - packages/mail
         - packages/mapper
+        #- packages/process - 31 errors
+        - packages/reflection
         - tests
     reportUnmatchedIgnoredErrors: true
 
