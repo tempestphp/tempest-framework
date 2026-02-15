@@ -96,7 +96,7 @@ final class LoadDiscoveryClasses
     /**
      * Build a list of discovery classes within all registered discovery locations
      * @param Discovery[] $discoveries
-     * @param DiscoveryLocation[]|null $discoveryLocations
+     * @param DiscoveryLocation[] $discoveryLocations
      */
     private function discover(array $discoveries, array $discoveryLocations): void
     {
