@@ -6,7 +6,7 @@ parameters:
                 - src/Tempest/Framework/Testing/*
                 - tests/Integration/**/*Test.php
                 - packages/auth/src/OAuth/Testing/*
-                - packages/cache/src/Testing/*
+                - packages/**/src/Testing/*
                 - packages/core/src/Exceptions/ExceptionTester.php
                 - packages/**/tests/**/*.php
                 - packages/**/tests/*.php
