@@ -1,39 +1,37 @@
 includes:
-	- phpstan-baseline.neon
-	- vendor/spaze/phpstan-disallowed-calls/extension.neon
-	- vendor/phpat/phpat/extension.neon
+    - phpstan-baseline.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - vendor/phpat/phpat/extension.neon
 services:
-	-
-		class: Tests\Tempest\Architecture\ArchitectureTestCase
-		tags:
-			- phpat.test
+    -
+        class: Tests\Tempest\Architecture\ArchitectureTestCase
+        tags:
+            - phpat.test
 parameters:
-	level: 5
-	tmpDir: .cache/phpstan
-	tips:
-	    treatPhpDocTypesAsCertain: false
-	excludePaths:
-	    - tests/Integration/View/blade/cache/**.php
-	paths:
-		- src
-		- tests
-	ignoreErrors:
-		-
-			identifier: argument.named
-		-
-		    message: '#.*exec*#'
-		    path: packages/console/src/Terminal/Terminal.php
+    level: 5
+    tmpDir: .cache/phpstan
+    tips:
+        treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+        - packages/auth
+        - packages/cache
+        - packages/clock
+        - packages/command-bus
+        - packages/console
+        - tests
+    reportUnmatchedIgnoredErrors: true
 
-	disallowedFunctionCalls:
-		-
-			function: 'exec()'
-		-
-			function: 'eval()'
-		-
-			function: 'dd()'
-		-
-			function: 'dump()'
-		-
-			function: 'phpinfo()'
-		-
-			function: 'var_dump()'
+    disallowedFunctionCalls:
+        -
+            function: 'exec()'
+        -
+            function: 'eval()'
+        -
+            function: 'dd()'
+        -
+            function: 'dump()'
+        -
+            function: 'phpinfo()'
+        -
+            function: 'var_dump()'

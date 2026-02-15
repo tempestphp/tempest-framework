@@ -1,2 +1,45 @@
 parameters:
-	ignoreErrors: []
+    ignoreErrors:
+        -
+            identifier: argument.named
+            paths:
+                - src/Tempest/Framework/Testing/*
+                - tests/Integration/**/*Test.php
+                - packages/auth/src/OAuth/Testing/*
+                - packages/cache/src/Testing/*
+        -
+            identifier: smaller.alwaysFalse
+            path: packages/support/src/Arr/functions.php
+            count: 1
+            # Runtime guard: positive-int type guarantees $number >= 1, but we keep the check for safety
+        -
+            identifier: instanceof.alwaysTrue
+            path: packages/support/src/Arr/functions.php
+            count: 1
+            # Runtime guard: closure return type guarantees Generator, but we validate for a clear error message
+        -
+            identifier: disallowed.function
+            path: packages/clock/src/MockClock.php
+            count: 1
+            # Intentional: dd() is the purpose of MockClock::dd()
+        -
+            identifier: property.uninitializedReadonly
+            paths:
+                - packages/**/*Command.php
+                - src/Tempest/Framework/Commands/*Command.php
+                - packages/console/src/Stubs/ConsoleMiddlewareStub.php
+                - src/Tempest/Framework/Installers/ViewComponentsInstaller.php
+                - tests/Fixtures/**/*Command.php
+                - tests/Fixtures/Console/CommandWithArgumentName.php
+                - tests/Integration/Console/Fixtures/*Command.php
+            # Intentional: #[Inject] attribute on HasConsole trait initializes $console via container reflection after construction
+        -
+            identifier: disallowed.function
+            path: packages/console/src/Terminal/Terminal.php
+            count: 3
+            # Intentional: exec() is required for TTY terminal operations (stty, tput)
+        -
+            identifier: function.alreadyNarrowedType
+            path: packages/console/src/GenericConsole.php
+            count: 1
+            # Runtime guard: PHPDoc narrows string to class-string<BackedEnum>, but is_a() check is needed at runtime
