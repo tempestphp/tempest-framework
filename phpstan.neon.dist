@@ -22,13 +22,17 @@ parameters:
         - packages/container
         - packages/core
         - packages/cryptography
-        #- packages/database
+        #- packages/database - 342 errors
         - packages/datetime
         - packages/debug
         - packages/discovery
         - packages/event-bus
         - packages/generation
         - packages/http
+        - packages/http-client
+        - packages/icon
+        #- packages/intl - 53 errors
+        - packages/kv-store
         - tests
     reportUnmatchedIgnoredErrors: true
 
