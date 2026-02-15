@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
+use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
@@ -21,7 +21,7 @@ final readonly class FileSessionManager implements SessionManager
 {
     public function __construct(
         private Clock $clock,
-        private SessionConfig $sessionConfig,
+        private FileSessionConfig $sessionConfig,
     ) {}
 
     public function getOrCreate(SessionId $id): Session
