@@ -33,6 +33,7 @@ parameters:
         - packages/icon
         #- packages/intl - 53 errors
         - packages/kv-store
+        - packages/log
         - tests
     reportUnmatchedIgnoredErrors: true
 
