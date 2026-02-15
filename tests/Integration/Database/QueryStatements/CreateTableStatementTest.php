@@ -225,7 +225,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $varcharStatement = new CreateTableStatement('frieren_mages')
             ->primary()
             ->varchar('name', length: 120, nullable: true, default: 'Himmel')
-            ->compile(DatabaseDialect::MYSQL);
+            ->compile(dialect: DatabaseDialect::MYSQL);
 
         $stringStatement = new CreateTableStatement('frieren_mages')
             ->primary()
@@ -233,6 +233,31 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             ->compile(DatabaseDialect::MYSQL);
 
         $this->assertSame($varcharStatement, $stringStatement);
+    }
+
+    public function test_text_with_length_limit(): void
+    {
+        $tinyText = new CreateTableStatement('test-table')
+            ->text('content', false, null, 255)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $mediumText = new CreateTableStatement('test-table')
+            ->text('content', false, null, 65535)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $text = new CreateTableStatement('test-table')
+            ->text('content', false, null, 16777215)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $longText = new CreateTableStatement('test-table')
+            ->text('content', false, null, 4294967295)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $default = new CreateTableStatement('test-table')
+            ->text('content', false, null, null)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+
+        $this->assertStringContainsString('TINYTEXT', $tinyText);
+        $this->assertStringContainsString('MEDIUMTEXT', $mediumText);
+        $this->assertStringContainsString('TEXT', $text);
+        $this->assertStringContainsString('LONGTEXT', $longText);
+        $this->assertStringContainsString('TEXT', $default);
     }
 
     public function test_object_field(): void

@@ -143,12 +143,13 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /**
      * Adds a `TEXT` column to the table.
      */
-    public function text(string $name, bool $nullable = false, ?string $default = null): self
+    public function text(string $name, bool $nullable = false, ?string $default = null, ?int $length = null): self
     {
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
             default: $default,
+            length: $length,
         );
 
         return $this;
