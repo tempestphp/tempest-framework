@@ -35,6 +35,7 @@ parameters:
         - packages/kv-store
         - packages/log
         - packages/mail
+        - packages/mapper
         - tests
     reportUnmatchedIgnoredErrors: true
 
