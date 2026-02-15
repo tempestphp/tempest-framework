@@ -22,6 +22,8 @@ final readonly class DependencyInstaller
     /**
      * Installs the specified JavaScript dependencies.
      * The package manager will be detected from the lockfile present in `$cwd`. If none found, it will be prompted to the user.
+     *
+     * @param non-empty-string|list<non-empty-string> $dependencies
      */
     public function installDependencies(string $cwd, string|array $dependencies, bool $dev = false): void
     {
@@ -40,6 +42,8 @@ final readonly class DependencyInstaller
 
     /**
      * Installs dependencies without interacting with the console.
+     *
+     * @param non-empty-string|list<non-empty-string> $dependencies
      */
     public function silentlyInstallDependencies(string $cwd, string|array $dependencies, bool $dev = false, PackageManager $defaultPackageManager = PackageManager::NPM): void
     {
@@ -55,19 +59,27 @@ final readonly class DependencyInstaller
 
     /**
      * Gets the `Process` instance that will install the specified dependencies.
+     *
+     * @param non-empty-string|list<non-empty-string> $dependencies
      */
     private function getInstallProcess(PackageManager $packageManager, string $cwd, string|array $dependencies, bool $dev = false): Process
     {
+        /** @var list<non-empty-string> $dependencies */
+        $dependencies = array_values(wrap($dependencies));
+
+        /** @var list<string> $command */
+        $command = array_values(array_filter(
+            [
+                $packageManager->getBinaryName(),
+                $packageManager->getInstallCommand(),
+                $dev ? '-D' : null,
+                ...$dependencies,
+            ],
+            fn (?string $arg): bool => $arg !== null,
+        ));
+
         return new Process(
-            array_filter(
-                [
-                    $packageManager->getBinaryName(),
-                    $packageManager->getInstallCommand(),
-                    $dev ? '-D' : null,
-                    ...wrap($dependencies),
-                ],
-                fn (?string $arg): bool => $arg !== null,
-            ),
+            $command,
             $cwd,
         );
     }

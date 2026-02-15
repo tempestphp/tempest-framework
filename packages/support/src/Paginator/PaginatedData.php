@@ -11,6 +11,7 @@ final class PaginatedData implements JsonSerializable
 {
     /**
      * @param array<T> $data
+     * @param list<int> $pageRange
      */
     public function __construct(
         public array $data,
@@ -41,7 +42,7 @@ final class PaginatedData implements JsonSerializable
 
     /**
      * @template U
-     * @param callable(mixed): U $callback
+     * @param callable(T): U $callback
      * @return PaginatedData<U>
      */
     public function map(callable $callback): self
@@ -62,6 +63,25 @@ final class PaginatedData implements JsonSerializable
         );
     }
 
+    /**
+     * @return array{
+     *     data: array<T>,
+     *     pagination: array{
+     *         current_page: int,
+     *         total_pages: int,
+     *         total_items: int,
+     *         items_per_page: int,
+     *         offset: int,
+     *         limit: int,
+     *         has_next: bool,
+     *         has_previous: bool,
+     *         next_page: ?int,
+     *         previous_page: ?int,
+     *         page_range: list<int>,
+     *         count: int
+     *     }
+     * }
+     */
     public function toArray(): array
     {
         return [
@@ -83,6 +103,25 @@ final class PaginatedData implements JsonSerializable
         ];
     }
 
+    /**
+     * @return array{
+     *     data: array<T>,
+     *     pagination: array{
+     *         current_page: int,
+     *         total_pages: int,
+     *         total_items: int,
+     *         items_per_page: int,
+     *         offset: int,
+     *         limit: int,
+     *         has_next: bool,
+     *         has_previous: bool,
+     *         next_page: ?int,
+     *         previous_page: ?int,
+     *         page_range: list<int>,
+     *         count: int
+     *     }
+     * }
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
