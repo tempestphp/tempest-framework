@@ -40,6 +40,7 @@ parameters:
         - packages/reflection
         - packages/router
         - packages/storage
+        - packages/support
         - tests
     reportUnmatchedIgnoredErrors: true
 
