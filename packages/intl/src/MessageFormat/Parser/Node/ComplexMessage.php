@@ -3,6 +3,7 @@
 namespace Tempest\Intl\MessageFormat\Parser\Node;
 
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\ComplexBody;
+use Tempest\Intl\MessageFormat\Parser\Node\Declaration\Declaration;
 
 final class ComplexMessage extends MessageNode
 {
