@@ -60,7 +60,7 @@ final class DevelopmentException implements Response
                     ],
                     'resources' => [
                         'memoryPeakUsage' => memory_get_peak_usage(real_usage: true),
-                        'executionTimeMs' => (hrtime(as_number: true) - TEMPEST_START) / 1_000_000,
+                        'executionTimeMs' => $this->resolveExecutionTimeInMilliseconds(),
                     ],
                     'versions' => [
                         'php' => PHP_VERSION,
@@ -69,6 +69,17 @@ final class DevelopmentException implements Response
                 ])->toJson(),
             ],
         );
+    }
+
+    private function resolveExecutionTimeInMilliseconds(): float
+    {
+        $tempestStart = defined('TEMPEST_START') ? constant('TEMPEST_START') : null;
+
+        if (! is_int($tempestStart)) {
+            return 0.0;
+        }
+
+        return (hrtime(as_number: true) - $tempestStart) / 1_000_000;
     }
 
     private function enhanceStacktraceForViewCompilation(ViewCompilationFailed $exception, Stacktrace $stacktrace): Stacktrace
