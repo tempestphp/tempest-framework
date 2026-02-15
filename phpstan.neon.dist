@@ -43,6 +43,7 @@ parameters:
         - packages/support
         #- packages/upgrade - 51 errors
         - packages/validation
+        - packages/view
         - tests
     reportUnmatchedIgnoredErrors: true
 
