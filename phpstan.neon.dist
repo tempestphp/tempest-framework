@@ -28,6 +28,7 @@ parameters:
         - packages/discovery
         - packages/event-bus
         - packages/generation
+        - packages/http
         - tests
     reportUnmatchedIgnoredErrors: true
 
