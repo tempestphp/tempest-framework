@@ -39,6 +39,7 @@ parameters:
         #- packages/process - 31 errors
         - packages/reflection
         - packages/router
+        - packages/storage
         - tests
     reportUnmatchedIgnoredErrors: true
 
