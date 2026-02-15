@@ -21,7 +21,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         public string $directory,
     ) {}
 
-    public function getItem(string $key): CacheItem
+    public function getItem(string $key): CacheItemInterface
     {
         $createCacheItem = Closure::bind(
             closure: static function ($key, $value, $isHit) {
