@@ -448,8 +448,7 @@ final class MailTester
                 return match (true) {
                     $address instanceof SymfonyAddress => $address->getAddress(),
                     $address instanceof EmailAddress => $address->email,
-                    is_string($address) => $address,
-                    default => null,
+                    default => $address,
                 };
             })
             ->filter()
