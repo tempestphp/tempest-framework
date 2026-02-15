@@ -41,12 +41,15 @@ parameters:
         - packages/router
         - packages/storage
         - packages/support
-        #- packages/upgrade - 51 errors
+        - packages/upgrade
         - packages/validation
         - packages/view
         - packages/vite
         - packages/vite-plugin-tempest
         - tests
+    excludePaths:
+        analyse:
+            - packages/upgrade/tests/*/Fixtures/*.php
     reportUnmatchedIgnoredErrors: true
 
     disallowedFunctionCalls:
