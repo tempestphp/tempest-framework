@@ -19,6 +19,8 @@ parameters:
         - packages/clock
         - packages/command-bus
         - packages/console
+        - packages/container
+        - packages/core
         - tests
     reportUnmatchedIgnoredErrors: true
 

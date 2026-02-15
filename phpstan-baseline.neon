@@ -7,6 +7,7 @@ parameters:
                 - tests/Integration/**/*Test.php
                 - packages/auth/src/OAuth/Testing/*
                 - packages/cache/src/Testing/*
+                - packages/core/src/Exceptions/ExceptionTester.php
         -
             identifier: smaller.alwaysFalse
             path: packages/support/src/Arr/functions.php
@@ -26,13 +27,21 @@ parameters:
             identifier: property.uninitializedReadonly
             paths:
                 - packages/**/*Command.php
+                - packages/**/*Installer.php
+                - packages/console/src/Stubs/*Stub.php
                 - src/Tempest/Framework/Commands/*Command.php
-                - packages/console/src/Stubs/ConsoleMiddlewareStub.php
-                - src/Tempest/Framework/Installers/ViewComponentsInstaller.php
+                - src/Tempest/Framework/Installers/*
                 - tests/Fixtures/**/*Command.php
                 - tests/Fixtures/Console/CommandWithArgumentName.php
+                - tests/Fixtures/Core/PublishesFilesConcreteClass.php
+                - tests/Fixtures/TestInstaller.php
                 - tests/Integration/Console/Fixtures/*Command.php
             # Intentional: #[Inject] attribute on HasConsole trait initializes $console via container reflection after construction
+        -
+            identifier: disallowed.function
+            path: packages/core/src/Composer.php
+            count: 1
+            # Intentional: exec() is required for running composer commands
         -
             identifier: disallowed.function
             path: packages/console/src/Terminal/Terminal.php
