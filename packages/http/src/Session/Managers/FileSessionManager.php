@@ -21,7 +21,7 @@ final readonly class FileSessionManager implements SessionManager
 {
     public function __construct(
         private Clock $clock,
-        private FileSessionConfig $sessionConfig,
+        private FileSessionConfig $sessionConfig, // TODO: rename to $config, see RedisSessionManager and DatabaseSessionManager
     ) {}
 
     public function getOrCreate(SessionId $id): Session
