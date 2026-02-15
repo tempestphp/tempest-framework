@@ -6,6 +6,7 @@ use Predis;
 use Tempest\Container\Container;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
+use Tempest\Core\InsightType;
 use Tempest\Support\Regex;
 
 final class RedisInsightsProvider implements InsightsProvider
@@ -28,13 +29,13 @@ final class RedisInsightsProvider implements InsightsProvider
                 'Engine' => match (get_class($redis->getClient())) {
                     \Redis::class => 'Redis extension',
                     Predis\Client::class => 'Predis',
-                    default => new Insight('None', Insight::WARNING),
+                    default => new Insight('None', InsightType::WARNING),
                 },
-                'Version' => $version ?: new Insight('Unknown', Insight::WARNING),
+                'Version' => $version ?: new Insight('Unknown', InsightType::WARNING),
             ];
         } catch (\Throwable) {
             return [
-                'Engine' => new Insight('Disconnected', Insight::ERROR),
+                'Engine' => new Insight('Disconnected', InsightType::ERROR),
             ];
         }
     }

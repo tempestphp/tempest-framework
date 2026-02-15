@@ -13,6 +13,7 @@ use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
+use Tempest\Core\InsightType;
 use Tempest\Support\Str;
 use UnitEnum;
 
@@ -54,10 +55,10 @@ final class UserCacheInsightsProvider implements InsightsProvider
             : null;
 
         if ($cache->enabled) {
-            return [$type, new Insight('ENABLED', Insight::SUCCESS)];
+            return [$type, new Insight('ENABLED', InsightType::SUCCESS)];
         }
 
-        return [$type, new Insight('DISABLED', Insight::WARNING)];
+        return [$type, new Insight('DISABLED', InsightType::WARNING)];
     }
 
     private function getCacheName(Cache $cache): string
