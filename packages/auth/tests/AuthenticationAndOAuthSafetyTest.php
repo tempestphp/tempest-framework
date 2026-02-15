@@ -31,10 +31,10 @@ final class AuthenticationAndOAuthSafetyTest extends TestCase
     {
         $provider = new GenericProvider([
             'clientId' => 'client-id',
-            'clientSecret' => 'client-secret',
+            'clientSecret' => 'client-secret', // @mago-expect lint:no-literal-password
             'redirectUri' => 'https://example.com/callback',
             'urlAuthorize' => 'https://provider.test/authorize',
-            'urlAccessToken' => 'https://provider.test/token',
+            'urlAccessToken' => 'https://provider.test/token', // @mago-expect lint:no-literal-password
             'urlResourceOwnerDetails' => 'https://provider.test/user',
         ]);
 
