@@ -31,7 +31,7 @@ parameters:
         - packages/http
         - packages/http-client
         - packages/icon
-        #- packages/intl - 53 errors
+        - packages/intl
         - packages/kv-store
         - packages/log
         - packages/mail
