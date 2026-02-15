@@ -24,6 +24,8 @@ parameters:
         - packages/cryptography
         - packages/datetime
         - packages/debug
+        - packages/discovery
+        - packages/event-bus
         - tests
     reportUnmatchedIgnoredErrors: true
 
