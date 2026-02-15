@@ -420,8 +420,6 @@ final class FormatterTest extends TestCase
 
     private function createDateTimeFunction(): DateTimeFunction
     {
-        return new DateTimeFunction(
-            new IntlConfig(Locale::default(), Locale::default()),
-        );
+        return new DateTimeFunction();
     }
 }
