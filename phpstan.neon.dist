@@ -22,10 +22,12 @@ parameters:
         - packages/container
         - packages/core
         - packages/cryptography
+        #- packages/database
         - packages/datetime
         - packages/debug
         - packages/discovery
         - packages/event-bus
+        - packages/generation
         - tests
     reportUnmatchedIgnoredErrors: true
 
