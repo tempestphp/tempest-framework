@@ -8,7 +8,7 @@ use Tempest\Support\Arr;
 final class GenericCatalog implements Catalog
 {
     /**
-     * @var array<string,string[]> $catalog
+     * @param array<string,mixed> $catalog
      */
     public function __construct(
         private array $catalog = [],
