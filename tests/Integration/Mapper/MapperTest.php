@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
@@ -18,6 +19,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithConfiguredTempestDateTimeFormat;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithInterfaceTypedProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
@@ -311,6 +313,16 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01', $fromArray->date->format('yyyy-MM-dd'));
         $this->assertInstanceOf(DateTimeImmutable::class, $fromArray->nativeDate);
         $this->assertSame('2025-03-02', $fromArray->nativeDate->format('Y-m-d'));
+    }
+
+    #[Test]
+    public function map_uses_configured_format_for_tempest_datetime(): void
+    {
+        $object = map([
+            'date' => '01/12/2024 10:10:10',
+        ])->to(ObjectWithConfiguredTempestDateTimeFormat::class);
+
+        $this->assertSame('2024-12-01 10:10:10', $object->date->format('yyyy-MM-dd HH:mm:ss'));
     }
 
     public function test_multiple_map_from_source(): void
