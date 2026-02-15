@@ -22,6 +22,7 @@ parameters:
         - packages/container
         - packages/core
         - packages/cryptography
+        - packages/datetime
         - tests
     reportUnmatchedIgnoredErrors: true
 
@@ -34,6 +35,10 @@ parameters:
             function: 'dd()'
         -
             function: 'dump()'
+        -
+            function: 'ld()'
+        -
+            function: 'lw()'
         -
             function: 'phpinfo()'
         -
