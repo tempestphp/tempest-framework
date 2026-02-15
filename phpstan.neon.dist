@@ -41,6 +41,8 @@ parameters:
         - packages/router
         - packages/storage
         - packages/support
+        #- packages/upgrade - 51 errors
+        - packages/validation
         - tests
     reportUnmatchedIgnoredErrors: true
 
