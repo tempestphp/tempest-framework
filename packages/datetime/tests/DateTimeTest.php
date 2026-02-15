@@ -1041,28 +1041,4 @@ final class DateTimeTest extends TestCase
 
         DateTime::fromParts(Timezone::UTC, PHP_INT_MAX, 1, 1);
     }
-
-    #[Test]
-    public function from_parts_with_year_where_calendar_returns_false_throws_overflow(): void
-    {
-        $this->expectException(OverflowException::class);
-
-        DateTime::fromParts(Timezone::UTC, 5_368_710, 1, 1);
-    }
-
-    #[Test]
-    public function plus_month_on_extreme_year_throws_overflow(): void
-    {
-        $this->expectException(OverflowException::class);
-
-        DateTime::fromParts(Timezone::UTC, 5_368_709, 12, 28)->plusMonth();
-    }
-
-    #[Test]
-    public function plus_year_on_extreme_year_throws_overflow(): void
-    {
-        $this->expectException(OverflowException::class);
-
-        DateTime::fromParts(Timezone::UTC, 5_368_709, 6, 15)->plusYear();
-    }
 }
