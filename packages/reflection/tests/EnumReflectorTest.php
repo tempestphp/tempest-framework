@@ -281,7 +281,7 @@ enum TestEnumWithInterface: string implements TestInterface
 }
 
 #[\Attribute]
-class TestAttribute
+final class TestAttribute
 {
     public function __construct(
         public string $value,
