@@ -38,6 +38,7 @@ parameters:
         - packages/mapper
         #- packages/process - 31 errors
         - packages/reflection
+        - packages/router
         - tests
     reportUnmatchedIgnoredErrors: true
 
