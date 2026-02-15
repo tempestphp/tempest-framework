@@ -4,7 +4,7 @@ namespace Tempest\Container\Tests\Fixtures;
 
 use Tempest\Container\Tag;
 
-class AutowireWithEnumTags
+final class AutowireWithEnumTags
 {
     public function __construct(
         #[Tag(EnumTag::FOO)]
