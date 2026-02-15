@@ -2,7 +2,6 @@
 
 namespace Tempest\Mail;
 
-use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 
 interface MailerConfig
@@ -10,7 +9,7 @@ interface MailerConfig
     /**
      * The underlying Symfony transport class.
      *
-     * @param class-string<Transport>
+     * @var class-string<TransportInterface>
      */
     public string $transport {
         get;
