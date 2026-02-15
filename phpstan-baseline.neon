@@ -36,20 +36,6 @@ parameters:
             count: 2
             # Intentional: dd() delegates to ld() and dump() delegates to lw()
         -
-            identifier: property.uninitializedReadonly
-            paths:
-                - packages/**/*Command.php
-                - packages/**/*Installer.php
-                - packages/console/src/Stubs/*Stub.php
-                - src/Tempest/Framework/Commands/*Command.php
-                - src/Tempest/Framework/Installers/*
-                - tests/Fixtures/**/*Command.php
-                - tests/Fixtures/Console/CommandWithArgumentName.php
-                - tests/Fixtures/Core/PublishesFilesConcreteClass.php
-                - tests/Fixtures/TestInstaller.php
-                - tests/Integration/Console/Fixtures/*Command.php
-            # Intentional: #[Inject] attribute on HasConsole trait initializes $console via container reflection after construction
-        -
             identifier: disallowed.function
             path: packages/core/src/Composer.php
             count: 1

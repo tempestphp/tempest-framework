@@ -7,6 +7,10 @@ services:
         class: Tests\Tempest\Architecture\ArchitectureTestCase
         tags:
             - phpat.test
+    -
+        class: Tests\Tempest\PHPStan\LazyReadWritePropertiesExtension
+        tags:
+            - phpstan.properties.readWriteExtension
 parameters:
     level: 5
     tmpDir: .cache/phpstan
