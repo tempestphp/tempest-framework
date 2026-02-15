@@ -95,6 +95,16 @@ parameters:
             count: 1
             # Intentional: lw() is the purpose of this test fixture
         -
+            identifier: disallowed.function
+            path: packages/support/tests/Filesystem/UnixFunctionsTest.php
+            count: 1
+            # Intentional: exec() restores permissions recursively during Unix test cleanup
+        -
+            identifier: requireOnce.fileNotFound
+            path: packages/support/tests/Fixtures/Phar/normalize_path.php
+            count: 1
+            # Intentional: require_once target exists only inside generated Phar archive at runtime
+        -
             identifier: function.alreadyNarrowedType
             path: packages/console/src/GenericConsole.php
             count: 1
