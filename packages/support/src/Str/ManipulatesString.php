@@ -847,7 +847,7 @@ trait ManipulatesString
      */
     public function dd(mixed ...$dd): void
     {
-        ld($this->value, ...$dd);
+        $this->debugLog([$this->value, ...$dd], terminate: true);
     }
 
     /**
@@ -855,9 +855,26 @@ trait ManipulatesString
      */
     public function dump(mixed ...$dumps): self
     {
-        lw($this->value, ...$dumps);
+        $this->debugLog([$this->value, ...$dumps]);
 
         return $this;
+    }
+
+    private function debugLog(array $items, bool $terminate = false): void
+    {
+        $debugClass = \Tempest\Debug\Debug::class;
+
+        if (class_exists($debugClass)) {
+            $debugClass::resolve()->log($items);
+        } else {
+            foreach ($items as $item) {
+                error_log(print_r($item, true));
+            }
+        }
+
+        if ($terminate) {
+            exit(1);
+        }
     }
 
     /**
