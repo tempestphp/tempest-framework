@@ -50,6 +50,41 @@ parameters:
             count: 3
             # Intentional: exec() is required for TTY terminal operations (stty, tput)
         -
+            identifier: disallowed.function
+            path: packages/datetime/src/TemporalConvenienceMethods.php
+            count: 2
+            # Intentional: dd() is the purpose of TemporalInterface::dd()
+        -
+            identifier: identical.alwaysFalse
+            path: packages/datetime/src/DateTime.php
+            count: 6
+            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
+        -
+            identifier: booleanOr.alwaysFalse
+            path: packages/datetime/src/DateTime.php
+            count: 5
+            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
+        -
+            identifier: instanceof.alwaysTrue
+            path: packages/datetime/src/DateTime.php
+            count: 1
+            # Runtime guard: DateTimeInterface::getTimezone() can return false at runtime
+        -
+            identifier: disallowed.function
+            path: packages/console/src/Testing/ConsoleTester.php
+            count: 1
+            # Intentional: ld() is the purpose of ConsoleTester::dd()
+        -
+            identifier: disallowed.function
+            path: src/Tempest/Framework/Commands/ConfigShowCommand.php
+            count: 1
+            # Intentional: lw() used for debug output when available
+        -
+            identifier: disallowed.function
+            path: tests/Integration/Console/Fixtures/LogDebugCommand.php
+            count: 1
+            # Intentional: lw() is the purpose of this test fixture
+        -
             identifier: function.alreadyNarrowedType
             path: packages/console/src/GenericConsole.php
             count: 1
