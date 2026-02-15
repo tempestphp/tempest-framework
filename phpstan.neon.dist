@@ -21,6 +21,7 @@ parameters:
         - packages/console
         - packages/container
         - packages/core
+        - packages/cryptography
         - tests
     reportUnmatchedIgnoredErrors: true
 

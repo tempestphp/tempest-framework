@@ -8,6 +8,8 @@ parameters:
                 - packages/auth/src/OAuth/Testing/*
                 - packages/cache/src/Testing/*
                 - packages/core/src/Exceptions/ExceptionTester.php
+                - packages/**/tests/**/*.php
+                - packages/**/tests/*.php
         -
             identifier: smaller.alwaysFalse
             path: packages/support/src/Arr/functions.php
