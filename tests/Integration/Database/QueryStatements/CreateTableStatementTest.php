@@ -225,7 +225,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $varcharStatement = new CreateTableStatement('frieren_mages')
             ->primary()
             ->varchar('name', length: 120, nullable: true, default: 'Himmel')
-            ->compile(dialect: DatabaseDialect::MYSQL);
+            ->compile(DatabaseDialect::MYSQL);
 
         $stringStatement = new CreateTableStatement('frieren_mages')
             ->primary()
