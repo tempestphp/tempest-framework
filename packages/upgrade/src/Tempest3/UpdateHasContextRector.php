@@ -15,7 +15,7 @@ final class UpdateHasContextRector extends AbstractRector
         ];
     }
 
-    public function refactor(Node $node): void
+    public function refactor(Node $node): ?int
     {
         if ($node instanceof Node\UseItem) {
             $name = $node->name->toString();
@@ -24,11 +24,11 @@ final class UpdateHasContextRector extends AbstractRector
                 $node->name = new Node\Name('Tempest\Core\ProvidesContext');
             }
 
-            return;
+            return null;
         }
 
         if (! $node instanceof Node\Stmt\Class_) {
-            return;
+            return null;
         }
 
         $implements = $node->implements;
@@ -39,10 +39,12 @@ final class UpdateHasContextRector extends AbstractRector
         );
 
         if ($implementsHasContext === null) {
-            return;
+            return null;
         }
 
         $implements[$implementsHasContext] = new Node\Name('\Tempest\Core\ProvidesContext');
         $node->implements = $implements;
+
+        return null;
     }
 }
