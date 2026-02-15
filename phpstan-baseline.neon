@@ -114,3 +114,8 @@ parameters:
             path: packages/validation/tests/Rules/IsEnumTest.php
             count: 1
             # Intentional: constructor accepts only enum class-strings; this test verifies runtime rejection path for invalid input
+        -
+            identifier: staticMethod.alreadyNarrowedType
+            path: packages/process/src/Testing/ProcessTester.php
+            count: 3
+            # Intentional: explicit assertTrue() calls keep callback-only branches counted as assertions in tests
