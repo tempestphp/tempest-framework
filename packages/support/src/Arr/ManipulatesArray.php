@@ -142,7 +142,7 @@ trait ManipulatesArray
      *
      * @param TValue|array<TValue> $values The values to remove.
      */
-    public function removeValues(string|int|array $values): self
+    public function removeValues(mixed $values): self
     {
         return $this->createOrModify(remove_values($this->value, $values));
     }
@@ -567,7 +567,7 @@ trait ManipulatesArray
     /**
      * Asserts whether the instance contains the specified value.
      *
-     * @param TValue: bool $search
+     * @param TValue|Closure(TValue, TKey): bool $search
      */
     public function hasValue(mixed $search): bool
     {
