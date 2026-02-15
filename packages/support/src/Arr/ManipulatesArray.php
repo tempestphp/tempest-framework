@@ -482,7 +482,7 @@ trait ManipulatesArray
     /**
      * Applies the given callback to all items of the instance.
      *
-     * @param Closure(mixed $value, mixed $key): void $each
+     * @param Closure(TValue, TKey): mixed $each
      */
     public function each(Closure $each): self
     {

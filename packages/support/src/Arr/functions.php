@@ -813,7 +813,7 @@ function filter(iterable $array, ?Closure $filter = null): array
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param Closure(TValue $value, TKey $key): void $each
+ * @param Closure(TValue $value, TKey $key): mixed $each
  *
  * @return array<TKey,TValue>
  */
