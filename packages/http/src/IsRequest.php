@@ -140,7 +140,7 @@ trait IsRequest
     {
         $header = $this->headers->get(name: 'accept') ?? '';
 
-        /** @var array{mediaType:string,subType:string} */
+        /** @var list<array{mediaType:string,subType:string}> */
         $acceptedMediaTypes = [];
 
         foreach (str($header)->explode(separator: ',') as $acceptedType) {
