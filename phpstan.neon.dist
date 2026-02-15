@@ -23,6 +23,7 @@ parameters:
         - packages/core
         - packages/cryptography
         - packages/datetime
+        - packages/debug
         - tests
     reportUnmatchedIgnoredErrors: true
 

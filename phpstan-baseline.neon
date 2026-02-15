@@ -26,6 +26,16 @@ parameters:
             count: 1
             # Intentional: dd() is the purpose of MockClock::dd()
         -
+            identifier: disallowed.function
+            path: packages/debug/src/DOMDebug.php
+            count: 1
+            # Intentional: lw() is the purpose of DOMDebug::dump()
+        -
+            identifier: disallowed.function
+            path: packages/debug/src/functions.php
+            count: 2
+            # Intentional: dd() delegates to ld() and dump() delegates to lw()
+        -
             identifier: property.uninitializedReadonly
             paths:
                 - packages/**/*Command.php
