@@ -245,7 +245,10 @@
         }
     },
     "scripts": {
-        "phpunit": "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
+        "phpunit": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices"
+        ],
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "fmt": "vendor/bin/mago fmt",
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
