@@ -26,7 +26,7 @@ parameters:
         - packages/container
         - packages/core
         - packages/cryptography
-        #- packages/database - 342 errors
+        - packages/database
         - packages/datetime
         - packages/debug
         - packages/discovery
