@@ -237,7 +237,8 @@
         }
     },
     "bin": [
-        "packages/console/bin/tempest"
+        "packages/console/bin/tempest",
+        "packages/console/bin/tempest-complete"
     ],
     "config": {
         "allow-plugins": {
