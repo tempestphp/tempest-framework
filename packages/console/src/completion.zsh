@@ -129,7 +129,7 @@ if (( $+functions[compdef] )); then
         _tempest_project_directory "$command"
         project_directory="$REPLY"
 
-        helper="${project_directory}/.tempest/completion/tempest-complete"
+        helper="${project_directory}/vendor/bin/tempest-complete"
         metadata="${project_directory}/.tempest/completion/commands.json"
 
         [[ -x "$helper" ]] || return 0

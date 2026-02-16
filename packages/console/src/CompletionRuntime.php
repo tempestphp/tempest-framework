@@ -15,18 +15,9 @@ use function Tempest\Support\path;
 #[Singleton]
 final readonly class CompletionRuntime
 {
-    public const string HELPER_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_BINARY__';
-    public const string METADATA_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_METADATA__';
-    public const string RELEASE_DOWNLOAD_BASE_URL = 'https://github.com/tempestphp/tempest-framework/releases/download';
-
     public function getInstallationDirectory(): string
     {
         return Path::canonicalize(path($this->getProfileDirectory(), '.tempest', 'completion')->toString());
-    }
-
-    public function getDirectory(): string
-    {
-        return internal_storage_path('completion');
     }
 
     public function getMetadataPath(): string
@@ -34,77 +25,19 @@ final readonly class CompletionRuntime
         return internal_storage_path('completion', 'commands.json');
     }
 
-    public function getHelperBinaryPath(): string
-    {
-        return internal_storage_path('completion', $this->getHelperBinaryFilename());
-    }
-
-    public function getHelperBinaryAssetFilename(): string
-    {
-        return $this->getHelperBinaryFilename() . '_' . str_replace('-', '_', $this->getHelperBinaryPlatform());
-    }
-
-    public function getHelperBinaryReleaseTag(): string
-    {
-        $releaseTag = $this->resolveInstalledReleaseVersion();
-
-        if (str_contains($releaseTag, 'dev')) {
-            throw new RuntimeException("Completion helper binaries are only available for tagged releases. Current version is `{$releaseTag}`.");
-        }
-
-        if (str_starts_with($releaseTag, 'v')) {
-            return $releaseTag;
-        }
-
-        return "v{$releaseTag}";
-    }
-
-    public function getHelperBinaryDownloadUrl(): string
-    {
-        return sprintf(
-            self::RELEASE_DOWNLOAD_BASE_URL . '/%s/%s',
-            $this->getHelperBinaryReleaseTag(),
-            $this->getHelperBinaryAssetFilename(),
-        );
-    }
-
-    public function isSupportedPlatform(?string $osFamily = null, ?string $architecture = null): bool
+    public function isSupportedPlatform(?string $osFamily = null): bool
     {
         $osFamily ??= PHP_OS_FAMILY;
-        $architecture ??= strtolower((string) php_uname('m'));
 
         return match ($osFamily) {
-            'Darwin' => $architecture === 'arm64',
-            'Linux' => true,
+            'Darwin', 'Linux' => true,
             default => false,
         };
     }
 
     public function getUnsupportedPlatformMessage(): string
     {
-        return 'Completion commands are supported on Linux and macOS (Apple Silicon). Use WSL if you are on Windows.';
-    }
-
-    public function getHelperBinaryPlatform(): string
-    {
-        $os = match (PHP_OS_FAMILY) {
-            'Darwin' => 'darwin',
-            'Linux' => 'linux',
-            default => strtolower(PHP_OS_FAMILY),
-        };
-
-        $architecture = match (strtolower((string) php_uname('m'))) {
-            'amd64', 'x86_64' => 'x86_64',
-            'aarch64', 'arm64' => 'arm64',
-            default => strtolower((string) php_uname('m')),
-        };
-
-        return "{$os}-{$architecture}";
-    }
-
-    public function getHelperBinaryFilename(): string
-    {
-        return 'tempest-complete';
+        return 'Completion commands are supported on Linux and macOS. Use WSL if you are on Windows.';
     }
 
     public function getInstalledCompletionPath(Shell $shell): string
@@ -132,27 +65,6 @@ final readonly class CompletionRuntime
                 "  source {$installedPath}",
             ],
         };
-    }
-
-    private function resolveInstalledReleaseVersion(): string
-    {
-        if (! class_exists(\Composer\InstalledVersions::class)) {
-            throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
-        }
-
-        foreach (['tempest/framework', 'tempest/console'] as $package) {
-            if (! \Composer\InstalledVersions::isInstalled($package)) {
-                continue;
-            }
-
-            $version = \Composer\InstalledVersions::getPrettyVersion($package);
-
-            if (is_string($version) && $version !== '') {
-                return $version;
-            }
-        }
-
-        throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
     }
 
     private function getProfileDirectory(): string

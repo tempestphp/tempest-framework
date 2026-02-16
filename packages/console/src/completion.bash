@@ -157,7 +157,7 @@ _tempest() {
 
     project_directory="$(_tempest_project_directory "$command")" || return 0
 
-    helper="$project_directory/.tempest/completion/tempest-complete"
+    helper="$project_directory/vendor/bin/tempest-complete"
     metadata="$project_directory/.tempest/completion/commands.json"
 
     [[ -x "$helper" ]] || return 0

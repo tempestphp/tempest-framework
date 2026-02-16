@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use RuntimeException;
 use Symfony\Component\Filesystem\Path;
 use Tempest\Console\Actions\BuildCompletionMetadata;
-use Tempest\Console\Actions\EnsureCompletionHelperBinary;
-use Tempest\Console\Actions\RenderCompletionScript;
 use Tempest\Console\Actions\ResolveShell;
 use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
@@ -28,8 +25,6 @@ final readonly class CompletionInstallCommand
         private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
         private BuildCompletionMetadata $buildCompletionMetadata,
-        private EnsureCompletionHelperBinary $ensureCompletionHelperBinary,
-        private RenderCompletionScript $renderCompletionScript,
     ) {}
 
     #[ConsoleCommand(
@@ -83,14 +78,6 @@ final readonly class CompletionInstallCommand
 
         Filesystem\write_json($this->completionRuntime->getMetadataPath(), ($this->buildCompletionMetadata)(), pretty: false);
 
-        try {
-            ($this->ensureCompletionHelperBinary)();
-        } catch (RuntimeException $runtimeException) {
-            $this->console->error($runtimeException->getMessage());
-
-            return ExitCode::ERROR;
-        }
-
         Filesystem\ensure_directory_exists($targetDir);
 
         if (Filesystem\is_file($targetPath) && ! $this->console->confirm('Completion file already exists. Overwrite?', default: true)) {
@@ -100,10 +87,7 @@ final readonly class CompletionInstallCommand
         }
 
         $script = Filesystem\read_file($sourcePath);
-        Filesystem\write_file(
-            $targetPath,
-            ($this->renderCompletionScript)($script),
-        );
+        Filesystem\write_file($targetPath, $script);
 
         $this->console->success("Installed completion script to: {$targetPath}");
 

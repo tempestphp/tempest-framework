@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Symfony\Component\Filesystem\Path;
-use Tempest\Console\Actions\RenderCompletionScript;
 use Tempest\Console\Actions\ResolveShell;
 use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
@@ -23,7 +22,6 @@ final readonly class CompletionShowCommand
         private Console $console,
         private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
-        private RenderCompletionScript $renderCompletionScript,
     ) {}
 
     #[ConsoleCommand(
@@ -59,9 +57,7 @@ final readonly class CompletionShowCommand
             return ExitCode::ERROR;
         }
 
-        $this->console->writeRaw(
-            ($this->renderCompletionScript)(Filesystem\read_file($sourcePath)),
-        );
+        $this->console->writeRaw(Filesystem\read_file($sourcePath));
 
         return ExitCode::SUCCESS;
     }
