@@ -97,3 +97,9 @@ $selectFromCount = SelectQueryBuilder::fromQueryBuilder($countBuilder);
 \PHPStan\Testing\assertType('Tempest\\Database\\Tests\\TypeInference\\ChildStubModel|null', ChildStubModel::findById(1));
 \PHPStan\Testing\assertType('Tempest\\Database\\Tests\\TypeInference\\ChildStubModel|null', ChildStubModel::get(1));
 \PHPStan\Testing\assertType('array<Tempest\\Database\\Tests\\TypeInference\\ChildStubModel>', ChildStubModel::all());
+
+$tableQueryBuilder = query('stub_models');
+\PHPStan\Testing\assertType('Tempest\\Database\\Builder\\QueryBuilders\\QueryBuilder<object>', $tableQueryBuilder);
+\PHPStan\Testing\assertType('Tempest\\Database\\Builder\\QueryBuilders\\SelectQueryBuilder<object>', $tableQueryBuilder->select());
+\PHPStan\Testing\assertType('object|null', $tableQueryBuilder->select()->where('id', 1)->first());
+\PHPStan\Testing\assertType('array<object>', $tableQueryBuilder->select()->where('id', 1)->all());

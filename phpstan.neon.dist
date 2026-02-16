@@ -11,6 +11,10 @@ services:
         class: Tests\Tempest\PHPStan\LazyReadWritePropertiesExtension
         tags:
             - phpstan.properties.readWriteExtension
+    -
+        class: Tests\Tempest\PHPStan\QueryFunctionDynamicReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
 parameters:
     level: 5
     tmpDir: .cache/phpstan

@@ -2,7 +2,6 @@
 
 namespace Tempest\Database\QueryStatements;
 
-use Stringable;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
