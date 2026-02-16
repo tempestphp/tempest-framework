@@ -13,18 +13,18 @@ enum IntegerBytes: int
     public static function fromBytes(int $bytes): self
     {
         return match (true) {
-            $bytes > self::DEFAULT->value => IntegerBytes::BIG,
-            $bytes > self::SMALL->value => IntegerBytes::DEFAULT,
-            DEFAULT => IntegerBytes::SMALL,
+            $bytes > self::DEFAULT->value => self::BIG,
+            $bytes > self::SMALL->value => self::DEFAULT,
+            DEFAULT => self::SMALL,
         };
     }
 
     public function toString(): string
     {
         return match($this) {
-            IntegerBytes::SMALL => 'SMALLINT',
-            IntegerBytes::DEFAULT => 'INTEGER',
-            IntegerBytes::BIG => 'BIGINT',
+            self::SMALL => 'SMALLINT',
+            self::DEFAULT => 'INTEGER',
+            self::BIG => 'BIGINT',
         };
     }
 }
