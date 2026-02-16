@@ -23,6 +23,10 @@ final class CompletionHelperPhpTest extends TestCase
     {
         parent::setUp();
 
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+
         $this->engine = new CompletionEngine();
         $this->inputNormalizer = new CompletionInputNormalizer();
         $this->metadataParser = new CompletionMetadataParser();
