@@ -61,28 +61,10 @@ final class ShellTest extends TestCase
     }
 
     #[Test]
-    public function getCompletionsDirectory(): void
-    {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        $this->assertSame($home . '/.tempest/completion', Shell::ZSH->getCompletionsDirectory());
-        $this->assertSame($home . '/.tempest/completion', Shell::BASH->getCompletionsDirectory());
-    }
-
-    #[Test]
     public function getCompletionFilename(): void
     {
         $this->assertSame('tempest.zsh', Shell::ZSH->getCompletionFilename());
         $this->assertSame('tempest.bash', Shell::BASH->getCompletionFilename());
-    }
-
-    #[Test]
-    public function getInstalledCompletionPath(): void
-    {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        $this->assertSame($home . '/.tempest/completion/tempest.zsh', Shell::ZSH->getInstalledCompletionPath());
-        $this->assertSame($home . '/.tempest/completion/tempest.bash', Shell::BASH->getInstalledCompletionPath());
     }
 
     #[Test]
@@ -99,19 +81,5 @@ final class ShellTest extends TestCase
 
         $this->assertSame($home . '/.zshrc', Shell::ZSH->getRcFile());
         $this->assertSame($home . '/.bashrc', Shell::BASH->getRcFile());
-    }
-
-    #[Test]
-    public function getPostInstallInstructions(): void
-    {
-        $zshInstructions = Shell::ZSH->getPostInstallInstructions();
-        $this->assertIsArray($zshInstructions);
-        $this->assertNotEmpty($zshInstructions);
-        $this->assertStringContainsStringIgnoringCase('source', implode("\n", $zshInstructions));
-
-        $bashInstructions = Shell::BASH->getPostInstallInstructions();
-        $this->assertIsArray($bashInstructions);
-        $this->assertNotEmpty($bashInstructions);
-        $this->assertStringContainsStringIgnoringCase('source', implode("\n", $bashInstructions));
     }
 }

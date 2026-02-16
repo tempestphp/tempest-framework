@@ -16,6 +16,8 @@ final class CompletionUpdateBinCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $helperBinary = null;
 
+    private CompletionRuntime $completionRuntime;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +25,8 @@ final class CompletionUpdateBinCommandTest extends FrameworkIntegrationTestCase
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Shell completion is not supported on Windows.');
         }
+
+        $this->completionRuntime = new CompletionRuntime();
     }
 
     protected function tearDown(): void
@@ -38,7 +42,7 @@ final class CompletionUpdateBinCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function update_bin_fails_gracefully_on_dev_version(): void
     {
-        $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
+        $this->helperBinary = $this->completionRuntime->getHelperBinaryPath();
 
         $this->console
             ->call('completion:update-bin')

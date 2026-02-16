@@ -12,15 +12,19 @@ use function Tempest\Support\box;
 
 final readonly class EnsureCompletionHelperBinary
 {
+    public function __construct(
+        private CompletionRuntime $completionRuntime,
+    ) {}
+
     public function __invoke(bool $update = false): string
     {
-        $binaryPath = CompletionRuntime::getHelperBinaryPath();
+        $binaryPath = $this->completionRuntime->getHelperBinaryPath();
 
-        if (!$update && Filesystem\is_file($binaryPath) && Filesystem\is_executable($binaryPath)) {
+        if (! $update && Filesystem\is_file($binaryPath) && Filesystem\is_executable($binaryPath)) {
             return $binaryPath;
         }
 
-        $downloadUrl = CompletionRuntime::getHelperBinaryDownloadUrl();
+        $downloadUrl = $this->completionRuntime->getHelperBinaryDownloadUrl();
         $binaryContents = $this->downloadBinary($downloadUrl);
 
         Filesystem\ensure_directory_exists(dirname($binaryPath));
@@ -49,7 +53,7 @@ final readonly class EnsureCompletionHelperBinary
         [$contents, $errorMessage] = box(static fn (): false|string => file_get_contents($downloadUrl, false, $context));
 
         if (! is_string($contents) || $contents === '') {
-            $platform = CompletionRuntime::getHelperBinaryPlatform();
+            $platform = $this->completionRuntime->getHelperBinaryPlatform();
 
             throw new RuntimeException("Failed to download completion helper binary for platform `{$platform}` from {$downloadUrl}. {$errorMessage}");
         }

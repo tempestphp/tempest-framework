@@ -18,6 +18,7 @@ final readonly class CompletionUninstallCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
     ) {}
 
@@ -33,8 +34,8 @@ final readonly class CompletionUninstallCommand
         )]
         ?Shell $shell = null,
     ): ExitCode {
-        if (! CompletionRuntime::isSupportedPlatform()) {
-            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
 
             return ExitCode::ERROR;
         }
@@ -47,7 +48,7 @@ final readonly class CompletionUninstallCommand
             return ExitCode::ERROR;
         }
 
-        $targetPath = $shell->getInstalledCompletionPath();
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath($shell);
 
         if (! Filesystem\is_file($targetPath)) {
             $this->console->warning("Completion file not found: {$targetPath}");

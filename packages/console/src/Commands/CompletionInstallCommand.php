@@ -25,6 +25,7 @@ final readonly class CompletionInstallCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
         private BuildCompletionMetadata $buildCompletionMetadata,
         private EnsureCompletionHelperBinary $ensureCompletionHelperBinary,
@@ -43,8 +44,8 @@ final readonly class CompletionInstallCommand
         )]
         ?Shell $shell = null,
     ): ExitCode {
-        if (! CompletionRuntime::isSupportedPlatform()) {
-            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
 
             return ExitCode::ERROR;
         }
@@ -58,8 +59,8 @@ final readonly class CompletionInstallCommand
         }
 
         $sourcePath = $this->getSourcePath($shell);
-        $targetDir = $shell->getCompletionsDirectory();
-        $targetPath = $shell->getInstalledCompletionPath();
+        $targetDir = $this->completionRuntime->getInstallationDirectory();
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath($shell);
 
         if (! Filesystem\is_file($sourcePath)) {
             $this->console->error("Completion script not found: {$sourcePath}");
@@ -80,7 +81,7 @@ final readonly class CompletionInstallCommand
             }
         }
 
-        Filesystem\write_json(CompletionRuntime::getMetadataPath(), ($this->buildCompletionMetadata)(), pretty: false);
+        Filesystem\write_json($this->completionRuntime->getMetadataPath(), ($this->buildCompletionMetadata)(), pretty: false);
 
         try {
             ($this->ensureCompletionHelperBinary)();
@@ -108,7 +109,7 @@ final readonly class CompletionInstallCommand
 
         $this->console->writeln();
         $this->console->info('Next steps:');
-        $this->console->instructions($shell->getPostInstallInstructions());
+        $this->console->instructions($this->completionRuntime->getPostInstallInstructions($shell));
 
         return ExitCode::SUCCESS;
     }

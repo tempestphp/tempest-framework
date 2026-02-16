@@ -6,44 +6,47 @@ namespace Tempest\Console;
 
 use RuntimeException;
 use Symfony\Component\Filesystem\Path;
+use Tempest\Console\Enums\Shell;
+use Tempest\Container\Singleton;
 
 use function Tempest\internal_storage_path;
 use function Tempest\Support\path;
 
-final class CompletionRuntime
+#[Singleton]
+final readonly class CompletionRuntime
 {
     public const string HELPER_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_BINARY__';
     public const string METADATA_PATH_PLACEHOLDER = '__TEMPEST_COMPLETION_METADATA__';
     public const string RELEASE_DOWNLOAD_BASE_URL = 'https://github.com/tempestphp/tempest-framework/releases/download';
 
-    public static function getInstallationDirectory(): string
+    public function getInstallationDirectory(): string
     {
-        return Path::canonicalize(path(self::getProfileDirectory(), '.tempest', 'completion')->toString());
+        return Path::canonicalize(path($this->getProfileDirectory(), '.tempest', 'completion')->toString());
     }
 
-    public static function getDirectory(): string
+    public function getDirectory(): string
     {
         return internal_storage_path('completion');
     }
 
-    public static function getMetadataPath(): string
+    public function getMetadataPath(): string
     {
         return internal_storage_path('completion', 'commands.json');
     }
 
-    public static function getHelperBinaryPath(): string
+    public function getHelperBinaryPath(): string
     {
-        return internal_storage_path('completion', self::getHelperBinaryFilename());
+        return internal_storage_path('completion', $this->getHelperBinaryFilename());
     }
 
-    public static function getHelperBinaryAssetFilename(): string
+    public function getHelperBinaryAssetFilename(): string
     {
-        return self::getHelperBinaryFilename() . '_' . str_replace('-', '_', self::getHelperBinaryPlatform());
+        return $this->getHelperBinaryFilename() . '_' . str_replace('-', '_', $this->getHelperBinaryPlatform());
     }
 
-    public static function getHelperBinaryReleaseTag(): string
+    public function getHelperBinaryReleaseTag(): string
     {
-        $releaseTag = self::resolveInstalledReleaseVersion();
+        $releaseTag = $this->resolveInstalledReleaseVersion();
 
         if (str_contains($releaseTag, 'dev')) {
             throw new RuntimeException("Completion helper binaries are only available for tagged releases. Current version is `{$releaseTag}`.");
@@ -56,16 +59,16 @@ final class CompletionRuntime
         return "v{$releaseTag}";
     }
 
-    public static function getHelperBinaryDownloadUrl(): string
+    public function getHelperBinaryDownloadUrl(): string
     {
         return sprintf(
             self::RELEASE_DOWNLOAD_BASE_URL . '/%s/%s',
-            self::getHelperBinaryReleaseTag(),
-            self::getHelperBinaryAssetFilename(),
+            $this->getHelperBinaryReleaseTag(),
+            $this->getHelperBinaryAssetFilename(),
         );
     }
 
-    public static function isSupportedPlatform(?string $osFamily = null, ?string $architecture = null): bool
+    public function isSupportedPlatform(?string $osFamily = null, ?string $architecture = null): bool
     {
         $osFamily ??= PHP_OS_FAMILY;
         $architecture ??= strtolower((string) php_uname('m'));
@@ -77,12 +80,12 @@ final class CompletionRuntime
         };
     }
 
-    public static function getUnsupportedPlatformMessage(): string
+    public function getUnsupportedPlatformMessage(): string
     {
         return 'Completion commands are supported on Linux and macOS (Apple Silicon). Use WSL if you are on Windows.';
     }
 
-    public static function getHelperBinaryPlatform(): string
+    public function getHelperBinaryPlatform(): string
     {
         $os = match (PHP_OS_FAMILY) {
             'Darwin' => 'darwin',
@@ -99,12 +102,39 @@ final class CompletionRuntime
         return "{$os}-{$architecture}";
     }
 
-    public static function getHelperBinaryFilename(): string
+    public function getHelperBinaryFilename(): string
     {
         return 'tempest-complete';
     }
 
-    private static function resolveInstalledReleaseVersion(): string
+    public function getInstalledCompletionPath(Shell $shell): string
+    {
+        return $this->getInstallationDirectory() . '/' . $shell->getCompletionFilename();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPostInstallInstructions(Shell $shell): array
+    {
+        $rcFile = $shell->getRcFile();
+        $installedPath = $this->getInstalledCompletionPath($shell);
+
+        return match ($shell) {
+            Shell::ZSH => [
+                "Add this line to {$rcFile} and restart your terminal:",
+                '',
+                "  source {$installedPath}",
+            ],
+            Shell::BASH => [
+                "Add this line to {$rcFile} and restart your terminal:",
+                '',
+                "  source {$installedPath}",
+            ],
+        };
+    }
+
+    private function resolveInstalledReleaseVersion(): string
     {
         if (! class_exists(\Composer\InstalledVersions::class)) {
             throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
@@ -125,7 +155,7 @@ final class CompletionRuntime
         throw new RuntimeException('Unable to determine the installed Tempest version to download completion helper binaries.');
     }
 
-    private static function getProfileDirectory(): string
+    private function getProfileDirectory(): string
     {
         $profileDirectory = $_SERVER['HOME'] ?? $_ENV['HOME'] ?? getenv('HOME') ?: null;
 

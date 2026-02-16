@@ -25,6 +25,8 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
     private ?string $originalHome = null;
 
+    private CompletionRuntime $completionRuntime;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,6 +34,8 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Shell completion is not supported on Windows.');
         }
+
+        $this->completionRuntime = new CompletionRuntime();
 
         $this->originalHome = getenv('HOME') ?: null;
         $this->profileDirectory = $this->internalStorage . '/profile';
@@ -76,7 +80,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->prepareCompletionRuntime();
 
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
 
         $this->console
             ->call('completion:install --shell=zsh --force')
@@ -104,7 +108,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->prepareCompletionRuntime();
 
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
 
         $this->console
             ->call('completion:install --shell=zsh --force')
@@ -118,7 +122,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->prepareCompletionRuntime();
 
-        $this->installedFile = Shell::BASH->getInstalledCompletionPath();
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::BASH);
 
         $this->console
             ->call('completion:install --shell=bash --force')
@@ -145,8 +149,8 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->prepareCompletionRuntime();
 
-        $targetPath = Shell::ZSH->getInstalledCompletionPath();
-        $targetDir = Shell::ZSH->getCompletionsDirectory();
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+        $targetDir = $this->completionRuntime->getInstallationDirectory();
 
         Filesystem\create_directory($targetDir);
         Filesystem\write_file($targetPath, '# existing content');
@@ -167,8 +171,8 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->prepareCompletionRuntime();
 
-        $targetPath = Shell::ZSH->getInstalledCompletionPath();
-        $targetDir = Shell::ZSH->getCompletionsDirectory();
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+        $targetDir = $this->completionRuntime->getInstallationDirectory();
 
         Filesystem\create_directory($targetDir);
         Filesystem\write_file($targetPath, '# existing content');
@@ -186,15 +190,15 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
     private function prepareCompletionRuntime(bool $withRuntimeHelperBinary = true): void
     {
-        $directory = CompletionRuntime::getDirectory();
+        $directory = $this->completionRuntime->getDirectory();
 
         Filesystem\ensure_directory_exists($directory);
 
-        $this->metadataFile = CompletionRuntime::getMetadataPath();
+        $this->metadataFile = $this->completionRuntime->getMetadataPath();
         Filesystem\write_json($this->metadataFile, ['version' => 1, 'commands' => []]);
 
         if ($withRuntimeHelperBinary) {
-            $this->helperBinary = CompletionRuntime::getHelperBinaryPath();
+            $this->helperBinary = $this->completionRuntime->getHelperBinaryPath();
             Filesystem\write_file($this->helperBinary, "#!/bin/sh\nexit 0\n");
             chmod($this->helperBinary, 0o755);
         }

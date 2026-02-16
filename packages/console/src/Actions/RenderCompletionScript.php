@@ -8,6 +8,10 @@ use Tempest\Console\CompletionRuntime;
 
 final readonly class RenderCompletionScript
 {
+    public function __construct(
+        private CompletionRuntime $completionRuntime,
+    ) {}
+
     public function __invoke(string $script): string
     {
         return str_replace(
@@ -16,8 +20,8 @@ final readonly class RenderCompletionScript
                 CompletionRuntime::METADATA_PATH_PLACEHOLDER,
             ],
             [
-                CompletionRuntime::getHelperBinaryPath(),
-                CompletionRuntime::getMetadataPath(),
+                $this->completionRuntime->getHelperBinaryPath(),
+                $this->completionRuntime->getMetadataPath(),
             ],
             $script,
         );

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Enums;
 
-use Tempest\Console\CompletionRuntime;
-
 enum Shell: string
 {
     case ZSH = 'zsh';
@@ -26,22 +24,12 @@ enum Shell: string
         };
     }
 
-    public function getCompletionsDirectory(): string
-    {
-        return CompletionRuntime::getInstallationDirectory();
-    }
-
     public function getCompletionFilename(): string
     {
         return match ($this) {
             self::ZSH => 'tempest.zsh',
             self::BASH => 'tempest.bash',
         };
-    }
-
-    public function getInstalledCompletionPath(): string
-    {
-        return $this->getCompletionsDirectory() . '/' . $this->getCompletionFilename();
     }
 
     public function getSourceFilename(): string
@@ -59,28 +47,6 @@ enum Shell: string
         return match ($this) {
             self::ZSH => $home . '/.zshrc',
             self::BASH => $home . '/.bashrc',
-        };
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getPostInstallInstructions(): array
-    {
-        $rcFile = $this->getRcFile();
-        $installedPath = $this->getInstalledCompletionPath();
-
-        return match ($this) {
-            self::ZSH => [
-                "Add this line to {$rcFile} and restart your terminal:",
-                '',
-                "  source {$installedPath}",
-            ],
-            self::BASH => [
-                "Add this line to {$rcFile} and restart your terminal:",
-                '',
-                "  source {$installedPath}",
-            ],
         };
     }
 }

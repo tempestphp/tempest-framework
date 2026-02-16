@@ -16,6 +16,7 @@ final readonly class CompletionGenerateCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private BuildCompletionMetadata $buildCompletionMetadata,
     ) {}
 
@@ -30,13 +31,13 @@ final readonly class CompletionGenerateCommand
         )]
         ?string $path = null,
     ): ExitCode {
-        if (! CompletionRuntime::isSupportedPlatform()) {
-            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
 
             return ExitCode::ERROR;
         }
 
-        $path ??= CompletionRuntime::getMetadataPath();
+        $path ??= $this->completionRuntime->getMetadataPath();
 
         Filesystem\write_json($path, ($this->buildCompletionMetadata)(), pretty: false);
 

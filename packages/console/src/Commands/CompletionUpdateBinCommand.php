@@ -15,6 +15,7 @@ final readonly class CompletionUpdateBinCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private EnsureCompletionHelperBinary $ensureCompletionHelperBinary,
     ) {}
 
@@ -24,8 +25,8 @@ final readonly class CompletionUpdateBinCommand
     )]
     public function __invoke(): ExitCode
     {
-        if (! CompletionRuntime::isSupportedPlatform()) {
-            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
 
             return ExitCode::ERROR;
         }

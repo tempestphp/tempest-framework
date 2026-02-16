@@ -21,6 +21,7 @@ final readonly class CompletionShowCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
         private RenderCompletionScript $renderCompletionScript,
     ) {}
@@ -36,8 +37,8 @@ final readonly class CompletionShowCommand
         )]
         ?Shell $shell = null,
     ): ExitCode {
-        if (! CompletionRuntime::isSupportedPlatform()) {
-            $this->console->error(CompletionRuntime::getUnsupportedPlatformMessage());
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
 
             return ExitCode::ERROR;
         }

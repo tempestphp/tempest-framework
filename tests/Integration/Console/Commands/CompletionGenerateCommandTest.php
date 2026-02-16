@@ -13,6 +13,8 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $generatedPath = null;
 
+    private CompletionRuntime $completionRuntime;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,6 +22,8 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Shell completion is not supported on Windows.');
         }
+
+        $this->completionRuntime = new CompletionRuntime();
     }
 
     protected function tearDown(): void
@@ -35,7 +39,7 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function generate_writes_completion_metadata_to_default_path(): void
     {
-        $this->generatedPath = CompletionRuntime::getMetadataPath();
+        $this->generatedPath = $this->completionRuntime->getMetadataPath();
 
         if (Filesystem\is_file($this->generatedPath)) {
             Filesystem\delete_file($this->generatedPath);
@@ -78,7 +82,7 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function generate_does_not_create_runtime_helper_binary(): void
     {
-        $helperBinary = CompletionRuntime::getHelperBinaryPath();
+        $helperBinary = $this->completionRuntime->getHelperBinaryPath();
 
         if (Filesystem\is_file($helperBinary)) {
             Filesystem\delete_file($helperBinary);
