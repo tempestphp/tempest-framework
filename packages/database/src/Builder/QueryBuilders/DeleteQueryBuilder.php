@@ -16,11 +16,14 @@ use function Tempest\Database\inspect;
  * @template TModel of object
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
- * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
+    use HasConditions;
+    use OnDatabase;
+    /** @use HasWhereQueryBuilderMethods<TModel> */
+    use HasWhereQueryBuilderMethods;
+    use TransformsQueryBuilder;
 
     private DeleteStatement $delete;
 

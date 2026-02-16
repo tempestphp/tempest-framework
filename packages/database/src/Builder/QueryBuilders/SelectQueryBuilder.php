@@ -39,11 +39,14 @@ use function Tempest\Mapper\map;
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsJoins<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsRelations<TModel>
- * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, SupportsJoins, SupportsRelations
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
+    use HasConditions;
+    use OnDatabase;
+    /** @use HasWhereQueryBuilderMethods<TModel> */
+    use HasWhereQueryBuilderMethods;
+    use TransformsQueryBuilder;
 
     public ModelInspector $model;
 

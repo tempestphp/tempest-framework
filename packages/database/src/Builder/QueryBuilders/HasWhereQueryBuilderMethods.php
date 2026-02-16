@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\WhereOperator;
+use Tempest\Database\QueryStatements\WhereGroupStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\str;
@@ -12,11 +13,16 @@ use function Tempest\Support\str;
  * @template TModel of object
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
- * @use \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
 {
+    /** @use HasConvenientWhereMethods<TModel> */
     use HasConvenientWhereMethods;
+
+    protected function appendWhere(WhereStatement|WhereGroupStatement $where): void
+    {
+        $this->wheres->offsetSet(null, $where);
+    }
 
     /**
      * Adds a SQL `WHERE` condition to the query. If the `$statement` looks like raw SQL, the method will assume it is and call `whereRaw`. Otherwise, `whereField` will be called.
