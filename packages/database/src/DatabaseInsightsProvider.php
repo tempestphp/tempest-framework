@@ -39,7 +39,7 @@ final class DatabaseInsightsProvider implements InsightsProvider
             SQLiteConfig::class => 'SQLite',
             PostgresConfig::class => 'PostgreSQL',
             MysqlConfig::class => 'MySQL',
-            default => ['Unknown', null],
+            default => 'Unknown',
         };
     }
 
@@ -68,7 +68,7 @@ final class DatabaseInsightsProvider implements InsightsProvider
         }
     }
 
-    private function getSQLitePath(): null|Insight|string
+    private function getSQLitePath(): ?string
     {
         if (! $this->databaseConfig instanceof SQLiteConfig) {
             return null;
