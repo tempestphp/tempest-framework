@@ -32,6 +32,6 @@
     },
     "bin": [
         "bin/tempest",
-      "bin/tempest-complete"
+        "bin/tempest-complete"
     ]
 }
