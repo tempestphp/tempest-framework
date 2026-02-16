@@ -87,7 +87,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres->offsetSet(null, $where);
+            $builder->appendWhere($where);
         }
 
         /** @var UpdateQueryBuilder<TSourceModel> $builder */
@@ -556,7 +556,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             return $this;
         }
 
-        $this->wheres->offsetSet(null, new WhereStatement($condition['sql']));
+        $this->appendWhere(new WhereStatement($condition['sql']));
         $this->bind(...$condition['bindings']);
 
         return $this;

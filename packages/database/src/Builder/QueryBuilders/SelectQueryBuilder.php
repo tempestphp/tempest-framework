@@ -155,7 +155,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres->offsetSet(null, $where);
+            $builder->appendWhere($where);
         }
 
         if ($source instanceof SupportsJoins) {

@@ -52,7 +52,7 @@ trait HasWhereQueryBuilderMethods
             return $this->andWhere($field, $value, $operator);
         }
 
-        $this->wheres->offsetSet(null, new WhereStatement($condition['sql']));
+        $this->appendWhere(new WhereStatement($condition['sql']));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -69,7 +69,7 @@ trait HasWhereQueryBuilderMethods
         $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->wheres->offsetSet(null, new WhereStatement("AND {$condition['sql']}"));
+        $this->appendWhere(new WhereStatement("AND {$condition['sql']}"));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -86,7 +86,7 @@ trait HasWhereQueryBuilderMethods
         $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->wheres->offsetSet(null, new WhereStatement("OR {$condition['sql']}"));
+        $this->appendWhere(new WhereStatement("OR {$condition['sql']}"));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -103,7 +103,7 @@ trait HasWhereQueryBuilderMethods
             return $this->andWhereRaw($statement, ...$bindings);
         }
 
-        $this->wheres->offsetSet(null, new WhereStatement($statement));
+        $this->appendWhere(new WhereStatement($statement));
         $this->bind(...$bindings);
 
         return $this;
@@ -116,7 +116,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->wheres->offsetSet(null, new WhereStatement("AND {$rawCondition}"));
+        $this->appendWhere(new WhereStatement("AND {$rawCondition}"));
         $this->bind(...$bindings);
 
         return $this;
@@ -129,7 +129,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->wheres->offsetSet(null, new WhereStatement("OR {$rawCondition}"));
+        $this->appendWhere(new WhereStatement("OR {$rawCondition}"));
         $this->bind(...$bindings);
 
         return $this;
@@ -143,12 +143,13 @@ trait HasWhereQueryBuilderMethods
      */
     public function whereGroup(Closure $callback): self
     {
+        /** @var WhereGroupBuilder<TModel> $groupBuilder */
         $groupBuilder = new WhereGroupBuilder($this->model);
         $callback($groupBuilder);
         $group = $groupBuilder->build();
 
         if (! $group->conditions->isEmpty()) {
-            $this->wheres->offsetSet(null, $group);
+            $this->appendWhere($group);
             $this->bind(...$groupBuilder->getBindings());
         }
 
@@ -164,7 +165,7 @@ trait HasWhereQueryBuilderMethods
     public function andWhereGroup(Closure $callback): self
     {
         if ($this->wheres->isNotEmpty()) {
-            $this->wheres->offsetSet(null, new WhereStatement('AND'));
+            $this->appendWhere(new WhereStatement('AND'));
         }
 
         return $this->whereGroup($callback);
@@ -179,7 +180,7 @@ trait HasWhereQueryBuilderMethods
     public function orWhereGroup(Closure $callback): self
     {
         if ($this->wheres->isNotEmpty()) {
-            $this->wheres->offsetSet(null, new WhereStatement('OR'));
+            $this->appendWhere(new WhereStatement('OR'));
         }
 
         return $this->whereGroup($callback);
