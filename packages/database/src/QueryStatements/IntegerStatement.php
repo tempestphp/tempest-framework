@@ -13,17 +13,28 @@ final readonly class IntegerStatement implements QueryStatement
         private string $name,
         private bool $unsigned = false,
         private bool $nullable = false,
+        private int $bytes = 4,
         private ?int $default = null,
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf(
-            '`%s` INTEGER %s %s %s',
-            $this->name,
-            $this->unsigned ? 'UNSIGNED' : '',
-            $this->default !== null ? "DEFAULT {$this->default}" : '',
-            $this->nullable ? '' : 'NOT NULL',
-        );
+        return match($dialect) {
+            DatabaseDialect::SQLITE => sprintf(
+                '`%s` INTEGER %s %s %s',
+                $this->name,
+                $this->unsigned ? 'UNSIGNED' : '',
+                $this->default !== null ? "DEFAULT {$this->default}" : '',
+                $this->nullable ? '' : 'NOT NULL',
+            ),
+            DEFAULT => sprintf(
+                '`%s` %s %s %s %s',
+                $this->name,
+                IntegerBytes::fromBytes($this->bytes)->toString(),
+                $this->unsigned ? 'UNSIGNED' : '',
+                $this->default !== null ? "DEFAULT {$this->default}" : '',
+                $this->nullable ? '' : 'NOT NULL',
+            )
+        };
     }
 }

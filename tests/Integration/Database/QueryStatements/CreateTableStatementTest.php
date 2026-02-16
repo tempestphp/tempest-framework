@@ -287,6 +287,57 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame($jsonStatement, $objectStatement);
         $this->assertSame($dtoStatement, $objectStatement);
     }
+
+    public function test_integer_field_with_bytes_mysql(): void
+    {
+        $bigInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 6)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $defaultInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 3)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+        $smallInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 2)
+            ->compile(dialect: DatabaseDialect::MYSQL);
+
+        $this->assertStringContainsString('BIGINT', $bigInteger);
+        $this->assertStringContainsString('INTEGER', $defaultInteger);
+        $this->assertStringContainsString('SMALL', $smallInteger);
+    }
+
+    public function test_integer_field_with_bytes_postgresql(): void
+    {
+        $bigInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 6)
+            ->compile(dialect: DatabaseDialect::POSTGRESQL);
+        $defaultInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 3)
+            ->compile(dialect: DatabaseDialect::POSTGRESQL);
+        $smallInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 2)
+            ->compile(dialect: DatabaseDialect::POSTGRESQL);
+
+        $this->assertStringContainsString('BIGINT', $bigInteger);
+        $this->assertStringContainsString('INTEGER', $defaultInteger);
+        $this->assertStringContainsString('SMALL', $smallInteger);
+    }
+
+    public function test_integer_field_with_bytes_sqlite(): void
+    {
+        $bigInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 6)
+            ->compile(dialect: DatabaseDialect::SQLITE);
+        $defaultInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 3)
+            ->compile(dialect: DatabaseDialect::SQLITE);
+        $smallInteger = new CreateTableStatement('test-table')
+            ->integer('content', false, false, 2)
+            ->compile(dialect: DatabaseDialect::SQLITE);
+
+        $this->assertStringContainsString('INTEGER', $bigInteger);
+        $this->assertStringContainsString('INTEGER', $defaultInteger);
+        $this->assertStringContainsString('INTEGER', $smallInteger);
+    }
 }
 
 enum CreateTableStatementTestEnumForCreateTable: string
