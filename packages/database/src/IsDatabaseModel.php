@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
@@ -22,13 +23,21 @@ trait IsDatabaseModel
     public PrimaryKey $id;
 
     /**
+     * @return QueryBuilder<static>
+     */
+    private static function queryBuilder(): QueryBuilder
+    {
+        return query(static::class);
+    }
+
+    /**
      * Returns a builder for selecting records using this model's table.
      *
      * @return SelectQueryBuilder<self>
      */
     public static function select(): SelectQueryBuilder
     {
-        return query(self::class)->select();
+        return self::queryBuilder()->select();
     }
 
     /**
@@ -38,7 +47,7 @@ trait IsDatabaseModel
      */
     public static function insert(): InsertQueryBuilder
     {
-        return query(self::class)->insert();
+        return self::queryBuilder()->insert();
     }
 
     /**
@@ -48,7 +57,7 @@ trait IsDatabaseModel
      */
     public static function count(): CountQueryBuilder
     {
-        return query(self::class)->count();
+        return self::queryBuilder()->count();
     }
 
     /**
@@ -56,7 +65,7 @@ trait IsDatabaseModel
      */
     public static function new(mixed ...$params): self
     {
-        return query(self::class)->new(...$params);
+        return self::queryBuilder()->new(...$params);
     }
 
     /**
@@ -72,7 +81,7 @@ trait IsDatabaseModel
      */
     public static function resolve(string $input): self
     {
-        return query(self::class)->resolve($input);
+        return self::queryBuilder()->resolve($input);
     }
 
     /**
@@ -80,7 +89,7 @@ trait IsDatabaseModel
      */
     public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
     {
-        return query(self::class)->get($id, $relations);
+        return self::queryBuilder()->get($id, $relations);
     }
 
     /**
@@ -90,7 +99,7 @@ trait IsDatabaseModel
      */
     public static function all(array $relations = []): array
     {
-        return query(self::class)->all($relations);
+        return self::queryBuilder()->all($relations);
     }
 
     /**
@@ -105,7 +114,7 @@ trait IsDatabaseModel
      */
     public static function find(mixed ...$conditions): SelectQueryBuilder
     {
-        return query(self::class)->find(...$conditions);
+        return self::queryBuilder()->find(...$conditions);
     }
 
     /**
@@ -120,7 +129,7 @@ trait IsDatabaseModel
      */
     public static function create(mixed ...$params): self
     {
-        return query(self::class)->create(...$params);
+        return self::queryBuilder()->create(...$params);
     }
 
     /**
@@ -140,7 +149,7 @@ trait IsDatabaseModel
      */
     public static function findOrNew(array $find, array $update): self
     {
-        return query(self::class)->findOrNew($find, $update);
+        return self::queryBuilder()->findOrNew($find, $update);
     }
 
     /**
@@ -159,7 +168,7 @@ trait IsDatabaseModel
      */
     public static function updateOrCreate(array $find, array $update): self
     {
-        return query(self::class)->updateOrCreate($find, $update);
+        return self::queryBuilder()->updateOrCreate($find, $update);
     }
 
     /**
