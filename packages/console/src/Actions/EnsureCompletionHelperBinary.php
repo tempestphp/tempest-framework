@@ -12,11 +12,11 @@ use function Tempest\Support\box;
 
 final readonly class EnsureCompletionHelperBinary
 {
-    public function __invoke(): string
+    public function __invoke(bool $update = false): string
     {
         $binaryPath = CompletionRuntime::getHelperBinaryPath();
 
-        if (Filesystem\is_file($binaryPath) && Filesystem\is_executable($binaryPath)) {
+        if (!$update && Filesystem\is_file($binaryPath) && Filesystem\is_executable($binaryPath)) {
             return $binaryPath;
         }
 

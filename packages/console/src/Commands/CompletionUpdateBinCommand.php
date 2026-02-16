@@ -31,7 +31,7 @@ final readonly class CompletionUpdateBinCommand
         }
 
         try {
-            $binaryPath = ($this->ensureCompletionHelperBinary)();
+            $binaryPath = ($this->ensureCompletionHelperBinary)(update: true);
         } catch (RuntimeException $runtimeException) {
             $this->console->error($runtimeException->getMessage());
 
