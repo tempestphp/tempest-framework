@@ -19,8 +19,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
     private ?string $metadataFile = null;
 
-    private ?string $helperBinary = null;
-
     private string $profileDirectory;
 
     private ?string $originalHome = null;
@@ -58,11 +56,6 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             $this->metadataFile = null;
         }
 
-        if ($this->helperBinary !== null && Filesystem\is_file($this->helperBinary)) {
-            Filesystem\delete_file($this->helperBinary);
-            $this->helperBinary = null;
-        }
-
         if ($this->originalHome === null) {
             putenv('HOME');
             unset($_ENV['HOME'], $_SERVER['HOME']);
@@ -89,7 +82,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
         $installedScript = Filesystem\read_file($this->installedFile);
 
-        $this->assertStringContainsString('/.tempest/completion/tempest-complete', $installedScript);
+        $this->assertStringContainsString('/vendor/bin/tempest-complete', $installedScript);
         $this->assertStringContainsString('/.tempest/completion/commands.json', $installedScript);
     }
 
@@ -188,19 +181,10 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
     }
 
-    private function prepareCompletionRuntime(bool $withRuntimeHelperBinary = true): void
+    private function prepareCompletionRuntime(): void
     {
-        $directory = $this->completionRuntime->getDirectory();
-
-        Filesystem\ensure_directory_exists($directory);
-
         $this->metadataFile = $this->completionRuntime->getMetadataPath();
+        Filesystem\ensure_directory_exists(dirname($this->metadataFile));
         Filesystem\write_json($this->metadataFile, ['version' => 1, 'commands' => []]);
-
-        if ($withRuntimeHelperBinary) {
-            $this->helperBinary = $this->completionRuntime->getHelperBinaryPath();
-            Filesystem\write_file($this->helperBinary, "#!/bin/sh\nexit 0\n");
-            chmod($this->helperBinary, 0o755);
-        }
     }
 }

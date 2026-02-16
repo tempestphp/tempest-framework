@@ -30,19 +30,17 @@ final class CompletionRuntimeTest extends TestCase
 
     #[Test]
     #[DataProvider('supportedPlatformDataProvider')]
-    public function isSupportedPlatform(string $osFamily, string $architecture, bool $expected): void
+    public function isSupportedPlatform(string $osFamily, bool $expected): void
     {
-        $this->assertSame($expected, $this->completionRuntime->isSupportedPlatform($osFamily, $architecture));
+        $this->assertSame($expected, $this->completionRuntime->isSupportedPlatform($osFamily));
     }
 
     public static function supportedPlatformDataProvider(): array
     {
         return [
-            'linux x86_64' => ['Linux', 'x86_64', true],
-            'linux arm64' => ['Linux', 'arm64', true],
-            'darwin arm64' => ['Darwin', 'arm64', true],
-            'darwin x86_64' => ['Darwin', 'x86_64', false],
-            'windows' => ['Windows', 'x86_64', false],
+            'linux' => ['Linux', true],
+            'darwin' => ['Darwin', true],
+            'windows' => ['Windows', false],
         ];
     }
 
@@ -50,24 +48,6 @@ final class CompletionRuntimeTest extends TestCase
     public function getUnsupportedPlatformMessage(): void
     {
         $this->assertStringContainsString('Windows', $this->completionRuntime->getUnsupportedPlatformMessage());
-    }
-
-    #[Test]
-    public function getHelperBinaryAssetFilename(): void
-    {
-        $this->assertMatchesRegularExpression(
-            '/^tempest-complete_[a-z0-9]+_[a-z0-9_]+$/',
-            $this->completionRuntime->getHelperBinaryAssetFilename(),
-        );
-    }
-
-    #[Test]
-    public function getHelperBinaryReleaseTag_throws_for_dev_versions(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('tagged releases');
-
-        $this->completionRuntime->getHelperBinaryReleaseTag();
     }
 
     #[Test]

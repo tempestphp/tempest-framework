@@ -59,7 +59,6 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(['--flag', '--items=', '--value='], $flags);
         $this->assertSame('Install shell completion for Tempest', $metadata['commands']['completion:install']['description']);
-        $this->assertSame('Update the completion helper binary', $metadata['commands']['completion:update-bin']['description']);
         $this->assertSame(['-s'], $installFlags['shell']['aliases']);
         $this->assertSame('The shell to install completions for (zsh, bash)', $installFlags['shell']['description']);
         $this->assertSame(['bash', 'zsh'], $installFlags['shell']['value_options']);
@@ -77,21 +76,5 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
 
         $this->assertTrue(Filesystem\is_file($this->generatedPath));
-    }
-
-    #[Test]
-    public function generate_does_not_create_runtime_helper_binary(): void
-    {
-        $helperBinary = $this->completionRuntime->getHelperBinaryPath();
-
-        if (Filesystem\is_file($helperBinary)) {
-            Filesystem\delete_file($helperBinary);
-        }
-
-        $this->console
-            ->call('completion:generate')
-            ->assertSuccess();
-
-        $this->assertFalse(Filesystem\is_file($helperBinary));
     }
 }
