@@ -50,13 +50,14 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
      */
     public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source): DeleteQueryBuilder
     {
-        $builder = new self($source->model->model);
+        $builder = new self($source->model->getName());
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres[] = $where;
+            $builder->wheres->offsetSet(null, $where);
         }
 
+        /** @var DeleteQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
 

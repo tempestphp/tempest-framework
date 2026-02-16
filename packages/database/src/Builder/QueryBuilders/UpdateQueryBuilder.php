@@ -83,13 +83,14 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
      */
     public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, mixed ...$values): UpdateQueryBuilder
     {
-        $builder = new self($source->model->model, $values, get(SerializerFactory::class));
+        $builder = new self($source->model->getName(), $values, get(SerializerFactory::class));
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres[] = $where;
+            $builder->wheres->offsetSet(null, $where);
         }
 
+        /** @var UpdateQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
 
@@ -550,10 +551,12 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
         if ($this->wheres->isNotEmpty()) {
-            return $this->andWhere($field, $value, $operator);
+            $this->andWhere($field, $value, $operator);
+
+            return $this;
         }
 
-        $this->wheres[] = new WhereStatement($condition['sql']);
+        $this->wheres->offsetSet(null, new WhereStatement($condition['sql']));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -587,10 +590,6 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function isRelationField(string $field): bool
     {
-        if (! $this->model) {
-            return false;
-        }
-
         return $this->model->getHasMany($field) || $this->model->getHasOne($field);
     }
 

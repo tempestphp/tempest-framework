@@ -10,8 +10,8 @@ use function Tempest\Support\str;
 
 /**
  * @template TModel of object
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements
+ * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
+ * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @use \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 trait HasWhereQueryBuilderMethods
@@ -52,7 +52,7 @@ trait HasWhereQueryBuilderMethods
             return $this->andWhere($field, $value, $operator);
         }
 
-        $this->wheres[] = new WhereStatement($condition['sql']);
+        $this->wheres->offsetSet(null, new WhereStatement($condition['sql']));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -69,7 +69,7 @@ trait HasWhereQueryBuilderMethods
         $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->wheres[] = new WhereStatement("AND {$condition['sql']}");
+        $this->wheres->offsetSet(null, new WhereStatement("AND {$condition['sql']}"));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -86,7 +86,7 @@ trait HasWhereQueryBuilderMethods
         $fieldDefinition = $this->model->getFieldDefinition($field);
         $condition = $this->buildCondition((string) $fieldDefinition, $operator, $value);
 
-        $this->wheres[] = new WhereStatement("OR {$condition['sql']}");
+        $this->wheres->offsetSet(null, new WhereStatement("OR {$condition['sql']}"));
         $this->bind(...$condition['bindings']);
 
         return $this;
@@ -103,7 +103,7 @@ trait HasWhereQueryBuilderMethods
             return $this->andWhereRaw($statement, ...$bindings);
         }
 
-        $this->wheres[] = new WhereStatement($statement);
+        $this->wheres->offsetSet(null, new WhereStatement($statement));
         $this->bind(...$bindings);
 
         return $this;
@@ -116,7 +116,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->wheres[] = new WhereStatement("AND {$rawCondition}");
+        $this->wheres->offsetSet(null, new WhereStatement("AND {$rawCondition}"));
         $this->bind(...$bindings);
 
         return $this;
@@ -129,7 +129,7 @@ trait HasWhereQueryBuilderMethods
      */
     public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
-        $this->wheres[] = new WhereStatement("OR {$rawCondition}");
+        $this->wheres->offsetSet(null, new WhereStatement("OR {$rawCondition}"));
         $this->bind(...$bindings);
 
         return $this;
@@ -148,7 +148,7 @@ trait HasWhereQueryBuilderMethods
         $group = $groupBuilder->build();
 
         if (! $group->conditions->isEmpty()) {
-            $this->wheres[] = $group;
+            $this->wheres->offsetSet(null, $group);
             $this->bind(...$groupBuilder->getBindings());
         }
 
@@ -164,7 +164,7 @@ trait HasWhereQueryBuilderMethods
     public function andWhereGroup(Closure $callback): self
     {
         if ($this->wheres->isNotEmpty()) {
-            $this->wheres[] = new WhereStatement('AND');
+            $this->wheres->offsetSet(null, new WhereStatement('AND'));
         }
 
         return $this->whereGroup($callback);
@@ -179,7 +179,7 @@ trait HasWhereQueryBuilderMethods
     public function orWhereGroup(Closure $callback): self
     {
         if ($this->wheres->isNotEmpty()) {
-            $this->wheres[] = new WhereStatement('OR');
+            $this->wheres->offsetSet(null, new WhereStatement('OR'));
         }
 
         return $this->whereGroup($callback);

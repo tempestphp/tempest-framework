@@ -63,11 +63,11 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
      */
     public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, ?string $column = null): CountQueryBuilder
     {
-        $builder = new self($source->model->model, $column);
+        $builder = new self($source->model->getName(), $column);
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres[] = $where;
+            $builder->wheres->offsetSet(null, $where);
         }
 
         if ($source instanceof SupportsJoins) {
@@ -80,6 +80,7 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
             }
         }
 
+        /** @var CountQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
 
