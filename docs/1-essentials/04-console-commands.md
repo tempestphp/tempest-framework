@@ -240,9 +240,9 @@ Interactive components are only supported on Mac and Linux. On Windows, Tempest 
 
 ## Shell completion
 
-Tempest provides shell completion for Zsh and Bash on Linux and macOS (Apple Silicon). This allows you to press `Tab` to autocomplete command names and options. On Windows, use WSL.
+Tempest provides shell completion for Zsh and Bash on Linux and macOS. This allows you to press `Tab` to autocomplete command names and options. On Windows, use WSL.
 
-Completion relies on two things: a **completion script** sourced by your shell, and a **helper binary** that performs the actual matching. The helper binary is not bundled with Tempest. It is downloaded from the GitHub release matching your installed Tempest version.
+Completion relies on two things: a **completion script** sourced by your shell, and a **helper executable** (`vendor/bin/tempest-complete`) that performs the actual matching.
 
 ### Installing completions
 
@@ -256,8 +256,7 @@ This will:
 
 1. Detect your shell (or use `--shell=zsh` / `--shell=bash`).
 2. Generate completion metadata (`commands.json`) for all registered commands.
-3. Download the platform-specific helper binary from the matching Tempest release.
-4. Install the completion script to the appropriate location.
+3. Install the completion script to the appropriate location.
 
 After installation, add the following line to your shell configuration file and restart your terminal:
 
@@ -277,21 +276,14 @@ After adding or removing commands, regenerate the metadata:
 <dim>./</dim>tempest completion:generate
 ```
 
-After updating Tempest to a new version, update the helper binary:
-
-```console
-<dim>./</dim>tempest completion:update-bin
-```
-
 ### Available commands
 
-| Command                 | Description                                                              |
-|-------------------------|--------------------------------------------------------------------------|
-| `completion:install`    | Install the completion script and download the helper binary.            |
-| `completion:generate`   | Regenerate the completion metadata JSON.                                 |
-| `completion:update-bin` | Re-download the helper binary for the current Tempest version.           |
-| `completion:show`       | Output the completion script to stdout (useful for custom installation). |
-| `completion:uninstall`  | Remove the installed completion script.                                  |
+| Command                | Description                                                              |
+|------------------------|--------------------------------------------------------------------------|
+| `completion:install`   | Install the completion script and generate metadata.                     |
+| `completion:generate`  | Regenerate the completion metadata JSON.                                 |
+| `completion:show`      | Output the completion script to stdout (useful for custom installation). |
+| `completion:uninstall` | Remove the installed completion script.                                  |
 
 ## Middleware
 
