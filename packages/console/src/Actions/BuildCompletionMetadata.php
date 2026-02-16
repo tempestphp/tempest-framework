@@ -22,12 +22,12 @@ final readonly class BuildCompletionMetadata
 
         foreach ($this->consoleConfig->commands as $name => $command) {
             $flags = array_map(
-                static fn (ConsoleArgumentDefinition $definition): array => [
+                fn (ConsoleArgumentDefinition $definition): array => [
                     'name' => $definition->name,
-                    'flag' => self::buildFlagNotation($definition),
-                    'aliases' => self::buildFlagAliases($definition),
+                    'flag' => $this->buildFlagNotation($definition),
+                    'aliases' => $this->buildFlagAliases($definition),
                     'description' => $definition->description,
-                    'value_options' => self::buildValueOptions($definition),
+                    'value_options' => $this->buildValueOptions($definition),
                     'repeatable' => $definition->type === 'array' || $definition->isVariadic,
                     'requires_value' => $definition->type !== 'bool',
                 ],
@@ -51,7 +51,7 @@ final readonly class BuildCompletionMetadata
         ];
     }
 
-    private static function buildFlagNotation(ConsoleArgumentDefinition $definition): string
+    private function buildFlagNotation(ConsoleArgumentDefinition $definition): string
     {
         $flag = "--{$definition->name}";
 
@@ -62,7 +62,7 @@ final readonly class BuildCompletionMetadata
         return $flag;
     }
 
-    private static function buildFlagAliases(ConsoleArgumentDefinition $definition): array
+    private function buildFlagAliases(ConsoleArgumentDefinition $definition): array
     {
         $aliases = array_values(array_filter(array_map(static function (string $alias): ?string {
             $normalized = ltrim(str($alias)->trim()->kebab()->toString(), '-');
@@ -82,7 +82,7 @@ final readonly class BuildCompletionMetadata
         return $aliases;
     }
 
-    private static function buildValueOptions(ConsoleArgumentDefinition $definition): array
+    private function buildValueOptions(ConsoleArgumentDefinition $definition): array
     {
         if (! $definition->isBackedEnum()) {
             return [];
