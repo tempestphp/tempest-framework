@@ -15,6 +15,7 @@ use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
 
+use Tempest\View\ViewCache;
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 use function Tempest\Support\str;

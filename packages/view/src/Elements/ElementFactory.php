@@ -11,6 +11,7 @@ use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
 use Tempest\View\Slot;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewConfig;
 
 final class ElementFactory
@@ -22,6 +23,7 @@ final class ElementFactory
     public function __construct(
         private readonly ViewConfig $viewConfig,
         private readonly Environment $environment,
+        private readonly ViewCache $viewCache,
     ) {}
 
     public function setViewCompiler(TempestViewCompiler $compiler): self
@@ -97,6 +99,7 @@ final class ElementFactory
                 token: $token,
                 environment: $this->environment,
                 compiler: $this->compiler,
+                viewCache: $this->viewCache,
                 viewComponent: $viewComponentClass,
                 attributes: $attributes,
             );

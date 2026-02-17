@@ -1028,4 +1028,31 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('', $this->view->render('<x-test />'));
         $this->assertSnippetsMatch('<div>hi</div>', $this->view->render('<x-test :flag/>'));
     }
+
+    #[Test]
+    public function performance(): void
+    {
+        $this->view->registerViewComponent('x-a', 'hi');
+
+        $start = microtime(true);
+
+        $html = $this->view->render(
+            <<<'HTML'
+            <x-a :foreach="$items as $item">
+                <x-b> 
+                    {{ $item }}
+                </x-b>
+            </x-a>
+            HTML,
+            items: \Tempest\Support\Arr\range(1, 10000),
+        );
+
+        $end = microtime(true);
+        $time = $end - $start;
+
+
+        // Include: 0.10852599143982
+        // Combined in one file: 0.0068130493164062
+        ld($time);
+    }
 }

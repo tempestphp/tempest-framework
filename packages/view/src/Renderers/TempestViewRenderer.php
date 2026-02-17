@@ -38,10 +38,12 @@ final class TempestViewRenderer implements ViewRenderer
         Environment $environment = Environment::PRODUCTION,
     ): self {
         $viewConfig ??= new ViewConfig();
+        $viewCache ??= ViewCache::create(enabled: false);
 
         $elementFactory = new ElementFactory(
             $viewConfig,
             $environment,
+            $viewCache,
         );
 
         $compiler = new TempestViewCompiler(
@@ -50,8 +52,6 @@ final class TempestViewRenderer implements ViewRenderer
         );
 
         $elementFactory->setViewCompiler($compiler);
-
-        $viewCache ??= ViewCache::create(enabled: false);
 
         return new self(
             compiler: $compiler,

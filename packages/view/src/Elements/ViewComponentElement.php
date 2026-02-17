@@ -14,6 +14,7 @@ use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
 use Tempest\View\WithToken;
 
@@ -36,6 +37,7 @@ final class ViewComponentElement implements Element, WithToken
         public readonly Token $token,
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
+        private readonly ViewCache $viewCache,
         private readonly ViewComponent $viewComponent,
         array $attributes,
     ) {
@@ -162,7 +164,16 @@ final class ViewComponentElement implements Element, WithToken
             },
         );
 
-        return $this->compiler->compile($compiled->toString());
+        $compiled = $this->compiler->compile($compiled->toString());
+
+        return $compiled;
+
+        $cachePath = $this->viewCache->getCachedViewPath(
+            $this->viewComponent->file,
+            fn () => $compiled,
+        );
+
+        return sprintf('<?php include \'%s\' ?>', $cachePath);
     }
 
     private function getSlotElement(string $name): SlotElement|CollectionElement|null
