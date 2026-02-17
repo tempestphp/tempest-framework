@@ -144,9 +144,9 @@ final class TempestViewRenderer implements ViewRenderer
             throw new ViewCompilationFailed(
                 path: $_path,
                 content: Filesystem\is_file($_path) ? Filesystem\read_file($_path) : '',
+                previous: $throwable,
                 sourcePath: $sourceLocation['path'] ?? null,
                 sourceLine: $sourceLocation['line'] ?? null,
-                previous: $throwable,
             );
         }
 

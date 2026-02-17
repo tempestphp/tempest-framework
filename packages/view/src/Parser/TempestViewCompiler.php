@@ -11,6 +11,7 @@ use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\CompiledView;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\Elements\RootElement;
 use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\ShouldBeRemoved;
@@ -66,13 +67,13 @@ final readonly class TempestViewCompiler
         $ast = $this->parseAst($template, $sourcePath);
 
         // 4. Map to elements
-        $elements = $this->mapToElements($ast);
+        $rootElement = $this->mapToElements($ast);
 
         // 5. Apply attributes
-        $elements = $this->applyAttributes($elements);
+        $rootElement = $this->applyAttributes($rootElement);
 
         // 6. Compile to PHP
-        $compiled = $this->compileElements($elements);
+        $compiled = $this->compileElement($rootElement);
 
         // 7. Cleanup compiled PHP
         [$cleaned, $lineMap] = $this->cleanupCompiled($compiled, $sourcePath);
@@ -82,21 +83,6 @@ final readonly class TempestViewCompiler
             sourcePath: $sourcePath,
             lineMap: $lineMap,
         );
-    }
-
-    /** @param Element[] $elements */
-    public function compileFragment(array $elements): string
-    {
-        $imports = $this->collectImportsForElements($elements);
-
-        if ($imports === []) {
-            return $this->compileElements($elements);
-        }
-
-        return implode(PHP_EOL, [
-            ...$imports,
-            $this->compileElements($elements),
-        ]);
     }
 
     private function removeComments(string $template): string
@@ -153,20 +139,6 @@ final readonly class TempestViewCompiler
     }
 
     /** @param Element[] $elements */
-    private function collectImportsForElements(array $elements): array
-    {
-        $imports = [];
-
-        foreach ($this->collectSourcePathsForElements($elements) as $sourcePath) {
-            foreach ($this->extractImportsFromSourcePath($sourcePath) as $import) {
-                $imports[$import] = $import;
-            }
-        }
-
-        return array_values($imports);
-    }
-
-    /** @param Element[] $elements */
     private function collectSourcePathsForElements(array $elements): array
     {
         $sourcePaths = [];
@@ -194,66 +166,36 @@ final readonly class TempestViewCompiler
         }
     }
 
-    /** @return string[] */
-    private function extractImportsFromSourcePath(string $sourcePath): array
-    {
-        static $imports = [];
-
-        if (isset($imports[$sourcePath])) {
-            return $imports[$sourcePath];
-        }
-
-        if (! Filesystem\is_file($sourcePath)) {
-            return $imports[$sourcePath] = [];
-        }
-
-        // TODO: this is not ideal, could use a little more love
-        preg_match_all('/^\s*use (function )?.*;/m', Filesystem\read_file($sourcePath), $matches);
-
-        return $imports[$sourcePath] = array_values(array_unique($matches[0]));
-    }
-
     /**
      * @return Element[]
      */
-    private function mapToElements(TempestViewAst $ast): array
+    private function mapToElements(TempestViewAst $ast): RootElement
     {
-        $elements = [];
-
         $elementFactory = $this->elementFactory->withIsHtml($ast->isHtml);
 
+        $rootElement = new RootElement();
+
         foreach ($ast as $token) {
-            $element = $elementFactory->make($token);
-
-            if ($element === null) {
-                continue;
-            }
-
-            $elements[] = $element;
+            $elementFactory->make($token, $rootElement);
         }
 
-        return $elements;
+        return $rootElement;
     }
 
-    /**
-     * @param Element[] $elements
-     * @return Element[]
-     */
-    private function applyAttributes(array $elements): array
+    private function applyAttributes(Element $parentElement): Element
     {
         $appliedElements = [];
 
         $previous = null;
 
-        foreach ($elements as $element) {
-            $children = $this->applyAttributes($element->getChildren());
-            $element->setChildren($children);
+        foreach ($parentElement->getChildren() as $childElement) {
+            $this->applyAttributes($childElement);
 
-            $element->setPrevious($previous);
+            $childElement->setPrevious($previous);
 
             $shouldBeRemoved = false;
 
-            foreach ($element->getAttributes() as $name => $value) {
+            foreach ($childElement->getAttributes() as $name => $value) {
                 // TODO: possibly refactor attribute construction to ElementFactory?
                 if ($value instanceof Attribute) {
                     $attribute = $value;
@@ -261,7 +203,7 @@ final readonly class TempestViewCompiler
                     $attribute = $this->attributeFactory->make($name);
                 }
 
-                $element = $attribute->apply($element);
+                $childElement = $attribute->apply($childElement);
 
                 if ($shouldBeRemoved === false && $attribute instanceof ShouldBeRemoved) {
                     $shouldBeRemoved = true;
@@ -272,21 +214,22 @@ final readonly class TempestViewCompiler
                 continue;
             }
 
-            $appliedElements[] = $element;
+            $appliedElements[] = $childElement;
 
-            $previous = $element;
+            $previous = $childElement;
         }
 
-        return $appliedElements;
+        $parentElement->setChildren($appliedElements);
+
+        return $parentElement;
     }
 
-    /** @param \Tempest\View\Element[] $elements */
-    private function compileElements(array $elements): string
+    public function compileElement(Element $rootElement): string
     {
         $compiled = arr();
         $sourcePath = null;
 
-        foreach ($elements as $element) {
+        foreach ($rootElement->getChildren() as $element) {
             if ($sourceLocation = $this->resolveSourceLocation($element)) {
                 if ($sourceLocation['sourcePath'] !== $sourcePath) {
                     $sourcePath = $sourceLocation['sourcePath'];

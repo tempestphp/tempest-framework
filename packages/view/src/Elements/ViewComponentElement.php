@@ -10,6 +10,7 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
 use Tempest\View\Export\ViewObjectExporter;
+use Tempest\View\HasImports;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
@@ -21,7 +22,7 @@ use Tempest\View\WithToken;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ViewComponentElement implements Element, WithToken
+final class ViewComponentElement implements Element, WithToken, HasImports
 {
     use IsElement;
 
@@ -139,11 +140,7 @@ final class ViewComponentElement implements Element, WithToken
                     return $default;
                 }
 
-                $slotElements = $slotElement instanceof CollectionElement
-                    ? $slotElement->getElements()
-                    : $slotElement->getChildren();
-
-                $compiled = $this->compiler->compileFragment($slotElements);
+                $compiled = $this->compiler->compileElement($slotElement);
 
                 // There's no default slot content, but there's a default value in the view component
                 if (trim($compiled) === '') {
@@ -153,6 +150,8 @@ final class ViewComponentElement implements Element, WithToken
                 return $compiled;
             },
         );
+
+        $compiled = $compiled->prepend(implode(PHP_EOL, $this->getImports()));
 
         $compiledView = $this->compiler->compileWithSourceMap(
             $compiled->toString(),
@@ -280,5 +279,16 @@ final class ViewComponentElement implements Element, WithToken
         }
 
         return sprintf('new \%s([%s])', ImmutableArray::class, implode(', ', $entries));
+    }
+
+    public function getImports(): array
+    {
+        $imports = [];
+
+        if ($this->parent instanceof HasImports) {
+            $imports = [...$imports, ...$this->parent->getImports()];
+        }
+
+        return $imports;
     }
 }

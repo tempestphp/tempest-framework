@@ -42,15 +42,7 @@ final class ElementFactory
         return $clone;
     }
 
-    public function make(Token $token): ?Element
-    {
-        return $this->makeElement(
-            token: $token,
-            parent: null,
-        );
-    }
-
-    private function makeElement(Token $token, ?Element $parent): ?Element
+    public function make(Token $token, Element $parent): ?Element
     {
         if (
             $token->type === TokenType::OPEN_TAG_END
@@ -61,6 +53,12 @@ final class ElementFactory
             return null;
         }
 
+        $attributes = $token->htmlAttributes;
+
+        foreach ($token->phpAttributes as $index => $content) {
+            $attributes[] = new PhpAttribute((string) $index, $content);
+        }
+
         if ($token->type === TokenType::CONTENT) {
             $text = $token->compile();
 
@@ -68,33 +66,28 @@ final class ElementFactory
                 return null;
             }
 
-            return new TextElement(text: $text);
-        }
-
-        if ($token->type === TokenType::WHITESPACE) {
-            return new WhitespaceElement($token->content);
-        }
-
-        if (! $token->tag || $token->type === TokenType::COMMENT || $token->type === TokenType::PHP) {
-            return new RawElement(token: $token, tag: null, content: $token->compile());
-        }
-
-        $attributes = $token->htmlAttributes;
-
-        foreach ($token->phpAttributes as $index => $content) {
-            $attributes[] = new PhpAttribute((string) $index, $content);
-        }
-
-        if ($token->tag === 'code' || $token->tag === 'pre') {
-            return new RawElement(
+            $element = new TextElement(text: $text);
+        } elseif ($token->type === TokenType::WHITESPACE) {
+            $element = new WhitespaceElement($token->content);
+        } elseif ($token->type !== TokenType::PHP && (! $token->tag || $token->type === TokenType::COMMENT)) {
+            $element = new RawElement(
+                token: $token,
+                tag: null,
+                content: $token->compile()
+            );
+        } elseif ($token->tag === 'code' || $token->tag === 'pre') {
+            $element = new RawElement(
                 token: $token,
                 tag: $token->tag,
                 content: $token->compileChildren(),
                 attributes: $attributes,
             );
-        }
-
-        if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
+        } elseif ($token->type === TokenType::PHP) {
+            $element = new PhpElement(
+                token: $token,
+                content: $token->compile(),
+            );
+        } elseif ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             $element = new ViewComponentElement(
                 token: $token,
                 environment: $this->environment,
@@ -123,22 +116,14 @@ final class ElementFactory
             );
         }
 
-        $children = [];
+        $element->setParent($parent);
 
         foreach ($token->children as $child) {
-            $childElement = $this->clone()->makeElement(
+            $this->clone()->make(
                 token: $child,
                 parent: $parent,
             );
-
-            if ($childElement === null) {
-                continue;
-            }
-
-            $children[] = $childElement;
         }
-
-        $element->setChildren($children);
 
         return $element;
     }
