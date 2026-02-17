@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\Connection;
 
 use PDOStatement;
-use Tempest\Database\Config\DatabaseConfig;
 
 interface Connection
 {
-    public DatabaseConfig $config {
-        get;
-    }
-
     public function beginTransaction(): bool;
 
     public function commit(): bool;
