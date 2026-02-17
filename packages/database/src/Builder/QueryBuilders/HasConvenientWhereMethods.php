@@ -13,7 +13,6 @@ use UnitEnum;
 
 /**
  * @template TModel of object
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements
  *
  * Shared methods for building WHERE conditions and convenience WHERE methods.
  */

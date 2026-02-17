@@ -198,12 +198,46 @@ final class EnumReflectorTest extends TestCase
     }
 
     #[Test]
+    public function constructor_with_backed_enum_instance(): void
+    {
+        $reflector = new EnumReflector(TestBackedEnum::ACTIVE);
+
+        $this->assertSame(TestBackedEnum::class, $reflector->getName());
+        $this->assertTrue($reflector->isBacked());
+        $this->assertSame(TestBackedEnum::ACTIVE, $reflector->getCase('ACTIVE'));
+    }
+
+    #[Test]
+    public function constructor_with_native_reflection_enum(): void
+    {
+        $reflectionEnum = new ReflectionEnum(TestBackedEnum::class);
+        $reflector = new EnumReflector($reflectionEnum);
+
+        $this->assertSame(TestBackedEnum::class, $reflector->getName());
+        $this->assertTrue($reflector->isBacked());
+        $this->assertSame($reflectionEnum, $reflector->getReflection());
+    }
+
+    #[Test]
     public function constructor_with_enum_reflector(): void
+    {
+        $reflector1 = new EnumReflector(TestBackedEnum::class);
+        $reflector2 = new EnumReflector($reflector1);
+
+        $this->assertEquals($reflector1, $reflector2);
+        $this->assertTrue($reflector2->isBacked());
+        $this->assertSame('string', $reflector2->getBackingType()?->getName());
+    }
+
+    #[Test]
+    public function constructor_with_unit_enum_reflector(): void
     {
         $reflector1 = new EnumReflector(TestUnitEnum::class);
         $reflector2 = new EnumReflector($reflector1);
 
         $this->assertEquals($reflector1, $reflector2);
+        $this->assertFalse($reflector2->isBacked());
+        $this->assertNull($reflector2->getBackingType());
     }
 
     #[Test]
@@ -247,7 +281,7 @@ enum TestEnumWithInterface: string implements TestInterface
 }
 
 #[\Attribute]
-class TestAttribute
+final class TestAttribute
 {
     public function __construct(
         public string $value,

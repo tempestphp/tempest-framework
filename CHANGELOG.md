@@ -2,7 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.1](https://github.com/tempestphp/tempest-framework/compare/v3.0.0..3.0.1)  —  2026-02-12
+## [3.0.2](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.0.2)  —  2026-02-16
+
+### 🚨 Breaking changes
+
+- **database**: [**breaking**] improve `make:migration` experience (#1935) ([5ebee16](https://github.com/tempestphp/tempest-framework/commit/5ebee16864b76a80a34b48c785d714f01c0165bd))
+
+### 🚀 Features
+
+- **generation**: add support for TypeScript types generation (#1897) ([744b7f9](https://github.com/tempestphp/tempest-framework/commit/744b7f91066be672d9cbdf3ad9e8a06130ec7104))
+- **mapper**: add `#[Hidden]` attribute for sensitive properties (#1931) ([29b4668](https://github.com/tempestphp/tempest-framework/commit/29b46685fc6453348c53c37beab17a4a940022ef))
+- **testing**: add `assertJsonSubset` to test response helper (#1944) ([4ab659e](https://github.com/tempestphp/tempest-framework/commit/4ab659e6702934fbb77bd7510668cce43ee16b44))
+- **view**: extend isset to handle multiple conditions (#1938) ([f2342cd](https://github.com/tempestphp/tempest-framework/commit/f2342cde6bc589f771a06194f66cd18eda37bedb))
+
+### 🐛 Bug fixes
+
+- **core**: work around Pest test file autoloading (#1895) ([63c6353](https://github.com/tempestphp/tempest-framework/commit/63c63530ad7a11d5bdc22a339b8ac2a8a8f3a19e))
+- **database**: correct phpstan-require-implements reference (#1943) ([3f97816](https://github.com/tempestphp/tempest-framework/commit/3f97816b4affa22b23e3d520c1d527b9bdb29959))
+- **router**: render all development exceptions with Tempest's view renderer (#1968) ([d18258c](https://github.com/tempestphp/tempest-framework/commit/d18258c07879849e3233331a93ca68a300541ea2))
+
+
+## [3.0.1](https://github.com/tempestphp/tempest-framework/compare/v3.0.0..v3.0.1)  —  2026-02-12
 
 ### 🐛 Bug fixes
 

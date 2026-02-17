@@ -32,12 +32,16 @@ final class PluralRulesMatcherGenerator
         $output .= ' * Generated on: ' . date('Y-m-d H:i:s') . "\n";
         $output .= " */\n";
         $output .= "final class {$this->className}\n{\n";
-        $output .= $this->generateHelperMethods();
 
         $pluralRules = $this->data['supplemental']['plurals-type-cardinal'] ?? [];
+        $languageMethods = '';
+
         foreach ($pluralRules as $locale => $rules) {
-            $output .= $this->generateLanguageMethod($locale, $rules);
+            $languageMethods .= $this->generateLanguageMethod($locale, $rules);
         }
+
+        $output .= $this->generateHelperMethods(str_contains($languageMethods, 'self::matchesValues('));
+        $output .= $languageMethods;
 
         $output .= $this->generateDispatcherMethod(array_keys($pluralRules));
         $output .= "}\n";
@@ -45,9 +49,9 @@ final class PluralRulesMatcherGenerator
         return $output;
     }
 
-    private function generateHelperMethods(): string
+    private function generateHelperMethods(bool $includeMatchesValues): string
     {
-        return <<<'PHP'
+        $helpers = <<<'PHP'
             /**
              * Extracts the integer part of a number.
              */
@@ -63,7 +67,7 @@ final class PluralRulesMatcherGenerator
             {
                 $str = (string) $n;
 
-                if (!str_contains($str, '.')) {
+                if (! str_contains($str, '.')) {
                     return 0;
                 }
 
@@ -77,7 +81,7 @@ final class PluralRulesMatcherGenerator
             {
                 $str = (string) $n;
 
-                if (!str_contains($str, '.')) {
+                if (! str_contains($str, '.')) {
                     return 0;
                 }
 
@@ -127,6 +131,21 @@ final class PluralRulesMatcherGenerator
             }
 
             /**
+             * Checks whether two numeric values are equal.
+             */
+            private static function isEqual(int|float $left, int|float $right): bool
+            {
+                return $left === $right;
+            }
+
+        PHP;
+
+        if (! $includeMatchesValues) {
+            return $helpers;
+        }
+
+        return $helpers . <<<'PHP'
+            /**
              * Checks if number matches any value in comma-separated list.
              */
             private static function matchesValues(int|float $value, string $values): bool
@@ -152,6 +171,7 @@ final class PluralRulesMatcherGenerator
                         return true;
                     }
                 }
+
                 return false;
             }
 
@@ -184,6 +204,8 @@ final class PluralRulesMatcherGenerator
             }
         }
 
+        $excludedEqualities = [];
+
         foreach ($sortedRules as $category => $rule) {
             if ($category === 'other') {
                 $output .= "        return '{$category}';\n";
@@ -191,15 +213,72 @@ final class PluralRulesMatcherGenerator
             }
 
             if ($condition = $this->parseRule($rule)) {
+                $condition = $this->removeExcludedNotEquals($condition, $excludedEqualities);
+
                 $output .= "        if ({$condition}) {\n";
                 $output .= "            return '{$category}';\n";
                 $output .= "        }\n\n";
+
+                $excludedEqualities = array_values(array_unique([
+                    ...$excludedEqualities,
+                    ...$this->extractPureEquals($condition),
+                ]));
             }
         }
 
         $output .= "    }\n\n";
 
         return $output;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function extractPureEquals(string $condition): array
+    {
+        if (str_contains($condition, '&&')) {
+            return [];
+        }
+
+        preg_match_all('/self::isEqual\(([^,]+),\s*(\d+(?:\.\d+)?)\)/', $condition, $matches, PREG_SET_ORDER);
+
+        if ($matches === []) {
+            return [];
+        }
+
+        $stripped = $condition;
+        $equalities = [];
+
+        foreach ($matches as $match) {
+            $stripped = str_replace($match[0], '', $stripped);
+            $equalities[] = 'self::isEqual(' . trim($match[1]) . ", {$match[2]})";
+        }
+
+        $stripped = preg_replace('/[()\s]/', '', $stripped);
+        $stripped = str_replace('||', '', $stripped);
+
+        if ($stripped !== '') {
+            return [];
+        }
+
+        return $equalities;
+    }
+
+    /**
+     * @param string[] $excludedEqualities
+     */
+    private function removeExcludedNotEquals(string $condition, array $excludedEqualities): string
+    {
+        foreach ($excludedEqualities as $equality) {
+            $negatedEquality = preg_quote("!{$equality}", '/');
+
+            $condition = preg_replace('/\(\s*' . $negatedEquality . '\s*\)\s*&&\s*/', '', $condition) ?? $condition;
+            $condition = preg_replace('/\s*&&\s*\(\s*' . $negatedEquality . '\s*\)/', '', $condition) ?? $condition;
+            $condition = preg_replace('/' . $negatedEquality . '\s*&&\s*/', '', $condition) ?? $condition;
+            $condition = preg_replace('/\s*&&\s*' . $negatedEquality . '/', '', $condition) ?? $condition;
+        }
+
+        return $condition;
     }
 
     private function parseRule(string $rule): string
@@ -262,7 +341,9 @@ final class PluralRulesMatcherGenerator
         $isNegative = $operator === '!==';
 
         if (preg_match('/^\d+(?:\.\d+)?$/', $values)) {
-            return "{$varExpression} {$operator} {$values}";
+            $condition = "self::isEqual({$varExpression}, {$values})";
+
+            return $isNegative ? "!{$condition}" : $condition;
         }
 
         if (preg_match('/^(\d+(?:\.\d+)?)\.\.(\d+(?:\.\d+)?)$/', $values, $matches)) {
@@ -290,7 +371,7 @@ final class PluralRulesMatcherGenerator
                         $conditions[] = "self::inRange({$varExpression}, {$start}, {$end})";
                     }
                 } else {
-                    $conditions[] = "{$varExpression} === {$part}";
+                    $conditions[] = "self::isEqual({$varExpression}, {$part})";
                 }
             }
 

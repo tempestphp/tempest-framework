@@ -10,7 +10,7 @@ use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
  *
  * @template TModel of object
  * @param class-string<TModel>|string|TModel $model
- * @return QueryBuilder<TModel>
+ * @return ($model is class-string<TModel>|TModel ? QueryBuilder<TModel> : QueryBuilder<object>)
  */
 function query(string|object $model): QueryBuilder
 {
@@ -22,7 +22,7 @@ function query(string|object $model): QueryBuilder
  *
  * @template TModel of object
  * @param class-string<TModel>|string|TModel $model
- * @return ModelInspector<TModel>
+ * @return ModelInspector
  * @internal
  */
 function inspect(string|object $model): ModelInspector

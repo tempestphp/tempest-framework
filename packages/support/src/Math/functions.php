@@ -47,11 +47,7 @@ function sqrt(float $number): float
 /**
  * Returns the absolute value of the given number.
  *
- * @template T of int|float
- *
- * @param T $number
- *
- * @return T
+ * @return ($number is int ? int<0, max> : float)
  */
 function abs(int|float $number): int|float
 {

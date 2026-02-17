@@ -13,6 +13,8 @@ namespace Tempest\Support\Arr;
 final class ImmutableArray implements ArrayInterface
 {
     use IsIterable;
+
+    /** @use ManipulatesArray<TKey, TValue> */
     use ManipulatesArray;
 
     /**

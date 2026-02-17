@@ -21,7 +21,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         public string $directory,
     ) {}
 
-    public function getItem(string $key): CacheItem
+    public function getItem(string $key): CacheItemInterface
     {
         $createCacheItem = Closure::bind(
             closure: static function ($key, $value, $isHit) {
@@ -58,7 +58,6 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         $path = path($this->directory);
 
         if ($path->isDirectory()) {
-            /** @phpstan-ignore-next-line  */
             $path->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             Filesystem\delete_directory($this->directory);

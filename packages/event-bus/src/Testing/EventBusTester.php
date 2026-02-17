@@ -6,6 +6,7 @@ use Closure;
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
+use Tempest\EventBus\EventBusConfig;
 use Tempest\Support\Str;
 
 final class EventBusTester
@@ -24,7 +25,8 @@ final class EventBusTester
     public function recordEventDispatches(bool $preventHandling = false): self
     {
         $this->fakeEventBus = new FakeEventBus(
-            genericEventBus: $this->container->get(EventBus::class),
+            eventBus: $this->container->get(EventBus::class),
+            eventBusConfig: $this->container->get(EventBusConfig::class),
             preventHandling: $preventHandling,
         );
 

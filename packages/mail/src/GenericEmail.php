@@ -30,6 +30,7 @@ final class GenericEmail implements Email, HasTextContent, HasAttachments
         public null|string|array|EmailAddress $replyTo = null,
         public array $headers = [],
         public EmailPriority $priority = EmailPriority::NORMAL,
+        /** @var Attachment[] */
         public array $attachments = [],
     ) {}
 }

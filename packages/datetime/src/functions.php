@@ -7,6 +7,7 @@ use IntlDateFormatter;
 use IntlTimeZone;
 use RuntimeException;
 use Tempest\DateTime\DateStyle;
+use Tempest\DateTime\Exception\OverflowException;
 use Tempest\DateTime\Exception\ParserException;
 use Tempest\DateTime\FormatPattern;
 use Tempest\DateTime\SecondsStyle;
@@ -14,6 +15,7 @@ use Tempest\DateTime\Timestamp;
 use Tempest\DateTime\TimeStyle;
 use Tempest\DateTime\Timezone;
 use Tempest\Intl\Locale;
+use ValueError;
 
 use function hrtime;
 use function microtime;
@@ -287,7 +289,16 @@ function create_intl_calendar_from_date_time(
      */
     $calendar = IntlCalendar::createInstance(to_intl_timezone($timezone));
 
-    $calendar->setDateTime($year, $month - 1, $day, $hours, $minutes, $seconds);
+    try {
+        $calendar->setDateTime($year, $month - 1, $day, $hours, $minutes, $seconds);
+    } catch (ValueError) {
+        throw new OverflowException(sprintf(
+            'The year value "%d" exceeds the supported calendar range (%d to %d).',
+            $year,
+            -2_147_483_648,
+            2_147_483_647,
+        ));
+    }
 
     return $calendar;
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Reflection\ClassReflector;
@@ -83,11 +82,7 @@ final class SerializerFactory
                     }
                 }
 
-                $serializer = $this->resolveSerializer($serializerClass, $property);
-
-                if ($serializer !== null) {
-                    return $serializer;
-                }
+                return $this->resolveSerializer($serializerClass, $property);
             }
 
             return null;
@@ -113,20 +108,16 @@ final class SerializerFactory
                 }
             }
 
-            $serializer = $this->resolveSerializer($serializerClass, $input);
-
-            if ($serializer !== null) {
-                return $serializer;
-            }
+            return $this->resolveSerializer($serializerClass, $input);
         }
 
         return null;
     }
 
     /**
-     * @param Closure|class-string<Serializer|ConfigurableSerializer> $serializerClass
+     * @param class-string<Serializer|ConfigurableSerializer> $serializerClass
      */
-    private function resolveSerializer(string $serializerClass, PropertyReflector|TypeReflector|string $input): ?Serializer
+    private function resolveSerializer(string $serializerClass, PropertyReflector|TypeReflector|string $input): Serializer
     {
         $context = MappingContext::from($this->context);
 
@@ -138,7 +129,7 @@ final class SerializerFactory
     }
 
     /**
-     * @return array{class-string<Serializer|ConfigurableSerializer>|Closure,int}[]
+     * @return array{class-string<Serializer|ConfigurableSerializer>,int}[]
      */
     private function resolveSerializers(): array
     {

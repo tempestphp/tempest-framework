@@ -171,6 +171,10 @@ final readonly class TypeReflector implements Reflector
 
     public function asEnumCase(): PHPReflectionEnumUnitCase
     {
+        if (! $this->reflector instanceof PHPReflectionEnumUnitCase) {
+            throw new \LogicException(sprintf('Cannot get enum case from `%s`.', $this->definition));
+        }
+
         return $this->reflector;
     }
 

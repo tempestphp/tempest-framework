@@ -96,12 +96,10 @@ final class ShellTest extends TestCase
     public function getPostInstallInstructions(): void
     {
         $zshInstructions = Shell::ZSH->getPostInstallInstructions();
-        $this->assertIsArray($zshInstructions);
         $this->assertNotEmpty($zshInstructions);
         $this->assertStringContainsString('fpath', $zshInstructions[0]);
 
         $bashInstructions = Shell::BASH->getPostInstallInstructions();
-        $this->assertIsArray($bashInstructions);
         $this->assertNotEmpty($bashInstructions);
         $this->assertStringContainsStringIgnoringCase('source', $bashInstructions[0]);
     }

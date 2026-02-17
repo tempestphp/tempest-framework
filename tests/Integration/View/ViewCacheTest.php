@@ -37,7 +37,6 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
         $directory = path(self::DIRECTORY);
 
         if ($directory->isDirectory()) {
-            /** @phpstan-ignore-next-line */
             $directory->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             rmdir(self::DIRECTORY);

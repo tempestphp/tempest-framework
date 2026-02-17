@@ -46,7 +46,7 @@ final readonly class DataTransferObjectSerializer implements Serializer, Dynamic
         return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
     }
 
-    public function serialize(mixed $input): array|string
+    public function serialize(mixed $input): string
     {
         if (is_array($input)) {
             return Json\encode($this->serializeWithType($input));
