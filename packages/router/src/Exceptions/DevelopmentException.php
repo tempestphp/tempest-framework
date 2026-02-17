@@ -99,8 +99,8 @@ final class DevelopmentException implements Response
         $errorLine = $exception->sourceLine ?? $previous->getLine();
 
         $lines = $hasSourceLocation
-            ? explode("\n", Filesystem\read_file($exception->sourcePath))
-            : explode("\n", $exception->content);
+            ? explode(PHP_EOL, Filesystem\read_file($exception->sourcePath))
+            : explode(PHP_EOL, $exception->content);
 
         $contextLines = 5;
         $startLine = max(1, $errorLine - $contextLines);
