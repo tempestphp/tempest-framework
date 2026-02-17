@@ -155,11 +155,8 @@ final class ViewComponentElement implements Element, WithToken
             fn () => $compiled,
         );
 
-        $componentVariable = sprintf('$__tempestComponent_%s', hash('xxh64', $cacheKey . ':' . spl_object_id($this)));
-
         return sprintf(
-            '<?php static %1$s; %1$s ??= include %2$s; %1$s(attributes: %3$s, slots: %4$s, scopedVariables: [%5$s] + ($scopedVariables ?? $this->currentView?->data ?? []) %6$s %7$s %8$s); ?>',
-            $componentVariable,
+            '<?php $this->includeViewComponent(%1$s)(attributes: %2$s, slots: %3$s, scopedVariables: [%4$s] + ($scopedVariables ?? $this->currentView?->data ?? []) %5$s %6$s %7$s); ?>',
             var_export($cachePath, true),
             $this->exportAttributesArray(),
             ViewObjectExporter::export($slots),

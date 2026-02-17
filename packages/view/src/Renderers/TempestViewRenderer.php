@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use Closure;
 use Stringable;
 use Tempest\Container\Container;
 use Tempest\Core\Environment;
@@ -24,6 +25,9 @@ use Throwable;
 final class TempestViewRenderer implements ViewRenderer
 {
     private ?View $currentView = null;
+
+    /** @var array<string, Closure> */
+    private array $includedViewComponents = [];
 
     public function __construct(
         private readonly TempestViewCompiler $compiler,
@@ -85,6 +89,12 @@ final class TempestViewRenderer implements ViewRenderer
         $view = $this->processView($view);
 
         return $this->renderCompiled($view, $path);
+    }
+
+    public function includeViewComponent(string $path): Closure
+    {
+        /** @var Closure */
+        return $this->includedViewComponents[$path] ??= include $path;
     }
 
     private function processView(View $view): View
