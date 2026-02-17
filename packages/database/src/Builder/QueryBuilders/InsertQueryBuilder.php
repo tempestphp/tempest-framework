@@ -509,7 +509,7 @@ final class InsertQueryBuilder implements BuildsQuery
             return $value;
         }
 
-        if (! $this->model?->reflector->hasProperty($key)) {
+        if (! $this->model->reflector->hasProperty($key)) {
             return $value;
         }
 

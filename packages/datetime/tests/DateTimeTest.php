@@ -7,10 +7,12 @@ namespace Tempest\DateTime\Tests;
 use DateTimeImmutable;
 use DateTimeZone;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateStyle;
 use Tempest\DateTime\DateTime;
+use Tempest\DateTime\Exception\OverflowException;
 use Tempest\DateTime\Exception\UnexpectedValueException;
 use Tempest\DateTime\FormatPattern;
 use Tempest\DateTime\Meridiem;
@@ -1030,5 +1032,13 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($utc->isSameDay($brussels));
         $this->assertTrue($utc->isSameYear($brussels));
         $this->assertTrue($utc->isSameMonth($brussels));
+    }
+
+    #[Test]
+    public function from_parts_with_year_exceeding_intl_calendar_range_throws_overflow(): void
+    {
+        $this->expectException(OverflowException::class);
+
+        DateTime::fromParts(Timezone::UTC, PHP_INT_MAX, 1, 1);
     }
 }

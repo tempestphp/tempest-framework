@@ -338,8 +338,7 @@ trait DateTimeConvenienceMethods
     /**
      * Adds a year to this date-time object, returning a new instance with the added year.
      *
-     * @throws Exception\UnderflowException If adding the years results in an arithmetic underflow.
-     * @throws Exception\OverflowException If adding the years results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If adding the year results in an arithmetic issue.
      */
     public function plusYear(): static
     {
@@ -359,8 +358,7 @@ trait DateTimeConvenienceMethods
     /**
      * Subtracts a year from this date-time object, returning a new instance with the subtracted year.
      *
-     * @throws Exception\UnderflowException If subtracting the years results in an arithmetic underflow.
-     * @throws Exception\OverflowException If subtracting the years results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If subtracting the year results in an arithmetic issue.
      */
     public function minusYear(): static
     {
@@ -380,8 +378,7 @@ trait DateTimeConvenienceMethods
     /**
      * Adds a month to this date-time object, returning a new instance with the added month.
      *
-     * @throws Exception\UnderflowException If adding the months results in an arithmetic underflow.
-     * @throws Exception\OverflowException If adding the months results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If adding the month results in an arithmetic issue.
      */
     public function plusMonth(): static
     {
@@ -424,8 +421,7 @@ trait DateTimeConvenienceMethods
     /**
      * Subtracts a month from this date-time object, returning a new instance with the subtracted month.
      *
-     * @throws Exception\UnderflowException If subtracting the months results in an arithmetic underflow.
-     * @throws Exception\OverflowException If subtracting the months results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If subtracting the month results in an arithmetic issue.
      */
     public function minusMonth(): static
     {

@@ -16,10 +16,10 @@ final class WriteableRouteRector extends AbstractRector
         ];
     }
 
-    public function refactor(Node $node): void
+    public function refactor(Node $node): ?int
     {
         if (! $node instanceof Node\Stmt\Class_) {
-            return;
+            return null;
         }
 
         // Check whether this class implements Tempest\Router\Route
@@ -31,13 +31,15 @@ final class WriteableRouteRector extends AbstractRector
         );
 
         if ($implementsRoute === null) {
-            return;
+            return null;
         }
 
         if (! $node->isReadonly()) {
-            return;
+            return null;
         }
 
         $node->flags &= ~Modifiers::READONLY;
+
+        return null;
     }
 }

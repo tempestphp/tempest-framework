@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Environment;
 use Tempest\Http\Session\FormSession;
 use Tempest\Validation\FailingRule;
@@ -870,6 +871,22 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, name: 'x-test');
 
         $this->assertSnippetsMatch('<div>test</div>', $html);
+    }
+
+    #[Test]
+    public function dynamic_view_component_keeps_foreach_scope(): void
+    {
+        $this->view->registerViewComponent('x-test', '<div><x-slot/></div>');
+
+        $html = $this->view->render(
+            <<<'HTML'
+            <x-component :foreach="$items as $item" :is="$name">{{ $item }}</x-component>
+            HTML,
+            name: 'x-test',
+            items: ['a', 'b'],
+        );
+
+        $this->assertSnippetsMatch('<div>a</div><div>b</div>', $html);
     }
 
     public function test_nested_slots(): void

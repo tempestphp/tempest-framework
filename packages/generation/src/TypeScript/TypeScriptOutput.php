@@ -10,7 +10,7 @@ namespace Tempest\Generation\TypeScript;
 final readonly class TypeScriptOutput
 {
     /**
-     * @param array<string,TypeDefinition[]> $namespaces Type definitions grouped by namespace
+     * @param array<string, array<TypeDefinition|InterfaceDefinition>> $namespaces Type definitions grouped by namespace
      * @param array<string> $imports Additional import statements to include
      */
     public function __construct(
@@ -21,13 +21,13 @@ final readonly class TypeScriptOutput
     /**
      * Gets all type definitions across all namespaces.
      *
-     * @return TypeDefinition[]
+     * @return array<TypeDefinition|InterfaceDefinition>
      */
     public function getAllDefinitions(): array
     {
         $definitions = [];
 
-        foreach ($this->namespaces as $namespace => $namespaceDefinitions) {
+        foreach ($this->namespaces as $namespaceDefinitions) {
             $definitions = [...$definitions, ...$namespaceDefinitions];
         }
 
@@ -47,7 +47,7 @@ final readonly class TypeScriptOutput
     /**
      * Gets definitions for a specific namespace.
      *
-     * @return TypeDefinition[]
+     * @return array<TypeDefinition|InterfaceDefinition>
      */
     public function getDefinitionsForNamespace(string $namespace): array
     {

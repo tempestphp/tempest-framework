@@ -3,15 +3,15 @@
 namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Support\Arr\ImmutableArray;
 
 final class UnknownArgumentsException extends ConsoleException
 {
+    /**
+     * @param ImmutableArray<int, ConsoleInputArgument> $invalidArguments
+     */
     public function __construct(
-        private readonly ConsoleCommand $consoleCommand,
-        /** @var \Tempest\Console\Input\ConsoleInputArgument[] $invalidArguments */
         private readonly ImmutableArray $invalidArguments,
     ) {}
 

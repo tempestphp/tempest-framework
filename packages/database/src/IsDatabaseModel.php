@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
@@ -22,75 +23,83 @@ trait IsDatabaseModel
     public PrimaryKey $id;
 
     /**
+     * @return QueryBuilder<static>
+     */
+    protected static function queryBuilder(): QueryBuilder
+    {
+        return query(static::class);
+    }
+
+    /**
      * Returns a builder for selecting records using this model's table.
      *
-     * @return SelectQueryBuilder<self>
+     * @return SelectQueryBuilder<static>
      */
     public static function select(): SelectQueryBuilder
     {
-        return query(self::class)->select();
+        return static::queryBuilder()->select();
     }
 
     /**
      * Returns a builder for inserting records using this model's table.
      *
-     * @return InsertQueryBuilder<self>
+     * @return InsertQueryBuilder<static>
      */
     public static function insert(): InsertQueryBuilder
     {
-        return query(self::class)->insert();
+        return static::queryBuilder()->insert();
     }
 
     /**
      * Returns a builder for counting records using this model's table.
      *
-     * @return CountQueryBuilder<self>
+     * @return CountQueryBuilder<static>
      */
     public static function count(): CountQueryBuilder
     {
-        return query(self::class)->count();
+        return static::queryBuilder()->count();
     }
 
     /**
      * Creates a new instance of this model without persisting it to the database.
      */
-    public static function new(mixed ...$params): self
+    public static function new(mixed ...$params): static
     {
-        return query(self::class)->new(...$params);
+        return static::queryBuilder()->new(...$params);
     }
 
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): self
+    public static function findById(string|int|PrimaryKey $id): ?static
     {
-        return self::get($id);
+        return static::get($id);
     }
 
     /**
      * Finds a model instance by its ID. Use through {@see Tempest\Router\Bindable}.
      */
-    public static function resolve(string $input): self
+    public static function resolve(string $input): static
     {
-        return query(self::class)->resolve($input);
+        return static::queryBuilder()->resolve($input);
     }
 
     /**
      * Gets a model instance by its ID, optionally loading the given relationships.
      */
-    public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
+    public static function get(string|int|PrimaryKey $id, array $relations = []): ?static
     {
-        return query(self::class)->get($id, $relations);
+        return static::queryBuilder()->get($id, $relations);
     }
 
     /**
      * Gets all records from the model's table.
      *
-     * @return self[]
+     * @return static[]
      */
     public static function all(array $relations = []): array
     {
-        return query(self::class)->all($relations);
+        return static::queryBuilder()->all($relations);
     }
 
     /**
@@ -101,11 +110,11 @@ trait IsDatabaseModel
      * MagicUser::find(name: 'Frieren');
      * ```
      *
-     * @return SelectQueryBuilder<self>
+     * @return SelectQueryBuilder<static>
      */
     public static function find(mixed ...$conditions): SelectQueryBuilder
     {
-        return query(self::class)->find(...$conditions);
+        return static::queryBuilder()->find(...$conditions);
     }
 
     /**
@@ -116,11 +125,11 @@ trait IsDatabaseModel
      * MagicUser::create(name: 'Frieren', kind: Kind::ELF);
      * ```
      *
-     * @return self
+     * @return static
      */
-    public static function create(mixed ...$params): self
+    public static function create(mixed ...$params): static
     {
-        return query(self::class)->create(...$params);
+        return static::queryBuilder()->create(...$params);
     }
 
     /**
@@ -136,11 +145,11 @@ trait IsDatabaseModel
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return self
+     * @return static
      */
-    public static function findOrNew(array $find, array $update): self
+    public static function findOrNew(array $find, array $update): static
     {
-        return query(self::class)->findOrNew($find, $update);
+        return static::queryBuilder()->findOrNew($find, $update);
     }
 
     /**
@@ -157,15 +166,15 @@ trait IsDatabaseModel
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
      */
-    public static function updateOrCreate(array $find, array $update): self
+    public static function updateOrCreate(array $find, array $update): static
     {
-        return query(self::class)->updateOrCreate($find, $update);
+        return static::queryBuilder()->updateOrCreate($find, $update);
     }
 
     /**
      * Refreshes the model instance with the latest data from the database.
      */
-    public function refresh(): self
+    public function refresh(): static
     {
         $model = inspect($this);
 
@@ -176,7 +185,7 @@ trait IsDatabaseModel
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = self::select()
+        $new = static::select()
             ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
             ->get($primaryKeyValue);
 
@@ -200,14 +209,14 @@ trait IsDatabaseModel
     /**
      * Loads the specified relations on the model instance.
      */
-    public function load(string ...$relations): self
+    public function load(string ...$relations): static
     {
         $model = inspect($this);
 
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = self::get($primaryKeyValue, $relations);
+        $new = static::get($primaryKeyValue, $relations);
 
         $fieldsToUpdate = arr($relations)
             ->map(fn (string $relation) => str($relation)->before('.')->toString())
@@ -223,7 +232,7 @@ trait IsDatabaseModel
     /**
      * Saves the model to the database. If the model has no primary key, this method always inserts.
      */
-    public function save(): self
+    public function save(): static
     {
         $model = inspect($this);
         $model->validate(...inspect($this)->getPropertyValues());
@@ -266,7 +275,7 @@ trait IsDatabaseModel
     /**
      * Updates the specified columns and persist the model to the database.
      */
-    public function update(mixed ...$params): self
+    public function update(mixed ...$params): static
     {
         $model = inspect($this);
 
