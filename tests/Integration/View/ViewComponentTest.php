@@ -1049,7 +1049,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $end = microtime(true);
         $time = $end - $start;
 
-
         // Include: 0.10852599143982
         // Combined in one file: 0.0068130493164062
         ld($time);
