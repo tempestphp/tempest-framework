@@ -1029,8 +1029,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div>hi</div>', $this->view->render('<x-test :flag/>'));
     }
 
-    #[Test]
-    public function performance(): void
+    public function test_performance(): void
     {
         $this->view->registerViewComponent('x-a', 'hi');
 

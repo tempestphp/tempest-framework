@@ -166,7 +166,7 @@ final class ViewComponentElement implements Element, WithToken
 
         $compiled = $this->compiler->compile($compiled->toString());
 
-        return $compiled;
+//        return $compiled;
 
         $cachePath = $this->viewCache->getCachedViewPath(
             $this->viewComponent->file,
