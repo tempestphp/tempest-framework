@@ -45,7 +45,7 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
 
         $this->assertInstanceOf(GenericElement::class, $a);
         $this->assertCount(1, $this->withoutWhitespace($a->getChildren()));
-        $this->assertNull($a->getParent());
+        $this->assertInstanceOf(RootElement::class, $a->getParent());
 
         $b = $this->withoutWhitespace($a->getChildren())[0];
         $this->assertInstanceOf(GenericElement::class, $b);
