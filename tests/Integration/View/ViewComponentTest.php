@@ -1042,6 +1042,5 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <x-test>{{ uri(HomeController::class) }}</x-test>
         HTML);
 
-        ld($html);
     }
 }
