@@ -105,31 +105,13 @@ final class ViewComponentElement implements Element, WithToken
         $compiled = $compiled
             ->prepend(
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    '<?php return function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
                 ),
             )
-            ->append(
-                sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s %s) ?>',
-                    $this->exportAttributesArray(),
-                    ViewObjectExporter::export($slots),
-                    $this->scopedVariables->isNotEmpty()
-                        ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
-                        : '',
-                    $this->dataAttributes->isNotEmpty()
-                        ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
-                        : '',
-                    $this->expressionAttributes->isNotEmpty()
-                        ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
-                        : '',
-                    $this->scopedVariables->isNotEmpty()
-                        ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
-                        : '',
-                ),
-            );
+            ->append('<?php };');
 
         $compiled = $compiled->replaceRegex(
             regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
@@ -166,14 +148,34 @@ final class ViewComponentElement implements Element, WithToken
 
         $compiled = $this->compiler->compile($compiled->toString());
 
-//        return $compiled;
+        $cacheKey = sprintf('%s:%s', $this->viewComponent->file, hash('xxh64', $compiled));
 
         $cachePath = $this->viewCache->getCachedViewPath(
-            $this->viewComponent->file,
+            $cacheKey,
             fn () => $compiled,
         );
 
-        return sprintf('<?php include \'%s\' ?>', $cachePath);
+        $componentVariable = sprintf('$__tempestComponent_%s', hash('xxh64', $cacheKey));
+
+        return sprintf(
+            '<?php static %1$s; %1$s ??= include %2$s; %1$s(attributes: %3$s, slots: %4$s, scopedVariables: [%5$s] + ($scopedVariables ?? $this->currentView?->data ?? []) %6$s %7$s %8$s); ?>',
+            $componentVariable,
+            var_export($cachePath, true),
+            $this->exportAttributesArray(),
+            ViewObjectExporter::export($slots),
+            $this->scopedVariables->isNotEmpty()
+                ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
+                : '',
+            $this->dataAttributes->isNotEmpty()
+                ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
+                : '',
+            $this->expressionAttributes->isNotEmpty()
+                ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
+                : '',
+            $this->scopedVariables->isNotEmpty()
+                ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
+                : '',
+        );
     }
 
     private function getSlotElement(string $name): SlotElement|CollectionElement|null
