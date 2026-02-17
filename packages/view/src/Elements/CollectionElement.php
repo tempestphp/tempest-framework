@@ -10,21 +10,17 @@ final class CollectionElement implements Element
 {
     use IsElement;
 
-    public function __construct(
-        private readonly array $elements,
-    ) {}
-
-    /** @return \Tempest\View\Element[] */
-    public function getElements(): array
+    /** @param Element[] $elements */
+    public function __construct(array $elements)
     {
-        return $this->elements;
+        $this->setChildren($elements);
     }
 
     public function compile(): string
     {
         $compiled = [];
 
-        foreach ($this->elements as $element) {
+        foreach ($this->getChildren() as $element) {
             $compiled[] = $element->compile();
         }
 
