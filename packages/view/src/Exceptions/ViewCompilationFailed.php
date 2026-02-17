@@ -17,14 +17,13 @@ final class ViewCompilationFailed extends Exception implements ProvidesContext
         private(set) ?string $sourcePath = null,
         private(set) ?int $sourceLine = null,
     ) {
-        $sourceLocation = $sourcePath && $sourceLine
-            ? sprintf(' in %s:%d', $sourcePath, $sourceLine)
-            : '';
-
         parent::__construct(
-            message: sprintf('View could not be compiled%s: %s.', $sourceLocation, lcfirst($previous->getMessage())),
+            message: sprintf('View could not be compiled: %s', lcfirst($previous->getMessage())),
             previous: $previous,
         );
+
+        $this->file = $this->sourcePath ?? $this->file;
+        $this->line = $this->sourceLine ?? $this->line;
     }
 
     public function context(): array
