@@ -88,7 +88,7 @@ final readonly class BuildCompletionMetadata
             return [];
         }
 
-        /** @var BackedEnum $type */
+        /** @var class-string<BackedEnum> $type */
         $type = $definition->type;
 
         $options = array_map(

@@ -71,12 +71,10 @@ final class CompletionRuntimeTest extends TestCase
     public function getPostInstallInstructions(): void
     {
         $zshInstructions = $this->completionRuntime->getPostInstallInstructions(Shell::ZSH);
-        $this->assertIsArray($zshInstructions);
         $this->assertNotEmpty($zshInstructions);
         $this->assertStringContainsStringIgnoringCase('source', implode("\n", $zshInstructions));
 
         $bashInstructions = $this->completionRuntime->getPostInstallInstructions(Shell::BASH);
-        $this->assertIsArray($bashInstructions);
         $this->assertNotEmpty($bashInstructions);
         $this->assertStringContainsStringIgnoringCase('source', implode("\n", $bashInstructions));
     }

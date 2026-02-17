@@ -71,15 +71,15 @@ final readonly class CompletionRuntime
     {
         $profileDirectory = $_SERVER['HOME'] ?? $_ENV['HOME'] ?? getenv('HOME') ?: null;
 
-        if ($profileDirectory === null || $profileDirectory === '') {
+        if ($profileDirectory === null) {
             $profileDirectory = $_SERVER['USERPROFILE'] ?? $_ENV['USERPROFILE'] ?? getenv('USERPROFILE') ?: null;
         }
 
-        if (($profileDirectory === null || $profileDirectory === '') && getenv('HOMEDRIVE') !== false && getenv('HOMEPATH') !== false) {
+        if ($profileDirectory === null && getenv('HOMEDRIVE') !== false && getenv('HOMEPATH') !== false) {
             $profileDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
         }
 
-        if ($profileDirectory === null || $profileDirectory === '') {
+        if ($profileDirectory === null) {
             throw new RuntimeException('Could not determine user profile directory for completions.');
         }
 
