@@ -18,7 +18,7 @@ final class ViewCompilationFailed extends Exception implements ProvidesContext
         private(set) ?int $sourceLine = null,
     ) {
         parent::__construct(
-            message: sprintf('View could not be compiled: %s', lcfirst($previous->getMessage())),
+            message: sprintf($previous->getMessage()),
             previous: $previous,
         );
 
