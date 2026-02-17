@@ -73,7 +73,7 @@ final class ElementFactory
             $element = new RawElement(
                 token: $token,
                 tag: null,
-                content: $token->compile()
+                content: $token->compile(),
             );
         } elseif ($token->tag === 'code' || $token->tag === 'pre') {
             $element = new RawElement(

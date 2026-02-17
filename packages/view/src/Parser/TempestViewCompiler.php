@@ -344,7 +344,7 @@ final readonly class TempestViewCompiler
 
             if (preg_match(sprintf('/^\s*<\?php \/\*%s(?<line>\d+)\*\/ \?>\s*$/', self::SOURCE_LINE_MARKER), $line, $matches) === 1) {
                 $sourceLine = $currentSourcePath !== null
-                    ? (int)$matches['line']
+                    ? (int) $matches['line']
                     : null;
 
                 continue;
@@ -442,9 +442,13 @@ final readonly class TempestViewCompiler
      */
     private function canExtendLineMapRange(array $range, array $lineMapping): bool
     {
-        return $lineMapping['compiledLine'] === $range['compiledEndLine'] + 1
+        return (
+            $lineMapping['compiledLine']
+            === ($range['compiledEndLine'] + 1)
             && $lineMapping['sourcePath'] === $range['sourcePath']
-            && $lineMapping['sourceLine'] === $range['sourceEndLine'] + 1;
+            && $lineMapping['sourceLine']
+            === ($range['sourceEndLine'] + 1)
+        );
     }
 
     /**

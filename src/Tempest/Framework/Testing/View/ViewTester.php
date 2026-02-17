@@ -42,7 +42,7 @@ final class ViewTester
         $viewComponent = new ViewComponent(
             name: $name,
             contents: $html,
-            file: $file ?? ($name . '.view.php'),
+            file: $file ?? $name . '.view.php',
             isVendorComponent: $isVendor,
         );
 

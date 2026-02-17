@@ -2,8 +2,8 @@
 
 namespace Tempest\View\Tests;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
 use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
@@ -142,9 +142,10 @@ final class StandaloneViewRendererTest extends TestCase
             __DIR__ . '/Fixtures/x-standalone-error-component.view.php',
         );
 
-        $renderer = TempestViewRenderer::make(
-            viewConfig: $viewConfig,
-        );
+        $renderer =
+            TempestViewRenderer::make(
+                viewConfig: $viewConfig,
+            );
 
         try {
             $renderer->render(view(__DIR__ . '/Fixtures/standalone-error-component-usage.view.php'));
@@ -162,9 +163,10 @@ final class StandaloneViewRendererTest extends TestCase
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
         );
 
-        $renderer = TempestViewRenderer::make(
-            viewConfig: $viewConfig,
-        );
+        $renderer =
+            TempestViewRenderer::make(
+                viewConfig: $viewConfig,
+            );
 
         try {
             $renderer->render(view(__DIR__ . '/Fixtures/standalone-error-slot-usage.view.php'));

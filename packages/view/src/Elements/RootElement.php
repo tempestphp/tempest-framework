@@ -2,7 +2,6 @@
 
 namespace Tempest\View\Elements;
 
-use Tempest\View\Attributes\PhpAttribute;
 use Tempest\View\Element;
 use Tempest\View\HasImports;
 

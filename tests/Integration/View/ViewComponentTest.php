@@ -1038,9 +1038,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             use Tests\Tempest\Fixtures\Modules\Home\HomeController;
             use function \Tempest\Router\uri;
         ?>
-        
+
         <x-test>{{ uri(HomeController::class) }}</x-test>
         HTML);
-
     }
 }
