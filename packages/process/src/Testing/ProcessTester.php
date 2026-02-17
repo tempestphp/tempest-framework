@@ -104,12 +104,12 @@ final class ProcessTester
 
     /**
      * Stops the process and dumps the recorded process executions.
-     *
-     * @mago-expect lint:no-debug-symbols
      */
     public function debugExecutedProcesses(): never
     {
-        dd($this->executor->executions);
+        $this->ensureTestingSetUp();
+
+        throw new \RuntimeException(var_export($this->executor->executions, true));
     }
 
     /**
@@ -123,7 +123,7 @@ final class ProcessTester
     /**
      * Asserts that the given command has been ran. Alternatively, a callback may be passed.
      *
-     * @param (\Closure(ProcessResult,PendingProcess=):false|void)|string $command
+     * @param null|Closure(): mixed|Closure(ProcessResult): mixed|Closure(ProcessResult, PendingProcess): mixed $callback
      */
     public function assertCommandRan(string $command, ?\Closure $callback = null): self
     {
@@ -158,7 +158,7 @@ final class ProcessTester
     /**
      * Asserts that the a command has been ran by the given callback.
      *
-     * @param \Closure(PendingProcess,ProcessResult=):false|void $callback
+     * @param Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $callback
      */
     public function assertRan(\Closure $callback): self
     {
@@ -186,7 +186,7 @@ final class ProcessTester
     /**
      * Asserts that the given command did not run. Alternatively, a callback may be passed.
      *
-     * @param (\Closure(PendingProcess,ProcessResult=):false|void)|string $command
+     * @param string|Closure(): mixed|Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $command
      */
     public function assertCommandDidNotRun(string|\Closure $command): self
     {

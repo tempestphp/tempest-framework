@@ -13,17 +13,22 @@ use Tempest\Reflection\TypeReflector;
 #[Priority(Priority::LOW)]
 final class ScalarTypeResolver implements TypeResolver
 {
+    private const array SCALAR_TYPE_MAP = [
+        'string' => 'string',
+        'int' => 'number',
+        'float' => 'number',
+        'bool' => 'boolean',
+    ];
+
     public function canResolve(TypeReflector $type): bool
     {
-        return $type->isBuiltIn() && in_array($type->getName(), ['string', 'int', 'float', 'bool'], strict: true);
+        return $type->isBuiltIn() && isset(self::SCALAR_TYPE_MAP[$type->getName()]);
     }
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
     {
-        return new ResolvedType(match ($type->getName()) {
-            'string' => 'string',
-            'int', 'float' => 'number',
-            'bool' => 'boolean',
-        });
+        $type = self::SCALAR_TYPE_MAP[$type->getName()] ?? throw new \LogicException(sprintf('Unsupported scalar type "%s".', $type->getName()));
+
+        return new ResolvedType($type);
     }
 }

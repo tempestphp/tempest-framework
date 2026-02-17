@@ -23,6 +23,8 @@ use function log;
  * @param int<0, max> $length The length of the string to generate.
  *
  * @throws InvalidArgumentException If $alphabet length is outside the [2^1, 2^56] range.
+ *
+ * @return ($length is 0 ? '' : non-empty-string)
  */
 function secure_string(int $length, ?string $alphabet = null): string
 {

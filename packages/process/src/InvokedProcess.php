@@ -50,7 +50,7 @@ interface InvokedProcess
     /**
      * Waits for the process to finish.
      *
-     * @param null|callable(OutputChannel,string) $output The callback receives the type of output (out or err) and some bytes from the output in real-time while writing the standard input to the process. It allows to have feedback from the independent process during execution.
+     * @param null|callable(OutputChannel, string): void $output The callback receives the type of output (out or err) and some bytes from the output in real-time while writing the standard input to the process. It allows to have feedback from the independent process during execution.
      */
     public function wait(?callable $output = null): ProcessResult;
 }

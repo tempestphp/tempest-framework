@@ -69,6 +69,8 @@ final class InvokedTestingProcess implements InvokedProcess
 
     /**
      * The general output handler callback.
+     *
+     * @var null|\Closure(OutputChannel, string): void
      */
     private ?\Closure $outputHandler = null;
 
@@ -95,11 +97,6 @@ final class InvokedTestingProcess implements InvokedProcess
      */
     private int $nextErrorOutputIndex = 0;
 
-    /**
-     * The signals that have been received.
-     */
-    private array $receivedSignals = [];
-
     public function __construct(
         private readonly InvokedProcessDescription $description,
     ) {}
@@ -107,8 +104,6 @@ final class InvokedTestingProcess implements InvokedProcess
     public function signal(int $signal): self
     {
         $this->invokeOutputHandlerWithNextLineOfOutput();
-
-        $this->receivedSignals[] = $signal;
 
         return $this;
     }
@@ -122,7 +117,11 @@ final class InvokedTestingProcess implements InvokedProcess
 
     public function wait(?callable $output = null): ProcessResult
     {
-        $this->outputHandler = $output ?: $this->outputHandler;
+        if ($output !== null) {
+            $this->outputHandler = $output instanceof \Closure
+                ? $output
+                : \Closure::fromCallable($output);
+        }
 
         if (! $this->outputHandler) {
             $this->remainingRunIterations = 0;
@@ -203,7 +202,7 @@ final class InvokedTestingProcess implements InvokedProcess
 
                 $this->nextOutputIndex = $i + 1;
 
-                return $currentOutput;
+                return true;
             }
 
             if ($currentOutput['type'] === OutputChannel::ERROR && $i >= $this->nextErrorOutputIndex) {
@@ -211,7 +210,7 @@ final class InvokedTestingProcess implements InvokedProcess
 
                 $this->nextErrorOutputIndex = $i + 1;
 
-                return $currentOutput;
+                return true;
             }
         }
 

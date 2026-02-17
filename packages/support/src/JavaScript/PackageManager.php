@@ -17,6 +17,7 @@ enum PackageManager: string
     case YARN = 'yarn';
     case NPM = 'npm';
 
+    /** @return list<non-empty-string> */
     public function getLockFiles(): array
     {
         return match ($this) {
@@ -61,7 +62,9 @@ enum PackageManager: string
     {
         return array_find(
             array: PackageManager::cases(),
-            callback: fn ($packageManager) => array_any($packageManager->getLockFiles(), fn ($lockFile) => Filesystem\is_file($cwd . '/' . $lockFile)),
+            callback: fn (PackageManager $packageManager): bool => array_any($packageManager->getLockFiles(), fn (string $lockFile): bool => Filesystem\is_file($cwd
+            . '/'
+            . $lockFile)),
         );
     }
 }

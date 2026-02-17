@@ -7,6 +7,7 @@ namespace Tempest\Validation\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\HasErrorMessage;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEmail;
 use Tempest\Validation\Rules\IsEnum;
@@ -63,8 +64,11 @@ final class ValidatorTest extends TestCase
             return 'I expected b';
         });
 
+        $rule = $failingRules[0]->rule;
+
         $this->assertCount(1, $failingRules);
-        $this->assertSame('I expected b', $failingRules[0]->rule->message);
+        $this->assertInstanceOf(HasErrorMessage::class, $rule);
+        $this->assertSame('I expected b', $rule->getErrorMessage());
     }
 
     public function test_closure_passes_with_null_response(): void

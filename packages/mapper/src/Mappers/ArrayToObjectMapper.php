@@ -161,7 +161,7 @@ final class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        $caster = $this->memoize((string) $property, function () use ($property, $value) {
+        $caster = $this->memoize((string) $property, function () use ($property) {
             return $this->casterFactory
                 ->in($this->context)
                 ->forProperty($property);

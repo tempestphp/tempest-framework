@@ -268,10 +268,6 @@ function create_temporary_directory(?string $prefix = null): string
     $temporaryDirectory = sys_get_temp_dir();
     $uniqueDirectory = $temporaryDirectory . '/' . uniqid(prefix: $prefix ?? '');
 
-    if ($uniqueDirectory === false) {
-        throw new Exceptions\RuntimeException('Failed to create a temporary directory.');
-    }
-
     namespace\ensure_directory_exists($uniqueDirectory);
     namespace\ensure_directory_empty($uniqueDirectory);
 

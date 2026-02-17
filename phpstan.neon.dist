@@ -1,39 +1,79 @@
 includes:
-	- phpstan-baseline.neon
-	- vendor/spaze/phpstan-disallowed-calls/extension.neon
-	- vendor/phpat/phpat/extension.neon
+    - phpstan-baseline.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - vendor/phpat/phpat/extension.neon
 services:
-	-
-		class: Tests\Tempest\Architecture\ArchitectureTestCase
-		tags:
-			- phpat.test
+    -
+        class: Tests\Tempest\Architecture\ArchitectureTestCase
+        tags:
+            - phpat.test
+    -
+        class: Tests\Tempest\PHPStan\LazyReadWritePropertiesExtension
+        tags:
+            - phpstan.properties.readWriteExtension
+    -
+        class: Tests\Tempest\PHPStan\QueryFunctionDynamicReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
 parameters:
-	level: 5
-	tmpDir: .cache/phpstan
-	tips:
-	    treatPhpDocTypesAsCertain: false
-	excludePaths:
-	    - tests/Integration/View/blade/cache/**.php
-	paths:
-		- src
-		- tests
-	ignoreErrors:
-		-
-			identifier: argument.named
-		-
-		    message: '#.*exec*#'
-		    path: packages/console/src/Terminal/Terminal.php
+    level: 5
+    tmpDir: .cache/phpstan
+    tips:
+        treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+        - packages/auth
+        - packages/cache
+        - packages/clock
+        - packages/command-bus
+        - packages/console
+        - packages/container
+        - packages/core
+        - packages/cryptography
+        - packages/database
+        - packages/datetime
+        - packages/debug
+        - packages/discovery
+        - packages/event-bus
+        - packages/generation
+        - packages/http
+        - packages/http-client
+        - packages/icon
+        - packages/intl
+        - packages/kv-store
+        - packages/log
+        - packages/mail
+        - packages/mapper
+        - packages/process
+        - packages/reflection
+        - packages/router
+        - packages/storage
+        - packages/support
+        - packages/upgrade
+        - packages/validation
+        - packages/view
+        - packages/vite
+        - packages/vite-plugin-tempest
+        - tests
+    excludePaths:
+        analyse:
+            - packages/upgrade/tests/*/Fixtures/*.php
+    reportUnmatchedIgnoredErrors: true
 
-	disallowedFunctionCalls:
-		-
-			function: 'exec()'
-		-
-			function: 'eval()'
-		-
-			function: 'dd()'
-		-
-			function: 'dump()'
-		-
-			function: 'phpinfo()'
-		-
-			function: 'var_dump()'
+    disallowedFunctionCalls:
+        -
+            function: 'exec()'
+        -
+            function: 'eval()'
+        -
+            function: 'dd()'
+        -
+            function: 'dump()'
+        -
+            function: 'ld()'
+        -
+            function: 'lw()'
+        -
+            function: 'phpinfo()'
+        -
+            function: 'var_dump()'

@@ -171,28 +171,42 @@ final readonly class DateTime implements DateTimeInterface
             $seconds,
         );
 
-        if ($seconds !== $calendar->get(IntlCalendar::FIELD_SECOND)) {
-            throw Exception\UnexpectedValueException::forSeconds($seconds, $calendar->get(IntlCalendar::FIELD_SECOND));
+        $calendarYear = $calendar->get(IntlCalendar::FIELD_YEAR);
+        $calendarMonth = $calendar->get(IntlCalendar::FIELD_MONTH);
+        $calendarDay = $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH);
+        $calendarHours = $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY);
+        $calendarMinutes = $calendar->get(IntlCalendar::FIELD_MINUTE);
+        $calendarSeconds = $calendar->get(IntlCalendar::FIELD_SECOND);
+
+        if ($calendarYear === false || $calendarMonth === false || $calendarDay === false || $calendarHours === false || $calendarMinutes === false || $calendarSeconds === false) {
+            throw new Exception\OverflowException(sprintf(
+                'The year value "%d" exceeds the range supported by the calendar.',
+                $year,
+            ));
         }
 
-        if ($minutes !== $calendar->get(IntlCalendar::FIELD_MINUTE)) {
-            throw Exception\UnexpectedValueException::forMinutes($minutes, $calendar->get(IntlCalendar::FIELD_MINUTE));
+        if ($seconds !== $calendarSeconds) {
+            throw Exception\UnexpectedValueException::forSeconds($seconds, $calendarSeconds);
         }
 
-        if ($hours !== $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY)) {
-            throw Exception\UnexpectedValueException::forHours($hours, $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY));
+        if ($minutes !== $calendarMinutes) {
+            throw Exception\UnexpectedValueException::forMinutes($minutes, $calendarMinutes);
         }
 
-        if ($day !== $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH)) {
-            throw Exception\UnexpectedValueException::forDay($day, $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH));
+        if ($hours !== $calendarHours) {
+            throw Exception\UnexpectedValueException::forHours($hours, $calendarHours);
         }
 
-        if ($month !== ($calendar->get(IntlCalendar::FIELD_MONTH) + 1)) {
-            throw Exception\UnexpectedValueException::forMonth($month, $calendar->get(IntlCalendar::FIELD_MONTH) + 1);
+        if ($day !== $calendarDay) {
+            throw Exception\UnexpectedValueException::forDay($day, $calendarDay);
         }
 
-        if ($year !== $calendar->get(IntlCalendar::FIELD_YEAR)) {
-            throw Exception\UnexpectedValueException::forYear($year, $calendar->get(IntlCalendar::FIELD_YEAR));
+        if ($month !== ($calendarMonth + 1)) {
+            throw Exception\UnexpectedValueException::forMonth($month, $calendarMonth + 1);
+        }
+
+        if ($year !== $calendarYear) {
+            throw Exception\UnexpectedValueException::forYear($year, $calendarYear);
         }
 
         $timestamp_in_seconds = (int) ($calendar->getTime() / (float) MILLISECONDS_PER_SECOND);
@@ -263,9 +277,11 @@ final readonly class DateTime implements DateTimeInterface
         }
 
         if ($string instanceof NativeDateTimeInterface) {
+            $nativeTimezone = $string->getTimezone();
+
             return self::fromTimestamp(
                 timestamp: Timestamp::fromParts($string->getTimestamp()),
-                timezone: $timezone ?? Timezone::tryFrom($string->getTimezone()?->getName() ?? ''),
+                timezone: $timezone ?? ($nativeTimezone instanceof \DateTimeZone ? Timezone::tryFrom($nativeTimezone->getName()) : null),
             );
         }
 

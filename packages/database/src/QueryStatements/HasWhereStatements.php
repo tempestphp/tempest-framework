@@ -6,7 +6,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 interface HasWhereStatements
 {
-    /** @var ImmutableArray<WhereStatement> */
+    /** @var ImmutableArray */
     public ImmutableArray $where {
         get;
     }

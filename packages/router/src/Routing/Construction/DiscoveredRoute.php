@@ -34,7 +34,7 @@ final class DiscoveredRoute implements Route
             optionalParameters: $uri['optional'],
             middleware: $route->middleware,
             handler: $methodReflector,
-            without: $route->without ?? [],
+            without: $route->without,
         );
     }
 
@@ -49,6 +49,7 @@ final class DiscoveredRoute implements Route
         /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $middleware,
         public MethodReflector $handler,
+        /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $without = [],
     ) {
         $this->isDynamic = $parameters !== [];

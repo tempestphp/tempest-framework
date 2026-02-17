@@ -6,10 +6,8 @@ use Tempest\Http\Response;
 
 /**
  * Marks this exception class as one that can be converted to a response.
- *
- * @phpstan-require-extends \Throwable
  */
-interface ConvertsToResponse
+interface ConvertsToResponse extends \Throwable
 {
     /**
      * Gets a response to be sent to the client.

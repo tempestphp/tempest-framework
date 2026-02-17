@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache\Testing;
 
 use Closure;
@@ -18,9 +20,11 @@ use Tempest\Support\Random;
 
 final class TestingCache implements Cache
 {
-    public bool $enabled {
-        get => $this->cache->enabled;
-        set => $this->cache->enabled = $value;
+    public bool $enabled = true {
+        set {
+            $this->cache->enabled = $value;
+            $this->enabled = $value;
+        }
     }
 
     private Cache $cache;

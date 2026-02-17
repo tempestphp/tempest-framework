@@ -194,10 +194,6 @@ final class MigrationManager
 
         $statement = $migration->up();
 
-        if ($statement === null) {
-            return;
-        }
-
         if ($statement instanceof CompoundStatement) {
             $statements = $statement->statements;
         } else {
