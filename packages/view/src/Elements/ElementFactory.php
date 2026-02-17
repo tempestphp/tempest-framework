@@ -121,7 +121,7 @@ final class ElementFactory
         foreach ($token->children as $child) {
             $this->clone()->make(
                 token: $child,
-                parent: $parent,
+                parent: $element,
             );
         }
 
