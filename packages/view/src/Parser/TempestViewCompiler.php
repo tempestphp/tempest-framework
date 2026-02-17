@@ -87,7 +87,16 @@ final readonly class TempestViewCompiler
     /** @param Element[] $elements */
     public function compileFragment(array $elements): string
     {
-        return $this->compileElements($elements);
+        $imports = $this->collectImportsForElements($elements);
+
+        if ($imports === []) {
+            return $this->compileElements($elements);
+        }
+
+        return implode(PHP_EOL, [
+            ...$imports,
+            $this->compileElements($elements),
+        ]);
     }
 
     private function removeComments(string $template): string
@@ -139,6 +148,67 @@ final readonly class TempestViewCompiler
         $tokens = new TempestViewLexer($template, $sourcePath)->lex();
 
         return new TempestViewParser($tokens)->parse();
+    }
+
+    /** @param Element[] $elements */
+    private function collectImportsForElements(array $elements): array
+    {
+        $imports = [];
+
+        foreach ($this->collectSourcePathsForElements($elements) as $sourcePath) {
+            foreach ($this->extractImportsFromSourcePath($sourcePath) as $import) {
+                $imports[$import] = $import;
+            }
+        }
+
+        return array_values($imports);
+    }
+
+    /** @param Element[] $elements */
+    private function collectSourcePathsForElements(array $elements): array
+    {
+        $sourcePaths = [];
+
+        foreach ($elements as $element) {
+            $this->collectSourcePathsForElement($element, $sourcePaths);
+        }
+
+        return array_keys($sourcePaths);
+    }
+
+    /** @param array<string, true> $sourcePaths */
+    private function collectSourcePathsForElement(Element $element, array &$sourcePaths): void
+    {
+        if ($element instanceof WithToken && is_string($element->token->sourcePath)) {
+            $sourcePaths[$element->token->sourcePath] = true;
+        }
+
+        if ($element instanceof WrapsElement) {
+            $this->collectSourcePathsForElement($element->getWrappingElement(), $sourcePaths);
+        }
+
+        foreach ($element->getChildren() as $child) {
+            $this->collectSourcePathsForElement($child, $sourcePaths);
+        }
+    }
+
+    /** @return string[] */
+    private function extractImportsFromSourcePath(string $sourcePath): array
+    {
+        static $imports = [];
+
+        if (isset($imports[$sourcePath])) {
+            return $imports[$sourcePath];
+        }
+
+        if (! Filesystem\is_file($sourcePath)) {
+            return $imports[$sourcePath] = [];
+        }
+
+        // TODO: this is not ideal, could use a little more love
+        preg_match_all('/^\s*use (function )?.*;/m', Filesystem\read_file($sourcePath), $matches);
+
+        return $imports[$sourcePath] = array_values(array_unique($matches[0]));
     }
 
     /**

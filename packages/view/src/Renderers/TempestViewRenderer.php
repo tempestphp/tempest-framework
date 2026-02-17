@@ -139,12 +139,11 @@ final class TempestViewRenderer implements ViewRenderer
         } catch (Throwable $throwable) {
             ob_end_clean(); // clean buffer before rendering exception
 
-            $compiledPath = $throwable->getFile();
-            $sourceLocation = $this->resolveSourceLocation($compiledPath, $throwable->getLine());
+            $sourceLocation = $this->resolveSourceLocationFromThrowable($throwable, $_path);
 
             throw new ViewCompilationFailed(
-                path: $compiledPath,
-                content: Filesystem\is_file($compiledPath) ? Filesystem\read_file($compiledPath) : '',
+                path: $_path,
+                content: Filesystem\is_file($_path) ? Filesystem\read_file($_path) : '',
                 sourcePath: $sourceLocation['path'] ?? null,
                 sourceLine: $sourceLocation['line'] ?? null,
                 previous: $throwable,
@@ -201,6 +200,33 @@ final class TempestViewRenderer implements ViewRenderer
             'path' => $sourceLocation['path'],
             'line' => $sourceLocation['line'],
         ];
+    }
+
+    /** @return array{path: string, line: int}|null */
+    private function resolveSourceLocationFromThrowable(Throwable $throwable, string $compiledPath): ?array
+    {
+        $sourceLocation = $this->resolveSourceLocation($throwable->getFile(), $throwable->getLine());
+
+        if ($sourceLocation !== null) {
+            return $sourceLocation;
+        }
+
+        foreach ($throwable->getTrace() as $frame) {
+            $framePath = $frame['file'] ?? null;
+            $frameLine = $frame['line'] ?? null;
+
+            if (! is_string($framePath) || ! is_int($frameLine)) {
+                continue;
+            }
+
+            $sourceLocation = $this->resolveSourceLocation($framePath, $frameLine);
+
+            if ($sourceLocation !== null) {
+                return $sourceLocation;
+            }
+        }
+
+        return $this->resolveSourceLocation($compiledPath, 1);
     }
 
     /**

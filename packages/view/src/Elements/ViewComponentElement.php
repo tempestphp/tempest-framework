@@ -135,22 +135,22 @@ final class ViewComponentElement implements Element, WithToken
 
                 $slotElement = $this->getSlotElement($slot->name);
 
-                $compiled = $slotElement?->compile() ?? '';
-
-                // There's no default slot content, but there's a default value in the view component
-                if (trim($compiled) === '') {
-                    return $default;
-                }
-
                 if ($slotElement === null) {
-                    return $compiled;
+                    return $default;
                 }
 
                 $slotElements = $slotElement instanceof CollectionElement
                     ? $slotElement->getElements()
                     : $slotElement->getChildren();
 
-                return $this->compiler->compileFragment($slotElements);
+                $compiled = $this->compiler->compileFragment($slotElements);
+
+                // There's no default slot content, but there's a default value in the view component
+                if (trim($compiled) === '') {
+                    return $default;
+                }
+
+                return $compiled;
             },
         );
 
