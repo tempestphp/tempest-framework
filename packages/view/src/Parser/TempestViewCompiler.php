@@ -130,13 +130,15 @@ final readonly class TempestViewCompiler
                 ->toArray(),
         ];
 
+        $searchPath = null;
+
         foreach ($searchPathOptions as $searchPath) {
             if (Filesystem\is_file($searchPath)) {
                 break;
             }
         }
 
-        if (! Filesystem\is_file($searchPath)) {
+        if (! $searchPath || ! Filesystem\is_file($searchPath)) {
             throw new ViewNotFound($path);
         }
 
@@ -399,7 +401,7 @@ final readonly class TempestViewCompiler
 
             if (preg_match(sprintf('/^\s*<\?php \/\*%s(?<line>\d+)\*\/ \?>\s*$/', self::SOURCE_LINE_MARKER), $line, $matches) === 1) {
                 $sourceLine = $currentSourcePath !== null
-                    ? (int) $matches['line']
+                    ? (int)$matches['line']
                     : null;
 
                 continue;
