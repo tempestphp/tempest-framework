@@ -140,7 +140,7 @@ final class ViewComponentElement implements Element, WithToken, HasImports
                     return $default;
                 }
 
-                $compiled = $this->compiler->compileElement($slotElement);
+                $compiled = $slotElement->compile() ?? '';
 
                 // There's no default slot content, but there's a default value in the view component
                 if (trim($compiled) === '') {

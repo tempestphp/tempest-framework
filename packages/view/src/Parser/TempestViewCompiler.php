@@ -224,7 +224,7 @@ final readonly class TempestViewCompiler
         return $parentElement;
     }
 
-    public function compileElement(Element $rootElement): string
+    private function compileElement(Element $rootElement): string
     {
         $compiled = arr();
         $sourcePath = null;
