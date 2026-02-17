@@ -81,10 +81,20 @@ final class TempestViewRenderer implements ViewRenderer
 
         $this->validateView($view);
 
+        $compiledView = null;
+
         $path = $this->viewCache->getCachedViewPath(
             path: $view->path,
-            compiledView: fn () => $this->compiler->compile($view),
+            compiledView: function () use (&$compiledView, $view): string {
+                $compiledView = $this->compiler->compileWithSourceMap($view);
+
+                return $compiledView->content;
+            },
         );
+
+        if ($compiledView !== null) {
+            $this->viewCache->saveSourceMap($path, $compiledView->sourcePath, $compiledView->lineMap);
+        }
 
         $view = $this->processView($view);
 
@@ -129,9 +139,14 @@ final class TempestViewRenderer implements ViewRenderer
         } catch (Throwable $throwable) {
             ob_end_clean(); // clean buffer before rendering exception
 
+            $compiledPath = $throwable->getFile();
+            $sourceLocation = $this->resolveSourceLocation($compiledPath, $throwable->getLine());
+
             throw new ViewCompilationFailed(
-                path: $_path,
-                content: Filesystem\read_file($_path),
+                path: $compiledPath,
+                content: Filesystem\is_file($compiledPath) ? Filesystem\read_file($compiledPath) : '',
+                sourcePath: $sourceLocation['path'] ?? null,
+                sourceLine: $sourceLocation['line'] ?? null,
                 previous: $throwable,
             );
         }
@@ -161,5 +176,56 @@ final class TempestViewRenderer implements ViewRenderer
         if (array_key_exists('slots', $data)) {
             throw new ViewVariableWasReserved('slots');
         }
+    }
+
+    /** @return array{path: string, line: int}|null */
+    private function resolveSourceLocation(string $compiledPath, int $compiledLine): ?array
+    {
+        $sourceMap = $this->viewCache->getSourceMap($compiledPath);
+
+        if ($sourceMap === null) {
+            return null;
+        }
+
+        $sourceLocation = $this->resolveSourceLine(
+            $compiledLine,
+            $sourceMap['sourcePath'],
+            $sourceMap['lineMap'],
+        );
+
+        if ($sourceLocation === null) {
+            return null;
+        }
+
+        return [
+            'path' => $sourceLocation['path'],
+            'line' => $sourceLocation['line'],
+        ];
+    }
+
+    /**
+     * @param array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath?: string, sourceStartLine: int}> $lineMap
+     * @return array{path: string, line: int}|null
+     */
+    private function resolveSourceLine(int $compiledLine, ?string $defaultSourcePath, array $lineMap): ?array
+    {
+        foreach ($lineMap as $entry) {
+            if ($compiledLine < $entry['compiledStartLine'] || $compiledLine > $entry['compiledEndLine']) {
+                continue;
+            }
+
+            $sourcePath = $entry['sourcePath'] ?? $defaultSourcePath;
+
+            if (! is_string($sourcePath)) {
+                return null;
+            }
+
+            return [
+                'path' => $sourcePath,
+                'line' => $entry['sourceStartLine'] + ($compiledLine - $entry['compiledStartLine']),
+            ];
+        }
+
+        return null;
     }
 }

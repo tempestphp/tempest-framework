@@ -142,18 +142,31 @@ final class ViewComponentElement implements Element, WithToken
                     return $default;
                 }
 
-                return $compiled;
+                if ($slotElement === null) {
+                    return $compiled;
+                }
+
+                $slotElements = $slotElement instanceof CollectionElement
+                    ? $slotElement->getElements()
+                    : $slotElement->getChildren();
+
+                return $this->compiler->compileFragment($slotElements);
             },
         );
 
-        $compiled = $this->compiler->compile($compiled->toString());
+        $compiledView = $this->compiler->compileWithSourceMap(
+            $compiled->toString(),
+            sourcePath: $this->viewComponent->file,
+        );
 
-        $cacheKey = sprintf('%s:%s', $this->viewComponent->file, hash('xxh64', $compiled));
+        $cacheKey = sprintf('%s:%s', $this->viewComponent->file, hash('xxh64', $compiledView->content));
 
         $cachePath = $this->viewCache->getCachedViewPath(
             $cacheKey,
-            fn () => $compiled,
+            fn () => $compiledView->content,
         );
+
+        $this->viewCache->saveSourceMap($cachePath, $compiledView->sourcePath, $compiledView->lineMap);
 
         return sprintf(
             '<?php $this->includeViewComponent(%1$s)(attributes: %2$s, slots: %3$s, scopedVariables: [%4$s] + ($scopedVariables ?? $this->currentView?->data ?? []) %5$s %6$s %7$s); ?>',

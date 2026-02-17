@@ -14,9 +14,15 @@ final class ViewCompilationFailed extends Exception implements ProvidesContext
         private(set) string $path,
         private(set) string $content,
         Throwable $previous,
+        private(set) ?string $sourcePath = null,
+        private(set) ?int $sourceLine = null,
     ) {
+        $sourceLocation = $sourcePath && $sourceLine
+            ? sprintf(' in %s:%d', $sourcePath, $sourceLine)
+            : '';
+
         parent::__construct(
-            message: sprintf('View could not be compiled: %s.', lcfirst($previous->getMessage())),
+            message: sprintf('View could not be compiled%s: %s.', $sourceLocation, lcfirst($previous->getMessage())),
             previous: $previous,
         );
     }
@@ -25,6 +31,8 @@ final class ViewCompilationFailed extends Exception implements ProvidesContext
     {
         return [
             'path' => $this->path,
+            'sourcePath' => $this->sourcePath,
+            'sourceLine' => $this->sourceLine,
         ];
     }
 }

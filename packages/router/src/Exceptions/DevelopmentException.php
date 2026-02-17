@@ -90,8 +90,18 @@ final class DevelopmentException implements Response
             return $stacktrace;
         }
 
-        $lines = explode("\n", $exception->content);
-        $errorLine = $previous->getLine();
+        $hasSourceLocation = $exception->sourcePath && $exception->sourceLine && Filesystem\is_file($exception->sourcePath);
+
+        $errorPath = $hasSourceLocation
+            ? $exception->sourcePath
+            : $exception->path;
+
+        $errorLine = $exception->sourceLine ?? $previous->getLine();
+
+        $lines = $hasSourceLocation
+            ? explode("\n", Filesystem\read_file($exception->sourcePath))
+            : explode("\n", $exception->content);
+
         $contextLines = 5;
         $startLine = max(1, $errorLine - $contextLines);
         $endLine = min(count($lines), $errorLine + $contextLines);
@@ -111,8 +121,8 @@ final class DevelopmentException implements Response
                 lines: $snippetLines,
                 highlightedLine: $errorLine,
             ),
-            absoluteFile: $exception->path,
-            relativeFile: to_relative_path(root_path(), $exception->path),
+            absoluteFile: $errorPath,
+            relativeFile: to_relative_path(root_path(), $errorPath),
             arguments: [],
             index: 1,
         ));

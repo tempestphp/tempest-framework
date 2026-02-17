@@ -3,6 +3,8 @@
 namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewComponentPathWasInvalid;
 use Tempest\View\Exceptions\ViewComponentPathWasNotFound;
 use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
@@ -117,6 +119,60 @@ final class StandaloneViewRendererTest extends TestCase
 
         $renderer = TempestViewRenderer::make();
         $renderer->render('<?xml version="1.0" encoding="UTF-8" ?><test></test>');
+    }
+
+    #[Test]
+    public function test_maps_source_path_and_line_for_view_errors(): void
+    {
+        $renderer = TempestViewRenderer::make();
+
+        try {
+            $renderer->render(view(__DIR__ . '/Fixtures/standalone-error.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $this->assertSame(__DIR__ . '/Fixtures/standalone-error.view.php', $exception->sourcePath);
+            $this->assertSame(2, $exception->sourceLine);
+        }
+    }
+
+    #[Test]
+    public function test_maps_source_path_and_line_for_component_errors(): void
+    {
+        $viewConfig = new ViewConfig()->addViewComponents(
+            __DIR__ . '/Fixtures/x-standalone-error-component.view.php',
+        );
+
+        $renderer = TempestViewRenderer::make(
+            viewConfig: $viewConfig,
+        );
+
+        try {
+            $renderer->render(view(__DIR__ . '/Fixtures/standalone-error-component-usage.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $this->assertSame(__DIR__ . '/Fixtures/x-standalone-error-component.view.php', $exception->sourcePath);
+            $this->assertSame(2, $exception->sourceLine);
+        }
+    }
+
+    #[Test]
+    public function test_maps_source_path_and_line_for_slot_content_errors(): void
+    {
+        $viewConfig = new ViewConfig()->addViewComponents(
+            __DIR__ . '/Fixtures/x-standalone-base.view.php',
+        );
+
+        $renderer = TempestViewRenderer::make(
+            viewConfig: $viewConfig,
+        );
+
+        try {
+            $renderer->render(view(__DIR__ . '/Fixtures/standalone-error-slot-usage.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $this->assertSame(__DIR__ . '/Fixtures/standalone-error-slot-usage.view.php', $exception->sourcePath);
+            $this->assertSame(2, $exception->sourceLine);
+        }
     }
 
     protected function assertSnippetsMatch(string $expected, string $actual): void

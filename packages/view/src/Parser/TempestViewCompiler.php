@@ -8,14 +8,16 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\CompiledView;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\ShouldBeRemoved;
 use Tempest\View\View;
+use Tempest\View\WithToken;
+use Tempest\View\WrapsElement;
 
-use Tempest\View\ViewCache;
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
@@ -28,6 +30,10 @@ final readonly class TempestViewCompiler
         '?>',
     ];
 
+    private const string SOURCE_PATH_MARKER = '__tempest_source_path=';
+
+    private const string SOURCE_LINE_MARKER = '__tempest_source_line=';
+
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
@@ -37,10 +43,16 @@ final readonly class TempestViewCompiler
 
     public function compile(string|View $view): string
     {
+        return $this->compileWithSourceMap($view)->content;
+    }
+
+    public function compileWithSourceMap(string|View $view, ?string $sourcePath = null): CompiledView
+    {
         $this->elementFactory->setViewCompiler($this);
 
         // 1. Retrieve template
-        $template = $this->retrieveTemplate($view);
+        [$template, $resolvedSourcePath] = $this->retrieveTemplate($view);
+        $sourcePath ??= $resolvedSourcePath;
 
         // Check for XML declarations when short_open_tag is enabled
         if (ini_get('short_open_tag') && str_contains($template, needle: '<?xml')) {
@@ -51,7 +63,7 @@ final readonly class TempestViewCompiler
         $template = $this->removeComments($template);
 
         // 3. Parse AST
-        $ast = $this->parseAst($template);
+        $ast = $this->parseAst($template, $sourcePath);
 
         // 4. Map to elements
         $elements = $this->mapToElements($ast);
@@ -63,9 +75,19 @@ final readonly class TempestViewCompiler
         $compiled = $this->compileElements($elements);
 
         // 7. Cleanup compiled PHP
-        $cleaned = $this->cleanupCompiled($compiled);
+        [$cleaned, $lineMap] = $this->cleanupCompiled($compiled, $sourcePath);
 
-        return $cleaned;
+        return new CompiledView(
+            content: $cleaned,
+            sourcePath: $sourcePath,
+            lineMap: $lineMap,
+        );
+    }
+
+    /** @param Element[] $elements */
+    public function compileFragment(array $elements): string
+    {
+        return $this->compileElements($elements);
     }
 
     private function removeComments(string $template): string
@@ -75,12 +97,13 @@ final readonly class TempestViewCompiler
             ->toString();
     }
 
-    private function retrieveTemplate(string|View $view): string
+    /** @return array{string, string|null} */
+    private function retrieveTemplate(string|View $view): array
     {
         $path = $view instanceof View ? $view->path : $view;
 
         if (! str_ends_with($path, '.php')) {
-            return $path;
+            return [$path, null];
         }
 
         $searchPathOptions = [
@@ -108,12 +131,12 @@ final readonly class TempestViewCompiler
             throw new ViewNotFound($path);
         }
 
-        return Filesystem\read_file($searchPath);
+        return [Filesystem\read_file($searchPath), $searchPath];
     }
 
-    private function parseAst(string $template): TempestViewAst
+    private function parseAst(string $template, ?string $sourcePath = null): TempestViewAst
     {
-        $tokens = new TempestViewLexer($template)->lex();
+        $tokens = new TempestViewLexer($template, $sourcePath)->lex();
 
         return new TempestViewParser($tokens)->parse();
     }
@@ -189,8 +212,21 @@ final readonly class TempestViewCompiler
     private function compileElements(array $elements): string
     {
         $compiled = arr();
+        $sourcePath = null;
 
         foreach ($elements as $element) {
+            if ($sourceLocation = $this->resolveSourceLocation($element)) {
+                if ($sourceLocation['sourcePath'] !== $sourcePath) {
+                    $sourcePath = $sourceLocation['sourcePath'];
+
+                    if ($sourcePath !== null) {
+                        $compiled[] = self::sourcePathMarker($sourcePath);
+                    }
+                }
+
+                $compiled[] = self::sourceLineMarker($sourceLocation['sourceLine']);
+            }
+
             $compiled[] = $element->compile();
         }
 
@@ -199,7 +235,43 @@ final readonly class TempestViewCompiler
             ->toString();
     }
 
-    private function cleanupCompiled(string $compiled): string
+    private static function sourcePathMarker(string $sourcePath): string
+    {
+        return sprintf('<?php /*%s%s*/ ?>', self::SOURCE_PATH_MARKER, base64_encode($sourcePath));
+    }
+
+    private static function sourceLineMarker(int $sourceLine): string
+    {
+        return sprintf('<?php /*%s%d*/ ?>', self::SOURCE_LINE_MARKER, $sourceLine);
+    }
+
+    /** @return array{sourcePath: string|null, sourceLine: int}|null */
+    private function resolveSourceLocation(Element $element): ?array
+    {
+        if ($element instanceof WithToken) {
+            return [
+                'sourcePath' => $element->token->sourcePath,
+                'sourceLine' => $element->token->line,
+            ];
+        }
+
+        if ($element instanceof WrapsElement) {
+            return $this->resolveSourceLocation($element->getWrappingElement());
+        }
+
+        foreach ($element->getChildren() as $child) {
+            if ($sourceLocation = $this->resolveSourceLocation($child)) {
+                return $sourceLocation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array{string, array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}>}
+     */
+    private function cleanupCompiled(string $compiled, ?string $sourcePath): array
     {
         // Remove strict type declarations
         $compiled = str($compiled)->replace('declare(strict_types=1);', '');
@@ -232,6 +304,158 @@ final readonly class TempestViewCompiler
         // Remove empty PHP blocks
         $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
 
-        return $compiled->toString();
+        return $this->extractSourceMap($compiled->toString(), $sourcePath);
+    }
+
+    /**
+     * @return array{string, array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}>}
+     */
+    private function extractSourceMap(string $compiled, ?string $sourcePath): array
+    {
+        $compiledLines = explode("\n", $compiled);
+
+        $cleanedLines = [];
+        $lineMap = [];
+        $currentSourcePath = $sourcePath;
+        $sourceLine = null;
+        $compiledLine = 0;
+
+        foreach ($compiledLines as $line) {
+            if (preg_match(sprintf('/^\s*<\?php \/\*%s(?<path>[a-zA-Z0-9\+\/=]+)\*\/ \?>\s*$/', self::SOURCE_PATH_MARKER), $line, $matches) === 1) {
+                $decodedPath = base64_decode($matches['path'], true);
+                $currentSourcePath = $decodedPath === false ? null : $decodedPath;
+                continue;
+            }
+
+            if (preg_match(sprintf('/^\s*<\?php \/\*%s(?<line>\d+)\*\/ \?>\s*$/', self::SOURCE_LINE_MARKER), $line, $matches) === 1) {
+                $sourceLine = $currentSourcePath !== null
+                    ? (int) $matches['line']
+                    : null;
+
+                continue;
+            }
+
+            $compiledLine++;
+            $cleanedLines[] = $line;
+
+            if ($sourceLine === null || $currentSourcePath === null) {
+                continue;
+            }
+
+            $lineMap[$compiledLine] = [
+                'sourcePath' => $currentSourcePath,
+                'sourceLine' => $sourceLine,
+            ];
+
+            $sourceLine++;
+        }
+
+        return [
+            implode("\n", $cleanedLines),
+            $this->compressLineMap($lineMap),
+        ];
+    }
+
+    /**
+     * @param array<int, array{sourcePath: string, sourceLine: int}> $lineMap
+     * @return array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}>
+     */
+    private function compressLineMap(array $lineMap): array
+    {
+        if ($lineMap === []) {
+            return [];
+        }
+
+        ksort($lineMap);
+
+        $entries = [];
+        $currentRange = null;
+
+        foreach ($lineMap as $compiledLine => $sourceLocation) {
+            $lineMapping = $this->createLineMapping($compiledLine, $sourceLocation);
+
+            if ($currentRange === null) {
+                $currentRange = $this->startLineMapRange($lineMapping);
+                continue;
+            }
+
+            if ($this->canExtendLineMapRange($currentRange, $lineMapping)) {
+                $currentRange = $this->extendLineMapRange($currentRange, $lineMapping);
+                continue;
+            }
+
+            $entries[] = $this->createLineMapEntry($currentRange);
+            $currentRange = $this->startLineMapRange($lineMapping);
+        }
+
+        $entries[] = $this->createLineMapEntry($currentRange);
+
+        return $entries;
+    }
+
+    /**
+     * @param array{sourcePath: string, sourceLine: int} $sourceLocation
+     * @return array{compiledLine: int, sourcePath: string, sourceLine: int}
+     */
+    private function createLineMapping(int $compiledLine, array $sourceLocation): array
+    {
+        return [
+            'compiledLine' => $compiledLine,
+            'sourcePath' => $sourceLocation['sourcePath'],
+            'sourceLine' => $sourceLocation['sourceLine'],
+        ];
+    }
+
+    /**
+     * @param array{compiledLine: int, sourcePath: string, sourceLine: int} $lineMapping
+     * @return array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int, sourceEndLine: int}
+     */
+    private function startLineMapRange(array $lineMapping): array
+    {
+        return [
+            'compiledStartLine' => $lineMapping['compiledLine'],
+            'compiledEndLine' => $lineMapping['compiledLine'],
+            'sourcePath' => $lineMapping['sourcePath'],
+            'sourceStartLine' => $lineMapping['sourceLine'],
+            'sourceEndLine' => $lineMapping['sourceLine'],
+        ];
+    }
+
+    /**
+     * @param array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int, sourceEndLine: int} $range
+     * @param array{compiledLine: int, sourcePath: string, sourceLine: int} $lineMapping
+     */
+    private function canExtendLineMapRange(array $range, array $lineMapping): bool
+    {
+        return $lineMapping['compiledLine'] === $range['compiledEndLine'] + 1
+            && $lineMapping['sourcePath'] === $range['sourcePath']
+            && $lineMapping['sourceLine'] === $range['sourceEndLine'] + 1;
+    }
+
+    /**
+     * @param array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int, sourceEndLine: int} $range
+     * @param array{compiledLine: int, sourcePath: string, sourceLine: int} $lineMapping
+     * @return array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int, sourceEndLine: int}
+     */
+    private function extendLineMapRange(array $range, array $lineMapping): array
+    {
+        $range['compiledEndLine'] = $lineMapping['compiledLine'];
+        $range['sourceEndLine'] = $lineMapping['sourceLine'];
+
+        return $range;
+    }
+
+    /**
+     * @param array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int, sourceEndLine: int} $range
+     * @return array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}
+     */
+    private function createLineMapEntry(array $range): array
+    {
+        return [
+            'compiledStartLine' => $range['compiledStartLine'],
+            'compiledEndLine' => $range['compiledEndLine'],
+            'sourcePath' => $range['sourcePath'],
+            'sourceStartLine' => $range['sourceStartLine'],
+        ];
     }
 }
