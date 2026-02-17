@@ -18,6 +18,7 @@
 /packages/clock/                                     @aidan-casey
 /packages/command-bus/                               @brendt @aidan-casey
 /packages/console/                                   @brendt
+/packages/console/src/Completion                     @xHeaven
 /packages/container/                                 @brendt
 /packages/core/                                      @brendt
 /packages/cryptography/                              @innocenzi
