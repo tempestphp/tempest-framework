@@ -60,7 +60,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $object = map([])->to(ObjectWithDefaultValues::class);
 
         $this->assertSame('a', $object->a);
-        $this->assertSame(null, $object->b);
+        $this->assertNull($object->b);
     }
 
     public function test_built_in_casters(): void
@@ -82,7 +82,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 10:10:10', $object->dateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-12-01 10:10:10', $object->dateTimeWithFormat->format('Y-m-d H:i:s'));
         $this->assertNull($object->nullableDateTimeImmutable);
-        $this->assertSame(false, $object->bool);
+        $this->assertFalse($object->bool);
         $this->assertSame(0.1, $object->float);
         $this->assertSame(1, $object->int);
     }

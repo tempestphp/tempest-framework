@@ -4,6 +4,7 @@ namespace Tempest\Database;
 
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
+use Tempest\Core\InsightType;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\PostgresConfig;
@@ -38,7 +39,7 @@ final class DatabaseInsightsProvider implements InsightsProvider
             SQLiteConfig::class => 'SQLite',
             PostgresConfig::class => 'PostgreSQL',
             MysqlConfig::class => 'MySQL',
-            default => ['Unknown', null],
+            default => 'Unknown',
         };
     }
 
@@ -53,7 +54,7 @@ final class DatabaseInsightsProvider implements InsightsProvider
         };
 
         if (! $versionQuery) {
-            return new Insight('Unknown', Insight::ERROR);
+            return new Insight('Unknown', InsightType::ERROR);
         }
 
         try {
@@ -63,11 +64,11 @@ final class DatabaseInsightsProvider implements InsightsProvider
                 match: 'version',
             ));
         } catch (\Throwable $e) {
-            return new Insight('Unavailable', Insight::ERROR);
+            return new Insight('Unavailable', InsightType::ERROR);
         }
     }
 
-    private function getSQLitePath(): null|Insight|string
+    private function getSQLitePath(): ?string
     {
         if (! $this->databaseConfig instanceof SQLiteConfig) {
             return null;

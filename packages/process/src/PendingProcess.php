@@ -11,12 +11,12 @@ final class PendingProcess
 {
     /**
      * @param array|string $command The command to run and its arguments listed as separate entries.
-     * @param null|Duration $timeout Sets the process timeout (max. runtime).
-     * @param null|Duration $idleTimeout Sets the process idle timeout (max. time since last output).
-     * @param null|string $path Working directory for the process.
-     * @param null|string $input Content that will be passed to the underlying process standard input.
-     * @param null|bool $quietly Disables fetching output and error output from the underlying process.
-     * @param null|bool $tty If set to `true`, forces enabling TTY mode.
+     * @param Duration|null $timeout Sets the process timeout (max. runtime).
+     * @param Duration|null $idleTimeout Sets the process idle timeout (max. time since last output).
+     * @param string|null $path Working directory for the process.
+     * @param string|null $input Content that will be passed to the underlying process standard input.
+     * @param bool $quietly Disables fetching output and error output from the underlying process.
+     * @param bool $tty If set to `true`, forces enabling TTY mode.
      * @param array<string,mixed> $environment Environment variables to set for the process.
      * @param array<string,mixed> $options Underlying `proc_open` options.
      */

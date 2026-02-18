@@ -13,7 +13,7 @@ final class ValidationFailed extends Exception
      * @template TKey of array-key
      *
      * @param array<TKey,FailingRule[]> $failingRules
-     * @param array<TKey,string> $errorMessages
+     * @param array<TKey,list<string>> $errorMessages
      * @param class-string|null $targetClass
      */
     public function __construct(

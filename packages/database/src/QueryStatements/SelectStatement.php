@@ -2,7 +2,6 @@
 
 namespace Tempest\Database\QueryStatements;
 
-use Stringable;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
@@ -45,29 +44,30 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $columns = $this->fields->isEmpty()
-            ? '*'
-            : $this->fields
-                ->flatMap(function (string|Stringable|FieldStatement $field) {
-                    if ($field instanceof FieldStatement) {
-                        return $field;
-                    }
+        $columns = '*';
 
-                    return str($field)->explode(',')->toArray();
-                })
-                ->map(function (string|Stringable|FieldStatement $field) use ($dialect) {
-                    if (! $field instanceof FieldStatement) {
-                        $field = new FieldStatement($field);
-                    }
+        if ($this->fields->isNotEmpty()) {
+            $compiledColumns = [];
 
-                    return $field->compile($dialect);
-                })
-                ->implode(', ');
+            foreach ($this->fields as $field) {
+                if ($field instanceof FieldStatement) {
+                    $compiledColumns[] = $field->compile($dialect);
 
-        $query = new ImmutableArray([
+                    continue;
+                }
+
+                foreach (str($field)->explode(',') as $splitField) {
+                    $compiledColumns[] = new FieldStatement($splitField)->compile($dialect);
+                }
+            }
+
+            $columns = implode(', ', $compiledColumns);
+        }
+
+        $query = [
             'SELECT ' . $columns,
             'FROM ' . $this->table,
-        ]);
+        ];
 
         if ($this->join->isNotEmpty()) {
             $query[] = $this->join
@@ -111,12 +111,11 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
         if ($this->raw->isNotEmpty()) {
             $query[] = $this->raw
                 ->map(fn (RawStatement $raw) => $raw->compile($dialect))
-                ->implode(' ');
+                ->implode(' ')
+                ->toString();
         }
 
-        $compiled = $query->implode(' ');
-
-        return $compiled;
+        return implode(' ', $query);
     }
 
     public function __clone(): void

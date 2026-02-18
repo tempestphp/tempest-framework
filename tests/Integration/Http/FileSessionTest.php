@@ -13,7 +13,6 @@ use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
@@ -52,7 +51,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),
-            $this->container->get(SessionConfig::class),
+            $this->container->get(FileSessionConfig::class),
         ));
     }
 

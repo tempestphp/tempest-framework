@@ -19,7 +19,7 @@ final class TestingProcessExecutor implements ProcessExecutor
     private(set) array $executions = [];
 
     /**
-     * @param array<string|ProcessResult> $mocks
+     * @param array<string, string|ProcessResult|InvokedProcessDescription> $mocks
      */
     public function __construct(
         private readonly GenericProcessExecutor $executor,

@@ -2,14 +2,8 @@
 
 declare(strict_types=1);
 
-use Tempest\Log\Channels\AppendLogChannel;
-use Tempest\Log\LogConfig;
+use Tempest\Log\Config\SimpleLogConfig;
 
-return new LogConfig(
-    channels: [
-        new AppendLogChannel(
-            path: __DIR__ . '/../logs/project.log',
-        ),
-    ],
-    serverLogPath: '/path/to/nginx.log',
+return new SimpleLogConfig(
+    path: __DIR__ . '/../logs/project.log',
 );

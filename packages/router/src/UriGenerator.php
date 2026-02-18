@@ -216,7 +216,7 @@ final class UriGenerator
 
         if ($routes === []) {
             if (! class_exists($controllerClass)) {
-                throw ControllerActionDoesNotExist::controllerNotFound($controllerClass, $controllerMethod);
+                throw ControllerActionDoesNotExist::controllerNotFound($controllerClass);
             }
 
             if (! method_exists($controllerClass, $controllerMethod)) {

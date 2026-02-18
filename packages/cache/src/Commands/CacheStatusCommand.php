@@ -81,7 +81,6 @@ if (class_exists(ConsoleCommand::class)) {
 
             $this->console->header('User caches');
 
-            /** @var Cache $cache */
             foreach ($caches as $cache) {
                 $this->console->keyValue(
                     key: $this->getCacheName($cache),

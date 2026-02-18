@@ -51,6 +51,11 @@ final class RedisConfig
         public bool $persistent = false,
 
         /**
+         * Identity for the requested persistent connection. Useful when multiple persistent connections are needed.
+         */
+        public ?string $persistentId = null,
+
+        /**
          * The maximum duration, in seconds, to wait for a connection to be established.
          */
         public ?float $connectionTimeOut = null,

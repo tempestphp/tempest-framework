@@ -16,7 +16,7 @@ final class InvokedProcessDescription
     /**
      * The process output, in order it should be received.
      *
-     * @var string[]
+     * @var array<int, array{type: OutputChannel, buffer: string}>
      */
     public array $output = [];
 
@@ -42,6 +42,8 @@ final class InvokedProcessDescription
 
     /**
      * Describes a line of standard output in the order it should be received.
+     *
+     * @param string|array<int, string> $output
      */
     public function output(string|array $output): self
     {
@@ -61,6 +63,8 @@ final class InvokedProcessDescription
 
     /**
      * Describes a line of error output in the order it should be received.
+     *
+     * @param string|array<int, string> $errorOutput
      */
     public function errorOutput(string|array $errorOutput): self
     {

@@ -10,8 +10,6 @@ final class TempestViewLexer
 
     private ?string $current;
 
-    private bool $eof = false;
-
     public function __construct(
         private readonly string $html,
     ) {

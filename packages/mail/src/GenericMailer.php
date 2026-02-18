@@ -25,6 +25,6 @@ final readonly class GenericMailer implements Mailer
 
         $this->transport->send($symfonyMail);
 
-        $this->eventBus?->dispatch(new EmailWasSent($email));
+        $this->eventBus->dispatch(new EmailWasSent($email));
     }
 }

@@ -154,13 +154,14 @@ final class WhereGroupBuilder
     /**
      * Adds another nested where statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      * @param 'AND'|'OR' $operator
      *
      * @return self<TModel>
      */
     public function whereGroup(Closure $callback, string $operator = 'AND'): self
     {
+        /** @var WhereGroupBuilder<TModel> $groupBuilder */
         $groupBuilder = new WhereGroupBuilder($this->model);
         $callback($groupBuilder);
 
@@ -181,7 +182,7 @@ final class WhereGroupBuilder
     /**
      * Adds another nested `AND WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      *
      * @return self<TModel>
      */
@@ -193,7 +194,7 @@ final class WhereGroupBuilder
     /**
      * Adds another nested `OR WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder):void $callback
+     * @param Closure(WhereGroupBuilder<TModel>):void $callback
      *
      * @return self<TModel>
      */

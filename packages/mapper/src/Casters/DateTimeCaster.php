@@ -50,6 +50,10 @@ final readonly class DateTimeCaster implements Caster, DynamicCaster, Configurab
         }
 
         try {
+            if ($this->format !== FormatPattern::ISO8601 && is_string($input)) {
+                return DateTime::fromPattern($input, $this->format);
+            }
+
             return DateTime::parse($input);
         } catch (\Throwable) {
             return null;

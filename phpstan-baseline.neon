@@ -1,2 +1,112 @@
 parameters:
-	ignoreErrors: []
+    ignoreErrors:
+        -
+            identifier: argument.named
+            paths:
+                - src/Tempest/Framework/Testing/*
+                - tests/Integration/**/*Test.php
+                - packages/auth/src/OAuth/Testing/*
+                - packages/**/src/Testing/*
+                - packages/core/src/Exceptions/ExceptionTester.php
+                - packages/**/tests/**/*.php
+                - packages/**/tests/*.php
+        -
+            identifier: smaller.alwaysFalse
+            path: packages/support/src/Arr/functions.php
+            count: 1
+            # Runtime guard: positive-int type guarantees $number >= 1, but we keep the check for safety
+        -
+            identifier: instanceof.alwaysTrue
+            path: packages/support/src/Arr/functions.php
+            count: 1
+            # Runtime guard: closure return type guarantees Generator, but we validate for a clear error message
+        -
+            identifier: disallowed.function
+            path: packages/clock/src/MockClock.php
+            count: 1
+            # Intentional: dd() is the purpose of MockClock::dd()
+        -
+            identifier: disallowed.function
+            path: packages/debug/src/DOMDebug.php
+            count: 1
+            # Intentional: lw() is the purpose of DOMDebug::dump()
+        -
+            identifier: disallowed.function
+            path: packages/debug/src/functions.php
+            count: 2
+            # Intentional: dd() delegates to ld() and dump() delegates to lw()
+        -
+            identifier: disallowed.function
+            path: packages/core/src/Composer.php
+            count: 1
+            # Intentional: exec() is required for running composer commands
+        -
+            identifier: disallowed.function
+            path: packages/console/src/Terminal/Terminal.php
+            count: 3
+            # Intentional: exec() is required for TTY terminal operations (stty, tput)
+        -
+            identifier: disallowed.function
+            path: packages/datetime/src/TemporalConvenienceMethods.php
+            count: 2
+            # Intentional: dd() is the purpose of TemporalInterface::dd()
+        -
+            identifier: identical.alwaysFalse
+            path: packages/datetime/src/DateTime.php
+            count: 6
+            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
+        -
+            identifier: booleanOr.alwaysFalse
+            path: packages/datetime/src/DateTime.php
+            count: 5
+            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
+        -
+            identifier: instanceof.alwaysTrue
+            path: packages/datetime/src/DateTime.php
+            count: 1
+            # Runtime guard: DateTimeInterface::getTimezone() can return false at runtime
+        -
+            identifier: disallowed.function
+            path: packages/console/src/Testing/ConsoleTester.php
+            count: 1
+            # Intentional: ld() is the purpose of ConsoleTester::dd()
+        -
+            identifier: disallowed.function
+            path: src/Tempest/Framework/Commands/ConfigShowCommand.php
+            count: 1
+            # Intentional: lw() used for debug output when available
+        -
+            identifier: disallowed.function
+            path: tests/Integration/Console/Fixtures/LogDebugCommand.php
+            count: 1
+            # Intentional: lw() is the purpose of this test fixture
+        -
+            identifier: disallowed.function
+            path: packages/support/tests/Filesystem/UnixFunctionsTest.php
+            count: 1
+            # Intentional: exec() restores permissions recursively during Unix test cleanup
+        -
+            identifier: requireOnce.fileNotFound
+            path: packages/support/tests/Fixtures/Phar/normalize_path.php
+            count: 1
+            # Intentional: require_once target exists only inside generated Phar archive at runtime
+        -
+            identifier: function.alreadyNarrowedType
+            path: packages/console/src/GenericConsole.php
+            count: 1
+            # Runtime guard: PHPDoc narrows string to class-string<BackedEnum>, but is_a() check is needed at runtime
+        -
+            identifier: argument.type
+            path: packages/validation/tests/Rules/IsEnumTest.php
+            count: 1
+            # Intentional: constructor accepts only enum class-strings; this test verifies runtime rejection path for invalid input
+        -
+            identifier: staticMethod.alreadyNarrowedType
+            path: packages/process/src/Testing/ProcessTester.php
+            count: 3
+            # Intentional: explicit assertTrue() calls keep callback-only branches counted as assertions in tests
+        -
+            identifier: method.alreadyNarrowedType
+            path: tests/Integration/Database/GroupedWhereMethodsTest.php
+            count: 1
+            # Intentional: assertion keeps explicit null-check semantics in grouped-where integration test
