@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Renderers;
 
 use Closure;
+use ErrorException;
 use Stringable;
 use Tempest\Container\Container;
 use Tempest\Core\Environment;
@@ -134,6 +135,15 @@ final class TempestViewRenderer implements ViewRenderer
 
         extract($_data, flags: EXTR_SKIP);
 
+        set_error_handler(static function (int $code, string $message, string $filename, int $line): bool {
+            throw new ErrorException(
+                message: $message,
+                code: $code,
+                filename: $filename,
+                line: $line,
+            );
+        });
+
         try {
             include $_path;
         } catch (Throwable $throwable) {
@@ -148,6 +158,8 @@ final class TempestViewRenderer implements ViewRenderer
                 sourcePath: $sourceLocation['path'] ?? null,
                 sourceLine: $sourceLocation['line'] ?? null,
             );
+        } finally {
+            restore_error_handler();
         }
 
         $this->currentView = null;

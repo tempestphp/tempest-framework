@@ -136,6 +136,20 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
+    public function test_maps_source_path_and_line_for_undefined_variable_errors(): void
+    {
+        $renderer = TempestViewRenderer::make();
+
+        try {
+            $renderer->render(view(__DIR__ . '/Fixtures/standalone-undefined-variable.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $this->assertSame(__DIR__ . '/Fixtures/standalone-undefined-variable.view.php', $exception->sourcePath);
+            $this->assertSame(2, $exception->sourceLine);
+        }
+    }
+
+    #[Test]
     public function test_maps_source_path_and_line_for_component_errors(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
