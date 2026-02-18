@@ -21,10 +21,14 @@ use Tempest\Router\Exceptions\HtmlExceptionRenderer;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\IsNotNull;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\GenericView;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
+
+use function Tempest\View\view;
 
 final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
 {
@@ -133,6 +137,38 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertNotInstanceOf(DevelopmentException::class, $response);
         $this->assertSame(Status::NOT_FOUND, $response->status);
+    }
+
+    #[Test]
+    public function does_not_duplicate_view_compilation_frames_in_stacktrace(): void
+    {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+        $this->container->singleton(GenericRequest::class, new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+        ));
+
+        $viewRenderer = TempestViewRenderer::make();
+
+        try {
+            $viewRenderer->render(view(__DIR__ . '/../../../../packages/view/tests/Fixtures/standalone-error.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $response = $this->renderer->render($exception);
+        }
+
+        $this->assertInstanceOf(DevelopmentException::class, $response);
+        $this->assertInstanceOf(GenericView::class, $response->body);
+
+        $hydration = json_decode($response->body->data['hydration'], associative: true, flags: JSON_THROW_ON_ERROR);
+        $stacktrace = json_decode($hydration['stacktrace'], associative: true, flags: JSON_THROW_ON_ERROR);
+
+        $renderCompiledFrames = array_values(array_filter(
+            $stacktrace['applicationFrames'],
+            fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
+        ));
+
+        $this->assertCount(1, $renderCompiledFrames);
     }
 
     #[Test]
