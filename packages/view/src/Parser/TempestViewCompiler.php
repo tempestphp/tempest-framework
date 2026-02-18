@@ -47,9 +47,11 @@ final readonly class TempestViewCompiler
         return $this->compileWithSourceMap($view)->content;
     }
 
-    public function compileWithSourceMap(string|View $view, ?string $sourcePath = null): CompiledView
+    public function compileWithSourceMap(string|View $view, ?string $sourcePath = null, array $prependImports = []): CompiledView
     {
         $this->elementFactory->setViewCompiler($this);
+
+        $prependImports = $this->normalizeImports($prependImports);
 
         // 1. Retrieve template
         [$template, $resolvedSourcePath] = $this->retrieveTemplate($view);
@@ -69,6 +71,10 @@ final readonly class TempestViewCompiler
         // 4. Map to elements
         $rootElement = $this->mapToElements($ast);
 
+        if ($prependImports !== []) {
+            $rootElement->setInheritedImports($prependImports);
+        }
+
         // 5. Apply attributes
         $rootElement = $this->applyAttributes($rootElement);
 
@@ -76,7 +82,7 @@ final readonly class TempestViewCompiler
         $compiled = $this->compileElement($rootElement);
 
         // 7. Cleanup compiled PHP
-        [$cleaned, $lineMap] = $this->cleanupCompiled($compiled, $sourcePath);
+        [$cleaned, $lineMap] = $this->cleanupCompiled($compiled, $sourcePath, $rootElement->getImports());
 
         return new CompiledView(
             content: $cleaned,
@@ -166,9 +172,6 @@ final readonly class TempestViewCompiler
         }
     }
 
-    /**
-     * @return Element[]
-     */
     private function mapToElements(TempestViewAst $ast): RootElement
     {
         $elementFactory = $this->elementFactory->withIsHtml($ast->isHtml);
@@ -286,13 +289,17 @@ final readonly class TempestViewCompiler
     /**
      * @return array{string, array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}>}
      */
-    private function cleanupCompiled(string $compiled, ?string $sourcePath): array
+    private function cleanupCompiled(string $compiled, ?string $sourcePath, array $importsToPrepend = []): array
     {
         // Remove strict type declarations
         $compiled = str($compiled)->replace('declare(strict_types=1);', '');
 
         // Cleanup and bundle imports
         $imports = arr();
+
+        foreach ($this->normalizeImports($importsToPrepend) as $import) {
+            $imports[$import] = $import;
+        }
 
         $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
             // The import contains escaped slashes, meaning it's a var_exported string; we can ignore those
@@ -320,6 +327,23 @@ final readonly class TempestViewCompiler
         $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
 
         return $this->extractSourceMap($compiled->toString(), $sourcePath);
+    }
+
+    private function normalizeImports(array $imports): array
+    {
+        $normalized = [];
+
+        foreach ($imports as $import) {
+            $import = trim($import);
+
+            if ($import === '') {
+                continue;
+            }
+
+            $normalized[$import] = $import;
+        }
+
+        return array_values($normalized);
     }
 
     /**

@@ -150,11 +150,10 @@ final class ViewComponentElement implements Element, WithToken
             },
         );
 
-        $compiled = $compiled->prepend('<?php' . PHP_EOL . implode(PHP_EOL, $this->getImports()) . PHP_EOL . '?>' . PHP_EOL);
-
         $compiledView = $this->compiler->compileWithSourceMap(
             $compiled->toString(),
             sourcePath: $this->viewComponent->file,
+            prependImports: $this->getImports(),
         );
 
         $cacheKey = sprintf('%s:%s', $this->viewComponent->file, hash('xxh64', $compiledView->content));
