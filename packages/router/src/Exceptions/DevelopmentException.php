@@ -98,6 +98,18 @@ final class DevelopmentException implements Response
 
         $errorLine = $exception->sourceLine ?? $previous->getLine();
 
+        $firstFrame = $stacktrace->frames[0] ?? null;
+
+        if (
+            $firstFrame instanceof Frame
+            && $firstFrame->absoluteFile === $errorPath
+            && $firstFrame->line === $errorLine
+            && $firstFrame->class === TempestViewRenderer::class
+            && $firstFrame->function === 'renderCompiled'
+        ) {
+            return $stacktrace;
+        }
+
         $lines = $hasSourceLocation
             ? explode(PHP_EOL, Filesystem\read_file($exception->sourcePath))
             : explode(PHP_EOL, $exception->content);
