@@ -151,7 +151,7 @@ final class ViewComponentElement implements Element, WithToken, HasImports
             },
         );
 
-        $compiled = $compiled->prepend(implode(PHP_EOL, $this->getImports()));
+        $compiled = $compiled->prepend('<?php' . PHP_EOL . implode(PHP_EOL, $this->getImports()) . PHP_EOL . '?>' . PHP_EOL);
 
         $compiledView = $this->compiler->compileWithSourceMap(
             $compiled->toString(),

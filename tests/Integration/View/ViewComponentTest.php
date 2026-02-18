@@ -1073,7 +1073,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_fallthrough_attribute_without_value(): void
     {
-        $this->view->registerViewComponent('x-test', '<div :if="$flag">hi</div>');
+        $this->view->registerViewComponent('x-test', '<div :isset="$flag">hi</div>');
 
         $this->assertSnippetsMatch('', $this->view->render('<x-test />'));
         $this->assertSnippetsMatch('<div>hi</div>', $this->view->render('<x-test :flag/>'));
@@ -1104,15 +1104,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
 
         $this->view->registerViewComponent('x-child', <<<'HTML'
-        <?php
-            use Tests\Tempest\Fixtures\Modules\Home\HomeController; 
+        <?php 
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController; 
         ?>
         <div class="child"><x-slot /></div>
         HTML,
         );
 
         $html = $this->view->render(<<<'HTML'
-        <?php
+        <?php 
         use function \Tempest\Router\uri; 
         ?>
 
@@ -1136,5 +1136,28 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 $this->assertStringContainsString('missing-import-view.view.php', $exception->getFile());
                 $this->assertSame(2, $exception->getLine());
             });
+    }
+
+    public function test_imports_with_nested_view_components(): void
+    {
+        $this->view->registerViewComponent('x-card', <<<'HTML'
+        <div class="card"><x-slot /></div>
+        HTML);
+
+        $this->view->registerViewComponent('x-footer', <<<'HTML'
+        <x-card><x-slot /></x-card>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <?php
+        use function Tempest\Router\uri;
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController;
+        ?>
+        <x-footer>
+            {{ uri(HomeController::class) }}
+        </x-footer>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="card">/</div>', $html);
     }
 }
