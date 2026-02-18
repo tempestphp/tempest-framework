@@ -18,10 +18,6 @@ use Tempest\Database\QueryStatements\RawStatement;
  */
 final class CreateTableStatementTest extends TestCase
 {
-    public function test_integer_table_database_dialect(): void
-    {
-
-    }
     #[DataProvider('provide_create_table_database_dialects')]
     public function test_create_a_table(DatabaseDialect $dialect, string $validSql): void
     {
