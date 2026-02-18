@@ -144,34 +144,6 @@ final readonly class TempestViewCompiler
         return new TempestViewParser($tokens)->parse();
     }
 
-    /** @param Element[] $elements */
-    private function collectSourcePathsForElements(array $elements): array
-    {
-        $sourcePaths = [];
-
-        foreach ($elements as $element) {
-            $this->collectSourcePathsForElement($element, $sourcePaths);
-        }
-
-        return array_keys($sourcePaths);
-    }
-
-    /** @param array<string, true> $sourcePaths */
-    private function collectSourcePathsForElement(Element $element, array &$sourcePaths): void
-    {
-        if ($element instanceof WithToken && is_string($element->token->sourcePath)) {
-            $sourcePaths[$element->token->sourcePath] = true;
-        }
-
-        if ($element instanceof WrapsElement) {
-            $this->collectSourcePathsForElement($element->getWrappingElement(), $sourcePaths);
-        }
-
-        foreach ($element->getChildren() as $child) {
-            $this->collectSourcePathsForElement($child, $sourcePaths);
-        }
-    }
-
     private function mapToElements(TempestViewAst $ast): RootElement
     {
         $elementFactory = $this->elementFactory->withIsHtml($ast->isHtml);

@@ -26,6 +26,6 @@ final class PhpElement implements Element, WithToken
     {
         preg_match_all('/^\s*use .*;/m', $this->content, $matches);
 
-        return $matches[0] ?? [];
+        return $matches[0];
     }
 }
