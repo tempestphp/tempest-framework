@@ -11,11 +11,11 @@ use Throwable;
 final class ViewCompilationFailed extends Exception implements ProvidesContext
 {
     public function __construct(
-        private(set) string $path,
-        private(set) string $content,
+        private(set) readonly string $path,
+        private(set) readonly string $content,
         Throwable $previous,
-        private(set) ?string $sourcePath = null,
-        private(set) ?int $sourceLine = null,
+        private(set) readonly ?string $sourcePath = null,
+        private(set) readonly ?int $sourceLine = null,
     ) {
         parent::__construct(
             message: sprintf($previous->getMessage()),

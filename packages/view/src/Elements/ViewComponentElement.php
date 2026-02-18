@@ -289,6 +289,12 @@ final class ViewComponentElement implements Element, WithToken, HasImports
             $imports = [...$imports, ...$this->parent->getImports()];
         }
 
+        foreach ($this->getChildren() as $child) {
+            if ($child instanceof PhpElement) {
+                $imports = [...$imports, ...$child->getImports()];
+            }
+        }
+
         return $imports;
     }
 }
