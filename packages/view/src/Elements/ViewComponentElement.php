@@ -10,7 +10,6 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
 use Tempest\View\Export\ViewObjectExporter;
-use Tempest\View\HasImports;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;

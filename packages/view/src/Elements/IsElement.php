@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\HasImports;
 use Tempest\View\View;
 use Tempest\View\WrapsElement;
 
