@@ -20,7 +20,7 @@ final class UuidPrimaryKeyStatementTest extends TestCase
         $statement = new UuidPrimaryKeyStatement('uuid');
         $compiled = $statement->compile(DatabaseDialect::MYSQL);
 
-        $this->assertSame('`uuid` VARCHAR(36) PRIMARY KEY', $compiled);
+        $this->assertSame('`uuid` CHAR(36) PRIMARY KEY', $compiled);
     }
 
     #[Test]
@@ -47,6 +47,6 @@ final class UuidPrimaryKeyStatementTest extends TestCase
         $statement = new UuidPrimaryKeyStatement();
         $compiled = $statement->compile(DatabaseDialect::MYSQL);
 
-        $this->assertSame('`id` VARCHAR(36) PRIMARY KEY', $compiled);
+        $this->assertSame('`id` CHAR(36) PRIMARY KEY', $compiled);
     }
 }

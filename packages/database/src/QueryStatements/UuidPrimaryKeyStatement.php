@@ -16,7 +16,7 @@ final readonly class UuidPrimaryKeyStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return match ($dialect) {
-            DatabaseDialect::MYSQL => sprintf('`%s` VARCHAR(36) PRIMARY KEY', $this->name),
+            DatabaseDialect::MYSQL => sprintf('`%s` CHAR(36) PRIMARY KEY', $this->name),
             DatabaseDialect::POSTGRESQL => sprintf('`%s` UUID PRIMARY KEY', $this->name),
             DatabaseDialect::SQLITE => sprintf('`%s` TEXT PRIMARY KEY', $this->name),
         };

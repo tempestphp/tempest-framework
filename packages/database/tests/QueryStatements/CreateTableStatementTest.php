@@ -206,7 +206,7 @@ final class CreateTableStatementTest extends TestCase
             DatabaseDialect::MYSQL,
             <<<SQL
             CREATE TABLE `users` (
-                `uuid` VARCHAR(36) PRIMARY KEY, 
+                `uuid` CHAR(36) PRIMARY KEY, 
                 `name` TEXT NOT NULL, 
                 `email` TEXT NOT NULL
             );
