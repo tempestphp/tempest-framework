@@ -243,6 +243,12 @@
     "config": {
         "allow-plugins": {
             "carthage-software/mago": true
+        },
+        "audit": {
+            "ignore": {
+                "PKSA-y2cr-5h3j-g3ys": "Optional dependency",
+                "PKSA-2kqm-ps5x-s4f5": "Optional dependency"
+            }
         }
     },
     "scripts": {
