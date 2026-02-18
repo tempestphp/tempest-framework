@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\HasImports;
 use Tempest\View\Parser\Token;
 use Tempest\View\WithToken;
 
-final class PhpElement implements Element, WithToken, HasImports
+final class PhpElement implements Element, WithToken
 {
     use IsElement;
 

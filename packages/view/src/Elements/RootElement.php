@@ -3,9 +3,8 @@
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\HasImports;
 
-final class RootElement implements Element, HasImports
+final class RootElement implements Element
 {
     use IsElement;
 

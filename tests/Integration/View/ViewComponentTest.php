@@ -1160,4 +1160,26 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<div class="card">/</div>', $html);
     }
+
+    public function test_imports_in_nested_html_elements(): void
+    {
+        $this->view->registerViewComponent('x-a', '<div class="a"><x-slot /></div>">');
+        $this->view->registerViewComponent('x-b', '<div class="b"><x-slot /></div>">');
+
+        $html = $this->view->render(<<<'HTML'
+        <?php
+        use function Tempest\Router\uri;
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController;
+        ?>
+        <x-a>
+            <div>
+                <x-b>
+                    {{ uri(HomeController::class) }}
+                </x-b>
+            </div>
+        </x-a>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="a"><div><div class="b">/</div>"></div></div>">', $html);
+    }
 }

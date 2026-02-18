@@ -22,7 +22,7 @@ use Tempest\View\WithToken;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ViewComponentElement implements Element, WithToken, HasImports
+final class ViewComponentElement implements Element, WithToken
 {
     use IsElement;
 
@@ -285,7 +285,7 @@ final class ViewComponentElement implements Element, WithToken, HasImports
     {
         $imports = [];
 
-        if ($this->parent instanceof HasImports) {
+        if ($this->parent) {
             $imports = [...$imports, ...$this->parent->getImports()];
         }
 
