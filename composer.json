@@ -222,6 +222,7 @@
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",
             "Tempest\\Http\\Tests\\": "packages/http/tests",
             "Tempest\\Icon\\Tests\\": "packages/icon/tests",
+            "Tempest\\Idempotency\\Tests\\": "packages/idempotency/tests",
             "Tempest\\Intl\\Tests\\": "packages/intl/tests",
             "Tempest\\KeyValue\\Tests\\": "packages/kv-store/tests",
             "Tempest\\Log\\Tests\\": "packages/log/tests",

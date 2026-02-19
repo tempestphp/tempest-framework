@@ -19,5 +19,10 @@
             "Tempest\\Idempotency\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Idempotency\\Tests\\": "tests"
+        }
+    },
     "minimum-stability": "dev"
 }
