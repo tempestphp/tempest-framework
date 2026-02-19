@@ -100,6 +100,7 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $authors = map($data)->with(SelectModelMapper::class)->to(Author::class);
 
         $this->assertCount(2, $authors[0]->books[0]->chapters);
+        $this->assertCount(1, $authors[0]->books);
     }
 
     public function test_array_of_serialized_enums(): void
