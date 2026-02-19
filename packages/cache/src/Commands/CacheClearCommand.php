@@ -20,7 +20,6 @@ use Tempest\Support\Str;
 use Tempest\View\ViewCache;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class CacheClearCommand
