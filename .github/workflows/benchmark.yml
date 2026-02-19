@@ -32,12 +32,18 @@ jobs:
       - name: Benchmark base branch
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
+          cp .env.example .env
+          sed -i 's/^INTERNAL_CACHES=.*/INTERNAL_CACHES=false/' .env
+          sed -i 's/^DISCOVERY_CACHE=.*/DISCOVERY_CACHE=false/' .env
           composer install --no-interaction --prefer-dist --quiet
           vendor/bin/phpbench run --tag=base --store --progress=none
 
       - name: Benchmark PR branch
         run: |
           git checkout ${{ github.event.pull_request.head.sha }}
+          cp .env.example .env
+          sed -i 's/^INTERNAL_CACHES=.*/INTERNAL_CACHES=false/' .env
+          sed -i 's/^DISCOVERY_CACHE=.*/DISCOVERY_CACHE=false/' .env
           composer install --no-interaction --prefer-dist --quiet
           vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=markdown | tee benchmark-result.txt || true
 
