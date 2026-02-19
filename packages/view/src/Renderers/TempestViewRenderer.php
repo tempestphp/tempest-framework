@@ -217,7 +217,7 @@ final class TempestViewRenderer implements ViewRenderer
     /** @return array{path: string, line: int}|null */
     private function resolveSourceLocationFromThrowable(Throwable $throwable, string $compiledPath): ?array
     {
-        $sourceLocation = $this->resolveSourceLocation($throwable->getFile(), $throwable->getLine());
+        $sourceLocation = $this->resolveSourceLocationForFrame($throwable->getFile(), $throwable->getLine());
 
         if ($sourceLocation !== null) {
             return $sourceLocation;
@@ -231,7 +231,7 @@ final class TempestViewRenderer implements ViewRenderer
                 continue;
             }
 
-            $sourceLocation = $this->resolveSourceLocation($framePath, $frameLine);
+            $sourceLocation = $this->resolveSourceLocationForFrame($framePath, $frameLine);
 
             if ($sourceLocation !== null) {
                 return $sourceLocation;
@@ -239,6 +239,155 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         return $this->resolveSourceLocation($compiledPath, 1);
+    }
+
+    /** @return array{path: string, line: int}|null */
+    private function resolveSourceLocationForFrame(string $compiledPath, int $compiledLine): ?array
+    {
+        $sourceLocation = $this->resolveSourceLocation($compiledPath, $compiledLine);
+
+        if ($sourceLocation === null) {
+            return null;
+        }
+
+        return [
+            'path' => $sourceLocation['path'],
+            'line' => $this->refineSourceLine(
+                compiledPath: $compiledPath,
+                compiledLine: $compiledLine,
+                sourcePath: $sourceLocation['path'],
+                fallbackLine: $sourceLocation['line'],
+            ),
+        ];
+    }
+
+    private function refineSourceLine(string $compiledPath, int $compiledLine, string $sourcePath, int $fallbackLine): int
+    {
+        if (! Filesystem\is_file($compiledPath) || ! Filesystem\is_file($sourcePath)) {
+            return $fallbackLine;
+        }
+
+        try {
+            $compiledLines = preg_split('/\R/', Filesystem\read_file($compiledPath));
+            $sourceLines = preg_split('/\R/', Filesystem\read_file($sourcePath));
+        } catch (Throwable) {
+            return $fallbackLine;
+        }
+
+        if (! is_array($compiledLines) || ! is_array($sourceLines)) {
+            return $fallbackLine;
+        }
+
+        $compiledLineContent = $compiledLines[$compiledLine - 1] ?? null;
+
+        if (! is_string($compiledLineContent)) {
+            return $fallbackLine;
+        }
+
+        foreach ($this->extractSourceNeedles($compiledLineContent) as $needle) {
+            $matches = $this->findMatchingSourceLines($sourceLines, $needle);
+
+            if ($matches === []) {
+                continue;
+            }
+
+            if (count($matches) === 1) {
+                return $matches[0];
+            }
+
+            return $this->closestLineToFallback($matches, $fallbackLine);
+        }
+
+        return $fallbackLine;
+    }
+
+    /** @return list<string> */
+    private function extractSourceNeedles(string $compiledLine): array
+    {
+        $needles = [];
+
+        if (preg_match('/value:\s*(?<expression>.+?)\s*\?\?\s*null/', $compiledLine, $matches) === 1) {
+            $needles[] = $matches['expression'];
+        }
+
+        if (preg_match('/\$this->escape\(\s*(?<expression>.+?)\s*\);/', $compiledLine, $matches) === 1) {
+            $needles[] = $matches['expression'];
+        }
+
+        if (preg_match('/<\?=\s*(?<expression>.+?)\s*\?>/', $compiledLine, $matches) === 1) {
+            $needles[] = $matches['expression'];
+        }
+
+        if (preg_match('/\b(?:if|elseif)\s*\((?<expression>.+?)\)\s*:/', $compiledLine, $matches) === 1) {
+            $needles[] = $matches['expression'];
+        }
+
+        if (preg_match('/\bforeach\s*\((?<expression>.+?)\)\s*:/', $compiledLine, $matches) === 1) {
+            $needles[] = $matches['expression'];
+        }
+
+        $needles[] = $compiledLine;
+
+        $normalized = [];
+
+        foreach ($needles as $needle) {
+            $needle = trim($needle);
+
+            if ($needle === '') {
+                continue;
+            }
+
+            $normalized[$needle] = $needle;
+        }
+
+        return array_values($normalized);
+    }
+
+    /** @param list<string> $sourceLines */
+    private function findMatchingSourceLines(array $sourceLines, string $needle): array
+    {
+        $normalizedNeedle = $this->normalizeSearchString($needle);
+
+        if ($normalizedNeedle === '') {
+            return [];
+        }
+
+        $matches = [];
+
+        foreach ($sourceLines as $index => $sourceLine) {
+            if (! str_contains($this->normalizeSearchString($sourceLine), $normalizedNeedle)) {
+                continue;
+            }
+
+            $matches[] = $index + 1;
+        }
+
+        return $matches;
+    }
+
+    private function normalizeSearchString(string $value): string
+    {
+        return preg_replace('/\s+/', '', $value) ?? '';
+    }
+
+    /** @param list<int> $lines */
+    private function closestLineToFallback(array $lines, int $fallbackLine): int
+    {
+        $closestLine = $fallbackLine;
+        $closestDistance = null;
+
+        foreach ($lines as $line) {
+            $distance = abs($line - $fallbackLine);
+
+            if ($closestDistance !== null && $distance >= $closestDistance) {
+                continue;
+            }
+
+            $closestLine = $line;
+            $closestDistance = $distance;
+        }
+
+        return $closestLine;
     }
 
     /**
