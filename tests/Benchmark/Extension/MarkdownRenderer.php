@@ -17,6 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final readonly class MarkdownRenderer implements RendererInterface
 {
+    private const array COMPACT_HEADERS = ['Benchmark', 'Set', 'Mem. Peak', 'Time', 'Variability'];
+
+    private const array COMPACT_SOURCE_COLUMNS = ['benchmark', 'subject', 'set', 'mem_peak', 'mode', 'rstdev'];
+
     public function __construct(
         private OutputInterface $output,
         private Printer $printer,
@@ -71,11 +75,14 @@ final readonly class MarkdownRenderer implements RendererInterface
             return $lines;
         }
 
+        $rows = array_map($this->renderTableRow(...), $table->rows());
+        [$columns, $rows] = $this->compactAggregateReportTable($columns, $rows);
+
         $lines[] = $this->renderRow($columns);
         $lines[] = $this->renderSeparatorRow($columns);
 
-        foreach ($table as $row) {
-            $lines[] = $this->renderDataRow($row);
+        foreach ($rows as $row) {
+            $lines[] = $this->renderRow($row);
         }
 
         $lines[] = '';
@@ -96,11 +103,52 @@ final readonly class MarkdownRenderer implements RendererInterface
         ));
     }
 
-    private function renderDataRow(TableRow $row): string
+    private function renderTableRow(TableRow $row): array
     {
-        $cells = array_map($this->formatCell(...), iterator_to_array($row));
+        return array_values(array_map($this->formatCell(...), iterator_to_array($row)));
+    }
 
-        return $this->renderRow($cells);
+    private function compactAggregateReportTable(array $columns, array $rows): array
+    {
+        $columnIndexes = $this->resolveCompactSourceColumnIndexes($columns);
+
+        if ($columnIndexes === null) {
+            return [$columns, $rows];
+        }
+
+        $rows = array_map(function (array $row) use ($columnIndexes): array {
+            $set = trim((string) $row[$columnIndexes['set']]);
+
+            return [
+                sprintf('%s(%s)', $row[$columnIndexes['benchmark']], $row[$columnIndexes['subject']]),
+                $set === '' ? '-' : $set,
+                $row[$columnIndexes['mem_peak']],
+                $row[$columnIndexes['mode']],
+                $row[$columnIndexes['rstdev']],
+            ];
+        }, $rows);
+
+        return [self::COMPACT_HEADERS, $rows];
+    }
+
+    private function resolveCompactSourceColumnIndexes(array $columns): ?array
+    {
+        $columnIndexes = array_flip($columns);
+
+        foreach (self::COMPACT_SOURCE_COLUMNS as $column) {
+            if (! array_key_exists($column, $columnIndexes)) {
+                return null;
+            }
+        }
+
+        return [
+            'benchmark' => $columnIndexes['benchmark'],
+            'subject' => $columnIndexes['subject'],
+            'set' => $columnIndexes['set'],
+            'mem_peak' => $columnIndexes['mem_peak'],
+            'mode' => $columnIndexes['mode'],
+            'rstdev' => $columnIndexes['rstdev'],
+        ];
     }
 
     private function formatCell(Node $node): string
