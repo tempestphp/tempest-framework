@@ -45,7 +45,7 @@ jobs:
           sed -i 's/^INTERNAL_CACHES=.*/INTERNAL_CACHES=false/' .env
           sed -i 's/^DISCOVERY_CACHE=.*/DISCOVERY_CACHE=false/' .env
           composer install --no-interaction --prefer-dist --quiet
-          vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=markdown | tee benchmark-result.txt || true
+          vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=benchmark-comment | tee benchmark-result.txt || true
 
       - name: Prepare artifact
         run: |

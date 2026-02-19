@@ -21,6 +21,8 @@ final readonly class MarkdownRenderer implements RendererInterface
 
     private const array COMPACT_SOURCE_COLUMNS = ['benchmark', 'subject', 'set', 'mem_peak', 'mode', 'rstdev'];
 
+    private const int COMPACT_TIME_COLUMN_INDEX = 3;
+
     public function __construct(
         private OutputInterface $output,
         private Printer $printer,
@@ -28,7 +30,7 @@ final readonly class MarkdownRenderer implements RendererInterface
 
     public function render(Reports $reports, Config $config): void
     {
-        $content = $this->renderContent($reports);
+        $content = $this->renderContent($reports, $this->resolveOutlierMinDiff($config));
         $file = $config['file'];
 
         if ($file === null) {
@@ -44,22 +46,24 @@ final readonly class MarkdownRenderer implements RendererInterface
     {
         $options->setDefaults([
             'file' => null,
+            'outlier_min_diff' => null,
         ]);
         $options->setAllowedTypes('file', ['null', 'string']);
+        $options->setAllowedTypes('outlier_min_diff', ['null', 'float', 'int']);
     }
 
-    private function renderContent(Reports $reports): string
+    private function renderContent(Reports $reports, ?float $outlierMinDiff): string
     {
         $lines = [];
 
         foreach ($reports->tables() as $table) {
-            array_push($lines, ...$this->renderTable($table));
+            array_push($lines, ...$this->renderTable($table, $outlierMinDiff));
         }
 
         return implode("\n", $lines) . "\n";
     }
 
-    private function renderTable(Table $table): array
+    private function renderTable(Table $table, ?float $outlierMinDiff): array
     {
         $lines = [];
         $title = $table->title();
@@ -76,7 +80,15 @@ final readonly class MarkdownRenderer implements RendererInterface
         }
 
         $rows = array_map($this->renderTableRow(...), $table->rows());
-        [$columns, $rows] = $this->compactAggregateReportTable($columns, $rows);
+        [$columns, $rows, $isCompactTable] = $this->compactAggregateReportTable($columns, $rows);
+        $rows = $this->filterOutlierRows($rows, $outlierMinDiff, $isCompactTable);
+
+        if ($rows === [] && $isCompactTable && $outlierMinDiff !== null && $outlierMinDiff > 0.0) {
+            $lines[] = sprintf('_No benchmark changes above ±%s%%._', $this->formatPercentage($outlierMinDiff));
+            $lines[] = '';
+
+            return $lines;
+        }
 
         $lines[] = $this->renderRow($columns);
         $lines[] = $this->renderSeparatorRow($columns);
@@ -113,7 +125,7 @@ final readonly class MarkdownRenderer implements RendererInterface
         $columnIndexes = $this->resolveCompactSourceColumnIndexes($columns);
 
         if ($columnIndexes === null) {
-            return [$columns, $rows];
+            return [$columns, $rows, false];
         }
 
         $rows = array_map(function (array $row) use ($columnIndexes): array {
@@ -128,17 +140,57 @@ final readonly class MarkdownRenderer implements RendererInterface
             ];
         }, $rows);
 
-        return [self::COMPACT_HEADERS, $rows];
+        return [self::COMPACT_HEADERS, $rows, true];
+    }
+
+    private function filterOutlierRows(array $rows, ?float $outlierMinDiff, bool $isCompactTable): array
+    {
+        if (! $isCompactTable || $outlierMinDiff === null || $outlierMinDiff <= 0.0) {
+            return $rows;
+        }
+
+        return array_values(array_filter($rows, function (array $row) use ($outlierMinDiff): bool {
+            $diff = $this->extractTrailingPercentage($row[self::COMPACT_TIME_COLUMN_INDEX]);
+
+            if ($diff === null) {
+                return true;
+            }
+
+            return abs($diff) >= $outlierMinDiff;
+        }));
+    }
+
+    private function extractTrailingPercentage(string $cell): ?float
+    {
+        if (preg_match('/([+-]?\d+(?:\.\d+)?)%\s*$/', $cell, $matches) !== 1) {
+            return null;
+        }
+
+        return (float) $matches[1];
+    }
+
+    private function resolveOutlierMinDiff(Config $config): ?float
+    {
+        if (! $config->offsetExists('outlier_min_diff')) {
+            return null;
+        }
+
+        $value = $config['outlier_min_diff'];
+
+        return $value === null ? null : (float) $value;
+    }
+
+    private function formatPercentage(float $value): string
+    {
+        return rtrim(rtrim(sprintf('%.2f', $value), '0'), '.');
     }
 
     private function resolveCompactSourceColumnIndexes(array $columns): ?array
     {
         $columnIndexes = array_flip($columns);
 
-        foreach (self::COMPACT_SOURCE_COLUMNS as $column) {
-            if (! array_key_exists($column, $columnIndexes)) {
-                return null;
-            }
+        if (array_any(self::COMPACT_SOURCE_COLUMNS, fn ($column) => ! array_key_exists($column, $columnIndexes))) {
+            return null;
         }
 
         return [
