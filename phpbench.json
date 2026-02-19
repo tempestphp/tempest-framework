@@ -3,6 +3,7 @@
     "runner.bootstrap": "vendor/autoload.php",
     "runner.path": "tests/Benchmark",
     "runner.file_pattern": "*Bench.php",
+    "runner.retry_threshold": 5,
     "core.extensions": [
         "Tests\\Tempest\\Benchmark\\Extension\\MarkdownExtension"
     ]
