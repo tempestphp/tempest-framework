@@ -101,33 +101,48 @@ final class LoadDiscoveryClasses
     private function discover(array $discoveries, array $discoveryLocations): void
     {
         foreach ($discoveryLocations as $location) {
-            // Skip location based on cache status
-            if ($this->isLocationCached($location)) {
-                $cachedForLocation = $this->discoveryCache->restore($location);
-
-                // Merge discovery items
-                foreach ($discoveries as $discovery) {
-                    $itemsForDiscovery = $cachedForLocation[$discovery::class] ?? null;
-
-                    if (! $itemsForDiscovery) {
-                        continue;
-                    }
-
-                    $discovery->setItems(
-                        $discovery->getItems()->addForLocation($location, $itemsForDiscovery),
-                    );
-                }
-
+            if ($this->restoreFromCache($discoveries, $location)) {
                 continue;
             }
 
-            // Scan all files within this location
             $this->scan(
                 location: $location,
                 discoveries: $discoveries,
                 path: $location->path,
             );
         }
+    }
+
+    private function restoreFromCache(array $discoveries, DiscoveryLocation $location): bool
+    {
+        if (! $this->isLocationCached($location)) {
+            return false;
+        }
+
+        $cachedForLocation = $this->discoveryCache->restore($location);
+
+        if (! $this->isCachedLocationUsable($discoveries, $cachedForLocation)) {
+            return false;
+        }
+
+        foreach ($discoveries as $discovery) {
+            $discovery->setItems(
+                $discovery->getItems()->addForLocation($location, $cachedForLocation[$discovery::class]),
+            );
+        }
+
+        return true;
+    }
+
+    private function isCachedLocationUsable(array $discoveries, ?array $cachedForLocation): bool
+    {
+        return (
+            is_array($cachedForLocation)
+            && array_all(
+                array: $discoveries,
+                callback: static fn (Discovery $discovery): bool => array_key_exists($discovery::class, $cachedForLocation) && is_iterable($cachedForLocation[$discovery::class]),
+            )
+        );
     }
 
     /**
