@@ -38,7 +38,6 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
 
         if ($invalidInput->isNotEmpty()) {
             throw new UnknownArgumentsException(
-                consoleCommand: $invocation->consoleCommand,
                 invalidArguments: $invalidInput,
             );
         }

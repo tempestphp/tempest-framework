@@ -9,7 +9,7 @@ use Tempest\Support\Str\ImmutableString;
 
 final class RawSql
 {
-    private ?RawSqlDatabaseContext $context {
+    private RawSqlDatabaseContext $context {
         get => $this->context ??= new RawSqlDatabaseContext($this->dialect);
     }
 
@@ -28,7 +28,7 @@ final class RawSql
             return $this->replaceNamedBindings($this->sql, $resolvedBindings);
         }
 
-        return $this->replacePositionalBindings($this->sql, array_values($resolvedBindings));
+        return $this->replacePositionalBindings($this->sql, $resolvedBindings);
     }
 
     public function toImmutableString(): ImmutableString

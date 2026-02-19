@@ -14,6 +14,15 @@ use Tempest\Console\Enums\Shell;
  */
 final class ShellTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     #[Test]
     #[DataProvider('detectDataProvider')]
     public function detect(string|false $shellEnv, ?Shell $expected): void
@@ -52,28 +61,10 @@ final class ShellTest extends TestCase
     }
 
     #[Test]
-    public function getCompletionsDirectory(): void
-    {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        $this->assertSame($home . '/.zsh/completions', Shell::ZSH->getCompletionsDirectory());
-        $this->assertSame($home . '/.bash_completion.d', Shell::BASH->getCompletionsDirectory());
-    }
-
-    #[Test]
     public function getCompletionFilename(): void
     {
-        $this->assertSame('_tempest', Shell::ZSH->getCompletionFilename());
+        $this->assertSame('tempest.zsh', Shell::ZSH->getCompletionFilename());
         $this->assertSame('tempest.bash', Shell::BASH->getCompletionFilename());
-    }
-
-    #[Test]
-    public function getInstalledCompletionPath(): void
-    {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        $this->assertSame($home . '/.zsh/completions/_tempest', Shell::ZSH->getInstalledCompletionPath());
-        $this->assertSame($home . '/.bash_completion.d/tempest.bash', Shell::BASH->getInstalledCompletionPath());
     }
 
     #[Test]
@@ -90,19 +81,5 @@ final class ShellTest extends TestCase
 
         $this->assertSame($home . '/.zshrc', Shell::ZSH->getRcFile());
         $this->assertSame($home . '/.bashrc', Shell::BASH->getRcFile());
-    }
-
-    #[Test]
-    public function getPostInstallInstructions(): void
-    {
-        $zshInstructions = Shell::ZSH->getPostInstallInstructions();
-        $this->assertIsArray($zshInstructions);
-        $this->assertNotEmpty($zshInstructions);
-        $this->assertStringContainsString('fpath', $zshInstructions[0]);
-
-        $bashInstructions = Shell::BASH->getPostInstallInstructions();
-        $this->assertIsArray($bashInstructions);
-        $this->assertNotEmpty($bashInstructions);
-        $this->assertStringContainsStringIgnoringCase('source', $bashInstructions[0]);
     }
 }

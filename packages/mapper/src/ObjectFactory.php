@@ -374,12 +374,12 @@ final class ObjectFactory
      */
     private function resolveMappers(): array
     {
+        /** @var Mapper[] $mappers */
         $mappers = [];
 
         $context = MappingContext::from($this->context);
 
         foreach ($this->config->mappers as $mapperClass) {
-            /** @var Mapper $mapper */
             $mappers[] = $this->container->get($mapperClass, context: $context);
         }
 

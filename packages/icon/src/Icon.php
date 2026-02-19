@@ -40,7 +40,10 @@ final class Icon
             expiresAt: $this->iconConfig->expiresAfter,
         );
 
-        if ($this->iconCache->get("icon-failure-{$collection}-{$iconName}")) {
+        /** @var bool $failed */
+        $failed = $this->iconCache->get("icon-failure-{$collection}-{$iconName}");
+
+        if ($failed) {
             $this->iconCache->delete("icon-{$collection}-{$iconName}");
         }
 

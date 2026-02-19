@@ -3,6 +3,8 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\WhereOperator;
+use Tempest\Database\QueryStatements\WhereGroupStatement;
+use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
 /**
@@ -13,7 +15,7 @@ interface SupportsWhereStatements
     /**
      * The current WHERE statements for this query builder.
      *
-     * @var ImmutableArray<WhereStatement>
+     * @var ImmutableArray<WhereStatement|WhereGroupStatement>
      */
     public ImmutableArray $wheres {
         get;

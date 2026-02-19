@@ -313,10 +313,8 @@ final class ConsoleTester
         return $this;
     }
 
-    public function dd(): self
+    public function dd(): never
     {
         ld($this->output->asUnformattedString());
-
-        return $this;
     }
 }

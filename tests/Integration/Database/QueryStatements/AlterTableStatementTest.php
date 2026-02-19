@@ -61,7 +61,6 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
             MigrationModel::get(new PrimaryKey(3))->name,
         );
 
-        /** @var User $user */
         $user = User::create(
             name: 'Test',
             email: 'test@example.com',

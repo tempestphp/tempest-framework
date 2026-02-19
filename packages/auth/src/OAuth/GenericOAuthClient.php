@@ -53,8 +53,12 @@ final class GenericOAuthClient implements OAuthClient
 
     public function buildAuthorizationUrl(array $scopes = [], array $options = []): string
     {
+        if ($scopes === []) {
+            $scopes = $this->config->scopes;
+        }
+
         return $this->provider->getAuthorizationUrl([
-            'scope' => $scopes ?? $this->config->scopes,
+            'scope' => $scopes,
             'redirect_uri' => $this->uri->createUri($this->config->redirectTo),
             ...$options,
         ]);
@@ -71,15 +75,26 @@ final class GenericOAuthClient implements OAuthClient
 
     public function getState(): ?string
     {
-        return $this->provider->getState();
+        return $this->provider->getState() ?: null;
     }
 
     public function requestAccessToken(string $code): AccessToken
     {
         try {
-            return $this->provider->getAccessToken('authorization_code', [
+            $token = $this->provider->getAccessToken('authorization_code', [
                 'code' => $code,
                 'redirect_uri' => $this->uri->createUri($this->config->redirectTo),
+            ]);
+
+            if ($token instanceof AccessToken) {
+                return $token;
+            }
+
+            return new AccessToken([
+                ...$token->getValues(),
+                'access_token' => $token->getToken(),
+                'refresh_token' => $token->getRefreshToken(),
+                'expires' => $token->getExpires(),
             ]);
         } catch (IdentityProviderException $exception) {
             throw OAuthTokenCouldNotBeRetrieved::fromProviderException($exception);

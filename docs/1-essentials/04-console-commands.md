@@ -240,7 +240,9 @@ Interactive components are only supported on Mac and Linux. On Windows, Tempest 
 
 ## Shell completion
 
-Tempest provides shell completion for Zsh and Bash. This allows you to press `Tab` to autocomplete command names and options.
+Tempest provides shell completion for Zsh and Bash on Linux and macOS. This allows you to press `Tab` to autocomplete command names and options. On Windows, use WSL.
+
+Completion relies on two things: a **completion script** sourced by your shell, and a **helper executable** (`vendor/bin/tempest-complete`) that performs the actual matching.
 
 ### Installing completions
 
@@ -250,28 +252,38 @@ Run the install command and follow the prompts:
 <dim>./</dim>tempest completion:install
 ```
 
-The installer will detect your current shell, copy the completion script to the appropriate location, and provide instructions for enabling it.
+This will:
 
-For Zsh, you'll need to ensure the completions directory is in your `fpath` and reload completions:
+1. Detect your shell (or use `--shell=zsh` / `--shell=bash`).
+2. Generate completion metadata (`commands.json`) for all registered commands.
+3. Install the completion script to the appropriate location.
 
-```zsh
-# Add to ~/.zshrc
-fpath=(~/.zsh/completions $fpath)
-autoload -Uz compinit && compinit
-```
-
-For Bash, source the completion file in your `~/.bashrc`:
+After installation, add the following line to your shell configuration file and restart your terminal:
 
 ```bash
-source ~/.bash_completion.d/tempest.bash
+# Zsh: add to ~/.zshrc
+source ~/.tempest/completion/tempest.zsh
+
+# Bash: add to ~/.bashrc
+source ~/.tempest/completion/tempest.bash
 ```
 
-### Additional commands
+### Keeping completions up to date
 
-You may also use these related commands:
+After adding or removing commands, regenerate the metadata:
 
-- `completion:show` — Output the completion script to stdout (useful for custom installation)
-- `completion:uninstall` — Remove the installed completion script
+```console
+<dim>./</dim>tempest completion:generate
+```
+
+### Available commands
+
+| Command                | Description                                                              |
+|------------------------|--------------------------------------------------------------------------|
+| `completion:install`   | Install the completion script and generate metadata.                     |
+| `completion:generate`  | Regenerate the completion metadata JSON.                                 |
+| `completion:show`      | Output the completion script to stdout (useful for custom installation). |
+| `completion:uninstall` | Remove the installed completion script.                                  |
 
 ## Middleware
 

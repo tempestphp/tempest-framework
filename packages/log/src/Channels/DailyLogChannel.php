@@ -39,7 +39,7 @@ final readonly class DailyLogChannel implements LogChannel
         return [
             new RotatingFileHandler(
                 filename: $this->path,
-                maxFiles: $this->maxFiles ?? 0,
+                maxFiles: $this->maxFiles,
                 level: $level,
                 bubble: $this->bubble,
                 filePermission: $this->filePermission,

@@ -129,7 +129,7 @@ final class MessageFormatParser
 
         $optional = (bool) array_find(
             array: $expression->function->options ?? [],
-            callback: fn (Option $option) => $option->identifier->name === 'default' && ! is_null($option->value->value),
+            callback: fn (Option $option) => $option->identifier->name === 'default',
         );
 
         return new InputDeclaration($expression, $optional);

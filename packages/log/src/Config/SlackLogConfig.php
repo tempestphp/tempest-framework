@@ -4,6 +4,7 @@ namespace Tempest\Log\Config;
 
 use Tempest\Log\Channels\Slack\PresentationMode;
 use Tempest\Log\Channels\SlackLogChannel;
+use Tempest\Log\LogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Log\LogLevel;
 use UnitEnum;
@@ -31,6 +32,7 @@ final class SlackLogConfig implements LogConfig
      * @param string|null $username The username to display as the sender of the message.
      * @param PresentationMode $mode The display mode for the Slack messages.
      * @param LogLevel $minimumLogLevel The minimum log level to record.
+     * @param array<LogChannel> $channels Additional channels to include in the configuration.
      * @param null|string $prefix An optional prefix displayed in all log messages. By default, the current environment is used.
      * @param null|UnitEnum|string $tag An optional tag to identify the logger instance associated to this configuration.
      */
@@ -39,7 +41,8 @@ final class SlackLogConfig implements LogConfig
         private(set) ?string $channelId = null,
         private(set) ?string $username = null,
         private(set) PresentationMode $mode = PresentationMode::INLINE,
-        private LogLevel $minimumLogLevel = LogLevel::DEBUG,
+        private(set) LogLevel $minimumLogLevel = LogLevel::DEBUG,
+        private(set) array $channels = [],
         private(set) ?string $prefix = null,
         private(set) null|UnitEnum|string $tag = null,
     ) {}

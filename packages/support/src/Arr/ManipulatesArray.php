@@ -142,7 +142,7 @@ trait ManipulatesArray
      *
      * @param TValue|array<TValue> $values The values to remove.
      */
-    public function removeValues(string|int|array $values): self
+    public function removeValues(mixed $values): self
     {
         return $this->createOrModify(remove_values($this->value, $values));
     }
@@ -347,9 +347,12 @@ trait ManipulatesArray
      * Returns the first item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the first item.
      *
-     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @template TDefault
      *
-     * @return TValue
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     public function first(?Closure $filter = null, mixed $default = null): mixed
     {
@@ -360,9 +363,12 @@ trait ManipulatesArray
      * Returns the last item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
-     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @template TDefault
      *
-     * @return TValue
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     public function last(?Closure $filter = null, mixed $default = null): mixed
     {
@@ -476,7 +482,7 @@ trait ManipulatesArray
     /**
      * Applies the given callback to all items of the instance.
      *
-     * @param Closure(mixed $value, mixed $key): void $each
+     * @param Closure(TValue, TKey): mixed $each
      */
     public function each(Closure $each): self
     {
@@ -561,7 +567,7 @@ trait ManipulatesArray
     /**
      * Asserts whether the instance contains the specified value.
      *
-     * @param TValue: bool $search
+     * @param TValue|Closure(TValue, TKey): bool $search
      */
     public function hasValue(mixed $search): bool
     {
@@ -804,7 +810,7 @@ trait ManipulatesArray
      */
     public function dump(mixed ...$dumps): self
     {
-        lw($this->value, ...$dumps);
+        $this->debugLog([$this->value, ...$dumps]);
 
         return $this;
     }
@@ -814,7 +820,24 @@ trait ManipulatesArray
      */
     public function dd(mixed ...$dd): void
     {
-        ld($this->value, ...$dd);
+        $this->debugLog([$this->value, ...$dd], terminate: true);
+    }
+
+    private function debugLog(array $items, bool $terminate = false): void
+    {
+        $debugClass = \Tempest\Debug\Debug::class;
+
+        if (class_exists($debugClass)) {
+            $debugClass::resolve()->log($items);
+        } else {
+            foreach ($items as $item) {
+                error_log(print_r($item, true));
+            }
+        }
+
+        if ($terminate) {
+            exit(1);
+        }
     }
 
     /**

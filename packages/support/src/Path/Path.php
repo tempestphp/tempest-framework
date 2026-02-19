@@ -29,6 +29,8 @@ final class Path implements StringInterface
 
     /**
      * Returns information about the path. See {@see pathinfo()}.
+     *
+     * @return ($flags is PATHINFO_ALL ? array{dirname: string, basename: string, extension?: string, filename: string} : string)
      */
     public function info(int $flags = PATHINFO_ALL): string|array
     {
@@ -77,10 +79,18 @@ final class Path implements StringInterface
 
     /**
      * Appends a glob and returns an immutable array with the resulting paths.
+     *
+     * @return ImmutableArray<int, string>
      */
     public function glob(string $pattern): ImmutableArray
     {
-        return new ImmutableArray(glob(namespace\normalize($this->value, $pattern)));
+        $paths = glob(namespace\normalize($this->value, $pattern));
+
+        if ($paths === false) {
+            return new ImmutableArray();
+        }
+
+        return new ImmutableArray($paths);
     }
 
     /**

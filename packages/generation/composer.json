@@ -5,7 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "nette/php-generator": "^4.1.6",
+        "nette/php-generator": "^4.2.1",
+        "nette/schema": "^1.3.4",
         "nikic/php-parser": "^5.3",
         "tempest/support": "3.x-dev"
     },

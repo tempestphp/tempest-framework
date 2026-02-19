@@ -121,6 +121,8 @@ trait IsElement
     {
         $this->parent = $parent;
 
+        $this->parent->setChildren([...$this->parent->getChildren(), $this]);
+
         return $this;
     }
 
@@ -141,10 +143,7 @@ trait IsElement
         $previous = null;
 
         foreach ($children as $child) {
-            $child
-                ->setParent($this)
-                ->setPrevious($previous);
-
+            $child->setPrevious($previous);
             $previous = $child;
         }
 
@@ -169,5 +168,14 @@ trait IsElement
         }
 
         return null;
+    }
+
+    public function getImports(): array
+    {
+        if ($this->parent) {
+            return $this->parent->getImports();
+        }
+
+        return [];
     }
 }

@@ -43,8 +43,6 @@ interface OAuthClient
     /**
      * Authenticates a user based on the given OAuth callback request.
      *
-     * @template T of Authenticatable
-     *
      * @param Closure(OAuthUser): T $map A callback that should return an authenticatable model from the given OAuthUser. Typically, the callback is also responsible for saving the user to the database.
      */
     public function authenticate(Request $request, Closure $map): Authenticatable;

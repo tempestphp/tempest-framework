@@ -31,7 +31,6 @@ use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 use Tempest\Intl\MessageFormat\SelectorFunction;
 use Tempest\Intl\MessageFormat\StandaloneMarkupFormatter;
-use Tempest\Support\Arr;
 
 use function Tempest\Support\arr;
 
@@ -102,18 +101,22 @@ final class MessageFormatter
                             identifier: $variableName,
                             value: $this->variables[$variableName]->value,
                             selector: $this->getSelectorFunction((string) $expression->function->identifier),
-                            formatter: $this->getFormattingFunction((string) $expression->function?->identifier),
+                            formatter: $this->getFormattingFunction((string) $expression->function->identifier),
                             parameters: $this->evaluateOptions($expression->function->options),
                         );
                     }
                 } elseif ($declaration instanceof LocalDeclaration) {
                     $variableName = $declaration->variable->name->name;
 
+                    $functionName = $declaration->expression->function
+                        ? (string) $declaration->expression->function->identifier
+                        : null;
+
                     $localVariables[$variableName] = new LocalVariable(
                         identifier: $variableName,
                         value: $this->evaluateExpression($declaration->expression)->value,
-                        selector: $this->getSelectorFunction($declaration->expression->function?->identifier),
-                        formatter: $this->getFormattingFunction($declaration->expression->function?->identifier),
+                        selector: $this->getSelectorFunction($functionName),
+                        formatter: $this->getFormattingFunction($functionName),
                         parameters: $declaration->expression->attributes,
                     );
                 }
@@ -344,7 +347,7 @@ final class MessageFormatter
     private function formatMarkup(Markup $markup): string
     {
         $tag = (string) $markup->identifier;
-        $options = Arr\map_with_keys($markup->options, fn (Option $option) => yield $option->identifier->name => $option->value->value);
+        $options = $this->evaluateOptions($markup->options);
 
         if ($markup->type === MarkupType::STANDALONE) {
             if (is_null($formatter = $this->getStandaloneMarkupFormatter($tag))) {
@@ -358,11 +361,11 @@ final class MessageFormatter
             return '';
         }
 
-        return match ($markup->type) {
-            MarkupType::OPEN => $formatter->formatOpenTag($tag, $options),
-            MarkupType::CLOSE => $formatter->formatCloseTag($tag),
-            default => '',
-        };
+        if ($markup->type === MarkupType::OPEN) {
+            return $formatter->formatOpenTag($tag, $options);
+        }
+
+        return $formatter->formatCloseTag($tag);
     }
 
     private function getMarkupFormatter(?string $tag): ?MarkupFormatter
