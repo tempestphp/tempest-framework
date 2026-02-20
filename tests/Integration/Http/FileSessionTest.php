@@ -109,8 +109,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $content = unserialize(file_get_contents($path));
 
-        $this->assertInstanceOf(Session::class, $content);
-        $this->assertEquals('test_value', $content->get('test_key'));
+        $this->assertIsArray($content);
+        $this->assertEquals('test_value', $content['data']['test_key']);
     }
 
     #[Test]

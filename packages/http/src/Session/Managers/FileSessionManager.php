@@ -6,6 +6,7 @@ namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Config\FileSessionConfig;
+use Tempest\Http\Session\GenericSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
@@ -30,7 +31,7 @@ final readonly class FileSessionManager implements SessionManager
         $session = $this->load($id);
 
         if ($session === null) {
-            $session = new Session(
+            $session = new GenericSession(
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
@@ -48,7 +49,7 @@ final readonly class FileSessionManager implements SessionManager
 
         Filesystem\write_file(
             filename: $this->getPath($session->id),
-            content: serialize($session),
+            content: serialize($session->serialize()),
             flags: LOCK_EX,
         );
     }
@@ -102,11 +103,8 @@ final readonly class FileSessionManager implements SessionManager
                 return null;
             }
 
-            return unserialize(
-                data: Filesystem\read_locked_file($path),
-                options: [
-                    'allowed_classes' => true,
-                ],
+            return GenericSession::unserialize(
+                \unserialize(Filesystem\read_locked_file($path)),
             );
         } catch (Throwable) {
             return null;

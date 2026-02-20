@@ -6,6 +6,7 @@ namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Config\RedisSessionConfig;
+use Tempest\Http\Session\GenericSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
@@ -31,7 +32,7 @@ final readonly class RedisSessionManager implements SessionManager
         $session = $this->load($id);
 
         if ($session === null) {
-            $session = new Session(
+            $session = new GenericSession(
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
@@ -49,7 +50,7 @@ final readonly class RedisSessionManager implements SessionManager
 
         $this->redis->set(
             key: $this->getKey($session->id),
-            value: serialize($session),
+            value: serialize($session->serialize()),
             expiration: $this->config->expiration,
         );
     }
@@ -96,9 +97,8 @@ final readonly class RedisSessionManager implements SessionManager
     private function load(SessionId $id): ?Session
     {
         try {
-            return unserialize(
-                data: $this->redis->get($this->getKey($id)),
-                options: ['allowed_classes' => true],
+            return GenericSession::unserialize(
+                \unserialize($this->redis->get($this->getKey($id))),
             );
         } catch (Throwable) {
             return null;

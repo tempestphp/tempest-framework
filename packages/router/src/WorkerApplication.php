@@ -8,9 +8,12 @@ use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Core\Application;
 use Tempest\Core\Kernel;
+use Tempest\Core\ResetHandler;
 use Tempest\Core\Tempest;
 use Tempest\Http\RequestFactory;
-use Tempest\Http\RequestHolder;
+use Tempest\Http\Session\OpaqueSession;
+use Tempest\Http\Session\Session;
+use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 #[Singleton]
 final readonly class WorkerApplication implements Application
@@ -24,8 +27,15 @@ final readonly class WorkerApplication implements Application
     public static function boot(string $root, array $discoveryLocations = [], int $maxLoops = -1): self
     {
         $container = Tempest::boot($root, $discoveryLocations);
+        self::register($container);
 
         return new self($container, $maxLoops);
+    }
+
+    private static function register(Container $container): void
+    {
+        $session = $container->get(OpaqueSession::class);
+        $container->singleton(Session::class, $session);
     }
 
     public function run(): never
@@ -34,22 +44,25 @@ final readonly class WorkerApplication implements Application
         // Prevent worker script termination when a client connection is interrupted
         ignore_user_abort(true);
 
+        $server = array_filter($_SERVER, static fn (string $key) => ! str_starts_with($key, 'HTTP_'), ARRAY_FILTER_USE_KEY);
+
         $requestFactory = $this->container->get(RequestFactory::class);
         $responseSender = $this->container->get(ResponseSender::class);
         $router = $this->container->get(WorkerRouter::class);
-        $requestHolder = $this->container->get(RequestHolder::class);
+        $resetHandler = $this->container->get(ResetHandler::class);
+        $exceptionHandler = $this->container->get(HttpExceptionHandler::class);
 
-        $server = array_filter($_SERVER, static fn (string $key) => ! str_starts_with($key, 'HTTP_'), ARRAY_FILTER_USE_KEY);
-
-        $handler = function () use ($server, $requestFactory, $responseSender, $router, $requestHolder): void {
+        $handler = function () use ($server, $requestFactory, $responseSender, $router, $exceptionHandler): void {
             // Merge the environment variables coming from DotEnv with the ones tied to the current request
             $_SERVER += $server;
 
-            $psrRequest = $requestFactory->make();
-            $response = $router->dispatch($psrRequest);
-            $responseSender->send($response);
-            // TODO: this probably should be handled by RESET event I'm talking about below
-            $requestHolder->clear();
+            try {
+                $psrRequest = $requestFactory->make();
+                $response = $router->dispatch($psrRequest);
+                $responseSender->send($response);
+            } catch (\Throwable $exception) {
+                $exceptionHandler->handle($exception);
+            }
         };
 
         $loops = 0;
@@ -58,6 +71,7 @@ final readonly class WorkerApplication implements Application
         // this is only useful for testing and development
         if (! function_exists('frankenphp_handle_request')) {
             $handler();
+            $resetHandler->reset($this->container);
 
             exit();
         }
@@ -65,8 +79,7 @@ final readonly class WorkerApplication implements Application
         do {
             $ret = \frankenphp_handle_request($handler);
 
-            // TODO: there should be some event to RESET state
-            // for example: CookieManager should reset its internal cookies state after each request
+            $resetHandler->reset($this->container);
 
             gc_collect_cycles();
         } while ($ret && (-1 === $this->maxLoops || ++$loops < $this->maxLoops));

@@ -6,6 +6,7 @@ namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
 use Tempest\DateTime\FormatPattern;
+use Tempest\Http\Session\GenericSession;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
@@ -29,7 +30,7 @@ final readonly class DatabaseSessionManager implements SessionManager
         $session = $this->load($id);
 
         if ($session === null) {
-            $session = new Session(
+            $session = new GenericSession(
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
@@ -121,7 +122,7 @@ final readonly class DatabaseSessionManager implements SessionManager
             return null;
         }
 
-        return new Session(
+        return new GenericSession(
             id: $id,
             createdAt: $session->created_at,
             lastActiveAt: $session->last_active_at,

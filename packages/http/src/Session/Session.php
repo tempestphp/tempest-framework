@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session;
 
-use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
-use Tempest\Support\Str;
 use UnitEnum;
 
 /**
@@ -15,135 +13,70 @@ use UnitEnum;
  * @see ManageSessionMiddleware
  * @see SessionManager
  */
-final class Session
+interface Session
 {
-    /**
-     * Stores the keys for session values that have expired.
-     */
-    private array $expiredKeys = [];
+    public SessionId $id {
+        get;
+    }
 
-    public function __construct(
-        private(set) SessionId $id,
-        private(set) DateTimeInterface $createdAt,
-        public DateTimeInterface $lastActiveAt,
-        /** @var array<array-key,mixed> */
-        private(set) array $data = [],
-    ) {}
+    public DateTimeInterface $createdAt {
+        get;
+    }
+
+    public DateTimeInterface $lastActiveAt {
+        get;
+        set;
+    }
+
+    /** @var array<array-key,mixed> */
+    public array $data {
+        get;
+    }
 
     /**
      * Sets a value in the session.
      */
-    public function set(string|UnitEnum $key, mixed $value): void
-    {
-        $this->data[Str\parse($key)] = $value;
-    }
+    public function set(string|UnitEnum $key, mixed $value): void;
 
     /**
      * Stores a value in the session that will be available for the next request only.
      */
-    public function flash(string|UnitEnum $key, mixed $value): void
-    {
-        $this->data[Str\parse($key)] = new FlashValue($value);
-    }
+    public function flash(string|UnitEnum $key, mixed $value): void;
 
     /**
      * Reflashes all flash values in the session, making them available for the next request.
      */
-    public function reflash(): void
-    {
-        foreach ($this->data as $key => $value) {
-            if (! $value instanceof FlashValue) {
-                continue;
-            }
-
-            unset($this->expiredKeys[$key]);
-        }
-    }
+    public function reflash(): void;
 
     /**
      * Retrieves a value from the session.
      */
-    public function get(string|UnitEnum $key, mixed $default = null): mixed
-    {
-        $key = Str\parse($key);
-        $value = $this->data[$key] ?? $default;
-
-        if ($value instanceof FlashValue) {
-            $this->expiredKeys[$key] = $key;
-            $value = $value->value;
-        }
-
-        return $value;
-    }
+    public function get(string|UnitEnum $key, mixed $default = null): mixed;
 
     /**
      * Retrieves the value for the given key and removes it from the session.
      */
-    public function consume(string|UnitEnum $key, mixed $default = null): mixed
-    {
-        $key = Str\parse($key);
-        $value = $this->get($key, $default);
-
-        $this->remove($key);
-
-        return $value;
-    }
+    public function consume(string|UnitEnum $key, mixed $default = null): mixed;
 
     /**
      * Retrieves all values from the session.
      */
-    public function all(): array
-    {
-        return $this->data;
-    }
+    public function all(): array;
 
     /**
      * Removes a value from the session.
      */
-    public function remove(string|UnitEnum $key): void
-    {
-        $key = Str\parse($key);
-
-        if (isset($this->data[$key])) {
-            unset($this->data[$key]);
-        }
-    }
+    public function remove(string|UnitEnum $key): void;
 
     /**
      * Cleans up expired session values.
      */
-    public function cleanup(): void
-    {
-        foreach ($this->expiredKeys as $key) {
-            $this->remove($key);
-        }
-    }
+    public function cleanup(): void;
 
     /**
      * Clears all values from the session.
      */
-    public function clear(): void
-    {
-        $this->data = [];
-    }
+    public function clear(): void;
 
-    public function __serialize(): array
-    {
-        return [
-            'id' => (string) $this->id,
-            'created_at' => $this->createdAt->getTimestamp()->getSeconds(),
-            'last_active_at' => $this->lastActiveAt->getTimestamp()->getSeconds(),
-            'data' => $this->data,
-            'expired_keys' => $this->expiredKeys,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->id = new SessionId($data['id']);
-        $this->createdAt = DateTime::fromTimestamp($data['created_at']);
-        $this->lastActiveAt = DateTime::fromTimestamp($data['last_active_at']);
-        $this->data = $data['data'];
-        $this->expiredKeys = $data['expired_keys'];
-    }
+    public function serialize(): array;
 }

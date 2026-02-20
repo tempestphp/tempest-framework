@@ -6,13 +6,14 @@ namespace Tempest\Http\Cookie;
 
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
+use Tempest\Core\Resetable;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Support\Str;
 
 /**
  * Manages cookies that will be sent to the client.
  */
-final class CookieManager
+final class CookieManager implements Resetable
 {
     /** @var \Tempest\Http\Cookie\Cookie[] */
     private array $cookies = [];
@@ -73,5 +74,10 @@ final class CookieManager
         $cookie = new Cookie($key, '', -1);
 
         $this->add($cookie);
+    }
+
+    public function reset(): void
+    {
+        $this->cookies = [];
     }
 }
