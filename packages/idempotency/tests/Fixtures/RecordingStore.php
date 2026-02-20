@@ -41,6 +41,11 @@ final class RecordingStore implements IdempotencyStore
         $this->store->savePending($scope, $key, $fingerprint, $ttlInSeconds, $pendingOwner, $pendingHeartbeatAt);
     }
 
+    public function updateHeartbeat(string $scope, string $key, string $owner, int $heartbeatAt, int $ttlInSeconds): void
+    {
+        $this->store->updateHeartbeat($scope, $key, $owner, $heartbeatAt, $ttlInSeconds);
+    }
+
     public function saveCompleted(string $scope, string $key, string $fingerprint, ?StoredResponse $response, int $ttlInSeconds): void
     {
         $this->store->saveCompleted($scope, $key, $fingerprint, $response, $ttlInSeconds);

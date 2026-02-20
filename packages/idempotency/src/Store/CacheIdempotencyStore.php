@@ -40,6 +40,27 @@ final readonly class CacheIdempotencyStore implements IdempotencyStore
         );
     }
 
+    public function updateHeartbeat(string $scope, string $key, string $owner, int $heartbeatAt, int $ttlInSeconds): void
+    {
+        $record = $this->find($scope, $key);
+
+        if ($record === null || $record->state !== IdempotencyState::PENDING || $record->pendingOwner !== $owner) {
+            return;
+        }
+
+        $this->cache->put(
+            key: $this->keyResolver->recordKey($scope, $key),
+            value: new IdempotencyRecord(
+                fingerprint: $record->fingerprint,
+                state: $record->state,
+                response: $record->response,
+                pendingOwner: $record->pendingOwner,
+                pendingHeartbeatAt: $heartbeatAt,
+            ),
+            expiration: Duration::seconds($ttlInSeconds),
+        );
+    }
+
     public function saveCompleted(string $scope, string $key, string $fingerprint, ?StoredResponse $response, int $ttlInSeconds): void
     {
         $this->cache->put(

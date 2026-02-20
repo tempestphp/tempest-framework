@@ -23,6 +23,15 @@ use Tempest\Idempotency\Tests\Fixtures\RecordingStore;
 
 final class IdempotentCommandMiddlewareTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Idempotency tests are not supported on Windows.');
+        }
+    }
+
     #[Test]
     public function ignores_commands_without_idempotent_attribute(): void
     {

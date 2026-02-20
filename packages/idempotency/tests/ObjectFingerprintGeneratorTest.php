@@ -12,6 +12,15 @@ use Tempest\Idempotency\Fingerprint\ObjectFingerprintGenerator;
 
 final class ObjectFingerprintGeneratorTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Idempotency tests are not supported on Windows.');
+        }
+    }
+
     #[Test]
     #[RunInSeparateProcess]
     public function throws_for_circular_references(): void

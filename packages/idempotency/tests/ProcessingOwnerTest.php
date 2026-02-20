@@ -11,6 +11,15 @@ use Tempest\Idempotency\Support\ProcessingOwnerLiveness;
 
 final class ProcessingOwnerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Idempotency tests are not supported on Windows.');
+        }
+    }
+
     #[Test]
     public function resolves_liveness_for_hosts_with_colons(): void
     {

@@ -29,6 +29,7 @@ use Tempest\Idempotency\Store\IdempotencyStore;
 use Tempest\Idempotency\Store\StoredResponse;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
+use Tempest\Idempotency\Tests\Fixtures\FixedScopeResolver;
 use Tempest\Idempotency\Tests\Fixtures\RecordingCache;
 use Tempest\Idempotency\Tests\Fixtures\RecordingStore;
 use Tempest\Reflection\ClassReflector;
@@ -42,6 +43,15 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 
 final class IdempotencyMiddlewareTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Idempotency tests are not supported on Windows.');
+        }
+    }
+
     #[Test]
     public function idempotency_middleware_is_not_globally_discovered(): void
     {
@@ -150,6 +160,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRouteForUri('createForMultipleRoutes', '/bulk-orders'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: new FixedScopeResolver(),
         );
 
         $secondMiddleware = new IdempotencyMiddleware(
@@ -160,6 +171,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRouteForUri('createForMultipleRoutes', '/bulk-orders/import'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: new FixedScopeResolver(),
         );
 
         $calls = 0;
@@ -192,6 +204,60 @@ final class IdempotencyMiddlewareTest extends TestCase
         $this->assertSame(Status::CREATED, $firstResponse->status);
         $this->assertSame(Status::CREATED, $secondResponse->status);
         $this->assertSame(2, $calls);
+    }
+
+    #[Test]
+    public function isolates_idempotency_keys_per_scope_resolver_identity(): void
+    {
+        $cache = new GenericCache(new ArrayAdapter());
+        $config = new IdempotencyConfig();
+        $keyResolver = new IdempotencyKeyResolver($config);
+        $store = new CacheIdempotencyStore($cache, $keyResolver);
+
+        $userAMiddleware = new IdempotencyMiddleware(
+            cache: $cache,
+            store: $store,
+            keyResolver: $keyResolver,
+            fingerprintGenerator: new RequestFingerprintGenerator(),
+            config: $config,
+            matchedRoute: $this->createMatchedRoute('create'),
+            processingOwner: new ProcessingOwner(),
+            scopeResolver: new FixedScopeResolver('user-a'),
+        );
+
+        $userBMiddleware = new IdempotencyMiddleware(
+            cache: $cache,
+            store: $store,
+            keyResolver: $keyResolver,
+            fingerprintGenerator: new RequestFingerprintGenerator(),
+            config: $config,
+            matchedRoute: $this->createMatchedRoute('create'),
+            processingOwner: new ProcessingOwner(),
+            scopeResolver: new FixedScopeResolver('user-b'),
+        );
+
+        $calls = 0;
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
+            $calls++;
+
+            return new GenericResponse(Status::CREATED, ['id' => 'order-' . $calls]);
+        });
+
+        $request = new GenericRequest(
+            Method::POST,
+            '/orders',
+            body: ['amount' => 100],
+            headers: ['Idempotency-Key' => 'shared-key'],
+        );
+
+        $firstResponse = $userAMiddleware($request, $next);
+        $secondResponse = $userBMiddleware($request, $next);
+
+        $this->assertSame(Status::CREATED, $firstResponse->status);
+        $this->assertSame(Status::CREATED, $secondResponse->status);
+        $this->assertSame(2, $calls);
+        $this->assertNull($firstResponse->getHeader('idempotency-replayed'));
+        $this->assertNull($secondResponse->getHeader('idempotency-replayed'));
     }
 
     #[Test]
@@ -286,6 +352,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute('create'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: new FixedScopeResolver(),
         );
 
         $response = $middleware(
@@ -373,6 +440,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $config = new IdempotencyConfig();
         $keyResolver = new IdempotencyKeyResolver($config);
         $store = new CacheIdempotencyStore($cache, $keyResolver);
+        $scopeResolver = new FixedScopeResolver();
         $middleware = new IdempotencyMiddleware(
             cache: $cache,
             store: $store,
@@ -381,6 +449,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute('create'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: $scopeResolver,
         );
 
         $request = new GenericRequest(
@@ -391,7 +460,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         );
 
         $store->savePending(
-            scope: sprintf('%s::%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders'),
+            scope: sprintf('%s::%s:%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders', $scopeResolver->resolve($request)),
             key: 'stale-order',
             fingerprint: new RequestFingerprintGenerator()->generate($request),
             ttlInSeconds: 120,
@@ -420,6 +489,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $config = new IdempotencyConfig();
         $keyResolver = new IdempotencyKeyResolver($config);
         $store = new CacheIdempotencyStore($cache, $keyResolver);
+        $scopeResolver = new FixedScopeResolver();
         $middleware = new IdempotencyMiddleware(
             cache: $cache,
             store: $store,
@@ -428,6 +498,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute('create'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: $scopeResolver,
         );
 
         $request = new GenericRequest(
@@ -438,7 +509,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         );
 
         $store->savePending(
-            scope: sprintf('%s::%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders'),
+            scope: sprintf('%s::%s:%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders', $scopeResolver->resolve($request)),
             key: 'stale-order',
             fingerprint: new RequestFingerprintGenerator()->generate($request),
             ttlInSeconds: 120,
@@ -467,6 +538,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $config = new IdempotencyConfig();
         $keyResolver = new IdempotencyKeyResolver($config);
         $store = new CacheIdempotencyStore($cache, $keyResolver);
+        $scopeResolver = new FixedScopeResolver();
         $middleware = new IdempotencyMiddleware(
             cache: $cache,
             store: $store,
@@ -475,6 +547,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute('create'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: $scopeResolver,
         );
 
         $request = new GenericRequest(
@@ -485,7 +558,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         );
 
         $store->savePending(
-            scope: sprintf('%s::%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders'),
+            scope: sprintf('%s::%s:%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders', $scopeResolver->resolve($request)),
             key: 'live-order',
             fingerprint: new RequestFingerprintGenerator()->generate($request),
             ttlInSeconds: 120,
@@ -515,6 +588,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $keyResolver = new IdempotencyKeyResolver($config);
         $baseStore = new CacheIdempotencyStore($cache, $keyResolver);
         $store = new ThrowingFindStore($baseStore);
+        $scopeResolver = new FixedScopeResolver();
 
         $middleware = new IdempotencyMiddleware(
             cache: $cache,
@@ -524,6 +598,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute('create'),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: $scopeResolver,
         );
 
         $request = new GenericRequest(
@@ -533,7 +608,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             headers: ['Idempotency-Key' => 'order-123'],
         );
 
-        $scope = sprintf('%s::%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders');
+        $scope = sprintf('%s::%s:%s:%s:%s', IdempotencyTestController::class, 'create', Method::POST->value, '/orders', $scopeResolver->resolve($request));
         $fingerprint = new RequestFingerprintGenerator()->generate($request);
 
         $baseStore->saveCompleted(
@@ -562,7 +637,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $this->assertSame(IdempotencyState::COMPLETED, $record->state);
     }
 
-    private function createMiddleware(string $method): IdempotencyMiddleware
+    private function createMiddleware(string $method, ?FixedScopeResolver $scopeResolver = null): IdempotencyMiddleware
     {
         $cache = new GenericCache(new ArrayAdapter());
         $config = new IdempotencyConfig();
@@ -576,6 +651,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             config: $config,
             matchedRoute: $this->createMatchedRoute($method),
             processingOwner: new ProcessingOwner(),
+            scopeResolver: $scopeResolver ?? new FixedScopeResolver(),
         );
     }
 
@@ -636,6 +712,11 @@ final class ThrowingFindStore implements IdempotencyStore
     public function savePending(string $scope, string $key, string $fingerprint, int $ttlInSeconds, ?string $pendingOwner = null, ?int $pendingHeartbeatAt = null): void
     {
         $this->store->savePending($scope, $key, $fingerprint, $ttlInSeconds, $pendingOwner, $pendingHeartbeatAt);
+    }
+
+    public function updateHeartbeat(string $scope, string $key, string $owner, int $heartbeatAt, int $ttlInSeconds): void
+    {
+        $this->store->updateHeartbeat($scope, $key, $owner, $heartbeatAt, $ttlInSeconds);
     }
 
     public function saveCompleted(string $scope, string $key, string $fingerprint, ?StoredResponse $response, int $ttlInSeconds): void

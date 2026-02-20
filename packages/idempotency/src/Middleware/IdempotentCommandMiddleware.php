@@ -17,6 +17,7 @@ use Tempest\Idempotency\Fingerprint\CommandFingerprintGenerator;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
 use Tempest\Idempotency\Store\IdempotencyStore;
+use Tempest\Idempotency\Support\HeartbeatRenewer;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
 use Tempest\Idempotency\Support\ProcessingOwnerLiveness;
@@ -79,6 +80,16 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
                     pendingHeartbeatAt: time(),
                 );
 
+                $heartbeat = new HeartbeatRenewer();
+                $heartbeat->start(
+                    store: $this->store,
+                    scope: $scope,
+                    key: $key,
+                    owner: $owner,
+                    intervalInSeconds: max(1, intdiv($options['pendingTtlInSeconds'], 3)),
+                    recordTtlInSeconds: $pendingRecordTtlInSeconds,
+                );
+
                 try {
                     $next($command);
 
@@ -93,6 +104,8 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
                     $this->store->delete($scope, $key);
 
                     throw $throwable;
+                } finally {
+                    $heartbeat->stop();
                 }
             },
             wait: Duration::seconds($pendingTtlInSeconds),

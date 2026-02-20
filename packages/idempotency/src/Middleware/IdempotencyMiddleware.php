@@ -13,12 +13,14 @@ use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\Contracts\IdempotencyScopeResolver;
 use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
 use Tempest\Idempotency\Fingerprint\HttpFingerprintGenerator;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
 use Tempest\Idempotency\Store\IdempotencyStore;
 use Tempest\Idempotency\Store\StoredResponse;
+use Tempest\Idempotency\Support\HeartbeatRenewer;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
 use Tempest\Idempotency\Support\ProcessingOwnerLiveness;
@@ -39,6 +41,7 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
         private IdempotencyConfig $config,
         private MatchedRoute $matchedRoute,
         private ProcessingOwner $processingOwner,
+        private IdempotencyScopeResolver $scopeResolver,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
@@ -99,7 +102,21 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
 
             $pendingRecordCreated = true;
 
-            $response = $next($request);
+            $heartbeat = new HeartbeatRenewer();
+            $heartbeat->start(
+                store: $this->store,
+                scope: $scope,
+                key: $key,
+                owner: $owner,
+                intervalInSeconds: max(1, intdiv($pendingTtlInSeconds, 3)),
+                recordTtlInSeconds: $pendingRecordTtlInSeconds,
+            );
+
+            try {
+                $response = $next($request);
+            } finally {
+                $heartbeat->stop();
+            }
 
             $this->store->saveCompleted(
                 scope: $scope,
@@ -198,11 +215,12 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
         $handler = $this->matchedRoute->route->handler;
 
         return sprintf(
-            '%s::%s:%s:%s',
+            '%s::%s:%s:%s:%s',
             $handler->getDeclaringClass()->getName(),
             $handler->getName(),
             $request->method->value,
             $this->matchedRoute->route->uri,
+            $this->scopeResolver->resolve($request),
         );
     }
 }
