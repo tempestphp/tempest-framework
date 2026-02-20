@@ -9,7 +9,7 @@ use Tempest\DateTime\DateTimeInterface;
 use Tempest\Support\Str;
 use UnitEnum;
 
-class GenericSession implements Session
+final class GenericSession implements Session
 {
     private array $expiredKeys = [];
 
