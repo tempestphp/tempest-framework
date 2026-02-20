@@ -32,28 +32,40 @@ final class GenericRouterBench
 {
     private GenericRouter $router;
 
-    private GenericContainer $container;
-
-    private RouteConfig $routeConfig;
+    private GenericRouter $routerWithoutExceptionMiddleware;
 
     public function setUp(): void
     {
-        $this->routeConfig = self::makeRouteConfig();
+        $routeConfig = self::makeRouteConfig();
 
-        $this->routeConfig->middleware = new Middleware(
+        $routeConfig->middleware = new Middleware(
             HandleRouteExceptionMiddleware::class,
             MatchRouteMiddleware::class,
         );
 
-        $this->container = new GenericContainer();
+        $container = new GenericContainer();
 
-        $matcher = new GenericRouteMatcher($this->routeConfig);
+        $matcher = new GenericRouteMatcher($routeConfig);
 
-        $this->container->singleton(Container::class, fn () => $this->container);
-        $this->container->singleton(RouteMatcher::class, fn () => $matcher);
-        $this->container->singleton(RouteConfig::class, fn () => $this->routeConfig);
+        $container->singleton(Container::class, fn () => $container);
+        $container->singleton(RouteMatcher::class, fn () => $matcher);
+        $container->singleton(RouteConfig::class, fn () => $routeConfig);
 
-        $this->router = new GenericRouter($this->container, $this->routeConfig);
+        $this->router = new GenericRouter($container, $routeConfig);
+
+        $routeConfigWithoutExceptionMiddleware = self::makeRouteConfig();
+        $routeConfigWithoutExceptionMiddleware->middleware = new Middleware(
+            MatchRouteMiddleware::class,
+        );
+
+        $containerWithoutExceptionMiddleware = new GenericContainer();
+        $matcherWithoutExceptionMiddleware = new GenericRouteMatcher($routeConfigWithoutExceptionMiddleware);
+
+        $containerWithoutExceptionMiddleware->singleton(Container::class, fn () => $containerWithoutExceptionMiddleware);
+        $containerWithoutExceptionMiddleware->singleton(RouteMatcher::class, fn () => $matcherWithoutExceptionMiddleware);
+        $containerWithoutExceptionMiddleware->singleton(RouteConfig::class, fn () => $routeConfigWithoutExceptionMiddleware);
+
+        $this->routerWithoutExceptionMiddleware = new GenericRouter($containerWithoutExceptionMiddleware, $routeConfigWithoutExceptionMiddleware);
     }
 
     #[BeforeMethods('setUp')]
@@ -75,13 +87,7 @@ final class GenericRouterBench
     #[Warmup(10)]
     public function benchDispatchWithoutMiddleware(array $params): void
     {
-        $this->routeConfig->middleware = new Middleware(
-            MatchRouteMiddleware::class,
-        );
-
-        $router = new GenericRouter($this->container, $this->routeConfig);
-
-        $router->dispatch(
+        $this->routerWithoutExceptionMiddleware->dispatch(
             new GenericRequest(Method::GET, $params['uri']),
         );
     }

@@ -44,14 +44,23 @@ final class ContainerBench
         $this->container->get(ContainerObjectB::class);
     }
 
-    #[BeforeMethods('setUp')]
+    #[BeforeMethods('setUpSingletonInstance')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchSingletonResolution(): void
+    public function benchResolveSingletonInstance(): void
     {
-        $this->container->singleton(ContainerObjectA::class, new ContainerObjectA());
         $this->container->get(ContainerObjectA::class);
+    }
+
+    #[Iterations(5)]
+    #[Revs(1000)]
+    #[Warmup(10)]
+    public function benchRegisterSingletonInstance(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(ContainerObjectA::class, new ContainerObjectA());
     }
 
     #[BeforeMethods('setUp')]
@@ -63,44 +72,80 @@ final class ContainerBench
         $this->container->get(ClassWithSingletonAttribute::class);
     }
 
-    #[BeforeMethods('setUp')]
+    #[BeforeMethods('setUpDefinition')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchDefinitionResolution(): void
+    public function benchResolveDefinition(): void
     {
-        $this->container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
         $this->container->get(ContainerObjectA::class);
     }
 
-    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchInitializerResolution(): void
+    public function benchRegisterDefinition(): void
     {
-        $this->container->addInitializer(ContainerObjectDInitializer::class);
+        $container = new GenericContainer();
+
+        $container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
+    }
+
+    #[BeforeMethods('setUpInitializer')]
+    #[Iterations(5)]
+    #[Revs(1000)]
+    #[Warmup(10)]
+    public function benchResolveWithInitializer(): void
+    {
         $this->container->get(ContainerObjectD::class);
     }
 
-    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchDynamicInitializerResolution(): void
+    public function benchRegisterInitializer(): void
     {
-        $this->container->addInitializer(ContainerObjectEInitializer::class);
+        $container = new GenericContainer();
+
+        $container->addInitializer(ContainerObjectDInitializer::class);
+    }
+
+    #[BeforeMethods('setUpDynamicInitializer')]
+    #[Iterations(5)]
+    #[Revs(1000)]
+    #[Warmup(10)]
+    public function benchResolveWithDynamicInitializer(): void
+    {
         $this->container->get(ContainerObjectE::class);
     }
 
-    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchClosureSingletonResolution(): void
+    public function benchRegisterDynamicInitializer(): void
     {
-        $this->container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
+        $container = new GenericContainer();
+
+        $container->addInitializer(ContainerObjectEInitializer::class);
+    }
+
+    #[BeforeMethods('setUpClosureSingleton')]
+    #[Iterations(5)]
+    #[Revs(1000)]
+    #[Warmup(10)]
+    public function benchResolveClosureSingleton(): void
+    {
         $this->container->get(ContainerObjectA::class);
+    }
+
+    #[Iterations(5)]
+    #[Revs(1000)]
+    #[Warmup(10)]
+    public function benchRegisterClosureSingleton(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
     }
 
     #[BeforeMethods('setUp')]
@@ -110,5 +155,35 @@ final class ContainerBench
     public function benchInvokeClosure(): void
     {
         $this->container->invoke(fn (ContainerObjectA $a) => $a);
+    }
+
+    public function setUpSingletonInstance(): void
+    {
+        $this->setUp();
+        $this->container->singleton(ContainerObjectA::class, new ContainerObjectA());
+    }
+
+    public function setUpDefinition(): void
+    {
+        $this->setUp();
+        $this->container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
+    }
+
+    public function setUpInitializer(): void
+    {
+        $this->setUp();
+        $this->container->addInitializer(ContainerObjectDInitializer::class);
+    }
+
+    public function setUpDynamicInitializer(): void
+    {
+        $this->setUp();
+        $this->container->addInitializer(ContainerObjectEInitializer::class);
+    }
+
+    public function setUpClosureSingleton(): void
+    {
+        $this->setUp();
+        $this->container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
     }
 }
