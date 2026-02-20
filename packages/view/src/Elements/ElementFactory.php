@@ -66,7 +66,10 @@ final class ElementFactory
                 return null;
             }
 
-            $element = new TextElement(text: $text);
+            $element = new TextElement(
+                text: $text,
+                token: $token,
+            );
         } elseif ($token->type === TokenType::WHITESPACE) {
             $element = new WhitespaceElement($token->content);
         } elseif ($token->type !== TokenType::PHP && (! $token->tag || $token->type === TokenType::COMMENT)) {

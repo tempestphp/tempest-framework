@@ -192,6 +192,27 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
+    public function test_maps_source_path_and_line_for_slot_expression_errors(): void
+    {
+        $viewConfig = new ViewConfig()->addViewComponents(
+            __DIR__ . '/Fixtures/x-standalone-base.view.php',
+        );
+
+        $renderer =
+            TempestViewRenderer::make(
+                viewConfig: $viewConfig,
+            );
+
+        try {
+            $renderer->render(view(__DIR__ . '/Fixtures/standalone-error-slot-expression-usage.view.php'));
+            $this->fail('Expected a view compilation exception.');
+        } catch (ViewCompilationFailed $exception) {
+            $this->assertSame(__DIR__ . '/Fixtures/standalone-error-slot-expression-usage.view.php', $exception->sourcePath);
+            $this->assertSame(2, $exception->sourceLine);
+        }
+    }
+
+    #[Test]
     public function test_maps_source_path_and_line_for_expression_attribute_errors_after_component_rendering(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(

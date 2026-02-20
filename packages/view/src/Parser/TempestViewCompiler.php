@@ -12,6 +12,7 @@ use Tempest\View\CompiledView;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\RootElement;
+use Tempest\View\Elements\TextElement;
 use Tempest\View\Exceptions\ViewNotFound;
 use Tempest\View\Exceptions\XmlDeclarationCouldNotBeParsed;
 use Tempest\View\ShouldBeRemoved;
@@ -238,6 +239,13 @@ final readonly class TempestViewCompiler
     /** @return array{sourcePath: string|null, sourceLine: int}|null */
     private function resolveSourceLocation(Element $element): ?array
     {
+        if ($element instanceof TextElement && $element->token !== null) {
+            return [
+                'sourcePath' => $element->token->sourcePath,
+                'sourceLine' => $element->token->line,
+            ];
+        }
+
         if ($element instanceof WithToken) {
             return [
                 'sourcePath' => $element->token->sourcePath,
