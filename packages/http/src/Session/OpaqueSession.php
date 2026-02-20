@@ -9,7 +9,7 @@ use Tempest\DateTime\DateTimeInterface;
 use UnitEnum;
 
 #[Singleton]
-class OpaqueSession implements Session
+final class OpaqueSession implements Session
 {
     public SessionId $id {
         get {
