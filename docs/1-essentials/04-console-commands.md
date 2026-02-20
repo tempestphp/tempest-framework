@@ -278,12 +278,10 @@ After adding or removing commands, regenerate the metadata:
 
 ### Available commands
 
-| Command                | Description                                                              |
-|------------------------|--------------------------------------------------------------------------|
-| `completion:install`   | Install the completion script and generate metadata.                     |
-| `completion:generate`  | Regenerate the completion metadata JSON.                                 |
-| `completion:show`      | Output the completion script to stdout (useful for custom installation). |
-| `completion:uninstall` | Remove the installed completion script.                                  |
+- `completion:install` — Install the completion script and generate metadata.
+- `completion:generate` — Regenerate the completion metadata JSON.
+- `completion:show` — Output the completion script to stdout (useful for custom installation).
+- `completion:uninstall` — Remove the installed completion script.
 
 ## Middleware
 
