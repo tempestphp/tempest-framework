@@ -105,11 +105,7 @@ final class LoadDiscoveryClasses
                 continue;
             }
 
-            $this->scan(
-                location: $location,
-                discoveries: $discoveries,
-                path: $location->path,
-            );
+            $this->scan($location, $discoveries, $location->path);
         }
     }
 
@@ -162,35 +158,39 @@ final class LoadDiscoveryClasses
             return;
         }
 
-        // Directories are scanned recursively
-        if (is_dir($input)) {
-            // Make sure the current directory is not marked for skipping
-            if ($this->shouldSkipDirectory($input)) {
-                return;
-            }
-
-            $subPaths = scandir($input, SCANDIR_SORT_NONE);
-            if ($subPaths === false) {
-                return;
-            }
-
-            foreach ($subPaths as $subPath) {
-                // `.` and `..` are skipped
-                if ($subPath === '.' || $subPath === '..') {
-                    continue;
-                }
-
-                // Scan all files and folders within this directory
-                $this->scan($location, $discoveries, "{$input}/{$subPath}");
-            }
-
+        if (is_file($input)) {
+            $this->discoverPath($input, $location, $discoveries);
             return;
         }
 
+        // Make sure the current directory is not marked for skipping
+        if ($this->shouldSkipDirectory($input)) {
+            return;
+        }
+
+        $subPaths = scandir($input, SCANDIR_SORT_NONE);
+        if ($subPaths === false) {
+            return;
+        }
+
+        foreach ($subPaths as $subPath) {
+            // `.` and `..` are skipped
+            if ($subPath === '.' || $subPath === '..') {
+                continue;
+            }
+
+            // Scan all files and folders within this directory
+            $this->scan($location, $discoveries, "{$input}/{$subPath}");
+        }
+    }
+
+    private function discoverPath(string $input, DiscoveryLocation $location, array $discoveries): void
+    {
         // At this point, we have a single file, let's try and discover it
         $pathInfo = pathinfo($input);
         $extension = $pathInfo['extension'] ?? null;
         $fileName = $pathInfo['filename'] ?: null;
+        $className = null;
 
         // If this is a PHP file starting with an uppercase letter, we assume it's a class.
         // TODO: Figure out if we can refactor this to checking composer's autoload map (it might not always be available)
@@ -240,7 +240,7 @@ final class LoadDiscoveryClasses
             // If the input is a class, we'll try to discover it
             if ($input instanceof ClassReflector) {
                 // Check whether this class is marked with `#[SkipDiscovery]`
-                if ($this->shouldSkipDiscoveryForClass($discovery, $input)) {
+                if ($this->shouldSkipDiscoveryForClass($discovery, $className)) {
                     continue;
                 }
 
@@ -296,20 +296,20 @@ final class LoadDiscoveryClasses
     /**
      * Check whether discovery for a specific class should be skipped based on the #[SkipDiscovery] attribute
      */
-    private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
+    private function shouldSkipDiscoveryForClass(Discovery $discovery, string $className): bool
     {
         // There's no `#[SkipDiscovery]` attribute, so the class shouldn't be skipped
-        if (! isset($this->shouldSkipForClass[$input->getName()])) {
+        if (! isset($this->shouldSkipForClass[$className])) {
             return false;
         }
 
         // The class has a general `#[SkipDiscovery]` attribute without exceptions
-        if ($this->shouldSkipForClass[$input->getName()] === true) {
+        if ($this->shouldSkipForClass[$className] === true) {
             return true;
         }
 
         // Current discovery is not added as "except", so it should be skipped
-        if (! isset($this->shouldSkipForClass[$input->getName()][$discovery::class])) {
+        if (! isset($this->shouldSkipForClass[$className][$discovery::class])) {
             return true;
         }
 
