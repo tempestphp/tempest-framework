@@ -152,7 +152,7 @@
             "Tempest\\HttpClient\\": "packages/http-client/src",
             "Tempest\\Http\\": "packages/http/src",
             "Tempest\\Icon\\": "packages/icon/src",
-            "Tempest\\Idempotency\\": "packages/idempotency/src/",
+            "Tempest\\Idempotency\\": "packages/idempotency/src",
             "Tempest\\Intl\\": "packages/intl/src",
             "Tempest\\KeyValue\\": "packages/kv-store/src",
             "Tempest\\Log\\": "packages/log/src",
