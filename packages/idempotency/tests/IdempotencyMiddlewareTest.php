@@ -20,6 +20,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
 use Tempest\Idempotency\Fingerprint\RequestFingerprintGenerator;
 use Tempest\Idempotency\Middleware\IdempotencyMiddleware;
 use Tempest\Idempotency\Store\CacheIdempotencyStore;
@@ -129,7 +130,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             $next,
         );
 
-        $this->assertSame(Status::CONFLICT, $secondResponse->status);
+        $this->assertSame(Status::UNPROCESSABLE_CONTENT, $secondResponse->status);
         $this->assertSame(1, $calls);
     }
 
@@ -238,6 +239,35 @@ final class IdempotencyMiddlewareTest extends TestCase
                 $route->middleware,
                 static fn (string $middleware): bool => $middleware === IdempotencyMiddleware::class,
             ),
+        );
+    }
+
+    #[Test]
+    public function idempotent_decorator_throws_for_get_routes(): void
+    {
+        $route = new FakeRoute();
+        $route->method = Method::GET;
+
+        $this->expectException(UnsupportedIdempotencyMethod::class);
+
+        new Idempotent()->decorate($route);
+    }
+
+    #[Test]
+    public function throws_for_non_post_and_patch_methods(): void
+    {
+        $middleware = $this->createMiddleware('create');
+
+        $this->expectException(UnsupportedIdempotencyMethod::class);
+
+        $middleware(
+            new GenericRequest(
+                Method::PUT,
+                '/orders',
+                body: ['amount' => 100],
+                headers: ['Idempotency-Key' => 'order-100'],
+            ),
+            new HttpMiddlewareCallable(static fn (Request $_): Response => new GenericResponse(Status::OK, ['ok' => true])),
         );
     }
 

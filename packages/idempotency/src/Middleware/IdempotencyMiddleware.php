@@ -13,6 +13,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
 use Tempest\Idempotency\Fingerprint\HttpFingerprintGenerator;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
@@ -21,6 +22,7 @@ use Tempest\Idempotency\Store\StoredResponse;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
 use Tempest\Idempotency\Support\ProcessingOwnerLiveness;
+use Tempest\Idempotency\SupportedMethod;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\MatchedRoute;
@@ -41,6 +43,10 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
+        if (! SupportedMethod::isSupported($request->method)) {
+            throw UnsupportedIdempotencyMethod::forMethod($request->method);
+        }
+
         $options = $this->resolveOptions();
         $key = trim($request->headers->get($options['header'], default: '') ?? '');
 
@@ -119,7 +125,7 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
     {
         if ($record->fingerprint !== $fingerprint) {
             return new GenericResponse(
-                status: Status::CONFLICT,
+                status: Status::UNPROCESSABLE_CONTENT,
                 body: ['error' => 'The idempotency key has already been used for another payload.'],
             );
         }
