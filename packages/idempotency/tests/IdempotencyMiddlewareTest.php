@@ -309,17 +309,6 @@ final class IdempotencyMiddlewareTest extends TestCase
     }
 
     #[Test]
-    public function idempotent_decorator_throws_for_get_routes(): void
-    {
-        $route = new FakeRoute();
-        $route->method = Method::GET;
-
-        $this->expectException(UnsupportedIdempotencyMethod::class);
-
-        new Idempotent()->decorate($route);
-    }
-
-    #[Test]
     public function throws_for_non_post_and_patch_methods(): void
     {
         $middleware = $this->createMiddleware('create');

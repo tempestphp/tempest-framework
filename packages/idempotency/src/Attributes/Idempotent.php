@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Attributes;
 
 use Attribute;
-use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
 use Tempest\Idempotency\Middleware\IdempotencyMiddleware;
-use Tempest\Idempotency\SupportedMethod;
 use Tempest\Router\Route;
 use Tempest\Router\RouteDecorator;
 
@@ -23,10 +21,6 @@ final readonly class Idempotent implements RouteDecorator
 
     public function decorate(Route $route): Route
     {
-        if (! SupportedMethod::isSupported($route->method)) {
-            throw UnsupportedIdempotencyMethod::forMethod($route->method);
-        }
-
         if (in_array(IdempotencyMiddleware::class, $route->middleware, true)) {
             return $route;
         }

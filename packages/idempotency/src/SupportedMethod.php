@@ -16,7 +16,6 @@ enum SupportedMethod: string
         return self::tryFrom($method->value) !== null;
     }
 
-    /** @return string */
     public static function allowed(): string
     {
         return implode(', ', array_column(self::cases(), 'value'));
