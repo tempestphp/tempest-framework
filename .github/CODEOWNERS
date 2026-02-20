@@ -34,6 +34,7 @@
 /packages/http/                                      @brendt @aidan-casey
 /packages/http-client/                               @aidan-casey
 /packages/icon/                                      @innocenzi
+/packages/idempotency/                               @xHeaven
 /packages/kv-store/                                  @innocenzi
 /packages/log/                                       @brendt
 /packages/mail/                                      @innocenzi
