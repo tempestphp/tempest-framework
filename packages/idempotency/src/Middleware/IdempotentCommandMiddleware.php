@@ -39,16 +39,16 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
 
     public function __invoke(object $command, CommandBusMiddlewareCallable $next): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            throw UnsupportedIdempotencyPlatform::forWindows();
-        }
-
         $options = $this->resolveOptions($command);
 
         if ($options === null) {
             $next($command);
 
             return;
+        }
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            throw UnsupportedIdempotencyPlatform::forWindows();
         }
 
         $scope = $this->resolveScope($command);
