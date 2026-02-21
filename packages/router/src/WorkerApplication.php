@@ -7,13 +7,13 @@ namespace Tempest\Router;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Core\Application;
+use Tempest\Core\ExceptionHandler;
 use Tempest\Core\Kernel;
 use Tempest\Core\ResetHandler;
 use Tempest\Core\Tempest;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\Session\OpaqueSession;
 use Tempest\Http\Session\Session;
-use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 #[Singleton]
 final readonly class WorkerApplication implements Application
@@ -50,7 +50,7 @@ final readonly class WorkerApplication implements Application
         $responseSender = $this->container->get(ResponseSender::class);
         $router = $this->container->get(WorkerRouter::class);
         $resetHandler = $this->container->get(ResetHandler::class);
-        $exceptionHandler = $this->container->get(HttpExceptionHandler::class);
+        $exceptionHandler = $this->container->get(ExceptionHandler::class);
 
         $handler = function () use ($server, $requestFactory, $responseSender, $router, $exceptionHandler): void {
             // Merge the environment variables coming from DotEnv with the ones tied to the current request
