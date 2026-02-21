@@ -14,7 +14,7 @@ use Tempest\Router\Routing\Matching\RouteMatcher;
 
 use function Tempest\Mapper\map;
 
-#[Priority(Priority::FRAMEWORK - 9)]
+#[Priority(Priority::FRAMEWORK - 10)]
 final readonly class MatchRouteMiddleware implements HttpMiddleware
 {
     public function __construct(
