@@ -3,6 +3,8 @@
 namespace Tempest\Database\Builder;
 
 use ReflectionException;
+use Tempest\Core\Resetable;
+use Tempest\Core\ResetableStatic;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
@@ -29,7 +31,7 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class ModelInspector
+final class ModelInspector implements Resetable, ResetableStatic
 {
     use HasMemoization;
 
@@ -43,9 +45,14 @@ final class ModelInspector
         get => get(Validator::class);
     }
 
-    public static function reset(): void
+    public static function resetStatic(): void
     {
         self::$inspectors = [];
+    }
+
+    public function reset(): void
+    {
+        $this->resetMemoization();
     }
 
     public static function forModel(object|string $model): self

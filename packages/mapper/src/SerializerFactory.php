@@ -6,6 +6,7 @@ namespace Tempest\Mapper;
 
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
+use Tempest\Core\Resetable;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
@@ -13,7 +14,7 @@ use Tempest\Support\Memoization\HasMemoization;
 use UnitEnum;
 
 #[Singleton]
-final class SerializerFactory
+final class SerializerFactory implements Resetable
 {
     use HasMemoization;
 
@@ -27,6 +28,11 @@ final class SerializerFactory
     public function __construct(
         private readonly Container $container,
     ) {}
+
+    public function reset(): void
+    {
+        $this->resetMemoization();
+    }
 
     /**
      * @param class-string<\Tempest\Mapper\Serializer> $serializerClass

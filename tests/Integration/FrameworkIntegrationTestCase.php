@@ -42,7 +42,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->config(require $databaseConfigPath);
         $this->database->reset(migrate: false);
 
-        ModelInspector::reset();
+        ModelInspector::resetStatic();
     }
 
     protected function assertStringCount(string $subject, string $search, int $count): void

@@ -16,4 +16,9 @@ trait HasMemoization
 
         return $this->memoize[$key];
     }
+
+    private function resetMemoization(): void
+    {
+        $this->memoize = [];
+    }
 }

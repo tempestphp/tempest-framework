@@ -7,12 +7,13 @@ namespace Tempest\Mapper;
 use Closure;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
+use Tempest\Core\Resetable;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Memoization\HasMemoization;
 use UnitEnum;
 
 #[Singleton]
-final class CasterFactory
+final class CasterFactory implements Resetable
 {
     use HasMemoization;
 
@@ -26,6 +27,11 @@ final class CasterFactory
     public function __construct(
         private readonly Container $container,
     ) {}
+
+    public function reset(): void
+    {
+        $this->resetMemoization();
+    }
 
     /**
      * @param class-string<\Tempest\Mapper\Caster> $casterClass

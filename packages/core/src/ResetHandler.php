@@ -21,5 +21,9 @@ class ResetHandler
 
             $container->get($class)->reset();
         }
+
+        foreach ($this->resetableContainer->resetableStaticClasses as $class) {
+            $class::resetStatic();
+        }
     }
 }

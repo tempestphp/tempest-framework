@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use Tempest\Core\Resetable;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
@@ -18,7 +19,7 @@ use Throwable;
 
 use function Tempest\Support\arr;
 
-final class ArrayToObjectMapper implements Mapper
+final class ArrayToObjectMapper implements Mapper, Resetable
 {
     use HasMemoization;
 
@@ -26,6 +27,11 @@ final class ArrayToObjectMapper implements Mapper
         private readonly CasterFactory $casterFactory,
         private readonly Context $context,
     ) {}
+
+    public function reset(): void
+    {
+        $this->resetMemoization();
+    }
 
     public function canMap(mixed $from, mixed $to): bool
     {
