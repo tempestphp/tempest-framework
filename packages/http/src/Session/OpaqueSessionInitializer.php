@@ -9,7 +9,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
 
-class OpaqueSessionInitializer implements Initializer
+final readonly class OpaqueSessionInitializer implements Initializer
 {
     public function initialize(Container $container): OpaqueSession
     {
