@@ -72,6 +72,7 @@ final readonly class WorkerApplication implements Application
         if (! function_exists('frankenphp_handle_request')) {
             $handler();
             $resetHandler->reset($this->container);
+            $this->container->get(Kernel::class)->shutdown();
 
             exit();
         }
