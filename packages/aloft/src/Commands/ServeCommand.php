@@ -67,7 +67,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 -v "
                 . root_path('.tempest/aloft/config')
                 . ":/config \
-                -v /Users/iamdadmin/Dev/vewe/:/Users/iamdadmin/Dev/vewe/ \
                 tempestphp/aloft:latest-nonroot",
             );
         }
