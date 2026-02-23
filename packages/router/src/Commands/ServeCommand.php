@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Aloft\Commands;
+namespace Tempest\Router\Commands;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;

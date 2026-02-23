@@ -8,8 +8,8 @@
 {
 	skip_install_trust
     {$CADDY_DEFAULT_BIND}
-    http_port {$HTTP_PORT:8000}
-    https_port {$HTTPS_PORT:8443}
+    http_port {$CADDY_HTTP_PORT:8000}
+    https_port {$CADDY_HTTPS_PORT:8443}
 
 	{$CADDY_GLOBAL_OPTIONS}
 

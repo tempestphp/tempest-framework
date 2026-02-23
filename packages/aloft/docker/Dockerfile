@@ -66,7 +66,6 @@ COPY --from=frankenphp --chown=1002:1000 /app /app
 COPY --from=frankenphp --chown=1002:1000 /config /config
 COPY --from=frankenphp --chown=1002:1000 /data /data
 COPY --from=frankenphp --chown=1002:1000 /etc/frankenphp /etc/frankenphp
-COPY --from=frankenphp --chown=1002:1000 /app/public/index.php /app/public/index.php
 
 COPY Caddyfile.noworker /etc/frankenphp/Caddyfile
 
