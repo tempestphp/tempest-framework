@@ -6,6 +6,9 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use Tempest\Validation\Rule;
+use ValueError;
+
+use const JSON_INVALID_UTF8_IGNORE;
 
 /**
  * Validates that the value is a valid JSON string.
@@ -31,6 +34,10 @@ final readonly class IsJsonString implements Rule
         }
 
         if ($this->flags !== null) {
+            if ($this->flags !== JSON_INVALID_UTF8_IGNORE) {
+                throw new ValueError('Invalid JSON validation flags provided.');
+            }
+
             $arguments['flags'] = $this->flags;
         }
 
