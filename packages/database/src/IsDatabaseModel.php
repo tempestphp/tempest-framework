@@ -13,6 +13,7 @@ use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Router\IsBindingValue;
 use Tempest\Validation\SkipValidation;
+use UnitEnum;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -21,6 +22,31 @@ trait IsDatabaseModel
 {
     #[IsBindingValue, SkipValidation]
     public PrimaryKey $id;
+
+    #[SkipValidation, Virtual]
+    private null|string|UnitEnum $onDatabase = null;
+
+    /**
+     * Returns a query builder targeting the specified database connection.
+     *
+     * @return QueryBuilder<static>
+     */
+    public static function on(null|string|UnitEnum $databaseTag): QueryBuilder
+    {
+        return static::queryBuilder()->onDatabase(databaseTag: $databaseTag);
+    }
+
+    /**
+     * Targets a specific database connection for this model instance.
+     */
+    public function onDatabase(null|string|UnitEnum $databaseTag): static
+    {
+        $clone = clone $this;
+
+        $clone->onDatabase = $databaseTag;
+
+        return $clone;
+    }
 
     /**
      * @return QueryBuilder<static>
@@ -185,7 +211,9 @@ trait IsDatabaseModel
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = static::select()
+        $new = static::queryBuilder()
+            ->onDatabase($this->onDatabase)
+            ->select()
             ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
             ->get($primaryKeyValue);
 
@@ -216,7 +244,9 @@ trait IsDatabaseModel
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = static::get($primaryKeyValue, $relations);
+        $new = static::queryBuilder()
+            ->onDatabase($this->onDatabase)
+            ->get($primaryKeyValue, $relations);
 
         $fieldsToUpdate = arr($relations)
             ->map(fn (string $relation) => str($relation)->before('.')->toString())
@@ -240,6 +270,7 @@ trait IsDatabaseModel
         // Models without primary keys always insert
         if (! $model->hasPrimaryKey()) {
             query($this::class)
+                ->onDatabase($this->onDatabase)
                 ->insert($this)
                 ->execute();
 
@@ -254,6 +285,7 @@ trait IsDatabaseModel
         // to generate the id and populate the model instance with it
         if ($primaryKeyValue === null) {
             $id = query($this::class)
+                ->onDatabase($this->onDatabase)
                 ->insert($this)
                 ->execute();
 
@@ -264,8 +296,9 @@ trait IsDatabaseModel
             return $this;
         }
 
-        // Is the model was already save, we update it
+        // Is the model was already saved, we update it
         query($this)
+            ->onDatabase($this->onDatabase)
             ->update(...inspect($this)->getPropertyValues())
             ->execute();
 
@@ -282,6 +315,7 @@ trait IsDatabaseModel
         $model->validate(...$params);
 
         query($this)
+            ->onDatabase($this->onDatabase)
             ->update(...$params)
             ->whereField($model->getPrimaryKey(), $model->getPrimaryKeyValue())
             ->execute();
@@ -299,6 +333,7 @@ trait IsDatabaseModel
     public function delete(): void
     {
         query($this)
+            ->onDatabase($this->onDatabase)
             ->delete()
             ->build()
             ->execute();
