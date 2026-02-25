@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use Tempest\Database\BelongsTo;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
@@ -694,6 +695,100 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotNull($a->b);
         $this->assertSame('b', $a->b->name);
     }
+
+    public function test_on_returns_query_builder_with_database_tag(): void
+    {
+        $builder = Foo::on('analytics');
+
+        $this->assertInstanceOf(QueryBuilder::class, $builder);
+        $this->assertSame('analytics', $builder->onDatabase);
+    }
+
+    public function test_on_propagates_tag_to_select_builder(): void
+    {
+        $selectBuilder = Foo::on('analytics')->select();
+
+        $this->assertSame('analytics', $selectBuilder->onDatabase);
+    }
+
+    public function test_on_propagates_tag_to_insert_builder(): void
+    {
+        $insertBuilder = Foo::on('analytics')->insert();
+
+        $this->assertSame('analytics', $insertBuilder->onDatabase);
+    }
+
+    public function test_on_propagates_tag_to_count_builder(): void
+    {
+        $countBuilder = Foo::on('analytics')->count();
+
+        $this->assertSame('analytics', $countBuilder->onDatabase);
+    }
+
+    public function test_on_propagates_tag_to_delete_builder(): void
+    {
+        $deleteBuilder = Foo::on('analytics')->delete();
+
+        $this->assertSame('analytics', $deleteBuilder->onDatabase);
+    }
+
+    public function test_on_with_null_sets_null_tag(): void
+    {
+        $builder = Foo::on(null);
+
+        $this->assertNull($builder->onDatabase);
+    }
+
+    public function test_on_with_enum_tag(): void
+    {
+        $builder = Foo::on(TestDatabaseTag::Analytics);
+
+        $this->assertSame(TestDatabaseTag::Analytics, $builder->onDatabase);
+    }
+
+    public function test_on_database_returns_clone(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        $foo = Foo::create(bar: 'baz');
+        $clone = $foo->onDatabase('analytics');
+
+        $this->assertNotSame($foo, $clone);
+    }
+
+    public function test_on_database_does_not_mutate_original(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        $foo = Foo::create(bar: 'baz');
+        $foo->onDatabase('analytics');
+
+        // Original still works against default database
+        $foo->update(bar: 'updated');
+        $refreshed = Foo::get($foo->id);
+
+        $this->assertSame('updated', $refreshed->bar);
+    }
+
+    public function test_on_database_preserves_model_data(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            FooDatabaseMigration::class,
+        );
+
+        $foo = Foo::create(bar: 'baz');
+        $clone = $foo->onDatabase('analytics');
+
+        $this->assertSame('baz', $clone->bar);
+        $this->assertEquals($foo->id, $clone->id);
+    }
 }
 
 final class Foo
@@ -1116,4 +1211,10 @@ final class ModelWithHookedVirtualProperty
     public string $hookedName {
         get => strtoupper($this->name);
     }
+}
+
+enum TestDatabaseTag
+{
+    case Analytics;
+    case Reporting;
 }
