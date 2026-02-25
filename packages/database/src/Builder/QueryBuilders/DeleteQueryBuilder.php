@@ -60,6 +60,8 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
             $builder->appendWhere($where);
         }
 
+        $builder->onDatabase = $source->onDatabase;
+
         /** @var DeleteQueryBuilder<TSourceModel> $builder */
         return $builder;
     }

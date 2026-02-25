@@ -3,6 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Mapper\SerializerFactory;
 
@@ -15,13 +16,15 @@ use function Tempest\Support\arr;
 /**
  * @template TModel of object
  */
-final readonly class QueryBuilder
+final class QueryBuilder
 {
+    use OnDatabase;
+
     /**
      * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(
-        private string|object $model,
+        private readonly string|object $model,
     ) {}
 
     /**
@@ -41,7 +44,7 @@ final readonly class QueryBuilder
         return new SelectQueryBuilder(
             model: $this->model,
             fields: $columns !== [] ? arr($columns)->unique() : null,
-        );
+        )->onDatabase($this->onDatabase);
     }
 
     /**
@@ -66,7 +69,7 @@ final readonly class QueryBuilder
             model: $this->model,
             rows: $values,
             serializerFactory: get(SerializerFactory::class),
-        );
+        )->onDatabase($this->onDatabase);
     }
 
     /**
@@ -88,7 +91,7 @@ final readonly class QueryBuilder
             model: $this->model,
             values: $values,
             serializerFactory: get(SerializerFactory::class),
-        );
+        )->onDatabase($this->onDatabase);
     }
 
     /**
@@ -106,7 +109,7 @@ final readonly class QueryBuilder
      */
     public function delete(): DeleteQueryBuilder
     {
-        return new DeleteQueryBuilder($this->model);
+        return new DeleteQueryBuilder($this->model)->onDatabase($this->onDatabase);
     }
 
     /**
@@ -124,7 +127,7 @@ final readonly class QueryBuilder
         return new CountQueryBuilder(
             model: $this->model,
             column: $column,
-        );
+        )->onDatabase($this->onDatabase);
     }
 
     /**
@@ -255,9 +258,7 @@ final readonly class QueryBuilder
 
         $model = $this->new(...$params);
 
-        $id = query($this->model)
-            ->insert($model)
-            ->execute();
+        $id = $this->insert($model)->execute();
 
         $inspector = inspect($this->model);
         $primaryKeyProperty = $inspector->getPrimaryKeyProperty();
@@ -338,6 +339,7 @@ final readonly class QueryBuilder
         }
 
         query($model)
+            ->onDatabase($this->onDatabase)
             ->update(...$update)
             ->execute();
 

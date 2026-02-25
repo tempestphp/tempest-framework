@@ -171,6 +171,8 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
             }
         }
 
+        $builder->onDatabase = $source->onDatabase;
+
         /** @var SelectQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
