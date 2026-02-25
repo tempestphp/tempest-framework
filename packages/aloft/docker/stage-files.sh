@@ -9,7 +9,7 @@
 # Steps:
 #   1. lddtree --copy-to-tree for extensions, php, frankenphp
 #   2. Resolve soname symlinks → copy versioned targets beside them
-#   3. Normalise lib/ → usr/lib/ (distroless has /lib -> usr/lib symlink)
+#   3. Normalise lib/ and lib64/ → usr/lib/ and usr/lib64/ (distroless symlink collision)
 #   4. Explicit copies for dlopen'd plugins lddtree cannot discover
 #   5. PHP config, ld config, mime types, frankenphp runtime files
 
@@ -36,11 +36,20 @@ lddtree --copy-to-tree "${STAGING}" /usr/local/bin/php        2>/dev/null || tru
 lddtree --copy-to-tree "${STAGING}" /usr/local/bin/frankenphp 2>/dev/null || true
 lddtree --copy-to-tree "${STAGING}" /usr/local/lib/libphp.so  2>/dev/null || true
 
-# Normalise lib/ → usr/lib/ before package resolution so path lookups work
+# Normalise lib/ and lib64/ → usr/lib/ and usr/lib64/ before package resolution.
+# lddtree follows the /lib -> usr/lib and /lib64 -> usr/lib64 symlinks on the
+# source system and may write files under staging/lib/ or staging/lib64/.
+# distroless has both as symlinks so COPY / would collide — merge into usr/.
 if [ -d "${STAGING}/lib" ]; then
   mkdir -p "${STAGING}/usr/lib"
   cp -a "${STAGING}/lib/." "${STAGING}/usr/lib/"
   rm -rf "${STAGING}/lib"
+fi
+
+if [ -d "${STAGING}/lib64" ]; then
+  mkdir -p "${STAGING}/usr/lib64"
+  cp -a "${STAGING}/lib64/." "${STAGING}/usr/lib64/"
+  rm -rf "${STAGING}/lib64"
 fi
 
 # ---------------------------------------------------------------------------

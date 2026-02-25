@@ -17,6 +17,15 @@ variable "PUSH" {
   default = "0"
 }
 
+variable "REGISTRY" {
+  default = ""
+}
+
+# Derived — prepends registry if set, otherwise just the image name
+variable "IMAGE" {
+  default = REGISTRY != "" ? "${REGISTRY}/aloft" : "tempestphp/aloft"
+}
+
 # Derived values — not meant to be overridden directly
 variable "BASE_IMAGE" {
   default = "dunglas/frankenphp:${FRANKENPHP_VERSION}-php${PHP_VERSION}"
@@ -55,8 +64,8 @@ target "latest-nonroot" {
     DISTROLESS_VARIANT = "nonroot"
   }
   tags = [
-    "tempestphp/aloft:latest-nonroot",
-    "tempestphp/aloft:${VERSION_TAG}-nonroot",
+    "${IMAGE}:latest-nonroot",
+    "${IMAGE}:${VERSION_TAG}-nonroot",
   ]
 }
 
@@ -74,8 +83,8 @@ target "debug-nonroot" {
     DISTROLESS_VARIANT = "debug-nonroot"
   }
   tags = [
-    "tempestphp/aloft:debug-nonroot",
-    "tempestphp/aloft:${VERSION_TAG}-debug-nonroot",
+    "${IMAGE}:debug-nonroot",
+    "${IMAGE}:${VERSION_TAG}-debug-nonroot",
   ]
 }
 
