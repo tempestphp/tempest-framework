@@ -95,7 +95,7 @@ jobs:
 
       - name: "Setup Redis"
         if: ${{ matrix.os != 'windows-latest' }}
-        uses: supercharge/redis-github-action@1.7.0
+        uses: supercharge/redis-github-action@1.8.1
 
       - name: "Setup MySQL"
         if: ${{ matrix.database == 'mysql' }}

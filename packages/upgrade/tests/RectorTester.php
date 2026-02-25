@@ -96,12 +96,4 @@ final class RectorTester
 
         return trim($diff);
     }
-
-    /**
-     * @mago-expect lint:no-debug-symbols
-     */
-    public function dd(): never
-    {
-        dd($this->actual);
-    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -11,6 +13,7 @@ use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
+use Tempest\Core\InsightType;
 use Tempest\Support\Str;
 use UnitEnum;
 
@@ -36,7 +39,9 @@ final class UserCacheInsightsProvider implements InsightsProvider
             ->toArray();
     }
 
-    /** @var Insight[] */
+    /**
+     * @return array{0: ?Insight, 1: Insight}
+     */
     private function getInsight(Cache $cache): array
     {
         $type = $cache instanceof GenericCache
@@ -50,10 +55,10 @@ final class UserCacheInsightsProvider implements InsightsProvider
             : null;
 
         if ($cache->enabled) {
-            return [$type, new Insight('ENABLED', Insight::SUCCESS)];
+            return [$type, new Insight('ENABLED', InsightType::SUCCESS)];
         }
 
-        return [$type, new Insight('DISABLED', Insight::WARNING)];
+        return [$type, new Insight('DISABLED', InsightType::WARNING)];
     }
 
     private function getCacheName(Cache $cache): string

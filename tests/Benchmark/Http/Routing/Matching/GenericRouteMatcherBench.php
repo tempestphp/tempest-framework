@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Benchmark\Http\Routing\Matching;
 
 use Generator;
+use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
@@ -26,6 +27,7 @@ final class GenericRouteMatcherBench
         $this->matcher = new GenericRouteMatcher($config);
     }
 
+    #[Iterations(5)]
     #[ParamProviders('provideDynamicMatchingCases')]
     #[Revs(1000)]
     #[Warmup(10)]

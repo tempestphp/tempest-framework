@@ -34,6 +34,14 @@
             "Tempest\\Auth\\Tests\\": "tests"
         }
     },
+    "config": {
+        "audit": {
+            "ignore": {
+                "PKSA-y2cr-5h3j-g3ys": "Optional dependency",
+                "PKSA-2kqm-ps5x-s4f5": "Optional dependency"
+            }
+        }
+    },
     "license": "MIT",
     "minimum-stability": "dev"
 }

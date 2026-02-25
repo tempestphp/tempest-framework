@@ -39,11 +39,14 @@ use function Tempest\Mapper\map;
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsJoins<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsRelations<TModel>
- * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, SupportsJoins, SupportsRelations
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
+    use HasConditions;
+    use OnDatabase;
+    /** @use HasWhereQueryBuilderMethods<TModel> */
+    use HasWhereQueryBuilderMethods;
+    use TransformsQueryBuilder;
 
     public ModelInspector $model;
 
@@ -65,7 +68,6 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
 
     public ImmutableArray $wheres {
         get => $this->select->where;
-        set => $this->select->where;
     }
 
     /**
@@ -93,7 +95,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         $query = $this->build(...$bindings);
 
         if (! $this->model->isObjectModel()) {
-            return $query->fetchFirst();
+            return $this->coerceFirstResult($query->fetchFirst());
         }
 
         $result = map($query->fetch())
@@ -152,11 +154,11 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
      */
     public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, mixed ...$fields): SelectQueryBuilder
     {
-        $builder = new self($source->model->model, ...$fields);
+        $builder = new self($source->model->getName(), ...$fields);
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres[] = $where;
+            $builder->appendWhere($where);
         }
 
         if ($source instanceof SupportsJoins) {
@@ -169,6 +171,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
             }
         }
 
+        /** @var SelectQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
 
@@ -396,6 +399,15 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     private function clone(): self
     {
         return clone $this;
+    }
+
+    /**
+     * @param mixed $result
+     * @return TModel|null
+     */
+    private function coerceFirstResult(mixed $result): mixed
+    {
+        return $result;
     }
 
     /**

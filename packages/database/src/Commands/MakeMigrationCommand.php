@@ -89,6 +89,7 @@ final class MakeMigrationCommand
 
             $table = $this->resolveTableName($table);
             [$migrationName, $className] = $this->resolveNames($name, $alter);
+            /** @var MigrationType $migrationType */
             $stub = $this->resolveStub($migrationType, $alter);
 
             $targetPath = match ($migrationType) {

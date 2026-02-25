@@ -21,15 +21,15 @@ final class EnumReflector implements Reflector
     private readonly PHPReflectionEnum $reflectionEnum;
 
     /**
-     * @param class-string<TEnumName>|TEnumName|PHPReflectionEnum<TEnumName> $reflectionEnum
+     * @param class-string<TEnumName>|TEnumName|self|PHPReflectionEnum<TEnumName> $reflectionEnum
      */
-    public function __construct(string|object $reflectionEnum)
+    public function __construct(string|UnitEnum|self|PHPReflectionEnum $reflectionEnum)
     {
         if (is_string($reflectionEnum)) {
             $reflectionEnum = new PHPReflectionEnum($reflectionEnum);
         } elseif ($reflectionEnum instanceof self) {
             $reflectionEnum = $reflectionEnum->getReflection();
-        } elseif (! $reflectionEnum instanceof PHPReflectionEnum) {
+        } elseif ($reflectionEnum instanceof UnitEnum) {
             $reflectionEnum = new PHPReflectionEnum($reflectionEnum);
         }
 

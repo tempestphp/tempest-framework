@@ -18,13 +18,10 @@ final class ClassManipulator
     public function __construct(string|ReflectionClass $source)
     {
         if (is_file($source)) {
-            /** @phpstan-ignore-next-line */
             $this->classType = ClassType::fromCode(Filesystem\read_file($source));
         } elseif (is_string($source)) {
-            /** @phpstan-ignore-next-line */
             $this->classType = ClassType::from($source, withBodies: true);
         } else {
-            /** @phpstan-ignore-next-line */
             $this->classType = ClassType::from($source->getName(), withBodies: true);
         }
 

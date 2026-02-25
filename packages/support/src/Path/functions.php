@@ -128,7 +128,7 @@ function normalize(null|Stringable|string ...$paths): string
 
     // Trim forward and backward slashes
     $parts = array_map(fn (string $part) => trim($part, '/\\'), $parts);
-    $parts = array_filter($parts, fn (string $part) => $part !== '');
+    $parts = array_filter($parts, fn (string $part) => $part !== '' && $part !== '.');
 
     // Glue parts together
     $path = implode('/', $parts);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var string $name
+ * @var null|string $name
  * @var string|null $class
  */
 

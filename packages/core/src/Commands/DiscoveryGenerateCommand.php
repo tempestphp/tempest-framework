@@ -12,7 +12,6 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
-use Tempest\Core\Environment;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
@@ -25,7 +24,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         public function __construct(
             private Kernel $kernel,
             private DiscoveryCache $discoveryCache,
-            private Environment $environment,
         ) {}
 
         #[ConsoleCommand(

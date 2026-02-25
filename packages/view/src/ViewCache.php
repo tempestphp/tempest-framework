@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Closure;
+use Tempest\Support\Filesystem;
 use Throwable;
 
 use function Tempest\internal_storage_path;
@@ -47,6 +48,53 @@ final class ViewCache
         }
 
         return path($this->pool->directory, $cacheItem->getKey() . '.php')->toString();
+    }
+
+    /**
+     * @param array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}> $lineMap
+     */
+    public function saveSourceMap(string $compiledViewPath, ?string $sourcePath, array $lineMap): void
+    {
+        $sourceMapPath = $this->getSourceMapPath($compiledViewPath);
+
+        $sourceMap = [
+            'sourcePath' => $sourcePath,
+            'lineMap' => $lineMap,
+        ];
+
+        Filesystem\write_file(
+            $sourceMapPath,
+            sprintf("<?php\n\nreturn %s;\n", var_export($sourceMap, true)),
+        );
+    }
+
+    /**
+     * @return array{sourcePath: string|null, lineMap: array<int, array{compiledStartLine: int, compiledEndLine: int, sourcePath: string, sourceStartLine: int}>}|null
+     */
+    public function getSourceMap(string $compiledViewPath): ?array
+    {
+        $sourceMapPath = $this->getSourceMapPath($compiledViewPath);
+
+        if (! Filesystem\is_file($sourceMapPath)) {
+            return null;
+        }
+
+        $sourceMap = include $sourceMapPath;
+
+        if (! is_array($sourceMap)) {
+            return null;
+        }
+
+        return $sourceMap;
+    }
+
+    private function getSourceMapPath(string $compiledViewPath): string
+    {
+        if (str_ends_with($compiledViewPath, '.php')) {
+            return substr($compiledViewPath, offset: 0, length: -4) . '.map.php';
+        }
+
+        return $compiledViewPath . '.map.php';
     }
 
     private static function getCachePath(): string

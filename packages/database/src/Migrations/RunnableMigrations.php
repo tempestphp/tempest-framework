@@ -10,11 +10,11 @@ use Tempest\Database\MigratesDown;
 use Tempest\Database\MigratesUp;
 use Traversable;
 
-/** @implements IteratorAggregate<MigratesUp> */
+/** @implements IteratorAggregate<MigratesUp|MigratesDown> */
 final class RunnableMigrations implements IteratorAggregate
 {
     /**
-     * @param MigratesUp[] $migrations
+     * @param array<MigratesUp|MigratesDown> $migrations
      */
     public function __construct(
         private array $migrations = [],
@@ -22,6 +22,9 @@ final class RunnableMigrations implements IteratorAggregate
         usort($this->migrations, static fn (MigratesUp|MigratesDown $a, MigratesUp|MigratesDown $b) => strnatcmp($a->name, $b->name));
     }
 
+    /**
+     * @return Traversable<MigratesUp|MigratesDown>
+     */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->migrations);

@@ -22,6 +22,7 @@ use function Tempest\Support\Str\strip_start;
  *
  * @param non-empty-string $pattern The pattern to match against.
  * @param 0|2|256|512|768 $flags
+ * @return array<int|string, string|array{0: string|null, 1: int}|null>|array<int|string, list<string|array{0: string|null, 1: int}|null>>|list<array<int|string, string|array{0: string|null, 1: int}|null>>
  */
 function get_matches(Stringable|string $subject, Stringable|string $pattern, bool $global = false, int $flags = 0, int $offset = 0): array
 {
@@ -61,6 +62,7 @@ function get_matches(Stringable|string $subject, Stringable|string $pattern, boo
  * Returns the specified matches of `$pattern` in `$subject`.
  *
  * @param non-empty-string $pattern The pattern to match against.
+ * @return list<array<int|string, string>>
  */
 function get_all_matches(
     Stringable|string $subject,
@@ -68,6 +70,7 @@ function get_all_matches(
     Stringable|string|int|array $matches = 0,
     int $offset = 0,
 ): array {
+    /** @var list<array<int|string, string>> $result */
     $result = get_matches($subject, $pattern, true, PREG_SET_ORDER, $offset);
 
     return arr($result)
@@ -78,8 +81,22 @@ function get_all_matches(
 /**
  * Returns the specified match of `$pattern` in `$subject`. If no match is specified, returns the whole matching array.
  *
+ * @template TMatch of null|array<int|string>|Stringable|int|string
+ * @template TDefault
+ *
  * @param non-empty-string $pattern The pattern to match against.
+ * @param TMatch $match
+ * @param TDefault $default
  * @param 0|256|512|768 $flags
+ * @return (
+ *   TMatch is null
+ *     ? array<int|string, string|array{0: string|null, 1: int}|null>
+ *     : (
+ *         TMatch is array
+ *           ? array<int|string, string|array{0: string|null, 1: int}|null>
+ *           : string|array{0: string|null, 1: int}|null|TDefault
+ *       )
+ * )
  */
 function get_match(
     Stringable|string $subject,
@@ -88,7 +105,7 @@ function get_match(
     mixed $default = null,
     int $flags = 0,
     int $offset = 0,
-): null|int|string|array {
+): mixed {
     $result = get_matches($subject, $pattern, false, $flags, $offset);
 
     if ($match === null) {

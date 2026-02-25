@@ -21,7 +21,7 @@ final class EnvironmentInsightsProvider implements InsightsProvider
             'Composer version' => $this->getComposerVersion(),
             'Operating system' => $this->getOperatingSystem(),
             'Environment' => $this->environment->value,
-            'Application URL' => $this->appConfig->baseUri ?: new Insight('Not set', Insight::ERROR),
+            'Application URL' => $this->appConfig->baseUri ?: new Insight('Not set', InsightType::ERROR),
         ];
     }
 
@@ -34,14 +34,14 @@ final class EnvironmentInsightsProvider implements InsightsProvider
         $output = shell_exec('composer --version --no-ansi 2>&1');
 
         if (! $output) {
-            return new Insight('Not installed', Insight::ERROR);
+            return new Insight('Not installed', InsightType::ERROR);
         }
 
         return \Tempest\Support\Regex\get_match(
             subject: $output,
             pattern: "/Composer version (?<version>\S+)/",
             match: 'version',
-            default: new Insight('Unknown', Insight::ERROR),
+            default: new Insight('Unknown', InsightType::ERROR),
         );
     }
 

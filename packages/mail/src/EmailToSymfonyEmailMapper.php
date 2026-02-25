@@ -122,8 +122,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
             ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
                 $address instanceof SymfonyAddress => $address,
                 $address instanceof EmailAddress => new SymfonyAddress($address->email, $address->name ?? ''),
-                is_string($address) => SymfonyAddress::create($address),
-                default => null,
+                default => SymfonyAddress::create($address),
             })
             ->filter()
             ->toArray();

@@ -37,12 +37,12 @@ final class ViewTester
     /**
      * Registers a view component for testing purposes.
      */
-    public function registerViewComponent(string $name, string $html, string $file = '', bool $isVendor = false): self
+    public function registerViewComponent(string $name, string $html, ?string $file = null, bool $isVendor = false): self
     {
         $viewComponent = new ViewComponent(
             name: $name,
             contents: $html,
-            file: $file,
+            file: $file ?? $name . '.view.php',
             isVendorComponent: $isVendor,
         );
 

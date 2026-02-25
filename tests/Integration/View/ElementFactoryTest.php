@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\View;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\RootElement;
 use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\WhitespaceElement;
 use Tempest\View\Parser\TempestViewParser;
@@ -38,11 +39,13 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
 
         $elementFactory = $this->container->get(ElementFactory::class);
 
-        $a = $elementFactory->make(iterator_to_array($ast)[0]);
+        $root = new RootElement();
+        $elementFactory->make(iterator_to_array($ast)[0], $root);
+        $a = $root->getChildren()[0];
 
         $this->assertInstanceOf(GenericElement::class, $a);
         $this->assertCount(1, $this->withoutWhitespace($a->getChildren()));
-        $this->assertNull($a->getParent());
+        $this->assertInstanceOf(RootElement::class, $a->getParent());
 
         $b = $this->withoutWhitespace($a->getChildren())[0];
         $this->assertInstanceOf(GenericElement::class, $b);

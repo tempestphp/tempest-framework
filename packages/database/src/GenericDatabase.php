@@ -10,6 +10,7 @@ use PDOStatement;
 use Tempest\Database\Builder\QueryBuilders\BuildsQuery;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
+use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
 use Tempest\Mapper\SerializerFactory;
@@ -17,6 +18,8 @@ use Tempest\Support\Str\ImmutableString;
 use Throwable;
 use UnitEnum;
 
+// TODO: add DatabaseConnection to the Connection interface instead (4.x)
+/** @property PDOConnection $connection */
 final class GenericDatabase implements Database
 {
     private ?PDOStatement $lastStatement = null;
