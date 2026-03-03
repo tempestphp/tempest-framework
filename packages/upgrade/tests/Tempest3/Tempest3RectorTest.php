@@ -116,4 +116,12 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('use Tempest\Support\Arr\map;')
             ->assertContains('return map($data, fn ($item) => $item * 2);');
     }
+
+    public function test_bindable_resolve_return_type_becomes_nullable(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/BindableResolveReturnType.input.php')
+            ->assertContains('public static function resolve(string $input): ?static')
+            ->assertNotContains('public static function resolve(string $input): self');
+    }
 }
