@@ -91,9 +91,23 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call('completion:install --shell=fish')
-            ->assertSee('Invalid argument `fish` for `shell` argument')
+            ->call('completion:install --shell=powershell')
+            ->assertSee('Invalid argument `powershell` for `shell` argument')
             ->assertError();
+    }
+
+    #[Test]
+    public function install_shows_post_install_instructions_for_fish(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::FISH);
+
+        $this->console
+            ->call('completion:install --shell=fish --force')
+            ->assertSee('source')
+            ->assertSee('config.fish')
+            ->assertSuccess();
     }
 
     #[Test]

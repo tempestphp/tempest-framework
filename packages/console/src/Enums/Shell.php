@@ -8,6 +8,7 @@ enum Shell: string
 {
     case ZSH = 'zsh';
     case BASH = 'bash';
+    case FISH = 'fish';
 
     public static function detect(): ?self
     {
@@ -20,6 +21,7 @@ enum Shell: string
         return match (true) {
             str_contains($shell, 'zsh') => self::ZSH,
             str_contains($shell, 'bash') => self::BASH,
+            str_contains($shell, 'fish') => self::FISH,
             default => null,
         };
     }
@@ -29,6 +31,7 @@ enum Shell: string
         return match ($this) {
             self::ZSH => 'tempest.zsh',
             self::BASH => 'tempest.bash',
+            self::FISH => 'tempest.fish',
         };
     }
 
@@ -37,6 +40,7 @@ enum Shell: string
         return match ($this) {
             self::ZSH => 'completion.zsh',
             self::BASH => 'completion.bash',
+            self::FISH => 'completion.fish',
         };
     }
 
@@ -47,6 +51,7 @@ enum Shell: string
         return match ($this) {
             self::ZSH => $home . '/.zshrc',
             self::BASH => $home . '/.bashrc',
+            self::FISH => $home . '/.config/fish/config.fish',
         };
     }
 }
