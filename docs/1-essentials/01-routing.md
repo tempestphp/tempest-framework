@@ -171,7 +171,7 @@ use Tempest\Database\IsDatabaseModel;
 
 final class Aircraft implements Bindable
 {
-    public static function resolve(string $input): self
+    public static function resolve(string $input): ?static
     {
         return query(self::class)->resolve($input);
     }
@@ -193,7 +193,7 @@ final class Aircraft implements Bindable
     #[IsBindingValue]
     public string $registrationNumber;
 
-    public static function resolve(string $input): self
+    public static function resolve(string $input): ?static
     {
         return query(self::class)
             ->where('registrationNumber', $input)
