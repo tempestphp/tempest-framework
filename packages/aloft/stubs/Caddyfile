@@ -20,7 +20,7 @@
 
 {$CADDY_EXTRA_CONFIG}
 
-{$CADDY_SERVER_NAME:localhost}:{$CADDY_HTTP_PORT:8000}, {$CADDY_SERVER_NAME:localhost}:{$CADDY_HTTPS_PORT:8443}  {
+{$CADDY_SERVER_NAME:localhost} {
 	#log {
 	#	# Redact the authorization query parameter that can be set by Mercure
 	#	format filter {
