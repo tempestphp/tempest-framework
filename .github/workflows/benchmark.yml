@@ -14,6 +14,7 @@ on:
       - 'packages/console/src/**'
       - 'packages/reflection/src/**'
       - 'phpbench.json'
+      - '.github/workflows/benchmark.yml'
 
 concurrency:
   group: benchmark-${{ github.event.pull_request.number }}
