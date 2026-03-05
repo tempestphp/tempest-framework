@@ -2,6 +2,18 @@ name: Benchmark
 
 on:
   pull_request:
+    paths:
+      - 'tests/Benchmark/**'
+      - 'packages/container/src/**'
+      - 'packages/core/src/**'
+      - 'packages/discovery/src/**'
+      - 'packages/router/src/**'
+      - 'packages/http/src/**'
+      - 'packages/view/src/**'
+      - 'packages/clock/src/**'
+      - 'packages/console/src/**'
+      - 'packages/reflection/src/**'
+      - 'phpbench.json'
 
 concurrency:
   group: benchmark-${{ github.event.pull_request.number }}
