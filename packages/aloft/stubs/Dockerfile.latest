@@ -67,8 +67,6 @@ FROM gcr.io/distroless/cc-debian13:nonroot AS runner
 
 USER root
 
-COPY --from=builder /bin/busybox /usr/bin/busybox
-
 RUN --mount=type=bind,from=builder,source=/tmp/chroot.tar,target=/tmp/chroot.tar \
     --mount=type=bind,from=builder,source=/bin/busybox,target=/bin/busybox \
     ["/bin/busybox", "sh", "-c", "\
