@@ -36,16 +36,21 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
 
     public function cast(mixed $input): mixed
     {
-        $values = [];
         $iterableType = $this->property->getIterableType();
+
+        if (Json\is_valid($input)) {
+            $input = Json\decode($input);
+        }
+
+        if ($iterableType->isBuiltIn()) {
+            return $input;
+        }
 
         $caster = $iterableType->isEnum()
             ? new EnumCaster($iterableType->getName())
             : new ObjectCaster($iterableType);
 
-        if (Json\is_valid($input)) {
-            $input = Json\decode($input);
-        }
+        $values = [];
 
         foreach ($input as $key => $item) {
             if (is_object($item) && $iterableType->matches($item::class)) {

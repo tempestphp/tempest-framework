@@ -12,6 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
@@ -164,6 +165,21 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $object->roles);
         $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+    }
+
+    public function test_map_primitive_array_properties(): void
+    {
+        $object = map([
+            'strings' => ['a', 'b', 'c'],
+            'ints' => [1, 2, 3],
+            'floats' => [1.1, 2.2, 3.3],
+            'bools' => [true, false, true],
+        ])->to(ObjectWithPrimitiveArrayProperties::class);
+
+        $this->assertSame(['a', 'b', 'c'], $object->strings);
+        $this->assertSame([1, 2, 3], $object->ints);
+        $this->assertSame([1.1, 2.2, 3.3], $object->floats);
+        $this->assertSame([true, false, true], $object->bools);
     }
 }
 
