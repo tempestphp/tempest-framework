@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-final class ViteConfigCommandTestCase extends FrameworkIntegrationTestCase
+final class ViteConfigCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_outputs_json_default_config(): void
     {
@@ -31,6 +31,6 @@ final class ViteConfigCommandTestCase extends FrameworkIntegrationTestCase
 
         $this->console
             ->call(ViteConfigCommand::class)
-            ->assertSee('{"build_directory":"build\/website","bridge_file_name":".website","manifest":"website.json","entrypoints":["src\/website\/main.ts"]}');
+            ->assertSee('{"build_directory":"build/website","bridge_file_name":".website","manifest":"website.json","entrypoints":["src/website/main.ts"]}');
     }
 }
