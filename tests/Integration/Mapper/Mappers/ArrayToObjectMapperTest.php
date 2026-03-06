@@ -24,7 +24,7 @@ use function Tempest\Mapper\map;
 /**
  * @internal
  */
-final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
+final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_missing_values(): void
     {
