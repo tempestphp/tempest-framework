@@ -12,11 +12,11 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
