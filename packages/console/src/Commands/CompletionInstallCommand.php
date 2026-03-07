@@ -34,7 +34,7 @@ final readonly class CompletionInstallCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            description: 'The shell to install completions for (zsh, bash)',
+            description: 'The shell to install completions for (zsh, bash, fish)',
             aliases: ['-s'],
         )]
         ?Shell $shell = null,
@@ -48,7 +48,7 @@ final readonly class CompletionInstallCommand
         $shell ??= ($this->resolveShell)('Which shell do you want to install completions for?');
 
         if ($shell === null) {
-            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;
         }
