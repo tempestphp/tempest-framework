@@ -254,7 +254,7 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "@php -r \"@mkdir('vendor/bin',0777,true); foreach(['tempest','tempest-complete'] as \\$f){\\$l='vendor/bin/'.\\$f; @unlink(\\$l); symlink('../../packages/console/bin/'.\\$f,\\$l);}\""
+            "@php bin/link-bin"
         ],
         "phpunit": [
             "Composer\\Config::disableProcessTimeout",

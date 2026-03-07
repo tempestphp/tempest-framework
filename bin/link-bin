@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Symlinks the bin files into vendor/bin for the root package.
+ * Composer only does this for dependencies, not the root package itself.
+ */
+
+declare(strict_types=1);
+
+@mkdir('vendor/bin', 0777, true);
+
+foreach (['tempest', 'tempest-complete'] as $f) {
+    $link = 'vendor/bin/' . $f;
+    $target = '../../packages/console/bin/' . $f;
+
+    @unlink($link);
+    symlink($target, $link);
+}
