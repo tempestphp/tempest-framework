@@ -78,18 +78,26 @@ function __tempest_completions
             set -l value "$parts[1]"
             set -l description "$parts[2]"
 
-            if test -n "$value"
-                set -l escaped_value (string escape --style=regex -- "$value")
-                set -l duplicate_match_pattern (string join '' '^' "$escaped_value" '[[:space:]][[:space:]]+')
-                set -l duplicate_replace_pattern (string join '' '^' "$escaped_value" '[[:space:]]+')
-
-                if string match -rq "$duplicate_match_pattern" -- "$description"
-                    set description (string replace -r "$duplicate_replace_pattern" '' -- "$description")
-                end
-
-                echo -- "$value$tab$description"
+            if test -z "$value"
                 continue
             end
+
+            if test "$value" = "$description"
+                echo -- "$value"
+                continue
+            end
+
+            set -l escaped_value (string escape --style=regex -- "$value")
+            set -l strip_pattern (string join '' '^' "$escaped_value" '[[:space:]]+')
+            set description (string replace -r "$strip_pattern" '' -- "$description")
+
+            if test -n "$description"
+                echo -- "$value$tab$description"
+            else
+                echo -- "$value"
+            end
+
+            continue
         end
 
         echo -- "$line"
