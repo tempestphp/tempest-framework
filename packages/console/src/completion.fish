@@ -1,3 +1,5 @@
+set -g _TEMPEST_SHOW_DESCRIPTIONS 1
+
 function __tempest_project_directory
     set -l command $argv[1]
     set -l dir (command dirname -- "$command")
@@ -79,6 +81,11 @@ function __tempest_completions
             set -l description "$parts[2]"
 
             if test -z "$value"
+                continue
+            end
+
+            if test "$_TEMPEST_SHOW_DESCRIPTIONS" != 1
+                echo -- "$value"
                 continue
             end
 

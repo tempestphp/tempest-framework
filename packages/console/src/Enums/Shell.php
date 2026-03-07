@@ -44,6 +44,14 @@ enum Shell: string
         };
     }
 
+    public function supportsCompletionDescriptions(): bool
+    {
+        return match ($this) {
+            self::ZSH, self::FISH => true,
+            self::BASH => false,
+        };
+    }
+
     public function getRcFile(): string
     {
         $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
