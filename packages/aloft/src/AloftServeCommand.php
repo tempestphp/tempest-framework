@@ -61,6 +61,9 @@ final readonly class AloftServeCommand
 
         if ($this->confirm("Do you want to start dev server from {$runImage}?", default: true)) {
             $this->console->info('Okay, starting, use ctrl-c to exit when finished');
+            if ($this->stubsPublished === true && ! ($repository ?? null === 'remote')) {
+                $this->console->info('Stubs are published, and you are using the local repository, therefore ensure that you run aloft:build before using aloft:serve');
+            }
             passthru(
                 "docker run --rm -it -p 80:8000 -p 443:8443 -p 443:8443/udp \
                 -v "
