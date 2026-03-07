@@ -253,6 +253,9 @@
         }
     },
     "scripts": {
+        "post-autoload-dump": [
+            "@php -r \"@mkdir('vendor/bin',0777,true); foreach(['tempest','tempest-complete'] as \\$f){\\$l='vendor/bin/'.\\$f; @unlink(\\$l); symlink('../../packages/console/bin/'.\\$f,\\$l);}\""
+        ],
         "phpunit": [
             "Composer\\Config::disableProcessTimeout",
             "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices"
