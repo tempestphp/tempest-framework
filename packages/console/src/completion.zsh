@@ -4,6 +4,8 @@ if ! (( $+functions[compdef] )); then
 fi
 
 if (( $+functions[compdef] )); then
+    typeset -g _TEMPEST_SHOW_DESCRIPTIONS=1
+
     if [[ -z "${_tempest_php_original_compdef:-}" ]] && [[ -n "${_comps[php]:-}" ]] && [[ "${_comps[php]}" != "_tempest" ]]; then
         typeset -g _tempest_php_original_compdef="${_comps[php]}"
     fi
@@ -98,11 +100,19 @@ if (( $+functions[compdef] )); then
         done
 
         if (( ${#without_equals_values[@]} )); then
-            compadd -Q -l -d without_equals_display -- "${without_equals_values[@]}"
+            if (( _TEMPEST_SHOW_DESCRIPTIONS )); then
+                compadd -Q -l -d without_equals_display -- "${without_equals_values[@]}"
+            else
+                compadd -Q -- "${without_equals_values[@]}"
+            fi
         fi
 
         if (( ${#with_equals_values[@]} )); then
-            compadd -Q -l -d with_equals_display -S '' -- "${with_equals_values[@]}"
+            if (( _TEMPEST_SHOW_DESCRIPTIONS )); then
+                compadd -Q -l -d with_equals_display -S '' -- "${with_equals_values[@]}"
+            else
+                compadd -Q -S '' -- "${with_equals_values[@]}"
+            fi
         fi
     }
 

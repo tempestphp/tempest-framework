@@ -54,7 +54,8 @@ final class ShellTest extends TestCase
             'bash' => ['/bin/bash', Shell::BASH],
             'usr local zsh' => ['/usr/local/bin/zsh', Shell::ZSH],
             'usr local bash' => ['/usr/local/bin/bash', Shell::BASH],
-            'fish' => ['/bin/fish', null],
+            'fish' => ['/bin/fish', Shell::FISH],
+            'usr local fish' => ['/usr/local/bin/fish', Shell::FISH],
             'empty' => ['', null],
             'not set' => [false, null],
         ];
@@ -65,6 +66,7 @@ final class ShellTest extends TestCase
     {
         $this->assertSame('tempest.zsh', Shell::ZSH->getCompletionFilename());
         $this->assertSame('tempest.bash', Shell::BASH->getCompletionFilename());
+        $this->assertSame('tempest.fish', Shell::FISH->getCompletionFilename());
     }
 
     #[Test]
@@ -72,6 +74,7 @@ final class ShellTest extends TestCase
     {
         $this->assertSame('completion.zsh', Shell::ZSH->getSourceFilename());
         $this->assertSame('completion.bash', Shell::BASH->getSourceFilename());
+        $this->assertSame('completion.fish', Shell::FISH->getSourceFilename());
     }
 
     #[Test]
@@ -81,5 +84,6 @@ final class ShellTest extends TestCase
 
         $this->assertSame($home . '/.zshrc', Shell::ZSH->getRcFile());
         $this->assertSame($home . '/.bashrc', Shell::BASH->getRcFile());
+        $this->assertSame($home . '/.config/fish/config.fish', Shell::FISH->getRcFile());
     }
 }

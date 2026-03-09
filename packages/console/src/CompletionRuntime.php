@@ -64,6 +64,11 @@ final readonly class CompletionRuntime
                 '',
                 "  source {$installedPath}",
             ],
+            Shell::FISH => [
+                "Add this line to {$rcFile} and restart your terminal:",
+                '',
+                "  source {$installedPath}",
+            ],
         };
     }
 

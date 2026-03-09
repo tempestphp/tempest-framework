@@ -172,9 +172,9 @@ final class QueryBuilder
      * query(User::class)->resolve(1);
      * ```
      *
-     * @return TModel
+     * @return TModel|null
      */
-    public function resolve(string|int|PrimaryKey $id): object
+    public function resolve(string|int|PrimaryKey $id): ?object
     {
         if (! inspect($this->model)->hasPrimaryKey()) {
             throw ModelDidNotHavePrimaryColumn::neededForMethod($this->model, 'resolve');

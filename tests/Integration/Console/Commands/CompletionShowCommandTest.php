@@ -49,12 +49,24 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function show_fish_completion_script(): void
+    {
+        $this->console
+            ->call('completion:show --shell=fish')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('function __tempest_completions')
+            ->assertSee('set -l command_name (command basename -- "$tokens[1]")')
+            ->assertSuccess();
+    }
+
+    #[Test]
     public function show_with_invalid_shell(): void
     {
         $this->console
             ->withoutPrompting()
-            ->call('completion:show --shell=fish')
-            ->assertSee('Invalid argument `fish` for `shell` argument')
+            ->call('completion:show --shell=bananas')
+            ->assertSee('Invalid argument `bananas` for `shell` argument')
             ->assertError();
     }
 }
