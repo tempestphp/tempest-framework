@@ -13,6 +13,10 @@ env:
   POSTGRES_PASSWORD: ""
   POSTGRES_DB: postgres
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   vitest:
     runs-on: ${{ matrix.os }}
