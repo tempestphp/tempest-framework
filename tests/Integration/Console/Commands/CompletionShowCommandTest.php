@@ -12,12 +12,24 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+    }
+
     #[Test]
     public function show_zsh_completion_script(): void
     {
         $this->console
             ->call('completion:show --shell=zsh')
-            ->assertSee('_tempest')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('_tempest_php_original_compdef')
+            ->assertSee('_compskip=all')
             ->assertSuccess();
     }
 
@@ -26,7 +38,25 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('completion:show --shell=bash')
-            ->assertSee('_tempest')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('if [[ "$current_word" == *[=:]* ]] && [[ "$current_segment" != "$current_word" ]]; then')
+            ->assertSee('if [[ -z "$current_segment" || "$current_segment" == "=" ]]; then')
+            ->assertSee('__tempest_php_original_completion')
+            ->assertSee('complete -o bashdefault -o default -F _tempest tempest')
+            ->assertSee('compopt +o default +o bashdefault')
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function show_fish_completion_script(): void
+    {
+        $this->console
+            ->call('completion:show --shell=fish')
+            ->assertSee('tempest-complete')
+            ->assertSee('commands.json')
+            ->assertSee('function __tempest_completions')
+            ->assertSee('set -l command_name (command basename -- "$tokens[1]")')
             ->assertSuccess();
     }
 
@@ -35,8 +65,8 @@ final class CompletionShowCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call('completion:show --shell=fish')
-            ->assertSee('Invalid argument `fish` for `shell` argument')
+            ->call('completion:show --shell=bananas')
+            ->assertSee('Invalid argument `bananas` for `shell` argument')
             ->assertError();
     }
 }

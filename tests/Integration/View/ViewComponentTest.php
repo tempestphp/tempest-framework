@@ -8,14 +8,22 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Environment;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
 use Tempest\Http\Session\FormSession;
+use Tempest\Router\Exceptions\DevelopmentException;
+use Tempest\Router\Exceptions\HtmlExceptionRenderer;
 use Tempest\Validation\FailingRule;
 use Tempest\Validation\Rules\IsAlphaNumeric;
 use Tempest\Validation\Rules\IsBetween;
 use Tempest\Validation\Validator;
 use Tempest\View\Exceptions\DataAttributeWasInvalid;
+use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewVariableWasReserved;
+use Tempest\View\GenericView;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewCache;
+use Tempest\View\ViewConfig;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -1023,9 +1031,187 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_fallthrough_attribute_without_value(): void
     {
-        $this->view->registerViewComponent('x-test', '<div :if="$flag">hi</div>');
+        $this->view->registerViewComponent('x-test', '<div :isset="$flag">hi</div>');
 
         $this->assertSnippetsMatch('', $this->view->render('<x-test />'));
         $this->assertSnippetsMatch('<div>hi</div>', $this->view->render('<x-test :flag/>'));
+    }
+
+    public function test_imports_in_slots_from_root_node(): void
+    {
+        $this->view->registerViewComponent('x-test', '<div><x-slot /></div>');
+
+        $html = $this->view->render(<<<'HTML'
+        <?php
+            use Tests\Tempest\Fixtures\Modules\Home\HomeController;
+            use function \Tempest\Router\uri;
+        ?>
+
+        <x-test>{{ uri(HomeController::class) }}</x-test>
+        HTML);
+
+        $this->assertSame('<div>/</div>', $html);
+    }
+
+    public function test_combined_imports_from_root_node_and_view_component(): void
+    {
+        $this->view->registerViewComponent('x-parent', <<<'HTML'
+        <div class="parent"><x-slot /></div>
+        HTML);
+
+        $this->view->registerViewComponent('x-child', <<<'HTML'
+        <?php 
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController; 
+        ?>
+        <div class="child"><x-slot /></div>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <?php 
+        use function \Tempest\Router\uri; 
+        ?>
+
+        <x-parent>
+            <x-child>{{ uri(HomeController::class) }}</x-child>
+        </x-parent>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="parent"><div class="child">/</div></div>', $html);
+    }
+
+    public function test_exception_for_missing_imports(): void
+    {
+        $this->assertException(
+            ViewCompilationFailed::class,
+            function (): void {
+                $this->view->render(view(__DIR__ . '/Fixtures/missing-import-view.view.php'));
+            },
+            function (ViewCompilationFailed $exception): void {
+                $this->assertStringContainsString('missing-import-view.view.php', $exception->getFile());
+                $this->assertSame(2, $exception->getLine());
+            },
+        );
+    }
+
+    #[Test]
+    public function does_not_duplicate_view_compilation_frames_in_stacktrace(): void
+    {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+        $this->container->singleton(GenericRequest::class, new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+        ));
+
+        $viewRenderer = TempestViewRenderer::make();
+        $exceptionRenderer = $this->container->get(HtmlExceptionRenderer::class);
+
+        $this->assertException(
+            ViewCompilationFailed::class,
+            function () use ($viewRenderer): void {
+                $viewRenderer->render(view(__DIR__ . '/Fixtures/stacktrace-standalone-error.view.php'));
+            },
+            function (ViewCompilationFailed $exception) use ($exceptionRenderer): void {
+                $response = $exceptionRenderer->render($exception);
+
+                $this->assertInstanceOf(DevelopmentException::class, $response);
+                $this->assertInstanceOf(GenericView::class, $response->body);
+
+                $hydration = json_decode($response->body->data['hydration'], associative: true, flags: JSON_THROW_ON_ERROR);
+                $stacktrace = json_decode($hydration['stacktrace'], associative: true, flags: JSON_THROW_ON_ERROR);
+
+                $renderCompiledFrames = array_values(array_filter(
+                    $stacktrace['applicationFrames'],
+                    fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
+                ));
+
+                $this->assertCount(1, $renderCompiledFrames);
+            },
+        );
+    }
+
+    #[Test]
+    public function maps_component_source_line_in_view_compilation_stacktrace(): void
+    {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+        $this->container->singleton(GenericRequest::class, new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+        ));
+
+        $this->container->get(ViewConfig::class)->addViewComponents(
+            __DIR__ . '/Fixtures/x-stacktrace-error-component.view.php',
+        );
+
+        $exceptionRenderer = $this->container->get(HtmlExceptionRenderer::class);
+
+        $this->assertException(
+            ViewCompilationFailed::class,
+            function (): void {
+                $this->view->render(view(__DIR__ . '/Fixtures/stacktrace-component-imported-usage.view.php'));
+            },
+            function (ViewCompilationFailed $exception) use ($exceptionRenderer): void {
+                $response = $exceptionRenderer->render($exception);
+
+                $this->assertInstanceOf(DevelopmentException::class, $response);
+                $this->assertInstanceOf(GenericView::class, $response->body);
+
+                $hydration = json_decode($response->body->data['hydration'], associative: true, flags: JSON_THROW_ON_ERROR);
+                $stacktrace = json_decode($hydration['stacktrace'], associative: true, flags: JSON_THROW_ON_ERROR);
+
+                $renderCompiledFrames = array_values(array_filter(
+                    $stacktrace['applicationFrames'],
+                    fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
+                ));
+
+                $this->assertCount(1, $renderCompiledFrames);
+                $this->assertSame('tests/Integration/View/Fixtures/x-stacktrace-error-component.view.php', $renderCompiledFrames[0]['relativeFile']);
+                $this->assertSame(2, $renderCompiledFrames[0]['line']);
+            },
+        );
+    }
+
+    public function test_imports_with_nested_view_components(): void
+    {
+        $this->view->registerViewComponent('x-card', <<<'HTML'
+        <div class="card"><x-slot /></div>
+        HTML);
+
+        $this->view->registerViewComponent('x-footer', <<<'HTML'
+        <x-card><x-slot /></x-card>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <?php
+        use function Tempest\Router\uri;
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController;
+        ?>
+        <x-footer>
+            {{ uri(HomeController::class) }}
+        </x-footer>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="card">/</div>', $html);
+    }
+
+    public function test_imports_in_nested_html_elements(): void
+    {
+        $this->view->registerViewComponent('x-a', '<div class="a"><x-slot /></div>">');
+        $this->view->registerViewComponent('x-b', '<div class="b"><x-slot /></div>">');
+
+        $html = $this->view->render(<<<'HTML'
+        <?php
+        use function Tempest\Router\uri;
+        use Tests\Tempest\Fixtures\Modules\Home\HomeController;
+        ?>
+        <x-a>
+            <div>
+                <x-b>
+                    {{ uri(HomeController::class) }}
+                </x-b>
+            </div>
+        </x-a>
+        HTML);
+
+        $this->assertSnippetsMatch('<div class="a"><div><div class="b">/</div>"></div></div>">', $html);
     }
 }

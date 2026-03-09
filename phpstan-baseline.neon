@@ -110,3 +110,17 @@ parameters:
             path: tests/Integration/Database/GroupedWhereMethodsTest.php
             count: 1
             # Intentional: assertion keeps explicit null-check semantics in grouped-where integration test
+        -
+            identifier: function.notFound
+            paths:
+                - packages/view/tests/Fixtures/standalone-error-slot-usage.view.php
+                - packages/view/tests/Fixtures/standalone-error.view.php
+                - packages/view/tests/Fixtures/x-standalone-error-component.view.php
+                - tests/Integration/View/Fixtures/stacktrace-standalone-error.view.php
+                - tests/Integration/View/Fixtures/x-stacktrace-error-component.view.php
+            # Intentional: these fixtures validate source-path stack traces for view compilation errors
+        -
+            identifier: variable.undefined
+            path: packages/view/tests/Fixtures/standalone-undefined-variable.view.php
+            count: 1
+            # Intentional: this fixture validates undefined variable source mapping in view compilation errors

@@ -28,6 +28,8 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
 
     public function test_cache_clear_default_named(): void
     {
+        $this->container->config(new InMemoryCacheConfig(tag: 'my-cache'));
+
         $this->console
             ->call(CacheClearCommand::class, ['tag' => 'default'])
             ->assertSeeCount('CLEARED', expectedCount: 1);
