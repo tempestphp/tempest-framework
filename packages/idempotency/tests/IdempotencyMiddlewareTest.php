@@ -20,7 +20,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
+use Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported;
 use Tempest\Idempotency\Fingerprint\RequestFingerprintGenerator;
 use Tempest\Idempotency\Middleware\IdempotencyMiddleware;
 use Tempest\Idempotency\Store\CacheIdempotencyStore;
@@ -313,7 +313,7 @@ final class IdempotencyMiddlewareTest extends TestCase
     {
         $middleware = $this->createMiddleware('create');
 
-        $this->expectException(UnsupportedIdempotencyMethod::class);
+        $this->expectException(IdempotencyMethodWasNotSupported::class);
 
         $middleware(
             new GenericRequest(

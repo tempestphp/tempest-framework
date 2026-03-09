@@ -14,8 +14,8 @@ use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
 use Tempest\Idempotency\Contracts\IdempotencyScopeResolver;
-use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyMethod;
-use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyPlatform;
+use Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported;
+use Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported;
 use Tempest\Idempotency\Fingerprint\HttpFingerprintGenerator;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
@@ -48,11 +48,11 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
         if (PHP_OS_FAMILY === 'Windows') {
-            throw UnsupportedIdempotencyPlatform::forWindows();
+            throw IdempotencyPlatformWasNotSupported::forWindows();
         }
 
         if (! SupportedMethod::isSupported($request->method)) {
-            throw UnsupportedIdempotencyMethod::forMethod($request->method);
+            throw IdempotencyMethodWasNotSupported::forMethod($request->method);
         }
 
         $options = $this->resolveOptions();

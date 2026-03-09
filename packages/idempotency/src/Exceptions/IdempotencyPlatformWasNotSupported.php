@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Idempotency\Exceptions;
 
-use RuntimeException;
-
-final class UnsupportedIdempotencyPlatform extends RuntimeException
+final class IdempotencyPlatformWasNotSupported extends IdempotencyException
 {
     public static function forWindows(): self
     {

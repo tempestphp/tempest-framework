@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Idempotency\Exceptions;
 
-use RuntimeException;
-
-final class IdempotencyKeyWasAlreadyUsed extends RuntimeException
+final class IdempotencyKeyWasAlreadyUsed extends IdempotencyException
 {
     public static function forScope(string $scope, string $key): self
     {

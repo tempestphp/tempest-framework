@@ -13,7 +13,7 @@ use Tempest\Idempotency\Attributes\IdempotentCommand;
 use Tempest\Idempotency\Config\IdempotencyConfig;
 use Tempest\Idempotency\Contracts\HasIdempotencyKey;
 use Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed;
-use Tempest\Idempotency\Exceptions\UnsupportedIdempotencyPlatform;
+use Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported;
 use Tempest\Idempotency\Fingerprint\CommandFingerprintGenerator;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
@@ -48,7 +48,7 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
         }
 
         if (PHP_OS_FAMILY === 'Windows') {
-            throw UnsupportedIdempotencyPlatform::forWindows();
+            throw IdempotencyPlatformWasNotSupported::forWindows();
         }
 
         $scope = $this->resolveScope($command);
