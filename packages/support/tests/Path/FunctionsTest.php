@@ -194,5 +194,20 @@ final class FunctionsTest extends TestCase
             'paths' => ['phar:///home/user/file.php'],
             'expected' => 'phar:///home/user/file.php',
         ];
+
+        yield 'dot segment in path' => [
+            'paths' => ['src/Web/Blog/./show.view.php'],
+            'expected' => 'src/Web/Blog/show.view.php',
+        ];
+
+        yield 'multiple dot segments' => [
+            'paths' => ['src/./Web/./Blog/show.view.php'],
+            'expected' => 'src/Web/Blog/show.view.php',
+        ];
+
+        yield 'dot segment with absolute path' => [
+            'paths' => ['/src/Web/./Blog/show.view.php'],
+            'expected' => '/src/Web/Blog/show.view.php',
+        ];
     }
 }

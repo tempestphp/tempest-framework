@@ -7,8 +7,6 @@ namespace Tempest\Debug;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Output\TailReader;
-use Tempest\Container\Tag;
-use Tempest\Highlight\Highlighter;
 use Tempest\Support\Filesystem;
 
 final readonly class TailDebugCommand
@@ -16,8 +14,6 @@ final readonly class TailDebugCommand
     public function __construct(
         private Console $console,
         private DebugConfig $debugConfig,
-        #[Tag('console')]
-        private Highlighter $highlighter,
     ) {}
 
     #[ConsoleCommand('tail:debug', description: 'Tails the debug log', aliases: ['debug:tail'])]

@@ -83,7 +83,7 @@ final class SignerTest extends TestCase
 
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
-            key: '',
+            key: '', // @phpstan-ignore argument.type
             minimumExecutionDuration: false,
         ));
 

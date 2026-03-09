@@ -67,6 +67,7 @@ final class Paginator
         get => $this->totalPages > 0 ? $this->totalPages : null;
     }
 
+    /** @var list<int> */
     public array $pageRange {
         get => $this->calculatePageRange();
     }
@@ -128,6 +129,7 @@ final class Paginator
         return $this->paginate($callback($this->limit, $this->offset));
     }
 
+    /** @return list<int> */
     private function calculatePageRange(): array
     {
         if ($this->totalPages <= $this->maxLinks) {

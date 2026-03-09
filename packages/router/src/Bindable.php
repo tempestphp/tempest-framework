@@ -10,5 +10,5 @@ interface Bindable
     /**
      * Resolves the implementing class through the given input.
      */
-    public static function resolve(string $input): self;
+    public static function resolve(string $input): ?static;
 }

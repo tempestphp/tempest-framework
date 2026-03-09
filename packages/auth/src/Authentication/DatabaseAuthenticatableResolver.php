@@ -4,22 +4,15 @@ namespace Tempest\Auth\Authentication;
 
 use Tempest\Auth\Exceptions\AuthenticatableModelWasInvalid;
 use Tempest\Auth\Exceptions\ModelWasNotAuthenticatable;
-use Tempest\Database\Database;
 
 use function Tempest\Database\inspect;
 use function Tempest\Database\query;
 
 final readonly class DatabaseAuthenticatableResolver implements AuthenticatableResolver
 {
-    public function __construct(
-        private Database $database,
-    ) {}
-
     public function resolve(int|string $id, string $class): ?Authenticatable
     {
-        if (! is_a($class, Authenticatable::class, allow_string: true)) {
-            throw new ModelWasNotAuthenticatable($class);
-        }
+        $this->ensureClassIsAuthenticatable($class);
 
         return query($class)->findById($id);
     }
@@ -39,5 +32,12 @@ final readonly class DatabaseAuthenticatableResolver implements AuthenticatableR
         }
 
         return $id;
+    }
+
+    private function ensureClassIsAuthenticatable(string $class): void
+    {
+        if (! is_a($class, Authenticatable::class, allow_string: true)) {
+            throw new ModelWasNotAuthenticatable($class);
+        }
     }
 }

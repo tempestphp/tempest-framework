@@ -21,7 +21,6 @@ use function Tempest\Support\arr;
 
 final class MailTester
 {
-    private ?Email $sentEmail = null;
     private ?SymfonyEmail $sentSymfonyEmail = null;
 
     public function __construct(
@@ -32,7 +31,6 @@ final class MailTester
     {
         $this->mailer->send($email);
 
-        $this->sentEmail = $email;
         $this->sentSymfonyEmail = map($email)->with(EmailToSymfonyEmailMapper::class)->do();
 
         return $this;
@@ -385,8 +383,6 @@ final class MailTester
             $filename,
             Arr\join(Arr\map($attachments, fn (DataPart $attachment) => $attachment->getName())),
         ));
-
-        return $this;
     }
 
     /**
@@ -452,8 +448,7 @@ final class MailTester
                 return match (true) {
                     $address instanceof SymfonyAddress => $address->getAddress(),
                     $address instanceof EmailAddress => $address->email,
-                    is_string($address) => $address,
-                    default => null,
+                    default => $address,
                 };
             })
             ->filter()

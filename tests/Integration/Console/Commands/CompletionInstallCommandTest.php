@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Enums\Shell;
 use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -16,11 +17,52 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 {
     private ?string $installedFile = null;
 
+    private ?string $metadataFile = null;
+
+    private string $profileDirectory;
+
+    private ?string $originalHome = null;
+
+    private CompletionRuntime $completionRuntime;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Shell completion is not supported on Windows.');
+        }
+
+        $this->completionRuntime = new CompletionRuntime();
+
+        $this->originalHome = getenv('HOME') ?: null;
+        $this->profileDirectory = $this->internalStorage . '/profile';
+
+        Filesystem\ensure_directory_exists($this->profileDirectory);
+        putenv("HOME={$this->profileDirectory}");
+        $_ENV['HOME'] = $this->profileDirectory;
+        $_SERVER['HOME'] = $this->profileDirectory;
+    }
+
     protected function tearDown(): void
     {
         if ($this->installedFile !== null && Filesystem\is_file($this->installedFile)) {
             Filesystem\delete_file($this->installedFile);
             $this->installedFile = null;
+        }
+
+        if ($this->metadataFile !== null && Filesystem\is_file($this->metadataFile)) {
+            Filesystem\delete_file($this->metadataFile);
+            $this->metadataFile = null;
+        }
+
+        if ($this->originalHome === null) {
+            putenv('HOME');
+            unset($_ENV['HOME'], $_SERVER['HOME']);
+        } else {
+            putenv("HOME={$this->originalHome}");
+            $_ENV['HOME'] = $this->originalHome;
+            $_SERVER['HOME'] = $this->originalHome;
         }
 
         parent::tearDown();
@@ -29,13 +71,19 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function install_with_explicit_shell_flag(): void
     {
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
 
         $this->console
             ->call('completion:install --shell=zsh --force')
             ->assertSee('Installed completion script to:')
-            ->assertSee('_tempest')
             ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('/vendor/bin/tempest-complete', $installedScript);
+        $this->assertStringContainsString('/.tempest/completion/commands.json', $installedScript);
     }
 
     #[Test]
@@ -43,40 +91,61 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call('completion:install --shell=fish')
-            ->assertSee('Invalid argument `fish` for `shell` argument')
+            ->call('completion:install --shell=powershell')
+            ->assertSee('Invalid argument `powershell` for `shell` argument')
             ->assertError();
+    }
+
+    #[Test]
+    public function install_shows_post_install_instructions_for_fish(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::FISH);
+
+        $this->console
+            ->call('completion:install --shell=fish --force')
+            ->assertSee('source')
+            ->assertSee('config.fish')
+            ->assertSuccess();
     }
 
     #[Test]
     public function install_shows_post_install_instructions_for_zsh(): void
     {
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
 
         $this->console
             ->call('completion:install --shell=zsh --force')
-            ->assertSee('fpath=')
-            ->assertSee('compinit')
+            ->assertSee('source')
+            ->assertSee('.zshrc')
             ->assertSuccess();
     }
 
     #[Test]
     public function install_shows_post_install_instructions_for_bash(): void
     {
-        $this->installedFile = Shell::BASH->getInstalledCompletionPath();
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::BASH);
 
         $this->console
             ->call('completion:install --shell=bash --force')
             ->assertSee('source')
-            ->assertSee('tempest.bash')
+            ->assertSee('.bashrc')
             ->assertSuccess();
     }
 
     #[Test]
     public function install_cancelled_when_user_denies_confirmation(): void
     {
+        $this->prepareCompletionRuntime();
+
         $this->console
             ->call('completion:install --shell=zsh')
+            ->submit()
             ->assertSee('Installing zsh completions')
             ->deny()
             ->assertSee('Installation cancelled')
@@ -84,28 +153,12 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function install_creates_directory_if_not_exists(): void
-    {
-        $targetDir = Shell::ZSH->getCompletionsDirectory();
-        $dirExisted = Filesystem\is_directory($targetDir);
-
-        $this->installedFile = Shell::ZSH->getInstalledCompletionPath();
-
-        $result = $this->console
-            ->call('completion:install --shell=zsh --force');
-
-        if (! $dirExisted) {
-            $result->assertSee('Created directory:');
-        }
-
-        $result->assertSuccess();
-    }
-
-    #[Test]
     public function install_asks_for_overwrite_when_file_exists(): void
     {
-        $targetPath = Shell::ZSH->getInstalledCompletionPath();
-        $targetDir = Shell::ZSH->getCompletionsDirectory();
+        $this->prepareCompletionRuntime();
+
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+        $targetDir = $this->completionRuntime->getInstallationDirectory();
 
         Filesystem\create_directory($targetDir);
         Filesystem\write_file($targetPath, '# existing content');
@@ -114,10 +167,141 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('completion:install --shell=zsh')
+            ->submit()
             ->confirm()
             ->assertSee('Completion file already exists')
             ->deny()
             ->assertSee('Installation cancelled')
             ->assertCancelled();
+    }
+
+    #[Test]
+    public function install_overwrites_existing_file_when_user_accepts_overwrite_default(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $targetPath = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+        $targetDir = $this->completionRuntime->getInstallationDirectory();
+
+        Filesystem\create_directory($targetDir);
+        Filesystem\write_file($targetPath, '# existing content');
+
+        $this->installedFile = $targetPath;
+
+        $this->console
+            ->call('completion:install --shell=zsh')
+            ->submit()
+            ->confirm()
+            ->assertSee('Completion file already exists')
+            ->submit()
+            ->assertSee('Installed completion script to:')
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function install_with_descriptions_enabled_by_default_for_zsh(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --force')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_flag_for_zsh(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --force --without-descriptions')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=0', $installedScript);
+        $this->assertStringNotContainsString('_TEMPEST_SHOW_DESCRIPTIONS=1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_flag_for_fish(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::FISH);
+
+        $this->console
+            ->call('completion:install --shell=fish --force --without-descriptions')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS 0', $installedScript);
+        $this->assertStringNotContainsString('_TEMPEST_SHOW_DESCRIPTIONS 1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_skips_question(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --without-descriptions')
+            ->assertNotSee('Show command descriptions')
+            ->assertSee('Descriptions')
+            ->assertSee('disabled')
+            ->confirm()
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function install_user_denies_descriptions(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh')
+            ->deny()
+            ->assertSee('disabled')
+            ->confirm()
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=0', $installedScript);
+    }
+
+    #[Test]
+    public function install_bash_does_not_ask_about_descriptions(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::BASH);
+
+        $this->console
+            ->call('completion:install --shell=bash')
+            ->assertNotSee('Show command descriptions')
+            ->assertNotSee('Descriptions')
+            ->confirm()
+            ->assertSuccess();
+    }
+
+    private function prepareCompletionRuntime(): void
+    {
+        $this->metadataFile = $this->completionRuntime->getMetadataPath();
+        Filesystem\ensure_directory_exists(dirname($this->metadataFile));
+        Filesystem\write_json($this->metadataFile, ['version' => 1, 'commands' => []]);
     }
 }

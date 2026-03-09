@@ -8,6 +8,7 @@ enum Shell: string
 {
     case ZSH = 'zsh';
     case BASH = 'bash';
+    case FISH = 'fish';
 
     public static function detect(): ?self
     {
@@ -20,31 +21,18 @@ enum Shell: string
         return match (true) {
             str_contains($shell, 'zsh') => self::ZSH,
             str_contains($shell, 'bash') => self::BASH,
+            str_contains($shell, 'fish') => self::FISH,
             default => null,
-        };
-    }
-
-    public function getCompletionsDirectory(): string
-    {
-        $home = $_SERVER['HOME'] ?? getenv('HOME') ?: '';
-
-        return match ($this) {
-            self::ZSH => $home . '/.zsh/completions',
-            self::BASH => $home . '/.bash_completion.d',
         };
     }
 
     public function getCompletionFilename(): string
     {
         return match ($this) {
-            self::ZSH => '_tempest',
+            self::ZSH => 'tempest.zsh',
             self::BASH => 'tempest.bash',
+            self::FISH => 'tempest.fish',
         };
-    }
-
-    public function getInstalledCompletionPath(): string
-    {
-        return $this->getCompletionsDirectory() . '/' . $this->getCompletionFilename();
     }
 
     public function getSourceFilename(): string
@@ -52,6 +40,15 @@ enum Shell: string
         return match ($this) {
             self::ZSH => 'completion.zsh',
             self::BASH => 'completion.bash',
+            self::FISH => 'completion.fish',
+        };
+    }
+
+    public function supportsCompletionDescriptions(): bool
+    {
+        return match ($this) {
+            self::ZSH, self::FISH => true,
+            self::BASH => false,
         };
     }
 
@@ -62,33 +59,7 @@ enum Shell: string
         return match ($this) {
             self::ZSH => $home . '/.zshrc',
             self::BASH => $home . '/.bashrc',
-        };
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getPostInstallInstructions(): array
-    {
-        return match ($this) {
-            self::ZSH => [
-                'Add the completions directory to your fpath in ~/.zshrc:',
-                '',
-                '  fpath=(~/.zsh/completions $fpath)',
-                '',
-                'Then reload completions:',
-                '',
-                '  autoload -Uz compinit && compinit',
-                '',
-                'Or restart your terminal.',
-            ],
-            self::BASH => [
-                'Source the completion file in your ~/.bashrc:',
-                '',
-                '  source ~/.bash_completion.d/tempest.bash',
-                '',
-                'Or restart your terminal.',
-            ],
+            self::FISH => $home . '/.config/fish/config.fish',
         };
     }
 }

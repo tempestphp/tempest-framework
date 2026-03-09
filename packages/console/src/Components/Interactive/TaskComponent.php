@@ -172,16 +172,14 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
 
         if ($handler instanceof Process) {
             return static function (Closure $log) use ($handler): bool {
-                return $handler->run(function (string $output, string $buffer) use ($log): bool {
-                    if ($output === Process::ERR) {
-                        return true;
+                return $handler->run(function (string $type, string $buffer) use ($log): void {
+                    if ($type === Process::ERR) {
+                        return;
                     }
 
                     if ($line = trim($buffer)) {
                         $log($line);
                     }
-
-                    return true;
                 }) === 0;
             };
         }

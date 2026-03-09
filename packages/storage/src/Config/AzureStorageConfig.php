@@ -3,8 +3,8 @@
 namespace Tempest\Storage\Config;
 
 use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter;
+use AzureOss\Storage\Blob\BlobServiceClient;
 use League\Flysystem\FilesystemAdapter;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 use UnitEnum;
 
 final class AzureStorageConfig implements StorageConfig
@@ -41,8 +41,7 @@ final class AzureStorageConfig implements StorageConfig
     public function createAdapter(): FilesystemAdapter
     {
         return new AzureBlobStorageAdapter(
-            client: BlobRestProxy::createBlobService($this->dsn),
-            container: $this->container,
+            containerClient: BlobServiceClient::fromConnectionString($this->dsn)->getContainerClient($this->container),
             prefix: $this->prefix,
         );
     }

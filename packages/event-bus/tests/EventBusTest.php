@@ -209,6 +209,7 @@ final class EventBusTest extends TestCase
 
         $eventBus->dispatch(EventEnum::TWO);
 
+        /** @var bool $hasHappened */
         $this->assertTrue($hasHappened);
     }
 }

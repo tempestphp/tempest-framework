@@ -37,11 +37,11 @@ interface Cache
     /**
      * Sets the specified keys to the specified values in the cache. Optionally, specify an expiration.
      *
-     * @template TKey of array-key
+     * @template TKey of Stringable|string
      * @template TValue
      *
-     * @param iterable<TKey,TValue> $array
-     * @return array<TKey,CacheItemInterface>
+     * @param iterable<TKey,TValue> $values
+     * @return array<string,CacheItemInterface>
      */
     public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array;
 
@@ -53,11 +53,10 @@ interface Cache
     /**
      * Gets the values associated with the specified keys from the cache. If a key does not exist, null is returned for that key.
      *
-     * @template TKey of array-key
-     * @template TValue
+     * @template TKey of Stringable|string
      *
-     * @param iterable<TKey,TValue> $array
-     * @return array<TValue,mixed>
+     * @param iterable<array-key, TKey> $key
+     * @return array<string,mixed>
      */
     public function getMany(iterable $key): array;
 
@@ -79,7 +78,7 @@ interface Cache
     /**
      * If the specified key already exists in the cache, the value is returned and the `$callback` is not executed. Otherwise, the result of the callback is stored, then returned.
      *
-     * @var null|Duration $stale Allow the value to be stale for the specified amount of time in addition to the time-to-live specified by `$expiration`. When a value is stale, it will still be returned as-is, but it will be refreshed in the background.
+     * @param null|Duration $stale Allow the value to be stale for the specified amount of time in addition to the time-to-live specified by `$expiration`. When a value is stale, it will still be returned as-is, but it will be refreshed in the background.
      */
     public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed;
 

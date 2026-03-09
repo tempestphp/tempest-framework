@@ -14,6 +14,7 @@ enum OutputChannel: string
         return match ($type) {
             Process::OUT => self::OUTPUT,
             Process::ERR => self::ERROR,
+            default => throw new \UnexpectedValueException(sprintf('Unsupported output type "%s".', $type)),
         };
     }
 }

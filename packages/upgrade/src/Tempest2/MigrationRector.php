@@ -16,10 +16,10 @@ final class MigrationRector extends AbstractRector
         ];
     }
 
-    public function refactor(Node $node): void
+    public function refactor(Node $node): ?int
     {
         if (! $node instanceof Node\Stmt\Class_) {
-            return;
+            return null;
         }
 
         // Check whether this class implements Tempest\Database\DatabaseMigration
@@ -31,7 +31,7 @@ final class MigrationRector extends AbstractRector
         );
 
         if ($implementsDatabaseMigration === null) {
-            return;
+            return null;
         }
 
         // Unset the old interface
@@ -84,5 +84,7 @@ final class MigrationRector extends AbstractRector
         }
 
         $node->implements = $implements;
+
+        return null;
     }
 }

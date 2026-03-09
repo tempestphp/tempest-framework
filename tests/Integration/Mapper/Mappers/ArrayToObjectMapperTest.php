@@ -16,6 +16,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
@@ -24,7 +25,7 @@ use function Tempest\Mapper\map;
 /**
  * @internal
  */
-final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
+final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_missing_values(): void
     {
@@ -60,7 +61,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $object = map([])->to(ObjectWithDefaultValues::class);
 
         $this->assertSame('a', $object->a);
-        $this->assertSame(null, $object->b);
+        $this->assertNull($object->b);
     }
 
     public function test_built_in_casters(): void
@@ -82,7 +83,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 10:10:10', $object->dateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-12-01 10:10:10', $object->dateTimeWithFormat->format('Y-m-d H:i:s'));
         $this->assertNull($object->nullableDateTimeImmutable);
-        $this->assertSame(false, $object->bool);
+        $this->assertFalse($object->bool);
         $this->assertSame(0.1, $object->float);
         $this->assertSame(1, $object->int);
     }
@@ -164,6 +165,21 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $object->roles);
         $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+    }
+
+    public function test_map_primitive_array_properties(): void
+    {
+        $object = map([
+            'strings' => ['a', 'b', 'c'],
+            'ints' => [1, 2, 3],
+            'floats' => [1.1, 2.2, 3.3],
+            'bools' => [true, false, true],
+        ])->to(ObjectWithPrimitiveArrayProperties::class);
+
+        $this->assertSame(['a', 'b', 'c'], $object->strings);
+        $this->assertSame([1, 2, 3], $object->ints);
+        $this->assertSame([1.1, 2.2, 3.3], $object->floats);
+        $this->assertSame([true, false, true], $object->bools);
     }
 }
 

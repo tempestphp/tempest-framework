@@ -268,10 +268,6 @@ function create_temporary_directory(?string $prefix = null): string
     $temporaryDirectory = sys_get_temp_dir();
     $uniqueDirectory = $temporaryDirectory . '/' . uniqid(prefix: $prefix ?? '');
 
-    if ($uniqueDirectory === false) {
-        throw new Exceptions\RuntimeException('Failed to create a temporary directory.');
-    }
-
     namespace\ensure_directory_exists($uniqueDirectory);
     namespace\ensure_directory_empty($uniqueDirectory);
 
@@ -624,7 +620,7 @@ function read_symbolic_link(string $path): string
  */
 function normalize_path(string $path): ?string
 {
-    if (class_exists(\Phar::class) && \Phar::running(false) !== '' && str_starts_with($path, 'phar:')) {
+    if (str_starts_with($path, 'phar:') && class_exists(\Phar::class) && \Phar::running(false) !== '') {
         return $path;
     }
 

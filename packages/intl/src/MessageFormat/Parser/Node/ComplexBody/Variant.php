@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\MessageFormat\Parser\Node\ComplexBody;
 
+use Tempest\Intl\MessageFormat\Parser\Node\Key\Key;
 use Tempest\Intl\MessageFormat\Parser\Node\Node;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\QuotedPattern;
 

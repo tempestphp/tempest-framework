@@ -7,6 +7,7 @@ use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
+use Tempest\Core\InsightType;
 use Tempest\Icon\IconCache;
 use Tempest\View\ViewCache;
 
@@ -25,14 +26,14 @@ final class InternalCacheInsightsProvider implements InsightsProvider
     {
         return [
             'Discovery' => match ($this->discoveryCache->valid) {
-                false => new Insight('Invalid', Insight::ERROR),
+                false => new Insight('Invalid', InsightType::ERROR),
                 true => match ($this->discoveryCache->enabled) {
                     true => match ($this->discoveryCache->strategy) {
-                        DiscoveryCacheStrategy::FULL => new Insight('Enabled', Insight::SUCCESS),
-                        DiscoveryCacheStrategy::PARTIAL => new Insight('Enabled (partial)', Insight::SUCCESS),
+                        DiscoveryCacheStrategy::FULL => new Insight('Enabled', InsightType::SUCCESS),
+                        DiscoveryCacheStrategy::PARTIAL => new Insight('Enabled (partial)', InsightType::SUCCESS),
                         default => null, // INVALID and NONE are handled
                     },
-                    false => new Insight('Disabled', Insight::WARNING),
+                    false => new Insight('Disabled', InsightType::WARNING),
                 },
             },
             'Configuration' => $this->getInsight($this->configCache->enabled),
@@ -44,9 +45,9 @@ final class InternalCacheInsightsProvider implements InsightsProvider
     private function getInsight(bool $enabled): Insight
     {
         if ($enabled) {
-            return new Insight('ENABLED', Insight::SUCCESS);
+            return new Insight('ENABLED', InsightType::SUCCESS);
         }
 
-        return new Insight('DISABLED', Insight::WARNING);
+        return new Insight('DISABLED', InsightType::WARNING);
     }
 }

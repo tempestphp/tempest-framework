@@ -22,7 +22,6 @@ final class StacktraceTest extends TestCase
         $this->assertSame('Test exception', $stacktrace->message);
         $this->assertSame(RuntimeException::class, $stacktrace->exceptionClass);
         $this->assertNotEmpty($stacktrace->frames);
-        $this->assertContainsOnlyInstancesOf(Frame::class, $stacktrace->frames);
     }
 
     #[Test]

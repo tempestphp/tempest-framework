@@ -14,6 +14,7 @@ use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Slot;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewComponent;
 use Tempest\View\WithToken;
 
@@ -36,6 +37,7 @@ final class ViewComponentElement implements Element, WithToken
         public readonly Token $token,
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
+        private readonly ViewCache $viewCache,
         private readonly ViewComponent $viewComponent,
         array $attributes,
     ) {
@@ -103,31 +105,13 @@ final class ViewComponentElement implements Element, WithToken
         $compiled = $compiled
             ->prepend(
                 sprintf(
-                    '<?php (function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
+                    '<?php return function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
                     $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
                     $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
                 ),
             )
-            ->append(
-                sprintf(
-                    '<?php })(attributes: %s, slots: %s, scopedVariables: [%s] + ($scopedVariables ?? $this->currentView?->data ?? []) %s %s %s) ?>',
-                    $this->exportAttributesArray(),
-                    ViewObjectExporter::export($slots),
-                    $this->scopedVariables->isNotEmpty()
-                        ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
-                        : '',
-                    $this->dataAttributes->isNotEmpty()
-                        ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
-                        : '',
-                    $this->expressionAttributes->isNotEmpty()
-                        ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
-                        : '',
-                    $this->scopedVariables->isNotEmpty()
-                        ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
-                        : '',
-                ),
-            );
+            ->append('<?php };');
 
         $compiled = $compiled->replaceRegex(
             regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/',
@@ -151,7 +135,11 @@ final class ViewComponentElement implements Element, WithToken
 
                 $slotElement = $this->getSlotElement($slot->name);
 
-                $compiled = $slotElement?->compile() ?? '';
+                if ($slotElement === null) {
+                    return $default;
+                }
+
+                $compiled = $this->compiler->compileElement($slotElement);
 
                 // There's no default slot content, but there's a default value in the view component
                 if (trim($compiled) === '') {
@@ -162,7 +150,39 @@ final class ViewComponentElement implements Element, WithToken
             },
         );
 
-        return $this->compiler->compile($compiled->toString());
+        $compiledView = $this->compiler->compileWithSourceMap(
+            $compiled->toString(),
+            sourcePath: $this->viewComponent->file,
+            prependImports: $this->getImports(),
+        );
+
+        $cacheKey = sprintf('%s:%s', $this->viewComponent->file, hash('xxh64', $compiledView->content));
+
+        $cachePath = $this->viewCache->getCachedViewPath(
+            $cacheKey,
+            fn () => $compiledView->content,
+        );
+
+        $this->viewCache->saveSourceMap($cachePath, $compiledView->sourcePath, $compiledView->lineMap);
+
+        return sprintf(
+            '<?php $this->includeViewComponent(%1$s)(attributes: %2$s, slots: %3$s, scopedVariables: [%4$s] + ($scopedVariables ?? $this->currentView?->data ?? []) %5$s %6$s %7$s); ?>',
+            var_export($cachePath, true),
+            $this->exportAttributesArray(),
+            ViewObjectExporter::export($slots),
+            $this->scopedVariables->isNotEmpty()
+                ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
+                : '',
+            $this->dataAttributes->isNotEmpty()
+                ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
+                : '',
+            $this->expressionAttributes->isNotEmpty()
+                ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
+                : '',
+            $this->scopedVariables->isNotEmpty()
+                ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
+                : '',
+        );
     }
 
     private function getSlotElement(string $name): SlotElement|CollectionElement|null
@@ -257,5 +277,22 @@ final class ViewComponentElement implements Element, WithToken
         }
 
         return sprintf('new \%s([%s])', ImmutableArray::class, implode(', ', $entries));
+    }
+
+    public function getImports(): array
+    {
+        $imports = [];
+
+        if ($this->parent) {
+            $imports = [...$imports, ...$this->parent->getImports()];
+        }
+
+        foreach ($this->getChildren() as $child) {
+            if ($child instanceof PhpElement) {
+                $imports = [...$imports, ...$child->getImports()];
+            }
+        }
+
+        return $imports;
     }
 }

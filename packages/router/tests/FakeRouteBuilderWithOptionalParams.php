@@ -21,6 +21,7 @@ final class FakeRouteBuilderWithOptionalParams implements Route
         public string $uri = '/',
         /** @var class-string<HttpMiddleware>[] */
         public array $middleware = [],
+        /** @var class-string<HttpMiddleware>[] */
         public array $without = [],
         private string $handlerMethod = 'handler',
     ) {
