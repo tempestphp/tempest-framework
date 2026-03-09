@@ -13,7 +13,7 @@ final readonly class IntegerStatement implements QueryStatement
         private string $name,
         private bool $unsigned = false,
         private bool $nullable = false,
-        private int $bytes = 4,
+        private int|DatabaseIntegerSize $size = DatabaseIntegerSize::DEFAULT,
         private ?int $default = null,
     ) {}
 
@@ -30,7 +30,7 @@ final readonly class IntegerStatement implements QueryStatement
             DEFAULT => sprintf(
                 '`%s` %s %s %s %s',
                 $this->name,
-                IntegerBytes::fromBytes($this->bytes)->toString(),
+                DatabaseIntegerSize::fromBytes($this->size)->toString(),
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',

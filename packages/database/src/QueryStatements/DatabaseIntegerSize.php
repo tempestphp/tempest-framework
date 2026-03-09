@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-enum IntegerBytes: int
+enum DatabaseIntegerSize: int
 {
     case SMALL = 2;
     case DEFAULT = 4;
