@@ -32,11 +32,14 @@ final class QueryAnalyzerTest extends TestCase
     {
         parent::setUp();
 
+        $eventBusConfig = new EventBusConfig();
+
         $this->eventBus = new FakeEventBus(
-            genericEventBus: new GenericEventBus(
+            eventBus: new GenericEventBus(
                 container: new GenericContainer(),
-                eventBusConfig: new EventBusConfig(),
+                eventBusConfig: $eventBusConfig,
             ),
+            eventBusConfig: $eventBusConfig,
         );
 
         $config = new SQLiteConfig(path: ':memory:');

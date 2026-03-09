@@ -34,11 +34,14 @@ final class QueryExecutedTest extends TestCase
 
     private function createFakeEventBus(): FakeEventBus
     {
+        $eventBusConfig = new EventBusConfig();
+
         return new FakeEventBus(
-            genericEventBus: new GenericEventBus(
+            eventBus: new GenericEventBus(
                 container: new GenericContainer(),
-                eventBusConfig: new EventBusConfig(),
+                eventBusConfig: $eventBusConfig,
             ),
+            eventBusConfig: $eventBusConfig,
         );
     }
 

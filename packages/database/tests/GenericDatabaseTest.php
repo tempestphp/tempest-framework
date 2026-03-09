@@ -35,7 +35,8 @@ final class GenericDatabaseTest extends TestCase
             ->willReturn(true);
 
         $container = new GenericContainer();
-        $eventBus = new FakeEventBus(new GenericEventBus($container, new EventBusConfig()));
+        $eventBusConfig = new EventBusConfig();
+        $eventBus = new FakeEventBus(new GenericEventBus($container, $eventBusConfig), $eventBusConfig);
 
         $database = new GenericDatabase(
             $connection,
@@ -66,7 +67,8 @@ final class GenericDatabaseTest extends TestCase
             ->willReturn(true);
 
         $container = new GenericContainer();
-        $eventBus = new FakeEventBus(new GenericEventBus($container, new EventBusConfig()));
+        $eventBusConfig = new EventBusConfig();
+        $eventBus = new FakeEventBus(new GenericEventBus($container, $eventBusConfig), $eventBusConfig);
 
         $database = new GenericDatabase(
             $connection,

@@ -156,7 +156,6 @@ final class GenericDatabase implements Database
         return $bindings;
     }
 
-    /** @template TResult */
     private function runQuery(Query $query, callable $runner): mixed
     {
         $bindings = $this->resolveBindings($query);
