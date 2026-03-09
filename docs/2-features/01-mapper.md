@@ -71,6 +71,40 @@ $array = map($book)->toArray();
 $json = map($book)->toJson();
 ```
 
+### Hiding properties from serialization
+
+Properties marked with the {b`#[Tempest\Mapper\Hidden]`} attribute are excluded from serialization. This is useful for sensitive data like passwords or API keys that should never be exposed in arrays or JSON responses.
+
+```php
+use Tempest\Mapper\Hidden;
+
+final class User
+{
+    public string $email;
+
+    #[Hidden]
+    public string $password;
+}
+```
+
+When serializing, hidden properties are automatically excluded:
+
+```php
+$user = new User();
+$user->email = 'user@example.com';
+$user->password = 'secret';
+
+$array = map($user)->toArray();
+// ['email' => 'user@example.com']
+
+$json = map($user)->toJson();
+// {"email":"user@example.com"}
+```
+
+:::info
+The {b`#[Hidden]`} attribute also excludes properties from database SELECT queries. See the [database documentation](../1-essentials/03-database.md#hidden-properties) for more information.
+:::
+
 ### Overriding field names
 
 When mapping from an array to an object, Tempest uses the property names of the target class to map the data. If a property name doesn't match a key in the source array, use the {b`#[Tempest\Mapper\MapFrom]`} attribute to specify the source key to map to the property.

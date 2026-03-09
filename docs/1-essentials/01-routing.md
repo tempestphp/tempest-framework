@@ -171,7 +171,7 @@ use Tempest\Database\IsDatabaseModel;
 
 final class Aircraft implements Bindable
 {
-    public static function resolve(string $input): self
+    public static function resolve(string $input): ?static
     {
         return query(self::class)->resolve($input);
     }
@@ -193,7 +193,7 @@ final class Aircraft implements Bindable
     #[IsBindingValue]
     public string $registrationNumber;
 
-    public static function resolve(string $input): self
+    public static function resolve(string $input): ?static
     {
         return query(self::class)
             ->where('registrationNumber', $input)
@@ -452,7 +452,7 @@ When users submit forms—like updating profile settings, or posting comments—
 On validation failure, Tempest either redirects back to the form (for web pages) or returns a 422 response (for stateless requests). Validation errors are available in two places:
 
 - As a JSON encoded string in the `{txt}X-Validation` header
-- Through the `b{Tempest\Http\Session\FormSession}` class
+- Through the {b`Tempest\Http\Session\FormSession`} class
 
 For web pages, Tempest also provides built-in view components to display errors when they occur.
 

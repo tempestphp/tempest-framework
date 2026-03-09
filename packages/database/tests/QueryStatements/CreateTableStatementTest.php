@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests\QueryStatements;
 
 use Generator;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -229,6 +231,57 @@ final class CreateTableStatementTest extends TestCase
                 `uuid` TEXT PRIMARY KEY, 
                 `name` TEXT NOT NULL, 
                 `email` TEXT NOT NULL
+            );
+            SQL,
+        ];
+    }
+
+    #[DataProvider('provide_datetime_current_database_dialects')]
+    #[Test]
+    public function datetime_current_default(DatabaseDialect $dialect, string $validSql): void
+    {
+        $statement = new CreateTableStatement('users')
+            ->datetime('created_at', current: true)
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+    }
+
+    #[Test]
+    public function datetime_current_conflicts_with_default(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new CreateTableStatement('users')
+            ->datetime('created_at', default: '2000-01-01 00:00:00', current: true)
+            ->compile(DatabaseDialect::MYSQL);
+    }
+
+    public static function provide_datetime_current_database_dialects(): iterable
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `users` (
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE `users` (
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `users` (
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
             );
             SQL,
         ];

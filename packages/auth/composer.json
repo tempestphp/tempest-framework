@@ -3,10 +3,10 @@
     "description": "A flexible authentication package for Tempest, providing authentication and authorization.",
     "require": {
         "php": "^8.5",
-        "tempest/core": "dev-main",
-        "tempest/router": "dev-main",
-        "tempest/database": "dev-main",
-        "tempest/mapper": "dev-main",
+        "tempest/core": "3.x-dev",
+        "tempest/router": "3.x-dev",
+        "tempest/database": "3.x-dev",
+        "tempest/mapper": "3.x-dev",
         "league/oauth2-client": "^2.8"
     },
     "require-dev": {
@@ -32,6 +32,14 @@
     "autoload-dev": {
         "psr-4": {
             "Tempest\\Auth\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "audit": {
+            "ignore": {
+                "PKSA-y2cr-5h3j-g3ys": "Optional dependency",
+                "PKSA-2kqm-ps5x-s4f5": "Optional dependency"
+            }
         }
     },
     "license": "MIT",

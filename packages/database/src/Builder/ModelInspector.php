@@ -13,6 +13,7 @@ use Tempest\Database\Relation;
 use Tempest\Database\Table;
 use Tempest\Database\Uuid;
 use Tempest\Database\Virtual;
+use Tempest\Mapper\Hidden;
 use Tempest\Mapper\SerializeAs;
 use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\ClassReflector;
@@ -394,6 +395,10 @@ final class ModelInspector
             }
 
             if ($property->isVirtual() || $property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
+            if ($property->hasAttribute(Hidden::class)) {
                 continue;
             }
 

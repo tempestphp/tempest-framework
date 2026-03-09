@@ -7,7 +7,7 @@ namespace Tempest\Container\Tests\Fixtures;
 use Tempest\Container\Decorates;
 
 #[Decorates(DecoratedInterface::class)]
-class DecoratorSecondClass implements DecoratedInterface
+final class DecoratorSecondClass implements DecoratedInterface
 {
     public function __construct(
         public DecoratedInterface $decorated,

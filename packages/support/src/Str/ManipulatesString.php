@@ -255,6 +255,8 @@ trait ManipulatesString
 
     /**
      * Returns an array of words from the current string.
+     *
+     * @return ImmutableArray<int, string>
      */
     public function words(): ImmutableArray
     {
@@ -451,6 +453,8 @@ trait ManipulatesString
 
     /**
      * Extracts an excerpt from the instance.
+     *
+     * @return ($asArray is true ? ImmutableArray<int, string> : self)
      */
     public function excerpt(int $from, int $to, bool $asArray = false): self|ImmutableArray
     {
@@ -650,6 +654,8 @@ trait ManipulatesString
 
     /**
      * Chunks the instance into parts of the specified `$length`.
+     *
+     * @return ImmutableArray<int, string>
      */
     public function chunk(int $length): ImmutableArray
     {
@@ -658,6 +664,8 @@ trait ManipulatesString
 
     /**
      * Explodes the string into an {@see \Tempest\Support\Arr\ImmutableArray} instance by a separator.
+     *
+     * @return ImmutableArray<int, string>
      */
     public function explode(string $separator = ' ', int $limit = PHP_INT_MAX): ImmutableArray
     {
@@ -704,12 +712,15 @@ trait ManipulatesString
      * str('10-abc')->match('/(?<id>\d+-)/', match: 'id'); // 10
      * ```
      *
+     * @template TDefault
+     *
      * @param non-empty-string $pattern The regular expression to match on
-     * @param string|int $match The group number or name to retrieve
-     * @param mixed $default The default value to return if no match is found
+     * @param array|string|int $match The group number, name, or list of groups to retrieve
+     * @param TDefault $default The default value to return if no match is found
      * @param 0|256|512|768 $flags
+     * @return ($match is array ? array<int|string, string|array{0: string|null, 1: int}|null> : string|array{0: string|null, 1: int}|null|TDefault)
      */
-    public function match(string $pattern, array|Stringable|int|string $match = 1, mixed $default = null, int $flags = 0, int $offset = 0): null|int|string|array
+    public function match(string $pattern, array|Stringable|int|string $match = 1, mixed $default = null, int $flags = 0, int $offset = 0): mixed
     {
         return Regex\get_match($this->value, $pattern, $match, $default, $flags, $offset);
     }
@@ -718,6 +729,7 @@ trait ManipulatesString
      * Gets all portions of the instance that match the given regular expression.
      *
      * @param non-empty-string $pattern The regular expression to match on
+     * @return ImmutableArray<int, array<int|string, string>>
      */
     public function matchAll(Stringable|string $pattern, array|Stringable|int|string $matches = 0, int $offset = 0): ImmutableArray
     {
@@ -847,7 +859,7 @@ trait ManipulatesString
      */
     public function dd(mixed ...$dd): void
     {
-        ld($this->value, ...$dd);
+        $this->debugLog([$this->value, ...$dd], terminate: true);
     }
 
     /**
@@ -855,13 +867,32 @@ trait ManipulatesString
      */
     public function dump(mixed ...$dumps): self
     {
-        lw($this->value, ...$dumps);
+        $this->debugLog([$this->value, ...$dumps]);
 
         return $this;
     }
 
+    private function debugLog(array $items, bool $terminate = false): void
+    {
+        $debugClass = \Tempest\Debug\Debug::class;
+
+        if (class_exists($debugClass)) {
+            $debugClass::resolve()->log($items);
+        } else {
+            foreach ($items as $item) {
+                error_log(print_r($item, true));
+            }
+        }
+
+        if ($terminate) {
+            exit(1);
+        }
+    }
+
     /**
      * Decodes the JSON string and returns an array helper instance.
+     *
+     * @return ImmutableArray<array-key, mixed>
      */
     public function decodeJson(): ImmutableArray
     {
@@ -892,8 +923,11 @@ trait ManipulatesString
         return $this->value;
     }
 
-    public static function __set_state(array $array): object
+    /**
+     * @param array{value: string} $array
+     */
+    public static function __set_state(array $array): static
     {
-        return new self($array['value']);
+        return new static($array['value']);
     }
 }

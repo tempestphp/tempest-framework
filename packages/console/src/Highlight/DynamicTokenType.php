@@ -88,7 +88,7 @@ final readonly class DynamicTokenType implements TokenType
 
     public function getValue(): string
     {
-        return '';
+        return $this->style;
     }
 
     public function canContain(TokenType $other): bool

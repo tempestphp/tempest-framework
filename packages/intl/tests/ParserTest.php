@@ -4,9 +4,12 @@ namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\MessageFormat\Parser\MessageFormatParser;
+use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexMessage;
+use Tempest\Intl\MessageFormat\Parser\Node\Declaration\InputDeclaration;
 use Tempest\Intl\MessageFormat\Parser\Node\Declaration\LocalDeclaration;
 use Tempest\Intl\MessageFormat\Parser\Node\Expression\VariableExpression;
+use Tempest\Intl\MessageFormat\Parser\Node\Literal\Literal;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Pattern;
 use Tempest\Intl\MessageFormat\Parser\Node\Pattern\Text;
 use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
@@ -35,11 +38,15 @@ final class ParserTest extends TestCase
         $this->assertInstanceOf(Text::class, $ast->pattern->elements[0]);
         $this->assertInstanceOf(VariableExpression::class, $ast->pattern->elements[1]);
         $this->assertInstanceOf(LocalDeclaration::class, $ast->declarations[0]);
+
+        $expression = $ast->declarations[0]->expression;
+        $this->assertInstanceOf(VariableExpression::class, $expression);
+
         $this->assertSame('time', $ast->declarations[0]->variable->name->name);
         $this->assertSame('datetime', $ast->declarations[0]->expression->function->identifier->name);
         $this->assertSame('style', $ast->declarations[0]->expression->function->options[0]->identifier->name);
         $this->assertSame('medium', $ast->declarations[0]->expression->function->options[0]->value->value);
-        $this->assertSame('launch_date', $ast->declarations[0]->expression->variable->name->name);
+        $this->assertSame('launch_date', $expression->variable->name->name);
     }
 
     public function test_input_declaration(): void
@@ -54,21 +61,44 @@ final class ParserTest extends TestCase
         MF2)->parse();
 
         $this->assertInstanceOf(ComplexMessage::class, $ast);
-        $this->assertSame('numDays', $ast->pattern->elements[0]->pattern->elements[0]->variable->name->name);
-        $this->assertSame(' one', $ast->pattern->elements[0]->pattern->elements[1]->value);
-        $this->assertSame('numDays', $ast->pattern->elements[1]->pattern->elements[0]->variable->name->name);
-        $this->assertSame(' two', $ast->pattern->elements[1]->pattern->elements[1]->value);
-        $this->assertSame('numDays', $ast->pattern->elements[2]->pattern->elements[0]->variable->name->name);
-        $this->assertSame(' three', $ast->pattern->elements[2]->pattern->elements[1]->value);
+        $this->assertInstanceOf(InputDeclaration::class, $ast->declarations[0]);
+        $this->assertSame('numDays', $ast->declarations[0]->expression->variable->name->name);
+
+        $this->assertInstanceOf(Matcher::class, $ast->body);
+
+        $firstVariant = $ast->body->variants[0]->pattern->pattern;
+        $this->assertInstanceOf(VariableExpression::class, $firstVariant->elements[0]);
+        $this->assertInstanceOf(Text::class, $firstVariant->elements[1]);
+        $this->assertSame('numDays', $firstVariant->elements[0]->variable->name->name);
+        $this->assertSame(' one', $firstVariant->elements[1]->value);
+
+        $secondVariant = $ast->body->variants[1]->pattern->pattern;
+        $this->assertInstanceOf(VariableExpression::class, $secondVariant->elements[0]);
+        $this->assertInstanceOf(Text::class, $secondVariant->elements[1]);
+        $this->assertSame('numDays', $secondVariant->elements[0]->variable->name->name);
+        $this->assertSame(' two', $secondVariant->elements[1]->value);
+
+        $thirdVariant = $ast->body->variants[2]->pattern->pattern;
+        $this->assertInstanceOf(VariableExpression::class, $thirdVariant->elements[0]);
+        $this->assertInstanceOf(Text::class, $thirdVariant->elements[1]);
+        $this->assertSame('numDays', $thirdVariant->elements[0]->variable->name->name);
+        $this->assertSame(' three', $thirdVariant->elements[1]->value);
     }
 
     public function test_function_with_option_quoted_literal(): void
     {
-        /** @var ComplexMessage $ast */
         $ast = new MessageFormatParser(<<<'MF2'
         Today is {$today :datetime pattern=|yyyy/MM/dd|}.
         MF2)->parse();
 
-        $this->assertSame('yyyy/MM/dd', $ast->pattern->elements[1]->function->options[0]->value->value);
+        $this->assertInstanceOf(SimpleMessage::class, $ast);
+        $this->assertInstanceOf(VariableExpression::class, $ast->pattern->elements[1]);
+
+        $function = $ast->pattern->elements[1]->function;
+        $this->assertNotNull($function);
+
+        $optionValue = $function->options[0]->value;
+        $this->assertInstanceOf(Literal::class, $optionValue);
+        $this->assertSame('yyyy/MM/dd', $optionValue->value);
     }
 }

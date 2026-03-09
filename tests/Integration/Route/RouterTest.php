@@ -103,6 +103,20 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame('Test', $response->body);
     }
 
+    public function test_route_binding_with_nonexistent_model_returns_404(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $this->http
+            ->get('/books/999')
+            ->assertNotFound();
+    }
+
     public function test_middleware(): void
     {
         $this

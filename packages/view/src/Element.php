@@ -42,4 +42,9 @@ interface Element
      * @return T|null
      */
     public function unwrap(string $elementClass): ?Element;
+
+    /**
+     * @return string[] An array of import statements
+     */
+    public function getImports(): array;
 }

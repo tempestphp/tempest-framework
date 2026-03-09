@@ -22,13 +22,13 @@ final class PredisClientTest extends TestCase
 
         $this->redis = new PredisClient(
             client: new Predis\Client(
-                parameters: array_filter([
+                parameters: [
                     'scheme' => 'tcp',
                     'host' => '127.0.0.1',
                     'port' => 6379,
                     'database' => 6,
                     'timeout' => .2,
-                ]),
+                ],
                 options: ['prefix' => 'tempest_test:'],
             ),
         );

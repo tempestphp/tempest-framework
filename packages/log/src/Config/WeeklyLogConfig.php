@@ -3,6 +3,7 @@
 namespace Tempest\Log\Config;
 
 use Tempest\Log\Channels\WeeklyLogChannel;
+use Tempest\Log\LogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Log\LogLevel;
 use UnitEnum;

@@ -9,7 +9,7 @@ namespace Tempest\Database\Enums;
  */
 enum MigrationType: string
 {
-    case RAW = 'raw';
     case OBJECT = 'class';
+    case RAW = 'raw';
     case UP = 'up';
 }

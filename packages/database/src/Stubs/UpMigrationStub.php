@@ -12,7 +12,7 @@ use Tempest\Discovery\SkipDiscovery;
 #[SkipDiscovery]
 final class UpMigrationStub implements MigratesUp
 {
-    public string $name = 'dummy-date_dummy-table-name';
+    public string $name = 'dummy-date_dummy-migration-name';
 
     public function up(): QueryStatement
     {

@@ -196,6 +196,18 @@ The `:isset` directive can be used to conditionally render the element it is att
 <h1 :isset="$title">{{ $title }}</h1>
 ```
 
+The `:isset` directive will also detect when you have multiple cases, and will wrap each variable with `isset()` for you. Consider this example:
+
+```html
+<h1 :isset="$foo || $bar">Welcome!</h1>
+```
+
+If either `isset($foo)` or `isset($bar)` returns `true`, then the condition is met, and the element will be conditionally rendered.
+
+You can also use `!isset($foo)` for inverse if needed.
+
+Note: Ensuring that the expression returns `true` or `false` and thus applies the condition correctly is left down to you, the directive will simply wrap each `$var` with `isset()` preserving operators, without performing any logic checks itself. If you make an incompatible string, it will throw an Exception which you'll be able to view in the Debug log or interface, when enabled.
+
 Since `:isset` is a shorthand for `:if="isset()"`, it can be combined with `:elseif` and `:else`:
 
 ```html

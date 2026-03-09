@@ -11,7 +11,7 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Database\Config\MysqlConfig;
 use Tempest\EventBus\EventBusConfig;
-use Tempest\Log\LogConfig;
+use Tempest\Log\Config\SimpleLogConfig;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\TwigConfig;
@@ -89,7 +89,7 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
             ],
             'log_config' => [
                 'configType' => ConfigType::LOG,
-                'expectedConfigClass' => LogConfig::class,
+                'expectedConfigClass' => SimpleLogConfig::class,
             ],
             'console_config' => [
                 'configType' => ConfigType::CONSOLE,

@@ -342,6 +342,44 @@ return new SQLiteConfig(
 
 :::
 
+### Migration prefixes
+
+When generating a migration file via `make:migration`, Tempest prefixes the file name with a sortable identifier so that migrations run in the correct order. By default, a date-based prefix is used (e.g. `2025-06-15_create_books_table`).
+
+The prefix format is determined by the `migrationNamingStrategy` property of your database configuration, which accepts any {b`Tempest\Database\Migrations\MigrationNamingStrategy`} instance.
+
+Tempest ships with two built-in strategies:
+
+- {b`Tempest\Database\Migrations\DatePrefixStrategy`} — generates a `Y-m-d` date prefix (default). Pass `useTime: true` to include hours, minutes and seconds (`Y-m-d_His`).
+- {b`Tempest\Database\Migrations\Uuidv7PrefixStrategy`} — generates a UUIDv7 prefix, which is both unique and time-ordered.
+
+You can also implement your own strategy:
+
+:::code-group
+
+```php app/Database/IncrementingPrefixStrategy.php
+use Tempest\Database\Migrations\MigrationNamingStrategy;
+
+final class IncrementingPrefixStrategy implements MigrationNamingStrategy
+{
+    public function generatePrefix(): string
+    {
+        return sprintf('%06d', /* resolve the next sequence number */);
+    }
+}
+```
+
+```php app/database.config.php
+use Tempest\Database\Config\SQLiteConfig;
+
+return new SQLiteConfig(
+    path: __DIR__ . '/../database.sqlite',
+    migrationNaming: new IncrementingPrefixStrategy(),
+);
+```
+
+:::
+
 ### Data transfer object properties
 
 Arbitrary objects can be stored in a `json` column when they are not part of the relational schema. Annotate the class with {b`#[Tempest\Mapper\SerializeAs]`} and provide a unique identifier to represent the object. The identifier must map to a single, distinct class.
@@ -446,6 +484,57 @@ final class Book
     }
 }
 ```
+
+### Hidden properties
+
+Sensitive properties can be marked with the {b`#[Tempest\Mapper\Hidden]`} attribute to exclude them from SELECT queries. This is useful for properties like passwords, API keys, or other sensitive data that should not be fetched or exposed by default.
+
+```php
+use Tempest\Database\IsDatabaseModel;
+use Tempest\Mapper\Hidden;
+
+final class User
+{
+    use IsDatabaseModel;
+
+    public string $email;
+
+    #[Hidden]
+    public string $password;
+
+    #[Hidden]
+    public ?string $apiKey = null;
+}
+```
+
+Hidden properties are still included in INSERT and UPDATE queries, allowing them to be persisted to the database.
+
+To explicitly include hidden fields in a query, use the `include()` method on the query builder:
+
+```php
+// Password is not included in the query
+$user = User::select()->where('email', $email)->first();
+
+// Password is explicitly included
+$user = User::select()
+    ->include('password')
+    ->where('email', $email)
+    ->first();
+
+// Multiple hidden fields can be included
+$user = User::select()
+    ->include('password', 'apiKey')
+    ->where('email', $email)
+    ->first();
+```
+
+:::info
+Unlike {b`#[Virtual]`} which marks computed properties that don't exist in the database, {b`#[Hidden]`} is for real database columns that should be protected from accidental exposure.
+:::
+
+:::info
+The {b`#[Hidden]`} attribute also excludes properties from serialization. See the [mapper documentation](../2-features/01-mapper.md#hiding-properties-from-serialization) for more information.
+:::
 
 ### The `IsDatabaseModel` trait
 

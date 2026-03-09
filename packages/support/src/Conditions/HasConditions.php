@@ -12,9 +12,9 @@ trait HasConditions
      * Applies the given `$callback` if the `$condition` is true.
      *
      * @param mixed|Closure(static): bool $condition
-     * @param Closure(static): self $callback
+     * @param Closure(static): mixed $callback
      */
-    public function when(mixed $condition, Closure $callback): self
+    public function when(mixed $condition, Closure $callback): static
     {
         if ($condition instanceof Closure) {
             $condition = $condition($this);
@@ -31,9 +31,9 @@ trait HasConditions
      * Applies the given `$callback` if the `$condition` is false.
      *
      * @param mixed|Closure(static): bool $condition
-     * @param Closure(static): self $callback
+     * @param Closure(static): mixed $callback
      */
-    public function unless(mixed $condition, Closure $callback): self
+    public function unless(mixed $condition, Closure $callback): static
     {
         if ($condition instanceof Closure) {
             $condition = $condition($this);

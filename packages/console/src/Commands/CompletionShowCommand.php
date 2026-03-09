@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Symfony\Component\Filesystem\Path;
 use Tempest\Console\Actions\ResolveShell;
+use Tempest\Console\CompletionRuntime;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
@@ -19,6 +20,7 @@ final readonly class CompletionShowCommand
 {
     public function __construct(
         private Console $console,
+        private CompletionRuntime $completionRuntime,
         private ResolveShell $resolveShell,
     ) {}
 
@@ -28,15 +30,21 @@ final readonly class CompletionShowCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            description: 'The shell to show completions for (zsh, bash)',
+            description: 'The shell to show completions for (zsh, bash, fish)',
             aliases: ['-s'],
         )]
         ?Shell $shell = null,
     ): ExitCode {
+        if (! $this->completionRuntime->isSupportedPlatform()) {
+            $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
+
+            return ExitCode::ERROR;
+        }
+
         $shell ??= ($this->resolveShell)('Which shell completion script do you want to see?');
 
         if ($shell === null) {
-            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;
         }

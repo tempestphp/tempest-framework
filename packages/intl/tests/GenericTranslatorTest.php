@@ -37,7 +37,7 @@ final class GenericTranslatorTest extends TestCase
             formatter: new MessageFormatter([
                 new StringFunction(),
                 new NumberFunction($this->config),
-                new DateTimeFunction($this->config),
+                new DateTimeFunction(),
             ]),
         );
     }

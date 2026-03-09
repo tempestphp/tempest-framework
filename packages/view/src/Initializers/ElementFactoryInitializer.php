@@ -7,6 +7,7 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\Environment;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewConfig;
 
 final class ElementFactoryInitializer implements Initializer
@@ -17,6 +18,7 @@ final class ElementFactoryInitializer implements Initializer
         return new ElementFactory(
             viewConfig: $container->get(ViewConfig::class),
             environment: $container->get(Environment::class),
+            viewCache: $container->get(ViewCache::class),
         );
     }
 }
