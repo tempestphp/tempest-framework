@@ -93,6 +93,8 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             $builder->appendWhere($where);
         }
 
+        $builder->onDatabase = $source->onDatabase;
+
         /** @var UpdateQueryBuilder<TSourceModel> $builder */
         return $builder;
     }

@@ -83,6 +83,8 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
             }
         }
 
+        $builder->onDatabase = $source->onDatabase;
+
         /** @var CountQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
