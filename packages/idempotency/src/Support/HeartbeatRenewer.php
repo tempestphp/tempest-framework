@@ -10,6 +10,9 @@ use Throwable;
 use const SIG_DFL;
 use const SIGALRM;
 
+/**
+ * Periodically refreshes the heartbeat of a pending idempotency record during long-running work when pcntl alarms are available.
+ */
 final class HeartbeatRenewer
 {
     private bool $active = false;
@@ -20,6 +23,9 @@ final class HeartbeatRenewer
 
     private int $previousAlarmRemaining = 0;
 
+    /**
+     * Starts a recurring alarm that keeps the pending record's heartbeat fresh while work is still running.
+     */
     public function start(
         IdempotencyStore $store,
         string $scope,
@@ -48,6 +54,9 @@ final class HeartbeatRenewer
         $this->active = true;
     }
 
+    /**
+     * Stops the recurring heartbeat alarm and restores any previous signal configuration.
+     */
     public function stop(): void
     {
         if (! $this->active) {
