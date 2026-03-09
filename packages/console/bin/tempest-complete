@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Tempest\Console\Completion\CompletionApplication;
+
+$metadataPath = $_SERVER['argv'][1] ?? null;
+
+if (! $metadataPath) {
+    return;
+}
+
+require_once dirname($metadataPath, 3) . '/vendor/autoload.php';
+
+if (! class_exists(CompletionApplication::class)) {
+    return;
+}
+
+if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
+    return;
+}
+
+new CompletionApplication()->run(array_slice($_SERVER['argv'] ?? [], 1));

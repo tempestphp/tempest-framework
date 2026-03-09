@@ -20,7 +20,6 @@ use Tempest\Support\Str;
 use Tempest\View\ViewCache;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class CacheClearCommand
@@ -95,7 +94,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $container = $this->container;
             $cacheTags = arr($container->getSingletons(CacheConfig::class))
                 ->map(fn ($_, string $key) => $key === CacheConfig::class ? self::DEFAULT_CACHE : Str\after_last($key, '#'))
-                ->filter(fn ($_, string $key) => in_array($tag, [null, self::DEFAULT_CACHE], strict: true) ? true : str($key)->afterLast('#')->equals($tag))
+                ->filter(fn (string $value) => $tag === null || $value === $tag)
                 ->values();
 
             if ($all === false && count($cacheTags) > 1) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Benchmark\Http\Routing\Construction;
 
 use PhpBench\Attributes\BeforeMethods;
+use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
@@ -14,40 +15,32 @@ final class RouteConfiguratorBench
 {
     private RouteConfigurator $subject;
 
-    public function __construct()
-    {
-        $this->subject = new RouteConfigurator();
-    }
-
-    #[BeforeMethods('setupRouteConfig')]
+    #[BeforeMethods('setUpConfiguredRoutes')]
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchRouteConfigConstructionToConfig(): void
+    public function benchBuildRouteConfig(): void
     {
         $this->subject->toRouteConfig();
     }
 
+    #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
-    public function benchRouteConfigConstructionRouteAdding(): void
+    public function benchRegisterRoutes(): void
     {
         $configurator = new RouteConfigurator();
-        $routeBuilder = new FakeRouteBuilder();
 
-        foreach (range(1, 100) as $i) {
-            $configurator->addRoute($routeBuilder->withUri("/test/{$i}")->asDiscoveredRoute());
-            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}")->asDiscoveredRoute());
-            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/delete")->asDiscoveredRoute());
-            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/edit")->asDiscoveredRoute());
-        }
+        $this->addRoutes($configurator);
     }
 
-    public function setupRouteConfig(): void
+    public function setUpConfiguredRoutes(): void
     {
-        self::addRoutes($this->subject);
+        $this->subject = new RouteConfigurator();
+        $this->addRoutes($this->subject);
     }
 
-    private static function addRoutes(RouteConfigurator $configurator): void
+    private function addRoutes(RouteConfigurator $configurator): void
     {
         $routeBuilder = new FakeRouteBuilder();
 

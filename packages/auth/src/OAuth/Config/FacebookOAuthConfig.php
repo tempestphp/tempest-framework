@@ -6,6 +6,7 @@ namespace Tempest\Auth\OAuth\Config;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Facebook;
+use League\OAuth2\Client\Provider\FacebookUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -59,14 +60,19 @@ final class FacebookOAuthConfig implements OAuthConfig
         ]);
     }
 
+    /**
+     * @param FacebookUser $resourceOwner
+     */
     public function mapUser(ObjectFactory $factory, ResourceOwnerInterface $resourceOwner): OAuthUser
     {
-        return $factory
-            ->withData([
-                'provider' => 'facebook',
-                'raw' => $data = $resourceOwner->toArray(),
-                ...$data,
-            ])
-            ->to(OAuthUser::class);
+        return $factory->withData([
+            'id' => (string) $resourceOwner->getId(),
+            'email' => $resourceOwner->getEmail(),
+            'name' => $resourceOwner->getName(),
+            'nickname' => $resourceOwner->getFirstName(),
+            'avatar' => $resourceOwner->getPictureUrl(),
+            'provider' => $this->provider,
+            'raw' => $resourceOwner->toArray(),
+        ])->to(OAuthUser::class);
     }
 }

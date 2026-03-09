@@ -1,4 +1,16 @@
 {
-	"$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
-	"runner.bootstrap": "vendor/autoload.php"
+    "$schema": "./vendor/phpbench/phpbench/phpbench.schema.json",
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.path": "tests/Benchmark",
+    "runner.file_pattern": "*Bench.php",
+    "runner.retry_threshold": 5,
+    "report.outputs": {
+        "benchmark-comment": {
+            "extends": "markdown",
+            "outlier_min_diff": 5.0
+        }
+    },
+    "core.extensions": [
+        "Tests\\Tempest\\Benchmark\\Extension\\MarkdownExtension"
+    ]
 }

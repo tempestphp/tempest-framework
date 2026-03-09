@@ -6,6 +6,7 @@
 .tempest/
 .cache/
 .idea/
+.phpbench/
 build/
 sessions/
 vendor/

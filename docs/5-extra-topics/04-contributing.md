@@ -321,3 +321,12 @@ Finally, as we close in on tagging `next major`, features that would usually go 
 ### Milestone deadlines
 
 Even though we release on a non-fixed schedule, we do assign deadlines to the `next major` version. This gives all contributors a clear goal to work towards, and helps us stay on track. The dealine for `next major` also determines the end date of `current minor`
+
+## Brand Guidelines
+
+### Colors
+
+<span class="swatch" style="--color: #1b1429">#1b1429</span>
+<span class="swatch" style="--color: #29abe2">#29abe2</span>
+<span class="swatch" style="--color: #00e7ff">#00e7ff</span>
+<span class="swatch" style="--color: #0071bc">#0071bc</span>

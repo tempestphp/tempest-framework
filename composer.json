@@ -22,7 +22,8 @@
         "league/mime-type-detection": "^1.16",
         "league/oauth2-client": "^2.8",
         "monolog/monolog": "^3.7.0",
-        "nette/php-generator": "^4.1.6",
+        "nette/php-generator": "4.2.1",
+        "nette/schema": "^1.3.4",
         "nikic/php-parser": "^5.3",
         "php": "^8.5",
         "psr-discovery/http-client-implementations": "^1.4",
@@ -33,7 +34,7 @@
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0|^2.0",
         "psr/log": "^3.0.0",
-        "rector/rector": "2.3.1",
+        "rector/rector": "2.3.8",
         "symfony/cache": "^7.3",
         "symfony/filesystem": "^7.3",
         "symfony/mailer": "^7.2.6",
@@ -73,8 +74,8 @@
         "nyholm/psr7": "^1.8",
         "patrickbussmann/oauth2-apple": "^0.3",
         "phpat/phpat": "^0.11.0",
-        "phpbench/phpbench": "84.x-dev",
-        "phpstan/phpstan": "2.1.33",
+        "phpbench/phpbench": "^1.4",
+        "phpstan/phpstan": "2.1.40",
         "phpunit/phpunit": "^12.5.8",
         "predis/predis": "^3.0.0",
         "riskio/oauth2-auth0": "^2.4",
@@ -237,15 +238,28 @@
         }
     },
     "bin": [
-        "packages/console/bin/tempest"
+        "packages/console/bin/tempest",
+        "packages/console/bin/tempest-complete"
     ],
     "config": {
         "allow-plugins": {
             "carthage-software/mago": true
+        },
+        "audit": {
+            "ignore": {
+                "PKSA-y2cr-5h3j-g3ys": "Optional dependency",
+                "PKSA-2kqm-ps5x-s4f5": "Optional dependency"
+            }
         }
     },
     "scripts": {
-        "phpunit": "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
+        "post-autoload-dump": [
+            "@php bin/link-bin"
+        ],
+        "phpunit": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices"
+        ],
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "fmt": "vendor/bin/mago fmt",
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
@@ -274,6 +288,7 @@
             "composer phpunit",
             "composer phpstan",
             "composer exceptions:build"
-        ]
+        ],
+        "bench": "vendor/bin/phpbench run --report=aggregate"
     }
 }

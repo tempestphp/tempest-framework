@@ -29,6 +29,8 @@ final class Token
     public function __construct(
         public readonly string $content,
         public readonly TokenType $type,
+        public readonly int $line = 1,
+        public readonly ?string $sourcePath = null,
     ) {
         $this->tag = (match ($this->type) {
             TokenType::OPEN_TAG_START => str($this->content)

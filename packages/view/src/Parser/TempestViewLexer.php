@@ -8,10 +8,13 @@ final class TempestViewLexer
 
     private int $position = 0;
 
+    private int $line = 1;
+
     private ?string $current;
 
     public function __construct(
         private readonly string $html,
+        private readonly ?string $sourcePath = null,
     ) {
         $this->current = $this->html[$this->position] ?? null;
     }
@@ -70,6 +73,7 @@ final class TempestViewLexer
     {
         $buffer = substr($this->html, $this->position, $length);
         $this->position += $length;
+        $this->line += substr_count($buffer, "\n");
         $this->current = $this->html[$this->position] ?? null;
 
         return $buffer;
@@ -94,20 +98,31 @@ final class TempestViewLexer
         return $this->consumeUntil($search) . $this->consume(strlen($search));
     }
 
+    private function makeToken(string $content, TokenType $type, int $line): Token
+    {
+        return new Token(
+            content: $content,
+            type: $type,
+            line: $line,
+            sourcePath: $this->sourcePath,
+        );
+    }
+
     private function lexTag(): array
     {
+        $tagLine = $this->line;
         $tag = $this->consumeWhile('</0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-:');
 
         $tokens = [];
 
         if (substr($tag, 1, 1) === '/') {
             $tag .= $this->consumeIncluding('>');
-            $tokens[] = new Token($tag, TokenType::CLOSING_TAG);
+            $tokens[] = $this->makeToken($tag, TokenType::CLOSING_TAG, $tagLine);
         } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tag, '/')) {
             $tag .= $this->consumeIncluding('>');
-            $tokens[] = new Token($tag, TokenType::SELF_CLOSING_TAG);
+            $tokens[] = $this->makeToken($tag, TokenType::SELF_CLOSING_TAG, $tagLine);
         } else {
-            $tokens[] = new Token($tag, TokenType::OPEN_TAG_START);
+            $tokens[] = $this->makeToken($tag, TokenType::OPEN_TAG_START, $tagLine);
 
             while ($this->seek() !== null && $this->seekIgnoringWhitespace() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
                 if ($this->seekIgnoringWhitespace(2) === '<?') {
@@ -115,6 +130,7 @@ final class TempestViewLexer
                     continue;
                 }
 
+                $attributeLine = $this->line;
                 $attributeName = $this->consumeWhile(self::WHITESPACE);
 
                 $attributeName .= $this->consumeUntil(self::WHITESPACE . '=/>');
@@ -125,9 +141,10 @@ final class TempestViewLexer
                     $attributeName .= $this->consume();
                 }
 
-                $tokens[] = new Token(
+                $tokens[] = $this->makeToken(
                     content: $attributeName,
                     type: TokenType::ATTRIBUTE_NAME,
+                    line: $attributeLine,
                 );
 
                 if ($hasValue) {
@@ -135,25 +152,33 @@ final class TempestViewLexer
                         ? '\''
                         : '"';
 
+                    $attributeValueLine = $this->line;
                     $attributeValue = $this->consumeIncluding($quote);
                     $attributeValue .= $this->consumeIncluding($quote);
 
-                    $tokens[] = new Token(
+                    $tokens[] = $this->makeToken(
                         content: $attributeValue,
                         type: TokenType::ATTRIBUTE_VALUE,
+                        line: $attributeValueLine,
                     );
                 }
             }
 
             if ($this->seekIgnoringWhitespace() === '>') {
-                $tokens[] = new Token(
+                $openTagEndLine = $this->line;
+
+                $tokens[] = $this->makeToken(
                     content: $this->consumeIncluding('>'),
                     type: TokenType::OPEN_TAG_END,
+                    line: $openTagEndLine,
                 );
             } elseif ($this->seekIgnoringWhitespace() === '/') {
-                $tokens[] = new Token(
+                $selfClosingTagEndLine = $this->line;
+
+                $tokens[] = $this->makeToken(
                     content: $this->consumeIncluding('>'),
                     type: TokenType::SELF_CLOSING_TAG_END,
+                    line: $selfClosingTagEndLine,
                 );
             }
         }
@@ -163,6 +188,7 @@ final class TempestViewLexer
 
     private function lexXml(): Token
     {
+        $line = $this->line;
         $buffer = '';
 
         while ($this->seek(2) !== '?>' && $this->current !== null) {
@@ -171,11 +197,12 @@ final class TempestViewLexer
 
         $buffer .= $this->consume(2);
 
-        return new Token($buffer, TokenType::XML);
+        return $this->makeToken($buffer, TokenType::XML, $line);
     }
 
     private function lexPhp(): Token
     {
+        $line = $this->line;
         $buffer = '';
 
         while ($this->seek(2) !== '?>' && $this->current !== null) {
@@ -184,18 +211,20 @@ final class TempestViewLexer
 
         $buffer .= $this->consume(2);
 
-        return new Token($buffer, TokenType::PHP);
+        return $this->makeToken($buffer, TokenType::PHP, $line);
     }
 
     private function lexContent(): Token
     {
+        $line = $this->line;
         $buffer = $this->consumeUntil('<');
 
-        return new Token($buffer, TokenType::CONTENT);
+        return $this->makeToken($buffer, TokenType::CONTENT, $line);
     }
 
     private function lexComment(): Token
     {
+        $line = $this->line;
         $buffer = '';
 
         while ($this->seek(3) !== '-->' && $this->current !== null) {
@@ -204,37 +233,45 @@ final class TempestViewLexer
 
         $buffer .= $this->consume(3);
 
-        return new Token($buffer, TokenType::COMMENT);
+        return $this->makeToken($buffer, TokenType::COMMENT, $line);
     }
 
     private function lexDoctype(): Token
     {
+        $line = $this->line;
         $buffer = $this->consumeIncluding('>');
 
-        return new Token($buffer, TokenType::DOCTYPE);
+        return $this->makeToken($buffer, TokenType::DOCTYPE, $line);
     }
 
     private function lexWhitespace(): Token
     {
+        $line = $this->line;
         $buffer = $this->consumeWhile(self::WHITESPACE);
 
-        return new Token($buffer, TokenType::WHITESPACE);
+        return $this->makeToken($buffer, TokenType::WHITESPACE, $line);
     }
 
     private function lexCharacterData(): array
     {
+        $characterDataOpenLine = $this->line;
+
         $tokens = [
-            new Token($this->consumeIncluding('<![CDATA['), TokenType::CHARACTER_DATA_OPEN),
+            $this->makeToken($this->consumeIncluding('<![CDATA['), TokenType::CHARACTER_DATA_OPEN, $characterDataOpenLine),
         ];
 
         $buffer = '';
+
+        $contentLine = $this->line;
 
         while ($this->seek(3) !== ']]>' && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
-        $tokens[] = new Token($buffer, TokenType::CONTENT);
-        $tokens[] = new Token($this->consume(3), TokenType::CHARACTER_DATA_CLOSE);
+        $tokens[] = $this->makeToken($buffer, TokenType::CONTENT, $contentLine);
+
+        $characterDataCloseLine = $this->line;
+        $tokens[] = $this->makeToken($this->consume(3), TokenType::CHARACTER_DATA_CLOSE, $characterDataCloseLine);
 
         return $tokens;
     }

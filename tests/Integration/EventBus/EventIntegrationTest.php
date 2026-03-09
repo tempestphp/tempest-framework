@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\EventBus;
 
-use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tests\Tempest\Fixtures\Events\ItHappened;
+use Tests\Tempest\Fixtures\Events\ItHappenedHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\EventBus\event;
@@ -13,14 +13,14 @@ use function Tempest\EventBus\event;
 /**
  * @internal
  */
-final class EventIntegrationTestCase extends FrameworkIntegrationTestCase
+final class EventIntegrationTest extends FrameworkIntegrationTestCase
 {
     public function test_event(): void
     {
-        MyEventHandler::$itHappened = false;
+        ItHappenedHandler::$itHappened = false;
 
         event(new ItHappened());
 
-        $this->assertTrue(MyEventHandler::$itHappened);
+        $this->assertTrue(ItHappenedHandler::$itHappened);
     }
 }
