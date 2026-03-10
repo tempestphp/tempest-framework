@@ -85,6 +85,9 @@ final class ArrayToObjectMapper implements Mapper
             if ($property->isVirtual()) {
                 continue;
             }
+            if ($property->isReadonly()) {
+                continue;
+            }
 
             $property->unset($targetObject);
         }
@@ -198,11 +201,6 @@ final class ArrayToObjectMapper implements Mapper
         array &$unsetProperties,
     ): void {
         if ($property->hasDefaultValue()) {
-            return;
-        }
-
-        if ($property->isReadonly()) {
-            $missingValues[] = $propertyName;
             return;
         }
 
