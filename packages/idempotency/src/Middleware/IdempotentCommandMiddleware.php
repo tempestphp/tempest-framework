@@ -11,7 +11,7 @@ use Tempest\Core\Priority;
 use Tempest\DateTime\Duration;
 use Tempest\Idempotency\Attributes\IdempotentCommand;
 use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\Contracts\HasIdempotencyKey;
+use Tempest\Idempotency\HasIdempotencyKey;
 use Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed;
 use Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported;
 use Tempest\Idempotency\Fingerprint\CommandFingerprintGenerator;

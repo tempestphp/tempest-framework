@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Tests\Fixtures;
 
 use Tempest\Http\Request;
-use Tempest\Idempotency\Contracts\IdempotencyScopeResolver;
+use Tempest\Idempotency\IdempotencyScopeResolver;
 
 final readonly class FixedScopeResolver implements IdempotencyScopeResolver
 {
