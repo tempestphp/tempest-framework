@@ -6,7 +6,6 @@ namespace Tempest\Http\Session\Installer;
 
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Migrations\MigrationManager;
@@ -21,7 +20,6 @@ final class DatabaseSessionInstaller implements Installer
 
     public function __construct(
         private readonly MigrationManager $migrationManager,
-        private readonly Container $container,
         private readonly Console $console,
         private readonly ConsoleArgumentBag $consoleArgumentBag,
     ) {}
@@ -50,7 +48,7 @@ final class DatabaseSessionInstaller implements Installer
         $argument = $this->consoleArgumentBag->get('migrate');
 
         if ($argument === null || ! is_bool($argument->value)) {
-            return $this->console->confirm('Do you want to execute migrations?', default: false);
+            return $this->console->confirm('Do you want to execute migrations?');
         }
 
         return (bool) $argument->value;
