@@ -11,9 +11,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Migrations\MigrationManager;
 
-use function Tempest\root_path;
 use function Tempest\src_path;
-use function Tempest\Support\Namespace\to_fqcn;
 
 final class DatabaseSessionInstaller implements Installer
 {
