@@ -43,9 +43,7 @@ final class DatabaseSessionInstaller implements Installer
         $this->publishImports();
 
         if ($migration && $this->shouldMigrate()) {
-            $this->migrationManager->executeUp(
-                migration: $this->container->get(to_fqcn($migration, root: root_path())),
-            );
+            $this->migrationManager->up();
         }
     }
 
