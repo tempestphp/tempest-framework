@@ -15,8 +15,6 @@ final readonly class Idempotent implements RouteDecorator
     public function __construct(
         public ?int $ttlInSeconds = null,
         public ?int $pendingTtlInSeconds = null,
-        public ?bool $requireKey = null,
-        public ?string $header = null,
     ) {}
 
     public function decorate(Route $route): Route

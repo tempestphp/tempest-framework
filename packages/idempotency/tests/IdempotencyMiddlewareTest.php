@@ -19,6 +19,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Attributes\IdempotentRoute;
 use Tempest\Idempotency\Config\IdempotencyConfig;
 use Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported;
 use Tempest\Idempotency\Fingerprint\RequestFingerprintGenerator;
@@ -742,7 +743,8 @@ final class IdempotencyTestController
     }
 
     #[Post('/drafts')]
-    #[Idempotent(requireKey: false)]
+    #[Idempotent]
+    #[IdempotentRoute(requireKey: false)]
     public function createWithoutKeyRequirement(): Response
     {
         return new GenericResponse(Status::CREATED, ['ok' => true]);

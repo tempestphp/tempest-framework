@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Middleware;
 
 use Tempest\Cache\Cache;
+use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandBusMiddleware;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;
 use Tempest\Core\Priority;
 use Tempest\DateTime\Duration;
-use Tempest\Idempotency\Attributes\IdempotentCommand;
+use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\HasIdempotencyKey;
 use Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed;
 use Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported;
 use Tempest\Idempotency\Fingerprint\CommandFingerprintGenerator;
+use Tempest\Idempotency\HasIdempotencyKey;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
 use Tempest\Idempotency\Store\IdempotencyStore;
@@ -34,6 +35,7 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
         private IdempotencyKeyResolver $keyResolver,
         private CommandFingerprintGenerator $fingerprintGenerator,
         private IdempotencyConfig $config,
+        private CommandBusConfig $commandBusConfig,
         private ProcessingOwner $processingOwner,
     ) {}
 
@@ -142,13 +144,13 @@ final readonly class IdempotentCommandMiddleware implements CommandBusMiddleware
     /** @return null|array{ttlInSeconds: int, pendingTtlInSeconds: int} */
     private function resolveOptions(object $command): ?array
     {
-        $reflector = new ClassReflector($command);
+        $instance = new ClassReflector($command)->getAttribute(Idempotent::class);
 
-        if (! $reflector->hasAttribute(IdempotentCommand::class)) {
-            return null;
+        if ($instance === null) {
+            $instance = ($this->commandBusConfig->handlers[$command::class] ?? null)
+                ?->handler
+                ->getAttribute(Idempotent::class);
         }
-
-        $instance = $reflector->getAttribute(IdempotentCommand::class);
 
         if ($instance === null) {
             return null;

@@ -8,18 +8,21 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\GenericCache;
+use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;
-use Tempest\Idempotency\Attributes\IdempotentCommand;
+use Tempest\CommandBus\CommandHandler;
+use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\HasIdempotencyKey;
 use Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed;
 use Tempest\Idempotency\Fingerprint\ObjectFingerprintGenerator;
+use Tempest\Idempotency\HasIdempotencyKey;
 use Tempest\Idempotency\Middleware\IdempotentCommandMiddleware;
 use Tempest\Idempotency\Store\CacheIdempotencyStore;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
 use Tempest\Idempotency\Tests\Fixtures\RecordingCache;
 use Tempest\Idempotency\Tests\Fixtures\RecordingStore;
+use Tempest\Reflection\MethodReflector;
 
 final class IdempotentCommandMiddlewareTest extends TestCase
 {
@@ -47,6 +50,31 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $middleware($command, $next);
 
         $this->assertSame(2, $calls);
+    }
+
+    #[Test]
+    public function supports_idempotent_attribute_on_handler_method(): void
+    {
+        $commandBusConfig = new CommandBusConfig();
+        $handler = new CommandHandler();
+        $commandBusConfig->addHandler(
+            $handler,
+            SyncInventoryCommand::class,
+            MethodReflector::fromParts(SyncInventoryHandler::class, 'handle'),
+        );
+
+        $middleware = $this->createMiddleware($commandBusConfig);
+        $calls = 0;
+        $command = new SyncInventoryCommand(warehouse: 'east', sku: 'WIDGET-1');
+
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
+            $calls++;
+        });
+
+        $middleware($command, $next);
+        $middleware($command, $next);
+
+        $this->assertSame(1, $calls);
     }
 
     #[Test]
@@ -113,6 +141,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             keyResolver: $resolver,
             fingerprintGenerator: new ObjectFingerprintGenerator(),
             config: $config,
+            commandBusConfig: new CommandBusConfig(),
             processingOwner: new ProcessingOwner(),
         );
 
@@ -143,6 +172,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             keyResolver: $resolver,
             fingerprintGenerator: $fingerprintGenerator,
             config: $config,
+            commandBusConfig: new CommandBusConfig(),
             processingOwner: new ProcessingOwner(),
         );
 
@@ -183,6 +213,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             keyResolver: $resolver,
             fingerprintGenerator: $fingerprintGenerator,
             config: $config,
+            commandBusConfig: new CommandBusConfig(),
             processingOwner: new ProcessingOwner(),
         );
 
@@ -223,6 +254,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             keyResolver: $resolver,
             fingerprintGenerator: $fingerprintGenerator,
             config: $config,
+            commandBusConfig: new CommandBusConfig(),
             processingOwner: new ProcessingOwner(),
         );
 
@@ -246,7 +278,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $this->assertSame(0, $calls);
     }
 
-    private function createMiddleware(): IdempotentCommandMiddleware
+    private function createMiddleware(?CommandBusConfig $commandBusConfig = null): IdempotentCommandMiddleware
     {
         $cache = new GenericCache(new ArrayAdapter());
         $config = new IdempotencyConfig();
@@ -258,6 +290,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             keyResolver: $resolver,
             fingerprintGenerator: new ObjectFingerprintGenerator(),
             config: $config,
+            commandBusConfig: $commandBusConfig ?? new CommandBusConfig(),
             processingOwner: new ProcessingOwner(),
         );
     }
@@ -270,7 +303,7 @@ final readonly class CreateDraftCommand
     ) {}
 }
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class ImportInvoicesCommand
 {
     public function __construct(
@@ -279,7 +312,7 @@ final readonly class ImportInvoicesCommand
     ) {}
 }
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class CreatePayoutCommand implements HasIdempotencyKey
 {
     public function __construct(
@@ -290,5 +323,22 @@ final readonly class CreatePayoutCommand implements HasIdempotencyKey
     public function getIdempotencyKey(): string
     {
         return $this->idempotencyKey;
+    }
+}
+
+final readonly class SyncInventoryCommand
+{
+    public function __construct(
+        public string $warehouse,
+        public string $sku,
+    ) {}
+}
+
+final class SyncInventoryHandler
+{
+    #[Idempotent]
+    #[CommandHandler]
+    public function handle(SyncInventoryCommand $command): void
+    {
     }
 }

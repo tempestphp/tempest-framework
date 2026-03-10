@@ -12,11 +12,12 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Attributes\IdempotentRoute;
 use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\IdempotencyScopeResolver;
 use Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported;
 use Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported;
 use Tempest\Idempotency\Fingerprint\HttpFingerprintGenerator;
+use Tempest\Idempotency\IdempotencyScopeResolver;
 use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
 use Tempest\Idempotency\Store\IdempotencyStore;
@@ -191,28 +192,34 @@ final readonly class IdempotencyMiddleware implements HttpMiddleware
     /** @return array{header: string, requireKey: bool, ttlInSeconds: int, pendingTtlInSeconds: int} */
     private function resolveOptions(): array
     {
-        $attribute = $this->resolveAttribute();
+        $idempotent = $this->resolveAttribute(Idempotent::class);
+        $route = $this->resolveAttribute(IdempotentRoute::class);
 
         return [
-            'header' => $attribute->header ?? $this->config->header,
-            'requireKey' => $attribute->requireKey ?? $this->config->requireKey,
-            'ttlInSeconds' => $attribute->ttlInSeconds ?? $this->config->ttlInSeconds,
-            'pendingTtlInSeconds' => $attribute->pendingTtlInSeconds ?? $this->config->pendingTtlInSeconds,
+            'header' => $route->header ?? $this->config->header,
+            'requireKey' => $route->requireKey ?? $this->config->requireKey,
+            'ttlInSeconds' => $idempotent->ttlInSeconds ?? $this->config->ttlInSeconds,
+            'pendingTtlInSeconds' => $idempotent->pendingTtlInSeconds ?? $this->config->pendingTtlInSeconds,
         ];
     }
 
-    private function resolveAttribute(): ?Idempotent
+    /**
+     * @template T of object
+     * @param class-string<T> $attributeClass
+     * @return T|null
+     */
+    private function resolveAttribute(string $attributeClass): ?object
     {
         $attribute = $this->matchedRoute
             ->route
             ->handler
-            ->getAttribute(Idempotent::class);
+            ->getAttribute($attributeClass);
 
         return $attribute ?? $this->matchedRoute
             ->route
             ->handler
             ->getDeclaringClass()
-            ->getAttribute(Idempotent::class);
+            ->getAttribute($attributeClass);
     }
 
     private function resolveScope(Request $request): string
