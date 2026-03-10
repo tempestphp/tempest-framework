@@ -7,11 +7,13 @@ description: "Prevent duplicate side effects for HTTP routes and command bus com
 
 Payment processing, order creation, resource provisioning - any operation where retrying the same request should not produce duplicate side effects. Timeouts, client retries, and accidental double clicks all cause the same problem: the server cannot distinguish a retry from a new request.
 
-The `tempest/idempotency` package solves this by storing the result of the first execution and replaying it for subsequent requests with the same idempotency key. It supports both [HTTP routes](#idempotent-routes) and [command bus commands](#idempotent-commands).
+The
+`tempest/idempotency` package solves this by storing the result of the first execution and replaying it for subsequent requests with the same idempotency key. It supports both [HTTP routes](#idempotent-routes) and [command bus commands](#idempotent-commands).
 
 ## Idempotent routes
 
-Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to a controller method. Clients send an `Idempotency-Key` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
+Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to a controller method. Clients send an
+`{txt}{:hlvalueproperty:Idempotency-Key:}` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
 
 ```php app/OrderController.php
 use Tempest\Router\Post;
@@ -46,17 +48,23 @@ Content-Type: application/json
 {"product": "widget", "quantity": 3}
 ```
 
-When a cached response is replayed, the response includes an `idempotency-replayed: true` header so the client can distinguish replays from original executions.
+When a cached response is replayed, the response includes an
+`{:hl-property:idempotency-replayed:}: true` header so the client can distinguish replays from original executions.
 
 ### Supported methods
 
-Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`, `PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported`} exception. `GET` is inherently idempotent, `PUT` and `DELETE` are idempotent by definition in HTTP semantics, and only `POST` and `PATCH` produce non-idempotent side effects.
+Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`,
+`PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported`} exception.
+`GET` is inherently idempotent, `PUT` and
+`DELETE` are idempotent by definition in HTTP semantics, and only `POST` and
+`PATCH` produce non-idempotent side effects.
 
 ### Scope resolver
 
 Idempotency keys must be scoped per user or client to prevent key collisions across different actors. This is done by implementing the {b`Tempest\Idempotency\IdempotencyScopeResolver`} interface and registering it in the container.
 
-The `resolve()` method receives the current request and must return a string that uniquely identifies the caller - such as a user ID, session ID, or API key:
+The
+`resolve()` method receives the current request and must return a string that uniquely identifies the caller - such as a user ID, session ID, or API key:
 
 ```php app/UserIdempotencyScopeResolver.php
 use Tempest\Http\Request;
@@ -81,7 +89,8 @@ A scope resolver is required. If no implementation of {b`Tempest\Idempotency\Ide
 
 ### Per-route overrides
 
-The `#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
+The
+`#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
 
 ```php app/PaymentController.php
 use Tempest\Router\Post;
@@ -103,23 +112,25 @@ final readonly class PaymentController
 
 #### `#[Idempotent]` parameters
 
-| Parameter | Type | Description |
-|---|---|---|
-| `ttlInSeconds` | `?int` | How long a completed response is cached. Defaults to the config value (86400 / 24 hours). |
-| `pendingTtlInSeconds` | `?int` | How long a pending (in-progress) record is considered active. Defaults to the config value (60 seconds). |
+| Parameter                             | Type               | Description                                                                                              |
+|---------------------------------------|--------------------|----------------------------------------------------------------------------------------------------------|
+| `{:hl-property:ttlInSeconds:}`        | `{:hl-type:?int:}` | How long a completed response is cached. Defaults to the config value (86400 / 24 hours).                |
+| `{:hl-property:pendingTtlInSeconds:}` | `{:hl-type:?int:}` | How long a pending (in-progress) record is considered active. Defaults to the config value (60 seconds). |
 
 #### `#[IdempotentRoute]` parameters
 
-| Parameter | Type | Description |
-|---|---|---|
-| `requireKey` | `?bool` | Whether requests without the idempotency key header should be rejected with a 400 response. Defaults to `true`. |
-| `header` | `?string` | The header name to read the idempotency key from. Defaults to `Idempotency-Key`. |
+| Parameter                    | Type                  | Description                                                                                                     |
+|------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------|
+| `{:hl-property:requireKey:}` | `{:hl-type:?bool:}`   | Whether requests without the idempotency key header should be rejected with a 400 response. Defaults to `true`. |
+| `{:hl-property:header:}`     | `{:hl-type:?string:}` | The header name to read the idempotency key from. Defaults to `{txt}{:hl-value:Idempotency-Key:}`.              |
 
-When `requireKey` is set to `false`, requests without the header bypass idempotency protection entirely and execute normally.
+When `{:hl-property:requireKey:}` is set to
+`false`, requests without the header bypass idempotency protection entirely and execute normally.
 
 ### Class-level application
 
-The `#[Idempotent]` attribute can be applied at the class level to make all routes in a controller idempotent:
+The
+`#[Idempotent]` attribute can be applied at the class level to make all routes in a controller idempotent:
 
 ```php app/ApiOrderController.php
 use Tempest\Router\Post;
@@ -142,17 +153,18 @@ final readonly class ApiOrderController
 
 The middleware produces different responses depending on the state of the idempotency key:
 
-| Scenario | Status | Description |
-|---|---|---|
-| No existing record |  -  | The request executes normally and the response is cached. |
-| Completed record, same payload | Original status | The cached response is replayed with an `idempotency-replayed: true` header. |
-| Completed record, different payload | 422 | The key was already used with a different request body. |
-| Pending record (in progress) | 409 | Another request with the same key is currently being processed. A `retry-after: 1` header is included. |
-| Missing key (when required) | 400 | The `Idempotency-Key` header was not provided. |
+| Scenario                            | Status          | Description                                                                                                            |
+|-------------------------------------|-----------------|------------------------------------------------------------------------------------------------------------------------|
+| No existing record                  | -               | The request executes normally and the response is cached.                                                              |
+| Completed record, same payload      | Original status | The cached response is replayed with an `{:hl-property:idempotency-replayed:}: true` header.                           |
+| Completed record, different payload | `422`           | The key was already used with a different request body.                                                                |
+| Pending record (in progress)        | `409`           | Another request with the same key is currently being processed. A `{:hl-property:retry-after:}: 1` header is included. |
+| Missing key (when required)         | `400`           | The `{txt}{:hl-value:Idempotency-Key:}` header was not provided.                                                       |
 
 ### How it works
 
-The `#[Idempotent]` attribute is a [route decorator](../1-essentials/01-routing.md#route-decorators) that adds {b`Tempest\Idempotency\Middleware\IdempotencyMiddleware`} to the route's middleware stack. The middleware:
+The
+`#[Idempotent]` attribute is a [route decorator](../1-essentials/01-routing.md#route-decorators) that adds {b`Tempest\Idempotency\Middleware\IdempotencyMiddleware`} to the route's middleware stack. The middleware:
 
 1. Reads the idempotency key from the request header.
 2. Computes a fingerprint of the request (method, URI, body, and query parameters).
@@ -231,21 +243,23 @@ When using explicit keys, the fingerprint of the command payload is still verifi
 
 ### Per-command TTL overrides
 
-The `#[Idempotent]` attribute accepts the same optional TTL parameters for commands as it does for routes:
+The
+`#[Idempotent]` attribute accepts the same optional TTL parameters for commands as it does for routes:
 
 ```php
 #[Idempotent(ttlInSeconds: 3600, pendingTtlInSeconds: 30)]
 final readonly class ProcessPaymentCommand { /* … */ }
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `ttlInSeconds` | `?int` | How long the completed record is cached. Defaults to the config value (86400 / 24 hours). |
-| `pendingTtlInSeconds` | `?int` | How long a pending record is considered active. Defaults to the config value (60 seconds). |
+| Parameter                             | Type               | Description                                                                                |
+|---------------------------------------|--------------------|--------------------------------------------------------------------------------------------|
+| `{:hl-property:ttlInSeconds:}`        | `{:hl-type:?int:}` | How long the completed record is cached. Defaults to the config value (86400 / 24 hours).  |
+| `{:hl-property:pendingTtlInSeconds:}` | `{:hl-type:?int:}` | How long a pending record is considered active. Defaults to the config value (60 seconds). |
 
 ## Configuration
 
-The idempotency package is configured by creating an `idempotency.config.php` file. All settings have sensible defaults:
+The idempotency package is configured by creating an
+`idempotency.config.php` file. All settings have sensible defaults:
 
 ```php app/idempotency.config.php
 use Tempest\Idempotency\Config\IdempotencyConfig;
@@ -259,18 +273,19 @@ return new IdempotencyConfig(
 );
 ```
 
-| Parameter | Default | Description |
-|---|---|---|
-| `header` | `Idempotency-Key` | The HTTP header name to read the idempotency key from. |
-| `requireKey` | `true` | Whether to reject requests that do not include the idempotency key header. |
-| `ttlInSeconds` | `86400` (24h) | How long a completed response is cached. |
-| `pendingTtlInSeconds` | `60` | How long a pending record is considered active before it can be taken over. |
-| `cachePrefix` | `idempotency` | Prefix for cache keys in the idempotency store. |
-| `storeClass` | `CacheIdempotencyStore` | The {b`Tempest\Idempotency\Store\IdempotencyStore`} implementation to use. |
+| Parameter                             | Default                             | Description                                                                 |
+|---------------------------------------|-------------------------------------|-----------------------------------------------------------------------------|
+| `{:hl-property:header:}`              | `{txt}{:hl-value:Idempotency-Key:}` | The HTTP header name to read the idempotency key from.                      |
+| `{:hl-property:requireKey:}`          | `{:hl-type:true:}`                  | Whether to reject requests that do not include the idempotency key header.  |
+| `{:hl-property:ttlInSeconds:}`        | `86400` (24h)                       | How long a completed response is cached.                                    |
+| `{:hl-property:pendingTtlInSeconds:}` | `60`                                | How long a pending record is considered active before it can be taken over. |
+| `{:hl-property:cachePrefix:}`         | `{:hl-value:idempotency:}`          | Prefix for cache keys in the idempotency store.                             |
+| `{:hl-property:storeClass:}`          | `{:hl-type:CacheIdempotencyStore:}` | The {b`Tempest\Idempotency\Store\IdempotencyStore`} implementation to use.  |
 
 ### Custom stores
 
-The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\Store\IdempotencyStore`} interface and setting the `storeClass` in the configuration:
+The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\Store\IdempotencyStore`} interface and setting the
+`storeClass` in the configuration:
 
 ```php app/idempotency.config.php
 use Tempest\Idempotency\Config\IdempotencyConfig;
@@ -282,6 +297,6 @@ return new IdempotencyConfig(
 ```
 
 ## Limitations
-
-- **Windows is not supported.** The heartbeat mechanism relies on `pcntl_alarm` and `pcntl_signal`, which are not available on Windows. Attempting to use idempotency on Windows will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported`} exception.
+- **Windows is not supported.** The heartbeat mechanism relies on `pcntl_alarm()` and
+  `pcntl_signal()`, which are not available on Windows. Attempting to use idempotency on Windows will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported`} exception.
 - **Stored responses must be serializable.** Response bodies are stored using PHP serialization or JSON encoding. Non-serializable bodies (such as generators or views) are stored as type name strings and will not reproduce the original output on replay.
