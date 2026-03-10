@@ -54,13 +54,13 @@ Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempot
 
 ### Scope resolver
 
-Idempotency keys must be scoped per user or client to prevent key collisions across different actors. This is done by implementing the {b`Tempest\Idempotency\Contracts\IdempotencyScopeResolver`} interface and registering it in the container.
+Idempotency keys must be scoped per user or client to prevent key collisions across different actors. This is done by implementing the {b`Tempest\Idempotency\IdempotencyScopeResolver`} interface and registering it in the container.
 
 The `resolve()` method receives the current request and must return a string that uniquely identifies the caller - such as a user ID, session ID, or API key:
 
 ```php app/UserIdempotencyScopeResolver.php
 use Tempest\Http\Request;
-use Tempest\Idempotency\Contracts\IdempotencyScopeResolver;
+use Tempest\Idempotency\IdempotencyScopeResolver;
 
 final readonly class UserIdempotencyScopeResolver implements IdempotencyScopeResolver
 {
@@ -76,22 +76,24 @@ final readonly class UserIdempotencyScopeResolver implements IdempotencyScopeRes
 ```
 
 :::warning
-A scope resolver is required. If no implementation of {b`Tempest\Idempotency\Contracts\IdempotencyScopeResolver`} is registered in the container, the middleware will fail at construction time.
+A scope resolver is required. If no implementation of {b`Tempest\Idempotency\IdempotencyScopeResolver`} is registered in the container, the middleware will fail at construction time.
 :::
 
 ### Per-route overrides
 
-The `#[Idempotent]` attribute accepts optional parameters to override the global configuration on a per-route basis:
+The `#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
 
 ```php app/PaymentController.php
 use Tempest\Router\Post;
 use Tempest\Http\Response;
 use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Attributes\IdempotentRoute;
 
 final readonly class PaymentController
 {
     #[Post('/payments')]
-    #[Idempotent(ttlInSeconds: 172_800, requireKey: true)]
+    #[Idempotent(ttlInSeconds: 172_800)]
+    #[IdempotentRoute(requireKey: true)]
     public function charge(ChargeRequest $request): Response
     {
         // Cached response persists for 48 hours instead of the default 24
@@ -99,10 +101,17 @@ final readonly class PaymentController
 }
 ```
 
+#### `#[Idempotent]` parameters
+
 | Parameter | Type | Description |
 |---|---|---|
 | `ttlInSeconds` | `?int` | How long a completed response is cached. Defaults to the config value (86400 / 24 hours). |
 | `pendingTtlInSeconds` | `?int` | How long a pending (in-progress) record is considered active. Defaults to the config value (60 seconds). |
+
+#### `#[IdempotentRoute]` parameters
+
+| Parameter | Type | Description |
+|---|---|---|
 | `requireKey` | `?bool` | Whether requests without the idempotency key header should be rejected with a 400 response. Defaults to `true`. |
 | `header` | `?string` | The header name to read the idempotency key from. Defaults to `Idempotency-Key`. |
 
@@ -156,12 +165,14 @@ A heartbeat mechanism keeps pending records alive during long-running requests, 
 
 ## Idempotent commands
 
-Mark a command class with {b`Tempest\Idempotency\Attributes\IdempotentCommand`} to prevent duplicate dispatches. When the same command is dispatched more than once, the duplicate is silently skipped.
+Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to prevent duplicate dispatches. When the same command is dispatched more than once, the duplicate is silently skipped. The attribute can be placed on the command class or on the handler method.
+
+On the command class:
 
 ```php app/ImportInvoicesCommand.php
-use Tempest\Idempotency\Attributes\IdempotentCommand;
+use Tempest\Idempotency\Attributes\Idempotent;
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class ImportInvoicesCommand
 {
     public function __construct(
@@ -171,13 +182,15 @@ final readonly class ImportInvoicesCommand
 }
 ```
 
-The handler is defined as usual with `#[CommandHandler]`:
+Or on the handler method:
 
 ```php app/ImportInvoicesHandler.php
 use Tempest\CommandBus\CommandHandler;
+use Tempest\Idempotency\Attributes\Idempotent;
 
 final class ImportInvoicesHandler
 {
+    #[Idempotent]
     #[CommandHandler]
     public function handleImportInvoices(ImportInvoicesCommand $command): void
     {
@@ -187,17 +200,19 @@ final class ImportInvoicesHandler
 }
 ```
 
+When placed on both the command class and the handler, the command class takes precedence.
+
 By default, the idempotency key is derived from a fingerprint of the command's properties. Two commands with identical property values produce the same fingerprint and are considered duplicates.
 
 ### Explicit idempotency keys
 
-Commands can provide an explicit key by implementing the {b`Tempest\Idempotency\Contracts\HasIdempotencyKey`} interface. This is useful when the deduplication key should be a specific business identifier rather than the full payload:
+Commands can provide an explicit key by implementing the {b`Tempest\Idempotency\HasIdempotencyKey`} interface. This is useful when the deduplication key should be a specific business identifier rather than the full payload:
 
 ```php app/ProcessPaymentCommand.php
-use Tempest\Idempotency\Attributes\IdempotentCommand;
-use Tempest\Idempotency\Contracts\HasIdempotencyKey;
+use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\HasIdempotencyKey;
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class ProcessPaymentCommand implements HasIdempotencyKey
 {
     public function __construct(
@@ -216,10 +231,10 @@ When using explicit keys, the fingerprint of the command payload is still verifi
 
 ### Per-command TTL overrides
 
-The `#[IdempotentCommand]` attribute accepts optional TTL parameters:
+The `#[Idempotent]` attribute accepts the same optional TTL parameters for commands as it does for routes:
 
 ```php
-#[IdempotentCommand(ttlInSeconds: 3600, pendingTtlInSeconds: 30)]
+#[Idempotent(ttlInSeconds: 3600, pendingTtlInSeconds: 30)]
 final readonly class ProcessPaymentCommand { /* … */ }
 ```
 

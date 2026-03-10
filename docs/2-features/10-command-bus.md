@@ -117,14 +117,14 @@ Note that async command handling is still an early feature, and will receive man
 
 ## Idempotent commands
 
-Commands that should not be processed more than once—such as payment processing or invoice imports—can be marked with {b`Tempest\Idempotency\Attributes\IdempotentCommand`}. Duplicate dispatches with the same payload are silently skipped.
+Commands that should not be processed more than once—such as payment processing or invoice imports—can be marked with {b`Tempest\Idempotency\Attributes\Idempotent`}. The attribute can be placed on the command class or on the handler method. Duplicate dispatches with the same payload are silently skipped.
 
 ```php
 // app/ImportInvoicesCommand.php
 
-use Tempest\Idempotency\Attributes\IdempotentCommand;
+use Tempest\Idempotency\Attributes\Idempotent;
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class ImportInvoicesCommand
 {
     public function __construct(
@@ -134,15 +134,31 @@ final readonly class ImportInvoicesCommand
 }
 ```
 
-By default, the deduplication key is derived from the command's properties. Two commands with identical property values are considered duplicates. For explicit control over the key, implement the {b`Tempest\Idempotency\Contracts\HasIdempotencyKey`} interface:
+Alternatively, the attribute can be placed on the handler method instead:
+
+```php
+// app/ImportInvoicesHandler.php
+
+use Tempest\CommandBus\CommandHandler;
+use Tempest\Idempotency\Attributes\Idempotent;
+
+final class ImportInvoicesHandler
+{
+    #[Idempotent]
+    #[CommandHandler]
+    public function handle(ImportInvoicesCommand $command): void { /* … */ }
+}
+```
+
+By default, the deduplication key is derived from the command's properties. Two commands with identical property values are considered duplicates. For explicit control over the key, implement the {b`Tempest\Idempotency\HasIdempotencyKey`} interface:
 
 ```php
 // app/ProcessPaymentCommand.php
 
-use Tempest\Idempotency\Attributes\IdempotentCommand;
-use Tempest\Idempotency\Contracts\HasIdempotencyKey;
+use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\HasIdempotencyKey;
 
-#[IdempotentCommand]
+#[Idempotent]
 final readonly class ProcessPaymentCommand implements HasIdempotencyKey
 {
     public function __construct(

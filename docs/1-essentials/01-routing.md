@@ -705,7 +705,7 @@ final readonly class OrderController
 }
 ```
 
-Idempotency is only supported for `POST` and `PATCH` routes. The attribute can be applied at the class level to make all routes in a controller idempotent, and accepts optional parameters for per-route TTL and key requirement overrides.
+Idempotency is only supported for `POST` and `PATCH` routes. The attribute can be applied at the class level to make all routes in a controller idempotent, and accepts optional TTL parameters. Route-specific settings like key requirement and header name can be configured with the `#[IdempotentRoute]` attribute.
 
 :::info
 Read the full [idempotency documentation](../2-features/19-idempotency.md) for details on scope resolvers, configuration, response behavior, and command bus idempotency.
