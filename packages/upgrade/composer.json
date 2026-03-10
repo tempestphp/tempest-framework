@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "phpstan/phpstan": "2.1.33",
+        "phpstan/phpstan": "2.1.40",
         "rector/rector": "2.3.8"
     },
     "autoload": {
