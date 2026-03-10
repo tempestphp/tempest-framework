@@ -7,13 +7,11 @@ description: "Prevent duplicate side effects for HTTP routes and command bus com
 
 Payment processing, order creation, resource provisioning - any operation where retrying the same request should not produce duplicate side effects. Timeouts, client retries, and accidental double clicks all cause the same problem: the server cannot distinguish a retry from a new request.
 
-The
-`tempest/idempotency` package solves this by storing the result of the first execution and replaying it for subsequent requests with the same idempotency key. It supports both [HTTP routes](#idempotent-routes) and [command bus commands](#idempotent-commands).
+The `tempest/idempotency` package solves this by storing the result of the first execution and replaying it for subsequent requests with the same idempotency key. It supports both [HTTP routes](#idempotent-routes) and [command bus commands](#idempotent-commands).
 
 ## Idempotent routes
 
-Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to a controller method. Clients send an
-`{txt}{:hlvalueproperty:Idempotency-Key:}` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
+Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to a controller method. Clients send an `{txt}{:hlvalueproperty:Idempotency-Key:}` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
 
 ```php app/OrderController.php
 use Tempest\Router\Post;
@@ -48,8 +46,7 @@ Content-Type: application/json
 {"product": "widget", "quantity": 3}
 ```
 
-When a cached response is replayed, the response includes an
-`{:hl-property:idempotency-replayed:}: true` header so the client can distinguish replays from original executions.
+When a cached response is replayed, the response includes an `{:hl-property:idempotency-replayed:}: true` header so the client can distinguish replays from original executions.
 
 ### Supported methods
 
@@ -63,8 +60,7 @@ Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempot
 
 Idempotency keys must be scoped per user or client to prevent key collisions across different actors. This is done by implementing the {b`Tempest\Idempotency\IdempotencyScopeResolver`} interface and registering it in the container.
 
-The
-`resolve()` method receives the current request and must return a string that uniquely identifies the caller - such as a user ID, session ID, or API key:
+The `resolve()` method receives the current request and must return a string that uniquely identifies the caller - such as a user ID, session ID, or API key:
 
 ```php app/UserIdempotencyScopeResolver.php
 use Tempest\Http\Request;
@@ -89,8 +85,7 @@ A scope resolver is required. If no implementation of {b`Tempest\Idempotency\Ide
 
 ### Per-route overrides
 
-The
-`#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
+The `#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
 
 ```php app/PaymentController.php
 use Tempest\Router\Post;
@@ -124,13 +119,11 @@ final readonly class PaymentController
 | `{:hl-property:requireKey:}` | `{:hl-type:?bool:}`   | Whether requests without the idempotency key header should be rejected with a 400 response. Defaults to `true`. |
 | `{:hl-property:header:}`     | `{:hl-type:?string:}` | The header name to read the idempotency key from. Defaults to `{txt}{:hl-value:Idempotency-Key:}`.              |
 
-When `{:hl-property:requireKey:}` is set to
-`false`, requests without the header bypass idempotency protection entirely and execute normally.
+When `{:hl-property:requireKey:}` is set to `false`, requests without the header bypass idempotency protection entirely and execute normally.
 
 ### Class-level application
 
-The
-`#[Idempotent]` attribute can be applied at the class level to make all routes in a controller idempotent:
+The `#[Idempotent]` attribute can be applied at the class level to make all routes in a controller idempotent:
 
 ```php app/ApiOrderController.php
 use Tempest\Router\Post;
@@ -163,8 +156,7 @@ The middleware produces different responses depending on the state of the idempo
 
 ### How it works
 
-The
-`#[Idempotent]` attribute is a [route decorator](../1-essentials/01-routing.md#route-decorators) that adds {b`Tempest\Idempotency\Middleware\IdempotencyMiddleware`} to the route's middleware stack. The middleware:
+The `#[Idempotent]` attribute is a [route decorator](../1-essentials/01-routing.md#route-decorators) that adds {b`Tempest\Idempotency\Middleware\IdempotencyMiddleware`} to the route's middleware stack. The middleware:
 
 1. Reads the idempotency key from the request header.
 2. Computes a fingerprint of the request (method, URI, body, and query parameters).
@@ -243,8 +235,7 @@ When using explicit keys, the fingerprint of the command payload is still verifi
 
 ### Per-command TTL overrides
 
-The
-`#[Idempotent]` attribute accepts the same optional TTL parameters for commands as it does for routes:
+The `#[Idempotent]` attribute accepts the same optional TTL parameters for commands as it does for routes:
 
 ```php
 #[Idempotent(ttlInSeconds: 3600, pendingTtlInSeconds: 30)]
@@ -258,8 +249,7 @@ final readonly class ProcessPaymentCommand { /* … */ }
 
 ## Configuration
 
-The idempotency package is configured by creating an
-`idempotency.config.php` file. All settings have sensible defaults:
+The idempotency package is configured by creating an `idempotency.config.php` file. All settings have sensible defaults:
 
 ```php app/idempotency.config.php
 use Tempest\Idempotency\Config\IdempotencyConfig;
@@ -284,8 +274,7 @@ return new IdempotencyConfig(
 
 ### Custom stores
 
-The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\Store\IdempotencyStore`} interface and setting the
-`storeClass` in the configuration:
+The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\Store\IdempotencyStore`} interface and setting the `storeClass` in the configuration:
 
 ```php app/idempotency.config.php
 use Tempest\Idempotency\Config\IdempotencyConfig;
