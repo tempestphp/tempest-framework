@@ -50,11 +50,7 @@ When a cached response is replayed, the response includes an `{:hl-property:idem
 
 ### Supported methods
 
-Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`,
-`PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported`} exception.
-`GET` is inherently idempotent, `PUT` and
-`DELETE` are idempotent by definition in HTTP semantics, and only `POST` and
-`PATCH` produce non-idempotent side effects.
+Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`, `PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported`} exception. `GET` is inherently idempotent, `PUT` and `DELETE` are idempotent by definition in HTTP semantics, and only `POST` and `PATCH` produce non-idempotent side effects.
 
 ### Scope resolver
 
