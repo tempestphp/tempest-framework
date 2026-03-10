@@ -14,7 +14,6 @@ use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Query;
-use Tempest\Database\QueryExecuted;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\GenericEventBus;
@@ -24,7 +23,7 @@ final class QueryExecutionBench
 {
     private GenericDatabase $database;
 
-    private function createDatabase(GenericEventBus $eventBus): GenericDatabase
+    public function setUp(): void
     {
         $container = new GenericContainer();
 
@@ -32,21 +31,16 @@ final class QueryExecutionBench
         $connection = new PDOConnection($config);
         $connection->connect();
 
-        $database = new GenericDatabase(
+        $this->database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory($container),
-            $eventBus,
+            new GenericEventBus($container, new EventBusConfig()),
         );
 
-        $container->singleton(Database::class, $database);
+        $container->singleton(Database::class, $this->database);
         GenericContainer::setInstance($container);
 
-        return $database;
-    }
-
-    private function seedTable(): void
-    {
         $this->database->execute(new Query('CREATE TABLE IF NOT EXISTS bench (id INTEGER PRIMARY KEY, name TEXT, value TEXT)'));
 
         foreach (range(1, 100) as $i) {
@@ -57,26 +51,7 @@ final class QueryExecutionBench
         }
     }
 
-    public function setUpWithoutListener(): void
-    {
-        $container = new GenericContainer();
-        $eventBus = new GenericEventBus($container, new EventBusConfig());
-
-        $this->database = $this->createDatabase($eventBus);
-        $this->seedTable();
-    }
-
-    public function setUpWithListener(): void
-    {
-        $container = new GenericContainer();
-        $eventBus = new GenericEventBus($container, new EventBusConfig());
-        $eventBus->listen(function (QueryExecuted $event): void {});
-
-        $this->database = $this->createDatabase($eventBus);
-        $this->seedTable();
-    }
-
-    #[BeforeMethods('setUpWithoutListener')]
+    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
@@ -88,19 +63,7 @@ final class QueryExecutionBench
         ));
     }
 
-    #[BeforeMethods('setUpWithListener')]
-    #[Iterations(5)]
-    #[Revs(1000)]
-    #[Warmup(10)]
-    public function benchExecuteInsertWithListener(): void
-    {
-        $this->database->execute(new Query(
-            'INSERT INTO bench (name, value) VALUES (:name, :value)',
-            [':name' => 'bench_item', ':value' => 'bench_value'],
-        ));
-    }
-
-    #[BeforeMethods('setUpWithoutListener')]
+    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
@@ -109,32 +72,11 @@ final class QueryExecutionBench
         $this->database->fetch(new Query('SELECT * FROM bench'));
     }
 
-    #[BeforeMethods('setUpWithListener')]
-    #[Iterations(5)]
-    #[Revs(1000)]
-    #[Warmup(10)]
-    public function benchFetchAllWithListener(): void
-    {
-        $this->database->fetch(new Query('SELECT * FROM bench'));
-    }
-
-    #[BeforeMethods('setUpWithoutListener')]
+    #[BeforeMethods('setUp')]
     #[Iterations(5)]
     #[Revs(1000)]
     #[Warmup(10)]
     public function benchFetchWithBindings(): void
-    {
-        $this->database->fetch(new Query(
-            'SELECT * FROM bench WHERE name = :name',
-            [':name' => 'item_50'],
-        ));
-    }
-
-    #[BeforeMethods('setUpWithListener')]
-    #[Iterations(5)]
-    #[Revs(1000)]
-    #[Warmup(10)]
-    public function benchFetchWithBindingsAndListener(): void
     {
         $this->database->fetch(new Query(
             'SELECT * FROM bench WHERE name = :name',
