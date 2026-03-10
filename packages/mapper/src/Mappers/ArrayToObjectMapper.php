@@ -85,7 +85,7 @@ final class ArrayToObjectMapper implements Mapper
             if ($property->isVirtual()) {
                 continue;
             }
-            
+
             if ($property->isReadonly()) {
                 continue;
             }
