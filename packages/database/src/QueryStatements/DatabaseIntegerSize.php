@@ -15,13 +15,13 @@ enum DatabaseIntegerSize: int
         return match (true) {
             $bytes > self::DEFAULT->value => self::BIG,
             $bytes > self::SMALL->value => self::DEFAULT,
-            DEFAULT => self::SMALL,
+            default => self::SMALL,
         };
     }
 
     public function toString(): string
     {
-        return match($this) {
+        return match ($this) {
             self::SMALL => 'SMALLINT',
             self::DEFAULT => 'INTEGER',
             self::BIG => 'BIGINT',

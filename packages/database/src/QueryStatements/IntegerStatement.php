@@ -19,7 +19,7 @@ final readonly class IntegerStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return match($dialect) {
+        return match ($dialect) {
             DatabaseDialect::SQLITE => sprintf(
                 '`%s` INTEGER %s %s %s',
                 $this->name,
@@ -27,14 +27,14 @@ final readonly class IntegerStatement implements QueryStatement
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            DEFAULT => sprintf(
+            default => sprintf(
                 '`%s` %s %s %s %s',
                 $this->name,
                 DatabaseIntegerSize::fromBytes($this->size)->toString(),
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
-            )
+            ),
         };
     }
 }
