@@ -201,6 +201,11 @@ final class ArrayToObjectMapper implements Mapper
             return;
         }
 
+        if ($property->isReadonly()) {
+            $missingValues[] = $propertyName;
+            return;
+        }
+
         $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
 
         if ($isStrictProperty) {
