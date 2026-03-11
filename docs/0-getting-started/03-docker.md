@@ -207,6 +207,44 @@ This would allow you to execute `composer install` from the command line, via do
 You can find more detailed instructions for running composer via docker [here](https://github.com/docker-library/docs/tree/master/composer).
 :::
 
+## Environment variables
+
+The following .env variables are exposed within the Caddyfile. Those requiring defaults already have them, so in many cases you can simply ignore these.
+
+```bash
+# Defaults to 8000, can be changed to any port above 1024
+CADDY_HTTP_PORT
+# Defaults to 8443, can be changed to any port above 1024, must be unique
+CADDY_HTTPS_PORT
+# Use this to insert any Caddy global options, carried forward from FrankenPHP
+CADDY_GLOBAL_OPTIONS
+# Use this to specify any FrankenPHP global options, carried forward from FrankenPHP
+FRANKENPHP_CONFIG
+
+# Use this to specify any extra Caddy config that doesn't belong in the global or site blocks, carried forward from FrankenPHP
+CADDY_EXTRA_CONFIG
+
+# Specify the FQDN, defaults to localhost
+CADDY_SERVER_NAME
+# Where to serve the app from, defaults to public/, meaning /app/public/ as app is the WORKDIR
+CADDY_SERVER_ROOT
+
+# Configure the mercure module, carried forward from FrankenPHP
+MERCURE_PUBLISHER_JWT_KEY
+MERCURE_PUBLISHER_JWT_ALG
+MERCURE_SUBSCRIBER_JWT_KEY
+MERCURE_SUBSCRIBER_JWT_ALG
+MERCURE_EXTRA_DIRECTIVES
+
+# Any additional Caddy directives for the site-block, carried forward from FrankenPHP
+CADDY_SERVER_EXTRA_DIRECTIVES
+```
+
+You can also map a volume to a folder containing Caddyfile and pass your own Caddyfile, should you wish. Assuming that you've stored the Caddyfile in `/my/local/caddyconfig`:
+```bash
+docker run -v /my/local/caddyconfig:/etc/frankenphp/
+```
+
 ## Frequently asked questions
 
 ### Why no Alpine image?
