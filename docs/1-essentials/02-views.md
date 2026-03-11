@@ -246,6 +246,39 @@ The example above will only render the child `div` elements:
 <div>Post C</div>
 ```
 
+### Tag override with the `as` prop
+
+The `as` attribute allows you to transform the rendered tag of one element into another. This takes place on an instance of `GenericElement`, so for example this code:
+```html
+<a as="button">My Link</a>
+```
+Would render
+```html
+<button>My Link</button>
+```
+The power behind this is when you use an `Expression` to determine the element.
+
+Say for example, you wish to have a `<x-link>` component which renders as an `<a>` when the `$href` attribute is provided. In your view, use the component like so:
+```html
+<x-link href="https://tempestphp.com">Click to go to an awesome website</x-link>
+
+<x-link>This is just a button</x-link>
+```
+In your `<x-link>` component, define:
+```html
+<a :as="$href ?? 'button'" :href="$href ?? ''"><x-slot /></a>
+```
+Your page will render two links, as follows
+```html
+<a href="https://tempestphp.com">Click to go to an awesome website</a>
+
+<button>This is just a button</button>
+```
+
+#### Where this can and cannot be used
+
+You can't use the `as` Attribute on things like `<x-template>`, `<x-slot>`, etc, as these do not themselves render any HTML. They are placeholders in the page. Nor will placing it on a view component itself inherently do anything. The `as` attribute CAN be passed to a ViewComponent as shown in the example above, but by itself it will actually do nothing, unless you specifically provide logic to place it where you want it.
+
 ## View components
 
 Components allow for splitting the user interface into independent and reusable pieces.
