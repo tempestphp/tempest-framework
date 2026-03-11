@@ -14,9 +14,11 @@ final class GenericElement implements Element, WithToken
 {
     use IsElement;
 
+    private ?string $tagExpression = null;
+
     public function __construct(
         public readonly Token $token,
-        private readonly string $tag,
+        private string $tag,
         private readonly bool $isHtml,
         array $attributes,
     ) {
@@ -26,6 +28,22 @@ final class GenericElement implements Element, WithToken
     public function getTag(): string
     {
         return $this->tag;
+    }
+
+    public function withTag(string $tag): self
+    {
+        $clone = clone $this;
+        $clone->tag = $tag;
+
+        return $clone;
+    }
+
+    public function withTagExpression(string $expression): self
+    {
+        $clone = clone $this;
+        $clone->tagExpression = $expression;
+
+        return $clone;
     }
 
     public function compile(): string
@@ -52,6 +70,16 @@ final class GenericElement implements Element, WithToken
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;
+        }
+
+        // When a PHP expression drives the tag, we cannot know the resolved
+        // name at compile time, so void-element detection is skipped and we
+        // always emit a full open/close pair.
+        if ($this->tagExpression !== null) {
+            $open = "<?= {$this->tagExpression} ?>";
+            $close = "<?= {$this->tagExpression} ?>";
+
+            return "<{$open}{$attributes}>{$content}</{$close}>";
         }
 
         // Void elements
