@@ -10,6 +10,7 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Core\CouldNotStoreDiscoveryCache;
 use Tempest\Support\Filesystem;
 use Throwable;
+
 use function Tempest\internal_storage_path;
 
 final class DiscoveryCache

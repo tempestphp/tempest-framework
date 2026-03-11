@@ -19,6 +19,7 @@ use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
 use UnitEnum;
+
 use function Tempest\Support\arr;
 
 if (class_exists(ConsoleCommand::class)) {

@@ -18,6 +18,7 @@ use Tempest\Discovery\DiscoveryCache;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
+
 use function Tempest\Support\arr;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {

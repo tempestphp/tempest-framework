@@ -15,6 +15,7 @@ use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Priority;
 use Tempest\Discovery\DiscoveryCache;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

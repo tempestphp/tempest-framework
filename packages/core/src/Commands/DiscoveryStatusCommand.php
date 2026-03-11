@@ -11,6 +11,7 @@ use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\Registry;
 use Tempest\Support\Filesystem;
+
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
