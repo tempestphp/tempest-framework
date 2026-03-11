@@ -29,8 +29,7 @@ final class BootDiscovery
     public function __invoke(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): void
-    {
+    ): void {
         $discoveries = $this->build($discoveryClasses, $discoveryLocations);
 
         foreach ($discoveries as $discovery) {
@@ -46,8 +45,7 @@ final class BootDiscovery
     public function build(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): array
-    {
+    ): array {
         $discoveryLocations ??= $this->registry->locations;
 
         if ($discoveryClasses === null) {
