@@ -1,0 +1,1 @@
+<section><x-slot /></section>
