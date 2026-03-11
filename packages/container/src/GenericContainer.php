@@ -6,6 +6,7 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
+use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
@@ -20,7 +21,7 @@ use Tempest\Reflection\TypeReflector;
 use Throwable;
 use UnitEnum;
 
-final class GenericContainer implements Container
+final class GenericContainer implements Container, ContainerInterface
 {
     use HasInstance;
 
