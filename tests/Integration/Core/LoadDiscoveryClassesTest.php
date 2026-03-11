@@ -7,8 +7,8 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
+use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\LoadDiscoveryClasses;
 use Tempest\Support\Arr;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
@@ -63,14 +63,14 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $dependency = $this->container->get(ManualTestDiscoveryDependency::class);
         $dependency->discovered = false;
 
-        /** @var LoadDiscoveryClasses $loadDiscoveryClasses */
-        $loadDiscoveryClasses = $this->container->get(LoadDiscoveryClasses::class);
+        /** @var \Tempest\Discovery\BootDiscovery $bootDiscovery */
+        $bootDiscovery = $this->container->get(BootDiscovery::class);
 
-        $loadDiscoveryClasses(discoveryClasses: [], discoveryLocations: []);
+        $bootDiscovery(discoveryClasses: [], discoveryLocations: []);
 
         $this->assertFalse($dependency->discovered);
 
-        $loadDiscoveryClasses(
+        $bootDiscovery(
             discoveryClasses: [
                 ManualTestDiscovery::class,
             ],

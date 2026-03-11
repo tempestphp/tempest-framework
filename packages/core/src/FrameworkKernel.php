@@ -6,6 +6,7 @@ namespace Tempest\Core;
 
 use Dotenv\Dotenv;
 use ErrorException;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
@@ -115,7 +116,9 @@ final class FrameworkKernel implements Kernel
 
         GenericContainer::setInstance($container);
 
-        $container->singleton(Container::class, fn () => $container);
+        $container->singleton(Container::class, $container);
+        $container->singleton(ContainerInterface::class, $container);
+        $container->singleton(GenericContainer::class, $container);
 
         return $container;
     }
