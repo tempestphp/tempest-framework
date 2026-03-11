@@ -9,7 +9,6 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\Registry;
 use Tempest\Support\Filesystem;
 

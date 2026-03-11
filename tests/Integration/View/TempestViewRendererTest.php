@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\Registry;
 use Tempest\Support\Html\HtmlString;

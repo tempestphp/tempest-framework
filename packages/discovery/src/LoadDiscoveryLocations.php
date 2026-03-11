@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use Tempest\Support\Filesystem;
+
 use function Tempest\Support\Path\normalize;
 
 /** @internal */

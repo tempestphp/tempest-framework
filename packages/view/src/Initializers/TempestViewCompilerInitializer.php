@@ -5,7 +5,6 @@ namespace Tempest\View\Initializers;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\Registry;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Elements\ElementFactory;

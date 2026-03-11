@@ -12,6 +12,7 @@ use Tempest\Process\Testing\ProcessTester;
 use Tempest\Support\Arr;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
+
 use function Tempest\Support\Path\to_absolute_path;
 
 final class InstallerTester

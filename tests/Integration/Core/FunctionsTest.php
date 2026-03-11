@@ -10,6 +10,7 @@ use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\internal_storage_path;
 use function Tempest\registered_namespace;
 use function Tempest\root_path;

@@ -10,6 +10,7 @@ use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\Path\normalize;
 
 /**
