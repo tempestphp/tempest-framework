@@ -13,7 +13,7 @@ use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @uses \Tempest\Database\Builder\QueryBuilders\HasConvenientWhereMethods<TModel>
  */
 final class WhereGroupBuilder

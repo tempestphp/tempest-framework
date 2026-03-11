@@ -789,6 +789,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('baz', $clone->bar);
         $this->assertEquals($foo->id, $clone->id);
     }
+
+//    public function test_(): void
+//    {
+//        query(Book::class)->select()->where()->first()->
+//    }
 }
 
 final class Foo

@@ -13,16 +13,12 @@ use function Tempest\Database\query;
 use function Tempest\Mapper\make;
 use function Tempest\Support\arr;
 
-/**
- * @template TModel of object
- */
+/** @template TModel */
 final class QueryBuilder
 {
     use OnDatabase;
 
-    /**
-     * @param class-string<TModel>|string|TModel $model
-     */
+    /** @param class-string<TModel>|TModel|string $model */
     public function __construct(
         private readonly string|object $model,
     ) {}
@@ -138,7 +134,7 @@ final class QueryBuilder
      * query(User::class)->new(name: 'Frieren');
      * ```
      *
-     * @return TModel
+     * @return TModel|object<TModel>
      */
     public function new(mixed ...$params): object
     {
@@ -153,7 +149,7 @@ final class QueryBuilder
      * query(User::class)->findById(1);
      * ```
      *
-     * @return TModel
+     * @return TModel|object<TModel>|null
      */
     public function findById(string|int|PrimaryKey $id): ?object
     {
@@ -172,7 +168,7 @@ final class QueryBuilder
      * query(User::class)->resolve(1);
      * ```
      *
-     * @return TModel|null
+     * @return TModel|object<TModel>|null
      */
     public function resolve(string|int|PrimaryKey $id): ?object
     {
@@ -191,7 +187,7 @@ final class QueryBuilder
      * query(User::class)->get(1);
      * ```
      *
-     * @return TModel|null
+     * @return TModel|object<TModel>|null
      */
     public function get(string|int|PrimaryKey $id, array $relations = []): ?object
     {
@@ -250,7 +246,7 @@ final class QueryBuilder
      * query(User::class)->create(name: 'Frieren', kind: Kind::ELF);
      * ```
      *
-     * @return TModel
+     * @return TModel|object<TModel>
      */
     public function create(mixed ...$params): object
     {
@@ -287,7 +283,7 @@ final class QueryBuilder
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return TModel
+     * @return TModel|object<TModel>
      */
     public function findOrNew(array $find, array $update): object
     {
@@ -319,7 +315,7 @@ final class QueryBuilder
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return TModel
+     * @return TModel|object<TModel>
      */
     public function updateOrCreate(array $find, array $update): object
     {

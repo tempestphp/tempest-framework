@@ -1,5 +1,40 @@
 parameters:
     ignoreErrors:
+        # We're ignoring certain type errors in the database package, so that PhpStorm has proper autocompletion
+        -
+            identifier: parameter.phpDocType
+            paths:
+                - packages/database/src/functions.php
+        -
+            identifier: method.templateTypeNotInParameter
+            paths:
+                - packages/database/src/functions.php
+        -
+            identifier: return.type
+            paths:
+                - packages/database/src/functions.php
+        -
+            identifier: return.unresolvableType
+            paths:
+                - packages/database/src/Builder/*
+        -
+            identifier: parameter.phpDocType
+            paths:
+                - packages/database/src/Builder/*
+        -
+            identifier: property.phpDocType
+            paths:
+                - packages/database/src/Builder/*
+        -
+            identifier: class.notFound
+            paths:
+                - packages/database/src/Builder/*
+        -
+            identifier: varTag.nativeType
+            paths:
+                - packages/database/src/Builder/*
+        # End of database ignores
+
         -
             identifier: argument.named
             paths:
@@ -105,11 +140,6 @@ parameters:
             path: packages/process/src/Testing/ProcessTester.php
             count: 3
             # Intentional: explicit assertTrue() calls keep callback-only branches counted as assertions in tests
-        -
-            identifier: method.alreadyNarrowedType
-            path: tests/Integration/Database/GroupedWhereMethodsTest.php
-            count: 1
-            # Intentional: assertion keeps explicit null-check semantics in grouped-where integration test
         -
             identifier: function.notFound
             paths:

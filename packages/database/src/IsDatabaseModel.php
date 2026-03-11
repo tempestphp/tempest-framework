@@ -29,17 +29,17 @@ trait IsDatabaseModel
     /**
      * Returns a query builder targeting the specified database connection.
      *
-     * @return QueryBuilder<static>
+     * @return QueryBuilder<self>
      */
     public static function on(null|string|UnitEnum $databaseTag): QueryBuilder
     {
-        return static::queryBuilder()->onDatabase(databaseTag: $databaseTag);
+        return self::queryBuilder()->onDatabase(databaseTag: $databaseTag);
     }
 
     /**
      * Targets a specific database connection for this model instance.
      */
-    public function onDatabase(null|string|UnitEnum $databaseTag): static
+    public function onDatabase(null|string|UnitEnum $databaseTag): self
     {
         $clone = clone $this;
 
@@ -48,84 +48,87 @@ trait IsDatabaseModel
         return $clone;
     }
 
-    /**
-     * @return QueryBuilder<static>
-     */
+    /** @return QueryBuilder<self> */
     protected static function queryBuilder(): QueryBuilder
     {
-        return query(static::class);
+        /** @var QueryBuilder<self> $query */
+        $query = query(self::class);
+
+        return $query;
     }
 
     /**
      * Returns a builder for selecting records using this model's table.
      *
-     * @return SelectQueryBuilder<static>
+     * @return SelectQueryBuilder<self>
      */
     public static function select(): SelectQueryBuilder
     {
-        return static::queryBuilder()->select();
+        $query = self::queryBuilder()->select();
+
+        return $query;
     }
 
     /**
      * Returns a builder for inserting records using this model's table.
      *
-     * @return InsertQueryBuilder<static>
+     * @return InsertQueryBuilder<self>
      */
     public static function insert(): InsertQueryBuilder
     {
-        return static::queryBuilder()->insert();
+        return self::queryBuilder()->insert();
     }
 
     /**
      * Returns a builder for counting records using this model's table.
      *
-     * @return CountQueryBuilder<static>
+     * @return CountQueryBuilder<self>
      */
     public static function count(): CountQueryBuilder
     {
-        return static::queryBuilder()->count();
+        return self::queryBuilder()->count();
     }
 
     /**
      * Creates a new instance of this model without persisting it to the database.
      */
-    public static function new(mixed ...$params): static
+    public static function new(mixed ...$params): self
     {
-        return static::queryBuilder()->new(...$params);
+        return self::queryBuilder()->new(...$params);
     }
 
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): ?static
+    public static function findById(string|int|PrimaryKey $id): ?self
     {
-        return static::get($id);
+        return self::get($id);
     }
 
     /**
-     * Finds a model instance by its ID. Use through {@see Tempest\Router\Bindable}.
+     * Finds a model instance by its ID. Use through {@see \Tempest\Router\Bindable}.
      */
-    public static function resolve(string $input): ?static
+    public static function resolve(string $input): ?self
     {
-        return static::queryBuilder()->resolve($input);
+        return self::queryBuilder()->resolve($input);
     }
 
     /**
      * Gets a model instance by its ID, optionally loading the given relationships.
      */
-    public static function get(string|int|PrimaryKey $id, array $relations = []): ?static
+    public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
     {
-        return static::queryBuilder()->get($id, $relations);
+        return self::queryBuilder()->get($id, $relations);
     }
 
     /**
      * Gets all records from the model's table.
      *
-     * @return static[]
+     * @return self[]
      */
     public static function all(array $relations = []): array
     {
-        return static::queryBuilder()->all($relations);
+        return self::queryBuilder()->all($relations);
     }
 
     /**
@@ -136,11 +139,11 @@ trait IsDatabaseModel
      * MagicUser::find(name: 'Frieren');
      * ```
      *
-     * @return SelectQueryBuilder<static>
+     * @return SelectQueryBuilder<self>
      */
     public static function find(mixed ...$conditions): SelectQueryBuilder
     {
-        return static::queryBuilder()->find(...$conditions);
+        return self::queryBuilder()->find(...$conditions);
     }
 
     /**
@@ -151,11 +154,11 @@ trait IsDatabaseModel
      * MagicUser::create(name: 'Frieren', kind: Kind::ELF);
      * ```
      *
-     * @return static
+     * @return self
      */
-    public static function create(mixed ...$params): static
+    public static function create(mixed ...$params): self
     {
-        return static::queryBuilder()->create(...$params);
+        return self::queryBuilder()->create(...$params);
     }
 
     /**
@@ -171,11 +174,11 @@ trait IsDatabaseModel
      *
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
-     * @return static
+     * @return self
      */
-    public static function findOrNew(array $find, array $update): static
+    public static function findOrNew(array $find, array $update): self
     {
-        return static::queryBuilder()->findOrNew($find, $update);
+        return self::queryBuilder()->findOrNew($find, $update);
     }
 
     /**
@@ -192,15 +195,15 @@ trait IsDatabaseModel
      * @param array<string,mixed> $find Properties to search for in the existing model.
      * @param array<string,mixed> $update Properties to update or set on the model if it is found or created.
      */
-    public static function updateOrCreate(array $find, array $update): static
+    public static function updateOrCreate(array $find, array $update): self
     {
-        return static::queryBuilder()->updateOrCreate($find, $update);
+        return self::queryBuilder()->updateOrCreate($find, $update);
     }
 
     /**
      * Refreshes the model instance with the latest data from the database.
      */
-    public function refresh(): static
+    public function refresh(): self
     {
         $model = inspect($this);
 
@@ -211,7 +214,7 @@ trait IsDatabaseModel
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = static::queryBuilder()
+        $new = self::queryBuilder()
             ->onDatabase($this->onDatabase)
             ->select()
             ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
@@ -237,14 +240,14 @@ trait IsDatabaseModel
     /**
      * Loads the specified relations on the model instance.
      */
-    public function load(string ...$relations): static
+    public function load(string ...$relations): self
     {
         $model = inspect($this);
 
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = static::queryBuilder()
+        $new = self::queryBuilder()
             ->onDatabase($this->onDatabase)
             ->get($primaryKeyValue, $relations);
 
@@ -262,7 +265,7 @@ trait IsDatabaseModel
     /**
      * Saves the model to the database. If the model has no primary key, this method always inserts.
      */
-    public function save(): static
+    public function save(): self
     {
         $model = inspect($this);
         $model->validate(...inspect($this)->getPropertyValues());
@@ -308,7 +311,7 @@ trait IsDatabaseModel
     /**
      * Updates the specified columns and persist the model to the database.
      */
-    public function update(mixed ...$params): static
+    public function update(mixed ...$params): self
     {
         $model = inspect($this);
 
