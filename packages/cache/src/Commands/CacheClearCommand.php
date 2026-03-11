@@ -14,11 +14,10 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\ConfigCache;
-use Tempest\Core\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCache;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
-
 use function Tempest\Support\arr;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {

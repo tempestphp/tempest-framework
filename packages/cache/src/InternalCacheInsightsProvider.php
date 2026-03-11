@@ -3,11 +3,11 @@
 namespace Tempest\Cache;
 
 use Tempest\Core\ConfigCache;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\Insight;
 use Tempest\Core\InsightsProvider;
 use Tempest\Core\InsightType;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Icon\IconCache;
 use Tempest\View\ViewCache;
 

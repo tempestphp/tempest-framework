@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
+use Tempest\Core\Environment;
 use function Tempest\env;
 
 enum DiscoveryCacheStrategy: string

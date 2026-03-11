@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Core\DiscoveryConfig;
+use Tempest\Discovery\DiscoveryConfig;
 
 return new DiscoveryConfig();

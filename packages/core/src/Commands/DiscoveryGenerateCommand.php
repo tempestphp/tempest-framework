@@ -9,11 +9,11 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\LoadDiscoveryClasses;
 use Tempest\Discovery\Registry;
 

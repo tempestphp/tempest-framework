@@ -6,9 +6,6 @@ namespace Tempest\Discovery;
 
 use AssertionError;
 use Tempest\Container\Container;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\DiscoveryConfig;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;

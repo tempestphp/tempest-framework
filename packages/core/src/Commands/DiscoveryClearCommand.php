@@ -6,7 +6,7 @@ namespace Tempest\Core\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Core\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCache;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryClearCommand

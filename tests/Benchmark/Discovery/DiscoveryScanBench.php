@@ -10,11 +10,11 @@ use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Container\Container;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\LoadDiscoveryClasses;
 

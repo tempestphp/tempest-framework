@@ -1,6 +1,6 @@
 <?php
 
-use Tempest\Core\DiscoveryConfig;
+use Tempest\Discovery\DiscoveryConfig;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
 
 return new DiscoveryConfig()

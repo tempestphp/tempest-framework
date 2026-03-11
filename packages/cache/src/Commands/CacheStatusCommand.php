@@ -13,13 +13,12 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\ConfigCache;
-use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Environment;
+use Tempest\Discovery\DiscoveryCache;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
 use UnitEnum;
-
 use function Tempest\Support\arr;
 
 if (class_exists(ConsoleCommand::class)) {

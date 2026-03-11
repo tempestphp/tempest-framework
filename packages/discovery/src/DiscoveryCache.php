@@ -2,17 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\DiscoveryItems;
-use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Core\CouldNotStoreDiscoveryCache;
 use Tempest\Support\Filesystem;
 use Throwable;
-
 use function Tempest\internal_storage_path;
 
 final class DiscoveryCache

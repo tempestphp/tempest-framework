@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Tempest\Support\Filesystem;
 

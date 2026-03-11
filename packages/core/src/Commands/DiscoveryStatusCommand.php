@@ -7,11 +7,10 @@ namespace Tempest\Core\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\Registry;
 use Tempest\Support\Filesystem;
-
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
