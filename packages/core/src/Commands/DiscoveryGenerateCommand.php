@@ -11,6 +11,7 @@ use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
+use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
@@ -60,16 +61,16 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $kernel = $this->resolveKernel();
 
-            $loadDiscoveryClasses = new LoadDiscoveryClasses(
-                registry: $kernel->container->get(Registry::class),
-                discoveryConfig: $kernel->container->get(DiscoveryConfig::class),
-                discoveryCache: $this->discoveryCache,
+            $bootDiscovery = new BootDiscovery(
                 container: $kernel->container,
+                registry: $kernel->container->get(Registry::class),
+                config: $kernel->container->get(DiscoveryConfig::class),
+                cache: $this->discoveryCache,
             );
 
-            $discoveries = $loadDiscoveryClasses->build();
+            $discoveries = $bootDiscovery->build();
 
-            foreach ($this->kernel->discoveryLocations as $location) {
+            foreach ($this->registry->locations as $location) {
                 $this->discoveryCache->store($location, $discoveries);
                 $log($location->path);
             }
@@ -81,6 +82,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $container = new GenericContainer();
             $container->singleton(Container::class, $container);
+            $container->singleton(Registry::class, $this->registry);
 
             return new FrameworkKernel(
                 root: $this->kernel->root,

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use Psr\Container\ContainerInterface;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 use UnitEnum;
 
-interface Container
+interface Container extends ContainerInterface
 {
     public function register(string $className, callable $definition): self;
 

@@ -21,7 +21,7 @@ use Tempest\Reflection\TypeReflector;
 use Throwable;
 use UnitEnum;
 
-final class GenericContainer implements Container, ContainerInterface
+final class GenericContainer implements Container
 {
     use HasInstance;
 

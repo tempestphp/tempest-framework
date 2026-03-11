@@ -24,7 +24,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             private DiscoveryCache $discoveryCache,
         ) {}
 
-        #[ConsoleCommand(name: 'discovery:status', description: 'Lists all discovery locations and discovery classes')]
+        #[ConsoleCommand(name: 'discovery:status', description: 'Lists all discovery locations and discovery classes', aliases: ['d:s'])]
         public function __invoke(
             #[ConsoleArgument(description: 'Prints discovery classes', aliases: ['c'])]
             bool $showClasses = false,
