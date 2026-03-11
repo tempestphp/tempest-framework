@@ -85,7 +85,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
             return new FrameworkKernel(
                 root: $this->kernel->root,
-                discoveryLocations: $this->kernel->discoveryLocations,
+                discoveryLocations: $this->kernel->registry->locations,
                 container: $container,
             )
                 ->registerKernel()

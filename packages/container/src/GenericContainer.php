@@ -7,6 +7,7 @@ namespace Tempest\Container;
 use ArrayIterator;
 use Closure;
 use ReflectionFunction;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
@@ -172,6 +173,8 @@ final class GenericContainer implements Container
      * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName
+     * @throws CircularDependencyEncountered
+     * @throws TaggedDependencyCouldNotBeResolved
      */
     public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {

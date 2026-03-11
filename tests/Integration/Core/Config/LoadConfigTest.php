@@ -25,7 +25,7 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         Filesystem\ensure_directory_empty(__DIR__ . '/Fixtures');
 
         $this->container->get(ConfigCache::class)->clear();
-        $this->kernel->discoveryLocations = [
+        $this->kernel->registry->locations = [
             new DiscoveryLocation('App', __DIR__ . '/Fixtures'),
         ];
     }

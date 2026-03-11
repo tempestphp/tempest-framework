@@ -39,8 +39,8 @@ final class DiscoveryScanBench
         $kernel = FrameworkKernel::boot(root: $this->root);
         $this->container = $kernel->container;
         $this->registry = $kernel->registry;
-        $this->discoveryLocations = $kernel->discoveryLocations;
-        $this->discoveryClasses = $kernel->discoveryClasses;
+        $this->discoveryLocations = $kernel->registry->locations;
+        $this->discoveryClasses = $kernel->registry->classes;
     }
 
     private function createLoader(): BootDiscovery

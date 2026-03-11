@@ -48,8 +48,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
                 {
                     $this->root = $kernel->root;
                     $this->internalStorage = $kernel->internalStorage;
-                    $this->discoveryLocations = $kernel->discoveryLocations;
-                    $this->discoveryClasses = $kernel->discoveryClasses;
+                    $this->discoveryLocations = $kernel->registry->locations;
+                    $this->discoveryClasses = $kernel->registry->classes;
                     $this->container = $kernel->container;
                 }
 

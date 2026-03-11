@@ -72,7 +72,7 @@ parameters:
             # Intentional: dd() delegates to ld() and dump() delegates to lw()
         -
             identifier: disallowed.function
-            path: packages/core/src/Composer.php
+            path: packages/discovery/src/Composer.php
             count: 1
             # Intentional: exec() is required for running composer commands
         -

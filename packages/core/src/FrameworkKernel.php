@@ -30,16 +30,6 @@ final class FrameworkKernel implements Kernel
 
     public bool $discoveryCache;
 
-    public array $discoveryClasses {
-        get => $this->registry->classes;
-        set => $this->registry->classes = $value;
-    }
-
-    public array $discoveryLocations {
-        get => $this->registry->locations;
-        set => $this->registry->locations = $value;
-    }
-
     public string $internalStorage;
 
     public Registry $registry;
