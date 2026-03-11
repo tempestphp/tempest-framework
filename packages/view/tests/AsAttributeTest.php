@@ -7,21 +7,12 @@ namespace Tempest\View\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Renderers\TempestViewRenderer;
-use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
 use function Tempest\View\view;
 
-/**
- * Tests for the `as` and `:as` attribute, which overrides the root tag of
- * any HTML element or view component at the call site.
- */
 final class AsAttributeTest extends TestCase
 {
-    // -------------------------------------------------------------------------
-    // GenericElement — static `as`
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function generic_element_static_as_overrides_tag(): void
     {
@@ -41,10 +32,6 @@ final class AsAttributeTest extends TestCase
 
         $this->assertSnippetsMatch('<button><span>Test</span></button>', $html);
     }
-
-    // -------------------------------------------------------------------------
-    // GenericElement — as and :as on a nested element inside a parent <div>
-    // -------------------------------------------------------------------------
 
     #[Test]
     public function generic_element_static_as_on_nested_element(): void
@@ -66,10 +53,6 @@ final class AsAttributeTest extends TestCase
         $this->assertSnippetsMatch('<div><button><span>Test</span></button></div>', $html);
     }
 
-    // -------------------------------------------------------------------------
-    // ViewComponentElement — static `as`
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function view_component_static_as_overrides_root_tag(): void
     {
@@ -81,10 +64,6 @@ final class AsAttributeTest extends TestCase
 
         $this->assertSnippetsMatch('<button><span>Test</span></button>', $html);
     }
-
-    // -------------------------------------------------------------------------
-    // ViewComponentElement — expression `:as` with ternary and null-coalesce default
-    // -------------------------------------------------------------------------
 
     #[Test]
     public function view_component_expression_as_defaults_to_button_when_no_href(): void
@@ -110,10 +89,6 @@ final class AsAttributeTest extends TestCase
         $this->assertSnippetsMatch('<a><span>Test</span></a>', $html);
     }
 
-    // -------------------------------------------------------------------------
-    // ViewComponentElement — nested inside a plain GenericElement <div>
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function view_component_with_static_as_inside_generic_div(): void
     {
@@ -125,10 +100,6 @@ final class AsAttributeTest extends TestCase
 
         $this->assertSnippetsMatch('<div><button><span>Test</span></button></div>', $html);
     }
-
-    // -------------------------------------------------------------------------
-    // ViewComponentElement — outer component without as, inner with static `as`
-    // -------------------------------------------------------------------------
 
     #[Test]
     public function view_component_without_as_wrapping_component_with_static_as(): void
@@ -144,16 +115,11 @@ final class AsAttributeTest extends TestCase
         $this->assertSnippetsMatch('<section><button><span>Test</span></button></section>', $html);
     }
 
-    // -------------------------------------------------------------------------
-    // ViewComponentElement — outer component without as, inner with expression `:as`
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function view_component_without_as_wrapping_component_with_expression_as(): void
     {
         $renderer = $this->makeRenderer();
 
-        // $tag is null → falls back to 'button'
         $html = $renderer->render(
             view(<<<'HTML'
                 <x-outer>
@@ -170,7 +136,6 @@ final class AsAttributeTest extends TestCase
     {
         $renderer = $this->makeRenderer();
 
-        // $tag = 'a' → resolves to anchor
         $html = $renderer->render(
             view(<<<'HTML'
                 <x-outer>
@@ -181,10 +146,6 @@ final class AsAttributeTest extends TestCase
 
         $this->assertSnippetsMatch('<section><a><span>Test</span></a></section>', $html);
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private function makeRenderer(): TempestViewRenderer
     {
