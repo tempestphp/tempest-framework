@@ -51,8 +51,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
-        $this->registry = new Registry();
-        $this->discoveryLocations = $discoveryLocations;
+        $this->registry = new Registry(locations: $discoveryLocations);
 
         if ($internalStorage !== null) {
             $this->internalStorage = $internalStorage;
@@ -177,6 +176,7 @@ final class FrameworkKernel implements Kernel
     {
         $createRegistry = new CreateRegistry(
             rootPath: $this->root,
+            registry: $this->registry,
             composer: $this->container->get(Composer::class),
         );
 
