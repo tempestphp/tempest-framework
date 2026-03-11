@@ -4,15 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\TypeInference;
 
-use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
-use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
-use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
-use Tempest\Database\Tests\QueryStatements\StubModel;
-
-use function Tempest\Database\query;
 
 abstract class ParentStubModel
 {
