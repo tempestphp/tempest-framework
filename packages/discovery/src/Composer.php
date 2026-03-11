@@ -124,7 +124,7 @@ final class Composer
     private function loadComposerFile(string $path): array
     {
         if (! Filesystem\is_file($path)) {
-            throw new ComposerJsonCouldNotBeLocated('Could not locate composer.json.');
+            throw new ComposerJsonCouldNotBeLocated("Could not locate {$path}");
         }
 
         return Filesystem\read_json($path);

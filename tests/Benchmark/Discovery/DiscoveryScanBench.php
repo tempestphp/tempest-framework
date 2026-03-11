@@ -42,6 +42,7 @@ final class DiscoveryScanBench
     private function createLoader(): LoadDiscoveryClasses
     {
         return new LoadDiscoveryClasses(
+
             container: $this->container,
             discoveryConfig: new DiscoveryConfig(),
             discoveryCache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),

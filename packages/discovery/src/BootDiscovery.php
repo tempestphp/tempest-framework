@@ -10,17 +10,16 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
 
-/** @internal */
-final class LoadDiscoveryClasses
+final class BootDiscovery
 {
     private array $appliedDiscovery = [];
     private array $shouldSkipForClass = [];
 
     public function __construct(
-        private readonly Registry $registry,
-        private readonly DiscoveryConfig $discoveryConfig,
-        private readonly DiscoveryCache $discoveryCache,
         private readonly ContainerInterface $container,
+        private readonly Registry $registry,
+        private readonly DiscoveryConfig $config = new DiscoveryConfig(),
+        private readonly DiscoveryCache $cache = new DiscoveryCache(DiscoveryCacheStrategy::NONE),
     ) {}
 
     /**
@@ -30,7 +29,8 @@ final class LoadDiscoveryClasses
     public function __invoke(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): void {
+    ): void
+    {
         $discoveries = $this->build($discoveryClasses, $discoveryLocations);
 
         foreach ($discoveries as $discovery) {
@@ -46,7 +46,8 @@ final class LoadDiscoveryClasses
     public function build(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): array {
+    ): array
+    {
         $discoveryLocations ??= $this->registry->locations;
 
         if ($discoveryClasses === null) {
@@ -104,7 +105,7 @@ final class LoadDiscoveryClasses
             return false;
         }
 
-        $cachedForLocation = $this->discoveryCache->restore($location);
+        $cachedForLocation = $this->cache->restore($location);
 
         if (! $this->isCachedLocationUsable($discoveries, $cachedForLocation)) {
             return false;
@@ -290,7 +291,7 @@ final class LoadDiscoveryClasses
             $input = $input->getName();
         }
 
-        return $this->discoveryConfig->shouldSkip($input);
+        return $this->config->shouldSkip($input);
     }
 
     /**
@@ -298,11 +299,11 @@ final class LoadDiscoveryClasses
      */
     private function isLocationCached(DiscoveryLocation $location): bool
     {
-        if (! $this->discoveryCache->enabled) {
+        if (! $this->cache->enabled) {
             return false;
         }
 
-        return match ($this->discoveryCache->strategy) {
+        return match ($this->cache->strategy) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
             DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
             // If discover cache is enabled, all locations cache should be skipped

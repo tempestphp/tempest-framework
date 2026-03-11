@@ -218,3 +218,53 @@ Most of Tempest's features are built on top of discovery. The following is a non
 - {b`Tempest\Vite\ViteDiscovery`} discovers `*.entrypoint.{ts,js,css}` files and register them as [entrypoints](../2-features/02-asset-bundling.md#entrypoints).
 - {b`Tempest\Auth\AccessControl\PolicyDiscovery`} discovers methods annotated with the {b`#[Tempest\Auth\AccessControl\Policy]`} attribute and registers them as [access control policies](../2-features/04-authentication.md#access-control).
 - {b`Tempest\Core\InsightsProviderDiscovery`} discovers classes that implement {b`Tempest\Core\InsightsProvider`} and registers them as insights providers, which power the `tempest about` command.
+
+## Discovery as a standalone package
+
+`tempest/discovery` can be used as a standalone package in any application. All it needs is a PSR-11 compliant container.
+
+Start by requiring `tempest/discovery`:
+
+```console
+composer require tempest/discovery
+```
+
+Next, you must create a {b`Tempest\Discovery\Registry`}, this object will keep track of all discovery locations. It's important that you add this registry to whatever container you're using:
+
+```php
+use Tempest\Discovery\CreateRegistry;
+
+// The $container is provided by your project
+
+$registry = new CreateRegistry(rootPath: __DIR__)();
+$container->singleton(Registry::class, $registry);
+// Or use another method, depending on what your container implementation requires:
+// $container->set(Registry::class, $registry);
+```
+
+With this registry, you can boot discovery:
+
+```php
+use Tempest\Discovery\BootDiscovery;
+
+new BootDiscovery(
+    container: $container,
+    registry: $registry,
+)();
+```
+
+### Custom registry
+
+{b`Tempest\Discovery\CreateRegistry`} will scan a given root path for discovery locations. It does so by analyzing your composer.json file. If you prefer another way of defining locations to scan, you can manually build a registry like so:
+
+```php
+use Tempest\Discovery\Registry;
+use Tempest\Discovery\DiscoveryLocation;
+
+$registry = new Registry(locations: [
+    new DiscoveryLocation('App\\', 'src/')
+]);
+
+// Don't forget to register the registry in the container of your choice.
+$container->singleton(Registry::class, $registry);
+```

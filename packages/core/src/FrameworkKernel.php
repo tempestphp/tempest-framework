@@ -12,12 +12,12 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
+use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\Composer;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheInitializer;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\LoadDiscoveryClasses;
-use Tempest\Discovery\LoadDiscoveryLocations;
+use Tempest\Discovery\CreateRegistry;
 use Tempest\Discovery\Registry;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
@@ -75,7 +75,6 @@ final class FrameworkKernel implements Kernel
             container: $container,
             internalStorage: $internalStorage,
         )
-            ->registerRegistry()
             ->registerKernel()
             ->validateRoot()
             ->loadEnv()
@@ -83,7 +82,7 @@ final class FrameworkKernel implements Kernel
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->loadComposer()
-            ->loadDiscoveryLocations()
+            ->createRegistry()
             ->loadConfig()
             ->loadDiscovery()
             ->registerExceptionHandler()
@@ -148,13 +147,6 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerRegistry(): self
-    {
-        $this->container->singleton(Registry::class, fn () => $this->registry);
-
-        return $this;
-    }
-
     public function registerKernel(): self
     {
         $this->container->singleton(Kernel::class, $this);
@@ -181,15 +173,16 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function loadDiscoveryLocations(): self
+    public function createRegistry(): self
     {
-        $loadDiscoveryLocations = new LoadDiscoveryLocations(
+        $createRegistry = new CreateRegistry(
             rootPath: $this->root,
-            registry: $this->container->get(Registry::class),
             composer: $this->container->get(Composer::class),
         );
 
-        $loadDiscoveryLocations();
+        $registry = $createRegistry();
+
+        $this->container->singleton(Registry::class, $registry);
 
         return $this;
     }
@@ -198,14 +191,14 @@ final class FrameworkKernel implements Kernel
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
 
-        $loadDiscoveryClasses = new LoadDiscoveryClasses(
-            registry: $this->container->get(Registry::class),
-            discoveryConfig: $this->container->get(DiscoveryConfig::class),
-            discoveryCache: $this->container->get(DiscoveryCache::class),
+        $bootDiscovery = new BootDiscovery(
             container: $this->container,
+            registry: $this->container->get(Registry::class),
+            config: $this->container->get(DiscoveryConfig::class),
+            cache: $this->container->get(DiscoveryCache::class),
         );
 
-        $loadDiscoveryClasses();
+        $bootDiscovery();
 
         return $this;
     }
