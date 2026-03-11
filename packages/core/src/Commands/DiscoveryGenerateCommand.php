@@ -15,7 +15,6 @@ use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\LoadDiscoveryClasses;
 use Tempest\Discovery\Registry;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {

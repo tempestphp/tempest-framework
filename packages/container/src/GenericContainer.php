@@ -6,7 +6,6 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
-use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;

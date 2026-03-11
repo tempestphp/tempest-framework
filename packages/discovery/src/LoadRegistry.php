@@ -20,7 +20,7 @@ final readonly class LoadRegistry
     ) {
         $this->registry = $registry ?? new Registry();
 
-        if (!$composer) {
+        if (! $composer) {
             $composer = new Composer($rootPath);
             $composer->load();
         }
