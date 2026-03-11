@@ -8,7 +8,7 @@ use Tempest\Support\Filesystem;
 
 use function Tempest\Support\Path\normalize;
 
-final readonly class CreateRegistry
+final readonly class LoadRegistry
 {
     private Composer $composer;
     private Registry $registry;

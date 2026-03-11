@@ -5,7 +5,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/container": "3.x-dev",
         "tempest/reflection": "3.x-dev",
         "tempest/support": "3.x-dev",
         "psr/container": "^2.0",

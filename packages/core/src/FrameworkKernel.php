@@ -17,7 +17,7 @@ use Tempest\Discovery\Composer;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheInitializer;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\CreateRegistry;
+use Tempest\Discovery\LoadRegistry;
 use Tempest\Discovery\Registry;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
@@ -41,7 +41,7 @@ final class FrameworkKernel implements Kernel
 
     public string $internalStorage;
 
-    private Registry $registry;
+    public Registry $registry;
 
     public function __construct(
         public string $root,
@@ -81,9 +81,9 @@ final class FrameworkKernel implements Kernel
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->loadComposer()
-            ->createRegistry()
+            ->loadRegistry()
             ->loadConfig()
-            ->loadDiscovery()
+            ->bootDiscovery()
             ->registerExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
@@ -172,22 +172,22 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function createRegistry(): self
+    public function loadRegistry(): self
     {
-        $createRegistry = new CreateRegistry(
+        $loadRegistry = new LoadRegistry(
             rootPath: $this->root,
             registry: $this->registry,
             composer: $this->container->get(Composer::class),
         );
 
-        $registry = $createRegistry();
+        $registry = $loadRegistry();
 
         $this->container->singleton(Registry::class, $registry);
 
         return $this;
     }
 
-    public function loadDiscovery(): self
+    public function bootDiscovery(): self
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
 

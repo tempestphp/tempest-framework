@@ -11,12 +11,13 @@ use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Container\Container;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\LoadDiscoveryClasses;
+use Tempest\Discovery\Registry;
 
 final class DiscoveryScanBench
 {
@@ -30,22 +31,25 @@ final class DiscoveryScanBench
 
     private string $root;
 
+    private Registry $registry;
+
     public function __construct()
     {
         $this->root = dirname(__DIR__, 3);
         $kernel = FrameworkKernel::boot(root: $this->root);
         $this->container = $kernel->container;
+        $this->registry = $kernel->registry;
         $this->discoveryLocations = $kernel->discoveryLocations;
         $this->discoveryClasses = $kernel->discoveryClasses;
     }
 
-    private function createLoader(): LoadDiscoveryClasses
+    private function createLoader(): BootDiscovery
     {
-        return new LoadDiscoveryClasses(
-
+        return new BootDiscovery(
             container: $this->container,
-            discoveryConfig: new DiscoveryConfig(),
-            discoveryCache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),
+            registry: $this->registry,
+            config: new DiscoveryConfig(),
+            cache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),
         );
     }
 

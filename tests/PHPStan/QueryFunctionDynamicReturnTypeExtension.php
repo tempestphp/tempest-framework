@@ -22,7 +22,7 @@ final readonly class QueryFunctionDynamicReturnTypeExtension implements DynamicF
 
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === \Tempest\Database\query::class;
+        return $functionReflection->getName() === 'Tempest\\Database\\query';
     }
 
     public function getTypeFromFunctionCall(FunctionReflection $functionReflection, FuncCall $functionCall, Scope $scope): ?Type
