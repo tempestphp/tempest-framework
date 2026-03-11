@@ -28,6 +28,35 @@ final class FallthroughAttributesTest extends TestCase
             view(__DIR__ . '/Fixtures/fallthrough.view.php'),
         );
 
+        lw(str_replace([' ', PHP_EOL], '', $html));
+
+        $this->assertEquals(str_replace([' ', PHP_EOL], '', <<<'HTML'
+        <div class="in-component component-class"></div>
+        <div class="in-component component-class"></div>
+        <div class="component-class" style="display: block;"></div>
+        <div class="component-class" style="display: block;"></div>
+        HTML), str_replace([' ', PHP_EOL], '', $html));
+    }
+
+    #[Test]
+    public function render_with_preamble(): void
+    {
+        $viewConfig = new ViewConfig()->addViewComponents(
+            __DIR__ . '/Fixtures/x-fallthrough-preamble-test.view.php',
+            __DIR__ . '/Fixtures/x-fallthrough-preamble-dynamic-test.view.php',
+        );
+
+        $renderer =
+            TempestViewRenderer::make(
+                viewConfig: $viewConfig,
+            );
+
+        $html = $renderer->render(
+            view(__DIR__ . '/Fixtures/fallthrough-preamble.view.php'),
+        );
+
+        lw(str_replace([' ', PHP_EOL], '', $html));
+
         $this->assertEquals(str_replace([' ', PHP_EOL], '', <<<'HTML'
         <div class="in-component component-class"></div>
         <div class="in-component component-class"></div>
