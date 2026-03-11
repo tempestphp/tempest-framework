@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use AssertionError;
+use Psr\Container\ContainerInterface;
 use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
@@ -20,7 +21,7 @@ final class LoadDiscoveryClasses
         private readonly Registry $registry,
         private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
-        private readonly Container $container,
+        private readonly Container|ContainerInterface $container,
     ) {}
 
     /**
@@ -30,7 +31,8 @@ final class LoadDiscoveryClasses
     public function __invoke(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): void {
+    ): void
+    {
         $discoveries = $this->build($discoveryClasses, $discoveryLocations);
 
         foreach ($discoveries as $discovery) {
@@ -46,7 +48,8 @@ final class LoadDiscoveryClasses
     public function build(
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
-    ): array {
+    ): array
+    {
         $discoveryLocations ??= $this->registry->locations;
 
         if ($discoveryClasses === null) {
@@ -256,10 +259,10 @@ final class LoadDiscoveryClasses
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
         /** @var Discovery $discovery */
-        if (! $this->container) {
-            $discovery = new $discoveryClass();
-        } else {
+        if ($this->container instanceof ContainerInterface || $this->container instanceof Container) {
             $discovery = $this->container->get($discoveryClass);
+        } else {
+            $discovery = new $discoveryClass();
         }
 
         $discovery->setItems(new DiscoveryItems());
