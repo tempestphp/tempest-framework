@@ -30,7 +30,7 @@ final readonly class IntegerStatement implements QueryStatement
             default => sprintf(
                 '`%s` %s %s %s %s',
                 $this->name,
-                DatabaseIntegerSize::fromBytes($this->size)->toString(),
+                is_int($this->size) ? DatabaseIntegerSize::fromBytes($this->size)->toString() : $this->size->toString(),
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',

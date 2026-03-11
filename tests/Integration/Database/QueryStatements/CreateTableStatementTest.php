@@ -299,10 +299,14 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $smallInteger = new CreateTableStatement('test-table')
             ->integer('content', false, false, 2)
             ->compile(dialect: DatabaseDialect::MYSQL);
+        $integer = new CreateTableStatement('test-table')
+            ->integer('content')
+            ->compile(dialect: DatabaseDialect::MYSQL);
 
         $this->assertStringContainsString('BIGINT', $bigInteger);
         $this->assertStringContainsString('INTEGER', $defaultInteger);
         $this->assertStringContainsString('SMALL', $smallInteger);
+        $this->assertStringContainsString('INTEGER', $integer);
     }
 
     public function test_integer_field_with_bytes_postgresql(): void
@@ -316,10 +320,14 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $smallInteger = new CreateTableStatement('test-table')
             ->integer('content', false, false, 2)
             ->compile(dialect: DatabaseDialect::POSTGRESQL);
+        $integer = new CreateTableStatement('test-table')
+            ->integer('content')
+            ->compile(dialect: DatabaseDialect::POSTGRESQL);
 
         $this->assertStringContainsString('BIGINT', $bigInteger);
         $this->assertStringContainsString('INTEGER', $defaultInteger);
         $this->assertStringContainsString('SMALL', $smallInteger);
+        $this->assertStringContainsString('INTEGER', $integer);
     }
 
     public function test_integer_field_with_bytes_sqlite(): void
