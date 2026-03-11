@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Aloft;
+namespace Tempest\Ship;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
@@ -19,14 +19,14 @@ use function Tempest\Support\Filesystem\copy_file;
 use function Tempest\Support\Filesystem\exists;
 use function Tempest\Support\str;
 
-final readonly class AloftPublishCommand
+final readonly class ShipPublishCommand
 {
     use HasConsole;
 
     #[ConsoleCommand(
-        name: 'aloft:publish',
+        name: 'ship:publish',
         description: 'Publish the Aloft Docker stubs, for the debug image.',
-        aliases: ['aloft:publish:debug', 'aloft:publish:dev'],
+        aliases: ['ship:publish:debug', 'ship:publish:dev'],
     )]
     public function publish(string $variant = 'debug'): void
     {
@@ -53,9 +53,9 @@ final readonly class AloftPublishCommand
     }
 
     #[ConsoleCommand(
-        name: 'aloft:publish:latest',
+        name: 'ship:publish:latest',
         description: 'Publish the Aloft Docker stubs, for the distroless image.',
-        aliases: ['aloft:publish:distroless', 'aloft:publish:prod'],
+        aliases: ['ship:publish:distroless', 'ship:publish:prod'],
     )]
     public function publishLatest(): void
     {

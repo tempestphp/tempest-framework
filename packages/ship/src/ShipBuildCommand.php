@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Aloft;
+namespace Tempest\Ship;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
@@ -12,7 +12,7 @@ use Tempest\Console\HasConsole;
 use function Tempest\root_path;
 use function Tempest\Support\Filesystem\exists;
 
-final readonly class AloftBuildCommand
+final readonly class ShipBuildCommand
 {
     use HasConsole;
 
@@ -34,7 +34,7 @@ final readonly class AloftBuildCommand
     }
 
     #[ConsoleCommand(
-        name: 'aloft:build',
+        name: 'ship:build',
         description: 'Build the Aloft Docker image locally, and publish the stub files if not already present.',
     )]
     public function build(
@@ -67,9 +67,9 @@ final readonly class AloftBuildCommand
         ]));
 
         $buildPath = ($this->stubsPublished ? root_path('docker') : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'stubs') . DIRECTORY_SEPARATOR;
-        $buildFile = "{$buildPath}Dockerfile.{$variant} -t tempestphp/aloft:{$variant}";
+        $buildFile = "{$buildPath}Dockerfile.{$variant} -t tempestphp/ship:{$variant}";
 
-        if ($this->confirm("Do you want to build tempestphp/aloft:{$variant}?", default: false)) {
+        if ($this->confirm("Do you want to build tempestphp/ship:{$variant}?", default: false)) {
             $this->console->info('Okay, attempting build');
             passthru("docker build -f {$buildFile}{$buildArgs} {$buildPath}");
         }

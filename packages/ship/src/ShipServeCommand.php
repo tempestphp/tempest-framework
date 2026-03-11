@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Aloft;
+namespace Tempest\Ship;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
@@ -12,7 +12,7 @@ use Tempest\Console\HasConsole;
 use function Tempest\root_path;
 use function Tempest\Support\Filesystem\exists;
 
-final readonly class AloftServeCommand
+final readonly class ServeCommand
 {
     use HasConsole;
 
@@ -38,17 +38,17 @@ final readonly class AloftServeCommand
     }
 
     #[ConsoleCommand(
-        name: 'aloft:build',
-        description: 'Build the Aloft Docker image locally, and publish the stub files if not already present.',
+        name: 'ship:serve',
+        description: 'Run a development or production docker container to serve your application.',
     )]
-    public function build(
+    public function serve(
         #[ConsoleArgument(
-            description: 'The build variant to use.',
+            description: 'The docker container variant to use.',
         )]
         string $requestedVariant = '',
         #[ConsoleArgument(
             name: 'repository',
-            description: 'Space-separated list of extra extensions to include in the build.',
+            description: 'The repository path to retrieve the docker container from.',
         )]
         ?string $repository = null,
     ): void {
@@ -57,25 +57,15 @@ final readonly class AloftServeCommand
 
         // TODO: Catch local development paths from composer.json and insert them as volumes
 
-        $runImage = "{$repo}tempestphp/aloft:{$variant}";
+        $runImage = "{$repo}tempestphp/ship:{$variant}";
 
         if ($this->confirm("Do you want to start dev server from {$runImage}?", default: true)) {
             $this->console->info('Okay, starting, use ctrl-c to exit when finished');
             if ($this->stubsPublished === true && ! ($repository ?? null === 'remote')) {
-                $this->console->info('Stubs are published, and you are using the local repository, therefore ensure that you run aloft:build before using aloft:serve');
+                $this->console->info('Stubs are published, and you are using the local repository, therefore ensure that you run ship:build before using ship:serve');
             }
             passthru(
-                "docker run --rm -it -p 80:8000 -p 443:8443 -p 443:8443/udp \
-                -v "
-                . root_path()
-                . ":/app \
-                -v "
-                . root_path('.frankenpest/data')
-                . ":/data \
-                -v "
-                . root_path('.frankenpest/config')
-                . ":/config \
-                {$runImage}",
+                'docker run --rm -it -p 80:8000 -p 443:8443 -p 443:8443/udp -v ' . root_path() . ":/app {$runImage}",
             );
         }
     }

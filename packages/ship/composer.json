@@ -1,6 +1,6 @@
 {
-    "name": "tempest/aloft",
-    "description": "Development and Production webserver Dockerfiles and utilities for TempestPHP.",
+    "name": "tempest/ship",
+    "description": "Development and Production webserver Dockerfiles and utilities for shipping/deploying TempestPHP applications.",
     "require": {
         "php": "^8.5",
         "tempest/core": "3.x-dev",

@@ -5,13 +5,13 @@ description: Tempest can both be developed or deployed in Production, with our o
 
 ## Overview
 
-We are pleased to offer TempestPHP/Aloft, our own set of Docker images for developing with and serving your Tempest applications, for you to use as and customise as you see fit.
+We are pleased to offer our own set of Docker images for developing with and serving your Tempest applications, for you to use as and customise as you see fit.
 
 In order to start from the strongest security posture and enable you to run secure and performant Tempest-based applications, we've initially selected FrankenPHP as our server of choice. Further, we've adopted a 'rootless' approach by default, and also offer a 'distroless' production image to further mitigate potential security issues stemming from unnecessary software often found in Docker images.
 
-## Aloft image architecture, variants and release strategy
+## Image architecture, variants and release strategy
 
-Our CI/CD will automatically generate and publish images to our public repository at https://PLACE.HOLD.ER/tempestphp/aloft following the releases of PHP and FrankenPHP, and also any time we find an issue in the underlying Docker image. Alternatively, you can also customise these images for your own use, see section below. (TODO: link)
+Our CI/CD will automatically generate and publish images to our public repository at https://PLACE.HOLD.ER/tempestphp/ship following the releases of PHP and FrankenPHP, and also any time we find an issue in the underlying Docker image. Alternatively, you can also customise these images for your own use, see section below. (TODO: link)
 
 ### Architectures
 
@@ -25,13 +25,13 @@ We maintain two variants; 'latest' which is rootless and distroless, and is aime
 
 ```bash
 # These periodically updated variant tags will always point at the latest version-pinned images
-tempestphp/aloft                  >>            tempestphp/aloft:1.11.3-8.5.3         #at time of writing
-tempestphp/aloft:latest           >>            tempestphp/aloft:1.11.3-8.5.3         #at time of writing
-tempestphp/aloft:debug            >>            tempestphp/aloft:1.11.3-8.5.3-debug   #at time of writing
+tempestphp/ship                  >>            tempestphp/ship:1.11.3-8.5.3         #at time of writing
+tempestphp/ship:latest           >>            tempestphp/ship:1.11.3-8.5.3         #at time of writing
+tempestphp/ship:debug            >>            tempestphp/ship:1.11.3-8.5.3-debug   #at time of writing
 
 # We'll also continually publish pinned-versions
-tempestphp/aloft:1.11.3-8.5.3
-tempestphp/aloft:1.11.3-8.5.3-debug
+tempestphp/ship:1.11.3-8.5.3
+tempestphp/ship:1.11.3-8.5.3-debug
 # these will accumulate over time
 ```
 We utilise the [GoogleContainerTools Distroless](https://github.com/GoogleContainerTools/distroless/) [`cc`](https://github.com/GoogleContainerTools/distroless/blob/main/cc/README.md) image, pulling their latest 'nonroot' image as our base, at time of build.
@@ -52,83 +52,83 @@ We won't automatically retire 'patch' version releases i.e. PHP8.5.3 > PHP8.5.4,
 
 ## Developing your application with Docker
 
-During development, we'd suggest using the debug image. We've included a convenience command in the `tempest/aloft` package which will run a development server on your device.
+During development, we'd suggest using the debug image. We've included a convenience command in the `tempest/ship` package which will run a development server on your device.
 ```bash
-./tempest aloft:serve                       # by default, this will get debug from the repository and serve it
+./tempest ship:serve                       # by default, this will get debug from the repository and serve it
 ```
 You may specify the `latest` image if you prefer.
 ```bash
-./tempest aloft:serve latest                # latest floating version
+./tempest ship:serve latest                # latest floating version
 ```
 You may instead specify the release, if you require a pinned-version.
 ```bash
-./tempest aloft:serve 1.11.3-8.5.3          # pinned-version, distroless
-./tempest aloft:serve 1.11.3-8.5.3-debug    # pinned-version, debug
+./tempest ship:serve 1.11.3-8.5.3          # pinned-version, distroless
+./tempest ship:serve 1.11.3-8.5.3-debug    # pinned-version, debug
 ```
 
 :::info
-By default, the `aloft:serve` command will try to pull from the registry. But if you have published the stub for customising the image, this command will attempt to use the local image. You can force this behaviour by adding the optional command `--repository=local` or `--repository=remote`.
+By default, the `ship:serve` command will try to pull from the registry. But if you have published the stub for customising the image, this command will attempt to use the local image. You can force this behaviour by adding the optional command `--repository=local` or `--repository=remote`.
 :::
 
 ## Testing and production applications with Docker
 
 For testing and QA, we'd suggest using the distroless image, as it is most representative of your final infrastructure, and should highlight any issues for your attention.
 ```bash
-./tempest aloft:serve latest
+./tempest ship:serve latest
 ```
 As per the section above, you can omit `latest` to default to the `debug` release, or specify a version.
 
 ## Customising the Docker image for your use
 
-As the `latest` and `debug` images are inherently distroless, albeit with busybox in the `debug` image, you cannot use this as an intermediate stage in a multi-stage Dockerfile build. Instead, you can use the `aloft:publish` Tempest command to publish a copy of the stubs, so you can build and tweak as you need.
+As the `latest` and `debug` images are inherently distroless, albeit with busybox in the `debug` image, you cannot use this as an intermediate stage in a multi-stage Dockerfile build. Instead, you can use the `ship:publish` Tempest command to publish a copy of the stubs, so you can build and tweak as you need.
 ```bash
-./tempest aloft:publish                     # by default, this will publish the debug dockerfile
-./tempest aloft:publish:latest              # select the distroless image, instead
+./tempest ship:publish                     # by default, this will publish the debug dockerfile
+./tempest ship:publish:latest              # select the distroless image, instead
 ```
 This will publish `.dockerignore`, `Caddyfile`, and `Dockerfile` into your project root `docker/` folder, creating it as necessary. If you already have files in here, it shouldn't overwrite by default.
 
 You can also retrieve the files manually, from the vendor folder.
 ```bash
-vendor/tempest/framework/packages/aloft/stubs/
+vendor/tempest/framework/packages/ship/stubs/
 ```
 ### Building the image
 
-We've provided a simple `aloft:build` command to build these local images. It won't handle all use cases, and is really only aimed at someone directly running the images. If you are ready to change the Dockerfile to suit your needs, you probably won't want to use this anyway. That said, here's how to use it.
+We've provided a simple `ship:build` command to build these local images. It won't handle all use cases, and is really only aimed at someone directly running the images. If you are ready to change the Dockerfile to suit your needs, you probably won't want to use this anyway. That said, here's how to use it.
 
 If you HAVE NOT published the stubs to your project:
 ```bash
-./tempest aloft:build               # will attempt to build debug directly from the package stubs folder
-./tempest aloft:build debug         # will attempt to build debug directly from the package stubs folder
-./tempest aloft:build latest        # will attempt to build distroless directly from the package stubs folder
+./tempest ship:build               # will attempt to build debug directly from the package stubs folder
+./tempest ship:build debug         # will attempt to build debug directly from the package stubs folder
+./tempest ship:build latest        # will attempt to build distroless directly from the package stubs folder
 ```
 If you HAVE published the stubs to your project:
 ```bash
-./tempest aloft:build               # will attempt to build debug from `{root_path}/docker/`
-./tempest aloft:build debug         # will attempt to build debug from `{root_path}/docker/`
-./tempest aloft:build latest        # will attempt to build distroless from `{root_path}/docker/`
+./tempest ship:build               # will attempt to build debug from `{root_path}/docker/`
+./tempest ship:build debug         # will attempt to build debug from `{root_path}/docker/`
+./tempest ship:build latest        # will attempt to build distroless from `{root_path}/docker/`
 ```
 :::info
-If you've published both stubs, or renamed the Dockerfile, this won't work. You've moved past the use-case this command was designed for, and will need to build yourself. Or copy the AloftBuildCommand into your project and customise it to suit you!
+If you've published both stubs, or renamed the Dockerfile, this won't work. You've moved past the use-case this command was designed for, and will need to build yourself. Or copy the ShipBuildCommand into your project and customise it to suit you!
 :::
 
 ### Default versions of FrankenPHP and PHP
 
 We will update the stubs from time-to-time, but you may find that your PHP and/or FrankenPHP versions are out of step, because you have customised your file and don't wish to republish the stubs losing the changes.
 
-You can use the `aloft:build` command to pass the arguments:
+You can use the `ship:build` command to pass the arguments:
 ```bash
-./tempest aloft:build {''|debug|latest} --with-frankenphp="1.11.3" --with-php="8.5.3"
+./tempest ship:build {''|debug|latest} --with-frankenphp="1.11.3" --with-php="8.5.3"
 ```
 :::info
-Note that this will tag the image with tempestphp/aloft:debug or :latest, and remains compatible with `aloft:serve`.
+Note that this will tag the image with 'tempestphp/ship:debug' or 'tempestphp/ship:latest', and remains compatible with `ship:serve`.
 :::
 
 Or, you pass these via build arguments run from the `{root_path}/docker/` folder:
 ```bash
-docker build . -t tempestphp/aloft:1.11.3-8.5.3 --build-arg FRANKENPHP_VERSION="1.11.3" --build-arg PHP_VERSION="8.5.3"
+docker build . -t tempestphp/ship:1.11.3-8.5.3 --build-arg FRANKENPHP_VERSION="1.11.3" --build-arg PHP_VERSION="8.5.3"
 ```
 :::info
-To retain compatibility with `aloft:serve` ensure that the image retains `tempestphp/aloft:` and then pass `1.11.3-8.5.3` as the image variant i.e. `./tempest aloft:serve 1.11.3-8.5.3`.
+To retain compatibility with `ship:serve` ensure that the image retains 'tempestphp/ship:' in the filename and then pass `1.11.3-8.5.3` as the image variant i.e. `./tempest ship:serve 1.11.3-8.5.3`.
 :::
 
 Or you can edit the Dockerfile directly:
@@ -137,7 +137,7 @@ ARG FRANKENPHP_VERSION=1.11.3
 ARG PHP_VERSION=8.5.3
 ```
 :::info
-This method also retains compatibility with `aloft:serve` and `aloft:build`, as long as you keep the filename unchanged.
+This method also retains compatibility with `ship:serve` and `ship:build`, as long as you keep the filename unchanged.
 :::
 
 ## Adding additional PHP Extensions
@@ -145,7 +145,7 @@ This method also retains compatibility with `aloft:serve` and `aloft:build`, as 
 We include PHP Extensions from [Marc Henderkes'](https://pkgs.henderkes.com/) Static PHP Repository. These are static builds, of PHP-ZTS, which is required by FrankenPHP.
 
 :::info
-Note that apt-get packages are kebab-case and should be prefixed `php-zts`. So if you wanted the extension `pdo_mysql`, you'd specify `php-zts-pdo-mysql`.
+Note that apt-get packages are kebab-case and should be prefixed `php-zts`. So if you wanted the extension `pdo_mysql`, you'd specify `php-zts-pdo-mysql`. The command won't convert the syntax automatically.
 :::
 
 ### Adding extensions at build time via build arguments
@@ -154,11 +154,11 @@ This method is useful if you need to make a specific build one-off, containing a
 
 Pass the build argument directly if using a published stub Dockerfile:
 ```bash
-docker build . -t aloft:with-yaml --build-arg PHP_EXTRA_EXTENSIONS="php-zts-yaml"
+docker build . -t ship:with-yaml --build-arg PHP_EXTRA_EXTENSIONS="php-zts-yaml"
 ```
-Or, you can use the Tempest aloft:build command and pass the optional argument:
+Or, you can use the Tempest `ship:build` command and pass the optional argument:
 ```bash
-./tempest aloft:build --with-php-extensions="php-zts-yaml"
+./tempest ship:build --with-php-extensions="php-zts-yaml"
 ```
 :::info
 This will work with both the `debug` and `latest` images.
@@ -195,7 +195,7 @@ We suggest one of the following options instead.
 
 You can use the following command to run composer interactively:
 ```bash
-docker run --rm -i --tty --volume $PWD:/app --user 1002:1002 composer:latest # We suggest running with 1002:1002 to match the file permissions within our rootless image
+docker run --rm -i --tty --volume $PWD:/app --user 1002:1002 composer:latest # We suggest running with 1002:1002 to match the file permissions within our rootless images
 ```
 You could also create an alias script:
 ```bash

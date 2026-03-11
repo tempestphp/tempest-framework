@@ -135,7 +135,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Tempest\\Aloft\\": "packages/aloft/src",
+            "Tempest\\Ship\\": "packages/ship/src",
             "Tempest\\Auth\\": "packages/auth/src",
             "Tempest\\Cache\\": "packages/cache/src",
             "Tempest\\Clock\\": "packages/clock/src",
@@ -208,7 +208,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tempest\\Aloft\\Tests\\": "packages/aloft/tests",
+            "Tempest\\Ship\\Tests\\": "packages/ship/tests",
             "Tempest\\Auth\\Tests\\": "packages/auth/tests",
             "Tempest\\Cache\\Tests\\": "packages/cache/tests",
             "Tempest\\Clock\\Tests\\": "packages/clock/tests",
