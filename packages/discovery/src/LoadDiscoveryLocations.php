@@ -2,14 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Kernel;
+namespace Tempest\Discovery;
 
-use Tempest\Core\Composer;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
-use Tempest\Discovery\Registry;
 use Tempest\Support\Filesystem;
-
 use function Tempest\Support\Path\normalize;
 
 /** @internal */

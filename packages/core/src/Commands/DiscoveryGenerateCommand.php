@@ -14,7 +14,7 @@ use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use Tempest\Discovery\LoadDiscoveryClasses;
 use Tempest\Discovery\Registry;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
@@ -23,7 +23,8 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         use HasConsole;
 
         public function __construct(
-            private Kernel $kernel,
+            private Registry $registry,
+            private FrameworkKernel $kernel,
             private DiscoveryCache $discoveryCache,
         ) {}
 

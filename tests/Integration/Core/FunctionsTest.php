@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
 use function Tempest\internal_storage_path;
 use function Tempest\registered_namespace;
 use function Tempest\root_path;

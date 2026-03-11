@@ -14,9 +14,9 @@ use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\LoadDiscoveryClasses;
 
 final class DiscoveryScanBench
 {

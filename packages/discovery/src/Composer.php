@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Arr;
@@ -10,7 +10,6 @@ use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Support\Path;
 use Tempest\Support\Str;
-
 use function Tempest\Support\arr;
 
 final class Composer
@@ -105,7 +104,7 @@ final class Composer
 
     public function save(): self
     {
-        Filesystem\write_json($this->composerPath, $this->composer, pretty: true);
+        Filesystem\write_json($this->composerPath, $this->composer);
 
         return $this;
     }

@@ -9,6 +9,7 @@ use Exception;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
+use Tempest\Discovery\Composer;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\Php\ClassManipulator;
 use Tempest\Generation\Php\DataObjects\StubFile;
@@ -23,7 +24,6 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\IsNotEmptyString;
 use Throwable;
-
 use function strlen;
 use function Tempest\root_path;
 use function Tempest\src_path;

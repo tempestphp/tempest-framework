@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
-use Tempest\Core\Composer;
+use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Vite\Exceptions\FileSystemEntrypointWasNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;

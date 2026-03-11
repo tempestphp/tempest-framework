@@ -50,7 +50,7 @@ abstract class IntegrationTest extends TestCase
     /** @var \Tempest\Discovery\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
 
-    protected Kernel $kernel;
+    protected FrameworkKernel $kernel;
 
     protected GenericContainer $container;
 

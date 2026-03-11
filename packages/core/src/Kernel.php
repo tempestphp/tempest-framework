@@ -18,16 +18,6 @@ interface Kernel
         get;
     }
 
-    public array $discoveryLocations {
-        get;
-        set;
-    }
-
-    public array $discoveryClasses {
-        get;
-        set;
-    }
-
     public Container $container {
         get;
     }

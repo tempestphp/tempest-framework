@@ -11,9 +11,10 @@ use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
-use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
+use Tempest\Discovery\Composer;
+use Tempest\Discovery\LoadDiscoveryClasses;
+use Tempest\Discovery\LoadDiscoveryLocations;
 use Tempest\Discovery\Registry;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
@@ -25,18 +26,30 @@ final class FrameworkKernel implements Kernel
 
     public bool $discoveryCache;
 
-    public array $discoveryClasses = [];
+    public array $discoveryClasses {
+        get => $this->registry->classes;
+        set => $this->registry->classes = $value;
+    }
+
+    public array $discoveryLocations {
+        get => $this->registry->locations;
+        set => $this->registry->locations = $value;
+    }
 
     public string $internalStorage;
+
+    private Registry $registry;
 
     public function __construct(
         public string $root,
         /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
-        public array $discoveryLocations = [],
+        array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
+        $this->registry = new Registry();
+        $this->discoveryLocations = $discoveryLocations;
 
         if ($internalStorage !== null) {
             $this->internalStorage = $internalStorage;
@@ -59,14 +72,14 @@ final class FrameworkKernel implements Kernel
             container: $container,
             internalStorage: $internalStorage,
         )
+            ->registerRegistry()
+            ->registerKernel()
             ->validateRoot()
             ->loadEnv()
             ->registerEmergencyExceptionHandler()
             ->registerShutdownFunction()
             ->registerInternalStorage()
-            ->registerKernel()
             ->loadComposer()
-            ->setupRegistry()
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadDiscovery()
@@ -132,6 +145,13 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
+    public function registerRegistry(): self
+    {
+        $this->container->singleton(Registry::class, fn () => $this->registry);
+
+        return $this;
+    }
+
     public function registerKernel(): self
     {
         $this->container->singleton(Kernel::class, $this);
@@ -154,13 +174,6 @@ final class FrameworkKernel implements Kernel
                 echo 'Does this class have the right namespace?' . PHP_EOL;
             }
         });
-
-        return $this;
-    }
-
-    public function setupRegistry(): self
-    {
-        $this->container->singleton(Registry::class, fn () => new Registry());
 
         return $this;
     }

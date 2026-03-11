@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\LoadDiscoveryClasses;
 use Tempest\Support\Arr;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;

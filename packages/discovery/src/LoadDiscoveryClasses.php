@@ -2,20 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Kernel;
+namespace Tempest\Discovery;
 
 use AssertionError;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
-use Tempest\Discovery\DiscoversPath;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\DiscoveryDiscovery;
-use Tempest\Discovery\DiscoveryItems;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\Registry;
-use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
