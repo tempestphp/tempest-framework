@@ -14,6 +14,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
+use Tempest\Discovery\Registry;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Support\Filesystem;
@@ -65,6 +66,7 @@ final class FrameworkKernel implements Kernel
             ->registerInternalStorage()
             ->registerKernel()
             ->loadComposer()
+            ->setupRegistry()
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadDiscovery()
@@ -156,9 +158,22 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
+    public function setupRegistry(): self
+    {
+        $this->container->singleton(Registry::class, fn () => new Registry());
+
+        return $this;
+    }
+
     public function loadDiscoveryLocations(): self
     {
-        $this->container->invoke(LoadDiscoveryLocations::class);
+        $loadDiscoveryLocations = new LoadDiscoveryLocations(
+            rootPath: $this->root,
+            registry: $this->container->get(Registry::class),
+            composer: $this->container->get(Composer::class),
+        );
+
+        $loadDiscoveryLocations();
 
         return $this;
     }
@@ -166,7 +181,15 @@ final class FrameworkKernel implements Kernel
     public function loadDiscovery(): self
     {
         $this->container->addInitializer(DiscoveryCacheInitializer::class);
-        $this->container->invoke(LoadDiscoveryClasses::class, discoveryLocations: $this->discoveryLocations);
+
+        $loadDiscoveryClasses = new LoadDiscoveryClasses(
+            registry: $this->container->get(Registry::class),
+            discoveryConfig: $this->container->get(DiscoveryConfig::class),
+            discoveryCache: $this->container->get(DiscoveryCache::class),
+            container: $this->container,
+        );
+
+        $loadDiscoveryClasses();
 
         return $this;
     }
@@ -175,7 +198,13 @@ final class FrameworkKernel implements Kernel
     {
         $this->container->addInitializer(ConfigCacheInitializer::class);
 
-        $loadConfig = $this->container->get(LoadConfig::class, environment: Environment::guessFromEnvironment());
+        $loadConfig = new LoadConfig(
+            registry: $this->container->get(Registry::class),
+            container: $this->container,
+            cache: $this->container->get(ConfigCache::class),
+            environment: Environment::guessFromEnvironment(),
+        );
+
         $loadConfig();
 
         return $this;
@@ -183,7 +212,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerInternalStorage(): self
     {
-        $path = isset($this->internalStorage) ? $this->internalStorage : $this->root . '/.tempest';
+        $path = $this->internalStorage ?? $this->root . '/.tempest';
 
         if (! is_dir($path)) {
             if (file_exists($path)) {
@@ -256,7 +285,7 @@ final class FrameworkKernel implements Kernel
             ));
 
             return true;
-        }, error_levels: E_ALL);
+        });
 
         return $this;
     }

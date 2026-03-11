@@ -15,6 +15,7 @@ use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use Tempest\Discovery\Registry;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
@@ -59,9 +60,10 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $kernel = $this->resolveKernel();
 
             $loadDiscoveryClasses = new LoadDiscoveryClasses(
-                container: $kernel->container,
+                registry: $kernel->container->get(Registry::class),
                 discoveryConfig: $kernel->container->get(DiscoveryConfig::class),
                 discoveryCache: $this->discoveryCache,
+                container: $kernel->container,
             );
 
             $discoveries = $loadDiscoveryClasses->build();

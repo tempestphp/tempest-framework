@@ -9,12 +9,12 @@ use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
-use Tempest\Core\DiscoveryDiscovery;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\Registry;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
@@ -27,9 +27,10 @@ final class LoadDiscoveryClasses
     private array $shouldSkipForClass = [];
 
     public function __construct(
-        private readonly Container $container,
+        private readonly Registry $registry,
         private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
+        private readonly ?Container $container = null,
     ) {}
 
     /**
@@ -56,9 +57,7 @@ final class LoadDiscoveryClasses
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
     ): array {
-        $kernel = $this->container->get(Kernel::class);
-
-        $discoveryLocations ??= $kernel->discoveryLocations;
+        $discoveryLocations ??= $this->registry->locations;
 
         if ($discoveryClasses === null) {
             // DiscoveryDiscovery needs to be applied before we can build all other discoveries
@@ -73,7 +72,7 @@ final class LoadDiscoveryClasses
             // Resolve all other discoveries from the container, optionally loading their cache
             $discoveries = array_map(
                 fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
-                $kernel->discoveryClasses,
+                $this->registry->classes,
             );
 
             // The second pass over all directories to apply all other discovery classes
@@ -190,11 +189,8 @@ final class LoadDiscoveryClasses
         $pathInfo = pathinfo($input);
         $extension = $pathInfo['extension'] ?? null;
         $fileName = $pathInfo['filename'] ?: null;
-        $className = null;
 
         // If this is a PHP file starting with an uppercase letter, we assume it's a class.
-        // TODO: Figure out if we can refactor this to checking composer's autoload map (it might not always be available)
-        //       An other idea is to check whether composer has a check to verify whether a file is a class?
         if ($extension === 'php' && ucfirst($fileName) === $fileName) {
             $className = $location->toClassName($input);
 
@@ -265,11 +261,16 @@ final class LoadDiscoveryClasses
     /**
      * Create a discovery instance from a class name.
      * Optionally set the cached discovery items whenever caching is enabled.
+     * @param class-string<Discovery> $discoveryClass
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
         /** @var Discovery $discovery */
-        $discovery = $this->container->get($discoveryClass);
+        if (! $this->container) {
+            $discovery = new $discoveryClass();
+        } else {
+            $discovery = $this->container->get($discoveryClass);
+        }
 
         $discovery->setItems(new DiscoveryItems());
 

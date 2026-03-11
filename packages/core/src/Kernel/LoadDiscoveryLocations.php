@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Core\Kernel;
 
 use Tempest\Core\Composer;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
+use Tempest\Discovery\Registry;
 use Tempest\Support\Filesystem;
 
 use function Tempest\Support\Path\normalize;
@@ -16,17 +16,18 @@ use function Tempest\Support\Path\normalize;
 final readonly class LoadDiscoveryLocations
 {
     public function __construct(
-        private Kernel $kernel,
+        private string $rootPath,
+        private Registry $registry,
         private Composer $composer,
     ) {}
 
     public function __invoke(): void
     {
-        $this->kernel->discoveryLocations = [
+        $this->registry->locations = [
             ...$this->discoverCorePackages(),
             ...$this->discoverVendorPackages(),
             ...$this->discoverAppNamespaces(),
-            ...$this->kernel->discoveryLocations,
+            ...$this->registry->locations,
         ];
     }
 
@@ -35,7 +36,7 @@ final readonly class LoadDiscoveryLocations
      */
     private function discoverCorePackages(): array
     {
-        $composerPath = normalize($this->kernel->root, 'vendor/composer');
+        $composerPath = normalize($this->rootPath, 'vendor/composer');
         $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 
@@ -69,7 +70,7 @@ final readonly class LoadDiscoveryLocations
         $discoveredLocations = [];
 
         foreach ($this->composer->namespaces as $namespace) {
-            $path = normalize($this->kernel->root, $namespace->path);
+            $path = normalize($this->rootPath, $namespace->path);
 
             $discoveredLocations[] = new DiscoveryLocation($namespace->namespace, $path);
         }
@@ -82,7 +83,7 @@ final readonly class LoadDiscoveryLocations
      */
     private function discoverVendorPackages(): array
     {
-        $composerPath = normalize($this->kernel->root, 'vendor/composer');
+        $composerPath = normalize($this->rootPath, 'vendor/composer');
         $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 
