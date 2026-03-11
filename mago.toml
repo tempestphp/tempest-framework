@@ -62,3 +62,4 @@ prefer-arrow-function = { enabled = false } # enable when references are fixed
 prefer-first-class-callable = { enabled = false } # enable when arguments are fixed
 strict-behavior = { allow-loose-behavior = true }
 no-redundant-use = { enabled = true }
+no-empty-comment = { enabled = false }
