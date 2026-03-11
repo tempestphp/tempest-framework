@@ -28,7 +28,7 @@ use function Tempest\Container\get;
 use function Tempest\Database\inspect;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  */
@@ -36,7 +36,6 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions;
     use OnDatabase;
-    /** @use HasWhereQueryBuilderMethods<TModel> */
     use HasWhereQueryBuilderMethods;
     use TransformsQueryBuilder;
 
@@ -62,11 +61,9 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         get => $this->update->where;
     }
 
-    /**
-     * @param class-string<TModel>|string|TModel $model
-     */
+    /** @param class-string<TModel>|string|TModel $model */
     public function __construct(
-        string|object $model,
+        mixed $model,
         private readonly array|ImmutableArray $values,
         private readonly SerializerFactory $serializerFactory,
     ) {
@@ -80,11 +77,12 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * Creates an instance from another query builder, inheriting conditions and bindings.
      *
-     * @template TSourceModel of object
+     * @template TSourceModel
      * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
+     * @param mixed ...$values
      * @return UpdateQueryBuilder<TSourceModel>
      */
-    public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, mixed ...$values): UpdateQueryBuilder
+    public static function fromQueryBuilder(mixed $source, mixed ...$values): UpdateQueryBuilder
     {
         $builder = new self($source->model->getName(), $values, get(SerializerFactory::class));
         $builder->bind(...$source->bindings);

@@ -18,7 +18,7 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  */
@@ -26,7 +26,6 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions;
     use OnDatabase;
-    /** @use HasWhereQueryBuilderMethods<TModel> */
     use HasWhereQueryBuilderMethods;
     use TransformsQueryBuilder;
 
@@ -46,7 +45,7 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * @param class-string<TModel>|string|TModel $model
      */
-    public function __construct(string|object $model, ?string $column = null)
+    public function __construct(mixed $model, ?string $column = null)
     {
         $this->model = inspect($model);
 
@@ -59,7 +58,7 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * Creates an instance from another query builder, inheriting conditions and bindings.
      *
-     * @template TSourceModel of object
+     * @template TSourceModel
      * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
      * @param string|null $column
      * @return CountQueryBuilder<TSourceModel>

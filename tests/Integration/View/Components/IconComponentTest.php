@@ -35,14 +35,17 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
-            '<svg></svg>',
-            $this->view->render('<x-icon name="ph:eye" />'),
+            '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render('<x-icon name="material-symbols:php" />'),
         );
     }
 
@@ -52,8 +55,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->exactly(1))
             ->method('get')
-            ->with('https://api.iconify.test/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.test/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
@@ -63,8 +69,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<svg></svg>',
-            $this->view->render('<x-icon name="ph:eye" />'),
+            '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render('<x-icon name="material-symbols:php" />'),
         );
     }
 
@@ -82,18 +88,24 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
-        $this->view->render('<x-icon name="ph:eye" />');
+        $this->view->render('<x-icon name="material-symbols:php" />');
 
         $iconCache = $this->container->get(IconCache::class);
-        $cachedIcon = $iconCache->get('icon-ph-eye');
+        $cachedIcon = $iconCache->get('icon-material-symbols-php');
 
         $this->assertNotNull($cachedIcon);
-        $this->assertSame('<svg></svg>', $cachedIcon);
+        $this->assertSame(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $cachedIcon,
+        );
     }
 
     public function test_it_renders_an_icon_from_cache(): void
@@ -102,17 +114,20 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->exactly(1))
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         // Trigger first render, which should cache the icon
-        $this->view->render('<x-icon name="ph:eye" />');
+        $this->view->render('<x-icon name="material-symbols:php" />');
 
         $this->assertSame(
-            '<svg></svg>',
-            $this->view->render('<x-icon name="ph:eye" />'),
+            '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render('<x-icon name="material-symbols:php" />'),
         );
     }
 
@@ -122,15 +137,15 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
+            ->with('https://api.iconify.design/material-symbols/php.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
         $this->container->singleton(Environment::class, Environment::LOCAL);
 
         $this->assertSame(
-            '<!-- unknown-icon: ph:eye -->',
-            $this->view->render('<x-icon name="ph:eye" />'),
+            '<!-- unknown-icon: material-symbols:php -->',
+            $this->view->render('<x-icon name="material-symbols:php" />'),
         );
     }
 
@@ -140,7 +155,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
+            ->with('https://api.iconify.design/material-symbols/php.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
@@ -148,7 +163,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '',
-            $this->view->render('<x-icon name="ph:eye" />'),
+            $this->view->render('<x-icon name="material-symbols:php" />'),
         );
     }
 
@@ -158,15 +173,84 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->exactly(1))
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
-            '<svg class="size-5"></svg>',
+            '<svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             $this->view->render(
-                '<x-icon name="ph:eye" class="size-5" />',
+                '<x-icon name="material-symbols:php" class="size-5" />',
+            ),
+        );
+    }
+
+    public function test_it_forwards_the_style_attribute(): void
+    {
+        $mockHttpClient = $this->createMock(HttpClient::class);
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
+
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
+        $this->assertSame(
+            '<svg style="width: 24px; height: 24px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render(
+                '<x-icon name="material-symbols:php" style="width: 24px; height: 24px;" />',
+            ),
+        );
+    }
+
+    public function test_it_handles_width_and_height_together_props(): void
+    {
+        $mockHttpClient = $this->createMock(HttpClient::class);
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
+
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
+        $this->assertSame(
+            '<svg width="2em" height="2em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render(
+                '<x-icon name="material-symbols:php" width="2em" height="2em" />',
+            ),
+        );
+    }
+
+    public function test_fallback_dimensions_when_none_defined_in_any_supported_method(): void
+    {
+        $mockHttpClient = $this->createMock(HttpClient::class);
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
+
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
+        $this->assertSame(
+            '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            $this->view->render(
+                '<x-icon name="material-symbols:php" />',
             ),
         );
     }
@@ -177,18 +261,21 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->exactly(1))
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $rendered = $this->view->render(
             '<x-icon :name="$iconName" class="size-5" />',
-            iconName: 'ph:eye',
+            iconName: 'material-symbols:php',
         );
 
         $this->assertSame(
-            '<svg class="size-5"></svg>',
+            '<svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             $rendered,
         );
     }
@@ -201,8 +288,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $mockHttpClient
             ->expects($this->exactly(1))
             ->method('get')
-            ->with('https://api.iconify.design/ph/eye.svg')
-            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+            ->with('https://api.iconify.design/material-symbols/php.svg')
+            ->willReturn(new GenericResponse(
+                status: Status::OK,
+                body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
+            ));
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
@@ -210,7 +300,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $html = $this->view->render($view);
 
         $this->assertSnippetsMatch(
-            '<html lang="en"><head><title></title></head><body><div><svg class="size-5"></svg></div>Test</body></html>',
+            '<html lang="en"><head><title></title></head><body><div><svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg></div>Test</body></html>',
             $html,
         );
     }

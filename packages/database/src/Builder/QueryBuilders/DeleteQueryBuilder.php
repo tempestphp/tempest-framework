@@ -13,7 +13,7 @@ use Tempest\Support\Str\ImmutableString;
 use function Tempest\Database\inspect;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
  */
@@ -21,7 +21,6 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
     use HasConditions;
     use OnDatabase;
-    /** @use HasWhereQueryBuilderMethods<TModel> */
     use HasWhereQueryBuilderMethods;
     use TransformsQueryBuilder;
 
@@ -38,7 +37,7 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * @param class-string<TModel>|string|TModel $model
      */
-    public function __construct(string|object $model)
+    public function __construct(mixed $model)
     {
         $this->model = inspect($model);
         $this->delete = new DeleteStatement($this->model->getTableDefinition());
@@ -47,7 +46,7 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * Creates an instance from another query builder, inheriting conditions and bindings.
      *
-     * @template TSourceModel of object
+     * @template TSourceModel
      * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
      * @return DeleteQueryBuilder<TSourceModel>
      */

@@ -678,6 +678,39 @@ final readonly class Auth implements RouteDecorator
 }
 ```
 
+## Idempotent routes
+
+For operations like payment processing or order creation, retrying the same request should not produce duplicate side effects. Tempest provides the {b`Tempest\Idempotency\Attributes\Idempotent`} route decorator to handle this. Clients send an `Idempotency-Key` header; the first request executes normally and caches the response, while subsequent requests with the same key replay the cached response.
+
+```php app/OrderController.php
+use Tempest\Router\Post;
+use Tempest\Http\Response;
+use Tempest\Http\GenericResponse;
+use Tempest\Http\Status;
+use Tempest\Idempotency\Attributes\Idempotent;
+
+final readonly class OrderController
+{
+    #[Post('/orders')]
+    #[Idempotent]
+    public function create(CreateOrderRequest $request): Response
+    {
+        $order = $this->orderService->create($request);
+
+        return new GenericResponse(
+            status: Status::CREATED,
+            body: ['id' => $order->id],
+        );
+    }
+}
+```
+
+Idempotency is only supported for `POST` and `PATCH` routes. The attribute can be applied at the class level to make all routes in a controller idempotent, and accepts optional TTL parameters. Route-specific settings like key requirement and header name can be configured with the `#[IdempotentRoute]` attribute.
+
+:::info
+Read the full [idempotency documentation](../2-features/19-idempotency.md) for details on scope resolvers, configuration, response behavior, and command bus idempotency.
+:::
+
 ## Responses
 
 All requests to a controller action expect a response to be returned to the client. This is done by returning a {b`Tempest\View\View`} or a {b`Tempest\Http\Response`} object.
