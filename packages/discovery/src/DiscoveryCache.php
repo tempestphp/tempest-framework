@@ -27,7 +27,7 @@ final class DiscoveryCache
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
-            directory: internal_storage_path('cache/discovery'),
+            directory: self::getCachePath(),
         );
     }
 
@@ -96,6 +96,15 @@ final class DiscoveryCache
             return internal_storage_path('current_discovery_strategy');
         } catch (Throwable) {
             return __DIR__ . '/current_discovery_strategy';
+        }
+    }
+
+    private static function getCachePath(): string
+    {
+        try {
+            return internal_storage_path('cache/views');
+        } catch (Throwable) {
+            return __DIR__ . '/../.tempest/cache';
         }
     }
 }

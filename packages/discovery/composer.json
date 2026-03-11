@@ -6,7 +6,8 @@
     "require": {
         "php": "^8.5",
         "tempest/reflection": "3.x-dev",
-        "tempest/support": "3.x-dev"
+        "tempest/support": "3.x-dev",
+        "symfony/cache": "^7.3"
     },
     "autoload": {
         "psr-4": {

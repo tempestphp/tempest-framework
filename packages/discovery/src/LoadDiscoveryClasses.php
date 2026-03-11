@@ -20,7 +20,7 @@ final class LoadDiscoveryClasses
         private readonly Registry $registry,
         private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
-        private readonly ?Container $container = null,
+        private readonly Container $container,
     ) {}
 
     /**
