@@ -400,9 +400,9 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
             new TableDefinition($this->tableName),
             arr($this->statements)
                 // Remove BelongsTo for sqlLite as it does not support those queries
-                ->filter(static fn (QueryStatement $queryStatement) => ! ($dialect === DatabaseDialect::SQLITE && $queryStatement instanceof BelongsToStatement))
-                ->map(static fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->filter(static fn (ImmutableString $str) => $str->isNotEmpty())
+                ->filter(fn (QueryStatement $queryStatement) => ! ($dialect === DatabaseDialect::SQLITE && $queryStatement instanceof BelongsToStatement))
+                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                ->filter(fn (ImmutableString $str) => $str->isNotEmpty())
                 ->implode(', ' . PHP_EOL . '    ')
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),

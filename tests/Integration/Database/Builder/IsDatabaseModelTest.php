@@ -771,7 +771,6 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         // Original still works against default database
         $foo->update(bar: 'updated');
-
         $refreshed = Foo::get($foo->id);
 
         $this->assertSame('updated', $refreshed->bar);
