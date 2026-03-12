@@ -18,6 +18,7 @@ use Tempest\Discovery\Composer;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheInitializer;
 use Tempest\Discovery\DiscoveryConfig;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Support\Filesystem;
@@ -32,6 +33,9 @@ final class FrameworkKernel implements Kernel
 
     public DiscoveryConfig $discoveryConfig;
 
+    /** @var DiscoveryLocation[] */
+    private array $discoveryLocations;
+
     public function __construct(
         public string $root,
         /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
@@ -40,7 +44,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
-        //        $this->registry = new Registry(locations: $discoveryLocations);
+        $this->discoveryLocations = $discoveryLocations;
 
         if ($internalStorage !== null) {
             $this->internalStorage = $internalStorage;
@@ -164,10 +168,13 @@ final class FrameworkKernel implements Kernel
         /** @var DiscoveryConfig $discoveryConfig */
         $discoveryConfig = $this->container->get(DiscoveryConfig::class);
 
-        $discoveryConfig->locations = (new AutoloadDiscoveryLocations(
-            rootPath: $this->root,
-            composer: $this->container->get(Composer::class),
-        ))($discoveryConfig);
+        $discoveryConfig->locations = [
+            ...$this->discoveryLocations,
+            ...(new AutoloadDiscoveryLocations(
+                rootPath: $this->root,
+                composer: $this->container->get(Composer::class),
+            ))($discoveryConfig),
+        ];
 
         $this->container->config($discoveryConfig);
         $this->discoveryConfig = $discoveryConfig;
