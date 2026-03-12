@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\tests;
+namespace Tempest\Discovery\Tests;
 
 use DI\Container;
 use PHPUnit\Framework\TestCase;
