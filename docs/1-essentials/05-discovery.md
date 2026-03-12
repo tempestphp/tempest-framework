@@ -235,6 +235,8 @@ Next, you can boot discovery:
 use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\Registry;
 
+// $container is any PSR-11 compliant container, already available in your app
+
 new BootDiscovery(
     container: $container,
     registry: Registry::autoload(__DIR__),
