@@ -15,11 +15,6 @@ use UnitEnum;
 
 final class MysqlConfig implements DatabaseConfig
 {
-    public const int LIMIT_TINYTEXT = 255;
-    public const int LIMIT_TEXT = 65535;
-    public const int LIMIT_MEDIUMTEXT = 16777215;
-    public const int LIMIT_LONGTEXT = 4294967295;
-
     public string $dsn {
         get => sprintf(
             'mysql:host=%s:%s;dbname=%s',

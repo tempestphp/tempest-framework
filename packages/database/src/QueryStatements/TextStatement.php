@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Config\MysqlConfig;
+use Tempest\Database\Enums\DatabaseTextLength;
 use Tempest\Database\QueryStatement;
 
 final readonly class TextStatement implements QueryStatement
@@ -13,8 +13,8 @@ final readonly class TextStatement implements QueryStatement
     public function __construct(
         private string $name,
         private bool $nullable = false,
+        private int|DatabaseTextLength $length = DatabaseTextLength::DEFAULT,
         private ?string $default = null,
-        private ?int $length = null,
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
@@ -35,16 +35,12 @@ final readonly class TextStatement implements QueryStatement
         };
     }
 
-    private function getSQLTypeDeclaration(?int $length = null): string
+    private function getSQLTypeDeclaration(int|DatabaseTextLength $length): string
     {
-        $type = match (true) {
-            $length <= MysqlConfig::LIMIT_TINYTEXT => 'TINYTEXT',
-            $length <= MysqlConfig::LIMIT_TEXT => 'TEXT',
-            $length <= MysqlConfig::LIMIT_MEDIUMTEXT => 'MEDIUMTEXT',
-            $length <= MysqlConfig::LIMIT_LONGTEXT => 'LONGTEXT',
-            default => 'TEXT',
-        };
+        if ($length instanceof DatabaseTextLength) {
+            return $length->toString();
+        }
 
-        return $type;
+        return DatabaseTextLength::fromLength($length)->toString();
     }
 }
