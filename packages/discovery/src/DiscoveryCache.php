@@ -103,7 +103,7 @@ final class DiscoveryCache
     private static function getCachePath(): string
     {
         try {
-            return internal_storage_path('cache/views');
+            return internal_storage_path('cache/discovery');
         } catch (Throwable) {
             return __DIR__ . '/../.tempest/cache';
         }
