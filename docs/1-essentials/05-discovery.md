@@ -258,3 +258,34 @@ $registry = new Registry(locations: [
     // …
 ]);
 ```
+
+### Config and caching
+
+You can pass optional config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
+
+```php
+use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryConfig;
+use Tempest\Discovery\Registry;
+
+new BootDiscovery(
+    container: $container,
+    registry: Registry::autoload(__DIR__),
+    config: new DiscoveryConfig()
+        ->skipClasses(
+            \App\Foo::class,
+            \Tempest\Container\AutowireDiscovery::class
+        )
+        ->skipPaths(
+            __DIR__ . '/../vendor/tempest/support'
+        ),
+    cache: new DiscoveryCache(
+        strategy: DiscoveryCacheStrategy::PARTIAL,
+        pool: new PhpFilesAdapter(
+            directory: __DIR__ . '/.cache/discovery'
+        )
+    ),
+)();
+```
