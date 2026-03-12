@@ -10,14 +10,9 @@ final class DiscoveryDiscovery implements Discovery
 {
     use IsDiscovery;
 
-    private ?Registry $registry = null;
-
-    public function setRegistry(Registry $registry): self
-    {
-        $this->registry = $registry;
-
-        return $this;
-    }
+    public function __construct(
+        private readonly Registry $registry,
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
@@ -34,10 +29,6 @@ final class DiscoveryDiscovery implements Discovery
 
     public function apply(): void
     {
-        if ($this->registry === null) {
-            throw new RegistryWasNotSet();
-        }
-
         foreach ($this->discoveryItems as $className) {
             $this->registry->classes[] = $className;
         }

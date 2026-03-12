@@ -50,8 +50,8 @@ final class BootDiscovery
 
         if ($discoveryClasses === null) {
             // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-            $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
-            $discoveryDiscovery->setRegistry($this->registry);
+            $discoveryDiscovery = new DiscoveryDiscovery($this->registry);
+            $discoveryDiscovery->setItems(new DiscoveryItems());
 
             // The first pass over all directories to find all discovery classes
             $this->discover([$discoveryDiscovery], $discoveryLocations);
