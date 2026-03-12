@@ -32,7 +32,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/dashboard'),
-            next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
+            next: new HttpMiddlewareCallable(static fn () => new GenericResponse(Status::OK)),
         );
 
         $this->assertEquals('/dashboard', $this->previousUrl->get());
@@ -45,7 +45,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
 
         $response = $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/test'),
-            next: new HttpMiddlewareCallable(fn () => $expected),
+            next: new HttpMiddlewareCallable(static fn () => $expected),
         );
 
         $this->assertSame($expected, $response);
@@ -56,7 +56,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::POST, uri: '/form-submit'),
-            next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
+            next: new HttpMiddlewareCallable(static fn () => new GenericResponse(Status::OK)),
         );
 
         $this->assertEquals('/', $this->previousUrl->get());
@@ -65,7 +65,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
     #[Test]
     public function middleware_tracks_multiple_requests_in_sequence(): void
     {
-        $next = new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK));
+        $next = new HttpMiddlewareCallable(static fn () => new GenericResponse(Status::OK));
 
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/page1'),
@@ -94,7 +94,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->middleware->__invoke(
             request: new GenericRequest(method: Method::GET, uri: '/dashboard'),
-            next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
+            next: new HttpMiddlewareCallable(static fn () => new GenericResponse(Status::OK)),
         );
 
         $this->middleware->__invoke(
@@ -103,7 +103,7 @@ final class TrackPreviousUrlMiddlewareTest extends FrameworkIntegrationTestCase
                 uri: '/api/data',
                 headers: ['X-Requested-With' => 'XMLHttpRequest'],
             ),
-            next: new HttpMiddlewareCallable(fn () => new GenericResponse(Status::OK)),
+            next: new HttpMiddlewareCallable(static fn () => new GenericResponse(Status::OK)),
         );
 
         $this->assertEquals('/dashboard', $this->previousUrl->get());

@@ -91,7 +91,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
 
             return array_merge(
                 $styleChunks,
-                array_map(fn (string $path) => ['file' => $path], $chunk->css),
+                array_map(static fn (string $path) => ['file' => $path], $chunk->css),
             );
         };
 
@@ -179,7 +179,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
         };
 
         $assets = array_values(array_map(
-            callback: fn (array $asset) => array_map('strval', $asset),
+            callback: static fn (array $asset) => array_map('strval', $asset),
             array: array_unique($findPrefetchableAssets($chunk), flags: SORT_REGULAR),
         ));
 
@@ -253,8 +253,8 @@ final readonly class ManifestTagsResolver implements TagsResolver
     {
         return str($file)
             ->when(
-                condition: fn ($file) => $file->startsWith('./'),
-                callback: fn ($file) => str(Filesystem\normalize_path(root_path($file->toString()))),
+                condition: static fn ($file) => $file->startsWith('./'),
+                callback: static fn ($file) => str(Filesystem\normalize_path(root_path($file->toString()))),
             )
             ->replaceStart(root_path('public'), '')
             ->replaceStart(root_path(), '')

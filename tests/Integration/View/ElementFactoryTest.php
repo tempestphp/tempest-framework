@@ -77,7 +77,7 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
     private function withoutWhitespace(array $elements): array
     {
         return arr($elements)
-            ->filter(fn (Element $element) => ! $element instanceof WhitespaceElement)
+            ->filter(static fn (Element $element) => ! $element instanceof WhitespaceElement)
             ->values()
             ->toArray();
     }

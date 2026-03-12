@@ -13,6 +13,7 @@ final class SlotElement implements Element, WithToken
     use IsElement;
 
     public function __construct(
+        #[\SensitiveParameter]
         public readonly Token $token,
         public readonly string $name,
         array $attributes = [],

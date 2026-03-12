@@ -26,6 +26,7 @@ final class GoogleOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Google OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

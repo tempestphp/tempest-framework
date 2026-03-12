@@ -21,7 +21,7 @@ final readonly class DynamicInjection implements Injection
             $content = preg_replace_callback(
                 subject: $content,
                 pattern: $pattern,
-                callback: function ($matches) use ($highlighter) {
+                callback: static function ($matches) use ($highlighter) {
                     $theme = $highlighter->getTheme();
                     $quote = $matches['quote'];
                     $match = $matches['match'];

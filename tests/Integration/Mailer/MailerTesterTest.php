@@ -39,12 +39,12 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextEmail` was sent but failed the assertion.");
 
-        $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => false);
+        $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, static fn (Email $_email) => false);
     }
 
     public function test_assert_sent_with_class_string_and_truthy_callback(): void
     {
-        $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => true);
+        $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, static fn (Email $_email) => true);
     }
 
     public function test_assert_not_sent_with_class_string(): void
@@ -72,7 +72,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
                 html: 'Hello Jon',
                 from: 'no-reply@tempestphp.com',
                 attachments: [
-                    Attachment::fromClosure(fn () => 'hello!'),
+                    Attachment::fromClosure(static fn () => 'hello!'),
                 ],
             ))
             ->assertSent(GenericEmail::class, function (GenericEmail $email): void {
@@ -92,7 +92,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
                 html: 'Hello Jon',
                 from: 'no-reply@tempestphp.com',
                 attachments: [
-                    Attachment::fromClosure(callable: fn () => 'hello!'),
+                    Attachment::fromClosure(callable: static fn () => 'hello!'),
                 ],
             ));
 

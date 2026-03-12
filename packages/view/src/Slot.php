@@ -49,7 +49,7 @@ final class Slot implements ExportableViewObject
         return $this->attributes[$name] ?? null;
     }
 
-    public static function named(Token $token): self
+    public static function named(#[\SensitiveParameter] Token $token): self
     {
         $name = $token->getAttribute('name');
         $attributes = $token->htmlAttributes;

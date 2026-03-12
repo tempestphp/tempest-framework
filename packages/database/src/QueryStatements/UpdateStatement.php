@@ -35,13 +35,13 @@ final class UpdateStatement implements QueryStatement, HasWhereStatements
         }
 
         $query[] = 'SET ' . $this->values
-            ->map(fn (mixed $_, mixed $key) => "`{$key}` = ?")
+            ->map(static fn (mixed $_, mixed $key) => "`{$key}` = ?")
             ->implode(', ');
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
-                ->filter(fn (string $compiled) => $compiled !== '')
+                ->map(static fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
+                ->filter(static fn (string $compiled) => $compiled !== '')
                 ->implode(' ');
         }
 

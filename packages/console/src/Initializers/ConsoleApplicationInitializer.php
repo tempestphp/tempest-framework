@@ -21,7 +21,7 @@ final readonly class ConsoleApplicationInitializer implements Initializer
             argumentBag: $container->get(ConsoleArgumentBag::class),
         );
 
-        $container->singleton(Application::class, fn () => $application);
+        $container->singleton(Application::class, static fn () => $application);
 
         return $application;
     }

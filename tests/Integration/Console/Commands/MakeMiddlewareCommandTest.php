@@ -94,8 +94,8 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
         $cases = MiddlewareType::cases();
 
         return array_combine(
-            keys: array_map(fn (MiddlewareType $case) => $case->value, $cases),
-            values: array_map(fn (MiddlewareType $case) => [
+            keys: array_map(static fn (MiddlewareType $case) => $case->value, $cases),
+            values: array_map(static fn (MiddlewareType $case) => [
                 'middlewareType' => $case,
                 'middlewareInterface' => $case->relatedInterface(),
             ], $cases),

@@ -6,10 +6,6 @@ use Serializable;
 
 final class SerializableObject implements Serializable
 {
-    /*
-     * @mago-expect lint:return-type
-     * @phpstan-ignore return.unusedType
-     */
     public function serialize()
     {
         return 'a';

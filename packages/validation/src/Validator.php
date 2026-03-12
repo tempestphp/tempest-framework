@@ -157,7 +157,7 @@ final readonly class Validator
 
         return Arr\map(
             array: $this->validateValue($value, $rules),
-            map: fn (FailingRule $rule) => $rule->withKey($key),
+            map: static fn (FailingRule $rule) => $rule->withKey($key),
         );
     }
 
@@ -264,7 +264,7 @@ final readonly class Validator
                 'i_pv4' => 'ipv4',
                 'reg_ex' => 'regex',
             ])
-            ->when($key !== '', fn ($s) => $s->append('.', $key))
+            ->when($key !== '', static fn ($s) => $s->append('.', $key))
             ->toString();
     }
 

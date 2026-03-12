@@ -8,7 +8,6 @@ use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
-use Tempest\Intl\Locale;
 use Tempest\Reflection\ClassReflector;
 
 use function Tempest\Support\arr;
@@ -55,7 +54,7 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
     private function isLocale(string $candidate): bool
     {
         $locale = arr(Locale::cases())
-            ->first(function (Locale $locale) use ($candidate) {
+            ->first(static function (Locale $locale) use ($candidate) {
                 if (strtolower($locale->value) === strtolower($candidate)) {
                     return true;
                 }

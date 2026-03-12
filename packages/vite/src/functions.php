@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Vite;
 
-use Tempest\Vite\Vite;
-
 use function Tempest\Container\get;
 
 /**

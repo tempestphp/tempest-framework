@@ -25,6 +25,7 @@ final class GenericOAuthConfig implements OAuthConfig
         /**
          * The client secret for the OAuth provider.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**
@@ -40,6 +41,7 @@ final class GenericOAuthConfig implements OAuthConfig
         /**
          * The access token URL for the OAuth provider.
          */
+        #[\SensitiveParameter]
         public string $urlAccessToken,
 
         /**

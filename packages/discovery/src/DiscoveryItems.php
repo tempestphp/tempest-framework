@@ -59,7 +59,7 @@ final class DiscoveryItems implements IteratorAggregate, Countable
     {
         return new self(
             arr($this->items)
-                ->filter(fn (array $_, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
+                ->filter(static fn (array $_, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
                 ->toArray(),
         );
     }

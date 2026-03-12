@@ -17,7 +17,7 @@ final class DeferController
     #[Get('/defer')]
     public function __invoke(): Response
     {
-        defer(function (): void {
+        defer(static function (): void {
             //            ll('defer start');
             //            sleep(2);
             //            ll('defer done');

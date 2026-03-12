@@ -90,7 +90,7 @@ trait ManipulatesArray
      */
     public function chunk(int $size, bool $preserveKeys = true): self
     {
-        return $this->createOrModify(array_map(fn (array $array) => new static($array), namespace\chunk($this->value, $size, $preserveKeys)));
+        return $this->createOrModify(array_map(static fn (array $array) => new static($array), namespace\chunk($this->value, $size, $preserveKeys)));
     }
 
     /**

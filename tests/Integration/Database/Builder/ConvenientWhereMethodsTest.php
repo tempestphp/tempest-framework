@@ -218,12 +218,12 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->where('published', true)
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
                     ->whereIn('category', ['fiction', 'mystery'])
                     ->orWhereNull('featured_at');
             })
-            ->orWhereGroup(function ($group): void {
+            ->orWhereGroup(static function ($group): void {
                 $group
                     ->whereBetween('rating', 4.0, 5.0)
                     ->whereNotLike('title', '%draft%');
@@ -241,10 +241,10 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->whereIn('status', ['published', 'featured'])
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
                     ->whereNotNull('published_at')
-                    ->orWhereGroup(function ($innerGroup): void {
+                    ->orWhereGroup(static function ($innerGroup): void {
                         $innerGroup
                             ->whereBetween('rating', 4.0, 5.0)
                             ->whereNotIn('category', ['children']);

@@ -78,7 +78,7 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
     public function test_map_with(): void
     {
         $result = map(['a' => 'a', 'b' => 'b'])->with(
-            fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
+            static fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
             ObjectToArrayMapper::class,
             ArrayToJsonMapper::class,
         )->do();

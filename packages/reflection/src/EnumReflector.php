@@ -88,7 +88,7 @@ final class EnumReflector implements Reflector
         return $this->memoize(
             key: 'cases',
             closure: fn () => array_map(
-                callback: fn (ReflectionEnumUnitCase $case) => $case->getValue(),
+                callback: static fn (ReflectionEnumUnitCase $case) => $case->getValue(),
                 array: $this->getReflectionCases(),
             ),
         );

@@ -88,7 +88,7 @@ final class ContainerBench
     {
         $container = new GenericContainer();
 
-        $container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
+        $container->register(ContainerObjectA::class, static fn () => new ContainerObjectA());
     }
 
     #[BeforeMethods('setUpInitializer')]
@@ -145,7 +145,7 @@ final class ContainerBench
     {
         $container = new GenericContainer();
 
-        $container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
+        $container->singleton(ContainerObjectA::class, static fn () => new ContainerObjectA());
     }
 
     #[BeforeMethods('setUp')]
@@ -154,7 +154,7 @@ final class ContainerBench
     #[Warmup(10)]
     public function benchInvokeClosure(): void
     {
-        $this->container->invoke(fn (ContainerObjectA $a) => $a);
+        $this->container->invoke(static fn (ContainerObjectA $a) => $a);
     }
 
     public function setUpSingletonInstance(): void
@@ -166,7 +166,7 @@ final class ContainerBench
     public function setUpDefinition(): void
     {
         $this->setUp();
-        $this->container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
+        $this->container->register(ContainerObjectA::class, static fn () => new ContainerObjectA());
     }
 
     public function setUpInitializer(): void
@@ -184,6 +184,6 @@ final class ContainerBench
     public function setUpClosureSingleton(): void
     {
         $this->setUp();
-        $this->container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
+        $this->container->singleton(ContainerObjectA::class, static fn () => new ContainerObjectA());
     }
 }

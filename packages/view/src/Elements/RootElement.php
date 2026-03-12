@@ -29,9 +29,11 @@ final class RootElement implements Element
         $this->mergeImports($imports, $this->inheritedImports);
 
         foreach ($this->children as $child) {
-            if ($child instanceof PhpElement) {
-                $this->mergeImports($imports, $child->getImports());
+            if (! $child instanceof PhpElement) {
+                continue;
             }
+
+            $this->mergeImports($imports, $child->getImports());
         }
 
         return array_values($imports);

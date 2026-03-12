@@ -47,6 +47,7 @@ final class SesMailerConfig implements MailerConfig, ProvidesDefaultSender
         /**
          * An optional Amazon SES session token.
          */
+        #[\SensitiveParameter]
         public ?string $sessionToken = null,
 
         /**

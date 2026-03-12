@@ -103,14 +103,14 @@ final readonly class ConfigShowCommand
 
         $return = $this->console->search(
             label: 'Which configuration file would you like to view?',
-            search: function (string $query) use ($data): array {
+            search: static function (string $query) use ($data): array {
                 if ($query === '') {
                     return $data;
                 }
 
                 return array_filter(
                     array: $data,
-                    callback: fn (string $path) => str_contains($path, $query),
+                    callback: static fn (string $path) => str_contains($path, $query),
                 );
             },
             default: $data[0],

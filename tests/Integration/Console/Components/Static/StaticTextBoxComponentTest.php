@@ -15,7 +15,7 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
     public function test_text_box(): void
     {
         $this->console
-            ->call(function (Console $console): void {
+            ->call(static function (Console $console): void {
                 $name = $console->ask('test');
 
                 $console->writeln("Hello {$name}");
@@ -27,7 +27,7 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
     public function test_supports_default(): void
     {
         $this->console
-            ->call(function (Console $console): void {
+            ->call(static function (Console $console): void {
                 $name = $console->ask('test', default: 'Brent');
 
                 $console->writeln("Hello {$name}");
@@ -40,7 +40,7 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call(function (Console $console): void {
+            ->call(static function (Console $console): void {
                 $name = $console->ask('test', default: 'Brent');
 
                 $console->writeln("Hello {$name}");

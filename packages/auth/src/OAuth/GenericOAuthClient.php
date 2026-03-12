@@ -101,7 +101,7 @@ final class GenericOAuthClient implements OAuthClient
         }
     }
 
-    public function fetchUser(AccessToken $token): OAuthUser
+    public function fetchUser(#[\SensitiveParameter] AccessToken $token): OAuthUser
     {
         try {
             return $this->config->mapUser(

@@ -31,7 +31,7 @@ final class OptionCollectionTest extends TestCase
 
         $options->filter('ergljherkigjerg');
         $this->assertCount(0, $options->getOptions());
-        $this->assertSame(null, $options->getActive());
+        $this->assertNull($options->getActive());
     }
 
     public function test_keeps_active_on_filter(): void
@@ -50,7 +50,7 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('baz', $options->getActive()->value);
 
         $options->filter('bazz');
-        $this->assertSame(null, $options->getActive());
+        $this->assertNull($options->getActive());
     }
 
     public function test_navigate(): void
@@ -168,6 +168,6 @@ final class OptionCollectionTest extends TestCase
 
     private function toValues(array $options): array
     {
-        return array_map(fn (Option $option) => $option->value, array_values($options));
+        return array_map(static fn (Option $option) => $option->value, array_values($options));
     }
 }

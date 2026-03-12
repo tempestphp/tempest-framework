@@ -37,7 +37,7 @@ final readonly class FunctionReflector implements Reflector
     {
         $parameter = array_find(
             array: $this->reflectionFunction->getParameters(),
-            callback: fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
+            callback: static fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
         );
 
         if ($parameter === null) {

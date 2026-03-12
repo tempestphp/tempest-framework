@@ -25,9 +25,9 @@ final readonly class EnumStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         $cases = arr($this->enumClass::cases())
-            ->map(fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
-            ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
-            ->map(fn (string $value) => "'{$value}'");
+            ->map(static fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
+            ->map(static fn (string $value) => str_replace('\\', '\\\\', $value))
+            ->map(static fn (string $value) => "'{$value}'");
 
         if ($this->default !== null) {
             $defaultValue = $this->default instanceof BackedEnum ? $this->default->value : $this->default->name;

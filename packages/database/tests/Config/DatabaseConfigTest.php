@@ -22,7 +22,7 @@ final class DatabaseConfigTest extends TestCase
 {
     #[DataProvider('provide_database_drivers')]
     #[Test]
-    public function driver_has_the_correct_dsn(DatabaseConfig $driver, string $dsn, ?string $username, ?string $password): void
+    public function driver_has_the_correct_dsn(DatabaseConfig $driver, string $dsn, ?string $username, #[\SensitiveParameter] ?string $password): void
     {
         $this->assertSame($dsn, $driver->dsn);
         $this->assertSame($username, $driver->username);

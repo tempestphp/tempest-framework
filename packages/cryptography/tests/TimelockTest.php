@@ -15,7 +15,7 @@ final class TimelockTest extends TestCase
     public function test_callback_is_executed(): void
     {
         $clock = new GenericClock();
-        $result = new Timelock($clock)->invoke(fn () => 'hello', Duration::zero());
+        $result = new Timelock($clock)->invoke(static fn () => 'hello', Duration::zero());
 
         $this->assertSame('hello', $result);
     }
@@ -26,7 +26,7 @@ final class TimelockTest extends TestCase
         $start = microtime(true);
 
         $timelock = new Timelock($clock);
-        $timelock->invoke(fn () => null, Duration::milliseconds(100));
+        $timelock->invoke(static fn () => null, Duration::milliseconds(100));
 
         $elapsed = microtime(true) - $start;
 
@@ -40,7 +40,7 @@ final class TimelockTest extends TestCase
 
         $start = microtime(true);
         $timelock->invoke(
-            callback: fn (Timelock $lock) => $lock->canReturnEarly = true,
+            callback: static fn (Timelock $lock) => $lock->canReturnEarly = true,
             duration: Duration::milliseconds(100),
         );
         $elapsed = microtime(true) - $start;
@@ -57,7 +57,7 @@ final class TimelockTest extends TestCase
 
         try {
             $timelock->invoke(
-                callback: fn () => throw new \RuntimeException('This is an error.'),
+                callback: static fn () => throw new \RuntimeException('This is an error.'),
                 duration: Duration::milliseconds(100),
             );
         } catch (\RuntimeException) {
@@ -74,7 +74,7 @@ final class TimelockTest extends TestCase
         $ms = $clock->timestamp()->getMilliseconds();
 
         $timelock->invoke(
-            callback: fn () => null,
+            callback: static fn () => null,
             duration: Duration::milliseconds(300),
         );
 

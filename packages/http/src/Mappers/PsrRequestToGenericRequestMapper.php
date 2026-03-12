@@ -43,14 +43,14 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         }
 
         $headersAsString = array_map(
-            fn (array $items) => implode(',', $items),
+            static fn (array $items) => implode(',', $items),
             $from->getHeaders(),
         );
 
         parse_str($from->getUri()->getQuery(), $query);
 
         $uploads = array_map(
-            fn (UploadedFileInterface $uploadedFile) => new Upload($uploadedFile),
+            static fn (UploadedFileInterface $uploadedFile) => new Upload($uploadedFile),
             $from->getUploadedFiles(),
         );
 

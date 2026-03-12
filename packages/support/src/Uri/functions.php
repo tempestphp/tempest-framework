@@ -123,7 +123,7 @@ function get_user(string $uri): ?string
 /**
  * Updates the given URI to use the provided password.
  */
-function set_password(string $uri, string $password): string
+function set_password(string $uri, #[\SensitiveParameter] string $password): string
 {
     return Uri::from($uri)->withPassword($password)->toString();
 }

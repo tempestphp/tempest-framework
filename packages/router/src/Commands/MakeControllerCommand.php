@@ -43,7 +43,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                     'dummy-view' => $controllerView,
                 ],
                 manipulations: [
-                    fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                    static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                 ],
             );
 

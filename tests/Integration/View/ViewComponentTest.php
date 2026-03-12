@@ -1107,7 +1107,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertException(
             ViewCompilationFailed::class,
-            function () use ($viewRenderer): void {
+            static function () use ($viewRenderer): void {
                 $viewRenderer->render(view(__DIR__ . '/Fixtures/stacktrace-standalone-error.view.php'));
             },
             function (ViewCompilationFailed $exception) use ($exceptionRenderer): void {
@@ -1121,7 +1121,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
                 $renderCompiledFrames = array_values(array_filter(
                     $stacktrace['applicationFrames'],
-                    fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
+                    static fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
                 ));
 
                 $this->assertCount(1, $renderCompiledFrames);
@@ -1160,7 +1160,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
                 $renderCompiledFrames = array_values(array_filter(
                     $stacktrace['applicationFrames'],
-                    fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
+                    static fn (array $frame): bool => ($frame['class'] ?? null) === TempestViewRenderer::class && ($frame['function'] ?? null) === 'renderCompiled',
                 ));
 
                 $this->assertCount(1, $renderCompiledFrames);

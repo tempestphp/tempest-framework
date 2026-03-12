@@ -53,7 +53,7 @@ final class OAuthInstaller
             '3. Review and customize the published files if needed',
             '',
             '<strong>Published files</strong>',
-            ...arr($this->publishedFiles)->map(fn (string $file) => '<style="fg-green">→</style> ' . $file),
+            ...arr($this->publishedFiles)->map(static fn (string $file) => '<style="fg-green">→</style> ' . $file),
         ]);
     }
 
@@ -108,7 +108,7 @@ final class OAuthInstaller
 
                 $this->update(
                     path: $destination,
-                    callback: fn (ImmutableString $contents) => $contents->replace(
+                    callback: static fn (ImmutableString $contents) => $contents->replace(
                         search: [
                             "'tag_name'",
                             'redirect-route',
@@ -132,7 +132,7 @@ final class OAuthInstaller
     private function installComposerDependencies(SupportedOAuthProvider ...$providers): void
     {
         $packages = arr($providers)
-            ->map(fn (SupportedOAuthProvider $provider) => $provider->composerPackage())
+            ->map(static fn (SupportedOAuthProvider $provider) => $provider->composerPackage())
             ->filter();
 
         if ($packages->isNotEmpty()) {
@@ -167,7 +167,7 @@ final class OAuthInstaller
         try {
             return str(read_file($configPath))
                 ->matchAll("/env\('(OAUTH_[^']*)'/", matches: 1)
-                ->map(fn (array $matches) => $matches[1] ?? null)
+                ->map(static fn (array $matches) => $matches[1] ?? null)
                 ->filter()
                 ->toArray();
         } catch (PathWasNotFound|PathWasNotReadable) {

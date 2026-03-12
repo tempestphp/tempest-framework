@@ -13,7 +13,7 @@ final class EnvironmentValueWasInvalid extends Exception
     public function __construct(string $value)
     {
         $possibleValues = arr(Environment::cases())
-            ->map(fn (Environment $environment) => $environment->value)
+            ->map(static fn (Environment $environment) => $environment->value)
             ->join();
 
         parent::__construct("Invalid environment [{$value}]. Possible values are {$possibleValues}.");

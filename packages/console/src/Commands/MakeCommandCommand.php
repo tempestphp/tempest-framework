@@ -39,7 +39,7 @@ final class MakeCommandCommand
                 'dummy-command-slug' => str($className)->kebab()->toString(),
             ],
             manipulations: [
-                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

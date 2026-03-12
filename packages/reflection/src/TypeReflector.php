@@ -236,7 +236,7 @@ final readonly class TypeReflector implements Reflector
     public function split(): array
     {
         return array_map(
-            fn (string $part) => new self($part),
+            static fn (string $part) => new self($part),
             preg_split('/[&|]/', $this->definition),
         );
     }

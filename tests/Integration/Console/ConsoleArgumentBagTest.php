@@ -36,13 +36,13 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->assertNull($firstArg->name);
 
         $forceFlag = $bag->all()[1];
-        $this->assertSame(true, $forceFlag->value);
-        $this->assertSame(null, $forceFlag->position);
+        $this->assertTrue($forceFlag->value);
+        $this->assertNull($forceFlag->position);
         $this->assertSame('force', $forceFlag->name);
 
         $timesFlag = $bag->all()[2];
         $this->assertSame('2', $timesFlag->value);
-        $this->assertSame(null, $timesFlag->position);
+        $this->assertNull($timesFlag->position);
         $this->assertSame('times', $timesFlag->name);
 
         $this->assertSame(

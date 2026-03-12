@@ -214,7 +214,7 @@ final class TestResponseHelper
         /** @var array<string,Cookie> */
         $cookies = Arr\map_with_keys(
             array: $this->response->getHeader('set-cookie')->values,
-            map: function (string $cookie) {
+            map: static function (string $cookie) {
                 $cookie = Cookie::createFromString($cookie);
                 yield $cookie->key => $cookie;
             },
@@ -247,7 +247,7 @@ final class TestResponseHelper
         /** @var array<string,Cookie> */
         $cookies = Arr\map_with_keys(
             array: $this->response->getHeader('set-cookie')->values ?? [],
-            map: function (string $cookie) {
+            map: static function (string $cookie) {
                 $cookie = Cookie::createFromString($cookie);
                 yield $cookie->key => $cookie;
             },
@@ -367,7 +367,7 @@ final class TestResponseHelper
         Assert::assertEmpty(
             actual: $validationErrors,
             message: arr($validationErrors)
-                ->map(fn (array $failingRules, string $key) => $key . ': ' . arr($failingRules)->map(fn (Rule $rule) => $rule::class)->implode(', '))
+                ->map(static fn (array $failingRules, string $key) => $key . ': ' . arr($failingRules)->map(static fn (Rule $rule) => $rule::class)->implode(', '))
                 ->implode(', ')
                 ->prepend('There should be no validation errors, but there were: ')
                 ->toString(),

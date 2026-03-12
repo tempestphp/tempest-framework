@@ -34,7 +34,7 @@ final class MemoryInputBuffer implements InputBuffer
                 implode(
                     separator: ', ',
                     array: array_map(
-                        callback: fn (int|string|Key $i) => is_string($i)
+                        callback: static fn (int|string|Key $i) => is_string($i)
                             ? rtrim($i)
                             : $i->value,
                         array: $input,

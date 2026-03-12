@@ -99,7 +99,7 @@ final class FrameworkKernel implements Kernel
 
         GenericContainer::setInstance($container);
 
-        $container->singleton(Container::class, fn () => $container);
+        $container->singleton(Container::class, static fn () => $container);
 
         return $container;
     }
@@ -143,7 +143,7 @@ final class FrameworkKernel implements Kernel
         // Fix for classes that don't have a proper PSR-4 namespace,
         // they break discovery with an unrecoverable error,
         // but you don't know why because PHP simply says "duplicate classname" instead of something reasonable.
-        register_shutdown_function(function (): void {
+        register_shutdown_function(static function (): void {
             $error = error_get_last();
 
             $message = $error['message'] ?? '';
@@ -247,7 +247,7 @@ final class FrameworkKernel implements Kernel
 
         ini_set('display_errors', 'Off'); // @mago-expect lint:no-ini-set
         set_exception_handler($handler->handle(...));
-        set_error_handler(function (int $code, string $message, string $filename, int $line) use ($handler): bool {
+        set_error_handler(static function (int $code, string $message, string $filename, int $line) use ($handler): bool {
             $handler->handle(new ErrorException(
                 message: $message,
                 code: $code,

@@ -15,6 +15,7 @@ final class GenericElement implements Element, WithToken
     use IsElement;
 
     public function __construct(
+        #[\SensitiveParameter]
         public readonly Token $token,
         private readonly string $tag,
         private readonly bool $isHtml,

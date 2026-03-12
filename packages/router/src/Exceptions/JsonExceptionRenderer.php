@@ -96,7 +96,7 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
                 'line' => $throwable->getLine(),
                 'trace' => Arr\map(
                     array: $throwable->getTrace(),
-                    map: fn (array $trace) => Arr\remove_keys($trace, 'args'),
+                    map: static fn (array $trace) => Arr\remove_keys($trace, 'args'),
                 ),
             ]);
         }

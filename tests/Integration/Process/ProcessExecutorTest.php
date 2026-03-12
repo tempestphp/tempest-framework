@@ -93,7 +93,7 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         while ($invocation->running->isNotEmpty()) {
             $output = $invocation
                 ->all
-                ->map(fn (InvokedProcess $process) => $process->output)
+                ->map(static fn (InvokedProcess $process) => $process->output)
                 ->toArray();
         }
 

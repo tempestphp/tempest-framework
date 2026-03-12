@@ -89,7 +89,7 @@ final class ContainerTest extends TestCase
 
         $container->register(
             ContainerObjectC::class,
-            fn () => new ContainerObjectC(prop: 'test'),
+            static fn () => new ContainerObjectC(prop: 'test'),
         );
 
         $c = $container->get(ContainerObjectC::class);
@@ -112,7 +112,7 @@ final class ContainerTest extends TestCase
     {
         $container = new GenericContainer();
 
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, static fn () => new SingletonClass());
 
         $instance = $container->get(SingletonClass::class);
 
@@ -349,18 +349,18 @@ final class ContainerTest extends TestCase
     public function test_invoke_callable(): void
     {
         $container = new GenericContainer();
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, static fn () => new SingletonClass());
 
         $this->assertEquals('foo', $container->invoke(InvokableClass::class));
         $this->assertEquals('foobar', $container->invoke([new InvokableClass(), 'execute']));
         $this->assertEquals('bar', $container->invoke(InvokableClassWithParameters::class, param: 'bar'));
-        $this->assertInstanceOf(ReflectionClass::class, $container->invoke(fn (SingletonClass $class) => new ReflectionClass($class)));
+        $this->assertInstanceOf(ReflectionClass::class, $container->invoke(static fn (SingletonClass $class) => new ReflectionClass($class)));
     }
 
     public function test_invoke_invokable_class(): void
     {
         $container = new GenericContainer();
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, static fn () => new SingletonClass());
 
         $result = $container->invoke(new ClassReflector(InvokableClassWithDependencies::class), param: 'bar');
 
@@ -370,10 +370,10 @@ final class ContainerTest extends TestCase
     public function test_call_function_with_parameters(): void
     {
         $container = new GenericContainer();
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, static fn () => new SingletonClass());
 
         $result = $container->invoke(
-            method: fn (SingletonClass $class, string $prefix) => $prefix . $class::class,
+            method: static fn (SingletonClass $class, string $prefix) => $prefix . $class::class,
             prefix: 'My resolved class is ',
         );
 
@@ -384,7 +384,7 @@ final class ContainerTest extends TestCase
     {
         $container = new GenericContainer();
 
-        $result = $container->invoke(fn (string $param) => $param, param: 'foo');
+        $result = $container->invoke(static fn (string $param) => $param, param: 'foo');
 
         $this->assertEquals('foo', $result);
     }
@@ -395,7 +395,7 @@ final class ContainerTest extends TestCase
         $this->expectExceptionMessageMatches('/because string cannot be resolved/');
 
         $container = new GenericContainer();
-        $container->invoke(fn (string $param) => $param);
+        $container->invoke(static fn (string $param) => $param);
     }
 
     public function test_call_invalid_closure(): void
@@ -410,9 +410,9 @@ final class ContainerTest extends TestCase
     public function test_invoke_closure_with_function(): void
     {
         GenericContainer::setInstance($container = new GenericContainer());
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, static fn () => new SingletonClass());
 
-        $result = Container\invoke(fn (SingletonClass $class) => $class::class);
+        $result = Container\invoke(static fn (SingletonClass $class) => $class::class);
 
         $this->assertEquals(SingletonClass::class, $result);
     }
@@ -448,7 +448,7 @@ final class ContainerTest extends TestCase
     {
         $container = new GenericContainer();
 
-        $container->register(InterfaceA::class, fn () => new ImplementsInterfaceA());
+        $container->register(InterfaceA::class, static fn () => new ImplementsInterfaceA());
 
         $this->assertInstanceOf(ImplementsInterfaceA::class, $container->get(InterfaceA::class));
 
@@ -500,7 +500,7 @@ final class ContainerTest extends TestCase
 
         $this->assertFalse($container->has(InterfaceA::class));
 
-        $container->register(InterfaceA::class, fn () => new ImplementsInterfaceA());
+        $container->register(InterfaceA::class, static fn () => new ImplementsInterfaceA());
 
         $this->assertTrue($container->has(InterfaceA::class));
     }
@@ -570,23 +570,23 @@ final class ContainerTest extends TestCase
         $delay = 0.01;
         $counter = 1;
 
-        $container->register(SlowDependency::class, function () use ($delay, &$counter) {
+        $container->register(SlowDependency::class, static function () use ($delay, &$counter) {
             return new SlowDependency($delay, $counter++);
         });
 
         // Normal example, this is slow during initialization, fast during use
-        $instance1 = $this->assertSlowerThan(fn () => $container->get(ClassWithSlowDependency::class), $delay);
+        $instance1 = $this->assertSlowerThan(static fn () => $container->get(ClassWithSlowDependency::class), $delay);
         $this->assertInstanceOf(ClassWithSlowDependency::class, $instance1);
         $this->assertInstanceOf(SlowDependency::class, $instance1->dependency);
 
-        $this->assertSame('value1', $this->assertFasterThan(fn () => $instance1->dependency->value, $delay));
+        $this->assertSame('value1', $this->assertFasterThan(static fn () => $instance1->dependency->value, $delay));
 
         // Lazy example, this is fast during initialization, slow during (first) use
-        $instance2 = $this->assertFasterThan(fn () => $container->get(ClassWithLazySlowDependency::class), $delay);
+        $instance2 = $this->assertFasterThan(static fn () => $container->get(ClassWithLazySlowDependency::class), $delay);
         $this->assertInstanceOf(ClassWithLazySlowDependency::class, $instance2);
         $this->assertInstanceOf(SlowDependency::class, $instance2->dependency);
 
-        $this->assertSame('value2', $this->assertSlowerThan(fn () => $instance2->dependency->value, $delay));
+        $this->assertSame('value2', $this->assertSlowerThan(static fn () => $instance2->dependency->value, $delay));
     }
 
     public function test_lazy_property_dependency(): void
@@ -600,14 +600,14 @@ final class ContainerTest extends TestCase
         $delay = 0.01;
         $counter = 1;
 
-        $container->register(SlowDependency::class, function () use ($delay, &$counter) {
+        $container->register(SlowDependency::class, static function () use ($delay, &$counter) {
             return new SlowDependency($delay, $counter++);
         });
 
-        $instance = $this->assertFasterThan(fn () => $container->get(ClassWithLazySlowPropertyDependency::class), $delay);
+        $instance = $this->assertFasterThan(static fn () => $container->get(ClassWithLazySlowPropertyDependency::class), $delay);
         $this->assertInstanceOf(SlowDependency::class, $instance->dependency);
 
-        $this->assertSame('value1', $this->assertSlowerThan(fn () => $instance->dependency->value, $delay));
+        $this->assertSame('value1', $this->assertSlowerThan(static fn () => $instance->dependency->value, $delay));
     }
 
     public function test_has_tags_support(): void
@@ -646,7 +646,7 @@ final class ContainerTest extends TestCase
     public function test_returns_decorated_instance(): void
     {
         $container = new GenericContainer();
-        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->register(DecoratedInterface::class, static fn () => new DecoratedClass());
         $container->addDecorator(DecoratorClass::class, DecoratedInterface::class);
 
         $instance = $container->get(DecoratedInterface::class);
@@ -658,7 +658,7 @@ final class ContainerTest extends TestCase
     public function test_returns_multiple_decorated_instance(): void
     {
         $container = new GenericContainer();
-        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->register(DecoratedInterface::class, static fn () => new DecoratedClass());
         $container->addDecorator(DecoratorClass::class, DecoratedInterface::class);
         $container->addDecorator(DecoratorSecondClass::class, DecoratedInterface::class);
 
@@ -672,7 +672,7 @@ final class ContainerTest extends TestCase
     public function test_throws_on_decorator_not_implementing_interface(): void
     {
         $container = new GenericContainer();
-        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->register(DecoratedInterface::class, static fn () => new DecoratedClass());
         $container->addDecorator(DecoratorInvalid::class, DecoratedInterface::class);
 
         $this->expectException(DecoratorDidNotImplementInterface::class);
@@ -683,7 +683,7 @@ final class ContainerTest extends TestCase
     public function test_returns_decorator_without_constructor(): void
     {
         $container = new GenericContainer();
-        $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
+        $container->register(DecoratedInterface::class, static fn () => new DecoratedClass());
         $container->addDecorator(DecoratorWithoutConstructor::class, DecoratedInterface::class);
 
         $instance = $container->get(DecoratedInterface::class);

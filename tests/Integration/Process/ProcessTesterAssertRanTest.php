@@ -29,7 +29,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
+        $this->process->assertCommandRan('echo *', static function (ProcessResult $result) {
             return $result->output === "hello\n";
         });
     }
@@ -51,7 +51,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
 
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
+        $this->process->assertCommandRan('echo *', static function (ProcessResult $result) {
             return $result->output !== "hello\n";
         });
     }
@@ -60,7 +60,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function (): void {});
+        $this->process->assertCommandRan('echo *', static function (): void {});
     }
 
     public function test_expectation_succeeds_when_callback_returns_true(): void
@@ -68,7 +68,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRan(function (PendingProcess $process): bool {
+        $this->process->assertRan(static function (PendingProcess $process): bool {
             return $process->command === 'echo "hello"';
         });
     }
@@ -81,7 +81,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRan(function (PendingProcess $_process): bool {
+        $this->process->assertRan(static function (PendingProcess $_process): bool {
             return false;
         });
     }
@@ -92,7 +92,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "world"');
 
-        $this->process->assertRan(function (PendingProcess $process): bool {
+        $this->process->assertRan(static function (PendingProcess $process): bool {
             if ($process->command === 'echo "hello"') {
                 return true;
             }
@@ -109,7 +109,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRan(function (PendingProcess $_process): void {
+        $this->process->assertRan(static function (PendingProcess $_process): void {
             // This callback never returns.
         });
     }

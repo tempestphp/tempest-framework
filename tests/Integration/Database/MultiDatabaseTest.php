@@ -337,7 +337,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             query(Book::class)->select()->onDatabase('main')->where('title', 'Timeline Taxi')->first()->title,
         );
 
-        $this->assertException(QueryWasInvalid::class, function (): void {
+        $this->assertException(QueryWasInvalid::class, static function (): void {
             query(Book::class)->select()->onDatabase('backup')->first();
         });
 
@@ -360,7 +360,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     {
         $this->assertException(
             expectedExceptionClass: QueryWasInvalid::class,
-            handler: fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
+            handler: static fn () => query($tableName)->count()->onDatabase($onDatabase)->execute(),
             message: "Table `{$tableName}` exists in database `{$onDatabase}`",
         );
     }

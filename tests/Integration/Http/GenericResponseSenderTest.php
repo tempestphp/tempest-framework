@@ -158,7 +158,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     public function test_stream(): void
     {
         ob_start();
-        $response = new EventStream(fn () => yield 'hello');
+        $response = new EventStream(static fn () => yield 'hello');
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
 
@@ -172,7 +172,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     public function test_stream_with_custom_event(): void
     {
         ob_start();
-        $response = new EventStream(function () {
+        $response = new EventStream(static function () {
             yield new ServerSentMessage(data: 'hello', event: 'first');
             yield new ServerSentMessage(data: 'goodbye', event: 'last');
         });
@@ -191,7 +191,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     public function test_stream_with_custom_id(): void
     {
         ob_start();
-        $response = new EventStream(function () {
+        $response = new EventStream(static function () {
             yield new ServerSentMessage(data: 'hello', id: 123);
             yield new ServerSentMessage(data: 'goodbye', id: 456);
         });
@@ -210,7 +210,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     public function test_stream_with_custom_retry(): void
     {
         ob_start();
-        $response = new EventStream(function () {
+        $response = new EventStream(static function () {
             yield new ServerSentMessage(data: 'hello', retryAfter: 1000);
             yield new ServerSentMessage(data: 'goodbye', retryAfter: Duration::minute());
         });
@@ -229,7 +229,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
     public function test_stream_with_custom_implementation(): void
     {
         ob_start();
-        $response = new EventStream(function () {
+        $response = new EventStream(static function () {
             yield new class implements ServerSentEvent {
                 public ?int $id = 1;
 

@@ -103,6 +103,7 @@ final class UserWithHash
 
     public function __construct(
         public string $email,
+        #[\SensitiveParameter]
         #[Hashed]
         public string $password,
     ) {}
@@ -116,6 +117,7 @@ final class UserWithNullablePassword
 
     public function __construct(
         public string $email,
+        #[\SensitiveParameter]
         #[Hashed]
         public ?string $password,
     ) {}

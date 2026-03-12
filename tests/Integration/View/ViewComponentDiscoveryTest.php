@@ -46,7 +46,7 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 
         $this->assertException(
             ViewComponentWasAlreadyRegistered::class,
-            function () use ($viewConfig): void {
+            static function () use ($viewConfig): void {
                 $viewConfig->addViewComponent(new ViewComponent(
                     name: 'x-form',
                     contents: 'b',

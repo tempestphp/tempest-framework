@@ -235,7 +235,7 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $rawSql = query('books')
             ->select()
             ->where('published', true)
-            ->whereGroup(function ($group): void {
+            ->whereGroup(static function ($group): void {
                 $group
                     ->where('category', 'fiction')
                     ->orWhere('rating', 4.5, WhereOperator::GREATER_THAN_OR_EQUAL);

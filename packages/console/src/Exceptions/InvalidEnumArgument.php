@@ -32,7 +32,7 @@ final class InvalidEnumArgument extends ConsoleException
         }
 
         $cases = array_map(
-            callback: fn (BackedEnum $case) => $case->value,
+            callback: static fn (BackedEnum $case) => $case->value,
             array: $this->argumentType::cases(),
         );
 

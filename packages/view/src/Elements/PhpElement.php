@@ -13,6 +13,7 @@ final class PhpElement implements Element, WithToken
     use IsElement;
 
     public function __construct(
+        #[\SensitiveParameter]
         public readonly Token $token,
         private readonly string $content,
     ) {}

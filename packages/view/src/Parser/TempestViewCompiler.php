@@ -118,7 +118,7 @@ final readonly class TempestViewCompiler
         $searchPathOptions = [
             ...$searchPathOptions,
             ...arr($this->discoveryLocations)
-                ->map(fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
+                ->map(static fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
                 ->toArray(),
         ];
 
@@ -273,7 +273,7 @@ final readonly class TempestViewCompiler
             $imports[$import] = $import;
         }
 
-        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
+        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", static function (array $matches) use (&$imports) {
             // The import contains escaped slashes, meaning it's a var_exported string; we can ignore those
             if (str_contains($matches[0], '\\\\')) {
                 return $matches[0];

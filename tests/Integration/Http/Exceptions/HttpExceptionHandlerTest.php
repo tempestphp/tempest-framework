@@ -31,7 +31,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Kernel::class,
-            fn () => new class($this->container->get(FrameworkKernel::class)) implements Kernel {
+            static fn () => new class($this->container->get(FrameworkKernel::class)) implements Kernel {
                 public const string VERSION = '1.0.0-alpha.6';
 
                 public string $root;
@@ -67,7 +67,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             ResponseSender::class,
-            fn () => new class($this) implements ResponseSender {
+            static fn () => new class($this) implements ResponseSender {
                 public function __construct(
                     private HttpExceptionHandlerTest $case,
                 ) {}

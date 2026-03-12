@@ -34,6 +34,7 @@ final class ViewComponentElement implements Element, WithToken
     private ImmutableArray $viewComponentAttributes;
 
     public function __construct(
+        #[\SensitiveParameter]
         public readonly Token $token,
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
@@ -44,16 +45,16 @@ final class ViewComponentElement implements Element, WithToken
         $this->attributes = $attributes;
 
         $this->viewComponentAttributes = arr($attributes)
-            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->ltrim(':')->toString() => $value);
+            ->mapWithKeys(static fn (string $value, string $key) => yield str($key)->ltrim(':')->toString() => $value);
 
         $this->dataAttributes = arr($attributes)
-            ->filter(fn (string $_, string $key) => ! str_starts_with($key, ':'))
-            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->toString() => $value);
+            ->filter(static fn (string $_, string $key) => ! str_starts_with($key, ':'))
+            ->mapWithKeys(static fn (string $value, string $key) => yield str($key)->camel()->toString() => $value);
 
         $this->expressionAttributes = arr($attributes)
-            ->filter(fn (string $_, string $key) => str_starts_with($key, ':'))
-            ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse'], strict: true))
-            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
+            ->filter(static fn (string $_, string $key) => str_starts_with($key, ':'))
+            ->filter(static fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse'], strict: true))
+            ->mapWithKeys(static fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
 
         $this->scopedVariables = arr();
     }
@@ -106,9 +107,9 @@ final class ViewComponentElement implements Element, WithToken
             ->prepend(
                 sprintf(
                     '<?php return function ($attributes, $slots, $scopedVariables %s %s %s) { extract($scopedVariables, EXTR_SKIP); ?>',
-                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
-                    $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
-                    $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(fn (string $name) => "\${$name}")->implode(', ') : '',
+                    $this->dataAttributes->isNotEmpty() ? ', ' . $this->dataAttributes->map(static fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->expressionAttributes->isNotEmpty() ? ', ' . $this->expressionAttributes->map(static fn (string $_value, string $key) => "\${$key}")->implode(', ') : '',
+                    $this->scopedVariables->isNotEmpty() ? ', ' . $this->scopedVariables->map(static fn (string $name) => "\${$name}")->implode(', ') : '',
                 ),
             )
             ->append('<?php };');
@@ -160,7 +161,7 @@ final class ViewComponentElement implements Element, WithToken
 
         $cachePath = $this->viewCache->getCachedViewPath(
             $cacheKey,
-            fn () => $compiledView->content,
+            static fn () => $compiledView->content,
         );
 
         $this->viewCache->saveSourceMap($cachePath, $compiledView->sourcePath, $compiledView->lineMap);
@@ -171,16 +172,16 @@ final class ViewComponentElement implements Element, WithToken
             $this->exportAttributesArray(),
             ViewObjectExporter::export($slots),
             $this->scopedVariables->isNotEmpty()
-                ? $this->scopedVariables->map(fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
+                ? $this->scopedVariables->map(static fn (string $name) => "'{$name}' => \${$name}")->implode(', ')
                 : '',
             $this->dataAttributes->isNotEmpty()
-                ? ', ' . $this->dataAttributes->map(fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
+                ? ', ' . $this->dataAttributes->map(static fn (mixed $value, string $key) => "{$key}: " . ViewObjectExporter::exportValue($value))->implode(', ')
                 : '',
             $this->expressionAttributes->isNotEmpty()
-                ? ', ' . $this->expressionAttributes->map(fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
+                ? ', ' . $this->expressionAttributes->map(static fn (mixed $value, string $key) => "{$key}: " . $value)->implode(', ')
                 : '',
             $this->scopedVariables->isNotEmpty()
-                ? ', ' . $this->scopedVariables->map(fn (string $name) => "{$name}: \${$name}")->implode(', ')
+                ? ', ' . $this->scopedVariables->map(static fn (string $name) => "{$name}: \${$name}")->implode(', ')
                 : '',
         );
     }
@@ -215,18 +216,18 @@ final class ViewComponentElement implements Element, WithToken
                 $token = TempestViewParser::ast($matches[0])[0];
 
                 $attributes = arr($token->htmlAttributes)
-                    ->map(fn (string $value) => new MutableString($value));
+                    ->map(static fn (string $value) => new MutableString($value));
 
                 foreach (['class', 'style', 'id'] as $name) {
                     $attributes = $this->applyFallthroughAttribute($attributes, $name);
                 }
 
                 $attributeString = $attributes
-                    ->map(fn (MutableString $value, string $key) => sprintf('%s="%s"', $key, $value->trim()))
+                    ->map(static fn (MutableString $value, string $key) => sprintf('%s="%s"', $key, $value->trim()))
                     ->implode(' ')
                     ->when(
-                        fn (ImmutableString $s) => $s->isNotEmpty(),
-                        fn (ImmutableString $s) => $s->prepend(' '),
+                        static fn (ImmutableString $s) => $s->isNotEmpty(),
+                        static fn (ImmutableString $s) => $s->prepend(' '),
                     );
 
                 return sprintf('<%s%s>', $matches['tag'], $attributeString);
@@ -288,9 +289,11 @@ final class ViewComponentElement implements Element, WithToken
         }
 
         foreach ($this->getChildren() as $child) {
-            if ($child instanceof PhpElement) {
-                $imports = [...$imports, ...$child->getImports()];
+            if (! $child instanceof PhpElement) {
+                continue;
             }
+
+            $imports = [...$imports, ...$child->getImports()];
         }
 
         return $imports;

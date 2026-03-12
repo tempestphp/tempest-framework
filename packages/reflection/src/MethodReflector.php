@@ -38,7 +38,7 @@ final class MethodReflector implements Reflector
     {
         $parameter = array_find(
             array: $this->reflectionMethod->getParameters(),
-            callback: fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
+            callback: static fn (ReflectionParameter $parameter) => $parameter->getName() === $key || $parameter->getPosition() === $key,
         );
 
         if ($parameter === null) {

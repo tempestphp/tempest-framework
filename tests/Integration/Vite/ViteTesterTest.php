@@ -73,17 +73,17 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(InvalidArgumentException::class);
 
         $this->vite->call(
-            callback: fn () => null,
+            callback: static fn () => null,
             files: [],
         );
     }
 
     public function test_retains_tags_resolver(): void
     {
-        $this->container->register(TagsResolver::class, fn () => new NullTagsResolver());
+        $this->container->register(TagsResolver::class, static fn () => new NullTagsResolver());
 
         $this->vite->call(
-            callback: fn () => null,
+            callback: static fn () => null,
             files: [],
             root: __DIR__ . '/Fixtures/tmp',
         );

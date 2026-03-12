@@ -62,7 +62,7 @@ final class MetaViewComponentCommand
         if (is_file($viewComponent)) {
             return array_find(
                 array: $this->viewConfig->viewComponents,
-                callback: fn ($registeredViewComponent) => $registeredViewComponent->file === $viewComponent,
+                callback: static fn ($registeredViewComponent) => $registeredViewComponent->file === $viewComponent,
             );
         }
 
@@ -74,7 +74,7 @@ final class MetaViewComponentCommand
         preg_match_all('/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|>(?<default>(.|\n)*?)<\/x-slot>)/', $viewComponent->contents, $matches);
 
         return arr($matches['name'])
-            ->mapWithKeys(fn (string $name) => yield $name => $name === '' ? Slot::DEFAULT : $name)
+            ->mapWithKeys(static fn (string $name) => yield $name => $name === '' ? Slot::DEFAULT : $name)
             ->values();
     }
 
@@ -82,19 +82,19 @@ final class MetaViewComponentCommand
     {
         return str($viewComponent->contents)
             ->matchAll('/^\s*\*\s*@var.*$/m')
-            ->map(fn (array $matches) => str($matches[0]))
-            ->map(fn (ImmutableString $line) => $line->replaceRegex('/^\s*\*\s*@var\s*/', ''))
-            ->map(fn (ImmutableString $line) => $line->trim())
-            ->map(fn (ImmutableString $line) => $line->explode(limit: 3))
+            ->map(static fn (array $matches) => str($matches[0]))
+            ->map(static fn (ImmutableString $line) => $line->replaceRegex('/^\s*\*\s*@var\s*/', ''))
+            ->map(static fn (ImmutableString $line) => $line->trim())
+            ->map(static fn (ImmutableString $line) => $line->explode(limit: 3))
             ->mapWithKeys(
-                fn (ImmutableArray $parts) => yield $parts[1] => [
+                static fn (ImmutableArray $parts) => yield $parts[1] => [
                     'type' => $parts[0],
                     'name' => $parts[1],
                     'attributeName' => str($parts[1])->kebab()->ltrim('$'),
                     'description' => $parts[2] ?? null,
                 ],
             )
-            ->filter(fn (array $parts) => ! in_array($parts['name'], ['$this', '$attributes', '$slots'], strict: true))
+            ->filter(static fn (array $parts) => ! in_array($parts['name'], ['$this', '$attributes', '$slots'], strict: true))
             ->values();
     }
 }

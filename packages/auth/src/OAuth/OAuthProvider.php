@@ -27,5 +27,5 @@ interface OAuthProvider
     /**
      * Gets the resource owner information using an access token.
      */
-    public function getResourceOwner(AccessToken $token): ResourceOwnerInterface;
+    public function getResourceOwner(#[\SensitiveParameter] AccessToken $token): ResourceOwnerInterface;
 }

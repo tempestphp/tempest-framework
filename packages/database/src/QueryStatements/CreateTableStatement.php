@@ -395,7 +395,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $createTable = sprintf(
+        return sprintf(
             'CREATE TABLE %s (%s);',
             new TableDefinition($this->tableName),
             arr($this->statements)
@@ -407,7 +407,5 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),
         );
-
-        return $createTable;
     }
 }

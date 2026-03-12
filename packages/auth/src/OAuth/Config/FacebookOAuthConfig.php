@@ -26,6 +26,7 @@ final class FacebookOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Facebook OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

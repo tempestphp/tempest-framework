@@ -25,6 +25,7 @@ final class SlackOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Slack OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

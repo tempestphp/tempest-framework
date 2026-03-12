@@ -78,7 +78,7 @@ final class ConsoleTester
         $clone->input = $memoryInputBuffer;
 
         if ($command instanceof Closure) {
-            $fiber = new Fiber(function () use ($clone, $command, $console): void {
+            $fiber = new Fiber(static function () use ($clone, $command, $console): void {
                 $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
             });
         } else {
@@ -107,7 +107,7 @@ final class ConsoleTester
             $input = explode(' ', $command);
 
             $inputString = implode(' ', array_map(
-                fn (string $item) => "--input=\"{$item}\"",
+                static fn (string $item) => "--input=\"{$item}\"",
                 $input,
             ));
         } else {

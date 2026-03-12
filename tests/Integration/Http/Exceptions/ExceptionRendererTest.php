@@ -35,7 +35,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->container->singleton(Kernel::class, fn () => new class($this->container->get(FrameworkKernel::class)) implements Kernel {
+        $this->container->singleton(Kernel::class, static fn () => new class($this->container->get(FrameworkKernel::class)) implements Kernel {
             public const string VERSION = '1.0.0-alpha.6';
 
             public string $root;
@@ -68,7 +68,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             }
         });
 
-        $this->container->singleton(ResponseSender::class, fn () => new class($this) implements ResponseSender {
+        $this->container->singleton(ResponseSender::class, static fn () => new class($this) implements ResponseSender {
             public function __construct(
                 private ExceptionRendererTest $case,
             ) {}
@@ -90,7 +90,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Request::class,
-            fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
+            static fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
         $this->callExceptionHandler(function (): void {
@@ -114,7 +114,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Request::class,
-            fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'text/html']),
+            static fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'text/html']),
         );
 
         $this->callExceptionHandler(function (): void {
@@ -135,7 +135,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Request::class,
-            fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
+            static fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
         $this->callExceptionHandler(function (): void {
@@ -157,7 +157,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Request::class,
-            fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
+            static fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'application/json']),
         );
 
         $this->callExceptionHandler(function (): void {
@@ -179,7 +179,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             Request::class,
-            fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'text/html']),
+            static fn () => new GenericRequest(Method::GET, '/test', headers: ['Accept' => 'text/html']),
         );
 
         $this->callExceptionHandler(function (): void {

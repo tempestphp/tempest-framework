@@ -310,7 +310,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'D')->save();
 
         $results = [];
-        Book::select()->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->chunk(static function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(4, $results);
@@ -318,7 +318,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $results = [];
         Book::select()
             ->whereRaw("title <> 'A'")
-            ->chunk(function (array $chunk) use (&$results): void {
+            ->chunk(static function (array $chunk) use (&$results): void {
                 $results = [...$results, ...$chunk];
             }, 2);
         $this->assertCount(3, $results);
@@ -341,7 +341,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $results = [];
         Book::select()
             ->with('author')
-            ->chunk(function (array $chunk) use (&$results): void {
+            ->chunk(static function (array $chunk) use (&$results): void {
                 $results = [...$results, ...$chunk];
             }, 1);
         $this->assertCount(2, $results);
@@ -370,14 +370,14 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->select('title', 'index')
             ->when(
                 true,
-                fn (SelectQueryBuilder $query) => $query
+                static fn (SelectQueryBuilder $query) => $query
                     ->whereRaw('`title` = ?', 'Timeline Taxi')
                     ->andWhereRaw('`index` <> ?', '1')
                     ->orWhereRaw('`createdAt` > ?', '2025-01-01'),
             )
             ->when(
                 false,
-                fn (SelectQueryBuilder $query) => $query
+                static fn (SelectQueryBuilder $query) => $query
                     ->whereRaw('`title` = ?', 'Timeline Uber')
                     ->andWhereRaw('`index` <> ?', '2')
                     ->orWhereRaw('`createdAt` > ?', '2025-01-02'),
@@ -534,9 +534,9 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $page1->offset);
         $this->assertSame(2, $page1->limit);
         $this->assertSame(2, $page1->nextPage);
-        $this->assertSame(null, $page1->previousPage);
-        $this->assertSame(true, $page1->hasNext);
-        $this->assertSame(false, $page1->hasPrevious);
+        $this->assertNull($page1->previousPage);
+        $this->assertTrue($page1->hasNext);
+        $this->assertFalse($page1->hasPrevious);
 
         $this->assertSame('LOTR 1.1', $page1->data[0]->title);
         $this->assertSame('LOTR 1.2', $page1->data[1]->title);

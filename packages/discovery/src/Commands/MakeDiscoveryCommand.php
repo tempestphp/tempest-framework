@@ -35,7 +35,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
                 manipulations: [
-                    fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                    static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                 ],
             );
 

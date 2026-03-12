@@ -15,7 +15,7 @@ final class PathTest extends TestCase
             $expected,
             new Path($input)
                 ->glob($glob)
-                ->map(fn (string $path) => basename($path))
+                ->map(static fn (string $path) => basename($path))
                 ->toArray(),
         );
     }

@@ -9,7 +9,7 @@ use Tempest\Router\Routing\Matching\MatchingRegex;
 final readonly class RouteMatchingRegexBuilder
 {
     // This limit is guesstimated using a small script with an ever in pattern feed into preg_match
-    private const int PREG_REGEX_SIZE_LIMIT = 32768;
+    private const int PREG_REGEX_SIZE_LIMIT = 32_768;
 
     private const int REGEX_SIZE_MARGIN = 256;
 

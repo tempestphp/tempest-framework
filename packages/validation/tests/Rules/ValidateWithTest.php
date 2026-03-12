@@ -45,7 +45,7 @@ final class ValidateWithTest extends TestCase
     {
         $rule = new ValidateWith(static fn (mixed $value): bool => str_contains((string) $value, '@'));
 
-        $this->assertFalse($rule->isValid(12345));
+        $this->assertFalse($rule->isValid(12_345));
         $this->assertFalse($rule->isValid(null));
         $this->assertFalse($rule->isValid(false));
     }
@@ -54,6 +54,6 @@ final class ValidateWithTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new ValidateWith(fn (mixed $value): bool => str_contains((string) $value, '@'));
+        new ValidateWith(static fn (mixed $value): bool => str_contains((string) $value, '@'));
     }
 }

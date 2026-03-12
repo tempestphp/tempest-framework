@@ -27,7 +27,7 @@ final readonly class DatabaseInitializer implements DynamicInitializer
     {
         $container->singleton(
             className: Connection::class,
-            definition: function () use ($tag, $container) {
+            definition: static function () use ($tag, $container) {
                 $config = $container->get(DatabaseConfig::class, $tag);
 
                 $connection = new PDOConnection($config);

@@ -133,7 +133,7 @@ final class GenericCache implements Cache
         if (! $this->enabled) {
             return Arr\map_with_keys(
                 array: $key,
-                map: fn (string|Stringable $key) => yield (string) $key => null,
+                map: static fn (string|Stringable $key) => yield (string) $key => null,
             );
         }
 

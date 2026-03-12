@@ -35,33 +35,35 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
             while (true) { // @phpstan-ignore-line
                 foreach ($processes as $uuid => $process) {
-                    if ($process->isTerminated()) {
-                        if ($process->isSuccessful()) {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-green bold'>SUCCESS</style>",
-                            );
-                        } else {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-red bold'>FAILED</style>",
-                            );
-                        }
-
-                        if ($output = trim($process->getOutput())) {
-                            $this->writeln($output);
-                        }
-
-                        if ($errorOutput = trim($process->getErrorOutput())) {
-                            $this->writeln($errorOutput);
-                        }
-
-                        unset($processes[$uuid]);
+                    if (! $process->isTerminated()) {
+                        continue;
                     }
+
+                    if ($process->isSuccessful()) {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-green bold'>SUCCESS</style>",
+                        );
+                    } else {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-red bold'>FAILED</style>",
+                        );
+                    }
+
+                    if ($output = trim($process->getOutput())) {
+                        $this->writeln($output);
+                    }
+
+                    if ($errorOutput = trim($process->getErrorOutput())) {
+                        $this->writeln($errorOutput);
+                    }
+
+                    unset($processes[$uuid]);
                 }
 
                 $availableCommands = arr($this->repository->getPendingCommands())
-                    ->filter(fn (object $_, string $uuid) => ! array_key_exists($uuid, $processes));
+                    ->filter(static fn (object $_, string $uuid) => ! array_key_exists($uuid, $processes));
 
                 if (count($processes) === 5) {
                     $this->sleep(0.5);

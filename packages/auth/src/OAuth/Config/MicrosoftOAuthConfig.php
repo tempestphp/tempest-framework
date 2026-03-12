@@ -25,6 +25,7 @@ final class MicrosoftOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Microsoft OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

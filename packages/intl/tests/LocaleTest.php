@@ -174,9 +174,11 @@ final class LocaleTest extends TestCase
     public static function getLocalesWithScript(): Generator
     {
         foreach (Locale::cases() as $locale) {
-            if ($locale->hasScript()) {
-                yield $locale->value => [$locale];
+            if (! $locale->hasScript()) {
+                continue;
             }
+
+            yield $locale->value => [$locale];
         }
 
         return null;
@@ -195,9 +197,11 @@ final class LocaleTest extends TestCase
     public static function getLocalesWithoutScript(): Generator
     {
         foreach (Locale::cases() as $locale) {
-            if (! $locale->hasScript()) {
-                yield $locale->value => [$locale];
+            if ($locale->hasScript()) {
+                continue;
             }
+
+            yield $locale->value => [$locale];
         }
 
         return null;
@@ -216,9 +220,11 @@ final class LocaleTest extends TestCase
     public static function getLocalesWithRegion(): Generator
     {
         foreach (Locale::cases() as $locale) {
-            if ($locale->hasRegion()) {
-                yield $locale->value => [$locale];
+            if (! $locale->hasRegion()) {
+                continue;
             }
+
+            yield $locale->value => [$locale];
         }
 
         return null;
@@ -238,9 +244,11 @@ final class LocaleTest extends TestCase
     public static function getLocalesWithoutRegion(): Generator
     {
         foreach (Locale::cases() as $locale) {
-            if (! $locale->hasRegion()) {
-                yield $locale->value => [$locale];
+            if ($locale->hasRegion()) {
+                continue;
             }
+
+            yield $locale->value => [$locale];
         }
 
         return null;

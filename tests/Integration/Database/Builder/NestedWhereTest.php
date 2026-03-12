@@ -15,7 +15,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->whereRaw('title = ?', 'test')
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
                     ->whereRaw('author_id = ?', 1)
                     ->orWhereRaw('author_id = ?', 2);
@@ -33,7 +33,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->whereRaw('status = ?', 'active')
-            ->orWhereGroup(function ($group): void {
+            ->orWhereGroup(static function ($group): void {
                 $group
                     ->whereRaw('priority = ?', 'high')
                     ->andWhereRaw('urgent = ?', true);
@@ -51,10 +51,10 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->whereRaw('published = ?', true)
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
                     ->whereRaw('category = ?', 'fiction')
-                    ->orWhereGroup(function ($innerGroup): void {
+                    ->orWhereGroup(static function ($innerGroup): void {
                         $innerGroup
                             ->whereRaw('author_name = ?', 'Tolkien')
                             ->andWhereRaw('rating > ?', 4.5);
@@ -81,14 +81,14 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->whereRaw('status = ?', 'published')
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
-                    ->andWhereGroup(function ($innerGroup): void {
+                    ->andWhereGroup(static function ($innerGroup): void {
                         $innerGroup
                             ->whereRaw('category = ?', 'fiction')
                             ->andWhereRaw('rating > ?', 4.0);
                     })
-                    ->orWhereGroup(function ($innerGroup): void {
+                    ->orWhereGroup(static function ($innerGroup): void {
                         $innerGroup
                             ->whereRaw('category = ?', 'non-fiction')
                             ->andWhereRaw('author_id IN (?, ?, ?)', 1, 2, 3);
@@ -119,7 +119,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
     {
         $query = query('books')
             ->select()
-            ->whereGroup(function ($group): void {
+            ->whereGroup(static function ($group): void {
                 $group
                     ->whereRaw('title LIKE ?', '%test%')
                     ->orWhereRaw('description LIKE ?', '%test%');
@@ -137,7 +137,7 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->where('published', true)
-            ->andWhereGroup(function ($group): void {
+            ->andWhereGroup(static function ($group): void {
                 $group
                     ->whereRaw('category = ?', 'fiction')
                     ->orWhereRaw('priority = ?', 'high');

@@ -179,12 +179,12 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
 
     public static function tempestLevelProvider(): array
     {
-        return array_map(fn (LogLevel $level) => [$level, strtoupper($level->value)], LogLevel::cases());
+        return array_map(static fn (LogLevel $level) => [$level, strtoupper($level->value)], LogLevel::cases());
     }
 
     public static function monologLevelProvider(): array
     {
-        return array_map(fn (Level $level) => [$level, strtoupper($level->name)], Level::cases());
+        return array_map(static fn (Level $level) => [$level, strtoupper($level->name)], Level::cases());
     }
 
     public static function psrLogLevelProvider(): array
@@ -192,6 +192,6 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $reflection = new ReflectionClass(PsrLogLevel::class);
         $levels = $reflection->getConstants();
 
-        return array_map(fn (string $level) => [$level, strtoupper($level)], array_values($levels));
+        return array_map(static fn (string $level) => [$level, strtoupper($level)], array_values($levels));
     }
 }

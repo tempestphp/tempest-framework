@@ -22,8 +22,8 @@ final readonly class WhereGroupStatement implements QueryStatement
         }
 
         $compiled = $this->conditions
-            ->map(fn (QueryStatement $condition) => $condition->compile($dialect))
-            ->filter(fn (string $condition) => $condition !== '');
+            ->map(static fn (QueryStatement $condition) => $condition->compile($dialect))
+            ->filter(static fn (string $condition) => $condition !== '');
 
         if ($compiled->isEmpty()) {
             return '';

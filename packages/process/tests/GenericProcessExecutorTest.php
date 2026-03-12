@@ -64,7 +64,7 @@ final class GenericProcessExecutorTest extends TestCase
         $process = $executor->start('echo hello');
 
         $output = [];
-        $process->wait(function (OutputChannel $channel, string $data) use (&$output) {
+        $process->wait(static function (OutputChannel $channel, string $data) use (&$output) {
             $output[$channel->value] ??= [];
             $output[$channel->value][] = $data;
         });

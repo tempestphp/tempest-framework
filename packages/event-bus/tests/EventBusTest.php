@@ -91,14 +91,14 @@ final class EventBusTest extends TestCase
     public function test_closure_based_handlers(): void
     {
         $container = new GenericContainer();
-        $container->singleton(MyService::class, fn () => new MyService('bar'));
+        $container->singleton(MyService::class, static fn () => new MyService('bar'));
 
         $called = null;
 
         $config = new EventBusConfig(
             handlers: [
                 ItHappened::class => [
-                    new CallableEventHandler(ItHappened::class, function (ItHappened $event, MyService $service) use (&$called): void {
+                    new CallableEventHandler(ItHappened::class, static function (ItHappened $event, MyService $service) use (&$called): void {
                         $called = $service->value;
                     }),
                 ],
@@ -125,7 +125,7 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
-        $eventBus->listen(function (string $event) use (&$hasHappened): void {
+        $eventBus->listen(static function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         }, event: 'my-event');
 
@@ -141,7 +141,7 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
-        $eventBus->listen(function (ItHappened $event) use (&$hasHappened): void {
+        $eventBus->listen(static function (ItHappened $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
@@ -159,7 +159,7 @@ final class EventBusTest extends TestCase
 
         $hasHappened = false;
 
-        listen(function (string $event) use (&$hasHappened): void {
+        listen(static function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         }, event: 'my-event');
 
@@ -199,7 +199,7 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
-        $eventBus->listen(function () use (&$hasHappened): void {
+        $eventBus->listen(static function () use (&$hasHappened): void {
             $hasHappened = true;
         }, EventEnum::TWO);
 

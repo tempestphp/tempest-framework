@@ -134,7 +134,7 @@ final class IconTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.test/mdi/tsunami.svg')
             ->willReturn($response ?? new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
 
         $this->container->singleton(Icon\IconCache::class, new Icon\IconCache(
             enabled: true,

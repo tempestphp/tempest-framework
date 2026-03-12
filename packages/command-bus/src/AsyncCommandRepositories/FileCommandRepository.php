@@ -52,7 +52,7 @@ final readonly class FileCommandRepository implements CommandRepository
     public function getPendingCommands(): array
     {
         return arr(glob(__DIR__ . '/../stored-commands/*.pending.txt'))
-            ->mapWithKeys(function (string $path) {
+            ->mapWithKeys(static function (string $path) {
                 if (! Filesystem\is_file($path)) {
                     return;
                 }

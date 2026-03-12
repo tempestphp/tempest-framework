@@ -60,10 +60,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function assertSameWithoutBackticks(Stringable|string $expected, Stringable|string $actual): void
     {
-        $clean = function (string $string): string {
+        $clean = static function (string $string): string {
             return str($string)
                 ->replace('`', '')
-                ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
+                ->replaceRegex('/AS \"(?<alias>.*?)\"/', static fn (array $matches) => "AS {$matches['alias']}")
                 ->toString();
         };
 

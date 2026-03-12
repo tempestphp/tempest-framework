@@ -18,7 +18,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)
             ->select()
-            ->transform(fn ($builder) => $builder->where('name', 'Frieren'));
+            ->transform(static fn ($builder) => $builder->where('name', 'Frieren'));
 
         $bindings = $query->build()->bindings;
 
@@ -29,7 +29,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)
             ->count()
-            ->transform(fn ($builder) => $builder->where('name', 'Himmel'));
+            ->transform(static fn ($builder) => $builder->where('name', 'Himmel'));
 
         $bindings = $query->build()->bindings;
 
@@ -40,7 +40,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)
             ->update(name: 'Heiter')
-            ->transform(fn ($builder) => $builder->where('id', 1));
+            ->transform(static fn ($builder) => $builder->where('id', 1));
 
         $bindings = $query->build()->bindings;
 
@@ -51,7 +51,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)
             ->delete()
-            ->transform(fn ($builder) => $builder->where('name', 'Eisen'));
+            ->transform(static fn ($builder) => $builder->where('name', 'Eisen'));
 
         $bindings = $query->build()->bindings;
 
@@ -62,7 +62,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)
             ->insert(['name' => 'Stark'])
-            ->transform(fn ($builder) => $builder->then(fn () => null));
+            ->transform(static fn ($builder) => $builder->then(static fn () => null));
 
         $bindings = $query->build()->bindings;
 
@@ -73,7 +73,7 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $original = query(Author::class)->select();
 
-        $transformed = $original->transform(fn ($builder) => $builder);
+        $transformed = $original->transform(static fn ($builder) => $builder);
 
         $this->assertNotSame($original, $transformed);
     }

@@ -60,7 +60,7 @@ final class Token
         return $this->htmlAttributes[$name] ?? null;
     }
 
-    public function addAttribute(Token $token): void
+    public function addAttribute(#[\SensitiveParameter] Token $token): void
     {
         $this->rawAttributes[] = $token;
 
@@ -71,18 +71,18 @@ final class Token
         }
     }
 
-    public function setAttributeValue(string $name, Token $token): void
+    public function setAttributeValue(string $name, #[\SensitiveParameter] Token $token): void
     {
         $this->rawAttributes[] = $token;
         $this->htmlAttributes[$this->attributeName($name)] = $this->attributeValue($token->content);
     }
 
-    public function setEndingToken(Token $endingToken): void
+    public function setEndingToken(#[\SensitiveParameter] Token $endingToken): void
     {
         $this->endingToken = $endingToken;
     }
 
-    public function setClosingToken(Token $closingToken): void
+    public function setClosingToken(#[\SensitiveParameter] Token $closingToken): void
     {
         if ($closingToken->tag && $this->tag !== $closingToken->tag) {
             throw new ClosingTagWasInvalid($this->tag, $closingToken->tag);

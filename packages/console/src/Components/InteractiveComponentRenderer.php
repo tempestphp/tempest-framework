@@ -108,14 +108,14 @@ final class InteractiveComponentRenderer
 
             // If we have multiple handlers, we put the ones that return nothing
             // first because the ones that return something will be overridden otherwise.
-            usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
+            usort($handlersForKey, static fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
             // CTRL+C and CTRL+D means we exit the CLI, but only if there is no custom
             // handler. When we exit, we want one last render to display pretty
             // styles, so we will throw the exception in the next loop.
             if ($handlersForKey === [] && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
                 $component->setState(ComponentState::CANCELLED);
-                $this->afterRenderCallbacks[] = fn () => throw new InterruptException();
+                $this->afterRenderCallbacks[] = static fn () => throw new InterruptException();
                 $this->shouldRerender = true;
                 Fiber::suspend();
 
@@ -242,7 +242,7 @@ final class InteractiveComponentRenderer
 
     public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool
     {
-        if (! arr($component->extensions ?? [])->every(fn (string $ext) => extension_loaded($ext))) {
+        if (! arr($component->extensions ?? [])->every(static fn (string $ext) => extension_loaded($ext))) {
             return false;
         }
 

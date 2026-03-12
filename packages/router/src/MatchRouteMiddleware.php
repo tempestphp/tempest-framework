@@ -35,7 +35,7 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         }
 
         // We register the matched route in the container, some internal framework components will need it
-        $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
+        $this->container->singleton(MatchedRoute::class, static fn () => $matchedRoute);
 
         // Convert the request to a specific request implementation, if needed
         $request = $this->resolveRequest($request, $matchedRoute);
@@ -43,7 +43,7 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
         // Making it so that we don't need to set any $_SERVER variables and stuff like that
-        $this->container->singleton($request::class, fn () => $request);
+        $this->container->singleton($request::class, static fn () => $request);
 
         return $next($request);
     }
@@ -56,12 +56,13 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
             // If the parameter's type is an instance of Request…
-            if ($parameter->getType()->matches(Request::class)) {
-                // We'll use that specific request class
-                $requestClass = $parameter->getType()->getName();
-
-                break;
+            if (! $parameter->getType()->matches(Request::class)) {
+                continue;
             }
+
+            $requestClass = $parameter->getType()->getName();
+
+            break;
         }
 
         if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {

@@ -60,8 +60,8 @@ final readonly class LoadConfig
                 $this->environment->isStaging() => ! Str\contains($path, [...$suffixes['testing'], ...$suffixes['development'], ...$suffixes['production']]),
                 default => true,
             })
-            ->sortByCallback(function (string $path1, string $path2) use ($suffixes): int {
-                $getPriority = fn (string $path): int => match (true) {
+            ->sortByCallback(static function (string $path1, string $path2) use ($suffixes): int {
+                $getPriority = static fn (string $path): int => match (true) {
                     Str\contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) => 0,
                     ! Str\contains($path, root_path()) => 0,
                     Str\contains($path, $suffixes['testing']) => 6,

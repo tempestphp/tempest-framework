@@ -35,7 +35,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
             $answers = $this->askQuestion($console);
 
             $answerAsString = arr($answers)
-                ->map(fn (Option $option) => $option->displayValue)
+                ->map(static fn (Option $option) => $option->displayValue)
                 ->join(', ', ' and ')
                 ->trim()
                 ->toString() ?: 'no option';
@@ -52,7 +52,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
             return $this->default;
         }
 
-        return array_map(fn (Option $option) => $option->value, $answers);
+        return array_map(static fn (Option $option) => $option->value, $answers);
     }
 
     private function askQuestion(Console $console): array
@@ -66,7 +66,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
                 fn (Option $option, int $index) => str($index)
                     ->when(
                         condition: in_array($option->value, $this->default, strict: true),
-                        callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
+                        callback: static fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
                     )
                     ->wrap('[', ']')
                     ->prepend('- ')
@@ -105,7 +105,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
                     });
             })
             ->filter()
-            ->unique(fn (Option $option) => $option->value)
+            ->unique(static fn (Option $option) => $option->value)
             ->toArray();
     }
 }

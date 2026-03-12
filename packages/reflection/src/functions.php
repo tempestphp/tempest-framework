@@ -6,8 +6,6 @@ namespace Tempest\Reflection;
 
 use ReflectionClass as PHPReflectionClass;
 use ReflectionProperty as PHPReflectionProperty;
-use Tempest\Reflection\ClassReflector;
-use Tempest\Reflection\PropertyReflector;
 
 /**
  * Creates a new {@see Reflector} instance based on the given `$classOrProperty`.

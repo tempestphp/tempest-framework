@@ -36,7 +36,7 @@ final readonly class OAuthControllerStub
 
         $this->oauth->authenticate(
             request: $request,
-            map: fn (OAuthUser $user): Authenticatable => query('user-model-fqcn')->updateOrCreate([
+            map: static fn (OAuthUser $user): Authenticatable => query('user-model-fqcn')->updateOrCreate([
                 'provider_db_column' => $user->id,
             ], [
                 'provider_db_column' => $user->id,

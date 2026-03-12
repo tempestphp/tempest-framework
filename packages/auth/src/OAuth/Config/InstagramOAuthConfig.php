@@ -25,6 +25,7 @@ final class InstagramOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Instagram OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

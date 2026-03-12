@@ -19,7 +19,7 @@ final class MarkdownExtension implements ExtensionInterface
     {
         $container->register(
             MarkdownRenderer::class,
-            function (Container $container) {
+            static function (Container $container) {
                 return new MarkdownRenderer(
                     $container->get(ConsoleExtension::SERVICE_OUTPUT_STD),
                     $container->get(ExpressionExtension::SERVICE_PLAIN_PRINTER),

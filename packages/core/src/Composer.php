@@ -38,17 +38,19 @@ final class Composer
         $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
             ->get('autoload.psr-4', default: arr())
-            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
-            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->map(static fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
+            ->sortByCallback(static fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()
             ->toArray();
 
         foreach ($this->namespaces as $namespace) {
-            if (Str\starts_with(Str\ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
-                $this->mainNamespace = $namespace;
-
-                break;
+            if (! Str\starts_with(Str\ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
+                continue;
             }
+
+            $this->mainNamespace = $namespace;
+
+            break;
         }
 
         if (! isset($this->mainNamespace) && count($this->namespaces)) {
@@ -60,13 +62,13 @@ final class Composer
             ...$this->namespaces,
         ])
             ->filter()
-            ->unique(fn (Psr4Namespace $ns) => $ns->namespace)
+            ->unique(static fn (Psr4Namespace $ns) => $ns->namespace)
             ->toArray();
 
         $this->devNamespaces = arr($this->composer)
             ->get('autoload-dev.psr-4', default: arr())
-            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
-            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->map(static fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
+            ->sortByCallback(static fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()
             ->toArray();
 

@@ -11,7 +11,7 @@ final readonly class TailReader
 {
     public function tail(string $path, ?Closure $format = null): void
     {
-        $format ??= fn (string $text) => $text;
+        $format ??= static fn (string $text) => $text;
 
         $handle = fopen($path, 'r');
 

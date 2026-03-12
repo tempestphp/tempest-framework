@@ -17,7 +17,7 @@ final class ViewObjectExporter
             $object::class,
             $object
                 ->exportData
-                ->map(function (mixed $value, string $key) {
+                ->map(static function (mixed $value, string $key) {
                     $value = self::exportValue($value);
 
                     return "{$key} : {$value}";
@@ -33,7 +33,7 @@ final class ViewObjectExporter
             $value instanceof ImmutableArray => sprintf(
                 'new \%s([%s])',
                 ImmutableArray::class,
-                $value->map(function (mixed $value, string|int $key) {
+                $value->map(static function (mixed $value, string|int $key) {
                     $key = is_int($key) ? $key : "'{$key}'";
 
                     return $key . ' => ' . rtrim(self::exportValue($value), ';');

@@ -65,7 +65,7 @@ final class PaginatedDataTest extends TestCase
     public function it_maps_data_while_preserving_pagination(): void
     {
         $original = $this->createSamplePaginatedData([1, 2, 3]);
-        $mapped = $original->map(fn ($x) => $x * 2);
+        $mapped = $original->map(static fn ($x) => $x * 2);
 
         $this->assertSame([2, 4, 6], $mapped->data);
         $this->assertSame($original->currentPage, $mapped->currentPage);

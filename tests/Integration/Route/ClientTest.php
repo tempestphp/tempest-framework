@@ -31,7 +31,7 @@ final class ClientTest extends FrameworkIntegrationTestCase
         $this->server->start();
 
         // Server needs to start
-        usleep(100000);
+        usleep(100_000);
 
         // We'll use the client interface directly because we want to write raw post data in this test
         $this->driver = $this->container->get(ClientInterface::class);

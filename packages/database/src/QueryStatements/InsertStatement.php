@@ -30,7 +30,7 @@ final class InsertStatement implements QueryStatement
         $columns = arr($this->entries->first())->keys();
 
         $entryPlaceholders = $this->entries
-            ->map(function (array|ImmutableArray $row) use ($columns) {
+            ->map(static function (array|ImmutableArray $row) use ($columns) {
                 $row = arr($row);
 
                 $rowColumns = $row->keys();
@@ -41,7 +41,7 @@ final class InsertStatement implements QueryStatement
 
                 return sprintf(
                     '(%s)',
-                    $row->map(fn () => '?')->implode(', '),
+                    $row->map(static fn () => '?')->implode(', '),
                 );
             })
             ->implode(', ');
@@ -55,7 +55,7 @@ final class InsertStatement implements QueryStatement
             $sql = sprintf(
                 'INSERT INTO %s (%s) VALUES %s',
                 $this->table,
-                $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
+                $columns->map(static fn (string $column) => "`{$column}`")->implode(', '),
                 $entryPlaceholders,
             );
         }

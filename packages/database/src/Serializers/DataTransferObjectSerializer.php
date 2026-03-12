@@ -99,7 +99,7 @@ final readonly class DataTransferObjectSerializer implements Serializer, Dynamic
 
         return Arr\map_with_keys(
             array: new ClassReflector($input)->getPublicProperties(),
-            map: fn (PropertyReflector $property) => yield $property->getName() => $property->getValue($input),
+            map: static fn (PropertyReflector $property) => yield $property->getName() => $property->getValue($input),
         );
     }
 }

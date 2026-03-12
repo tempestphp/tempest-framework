@@ -66,7 +66,7 @@ final class InvokedSystemProcess implements InvokedProcess
     {
         try {
             $callback = $output
-                ? fn (string $type, mixed $data) => $output(OutputChannel::fromSymfonyOutputType($type), $data)
+                ? static fn (string $type, mixed $data) => $output(OutputChannel::fromSymfonyOutputType($type), $data)
                 : null;
 
             $this->process->wait($callback);

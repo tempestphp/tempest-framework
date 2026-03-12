@@ -185,7 +185,7 @@ final class OAuthTest extends TestCase
             avatar: 'https://example.com/avatar.jpg',
             provider: 'github',
             raw: [
-                'id' => 123456,
+                'id' => 123_456,
                 'login' => 'frieren',
                 'name' => 'Frieren the Mage',
                 'email' => 'frieren@elven-mage.magic',

@@ -59,7 +59,7 @@ final readonly class ConsoleInputBuilder
         }
 
         return array_map(
-            callback: fn (ConsoleInputArgument $argument) => $argument->value,
+            callback: static fn (ConsoleInputArgument $argument) => $argument->value,
             array: $validArguments,
         );
     }

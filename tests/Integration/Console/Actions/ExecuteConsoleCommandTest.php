@@ -25,7 +25,7 @@ final class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
     public function test_command_specific_middleware_through_console(): void
     {
         $this->console
-            ->call(fn (GenericConsole $console) => $console->call('with:middleware'))
+            ->call(static fn (GenericConsole $console) => $console->call('with:middleware'))
             ->assertContains('from middleware')
             ->assertContains('from command');
     }

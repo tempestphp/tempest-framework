@@ -22,9 +22,9 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         $cases = arr($this->enumClass::cases())
-            ->map(fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
-            ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
-            ->map(fn (string $value) => "'{$value}'");
+            ->map(static fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
+            ->map(static fn (string $value) => str_replace('\\', '\\\\', $value))
+            ->map(static fn (string $value) => "'{$value}'");
 
         return match ($dialect) {
             DatabaseDialect::MYSQL, DatabaseDialect::SQLITE => '',

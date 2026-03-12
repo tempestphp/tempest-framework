@@ -47,7 +47,7 @@ final readonly class Attachment
         $path = Path\normalize($path);
 
         return new self(
-            resolve: fn () => $storage->readStream($path),
+            resolve: static fn () => $storage->readStream($path),
             name: $name ?? basename($path),
             contentType: $contentType ?? $storage->mimeType($path),
         );
@@ -65,7 +65,7 @@ final readonly class Attachment
         }
 
         return new self(
-            resolve: fn () => Filesystem\read_file($path),
+            resolve: static fn () => Filesystem\read_file($path),
             name: $name ?? basename($path),
             contentType: $contentType ?? finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path),
         );

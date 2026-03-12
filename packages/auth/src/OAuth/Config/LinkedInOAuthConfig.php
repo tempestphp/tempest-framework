@@ -25,6 +25,7 @@ final class LinkedInOAuthConfig implements OAuthConfig
         /**
          * The client secret for the LinkedIn OAuth application.
          */
+        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

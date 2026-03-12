@@ -15,7 +15,7 @@ final class TimelockTest extends FrameworkIntegrationTestCase
 
         $ms = $clock->timestamp()->getMilliseconds();
         $timelock->invoke(
-            callback: fn () => null,
+            callback: static fn () => null,
             duration: Duration::milliseconds(10_000),
         );
         $elapsed = $clock->timestamp()->getMilliseconds() - $ms;
