@@ -181,7 +181,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             key: $fingerprint,
             fingerprint: $fingerprint,
             ttlInSeconds: 120,
-            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99999999, 'stale-owner'),
+            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99_999_999, 'stale-owner'),
             pendingHeartbeatAt: time(),
         );
 

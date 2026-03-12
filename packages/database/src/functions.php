@@ -14,10 +14,7 @@ use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
  */
 function query(string|object $model): QueryBuilder
 {
-    /** @var QueryBuilder<string|TModel> $query */
-    $query = new QueryBuilder($model);
-
-    return $query;
+    return new QueryBuilder($model);
 }
 
 /**

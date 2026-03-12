@@ -6,7 +6,6 @@ namespace Tempest;
 
 use Closure;
 use Stringable;
-use Tempest\Container;
 use Tempest\Core\Composer;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\EnvironmentVariableValidationFailed;

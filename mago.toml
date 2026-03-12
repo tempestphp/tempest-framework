@@ -70,3 +70,4 @@ single-class-per-file = { enabled = false }
 no-isset = { enabled = false }
 instanceof-stringable = { enabled = false }
 prefer-static-closure = { enabled = false }
+sensitive-parameter = { enabled = false }

@@ -10,10 +10,6 @@ parameters:
             paths:
                 - packages/database/src/functions.php
         -
-            identifier: return.type
-            paths:
-                - packages/database/src/functions.php
-        -
             identifier: return.unresolvableType
             paths:
                 - packages/database/src/Builder/*

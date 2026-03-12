@@ -35,33 +35,35 @@ if (class_exists(ConsoleCommand::class)) {
 
             while (true) { // @phpstan-ignore-line
                 foreach ($processes as $uuid => $process) {
-                    if ($process->isTerminated()) {
-                        if ($process->isSuccessful()) {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-green bold'>SUCCESS</style>",
-                            );
-                        } else {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-red bold'>FAILED</style>",
-                            );
-                        }
-
-                        $output = trim($process->getOutput());
-
-                        if ($output !== '' && $output !== '0') {
-                            $this->writeln($output);
-                        }
-
-                        $errorOutput = trim($process->getErrorOutput());
-
-                        if ($errorOutput !== '' && $errorOutput !== '0') {
-                            $this->writeln($errorOutput);
-                        }
-
-                        unset($processes[$uuid]);
+                    if (! $process->isTerminated()) {
+                        continue;
                     }
+
+                    if ($process->isSuccessful()) {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-green bold'>SUCCESS</style>",
+                        );
+                    } else {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-red bold'>FAILED</style>",
+                        );
+                    }
+
+                    $output = trim($process->getOutput());
+
+                    if ($output !== '' && $output !== '0') {
+                        $this->writeln($output);
+                    }
+
+                    $errorOutput = trim($process->getErrorOutput());
+
+                    if ($errorOutput !== '' && $errorOutput !== '0') {
+                        $this->writeln($errorOutput);
+                    }
+
+                    unset($processes[$uuid]);
                 }
 
                 $availableCommands = arr($this->repository->getPendingCommands())

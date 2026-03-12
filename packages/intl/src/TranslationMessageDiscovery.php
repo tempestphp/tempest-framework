@@ -8,7 +8,6 @@ use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
-use Tempest\Intl\Locale;
 use Tempest\Reflection\ClassReflector;
 
 use function Tempest\Support\arr;

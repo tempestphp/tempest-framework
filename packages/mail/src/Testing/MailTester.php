@@ -369,13 +369,15 @@ final class MailTester
         );
 
         foreach ($attachments as $attachment) {
-            if ($attachment->getFilename() === $filename) {
-                if ($callback && $callback(new AttachmentTester($attachment)) === false) {
-                    Assert::fail(sprintf('The assertion callback returned `false` for attachment `%s`.', $filename));
-                }
-
-                return $this;
+            if ($attachment->getFilename() !== $filename) {
+                continue;
             }
+
+            if ($callback && $callback(new AttachmentTester($attachment)) === false) {
+                Assert::fail(sprintf('The assertion callback returned `false` for attachment `%s`.', $filename));
+            }
+
+            return $this;
         }
 
         Assert::fail(sprintf(

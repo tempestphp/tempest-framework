@@ -38,7 +38,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $item = $pool->getItem('a');
         $this->assertFalse($item->isHit());
-        $this->assertSame(null, $item->get());
+        $this->assertNull($item->get());
 
         $item = $pool->getItem('b');
         $this->assertTrue($item->isHit());
@@ -152,7 +152,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $clock->plus($interval);
 
-        $this->assertSame(null, $cache->get('a'));
+        $this->assertNull($cache->get('a'));
         $this->assertSame('b', $cache->get('b'));
     }
 
@@ -171,7 +171,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $values = $cache->getMany(['foo2', 'foo3']);
 
         $this->assertSame('bar2', $values['foo2']);
-        $this->assertSame(null, $values['foo3']);
+        $this->assertNull($values['foo3']);
     }
 
     public function test_resolve(): void
@@ -188,7 +188,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $clock->plus($interval);
 
-        $this->assertSame(null, $cache->get('a'));
+        $this->assertNull($cache->get('a'));
         $this->assertSame('b', $cache->get('b'));
 
         $b = $cache->resolve('b', fn () => 'b');

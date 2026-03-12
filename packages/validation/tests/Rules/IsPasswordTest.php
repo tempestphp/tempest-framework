@@ -23,8 +23,8 @@ final class IsPasswordTest extends TestCase
     public function test_invalid_input(): void
     {
         $rule = new IsPassword();
-        $this->assertFalse($rule->isValid(123456789012));
-        $this->assertFalse($rule->isValid([123456789012]));
+        $this->assertFalse($rule->isValid(123_456_789_012));
+        $this->assertFalse($rule->isValid([123_456_789_012]));
     }
 
     public function test_minimum(): void

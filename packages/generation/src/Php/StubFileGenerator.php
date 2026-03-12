@@ -8,7 +8,6 @@ use Closure;
 use Tempest\Generation\Php\DataObjects\StubFile;
 use Tempest\Generation\Php\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Php\Exceptions\FileGenerationWasAborted;
-use Tempest\Generation\Php\StubFileType;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;

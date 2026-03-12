@@ -81,7 +81,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(1, $request->intParam);
         $this->assertSame('a', $request->stringParam);
-        $this->assertSame(true, $request->boolParam);
+        $this->assertTrue($request->boolParam);
         $this->assertSame(0.1, $request->floatParam);
     }
 

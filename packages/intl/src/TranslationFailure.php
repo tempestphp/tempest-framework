@@ -2,7 +2,6 @@
 
 namespace Tempest\Intl;
 
-use Tempest\Intl\Locale;
 use Throwable;
 
 final readonly class TranslationFailure

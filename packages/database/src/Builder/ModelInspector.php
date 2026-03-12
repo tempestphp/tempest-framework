@@ -312,9 +312,11 @@ final class ModelInspector
             $relationFields = arr();
 
             foreach ($this->reflector->getPublicProperties() as $property) {
-                if (($relation = $this->getRelation($property->getName())) instanceof Relation) {
-                    $relationFields[] = $relation;
+                if (! ($relation = $this->getRelation($property->getName())) instanceof Relation) {
+                    continue;
                 }
+
+                $relationFields[] = $relation;
             }
 
             return $relationFields;

@@ -455,7 +455,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             key: 'stale-order',
             fingerprint: new RequestFingerprintGenerator()->generate($request),
             ttlInSeconds: 120,
-            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99999999, 'stale-owner'),
+            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99_999_999, 'stale-owner'),
             pendingHeartbeatAt: time(),
         );
 

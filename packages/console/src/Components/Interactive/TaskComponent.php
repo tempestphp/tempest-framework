@@ -139,9 +139,11 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
     private function cleanupSockets(): void
     {
         foreach ($this->sockets as $socket) {
-            if (is_resource($socket)) {
-                @fclose($socket);
+            if (! is_resource($socket)) {
+                continue;
             }
+
+            @fclose($socket);
         }
 
         $this->sockets = [];

@@ -692,9 +692,7 @@ function chunk(Stringable|string $string, int $length): array
 
     $chunks = [];
 
-    $chunks = str_split($string, $length);
-
-    return $chunks;
+    return str_split($string, $length);
 }
 
 /**

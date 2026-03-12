@@ -262,9 +262,7 @@ final class Uri implements Stringable
         }
 
         $queryString = http_build_query($processedQuery, arg_separator: '&', encoding_type: PHP_QUERY_RFC3986);
-        $queryString = preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
-
-        return $queryString;
+        return preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
     }
 
     /**

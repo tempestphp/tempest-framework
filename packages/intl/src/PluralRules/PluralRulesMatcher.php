@@ -57,7 +57,7 @@ final class PluralRulesMatcher
 
         $abs = abs($n);
 
-        if ($abs >= 1000000) {
+        if ($abs >= 1_000_000) {
             return 6;
         }
 
@@ -518,7 +518,7 @@ final class PluralRulesMatcher
             return 'few';
         }
 
-        if (! self::isEqual($n, 0) && self::isEqual($n % 1000000, 0)) {
+        if (! self::isEqual($n, 0) && self::isEqual($n % 1_000_000, 0)) {
             return 'many';
         }
 
@@ -580,7 +580,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -980,7 +980,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -1132,7 +1132,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -1639,7 +1639,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -2098,8 +2098,8 @@ final class PluralRulesMatcher
             || self::isEqual($n % 100, 62)
             || self::isEqual($n % 100, 82)
             || self::isEqual($n % 1000, 0)
-            && (self::inRange($n % 100000, 1000, 20000) || self::isEqual($n % 100000, 40000) || self::isEqual($n % 100000, 60000) || self::isEqual($n % 100000, 80000))
-            || self::isEqual($n % 1000000, 100000)
+            && (self::inRange($n % 100_000, 1000, 20_000) || self::isEqual($n % 100_000, 40_000) || self::isEqual($n % 100_000, 60_000) || self::isEqual($n % 100_000, 80_000))
+            || self::isEqual($n % 1_000_000, 100_000)
         ) {
             return 'two';
         }
@@ -2238,7 +2238,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -2998,7 +2998,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -3020,7 +3020,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -3216,7 +3216,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 
@@ -4150,7 +4150,7 @@ final class PluralRulesMatcher
             return 'one';
         }
 
-        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1000000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
+        if (self::isEqual($e, 0) && ! self::isEqual($i, 0) && self::isEqual($i % 1_000_000, 0) && self::isEqual($v, 0) || ! self::inRange($e, 0, 5)) {
             return 'many';
         }
 

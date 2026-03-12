@@ -56,12 +56,13 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
             // If the parameter's type is an instance of Request…
-            if ($parameter->getType()->matches(Request::class)) {
-                // We'll use that specific request class
-                $requestClass = $parameter->getType()->getName();
-
-                break;
+            if (! $parameter->getType()->matches(Request::class)) {
+                continue;
             }
+
+            $requestClass = $parameter->getType()->getName();
+
+            break;
         }
 
         if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {

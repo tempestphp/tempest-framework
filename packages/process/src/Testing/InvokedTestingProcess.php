@@ -43,9 +43,11 @@ final class InvokedTestingProcess implements InvokedProcess
             $output = [];
 
             for ($i = 0; $i < $this->nextOutputIndex; $i++) {
-                if ($this->description->output[$i]['type'] === OutputChannel::OUTPUT) {
-                    $output[] = $this->description->output[$i]['buffer'];
+                if ($this->description->output[$i]['type'] !== OutputChannel::OUTPUT) {
+                    continue;
                 }
+
+                $output[] = $this->description->output[$i]['buffer'];
             }
 
             return rtrim(implode('', $output), "\n") . "\n";
@@ -59,9 +61,11 @@ final class InvokedTestingProcess implements InvokedProcess
             $output = [];
 
             for ($i = 0; $i < $this->nextErrorOutputIndex; $i++) {
-                if ($this->description->output[$i]['type'] === OutputChannel::ERROR) {
-                    $output[] = $this->description->output[$i]['buffer'];
+                if ($this->description->output[$i]['type'] !== OutputChannel::ERROR) {
+                    continue;
                 }
+
+                $output[] = $this->description->output[$i]['buffer'];
             }
 
             return rtrim(implode('', $output), "\n") . "\n";

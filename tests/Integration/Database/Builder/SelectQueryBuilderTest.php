@@ -534,9 +534,9 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $page1->offset);
         $this->assertSame(2, $page1->limit);
         $this->assertSame(2, $page1->nextPage);
-        $this->assertSame(null, $page1->previousPage);
-        $this->assertSame(true, $page1->hasNext);
-        $this->assertSame(false, $page1->hasPrevious);
+        $this->assertNull($page1->previousPage);
+        $this->assertTrue($page1->hasNext);
+        $this->assertFalse($page1->hasPrevious);
 
         $this->assertSame('LOTR 1.1', $page1->data[0]->title);
         $this->assertSame('LOTR 1.2', $page1->data[1]->title);

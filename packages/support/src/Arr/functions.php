@@ -63,9 +63,7 @@ function chunk(iterable $array, int $size, bool $preserveKeys = true): array
     }
 
     $chunks = [];
-    $chunks = array_chunk($array, $size, $preserveKeys);
-
-    return $chunks;
+    return array_chunk($array, $size, $preserveKeys);
 }
 
 /**
@@ -201,9 +199,11 @@ function forget_values(array &$array, mixed $values): array
     $values = is_array($values) ? $values : [$values];
 
     foreach ($values as $value) {
-        if (! is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
-            unset($array[$key]);
+        if (is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
+            continue;
         }
+
+        unset($array[$key]);
     }
 
     return $array;
@@ -755,10 +755,7 @@ function implode(iterable $array, string $glue): ImmutableString
  */
 function keys(iterable $array): array
 {
-    /** @var list<TKey> $result */
-    $result = array_keys(to_array($array));
-
-    return $result;
+    return array_keys(to_array($array));
 }
 
 /**
@@ -773,10 +770,7 @@ function keys(iterable $array): array
  */
 function values(iterable $array): array
 {
-    /** @var list<TValue> $result */
-    $result = array_values(to_array($array));
-
-    return $result;
+    return array_values(to_array($array));
 }
 
 /**
@@ -797,9 +791,11 @@ function filter(iterable $array, ?Closure $filter = null): array
     $filter ??= static fn (mixed $value, mixed $_) => ! in_array($value, [false, null], strict: true);
 
     foreach (to_array($array) as $key => $value) {
-        if ($filter($value, $key)) {
-            $result[$key] = $value;
+        if (! $filter($value, $key)) {
+            continue;
         }
+
+        $result[$key] = $value;
     }
 
     return $result;
@@ -1533,9 +1529,11 @@ function to_array(mixed $input): array
         $result = [];
 
         for ($i = 0; $i < $count; $i++) {
-            if (isset($input[$i])) {
-                $result[$i] = $input[$i];
+            if (! isset($input[$i])) {
+                continue;
             }
+
+            $result[$i] = $input[$i];
         }
 
         return $result;

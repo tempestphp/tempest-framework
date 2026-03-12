@@ -89,9 +89,11 @@ trait ManipulatesPhpClasses
         $attributes = $this->classType->getAttributes();
 
         foreach ($attributes as $key => $attribute) {
-            if ($attribute->getName() === $attributeName) {
-                unset($attributes[$key]);
+            if ($attribute->getName() !== $attributeName) {
+                continue;
             }
+
+            unset($attributes[$key]);
         }
 
         $this->classType->setAttributes($attributes);

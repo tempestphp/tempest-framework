@@ -51,10 +51,7 @@ trait IsDatabaseModel
     /** @return QueryBuilder<self> */
     protected static function queryBuilder(): QueryBuilder
     {
-        /** @var QueryBuilder<self> $query */
-        $query = query(self::class);
-
-        return $query;
+        return query(self::class);
     }
 
     /**
@@ -64,9 +61,7 @@ trait IsDatabaseModel
      */
     public static function select(): SelectQueryBuilder
     {
-        $query = self::queryBuilder()->select();
-
-        return $query;
+        return self::queryBuilder()->select();
     }
 
     /**

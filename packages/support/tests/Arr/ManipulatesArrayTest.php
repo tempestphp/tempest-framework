@@ -203,7 +203,7 @@ final class ManipulatesArrayTest extends TestCase
 
     public function test_last(): void
     {
-        $this->assertSame(null, arr()->last());
+        $this->assertNull(arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
 
         $this->assertSame('foo', arr()->last(default: 'foo'));
@@ -213,7 +213,7 @@ final class ManipulatesArrayTest extends TestCase
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
-        $this->assertSame(null, arr()->first());
+        $this->assertNull(arr()->first());
 
         $this->assertSame('foo', arr()->first(default: 'foo'));
         $this->assertSame(1, arr([1, 2])->first(default: 'foo'));
