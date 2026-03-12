@@ -4,5 +4,7 @@ namespace Tempest\Database;
 
 interface HasLeadingStatements
 {
-    public array $leadingStatements { get; }
+    public array $leadingStatements {
+        get;
+    }
 }

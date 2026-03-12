@@ -14,8 +14,7 @@ final readonly class StylingCommand
     #[ConsoleCommand(name: 'test:style')]
     public function __invoke(): void
     {
-        $this
-            ->info('info')
+        $this->info('info')
             ->success('success')
             ->warning('warning')
             ->error('error');

@@ -87,8 +87,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->apply();
 
         $html = $this->view->render(<<<'HTML'
-            <x-auto-registered></x-auto-registered>
-            HTML);
+        <x-auto-registered></x-auto-registered>
+        HTML);
 
         $this->assertSame('<span>Hello World</span>', $html);
     }
@@ -101,8 +101,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $discovery->apply();
 
         $html = $this->view->render(<<<'HTML'
-            <x-auto-registered-with-declaration></x-auto-registered-with-declaration>
-            HTML);
+        <x-auto-registered-with-declaration></x-auto-registered-with-declaration>
+        HTML);
 
         $this->assertSame('<span>Hello World</span>', $html);
     }

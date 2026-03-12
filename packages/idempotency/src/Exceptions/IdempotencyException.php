@@ -6,4 +6,6 @@ namespace Tempest\Idempotency\Exceptions;
 
 use Exception;
 
-abstract class IdempotencyException extends Exception {}
+abstract class IdempotencyException extends Exception
+{
+}

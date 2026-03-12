@@ -44,8 +44,8 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            Hello, {$name}!
-            TXT, name: 'Jon');
+        Hello, {$name}!
+        TXT, name: 'Jon');
 
         $this->assertSame('Hello, Jon!', $value);
     }
@@ -59,8 +59,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createDateTimeFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            Today is {$today :datetime pattern=|yyyy/MM/dd|}.
-            TXT, today: '2024-01-01');
+        Today is {$today :datetime pattern=|yyyy/MM/dd|}.
+        TXT, today: '2024-01-01');
 
         $this->assertSame('Today is 2024/01/01.', $value);
     }
@@ -70,8 +70,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            The total was {31 :number style=percent}.
-            TXT);
+        The total was {31 :number style=percent}.
+        TXT);
 
         $this->assertSame('The total was 31%.', $value);
     }
@@ -84,12 +84,12 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$aircraft :number}
-            .match $aircraft
-                0 {{pas d‘avion}}
-                1 {{un avion}}
-                * {{{$aircraft} avions}}
-            TXT, aircraft: $count);
+        .input {$aircraft :number}
+        .match $aircraft
+            0 {{pas d‘avion}}
+            1 {{un avion}}
+            * {{{$aircraft} avions}}
+        TXT, aircraft: $count);
 
         $this->assertSame($expected, $value);
     }
@@ -99,16 +99,16 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$field :string default=unknown}
-            field is {$field}
-            TXT);
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT);
 
         $this->assertSame('field is unknown', $value);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$field :string default=unknown}
-            field is {$field}
-            TXT, field: 'here');
+        .input {$field :string default=unknown}
+        field is {$field}
+        TXT, field: 'here');
 
         $this->assertSame('field is here', $value);
     }
@@ -117,8 +117,8 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            Hello, {world}!
-            TXT);
+        Hello, {world}!
+        TXT);
 
         $this->assertSame('Hello, world!', $value);
     }
@@ -127,8 +127,8 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            My name is {|John Doe|}.
-            TXT);
+        My name is {|John Doe|}.
+        TXT);
 
         $this->assertSame('My name is John Doe.', $value);
     }
@@ -137,11 +137,11 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
         $value = $formatter->format(<<<'TXT'
-            .input {$count :number}
-            .match $count
-            one {{You have {$count} notification.}}
-            *   {{You have {$count} notifications.}}
-            TXT, count: 1);
+        .input {$count :number}
+        .match $count
+        one {{You have {$count} notification.}}
+        *   {{You have {$count} notifications.}}
+        TXT, count: 1);
 
         $this->assertSame('You have 1 notification.', $value);
     }
@@ -150,11 +150,11 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
         $value = $formatter->format(<<<'TXT'
-            .input {$count :number select=exact}
-            .match $count
-            one {{You have {$count} notification.}}
-            *   {{You have {$count} notifications.}}
-            TXT, count: 1);
+        .input {$count :number select=exact}
+        .match $count
+        one {{You have {$count} notification.}}
+        *   {{You have {$count} notifications.}}
+        TXT, count: 1);
 
         $this->assertSame('You have 1 notifications.', $value);
     }
@@ -163,12 +163,12 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter([new StringFunction()]);
         $value = $formatter->format(<<<'TXT'
-            .local $val = {foo2 :string}
-            .match $val
-            foo {{Foo}}
-            bar {{Bar}}
-            *   {{No match}}
-            TXT);
+        .local $val = {foo2 :string}
+        .match $val
+        foo {{Foo}}
+        bar {{Bar}}
+        *   {{No match}}
+        TXT);
 
         $this->assertSame('No match', $value);
     }
@@ -177,11 +177,11 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            .local $x = {42}
-            .local $y = {number42}
-            .local $z = {_number}
-            {{{$x} {$y} {$z}}}
-            TXT);
+        .local $x = {42}
+        .local $y = {number42}
+        .local $z = {_number}
+        {{{$x} {$y} {$z}}}
+        TXT);
 
         $this->assertSame('42 number42 _number', $value);
     }
@@ -190,11 +190,11 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            .local $x = {|@literal|}
-            .local $y = {|white space|}
-            .local $z = {|{{curly braces}}|}
-            {{{$x} {$y} {$z} {|and \\, a backslash|}}}
-            TXT);
+        .local $x = {|@literal|}
+        .local $y = {|white space|}
+        .local $z = {|{{curly braces}}|}
+        {{{$x} {$y} {$z} {|and \\, a backslash|}}}
+        TXT);
 
         $this->assertSame('@literal white space {{curly braces}} and \, a backslash', $value);
     }
@@ -203,9 +203,9 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            .input {$num :number}
-            {{   This is the {$num} pattern   }}
-            TXT, num: 5);
+        .input {$num :number}
+        {{   This is the {$num} pattern   }}
+        TXT, num: 5);
 
         $this->assertSame('   This is the 5 pattern   ', $value);
     }
@@ -214,8 +214,8 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            Backslash: \\, left curly brace \{, right curly brace \}
-            TXT);
+        Backslash: \\, left curly brace \{, right curly brace \}
+        TXT);
 
         $this->assertSame('Backslash: \, left curly brace {, right curly brace }', $value);
     }
@@ -224,12 +224,12 @@ final class FormatterTest extends TestCase
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
-            .input {$char :string}
-            .match $char
-            | |  {{You entered a space character.}}
-            |\|| {{You entered a pipe character.}}
-            *    {{You entered something else.}}
-            TXT, char: '|');
+        .input {$char :string}
+        .match $char
+        | |  {{You entered a space character.}}
+        |\|| {{You entered a pipe character.}}
+        *    {{You entered something else.}}
+        TXT, char: '|');
 
         $this->assertSame('You entered a pipe character.', $value);
     }
@@ -239,12 +239,12 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$numDays :number select=exact}
-            .match $numDays
-            1  {{{$numDays} one}}
-            2  {{{$numDays} two}}
-            3 {{{$numDays} three}}
-            TXT, numDays: 2);
+        .input {$numDays :number select=exact}
+        .match $numDays
+        1  {{{$numDays} one}}
+        2  {{{$numDays} two}}
+        3 {{{$numDays} three}}
+        TXT, numDays: 2);
 
         $this->assertSame('2 two', $value);
     }
@@ -260,13 +260,13 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$days :number}
-            .match $days
-            one  {{{$days} den}}
-            few  {{{$days} dny}}
-            many {{{$days} dne}}
-            *    {{{$days} dní}}
-            TXT, days: $days);
+        .input {$days :number}
+        .match $days
+        one  {{{$days} den}}
+        few  {{{$days} dny}}
+        many {{{$days} dne}}
+        *    {{{$days} dní}}
+        TXT, days: $days);
 
         $this->assertSame($expected, $value);
     }
@@ -279,12 +279,12 @@ final class FormatterTest extends TestCase
         ]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$operand :string}
-            .match $operand
-            1    {{Number 1}}
-            one  {{String "one"}}
-            *    {{Something else}}
-            TXT, operand: 1);
+        .input {$operand :string}
+        .match $operand
+        1    {{Number 1}}
+        one  {{String "one"}}
+        *    {{Something else}}
+        TXT, operand: 1);
 
         $this->assertSame('Number 1', $value);
     }
@@ -298,8 +298,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([new StringFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            {$value :string}
-            TXT, value: $input);
+        {$value :string}
+        TXT, value: $input);
 
         $this->assertSame($expected, $value);
     }
@@ -316,8 +316,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([new StringFunction()]);
 
         $value = $formatter->format(<<<TXT
-            {\$value :string style={$style}}
-            TXT, value: $input);
+        {\$value :string style={$style}}
+        TXT, value: $input);
 
         $this->assertSame($expected, $value);
     }
@@ -327,8 +327,8 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            You have {42 :number style=currency currency=$currency}.
-            TXT, currency: Currency::USD);
+        You have {42 :number style=currency currency=$currency}.
+        TXT, currency: Currency::USD);
 
         $this->assertSame('You have $42.00.', $value);
     }
@@ -338,9 +338,9 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            .local $count = {42}
-            {{The count is: {$count}}}
-            TXT, count: 32);
+        .local $count = {42}
+        {{The count is: {$count}}}
+        TXT, count: 32);
 
         $this->assertSame('The count is: 42', $value);
     }
@@ -353,12 +353,12 @@ final class FormatterTest extends TestCase
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$count :number}
-            .match $count
-            0   {{No items.}}
-            one {{1 item.}}
-            *   {{{$count} items.}}
-            TXT, count: $count);
+        .input {$count :number}
+        .match $count
+        0   {{No items.}}
+        one {{1 item.}}
+        *   {{{$count} items.}}
+        TXT, count: $count);
 
         $this->assertSame($expected, $value);
     }
@@ -371,22 +371,22 @@ final class FormatterTest extends TestCase
         ]);
 
         $value = $formatter->format(<<<'TXT'
-            .input {$hostGender :string}
-            .input {$guestCount :number}
-            .match $hostGender $guestCount
-            female 0 {{{$hostName} does not give a party.}}
-            female 1 {{{$hostName} invites {$guestName} to her party.}}
-            female 2 {{{$hostName} invites {$guestName} and one other person to her party.}}
-            female * {{{$hostName} invites {$guestCount} people, including {$guestName}, to her party.}}
-            male   0 {{{$hostName} does not give a party.}}
-            male   1 {{{$hostName} invites {$guestName} to his party.}}
-            male   2 {{{$hostName} invites {$guestName} and one other person to his party.}}
-            male   * {{{$hostName} invites {$guestCount} people, including {$guestName}, to his party.}}
-            *      0 {{{$hostName} does not give a party.}}
-            *      1 {{{$hostName} invites {$guestName} to their party.}}
-            *      2 {{{$hostName} invites {$guestName} and one other person to their party.}}
-            *      * {{{$hostName} invites {$guestCount} people, including {$guestName}, to their party.}}
-            TXT, hostGender: 'female', hostName: 'Alice', guestCount: 2, guestName: 'Bob');
+        .input {$hostGender :string}
+        .input {$guestCount :number}
+        .match $hostGender $guestCount
+        female 0 {{{$hostName} does not give a party.}}
+        female 1 {{{$hostName} invites {$guestName} to her party.}}
+        female 2 {{{$hostName} invites {$guestName} and one other person to her party.}}
+        female * {{{$hostName} invites {$guestCount} people, including {$guestName}, to her party.}}
+        male   0 {{{$hostName} does not give a party.}}
+        male   1 {{{$hostName} invites {$guestName} to his party.}}
+        male   2 {{{$hostName} invites {$guestName} and one other person to his party.}}
+        male   * {{{$hostName} invites {$guestCount} people, including {$guestName}, to his party.}}
+        *      0 {{{$hostName} does not give a party.}}
+        *      1 {{{$hostName} invites {$guestName} to their party.}}
+        *      2 {{{$hostName} invites {$guestName} and one other person to their party.}}
+        *      * {{{$hostName} invites {$guestCount} people, including {$guestName}, to their party.}}
+        TXT, hostGender: 'female', hostName: 'Alice', guestCount: 2, guestName: 'Bob');
 
         $this->assertSame('Alice invites Bob and one other person to her party.', $value);
     }
@@ -405,8 +405,8 @@ final class FormatterTest extends TestCase
         ]);
 
         $value = $formatter->format(<<<'TXT'
-            Check out {MessageFormat :uppercase}.
-            TXT);
+        Check out {MessageFormat :uppercase}.
+        TXT);
 
         $this->assertSame('Check out MESSAGEFORMAT.', $value);
     }

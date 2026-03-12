@@ -7,4 +7,6 @@ namespace Tempest\Http;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class SensitiveField {}
+final class SensitiveField
+{
+}

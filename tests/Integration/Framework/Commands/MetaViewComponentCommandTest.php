@@ -29,33 +29,33 @@ final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('x-view-component-with-named-slots.view.php')
             ->assertSee('"name": "x-view-component-with-named-slots",')
             ->assertSee(<<<'JSON'
-                    "variables": [
-                        {
-                            "type": "string",
-                            "name": "$title",
-                            "attributeName": "title",
-                            "description": null
-                        },
-                        {
-                            "type": "\\Tests\\Tempest\\Fixtures\\Modules\\Books\\Models\\Book",
-                            "name": "$book",
-                            "attributeName": "book",
-                            "description": "Any kind of book will work"
-                        },
-                        {
-                            "type": "string",
-                            "name": "$dataFoo",
-                            "attributeName": "data-foo",
-                            "description": null
-                        }
-                    ]
-                JSON)
+                "variables": [
+                    {
+                        "type": "string",
+                        "name": "$title",
+                        "attributeName": "title",
+                        "description": null
+                    },
+                    {
+                        "type": "\\Tests\\Tempest\\Fixtures\\Modules\\Books\\Models\\Book",
+                        "name": "$book",
+                        "attributeName": "book",
+                        "description": "Any kind of book will work"
+                    },
+                    {
+                        "type": "string",
+                        "name": "$dataFoo",
+                        "attributeName": "data-foo",
+                        "description": null
+                    }
+                ]
+            JSON)
             ->assertSee(<<<'JSON'
-                    "slots": [
-                        "default",
-                        "foo",
-                        "bar"
-                    ],
-                JSON);
+                "slots": [
+                    "default",
+                    "foo",
+                    "bar"
+                ],
+            JSON);
     }
 }

@@ -2,4 +2,6 @@
 
 namespace Tempest\Storage;
 
-interface StorageException {}
+interface StorageException
+{
+}

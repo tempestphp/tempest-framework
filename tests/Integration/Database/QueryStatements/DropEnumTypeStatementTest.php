@@ -16,8 +16,8 @@ final class DropEnumTypeStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             <<<PSQL
-                DROP TYPE IF EXISTS "Tests\Tempest\Integration\Database\QueryStatements\DropEnumTypeStatementTestEnumForCreateTable";
-                PSQL,
+            DROP TYPE IF EXISTS "Tests\Tempest\Integration\Database\QueryStatements\DropEnumTypeStatementTestEnumForCreateTable";
+            PSQL,
             $enumStatement->compile(DatabaseDialect::POSTGRESQL),
         );
     }

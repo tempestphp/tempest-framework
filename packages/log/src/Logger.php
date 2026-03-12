@@ -6,4 +6,6 @@ namespace Tempest\Log;
 
 use Psr\Log\LoggerInterface;
 
-interface Logger extends LoggerInterface {}
+interface Logger extends LoggerInterface
+{
+}

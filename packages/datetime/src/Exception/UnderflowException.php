@@ -6,4 +6,6 @@ namespace Tempest\DateTime\Exception;
 
 use UnderflowException as PhpUnderflowException;
 
-final class UnderflowException extends PhpUnderflowException implements DateTimeException {}
+final class UnderflowException extends PhpUnderflowException implements DateTimeException
+{
+}

@@ -6,4 +6,6 @@ namespace Tempest\Support\Filesystem\Exceptions;
 
 use RuntimeException as PhpRuntimeException;
 
-final class RuntimeException extends PhpRuntimeException implements FilesystemException {}
+final class RuntimeException extends PhpRuntimeException implements FilesystemException
+{
+}

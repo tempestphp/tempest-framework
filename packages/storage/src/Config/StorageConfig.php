@@ -10,12 +10,17 @@ interface StorageConfig extends HasTag
     /**
      * Whether the storage is read-only.
      */
-    public bool $readonly { get; set; }
+    public bool $readonly {
+        get;
+        set;
+    }
 
     /**
      * The adapter class.
      */
-    public string $adapter { get; }
+    public string $adapter {
+        get;
+    }
 
     /**
      * Creates the adapter.

@@ -201,7 +201,9 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
     }
 }
 
-final class CustomValidationException extends Exception {}
+final class CustomValidationException extends Exception
+{
+}
 
 #[Priority(Priority::HIGH)]
 final readonly class CustomJsonValidationRenderer implements ExceptionRenderer

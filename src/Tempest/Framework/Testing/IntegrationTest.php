@@ -120,8 +120,7 @@ abstract class IntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this
-            ->setupKernel()
+        $this->setupKernel()
             ->setupConsole()
             ->setupTesters()
             ->setupBaseRequest();

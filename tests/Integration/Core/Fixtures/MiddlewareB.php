@@ -2,4 +2,6 @@
 
 namespace Tests\Tempest\Integration\Core\Fixtures;
 
-final class MiddlewareB {}
+final class MiddlewareB
+{
+}

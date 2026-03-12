@@ -8,25 +8,43 @@ use Tempest\Http\Cookie\Cookie;
 
 interface Request
 {
-    public Method $method { get; }
+    public Method $method {
+        get;
+    }
 
-    public string $uri { get; }
+    public string $uri {
+        get;
+    }
 
-    public ?string $raw { get; }
+    public ?string $raw {
+        get;
+    }
 
-    public array $body { get; }
+    public array $body {
+        get;
+    }
 
-    public RequestHeaders $headers { get; }
+    public RequestHeaders $headers {
+        get;
+    }
 
-    public string $path { get; }
+    public string $path {
+        get;
+    }
 
-    public array $query { get; }
+    public array $query {
+        get;
+    }
 
     /** @var \Tempest\Http\Upload[] $files */
-    public array $files { get; }
+    public array $files {
+        get;
+    }
 
     /** @var Cookie[] $cookies */
-    public array $cookies { get; }
+    public array $cookies {
+        get;
+    }
 
     public function has(string $key): bool;
 

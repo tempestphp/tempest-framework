@@ -2,4 +2,6 @@
 
 namespace Tempest\Intl\MessageFormat\Parser\Node;
 
-interface Node {}
+interface Node
+{
+}

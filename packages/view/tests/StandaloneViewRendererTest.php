@@ -33,10 +33,10 @@ final class StandaloneViewRendererTest extends TestCase
         );
 
         $this->assertSnippetsMatch(<<<'HTML'
-            <div>
-                Hi
-            </div>
-            HTML, $html);
+        <div>
+            Hi
+        </div>
+        HTML, $html);
     }
 
     public function test_invalid_view_component_paths(): void
@@ -86,10 +86,10 @@ final class StandaloneViewRendererTest extends TestCase
         );
 
         $this->assertSnippetsMatch(<<<'HTML'
-            <x-standalone-base>
-                Hi
-            </x-standalone-base>
-            HTML, $html);
+        <x-standalone-base>
+            Hi
+        </x-standalone-base>
+        HTML, $html);
     }
 
     public function test_with_cache_disabled(): void
@@ -103,10 +103,10 @@ final class StandaloneViewRendererTest extends TestCase
         );
 
         $this->assertSnippetsMatch(<<<'HTML'
-            <x-standalone-base>
-                Hi
-            </x-standalone-base>
-            HTML, $html);
+        <x-standalone-base>
+            Hi
+        </x-standalone-base>
+        HTML, $html);
     }
 
     public function test_xml_declaration_with_short_open_tag(): void

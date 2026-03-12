@@ -10,7 +10,9 @@ interface SessionConfig
     /**
      * Time required for a session to expire.
      */
-    public Duration $expiration { get; }
+    public Duration $expiration {
+        get;
+    }
 
     public function createManager(Container $container): SessionManager;
 }

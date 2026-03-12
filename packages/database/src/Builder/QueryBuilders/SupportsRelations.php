@@ -14,7 +14,9 @@ interface SupportsRelations
      *
      * @return array<string>
      */
-    public array $relations { get; }
+    public array $relations {
+        get;
+    }
 
     /**
      * Gets all resolved relations with their join statements.

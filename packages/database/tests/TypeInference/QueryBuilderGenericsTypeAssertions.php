@@ -14,7 +14,9 @@ abstract class ParentStubModel
     public PrimaryKey $id;
 }
 
-final class ChildStubModel extends ParentStubModel {}
+final class ChildStubModel extends ParentStubModel
+{
+}
 
 //$queryBuilder = query(StubModel::class);
 //\PHPStan\Testing\assertType('Tempest\\Database\\Builder\\QueryBuilders\\QueryBuilder<Tempest\\Database\\Tests\\QueryStatements\\StubModel>', $queryBuilder);

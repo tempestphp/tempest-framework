@@ -6,4 +6,6 @@ namespace Tempest\Support\Regex;
 
 use RuntimeException;
 
-final class InvalidPatternException extends RuntimeException {}
+final class InvalidPatternException extends RuntimeException
+{
+}

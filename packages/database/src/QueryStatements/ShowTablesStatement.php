@@ -23,11 +23,11 @@ final readonly class ShowTablesStatement implements QueryStatement
             DatabaseDialect::MYSQL => "SHOW FULL TABLES WHERE table_type = 'BASE TABLE'",
             DatabaseDialect::SQLITE => "select type, name from sqlite_master where type = 'table' and name not like 'sqlite_%'",
             DatabaseDialect::POSTGRESQL => <<<SQL
-                    SELECT table_name
-                    FROM information_schema.tables
-                    WHERE table_type = 'BASE TABLE'
-                      AND table_schema NOT IN ('pg_catalog', 'information_schema');
-                SQL,
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_type = 'BASE TABLE'
+                  AND table_schema NOT IN ('pg_catalog', 'information_schema');
+            SQL,
         };
     }
 }

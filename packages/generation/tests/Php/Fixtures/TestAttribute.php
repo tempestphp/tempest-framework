@@ -7,4 +7,6 @@ namespace Tempest\Generation\Tests\Php\Fixtures;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class TestAttribute {}
+final class TestAttribute
+{
+}

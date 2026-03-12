@@ -2,4 +2,6 @@
 
 namespace Tempest\Router\Exceptions;
 
-interface RouterException {}
+interface RouterException
+{
+}

@@ -47,5 +47,7 @@ final class FakeRouteBuilder implements Route
         return DiscoveredRoute::fromRoute($this, [], $this->handler);
     }
 
-    public function handler(): void {}
+    public function handler(): void
+    {
+    }
 }

@@ -6,5 +6,7 @@ namespace Tempest\Generation\Tests\Php\Fixtures\SampleNamespace;
 
 trait ExampleTrait
 {
-    public function traitMethod(): void {}
+    public function traitMethod(): void
+    {
+    }
 }

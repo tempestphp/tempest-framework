@@ -30,8 +30,8 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
             DatabaseDialect::MYSQL, DatabaseDialect::SQLITE => '',
             DatabaseDialect::POSTGRESQL => sprintf(
                 <<<'PSQL'
-                    CREATE TYPE "%s" AS ENUM (%s);
-                    PSQL,
+                CREATE TYPE "%s" AS ENUM (%s);
+                PSQL,
                 str($this->enumClass)->replace('\\\\', '_'),
                 $cases->implode(', '),
             ),

@@ -15,19 +15,25 @@ interface Response
     /**
      * Gets the status code of the response.
      */
-    public Status $status { get; }
+    public Status $status {
+        get;
+    }
 
     /**
      * Gets the headers of the response.
      *
      * @var \Tempest\Http\Header[] $headers
      */
-    public array $headers { get; }
+    public array $headers {
+        get;
+    }
 
     /**
      * Gets the body of the response.
      */
-    public View|string|array|Generator|JsonSerializable|null $body { get; }
+    public View|string|array|Generator|JsonSerializable|null $body {
+        get;
+    }
 
     /**
      * Gets a header by its name, case insensitive.

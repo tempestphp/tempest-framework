@@ -24,8 +24,8 @@ final readonly class DropEnumTypeStatement implements QueryStatement
             DatabaseDialect::MYSQL, DatabaseDialect::SQLITE => '',
             DatabaseDialect::POSTGRESQL => sprintf(
                 <<<'PSQL'
-                    DROP TYPE IF EXISTS "%s";
-                    PSQL,
+                DROP TYPE IF EXISTS "%s";
+                PSQL,
                 str($this->enumClass)->replace('\\\\', '_'),
             ),
         };

@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Json\Exception;
 
-interface JsonException {}
+interface JsonException
+{
+}

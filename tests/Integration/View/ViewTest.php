@@ -41,8 +41,8 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->view->render($view);
 
         $expected = <<<HTML
-            ViewModel Brent, 2020-01-01
-            HTML;
+        ViewModel Brent, 2020-01-01
+        HTML;
 
         $this->assertEquals($expected, $html);
     }

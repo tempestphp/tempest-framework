@@ -2,4 +2,6 @@
 
 namespace Tempest\View;
 
-interface ShouldBeRemoved {}
+interface ShouldBeRemoved
+{
+}

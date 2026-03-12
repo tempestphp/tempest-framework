@@ -2,4 +2,6 @@
 
 namespace Tempest\Reflection\Tests\Fixtures;
 
-enum TestEnum {}
+enum TestEnum
+{
+}

@@ -6,4 +6,6 @@ namespace Tempest\DateTime\Exception;
 
 use OverflowException as PhpOverflowException;
 
-final class OverflowException extends PhpOverflowException implements DateTimeException {}
+final class OverflowException extends PhpOverflowException implements DateTimeException
+{
+}

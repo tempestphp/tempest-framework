@@ -8,7 +8,9 @@ use Tempest\Support\Arr\ImmutableArray;
 
 interface Relation extends PropertyAttribute
 {
-    public string $name { get; }
+    public string $name {
+        get;
+    }
 
     public function setParent(string $name): self;
 

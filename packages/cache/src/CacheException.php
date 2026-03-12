@@ -2,4 +2,6 @@
 
 namespace Tempest\Cache;
 
-interface CacheException {}
+interface CacheException
+{
+}

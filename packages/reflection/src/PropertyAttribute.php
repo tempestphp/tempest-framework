@@ -4,5 +4,8 @@ namespace Tempest\Reflection;
 
 interface PropertyAttribute
 {
-    public PropertyReflector $property { set; get; }
+    public PropertyReflector $property {
+        set;
+        get;
+    }
 }

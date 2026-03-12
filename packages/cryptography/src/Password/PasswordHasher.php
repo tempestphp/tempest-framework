@@ -4,7 +4,9 @@ namespace Tempest\Cryptography\Password;
 
 interface PasswordHasher
 {
-    public HashingAlgorithm $algorithm { get; }
+    public HashingAlgorithm $algorithm {
+        get;
+    }
 
     /**
      * Hashes the specified password.

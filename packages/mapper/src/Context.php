@@ -10,5 +10,7 @@ interface Context
     /**
      * A unique name for this context.
      */
-    public string $name { get; }
+    public string $name {
+        get;
+    }
 }

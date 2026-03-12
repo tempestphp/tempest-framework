@@ -68,11 +68,10 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_send_to_address_vo(): void
     {
-        $this
-            ->sendTestEmail(
-                to: [new EmailAddress('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
-                from: 'no-reply@tempestphp.com',
-            )
+        $this->sendTestEmail(
+            to: [new EmailAddress('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
+            from: 'no-reply@tempestphp.com',
+        )
             ->assertSentTo('recipient1@example.com')
             ->assertSentTo('recipient2@example.com');
     }
@@ -90,11 +89,10 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_sent_to(): void
     {
-        $this
-            ->sendTestEmail(
-                to: ['recipient1@example.com', 'recipient2@example.com'],
-                from: 'no-reply@tempestphp.com',
-            )
+        $this->sendTestEmail(
+            to: ['recipient1@example.com', 'recipient2@example.com'],
+            from: 'no-reply@tempestphp.com',
+        )
             ->assertSentTo('recipient1@example.com')
             ->assertSentTo('recipient2@example.com')
             ->assertSentTo(['recipient1@example.com', 'recipient2@example.com'])
@@ -207,12 +205,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP
-                    <html>
-                        <body>
-                            <h1>{$html}</h1>
-                        </body>
-                    </html>
-                HTML_WRAP,
+                <html>
+                    <body>
+                        <h1>{$html}</h1>
+                    </body>
+                </html>
+            HTML_WRAP,
             $text !== null => $text,
             default => 'Hello Jon in Text',
         };

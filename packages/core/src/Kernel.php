@@ -10,15 +10,27 @@ interface Kernel
 {
     public const string VERSION = '3.3.1';
 
-    public string $root { get; }
+    public string $root {
+        get;
+    }
 
-    public string $internalStorage { get; }
+    public string $internalStorage {
+        get;
+    }
 
-    public array $discoveryLocations { get; set; }
+    public array $discoveryLocations {
+        get;
+        set;
+    }
 
-    public array $discoveryClasses { get; set; }
+    public array $discoveryClasses {
+        get;
+        set;
+    }
 
-    public Container $container { get; }
+    public Container $container {
+        get;
+    }
 
     public static function boot(
         string $root,

@@ -24,16 +24,16 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
     {
         // See https://github.com/php/php-src/issues/16960
         $contents = <<<'HTML'
-            <a>
-                <b>
-                    <c>
-                        Hello
-                    </c>
-                    <d></d>
-                    <e></e>
-                </b>    
-            </a>
-            HTML;
+        <a>
+            <b>
+                <c>
+                    Hello
+                </c>
+                <d></d>
+                <e></e>
+            </b>    
+        </a>
+        HTML;
 
         $ast = TempestViewParser::ast($contents);
 

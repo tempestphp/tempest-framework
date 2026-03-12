@@ -30,9 +30,9 @@ final class ParserTest extends TestCase
     {
         /** @var ComplexMessage $ast */
         $ast = new MessageFormatParser(<<<'MF2'
-            .local $time = {$launch_date :datetime style=|medium|}
-            Launch time: {$time}
-            MF2)->parse();
+        .local $time = {$launch_date :datetime style=|medium|}
+        Launch time: {$time}
+        MF2)->parse();
 
         $this->assertInstanceOf(ComplexMessage::class, $ast);
         $this->assertInstanceOf(Text::class, $ast->pattern->elements[0]);
@@ -53,12 +53,12 @@ final class ParserTest extends TestCase
     {
         /** @var ComplexMessage $ast */
         $ast = new MessageFormatParser(<<<'MF2'
-            .input {$numDays :number select=exact}
-            .match $numDays
-            1  {{{$numDays} one}}
-            2  {{{$numDays} two}}
-            3 {{{$numDays} three}}
-            MF2)->parse();
+        .input {$numDays :number select=exact}
+        .match $numDays
+        1  {{{$numDays} one}}
+        2  {{{$numDays} two}}
+        3 {{{$numDays} three}}
+        MF2)->parse();
 
         $this->assertInstanceOf(ComplexMessage::class, $ast);
         $this->assertInstanceOf(InputDeclaration::class, $ast->declarations[0]);
@@ -88,8 +88,8 @@ final class ParserTest extends TestCase
     public function test_function_with_option_quoted_literal(): void
     {
         $ast = new MessageFormatParser(<<<'MF2'
-            Today is {$today :datetime pattern=|yyyy/MM/dd|}.
-            MF2)->parse();
+        Today is {$today :datetime pattern=|yyyy/MM/dd|}.
+        MF2)->parse();
 
         $this->assertInstanceOf(SimpleMessage::class, $ast);
         $this->assertInstanceOf(VariableExpression::class, $ast->pattern->elements[1]);

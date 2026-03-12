@@ -24,4 +24,6 @@ use Attribute;
  * ```
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final readonly class Uuid {}
+final readonly class Uuid
+{
+}

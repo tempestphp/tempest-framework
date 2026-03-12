@@ -8,5 +8,7 @@ namespace Tempest\Mapper;
 interface ProvidesCaster
 {
     /** @var class-string<Caster> */
-    public string $caster { get; }
+    public string $caster {
+        get;
+    }
 }

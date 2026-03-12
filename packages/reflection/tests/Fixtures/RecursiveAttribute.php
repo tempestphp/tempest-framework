@@ -7,4 +7,6 @@ namespace Tempest\Reflection\Tests\Fixtures;
 use Attribute;
 
 #[Attribute]
-final class RecursiveAttribute {}
+final class RecursiveAttribute
+{
+}

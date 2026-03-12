@@ -8,5 +8,7 @@ namespace Tempest\Mapper;
 interface ProvidesSerializer
 {
     /** @var class-string<Serializer> */
-    public string $serializer { get; }
+    public string $serializer {
+        get;
+    }
 }

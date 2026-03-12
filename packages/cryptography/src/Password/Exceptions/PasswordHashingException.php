@@ -2,4 +2,6 @@
 
 namespace Tempest\Cryptography\Password\Exceptions;
 
-interface PasswordHashingException {}
+interface PasswordHashingException
+{
+}

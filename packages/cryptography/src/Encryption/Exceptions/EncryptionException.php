@@ -2,4 +2,6 @@
 
 namespace Tempest\Cryptography\Encryption\Exceptions;
 
-interface EncryptionException {}
+interface EncryptionException
+{
+}

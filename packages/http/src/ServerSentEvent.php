@@ -11,12 +11,16 @@ interface ServerSentEvent
     /**
      * Defines the ID of this event, which sets the `Last-Event-ID` header in case of a reconnection.
      */
-    public ?int $id { get; }
+    public ?int $id {
+        get;
+    }
 
     /**
      * Defines the event stream's reconnection time in case of a reconnection attempt.
      */
-    public null|Duration|int $retryAfter { get; }
+    public null|Duration|int $retryAfter {
+        get;
+    }
 
     /**
      * The name of the event, which may be listened to by `EventSource#addEventListener`.
@@ -29,10 +33,14 @@ interface ServerSentEvent
      * })
      * ```
      */
-    public ?string $event { get; }
+    public ?string $event {
+        get;
+    }
 
     /**
      * Content of the event.
      */
-    public JsonSerializable|Stringable|string|iterable $data { get; }
+    public JsonSerializable|Stringable|string|iterable $data {
+        get;
+    }
 }

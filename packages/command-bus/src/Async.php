@@ -7,4 +7,6 @@ namespace Tempest\CommandBus;
 use Attribute;
 
 #[Attribute]
-final readonly class Async {}
+final readonly class Async
+{
+}
