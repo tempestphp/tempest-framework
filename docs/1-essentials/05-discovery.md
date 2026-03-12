@@ -271,3 +271,17 @@ $registry = new Registry(locations: [
 // Don't forget to register the registry in the container of your choice.
 $container->singleton(Registry::class, $registry);
 ```
+
+### Using `tempest/container`
+
+If you're using `tempest/container` with discovery, you'll have to make sure that the container itself is also registered as a singleton:
+
+```php
+use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
+
+$container = new GenericContainer();
+$container->singleton(Container::class, $container);
+```
+
+This is because `tempest/container` comes with a handful of discovery classes itself, and they rely on the container being a singleton to configure it.
