@@ -66,4 +66,20 @@ final class Tempest34RectorTest extends TestCase
             ->assertContains('Tempest\Discovery\DiscoveryCache')
             ->assertNotContains('Tempest\Core\DiscoveryCache');
     }
+
+    public function test_kernel_discovery_locations_refactored(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/KernelDiscoveryLocations.input.php')
+            ->assertContains('$this->kernel->registry->locations')
+            ->assertNotContains('$this->kernel->discoveryLocations');
+    }
+
+    public function test_kernel_discovery_classes_refactored(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/KernelDiscoveryClasses.input.php')
+            ->assertContains('$this->kernel->registry->classes')
+            ->assertNotContains('$this->kernel->discoveryClasses');
+    }
 }
