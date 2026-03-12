@@ -239,22 +239,22 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_text_with_length_limit(): void
     {
         $tinyText = new CreateTableStatement('test-table')
-            ->text('content', false, null, DatabaseTextLength::TINY)
+            ->text('content', false, DatabaseTextLength::TINY, null)
             ->compile(dialect: DatabaseDialect::MYSQL);
         $mediumText = new CreateTableStatement('test-table')
-            ->text('content', false, null, DatabaseTextLength::DEFAULT)
+            ->text('content', false, DatabaseTextLength::DEFAULT)
             ->compile(dialect: DatabaseDialect::MYSQL);
         $text = new CreateTableStatement('test-table')
-            ->text('content', false, null, DatabaseTextLength::MEDIUM)
+            ->text('content', false, DatabaseTextLength::MEDIUM)
             ->compile(dialect: DatabaseDialect::MYSQL);
         $longText = new CreateTableStatement('test-table')
-            ->text('content', false, null, DatabaseTextLength::LONG)
+            ->text('content', false, DatabaseTextLength::LONG)
             ->compile(dialect: DatabaseDialect::MYSQL);
         $default = new CreateTableStatement('test-table')
-            ->text('content', false, null)
+            ->text('content', false)
             ->compile(dialect: DatabaseDialect::MYSQL);
-        $enum = new CreateTableStatement('test-table')
-            ->text('content', false, null, 180)
+        $value = new CreateTableStatement('test-table')
+            ->text('content', false, 180)
             ->compile(dialect: DatabaseDialect::MYSQL);
 
         $this->assertStringContainsString('TINYTEXT', $tinyText);
@@ -262,7 +262,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('TEXT', $text);
         $this->assertStringContainsString('LONGTEXT', $longText);
         $this->assertStringContainsString('TEXT', $default);
-        $this->assertStringContainsString('TINYTEXT', $enum);
+        $this->assertStringContainsString('TINYTEXT', $value);
     }
 
     public function test_object_field(): void
