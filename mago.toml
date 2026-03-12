@@ -15,6 +15,7 @@ excludes = [
 	"**/*.expected.php",
 	"**/.tempest",
 	"./vendor/rector", #see https://github.com/carthage-software/mago/issues/1237 rector clashes and throws errors in tests
+	"packages/intl/bin/plural-rules.php",
 ]
 
 [formatter]
@@ -65,3 +66,6 @@ prefer-first-class-callable = { enabled = false } # enable when arguments are fi
 strict-behavior = { allow-loose-behavior = true }
 no-redundant-use = { enabled = true }
 no-empty-comment = { enabled = false }
+single-class-per-file = { enabled = false }
+no-isset = { enabled = false }
+instanceof-stringable = { enabled = false }
