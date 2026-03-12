@@ -33,7 +33,7 @@ final class DiscoveryTest extends TestCase
             ]),
         ))();
 
-        self::assertNotNull(MyDiscoveryClass::$discoveredItem);
+        $this->assertNotNull(MyDiscoveryClass::$discoveredItem);
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
     }
 
@@ -51,7 +51,7 @@ final class DiscoveryTest extends TestCase
             ]),
         ))();
 
-        self::assertNotNull(MyDiscoveryClass::$discoveredItem);
+        $this->assertNotNull(MyDiscoveryClass::$discoveredItem);
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
     }
 }
