@@ -4,9 +4,7 @@ namespace Tempest\Cryptography\Encryption;
 
 interface Encrypter
 {
-    public EncryptionAlgorithm $algorithm {
-        get;
-    }
+    public EncryptionAlgorithm $algorithm { get; }
 
     /**
      * Encrypts the specified data.

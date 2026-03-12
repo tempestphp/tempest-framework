@@ -21,6 +21,5 @@ final readonly class CommandWithDifferentArguments
         string $camelCaseStringWithDefault = 'foo',
         bool $camelCaseBoolWithTrueDefault = true,
         bool $camelCaseBoolWithFalseDefault = false,
-    ): void {
-    }
+    ): void {}
 }

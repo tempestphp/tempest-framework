@@ -203,7 +203,8 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         $offset = 0;
 
         do {
-            $data = $this->clone()
+            $data = $this
+                ->clone()
                 ->limit($amountPerChunk)
                 ->offset($offset)
                 ->all();

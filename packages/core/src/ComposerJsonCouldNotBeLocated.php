@@ -6,6 +6,4 @@ namespace Tempest\Core;
 
 use Exception;
 
-final class ComposerJsonCouldNotBeLocated extends Exception
-{
-}
+final class ComposerJsonCouldNotBeLocated extends Exception {}

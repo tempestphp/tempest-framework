@@ -13,9 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MarkdownExtension implements ExtensionInterface
 {
-    public function configure(OptionsResolver $resolver): void
-    {
-    }
+    public function configure(OptionsResolver $resolver): void {}
 
     public function load(Container $container): void
     {

@@ -16,8 +16,8 @@ final class CreateEnumTypeStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             <<<PSQL
-            CREATE TYPE "Tests\Tempest\Integration\Database\QueryStatements\CreateEnumTypeStatementTestEnumForCreateTable" AS ENUM ('foo', 'bar');
-            PSQL,
+                CREATE TYPE "Tests\Tempest\Integration\Database\QueryStatements\CreateEnumTypeStatementTestEnumForCreateTable" AS ENUM ('foo', 'bar');
+                PSQL,
             $enumStatement->compile(DatabaseDialect::POSTGRESQL),
         );
     }

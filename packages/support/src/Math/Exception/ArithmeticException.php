@@ -7,6 +7,4 @@ namespace Tempest\Support\Math\Exception;
 use InvalidArgumentException;
 
 // @phpstan-ignore-next-line
-class ArithmeticException extends InvalidArgumentException implements MathException
-{
-}
+class ArithmeticException extends InvalidArgumentException implements MathException {}

@@ -52,130 +52,130 @@ final class PluralRulesMatcherGenerator
     private function generateHelperMethods(bool $includeMatchesValues): string
     {
         $helpers = <<<'PHP'
-            /**
-             * Extracts the integer part of a number.
-             */
-            private static function getIntegerPart(float|int $n): int
-            {
-                return (int) abs($n);
-            }
+                /**
+                 * Extracts the integer part of a number.
+                 */
+                private static function getIntegerPart(float|int $n): int
+                {
+                    return (int) abs($n);
+                }
 
-            /**
-             * Counts visible fractional digits.
-             */
-            private static function getVisibleFractionalDigits(float|int $n): int
-            {
-                $str = (string) $n;
+                /**
+                 * Counts visible fractional digits.
+                 */
+                private static function getVisibleFractionalDigits(float|int $n): int
+                {
+                    $str = (string) $n;
 
-                if (! str_contains($str, '.')) {
+                    if (! str_contains($str, '.')) {
+                        return 0;
+                    }
+
+                    return strlen(rtrim(explode('.', $str)[1], '0'));
+                }
+
+                /**
+                 * Gets fractional digits as integer.
+                 */
+                private static function getFractionalDigits(float|int $n): int
+                {
+                    $str = (string) $n;
+
+                    if (! str_contains($str, '.')) {
+                        return 0;
+                    }
+
+                    return (int) rtrim(explode('.', $str)[1], '0') ?: 0;
+                }
+
+                /**
+                 * Gets compact decimal exponent (magnitude).
+                 */
+                private static function getCompactExponent(float|int $n): int
+                {
+                    if ($n === 0 || $n === 0.0) {
+                        return 0;
+                    }
+
+                    $abs = abs($n);
+
+                    if ($abs >= 1000000) {
+                        return 6;
+                    }
+
+                    if ($abs >= 1000) {
+                        return 3;
+                    }
+
                     return 0;
                 }
 
-                return strlen(rtrim(explode('.', $str)[1], '0'));
-            }
+                /**
+                 * Gets the exponent for scientific notation.
+                 */
+                private static function getExponent(float|int $n): int
+                {
+                    if ($n === 0 || $n === 0.0) {
+                        return 0;
+                    }
 
-            /**
-             * Gets fractional digits as integer.
-             */
-            private static function getFractionalDigits(float|int $n): int
-            {
-                $str = (string) $n;
-
-                if (! str_contains($str, '.')) {
-                    return 0;
+                    return (int) floor(log10(abs($n)));
                 }
 
-                return (int) rtrim(explode('.', $str)[1], '0') ?: 0;
-            }
-
-            /**
-             * Gets compact decimal exponent (magnitude).
-             */
-            private static function getCompactExponent(float|int $n): int
-            {
-                if ($n === 0 || $n === 0.0) {
-                    return 0;
+                /**
+                 * Checks if number is in range.
+                 */
+                private static function inRange(int|float $value, int|float $start, int|float $end): bool
+                {
+                    return $value >= $start && $value <= $end;
                 }
 
-                $abs = abs($n);
-
-                if ($abs >= 1000000) {
-                    return 6;
+                /**
+                 * Checks whether two numeric values are equal.
+                 */
+                private static function isEqual(int|float $left, int|float $right): bool
+                {
+                    return $left === $right;
                 }
 
-                if ($abs >= 1000) {
-                    return 3;
-                }
-
-                return 0;
-            }
-
-            /**
-             * Gets the exponent for scientific notation.
-             */
-            private static function getExponent(float|int $n): int
-            {
-                if ($n === 0 || $n === 0.0) {
-                    return 0;
-                }
-
-                return (int) floor(log10(abs($n)));
-            }
-
-            /**
-             * Checks if number is in range.
-             */
-            private static function inRange(int|float $value, int|float $start, int|float $end): bool
-            {
-                return $value >= $start && $value <= $end;
-            }
-
-            /**
-             * Checks whether two numeric values are equal.
-             */
-            private static function isEqual(int|float $left, int|float $right): bool
-            {
-                return $left === $right;
-            }
-
-        PHP;
+            PHP;
 
         if (! $includeMatchesValues) {
             return $helpers;
         }
 
         return $helpers . <<<'PHP'
-            /**
-             * Checks if number matches any value in comma-separated list.
-             */
-            private static function matchesValues(int|float $value, string $values): bool
-            {
-                $parts = explode(',', $values);
+                /**
+                 * Checks if number matches any value in comma-separated list.
+                 */
+                private static function matchesValues(int|float $value, string $values): bool
+                {
+                    $parts = explode(',', $values);
 
-                foreach ($parts as $part) {
-                    $part = trim($part);
+                    foreach ($parts as $part) {
+                        $part = trim($part);
 
-                    if (str_contains($part, '~')) {
-                        [$start, $end] = explode('~', $part);
+                        if (str_contains($part, '~')) {
+                            [$start, $end] = explode('~', $part);
 
-                        if (self::inRange($value, (float) trim($start), (float) trim($end))) {
+                            if (self::inRange($value, (float) trim($start), (float) trim($end))) {
+                                return true;
+                            }
+                        } elseif (str_contains($part, '..')) {
+                            [$start, $end] = explode('..', $part);
+
+                            if (self::inRange($value, (float) trim($start), (float) trim($end))) {
+                                return true;
+                            }
+                        } elseif ((float) $part === (float) $value) {
                             return true;
                         }
-                    } elseif (str_contains($part, '..')) {
-                        [$start, $end] = explode('..', $part);
-
-                        if (self::inRange($value, (float) trim($start), (float) trim($end))) {
-                            return true;
-                        }
-                    } elseif ((float) $part === (float) $value) {
-                        return true;
                     }
+
+                    return false;
                 }
 
-                return false;
-            }
-
-        PHP;
+            PHP;
     }
 
     private function generateLanguageMethod(string $locale, array $rules): string

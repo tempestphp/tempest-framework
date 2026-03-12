@@ -36,31 +36,31 @@ final class CreateTableStatementTest extends TestCase
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
             <<<SQL
-            CREATE TABLE `migrations` (
-                `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `migrations` (
+                    `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `migrations` (
-                `id` SERIAL PRIMARY KEY, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `migrations` (
+                    `id` SERIAL PRIMARY KEY, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
             <<<SQL
-            CREATE TABLE `migrations` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `migrations` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
     }
 
@@ -97,36 +97,36 @@ final class CreateTableStatementTest extends TestCase
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
+                    `author_id` INTEGER  NOT NULL, 
+                    CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` SERIAL PRIMARY KEY, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` SERIAL PRIMARY KEY, 
+                    `author_id` INTEGER  NOT NULL, 
+                    CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
-                `author_id` INTEGER  NOT NULL, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    `author_id` INTEGER  NOT NULL, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
     }
 
@@ -148,36 +148,36 @@ final class CreateTableStatementTest extends TestCase
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
+                    `author_id` INTEGER  NOT NULL, 
+                    CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` SERIAL PRIMARY KEY, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` SERIAL PRIMARY KEY, 
+                    `author_id` INTEGER  NOT NULL, 
+                    CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
-                `author_id` INTEGER  NOT NULL, 
-                `name` VARCHAR(255) NOT NULL
-            );
-            SQL,
+                CREATE TABLE `books` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    `author_id` INTEGER  NOT NULL, 
+                    `name` VARCHAR(255) NOT NULL
+                );
+                SQL,
         ];
     }
 
@@ -205,34 +205,34 @@ final class CreateTableStatementTest extends TestCase
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `uuid` VARCHAR(36) PRIMARY KEY, 
-                `name` TEXT NOT NULL, 
-                `email` TEXT NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `uuid` VARCHAR(36) PRIMARY KEY, 
+                    `name` TEXT NOT NULL, 
+                    `email` TEXT NOT NULL
+                );
+                SQL,
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `uuid` UUID PRIMARY KEY, 
-                `name` TEXT NOT NULL, 
-                `email` TEXT NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `uuid` UUID PRIMARY KEY, 
+                    `name` TEXT NOT NULL, 
+                    `email` TEXT NOT NULL
+                );
+                SQL,
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
             <<<SQL
-            CREATE TABLE `users` (
-                `uuid` TEXT PRIMARY KEY, 
-                `name` TEXT NOT NULL, 
-                `email` TEXT NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `uuid` TEXT PRIMARY KEY, 
+                    `name` TEXT NOT NULL, 
+                    `email` TEXT NOT NULL
+                );
+                SQL,
         ];
     }
 
@@ -262,28 +262,28 @@ final class CreateTableStatementTest extends TestCase
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+                );
+                SQL,
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+                );
+                SQL,
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
             <<<SQL
-            CREATE TABLE `users` (
-                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-            );
-            SQL,
+                CREATE TABLE `users` (
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+                );
+                SQL,
         ];
     }
 }

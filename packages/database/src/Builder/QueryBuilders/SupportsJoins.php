@@ -14,7 +14,5 @@ interface SupportsJoins
      *
      * @return array<JoinStatement|string>
      */
-    public array $joins {
-        get;
-    }
+    public array $joins { get; }
 }

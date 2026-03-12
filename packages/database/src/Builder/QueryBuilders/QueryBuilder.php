@@ -200,7 +200,8 @@ final class QueryBuilder
             default => new PrimaryKey($id),
         };
 
-        return $this->select()
+        return $this
+            ->select()
             ->with(...$relations)
             ->get($id);
     }
@@ -212,7 +213,8 @@ final class QueryBuilder
      */
     public function all(array $relations = []): array
     {
-        return $this->select()
+        return $this
+            ->select()
             ->with(...$relations)
             ->all();
     }

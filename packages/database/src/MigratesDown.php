@@ -6,9 +6,7 @@ namespace Tempest\Database;
 
 interface MigratesDown
 {
-    public string $name {
-        get;
-    }
+    public string $name { get; }
 
     public function down(): QueryStatement;
 }

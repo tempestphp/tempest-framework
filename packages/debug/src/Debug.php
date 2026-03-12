@@ -97,16 +97,16 @@ final readonly class Debug
                 echo
                     vsprintf(
                         <<<HTML
-                        <span style="
-                            display:inline-block; 
-                            color: #fff; 
-                            font-family: %s;
-                            padding: 2px 4px;
-                            font-size: 0.8rem;
-                            margin-bottom: -12px;
-                            background: #0071BC;"
-                        >%s (%s)</span>
-                        HTML,
+                            <span style="
+                                display:inline-block; 
+                                color: #fff; 
+                                font-family: %s;
+                                padding: 2px 4px;
+                                font-size: 0.8rem;
+                                margin-bottom: -12px;
+                                background: #0071BC;"
+                            >%s (%s)</span>
+                            HTML,
                         [
                             'Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
                             $key,

@@ -10,9 +10,7 @@ use Tempest\Console\ConsoleCommand;
 final readonly class Package
 {
     #[ConsoleCommand]
-    public function list(): void
-    {
-    }
+    public function list(): void {}
 
     #[ConsoleCommand(help: 'help text')]
     public function info(
@@ -23,6 +21,5 @@ final readonly class Package
             aliases: ['n'],
         )]
         string $name,
-    ): void {
-    }
+    ): void {}
 }

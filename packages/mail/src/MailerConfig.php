@@ -11,9 +11,7 @@ interface MailerConfig
      *
      * @var class-string<TransportInterface>
      */
-    public string $transport {
-        get;
-    }
+    public string $transport { get; }
 
     /**
      * Creates the transport.

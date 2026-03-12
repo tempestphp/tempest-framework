@@ -271,9 +271,7 @@ enum TestIntBackedEnum: int
     case SECOND = 2;
 }
 
-interface TestInterface
-{
-}
+interface TestInterface {}
 
 enum TestEnumWithInterface: string implements TestInterface
 {

@@ -2,6 +2,4 @@
 
 namespace Tempest\Auth\Exceptions;
 
-interface AuthenticationException
-{
-}
+interface AuthenticationException {}

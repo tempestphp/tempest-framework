@@ -7,6 +7,4 @@ namespace Tempest\Container;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Autowire
-{
-}
+final class Autowire {}
