@@ -17,7 +17,6 @@ use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\Registry;
 
 final class DiscoveryScanBench
 {
@@ -31,24 +30,23 @@ final class DiscoveryScanBench
 
     private string $root;
 
-    private Registry $registry;
+    private DiscoveryConfig $discoveryConfig;
 
     public function __construct()
     {
         $this->root = dirname(__DIR__, 3);
         $kernel = FrameworkKernel::boot(root: $this->root);
         $this->container = $kernel->container;
-        $this->registry = $kernel->registry;
-        $this->discoveryLocations = $kernel->registry->locations;
-        $this->discoveryClasses = $kernel->registry->classes;
+        $this->discoveryConfig = $kernel->discoveryConfig;
+        $this->discoveryLocations = $kernel->discoveryConfig->locations;
+        $this->discoveryClasses = $kernel->discoveryConfig->classes;
     }
 
     private function createLoader(): BootDiscovery
     {
         return new BootDiscovery(
             container: $this->container,
-            registry: $this->registry,
-            config: new DiscoveryConfig(),
+            config: $this->discoveryConfig,
             cache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),
         );
     }

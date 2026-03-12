@@ -27,7 +27,7 @@ final class KernelTest extends TestCase
 
         $this->assertInstanceOf(Container::class, $kernel->container);
 
-        $this->assertNotEmpty($kernel->registry->classes);
+        $this->assertNotEmpty($kernel->discoveryConfig->classes);
 
         $test = $kernel->container->get(TestDependency::class);
 

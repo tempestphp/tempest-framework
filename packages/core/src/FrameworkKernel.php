@@ -12,13 +12,12 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
+use Tempest\Discovery\AutoloadDiscoveryLocations;
 use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\Composer;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheInitializer;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\LoadRegistry;
-use Tempest\Discovery\Registry;
 use Tempest\EventBus\EventBus;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Support\Filesystem;
@@ -31,7 +30,7 @@ final class FrameworkKernel implements Kernel
 
     public string $internalStorage;
 
-    public Registry $registry;
+    public DiscoveryConfig $discoveryConfig;
 
     public function __construct(
         public string $root,
@@ -41,7 +40,7 @@ final class FrameworkKernel implements Kernel
         ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
-        $this->registry = new Registry(locations: $discoveryLocations);
+        //        $this->registry = new Registry(locations: $discoveryLocations);
 
         if ($internalStorage !== null) {
             $this->internalStorage = $internalStorage;
@@ -71,7 +70,7 @@ final class FrameworkKernel implements Kernel
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->loadComposer()
-            ->loadRegistry()
+            ->loadDiscoveryConfig()
             ->loadConfig()
             ->bootDiscovery()
             ->registerExceptionHandler()
@@ -160,17 +159,34 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function loadRegistry(): self
+    public function loadDiscoveryConfig(): self
     {
-        $loadRegistry = new LoadRegistry(
+        /** @var DiscoveryConfig $discoveryConfig */
+        $discoveryConfig = $this->container->get(DiscoveryConfig::class);
+
+        $discoveryConfig->locations = (new AutoloadDiscoveryLocations(
             rootPath: $this->root,
-            registry: $this->registry,
             composer: $this->container->get(Composer::class),
+        ))($discoveryConfig);
+
+        $this->container->config($discoveryConfig);
+        $this->discoveryConfig = $discoveryConfig;
+
+        return $this;
+    }
+
+    public function loadConfig(): self
+    {
+        $this->container->addInitializer(ConfigCacheInitializer::class);
+
+        $loadConfig = new LoadConfig(
+            discoveryConfig: $this->container->get(DiscoveryConfig::class),
+            container: $this->container,
+            cache: $this->container->get(ConfigCache::class),
+            environment: Environment::guessFromEnvironment(),
         );
 
-        $registry = $loadRegistry();
-
-        $this->container->singleton(Registry::class, $registry);
+        $loadConfig();
 
         return $this;
     }
@@ -181,28 +197,11 @@ final class FrameworkKernel implements Kernel
 
         $bootDiscovery = new BootDiscovery(
             container: $this->container,
-            registry: $this->container->get(Registry::class),
             config: $this->container->get(DiscoveryConfig::class),
             cache: $this->container->get(DiscoveryCache::class),
         );
 
         $bootDiscovery();
-
-        return $this;
-    }
-
-    public function loadConfig(): self
-    {
-        $this->container->addInitializer(ConfigCacheInitializer::class);
-
-        $loadConfig = new LoadConfig(
-            registry: $this->container->get(Registry::class),
-            container: $this->container,
-            cache: $this->container->get(ConfigCache::class),
-            environment: Environment::guessFromEnvironment(),
-        );
-
-        $loadConfig();
 
         return $this;
     }

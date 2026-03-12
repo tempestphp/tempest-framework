@@ -6,8 +6,8 @@ use DI\Container;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\Registry;
 use Tempest\Discovery\Tests\Fixtures\MyDiscoveryClass;
 
 final class DiscoveryTest extends TestCase
@@ -25,7 +25,7 @@ final class DiscoveryTest extends TestCase
 
         (new BootDiscovery(
             container: $container,
-            registry: new Registry(locations: [
+            config: new DiscoveryConfig(locations: [
                 new DiscoveryLocation(
                     namespace: 'Tempest\Discovery\Tests\Fixtures',
                     path: __DIR__ . '/Fixtures',
@@ -43,7 +43,7 @@ final class DiscoveryTest extends TestCase
 
         (new BootDiscovery(
             container: $container,
-            registry: new Registry(locations: [
+            config: new DiscoveryConfig(locations: [
                 new DiscoveryLocation(
                     namespace: 'Tempest\Discovery\Tests\Fixtures',
                     path: __DIR__ . '/Fixtures',

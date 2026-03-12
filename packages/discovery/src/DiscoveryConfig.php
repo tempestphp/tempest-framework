@@ -8,6 +8,21 @@ final class DiscoveryConfig
 {
     private array $skipDiscovery = [];
 
+    /** @var array<array-key, class-string<\Tempest\Discovery\Discovery>> The loaded discovery classes that will be used during discovery */
+    public array $classes = [];
+
+    public function __construct(
+        /** @var \Tempest\Discovery\DiscoveryLocation[] Locations that should be scanned during discovery */
+        public array $locations = [],
+    ) {}
+
+    public static function autoload(string $path): self
+    {
+        return new self(
+            locations: (new AutoloadDiscoveryLocations($path))(),
+        );
+    }
+
     public function shouldSkip(string $input): bool
     {
         return $this->skipDiscovery[$input] ?? false;

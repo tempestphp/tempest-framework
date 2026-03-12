@@ -8,18 +8,14 @@ use Tempest\Support\Filesystem;
 
 use function Tempest\Support\Path\normalize;
 
-final readonly class LoadRegistry
+final readonly class AutoloadDiscoveryLocations
 {
     private Composer $composer;
-    private Registry $registry;
 
     public function __construct(
         private string $rootPath,
-        ?Registry $registry = null,
         ?Composer $composer = null,
     ) {
-        $this->registry = $registry ?? new Registry();
-
         if (! $composer) {
             $composer = new Composer($rootPath);
             $composer->load();
@@ -28,16 +24,15 @@ final readonly class LoadRegistry
         $this->composer = $composer;
     }
 
-    public function __invoke(): Registry
+    /** @return \Tempest\Discovery\DiscoveryLocation[] */
+    public function __invoke(?DiscoveryConfig $config = null): array
     {
-        $this->registry->locations = [
+        return [
             ...$this->discoverCorePackages(),
             ...$this->discoverVendorPackages(),
             ...$this->discoverAppNamespaces(),
-            ...$this->registry->locations,
+            ...($config->locations ?? []),
         ];
-
-        return $this->registry;
     }
 
     /**

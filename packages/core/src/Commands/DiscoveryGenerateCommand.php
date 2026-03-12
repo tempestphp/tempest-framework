@@ -15,7 +15,6 @@ use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\Registry;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
@@ -23,7 +22,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         use HasConsole;
 
         public function __construct(
-            private Registry $registry,
+            private DiscoveryConfig $discoveryConfig,
             private FrameworkKernel $kernel,
             private DiscoveryCache $discoveryCache,
         ) {}
@@ -62,14 +61,13 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
             $bootDiscovery = new BootDiscovery(
                 container: $kernel->container,
-                registry: $kernel->container->get(Registry::class),
                 config: $kernel->container->get(DiscoveryConfig::class),
                 cache: $this->discoveryCache,
             );
 
             $discoveries = $bootDiscovery->build();
 
-            foreach ($this->registry->locations as $location) {
+            foreach ($this->discoveryConfig->locations as $location) {
                 $this->discoveryCache->store($location, $discoveries);
                 $log($location->path);
             }
@@ -81,11 +79,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $container = new GenericContainer();
             $container->singleton(Container::class, $container);
-            $container->singleton(Registry::class, $this->registry);
+            $container->singleton(DiscoveryConfig::class, $this->discoveryConfig);
 
             return new FrameworkKernel(
                 root: $this->kernel->root,
-                discoveryLocations: $this->kernel->registry->locations,
+                discoveryLocations: $this->kernel->discoveryConfig->locations,
                 container: $container,
             )
                 ->registerKernel()

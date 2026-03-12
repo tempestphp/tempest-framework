@@ -11,7 +11,7 @@ final class DiscoveryDiscovery implements Discovery
     use IsDiscovery;
 
     public function __construct(
-        private readonly Registry $registry,
+        private readonly DiscoveryConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
@@ -30,7 +30,7 @@ final class DiscoveryDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as $className) {
-            $this->registry->classes[] = $className;
+            $this->config->classes[] = $className;
         }
     }
 }

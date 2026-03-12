@@ -17,8 +17,7 @@ final class BootDiscovery
 
     public function __construct(
         private readonly ContainerInterface $container,
-        private readonly Registry $registry,
-        private readonly DiscoveryConfig $config = new DiscoveryConfig(),
+        private readonly DiscoveryConfig $config,
         private readonly DiscoveryCache $cache = new DiscoveryCache(DiscoveryCacheStrategy::NONE),
     ) {}
 
@@ -46,11 +45,11 @@ final class BootDiscovery
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
     ): array {
-        $discoveryLocations ??= $this->registry->locations;
+        $discoveryLocations ??= $this->config->locations;
 
         if ($discoveryClasses === null) {
             // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-            $discoveryDiscovery = new DiscoveryDiscovery($this->registry);
+            $discoveryDiscovery = new DiscoveryDiscovery($this->config);
             $discoveryDiscovery->setItems(new DiscoveryItems());
 
             // The first pass over all directories to find all discovery classes
@@ -62,7 +61,7 @@ final class BootDiscovery
             // Resolve all other discoveries from the container, optionally loading their cache
             $discoveries = array_map(
                 fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
-                $this->registry->classes,
+                $this->config->classes,
             );
 
             // The second pass over all directories to apply all other discovery classes

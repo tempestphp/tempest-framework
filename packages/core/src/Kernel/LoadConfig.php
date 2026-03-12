@@ -7,7 +7,7 @@ namespace Tempest\Core\Kernel;
 use Tempest\Container\Container;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
-use Tempest\Discovery\Registry;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
@@ -19,7 +19,7 @@ use function Tempest\root_path;
 final readonly class LoadConfig
 {
     public function __construct(
-        private Registry $registry,
+        private DiscoveryConfig $discoveryConfig,
         private Container $container,
         private ConfigCache $cache,
         private Environment $environment,
@@ -31,6 +31,11 @@ final readonly class LoadConfig
 
         foreach ($configPaths as $path) {
             $configFile = require $path;
+
+            if ($configFile instanceof DiscoveryConfig) {
+                $configFile->locations = [...$this->discoveryConfig->locations, ...$configFile->locations];
+                $configFile->classes = [...$this->discoveryConfig->classes, ...$configFile->classes];
+            }
 
             $this->container->config($configFile);
         }
@@ -44,7 +49,7 @@ final readonly class LoadConfig
         $configPaths = new MutableArray();
 
         // Scan for config files in all discovery locations
-        foreach ($this->registry->locations as $discoveryLocation) {
+        foreach ($this->discoveryConfig->locations as $discoveryLocation) {
             $this->scan($discoveryLocation->path, $configPaths);
         }
 

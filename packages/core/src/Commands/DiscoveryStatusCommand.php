@@ -9,7 +9,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
-use Tempest\Discovery\Registry;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Support\Filesystem;
 
 use function Tempest\root_path;
@@ -20,7 +20,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     {
         public function __construct(
             private Console $console,
-            private Registry $registry,
+            private DiscoveryConfig $discoveryConfig,
             private DiscoveryCache $discoveryCache,
         ) {}
 
@@ -32,8 +32,8 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             bool $showLocations = false,
         ): void {
             $this->console->header('Discovery status');
-            $this->console->keyValue('Registered locations', (string) count($this->registry->locations));
-            $this->console->keyValue('Loaded discovery classes', (string) count($this->registry->classes));
+            $this->console->keyValue('Registered locations', (string) count($this->discoveryConfig->locations));
+            $this->console->keyValue('Loaded discovery classes', (string) count($this->discoveryConfig->classes));
             $this->console->keyValue('Cache', match ($this->discoveryCache->enabled) {
                 true => '<style="fg-green bold">ENABLED</style>',
                 false => '<style="fg-gray bold">DISABLED</style>',
@@ -53,7 +53,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 $this->console->header('Discovery classes', subheader: 'These classes are used by Tempest to determine which classes to discover and how to handle them.');
                 $this->console->writeln();
 
-                foreach ($this->registry->classes as $discoveryClass) {
+                foreach ($this->discoveryConfig->classes as $discoveryClass) {
                     $this->console->keyValue("<style='fg-gray'>{$discoveryClass}</style>");
                 }
             }
@@ -62,7 +62,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 $this->console->header('Discovery locations', subheader: 'These locations are used by Tempest to discover classes.');
                 $this->console->writeln();
 
-                foreach ($this->registry->locations as $discoveryLocation) {
+                foreach ($this->discoveryConfig->locations as $discoveryLocation) {
                     $path = str(Filesystem\normalize_path($discoveryLocation->path))
                         ->replaceStart(root_path(), '.')
                         ->toString();

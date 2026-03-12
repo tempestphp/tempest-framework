@@ -233,27 +233,27 @@ Next, you can boot discovery:
 
 ```php
 use Tempest\Discovery\BootDiscovery;
-use Tempest\Discovery\Registry;
+use Tempest\Discovery\DiscoveryConfig;
 
 // $container is any PSR-11 compliant container, already available in your app
 
 new BootDiscovery(
     container: $container,
-    registry: Registry::autoload(__DIR__),
+    config: DiscoveryConfig::autoload(__DIR__),
 )();
 ```
 
 Whenever this action is run, discovery will find all discovery classes, and run them against all registry locations.
 
-### Custom registry
+### Manually specify discovery locations
 
-`Registry::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually build a registry like so:
+`DiscoveryConfig::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually build a registry like so:
 
 ```php
-use Tempest\Discovery\Registry;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 
-$registry = new Registry(locations: [
+$config = new DiscoveryConfig(locations: [
     new DiscoveryLocation('App\\', 'src/'),
     // …
 ]);
@@ -261,19 +261,17 @@ $registry = new Registry(locations: [
 
 ### Config and caching
 
-You can pass optional config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
+You can pass config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
 
 ```php
 use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
-use Tempest\Discovery\Registry;
 
 new BootDiscovery(
     container: $container,
-    registry: Registry::autoload(__DIR__),
-    config: new DiscoveryConfig()
+    config: DiscoveryConfig::autoload(__DIR__)
         ->skipClasses(
             \App\Foo::class,
             \Tempest\Container\AutowireDiscovery::class
