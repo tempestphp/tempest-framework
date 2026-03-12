@@ -23,7 +23,7 @@ final class DiscoveryTest extends TestCase
     {
         $container = new GenericContainer();
 
-        new BootDiscovery(
+        (new BootDiscovery(
             container: $container,
             registry: new Registry(locations: [
                 new DiscoveryLocation(
@@ -31,7 +31,7 @@ final class DiscoveryTest extends TestCase
                     path: __DIR__ . '/Fixtures',
                 ),
             ]),
-        )();
+        ))();
 
         self::assertNotNull(MyDiscoveryClass::$discoveredItem);
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
@@ -41,7 +41,7 @@ final class DiscoveryTest extends TestCase
     {
         $container = new Container();
 
-        new BootDiscovery(
+        (new BootDiscovery(
             container: $container,
             registry: new Registry(locations: [
                 new DiscoveryLocation(
@@ -49,7 +49,7 @@ final class DiscoveryTest extends TestCase
                     path: __DIR__ . '/Fixtures',
                 ),
             ]),
-        )();
+        ))();
 
         self::assertNotNull(MyDiscoveryClass::$discoveredItem);
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
