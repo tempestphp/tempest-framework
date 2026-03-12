@@ -40,7 +40,7 @@ final class FrameworkKernel implements Kernel
         ?Container $container = null,
         ?string $internalStorage = null,
     ) {
-        $this->container = $container ?? new GenericContainer();
+        $this->container = $container ?? $this->createContainer();
         $this->registry = new Registry(locations: $discoveryLocations);
 
         if ($internalStorage !== null) {
@@ -76,6 +76,15 @@ final class FrameworkKernel implements Kernel
             ->bootDiscovery()
             ->registerExceptionHandler()
             ->event(KernelEvent::BOOTED);
+    }
+
+    public function createContainer(): GenericContainer
+    {
+        $container = new GenericContainer();
+
+        GenericContainer::setInstance($container);
+
+        return $container;
     }
 
     public function validateRoot(): self

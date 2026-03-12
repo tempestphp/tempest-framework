@@ -43,7 +43,6 @@ final class GenericContainer implements Container
         private(set) ArrayIterator $decorators = new ArrayIterator(),
         private(set) ?DependencyChain $chain = null,
     ) {
-        GenericContainer::setInstance($this);
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
         $this->singleton(GenericContainer::class, $this);
