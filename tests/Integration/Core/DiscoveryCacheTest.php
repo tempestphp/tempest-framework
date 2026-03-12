@@ -4,7 +4,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\CouldNotStoreDiscoveryCache;
+use Tempest\Discovery\CouldNotStoreDiscoveryCache;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryLocation;

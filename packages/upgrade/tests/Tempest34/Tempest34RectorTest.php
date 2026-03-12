@@ -43,6 +43,14 @@ final class Tempest34RectorTest extends TestCase
             ->assertNotContains('use Tempest\Core\ComposerJsonCouldNotBeLocated;');
     }
 
+    public function test_could_not_store_discovery_cache_namespace_change(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/CouldNotStoreDiscoveryCacheNamespaceChange.input.php')
+            ->assertContains('use Tempest\Discovery\CouldNotStoreDiscoveryCache;')
+            ->assertNotContains('use Tempest\Core\CouldNotStoreDiscoveryCache;');
+    }
+
     public function test_discovery_caching_strategy_was_changed_namespace_change(): void
     {
         $this->rector

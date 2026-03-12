@@ -7,7 +7,6 @@ namespace Tempest\Discovery;
 use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Tempest\Core\CouldNotStoreDiscoveryCache;
 use Tempest\Support\Filesystem;
 use Throwable;
 
