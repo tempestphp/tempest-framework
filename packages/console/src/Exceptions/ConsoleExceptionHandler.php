@@ -41,7 +41,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ->error($throwable::class)
                 ->when(
                     condition: $throwable->getMessage(),
-                    callback: static fn (Console $console) => $console->error($throwable->getMessage()),
+                    callback: fn (Console $console) => $console->error($throwable->getMessage()),
                 )
                 ->writeln()
                 ->writeln('In ' . $this->formatFileWithLine($throwable->getFile() . ':' . $throwable->getLine()))
@@ -81,7 +81,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         $lines = explode(PHP_EOL, $code);
 
         $lines[$lineNumber - 1] = str($lines[$lineNumber - 1])
-            ->replaceRegex('/^\d+/', static fn (array $match) => "<style='fg-red'>{$match[0]}</style>")
+            ->replaceRegex('/^\d+/', fn (array $match) => "<style='fg-red'>{$match[0]}</style>")
             ->append('  <style="fg-red"><<<</style>')
             ->toString();
 

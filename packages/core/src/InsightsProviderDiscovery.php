@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Core\AppConfig;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;

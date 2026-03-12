@@ -22,7 +22,7 @@ final class ProgressBarComponentTest extends FrameworkIntegrationTestCase
                 $terminal = new Terminal($console);
                 $component = new ProgressBarComponent(
                     data: ['a', 'b', 'c', 'd'],
-                    handler: static fn (string $input) => $input . $input,
+                    handler: fn (string $input) => $input . $input,
                 );
 
                 $generator = $component->render($terminal);
@@ -55,8 +55,8 @@ final class ProgressBarComponentTest extends FrameworkIntegrationTestCase
                 $terminal = new Terminal($console);
                 $component = new ProgressBarComponent(
                     data: ['a', 'b', 'c', 'd'],
-                    handler: static fn (string $input) => $input,
-                    format: static fn (int $step) => str_repeat(':', $step),
+                    handler: fn (string $input) => $input,
+                    format: fn (int $step) => str_repeat(':', $step),
                 );
 
                 $generator = $component->render($terminal);

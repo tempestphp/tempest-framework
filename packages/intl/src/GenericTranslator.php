@@ -4,6 +4,8 @@ namespace Tempest\Intl;
 
 use Tempest\EventBus\EventBus;
 use Tempest\Intl\Catalog\Catalog;
+use Tempest\Intl\IntlConfig;
+use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
 
 final readonly class GenericTranslator implements Translator

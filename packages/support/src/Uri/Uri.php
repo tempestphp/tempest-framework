@@ -21,7 +21,7 @@ final class Uri
                 return [];
             }
 
-            return array_values(array_filter(explode('/', $this->path), static fn (string $segment) => $segment !== ''));
+            return array_values(array_filter(explode('/', $this->path), fn (string $segment) => $segment !== ''));
         }
     }
 
@@ -53,7 +53,6 @@ final class Uri
     public function __construct(
         public readonly ?string $scheme = null,
         public readonly ?string $user = null,
-        #[\SensitiveParameter]
         public readonly ?string $password = null,
         public readonly ?string $host = null,
         public readonly ?int $port = null,
@@ -104,7 +103,7 @@ final class Uri
     /**
      * Returns a new Uri with the provided password.
      */
-    public function withPassword(#[\SensitiveParameter] string $password): self
+    public function withPassword(string $password): self
     {
         return $this->with(
             user: $this->user ?? '',
@@ -216,7 +215,6 @@ final class Uri
     private function with(
         ?string $scheme = null,
         ?string $user = null,
-        #[\SensitiveParameter]
         ?string $password = null,
         ?string $host = null,
         ?int $port = null,
@@ -265,7 +263,9 @@ final class Uri
         }
 
         $queryString = http_build_query($processedQuery, arg_separator: '&', encoding_type: PHP_QUERY_RFC3986);
-        return preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
+        $queryString = preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
+
+        return $queryString;
     }
 
     /**

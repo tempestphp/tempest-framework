@@ -246,11 +246,9 @@ final class ProcessTester
             $count = 0;
             foreach ($this->executor->executions as $executions) {
                 foreach ($executions as [$process, $result]) {
-                    if ($command($process, $result) !== true) {
-                        continue;
+                    if ($command($process, $result) === true) {
+                        $count++;
                     }
-
-                    $count++;
                 }
             }
         } else { // @mago-expects linter:no-else-clause
@@ -276,11 +274,9 @@ final class ProcessTester
         $executions = [];
 
         foreach ($this->executor->executions as $command => $commandExecutions) {
-            if (! $this->executor->commandMatchesPattern($command, $pattern)) {
-                continue;
+            if ($this->executor->commandMatchesPattern($command, $pattern)) {
+                $executions[] = $commandExecutions;
             }
-
-            $executions[] = $commandExecutions;
         }
 
         return Arr\flatten($executions, depth: 1);

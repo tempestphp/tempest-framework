@@ -42,7 +42,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $command = new CreateDraftCommand('A');
 
-        $next = new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
             $calls++;
         });
 
@@ -67,7 +67,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $command = new SyncInventoryCommand(warehouse: 'east', sku: 'WIDGET-1');
 
-        $next = new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
             $calls++;
         });
 
@@ -84,7 +84,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $command = new ImportInvoicesCommand(tenant: 'acme', month: '2026-01');
 
-        $next = new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
             $calls++;
         });
 
@@ -100,7 +100,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $middleware = $this->createMiddleware();
         $calls = 0;
 
-        $next = new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
             $calls++;
         });
 
@@ -118,7 +118,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $command = new CreatePayoutCommand('payout-1', 100);
 
-        $next = new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+        $next = new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
             $calls++;
         });
 
@@ -181,14 +181,14 @@ final class IdempotentCommandMiddlewareTest extends TestCase
             key: $fingerprint,
             fingerprint: $fingerprint,
             ttlInSeconds: 120,
-            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99_999_999, 'stale-owner'),
+            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99999999, 'stale-owner'),
             pendingHeartbeatAt: time(),
         );
 
         $calls = 0;
         $middleware(
             $command,
-            new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+            new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
                 $calls++;
             }),
         );
@@ -229,7 +229,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $middleware(
             $command,
-            new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+            new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
                 $calls++;
             }),
         );
@@ -270,7 +270,7 @@ final class IdempotentCommandMiddlewareTest extends TestCase
         $calls = 0;
         $middleware(
             $command,
-            new CommandBusMiddlewareCallable(static function (object $_) use (&$calls): void {
+            new CommandBusMiddlewareCallable(function (object $_) use (&$calls): void {
                 $calls++;
             }),
         );

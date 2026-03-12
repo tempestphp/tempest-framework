@@ -94,7 +94,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRanTimes(static fn (PendingProcess $process) => $process->command === 'echo "hello"', times: 2);
+        $this->process->assertRanTimes(fn (PendingProcess $process) => $process->command === 'echo "hello"', times: 2);
     }
 
     public function test_assert_ran_times_with_string_failure(): void
@@ -118,7 +118,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->executor->run('echo "hello"');
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRanTimes(static fn (PendingProcess $process) => $process->command === 'echo "hello"', times: 1);
+        $this->process->assertRanTimes(fn (PendingProcess $process) => $process->command === 'echo "hello"', times: 1);
     }
 
     public function test_assert_ran_times_with_unrelated_callback(): void
@@ -128,7 +128,7 @@ final class ProcessTesterTest extends FrameworkIntegrationTestCase
         $this->executor->run('echo "hello"');
 
         $this->process->assertRanTimes('echo *', times: 2);
-        $this->process->assertRanTimes(static fn (PendingProcess $process) => $process->command === 'echo "world"', times: 0);
+        $this->process->assertRanTimes(fn (PendingProcess $process) => $process->command === 'echo "world"', times: 0);
     }
 
     public function test_register_multiple_process_results(): void

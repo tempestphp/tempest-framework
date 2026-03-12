@@ -83,7 +83,7 @@ if (trait_exists(HasConsole::class)) {
                         targetPath: $destination,
                         shouldOverride: true,
                         manipulations: [
-                            static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                            fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                         ],
                     );
 
@@ -248,16 +248,14 @@ if (trait_exists(HasConsole::class)) {
                     // PHP will output empty arrays for empty dependencies,
                     // which is invalid and will make package managers crash.
                     foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
-                        if (! (isset($json[$key]) && ! $json[$key])) {
-                            continue;
+                        if (isset($json[$key]) && ! $json[$key]) {
+                            unset($json[$key]);
                         }
-
-                        unset($json[$key]);
                     }
 
                     $content = preg_replace_callback(
                         '/^ +/m',
-                        static fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
+                        fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
                         Json\encode($json, pretty: true),
                     );
 

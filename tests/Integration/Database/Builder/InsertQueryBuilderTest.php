@@ -134,11 +134,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
             ->then(
-                static fn (PrimaryKey $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 01', 'book_id' => $id],
                     ['title' => 'Chapter 02', 'book_id' => $id],
                 ),
-                static fn (PrimaryKey $id) => query(Chapter::class)->insert(
+                fn (PrimaryKey $id) => query(Chapter::class)->insert(
                     ['title' => 'Chapter 03', 'book_id' => $id],
                 ),
             )

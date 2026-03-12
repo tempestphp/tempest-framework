@@ -66,7 +66,7 @@ final readonly class GenericScheduler implements Scheduler
 
         $eligibleToRun = array_filter(
             $this->config->scheduledInvocations,
-            static fn (ScheduledInvocation $invocation) => $invocation->canRunAt(
+            fn (ScheduledInvocation $invocation) => $invocation->canRunAt(
                 date: $date,
                 lastRunTimestamp: $previousRuns[$invocation->handler->getName()] ?? null,
             ),

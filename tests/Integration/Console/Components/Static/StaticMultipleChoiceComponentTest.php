@@ -16,7 +16,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_ask(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,1')
@@ -26,7 +26,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_with_invalid_options(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,4,c,2')
@@ -36,7 +36,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_confirm(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b', 'c'], multiple: true);
 
                 $console->writeln(json_encode($answer));
@@ -54,7 +54,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_supports_defaults(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $answer = $console->ask(
                     question: 'test',
                     options: ['foo', 'bar'],
@@ -72,7 +72,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_supports_enum(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $answer = $console->ask(
                     question: 'test',
                     options: TestStringEnum::cases(),
@@ -92,7 +92,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
     public function test_supports_enum_with_default(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $answer = $console->ask(
                     question: 'test',
                     options: TestStringEnum::cases(),

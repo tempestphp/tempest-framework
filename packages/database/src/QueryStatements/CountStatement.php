@@ -44,8 +44,8 @@ final class CountStatement implements QueryStatement, HasWhereStatements
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(static fn (QueryStatement $where) => $where->compile($dialect))
-                ->filter(static fn (string $compiled) => $compiled !== '')
+                ->map(fn (QueryStatement $where) => $where->compile($dialect))
+                ->filter(fn (string $compiled) => $compiled !== '')
                 ->implode(' ');
         }
 

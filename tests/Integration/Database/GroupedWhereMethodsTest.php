@@ -60,7 +60,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('category', 'electronics')
                     ->where('in_stock', true);
@@ -78,7 +78,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $products = query(Product::class)
             ->select()
             ->where('category', 'electronics')
-            ->andWhereGroup(static function ($query): void {
+            ->andWhereGroup(function ($query): void {
                 $query
                     ->whereField('price', 100.0, WhereOperator::GREATER_THAN)
                     ->where('in_stock', true);
@@ -97,7 +97,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $products = query(Product::class)
             ->select()
             ->where('category', 'furniture')
-            ->orWhereGroup(static function ($query): void {
+            ->orWhereGroup(function ($query): void {
                 $query
                     ->whereField('price', 500.0, WhereOperator::GREATER_THAN)
                     ->where('brand', 'TechCorp');
@@ -125,10 +125,10 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('category', 'electronics')
-                    ->orWhereGroup(static function ($subQuery): void {
+                    ->orWhereGroup(function ($subQuery): void {
                         $subQuery
                             ->where('category', 'furniture')
                             ->whereField('price', 200.0, WhereOperator::LESS_THAN);
@@ -149,12 +149,12 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('brand', 'TechCorp')
                     ->orWhere('brand', 'ViewPro');
             })
-            ->andWhereGroup(static function ($query): void {
+            ->andWhereGroup(function ($query): void {
                 $query
                     ->where('rating', 4.0, WhereOperator::GREATER_THAN_OR_EQUAL)
                     ->where('price', 300.0, WhereOperator::LESS_THAN);
@@ -174,7 +174,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->whereIn('category', ['electronics', 'furniture'])
                     ->whereBetween('price', 50.0, 250.0)
@@ -194,7 +194,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->whereRaw('price > ?', 100.0)
                     ->andWhereRaw('rating >= ?', 4.0);
@@ -211,7 +211,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('brand', 'TechCorp')
                     ->orWhereRaw('rating > ?', 4.5);
@@ -238,7 +238,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $products = query(Product::class)
             ->select()
             ->where('category', 'electronics')
-            ->whereGroup(static function (): void {})
+            ->whereGroup(function (): void {})
             ->all();
 
         foreach ($products as $product) {
@@ -250,12 +250,12 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('category', 'electronics')
                     ->orWhere('category', 'furniture');
             })
-            ->andWhereGroup(static function ($query): void {
+            ->andWhereGroup(function ($query): void {
                 $query
                     ->where('in_stock', true)
                     ->orWhere('rating', 4.5, WhereOperator::GREATER_THAN);
@@ -272,7 +272,7 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('brand', 'TechCorp')
                     ->andWhere('category', 'electronics')
@@ -301,13 +301,13 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
     {
         $products = query(Product::class)
             ->select()
-            ->whereGroup(static function ($query): void {
+            ->whereGroup(function ($query): void {
                 $query
                     ->where('category', 'electronics')
-                    ->orWhereGroup(static function ($subQuery): void {
+                    ->orWhereGroup(function ($subQuery): void {
                         $subQuery
                             ->where('category', 'furniture')
-                            ->andWhereGroup(static function ($deepQuery): void {
+                            ->andWhereGroup(function ($deepQuery): void {
                                 $deepQuery
                                     ->whereField('price', 150.0, WhereOperator::GREATER_THAN)
                                     ->orWhere('brand', 'LightUp');

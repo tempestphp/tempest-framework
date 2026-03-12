@@ -106,7 +106,7 @@ final class EventBusTester
 
     private function findDispatches(string|object $event): array
     {
-        return array_filter($this->fakeEventBus->dispatched, static function (string|object $dispatched) use ($event) {
+        return array_filter($this->fakeEventBus->dispatched, function (string|object $dispatched) use ($event) {
             if ($dispatched === $event) {
                 return true;
             }

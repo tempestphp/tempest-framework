@@ -37,7 +37,7 @@ final class GenericDatabaseTest extends TestCase
             new SerializerFactory(new GenericContainer()),
         );
 
-        $result = $database->withinTransaction(static function () {
+        $result = $database->withinTransaction(function () {
             return true;
         });
 
@@ -64,7 +64,7 @@ final class GenericDatabaseTest extends TestCase
             new SerializerFactory(new GenericContainer()),
         );
 
-        $result = $database->withinTransaction(static function (): never {
+        $result = $database->withinTransaction(function (): never {
             throw new Exception();
         });
 

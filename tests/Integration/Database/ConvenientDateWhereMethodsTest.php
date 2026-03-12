@@ -226,11 +226,9 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertCount(10, $events);
 
         foreach ($events as $event) {
-            if ($event->name === 'Last year event') {
-                continue;
+            if ($event->name !== 'Last year event') {
+                $this->assertTrue($event->event_date->isCurrentYear());
             }
-
-            $this->assertTrue($event->event_date->isCurrentYear());
         }
     }
 

@@ -6,6 +6,8 @@ namespace Tempest\EventBus;
 
 use Closure;
 use Tempest\Container;
+use Tempest\EventBus\EventBus;
+use Tempest\EventBus\EventBusConfig;
 
 /**
  * Dispatches the given `$event`, triggering all associated event listeners.

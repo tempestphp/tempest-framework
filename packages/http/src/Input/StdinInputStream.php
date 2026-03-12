@@ -20,7 +20,7 @@ final class StdinInputStream implements InputStream
 
         $inputStreamData = str($input)
             ->explode('&')
-            ->mapWithKeys(static function (string $item) {
+            ->mapWithKeys(function (string $item) {
                 $parts = explode('=', $item, 2);
 
                 $key = urldecode($parts[0]);

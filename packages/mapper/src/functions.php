@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Tempest\Container;
+use Tempest\Mapper\ObjectFactory;
 
 /**
  * Creates a factory which allows instantiating `$objectOrClass` with the data specified by the {@see \Tempest\Mapper\ObjectFactory::from()} method.

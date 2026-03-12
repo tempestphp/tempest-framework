@@ -326,6 +326,8 @@ final class MigrationManager
         $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
 
         // Remove blank lines and excessive spaces
-        return preg_replace('/\s+/', ' ', trim($sql));
+        $sql = preg_replace('/\s+/', ' ', trim($sql));
+
+        return $sql;
     }
 }

@@ -11,6 +11,7 @@ use Tempest\Console\Output\TailReader;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
+use Tempest\Log\LogConfig;
 use Tempest\Support\Filesystem;
 
 final readonly class TailLogsCommand
@@ -28,12 +29,10 @@ final readonly class TailLogsCommand
         $appendLogChannel = null;
 
         foreach ($this->config->logChannels as $channel) {
-            if (! $channel instanceof AppendLogChannel) {
-                continue;
+            if ($channel instanceof AppendLogChannel) {
+                $appendLogChannel = $channel;
+                break;
             }
-
-            $appendLogChannel = $channel;
-            break;
         }
 
         if ($appendLogChannel === null) {

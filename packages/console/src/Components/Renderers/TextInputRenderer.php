@@ -53,8 +53,8 @@ final class TextInputRenderer
 
         // if there is nothing to display after the component is done, show "no input"
         // TODO(innocenzi): clean up
-        if ($this->state->isFinished() && $lines->filter(static fn (ImmutableString $line) => $line->trim()->isNotEmpty())->isEmpty()) {
-            $displayLines = $displayLines->filter(static fn (ImmutableString $line) => $line->trim()->isNotEmpty());
+        if ($this->state->isFinished() && $lines->filter(fn (ImmutableString $line) => $line->trim()->isNotEmpty())->isEmpty()) {
+            $displayLines = $displayLines->filter(fn (ImmutableString $line) => $line->trim()->isNotEmpty());
 
             $this->line($this->style('italic dim', 'No input.'))->newLine();
         }

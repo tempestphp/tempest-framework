@@ -27,7 +27,7 @@ final readonly class ResolveConsoleCommand
         if (is_array($command)) {
             $command = array_find(
                 array: $this->consoleConfig->commands,
-                callback: static fn (ConsoleCommand $consoleCommand) => (
+                callback: fn (ConsoleCommand $consoleCommand) => (
                     $consoleCommand->handler->getDeclaringClass()->getName() === $command[0]
                     && $consoleCommand->handler->getName() === $command[1]
                 ),

@@ -52,7 +52,9 @@ trait IsDatabaseModel
     protected static function queryBuilder(): QueryBuilder
     {
         /** @var QueryBuilder<self> $query */
-        return query(self::class);
+        $query = query(self::class);
+
+        return $query;
     }
 
     /**
@@ -62,7 +64,9 @@ trait IsDatabaseModel
      */
     public static function select(): SelectQueryBuilder
     {
-        return self::queryBuilder()->select();
+        $query = self::queryBuilder()->select();
+
+        return $query;
     }
 
     /**
@@ -205,7 +209,7 @@ trait IsDatabaseModel
 
         $loadedRelations = $model
             ->getRelations()
-            ->filter(static fn (Relation $relation) => $model->isRelationLoaded($relation));
+            ->filter(fn (Relation $relation) => $model->isRelationLoaded($relation));
 
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
@@ -213,7 +217,7 @@ trait IsDatabaseModel
         $new = self::queryBuilder()
             ->onDatabase($this->onDatabase)
             ->select()
-            ->with(...$loadedRelations->map(static fn (Relation $relation) => $relation->name))
+            ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
             ->get($primaryKeyValue);
 
         foreach ($loadedRelations as $relation) {
@@ -248,7 +252,7 @@ trait IsDatabaseModel
             ->get($primaryKeyValue, $relations);
 
         $fieldsToUpdate = arr($relations)
-            ->map(static fn (string $relation) => str($relation)->before('.')->toString())
+            ->map(fn (string $relation) => str($relation)->before('.')->toString())
             ->unique();
 
         foreach ($fieldsToUpdate as $fieldToUpdate) {

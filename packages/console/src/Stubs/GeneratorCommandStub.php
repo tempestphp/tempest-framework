@@ -30,7 +30,7 @@ final class GeneratorCommandStub
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
             manipulations: [
-                static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

@@ -54,7 +54,7 @@ final class ViteTester
      */
     public function preventTagResolution(): self
     {
-        $this->container->register(TagsResolver::class, static fn () => new NullTagsResolver());
+        $this->container->register(TagsResolver::class, fn () => new NullTagsResolver());
 
         return $this;
     }
@@ -150,7 +150,7 @@ final class ViteTester
         $this->container->config($actualViteConfig);
 
         if ($tagsResolver) {
-            $this->container->register(TagsResolver::class, static fn () => $tagsResolver);
+            $this->container->register(TagsResolver::class, fn () => $tagsResolver);
         }
 
         delete_directory($temporaryRootDirectory);

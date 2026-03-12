@@ -14,7 +14,7 @@ final class Stacktrace
     public array $applicationFrames {
         get => array_values(array_filter(
             array: $this->frames,
-            callback: static fn (Frame $frame) => ! $frame->isVendor,
+            callback: fn (Frame $frame) => ! $frame->isVendor,
         ));
     }
 
@@ -22,7 +22,7 @@ final class Stacktrace
     public array $vendorFrames {
         get => array_values(array_filter(
             array: $this->frames,
-            callback: static fn (Frame $frame) => $frame->isVendor,
+            callback: fn (Frame $frame) => $frame->isVendor,
         ));
     }
 
@@ -103,7 +103,7 @@ final class Stacktrace
                     index: 1,
                 ),
                 // and shift the frame index by one for each frame
-                ...array_map(static fn (Frame $frame) => new Frame(
+                ...array_map(fn (Frame $frame) => new Frame(
                     line: $frame->line,
                     class: $frame->class,
                     function: $frame->function,

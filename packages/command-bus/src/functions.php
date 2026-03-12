@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
+use Tempest\CommandBus\CommandBus;
 use Tempest\Container;
 
 /**

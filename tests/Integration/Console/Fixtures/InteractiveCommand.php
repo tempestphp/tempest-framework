@@ -131,8 +131,8 @@ final readonly class InteractiveCommand
     {
         $result = $this->console->progressBar(
             data: array_fill(0, 10, 'a'),
-            handler: static function ($i) {
-                usleep(100_000);
+            handler: function ($i) {
+                usleep(100000);
 
                 return $i . $i;
             },
@@ -148,14 +148,14 @@ final readonly class InteractiveCommand
 
         $result = $this->console->search(
             'Search',
-            static function (string $query) use ($data): array {
+            function (string $query) use ($data): array {
                 if ($query === '') {
                     return [];
                 }
 
                 return array_filter(
                     $data,
-                    static fn (string $name) => str_contains(strtolower($name), strtolower($query)),
+                    fn (string $name) => str_contains(strtolower($name), strtolower($query)),
                 );
             },
         );

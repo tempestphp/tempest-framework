@@ -20,7 +20,7 @@ final class InvalidCommandException extends ConsoleException
     public function render(Console $console): void
     {
         $missingArguments = implode(', ', array_map(
-            static fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
+            fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
             $this->invalidArguments,
         ));
 

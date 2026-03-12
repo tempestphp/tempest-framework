@@ -22,7 +22,7 @@ final class EnvironmentVariableValidationFailed extends Exception
         parent::__construct(vsprintf("Environment variable [%s] is not valid:\n- %s", [
             $name,
             arr($failingRules)
-                ->map(static fn (FailingRule $failingRule) => $validator->getErrorMessage($failingRule, $name))
+                ->map(fn (FailingRule $failingRule) => $validator->getErrorMessage($failingRule, $name))
                 ->implode("\n- ")
                 ->toString(),
         ]));

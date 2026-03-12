@@ -16,7 +16,7 @@ final class TokenCollection implements IteratorAggregate, ArrayAccess
         private array $tokens = [],
     ) {}
 
-    public function add(#[\SensitiveParameter] Token $token): self
+    public function add(Token $token): self
     {
         $this->tokens[] = $token;
 
@@ -33,7 +33,7 @@ final class TokenCollection implements IteratorAggregate, ArrayAccess
         return [
             implode(
                 ', ' . PHP_EOL,
-                array_map(static fn (#[\SensitiveParameter] Token $token) => $token->__debugInfo()[0], $this->tokens),
+                array_map(fn (Token $token) => $token->__debugInfo()[0], $this->tokens),
             ),
         ];
     }

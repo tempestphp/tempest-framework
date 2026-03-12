@@ -34,7 +34,7 @@ final class DebugTest extends FrameworkIntegrationTestCase
         $dispatchCount = 0;
 
         $eventBus = $this->container->get(EventBus::class);
-        $eventBus->listen(static function (ItemsDebugged $event) use (&$dispatchCount): void {
+        $eventBus->listen(function (ItemsDebugged $event) use (&$dispatchCount): void {
             $dispatchCount++;
 
             Debug::resolve()->log(['recursive call'], writeToLog: false, writeToOut: false);

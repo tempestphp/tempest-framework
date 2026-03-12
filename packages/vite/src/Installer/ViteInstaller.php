@@ -69,7 +69,7 @@ final class ViteInstaller implements Installer
         }
 
         // Installs package.json scripts
-        $this->updateJson(root_path('package.json'), static function (array $json) {
+        $this->updateJson(root_path('package.json'), function (array $json) {
             $json['type'] = 'module';
             $json['scripts'] ??= [];
             $json['scripts'] = [

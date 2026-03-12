@@ -31,7 +31,7 @@ if (trait_exists(PublishesFiles::class)) {
                 ->replaceStart(root_path(), '')
                 ->trim('/')
                 ->explode('/')
-                ->map(static fn (string $part) => ucfirst($part))
+                ->map(fn (string $part) => ucfirst($part))
                 ->implode('\\')
                 ->append('\\')
                 ->toString();

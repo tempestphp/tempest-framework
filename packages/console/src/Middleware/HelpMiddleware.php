@@ -55,9 +55,9 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
             $this->console
                 ->writeln()
                 ->write("<style=\"underline\">{$argumentDefinition->name}</style>")
-                ->when($argumentDefinition->aliases !== [], static fn (Console $console) => $console->write(' (' . implode(', ', $argumentDefinition->aliases) . ')'))
-                ->when($argumentDefinition->description, static fn (Console $console) => $console->writeln()->writeln($argumentDefinition->description))
-                ->when($argumentDefinition->help, static fn (Console $console) => $console->writeln()->writeln('<style="fg-gray">' . $argumentDefinition->help . '</style>'));
+                ->when($argumentDefinition->aliases !== [], fn (Console $console) => $console->write(' (' . implode(', ', $argumentDefinition->aliases) . ')'))
+                ->when($argumentDefinition->description, fn (Console $console) => $console->writeln()->writeln($argumentDefinition->description))
+                ->when($argumentDefinition->help, fn (Console $console) => $console->writeln()->writeln('<style="fg-gray">' . $argumentDefinition->help . '</style>'));
         }
 
         $this->console->writeln();

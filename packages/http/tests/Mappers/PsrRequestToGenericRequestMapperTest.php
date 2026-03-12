@@ -145,6 +145,8 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
         }
 
         $stream = new Stream('php://temp', 'r+');
-        return $request->withBody($stream);
+        $request = $request->withBody($stream);
+
+        return $request;
     }
 }

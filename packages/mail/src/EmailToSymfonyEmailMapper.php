@@ -119,7 +119,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
     private function convertAddresses(null|string|array|EmailAddress $addresses): array
     {
         return arr($addresses)
-            ->map(static fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
+            ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
                 $address instanceof SymfonyAddress => $address,
                 $address instanceof EmailAddress => new SymfonyAddress($address->email, $address->name ?? ''),
                 default => SymfonyAddress::create($address),

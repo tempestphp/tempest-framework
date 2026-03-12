@@ -26,7 +26,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             CommandRepository::class,
-            static fn () => $repository,
+            fn () => $repository,
         );
 
         MyAsyncCommandHandler::$isHandled = false;
@@ -75,7 +75,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $process->stop();
 
         arr(glob(__DIR__ . '/../../../packages/command-bus/src/stored-commands/*.failed.txt'))
-            ->each(static function (string $filename): void {
+            ->each(function (string $filename): void {
                 unlink($filename);
             });
     }
@@ -83,7 +83,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
     private function getOutput(Process $process): string
     {
         $pattern = array_map(
-            static fn (TerminalStyle $consoleStyle) => TerminalStyle::ESC->value . $consoleStyle->value,
+            fn (TerminalStyle $consoleStyle) => TerminalStyle::ESC->value . $consoleStyle->value,
             TerminalStyle::cases(),
         );
 

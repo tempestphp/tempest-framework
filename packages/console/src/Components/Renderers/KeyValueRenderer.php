@@ -20,8 +20,8 @@ final readonly class KeyValueRenderer
     {
         $key = $this->cleanText($key)->append(' ');
         $value = $this->cleanText($value)->when(
-            condition: static fn ($s) => $s->stripTags()->length() !== 0,
-            callback: static fn ($s) => $s->prepend(' '),
+            condition: fn ($s) => $s->stripTags()->length() !== 0,
+            callback: fn ($s) => $s->prepend(' '),
         );
 
         $maximumWidth = $useAvailableWidth
@@ -58,7 +58,7 @@ final readonly class KeyValueRenderer
 
         return $text
             ->replaceRegex('/\[([^]]+)]/', '<em>[$1]</em>')
-            ->when(static fn ($s) => $s->endsWith(['.', '?', '!', ':']), static fn ($s) => $s->replaceAt(-1, 1, ''))
+            ->when(fn ($s) => $s->endsWith(['.', '?', '!', ':']), fn ($s) => $s->replaceAt(-1, 1, ''))
             ->erase(root_path())
             ->trim();
     }

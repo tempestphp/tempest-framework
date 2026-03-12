@@ -73,8 +73,8 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
         $longestCommandName = max(
             arr($commands)
-                ->flatMap(static fn (array $group) => $group)
-                ->map(static fn (ConsoleCommand $command) => mb_strlen($command->getName()))
+                ->flatMap(fn (array $group) => $group)
+                ->map(fn (ConsoleCommand $command) => mb_strlen($command->getName()))
                 ->toArray(),
         ) + 4;
 
@@ -96,7 +96,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         $this->console
             ->unless(
                 condition: $this->discoveryCache->valid,
-                callback: static fn (Console $console) => $console->writeln()->error('Discovery cache invalid. Run discovery:generate to enable discovery caching.'),
+                callback: fn (Console $console) => $console->writeln()->error('Discovery cache invalid. Run discovery:generate to enable discovery caching.'),
             );
     }
 }

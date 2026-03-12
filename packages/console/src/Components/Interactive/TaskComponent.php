@@ -139,11 +139,9 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
     private function cleanupSockets(): void
     {
         foreach ($this->sockets as $socket) {
-            if (! is_resource($socket)) {
-                continue;
+            if (is_resource($socket)) {
+                @fclose($socket);
             }
-
-            @fclose($socket);
         }
 
         $this->sockets = [];
@@ -153,7 +151,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
     {
         $log = function (string ...$lines): void {
             arr($lines)
-                ->flatMap(static fn (string $line) => explode("\n", $line))
+                ->flatMap(fn (string $line) => explode("\n", $line))
                 ->each(function (string $line): void {
                     fwrite($this->sockets[0], $line);
                 });
@@ -174,7 +172,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
 
         if ($handler instanceof Process) {
             return static function (Closure $log) use ($handler): bool {
-                return $handler->run(static function (string $type, string $buffer) use ($log): void {
+                return $handler->run(function (string $type, string $buffer) use ($log): void {
                     if ($type === Process::ERR) {
                         return;
                     }

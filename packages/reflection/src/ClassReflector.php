@@ -56,7 +56,7 @@ final class ClassReflector implements Reflector
     public function getInterfaces(): array
     {
         return array_map(
-            static fn (PHPReflectionClass $interface) => new TypeReflector($interface),
+            fn (PHPReflectionClass $interface) => new TypeReflector($interface),
             $this->reflectionClass->getInterfaces(),
         );
     }
@@ -65,7 +65,7 @@ final class ClassReflector implements Reflector
     public function getPublicProperties(): array
     {
         return array_map(
-            static fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
             $this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC),
         );
     }
@@ -74,7 +74,7 @@ final class ClassReflector implements Reflector
     public function getProperties(): array
     {
         return array_map(
-            static fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
             $this->reflectionClass->getProperties(),
         );
     }
@@ -85,7 +85,7 @@ final class ClassReflector implements Reflector
         return $this->memoize(
             'public_methods',
             fn () => array_map(
-                static fn (PHPReflectionMethod $method) => new MethodReflector($method),
+                fn (PHPReflectionMethod $method) => new MethodReflector($method),
                 $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
             ),
         );

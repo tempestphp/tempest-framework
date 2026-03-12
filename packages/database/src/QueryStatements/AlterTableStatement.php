@@ -94,8 +94,8 @@ final class AlterTableStatement implements QueryStatement, HasTrailingStatements
                 'ALTER TABLE %s %s;',
                 new TableDefinition($this->tableName),
                 arr($this->statements)
-                    ->map(static fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                    ->filter(static fn (ImmutableString $line) => $line->isNotEmpty())
+                    ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                    ->filter(fn (ImmutableString $line) => $line->isNotEmpty())
                     ->implode(', ' . PHP_EOL . '    ')
                     ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                     ->toString(),

@@ -58,7 +58,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         $path = path($this->directory);
 
         if ($path->isDirectory()) {
-            $path->glob('/*.php')->each(static fn (string $file) => unlink($file));
+            $path->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             Filesystem\delete_directory($this->directory);
         }

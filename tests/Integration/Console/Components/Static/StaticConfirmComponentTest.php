@@ -16,7 +16,7 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
     public function test_confirm(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 if ($console->confirm('continue')) {
                     $console->writeln('continued');
                 } else {
@@ -30,7 +30,7 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
     public function test_not_confirm(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 if ($console->confirm('continue')) {
                     $console->writeln('continued');
                 } else {
@@ -44,7 +44,7 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
     public function test_with_default(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 if ($console->confirm('continue', default: true)) {
                     $console->writeln('continued');
                 } else {
@@ -58,7 +58,7 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
     public function test_without_default(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 if ($console->confirm('continue')) {
                     $console->writeln('continued');
                 } else {
@@ -73,7 +73,7 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 if ($console->confirm('continue', default: true)) {
                     $console->writeln('continued');
                 } else {

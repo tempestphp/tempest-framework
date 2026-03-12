@@ -163,11 +163,9 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         $reflector = new ClassReflector($targetClass);
 
         foreach ($reflector->getPublicProperties() as $property) {
-            if (! $property->hasAttribute(SensitiveField::class)) {
-                continue;
+            if ($property->hasAttribute(SensitiveField::class)) {
+                unset($body[$property->getName()]);
             }
-
-            unset($body[$property->getName()]);
         }
 
         return $body;

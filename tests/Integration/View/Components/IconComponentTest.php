@@ -41,7 +41,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
@@ -61,11 +61,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->container->singleton(
             IconConfig::class,
-            static fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test', retryAfter: Duration::hours(12)),
+            fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test', retryAfter: Duration::hours(12)),
         );
 
         $this->assertSame(
@@ -94,7 +94,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->view->render('<x-icon name="material-symbols:php" />');
 
@@ -120,7 +120,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         // Trigger first render, which should cache the icon
         $this->view->render('<x-icon name="material-symbols:php" />');
@@ -140,7 +140,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/material-symbols/php.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
         $this->container->singleton(Environment::class, Environment::LOCAL);
 
         $this->assertSame(
@@ -158,7 +158,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/material-symbols/php.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
         $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
         $this->assertSame(
@@ -179,7 +179,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
@@ -201,7 +201,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg style="width: 24px; height: 24px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
@@ -223,7 +223,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg width="2em" height="2em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
@@ -245,7 +245,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
@@ -267,7 +267,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $rendered = $this->view->render(
             '<x-icon :name="$iconName" class="size-5" />',
@@ -294,7 +294,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
                 body: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 15V9h3.5q.6 0 1.05.45T8 10.5v1q0 .6-.45 1.05T6.5 13h-2v2zm6.5 0V9H11v2h2V9h1.5v6H13v-2.5h-2V15zm7 0V9H20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05T20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"/></svg>',
             ));
 
-        $this->container->register(HttpClient::class, static fn () => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $view = view(__DIR__ . '/../../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
         $html = $this->view->render($view);

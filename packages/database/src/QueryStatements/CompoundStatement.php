@@ -22,7 +22,7 @@ final readonly class CompoundStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return arr($this->statements)
-            ->map(static fn (QueryStatement $statement) => $statement->compile($dialect))
+            ->map(fn (QueryStatement $statement) => $statement->compile($dialect))
             ->implode(';' . PHP_EOL)
             ->append(';')
             ->toString();

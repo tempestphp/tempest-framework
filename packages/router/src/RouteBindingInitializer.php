@@ -24,13 +24,11 @@ final class RouteBindingInitializer implements DynamicInitializer
         $parameter = null;
 
         foreach ($matchedRoute->route->handler->getParameters() as $searchParameter) {
-            if (! $searchParameter->getType()->equals($class->getType())) {
-                continue;
+            if ($searchParameter->getType()->equals($class->getType())) {
+                $parameter = $searchParameter;
+
+                break;
             }
-
-            $parameter = $searchParameter;
-
-            break;
         }
 
         if ($parameter === null) {

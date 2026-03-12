@@ -36,8 +36,8 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
     {
         $executed = false;
 
-        defer(static function (Container $container) use (&$executed): void {
-            $container->invoke(static function () use (&$executed): void {
+        defer(function (Container $container) use (&$executed): void {
+            $container->invoke(function () use (&$executed): void {
                 $executed = true;
             });
         });

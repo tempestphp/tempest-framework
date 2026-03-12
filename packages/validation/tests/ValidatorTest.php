@@ -51,7 +51,7 @@ final class ValidatorTest extends TestCase
 
     public function test_closure_fails_with_false_response(): void
     {
-        $failingRules = $this->validator->validateValue('a', static function (mixed $_) {
+        $failingRules = $this->validator->validateValue('a', function (mixed $_) {
             return false;
         });
 
@@ -60,7 +60,7 @@ final class ValidatorTest extends TestCase
 
     public function test_closure_fails_with_string_response(): void
     {
-        $failingRules = $this->validator->validateValue('a', static function (mixed $_) {
+        $failingRules = $this->validator->validateValue('a', function (mixed $_) {
             return 'I expected b';
         });
 
@@ -74,7 +74,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_null_response(): void
     {
         $validator = $this->validator;
-        $validator->validateValue('a', static function (mixed $_) {
+        $validator->validateValue('a', function (mixed $_) {
             return null;
         });
 
@@ -84,7 +84,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_true_response(): void
     {
         $validator = $this->validator;
-        $validator->validateValue('a', static function (mixed $_) {
+        $validator->validateValue('a', function (mixed $_) {
             return true;
         });
 
@@ -95,11 +95,11 @@ final class ValidatorTest extends TestCase
     {
         $validator = $this->validator;
 
-        $validator->validateValue('a', static function (mixed $value) {
+        $validator->validateValue('a', function (mixed $value) {
             return $value === 'a';
         });
 
-        $validator->validateValue('a', static function (mixed $value) {
+        $validator->validateValue('a', function (mixed $value) {
             if ($value === 'a') {
                 return true;
             }

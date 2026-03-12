@@ -322,7 +322,7 @@ final class ManipulatesStringTest extends TestCase
     public function test_replace_regex(): void
     {
         $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', '')->equals('abc'));
-        $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', static fn () => '')->equals('abc'));
+        $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', fn () => '')->equals('abc'));
         $this->assertTrue(str('10-abc')->replaceRegex(['/\d/', '/\w/'], ['#', 'X'])->equals('##-XXX'));
     }
 
@@ -594,7 +594,7 @@ b'));
         $string = str('foo');
 
         $log = '';
-        $result = $string->tap(static function (ImmutableString $string) use (&$log): void {
+        $result = $string->tap(function (ImmutableString $string) use (&$log): void {
             $log .= $string->toString();
         });
 

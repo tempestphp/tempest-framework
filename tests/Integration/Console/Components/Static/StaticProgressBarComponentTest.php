@@ -15,10 +15,10 @@ final class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
     public function test_progress_bar(): void
     {
         $this->console
-            ->call(static function (Console $console): void {
+            ->call(function (Console $console): void {
                 $output = $console->progressBar(
                     ['a', 'b', 'c'],
-                    static fn (string $input) => $input . $input,
+                    fn (string $input) => $input . $input,
                 );
 
                 $console->write(json_encode($output));

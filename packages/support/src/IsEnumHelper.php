@@ -39,7 +39,7 @@ trait IsEnumHelper
     {
         $cases = array_filter(
             static::cases(),
-            static fn (UnitEnum $case) => $case->name === $name,
+            fn (UnitEnum $case) => $case->name === $name,
         );
 
         return array_shift($cases);

@@ -2,6 +2,8 @@
 
 namespace Tempest\Intl;
 
+use Tempest\Intl\Locale;
+
 interface Translator
 {
     /**

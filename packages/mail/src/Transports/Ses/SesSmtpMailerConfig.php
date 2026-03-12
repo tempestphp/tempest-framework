@@ -25,7 +25,6 @@ final class SesSmtpMailerConfig implements MailerConfig
         /**
          * Secret key used for authenticating to the SES API.
          */
-        #[\SensitiveParameter]
         public string $password,
 
         /**

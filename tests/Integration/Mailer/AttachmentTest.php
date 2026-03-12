@@ -48,7 +48,7 @@ final class AttachmentTest extends FrameworkIntegrationTestCase
     public function test_from_closure(): void
     {
         $attachment = Attachment::fromClosure(
-            static fn () => 'Hello, world!',
+            fn () => 'Hello, world!',
             'greeting.txt',
             'text/plain',
         );

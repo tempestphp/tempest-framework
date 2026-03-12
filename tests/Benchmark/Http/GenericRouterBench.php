@@ -47,9 +47,9 @@ final class GenericRouterBench
 
         $matcher = new GenericRouteMatcher($routeConfig);
 
-        $container->singleton(Container::class, static fn () => $container);
-        $container->singleton(RouteMatcher::class, static fn () => $matcher);
-        $container->singleton(RouteConfig::class, static fn () => $routeConfig);
+        $container->singleton(Container::class, fn () => $container);
+        $container->singleton(RouteMatcher::class, fn () => $matcher);
+        $container->singleton(RouteConfig::class, fn () => $routeConfig);
 
         $this->router = new GenericRouter($container, $routeConfig);
 
@@ -61,9 +61,9 @@ final class GenericRouterBench
         $containerWithoutExceptionMiddleware = new GenericContainer();
         $matcherWithoutExceptionMiddleware = new GenericRouteMatcher($routeConfigWithoutExceptionMiddleware);
 
-        $containerWithoutExceptionMiddleware->singleton(Container::class, static fn () => $containerWithoutExceptionMiddleware);
-        $containerWithoutExceptionMiddleware->singleton(RouteMatcher::class, static fn () => $matcherWithoutExceptionMiddleware);
-        $containerWithoutExceptionMiddleware->singleton(RouteConfig::class, static fn () => $routeConfigWithoutExceptionMiddleware);
+        $containerWithoutExceptionMiddleware->singleton(Container::class, fn () => $containerWithoutExceptionMiddleware);
+        $containerWithoutExceptionMiddleware->singleton(RouteMatcher::class, fn () => $matcherWithoutExceptionMiddleware);
+        $containerWithoutExceptionMiddleware->singleton(RouteConfig::class, fn () => $routeConfigWithoutExceptionMiddleware);
 
         $this->routerWithoutExceptionMiddleware = new GenericRouter($containerWithoutExceptionMiddleware, $routeConfigWithoutExceptionMiddleware);
     }

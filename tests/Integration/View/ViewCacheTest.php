@@ -37,7 +37,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
         $directory = path(self::DIRECTORY);
 
         if ($directory->isDirectory()) {
-            $directory->glob('/*.php')->each(static fn (string $file) => unlink($file));
+            $directory->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             rmdir(self::DIRECTORY);
         }
@@ -103,7 +103,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
 
     public function test_view_cache(): void
     {
-        $path = $this->viewCache->getCachedViewPath('path', static fn () => 'hi');
+        $path = $this->viewCache->getCachedViewPath('path', fn () => 'hi');
 
         $this->assertFileExists($path);
         $this->assertSame('hi', file_get_contents($path));
@@ -115,7 +115,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
 
         $this->viewCache->enabled = false;
 
-        $compileFunction = static function () use (&$hit) {
+        $compileFunction = function () use (&$hit) {
             $hit += 1;
 
             return 'hi';
@@ -135,7 +135,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
 
         $this->viewCache->enabled = true;
 
-        $compileFunction = static function () use (&$hit) {
+        $compileFunction = function () use (&$hit) {
             $hit += 1;
 
             return 'hi';

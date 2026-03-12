@@ -72,11 +72,11 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->delete()
             ->when(
                 true,
-                static fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'boo'),
+                fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'boo'),
             )
             ->when(
                 false,
-                static fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'foo'),
+                fn (DeleteQueryBuilder $query) => $query->whereRaw('`bar` = ?', 'foo'),
             )
             ->build();
 
@@ -142,7 +142,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->delete()
             ->whereRaw('status = ?', 'draft')
-            ->andWhereGroup(static function ($group): void {
+            ->andWhereGroup(function ($group): void {
                 $group
                     ->whereRaw('created_at < ?', '2022-01-01')
                     ->andWhereRaw('author_id IS NULL');

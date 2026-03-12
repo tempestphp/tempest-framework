@@ -189,7 +189,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->where('published', true)
-            ->andWhereGroup(static function ($group): void {
+            ->andWhereGroup(function ($group): void {
                 $group
                     ->where('category', 'fiction')
                     ->orWhere('rating', 4.5, WhereOperator::GREATER_THAN);
@@ -207,7 +207,7 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->select()
             ->where('status', 'published')
-            ->andWhereGroup(static function ($group): void {
+            ->andWhereGroup(function ($group): void {
                 $group
                     ->whereField('category', ['fiction', 'mystery'], WhereOperator::IN)
                     ->orWhereRaw('custom_field IS NOT NULL');

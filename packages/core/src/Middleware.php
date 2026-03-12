@@ -64,7 +64,7 @@ final class Middleware implements IteratorAggregate
     /** @return self<MiddlewareInterface> */
     private function sort(): self
     {
-        uasort($this->middlewareClasses, static function (ClassReflector $a, ClassReflector $b): int {
+        uasort($this->middlewareClasses, function (ClassReflector $a, ClassReflector $b): int {
             $priorityA = $a->getAttribute(Priority::class)->priority ?? Priority::NORMAL;
             $priorityB = $b->getAttribute(Priority::class)->priority ?? Priority::NORMAL;
 
@@ -78,7 +78,7 @@ final class Middleware implements IteratorAggregate
     {
         return [
             'middlewareClasses' => arr($this->middlewareClasses)
-                ->map(static fn (ClassReflector $class) => $class->getName())
+                ->map(fn (ClassReflector $class) => $class->getName())
                 ->toArray(),
         ];
     }
@@ -86,7 +86,7 @@ final class Middleware implements IteratorAggregate
     public function __unserialize(array $data): void
     {
         $this->middlewareClasses = arr($data['middlewareClasses'])
-            ->map(static fn (string $className) => new ClassReflector($className))
+            ->map(fn (string $className) => new ClassReflector($className))
             ->toArray();
     }
 }

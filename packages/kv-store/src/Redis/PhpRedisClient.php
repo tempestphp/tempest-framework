@@ -82,7 +82,7 @@ final readonly class PhpRedisClient implements Redis
         }
 
         $command = (string) $command;
-        $arguments = array_map(static fn (Stringable|string $argument) => (string) $argument, $arguments);
+        $arguments = array_map(fn (Stringable|string $argument) => (string) $argument, $arguments);
         $startedAt = DateTime::now();
         $result = $this->client->rawcommand($command, ...$arguments);
 

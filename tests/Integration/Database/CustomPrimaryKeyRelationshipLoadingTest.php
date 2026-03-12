@@ -87,7 +87,7 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
 
         $this->assertCount(2, $loadedMage->spells);
 
-        $spellNames = array_map(static fn (SpellWithUuid $spell) => $spell->name, $loadedMage->spells);
+        $spellNames = array_map(fn (SpellWithUuid $spell) => $spell->name, $loadedMage->spells);
         $this->assertContains('Zoltraak', $spellNames);
         $this->assertContains('Volzandia', $spellNames);
 

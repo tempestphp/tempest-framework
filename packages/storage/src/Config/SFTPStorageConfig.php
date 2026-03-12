@@ -15,7 +15,6 @@ final class SFTPStorageConfig implements StorageConfig
         public string $host,
         public string $root,
         public string $username,
-        #[\SensitiveParameter]
         public string $password,
         public ?string $privateKey = null,
         public ?string $passphrase = null,

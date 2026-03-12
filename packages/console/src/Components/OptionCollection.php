@@ -38,7 +38,7 @@ final class OptionCollection implements Iterator, Countable
 
         $this->preserveKeys = $options->isAssociative();
         $this->options = $options
-            ->map(static fn (mixed $value, string|int $key) => new Option($key, $value))
+            ->map(fn (mixed $value, string|int $key) => new Option($key, $value))
             ->toArray();
 
         $this->filter(null);
@@ -50,11 +50,11 @@ final class OptionCollection implements Iterator, Countable
         $previouslySelectedOptions = $this->selectedOptions;
 
         $this->filteredOptions = arr($this->options)
-            ->filter(static fn (Option $option) => ! $query || str_contains(mb_strtolower((string) $option->value), mb_strtolower(trim($query))))
+            ->filter(fn (Option $option) => ! $query || str_contains(mb_strtolower((string) $option->value), mb_strtolower(trim($query))))
             ->values()
             ->toArray();
 
-        $this->selectedOptions = array_filter($this->filteredOptions, static fn (Option $option) => in_array($option, $previouslySelectedOptions, strict: true));
+        $this->selectedOptions = array_filter($this->filteredOptions, fn (Option $option) => in_array($option, $previouslySelectedOptions, strict: true));
         $this->activeOption = array_search($previouslyActiveOption ?? $this->filteredOptions[0] ?? '', $this->filteredOptions, strict: true) ?: 0;
     }
 
@@ -90,7 +90,7 @@ final class OptionCollection implements Iterator, Countable
         if (! $this->isSelected($active)) {
             $this->selectedOptions[] = $active;
         } else {
-            $this->selectedOptions = array_filter($this->selectedOptions, static fn (Option $option) => ! $active->equals($option));
+            $this->selectedOptions = array_filter($this->selectedOptions, fn (Option $option) => ! $active->equals($option));
         }
     }
 
@@ -160,7 +160,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function isSelected(Option $option): bool
     {
-        return (bool) arr($this->selectedOptions)->first(static fn (Option $other) => $option->equals($other));
+        return (bool) arr($this->selectedOptions)->first(fn (Option $other) => $option->equals($other));
     }
 
     public function isActive(Option $option): bool
@@ -186,7 +186,7 @@ final class OptionCollection implements Iterator, Countable
         };
 
         $this->activeOption = array_search(
-            array_find($this->filteredOptions, static fn (Option $option) => $option->key === $value || $option->value === $value),
+            array_find($this->filteredOptions, fn (Option $option) => $option->key === $value || $option->value === $value),
             $this->filteredOptions,
             strict: true,
         ) ?: 0;

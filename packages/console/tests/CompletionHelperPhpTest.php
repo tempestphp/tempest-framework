@@ -228,7 +228,7 @@ final class CompletionHelperPhpTest extends TestCase
     private function mapCompletions(array $completions): array
     {
         return array_map(
-            static fn (CompletionCandidate $completion): array => [
+            fn (CompletionCandidate $completion): array => [
                 'value' => $completion->value,
                 'display' => $completion->display,
             ],

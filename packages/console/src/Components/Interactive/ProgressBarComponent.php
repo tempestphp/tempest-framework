@@ -43,7 +43,7 @@ final class ProgressBarComponent implements InteractiveConsoleComponent, HasStat
         $count = iterator_count($this->data);
         $step = 1;
 
-        $format = $this->format ?? static function (int $step, int $count): string {
+        $format = $this->format ?? function (int $step, int $count): string {
             $width = 30;
 
             $progress = (int) round(($step / $count) * $width);

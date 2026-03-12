@@ -168,8 +168,8 @@ abstract class IntegrationTest extends TestCase
     protected function setupConsole(): self
     {
         $this->console = new ConsoleTester($this->container);
-        $this->container->singleton(OutputBuffer::class, static fn () => new MemoryOutputBuffer());
-        $this->container->singleton(StdoutOutputBuffer::class, static fn () => new MemoryOutputBuffer());
+        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
+        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
 
         return $this;
     }
@@ -203,8 +203,8 @@ abstract class IntegrationTest extends TestCase
     protected function setupBaseRequest(): self
     {
         $request = new GenericRequest(Method::GET, '/', []);
-        $this->container->singleton(Request::class, static fn () => $request);
-        $this->container->singleton(GenericRequest::class, static fn () => $request);
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton(GenericRequest::class, fn () => $request);
 
         return $this;
     }
@@ -213,7 +213,7 @@ abstract class IntegrationTest extends TestCase
     {
         $clock = new MockClock($now);
 
-        $this->container->singleton(Clock::class, static fn () => $clock);
+        $this->container->singleton(Clock::class, fn () => $clock);
 
         return $clock;
     }

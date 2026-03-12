@@ -64,11 +64,9 @@ final readonly class ObjectToArrayMapper implements Mapper
 
         if ($property->getIterableType()?->isClass()) {
             foreach ($propertyValue as $key => $value) {
-                if (! is_object($value)) {
-                    continue;
+                if (is_object($value)) {
+                    $propertyValue[$key] = map($value)->toArray();
                 }
-
-                $propertyValue[$key] = map($value)->toArray();
             }
 
             return $propertyValue;

@@ -85,7 +85,7 @@ final readonly class PolicyBasedAccessControl implements AccessControl
         $actionBeingEvaluated = Str\parse($action);
 
         return new ImmutableArray($this->authConfig->policies[$resource] ?? [])
-            ->filter(static fn ($_, string $action) => $action === $actionBeingEvaluated)
+            ->filter(fn ($_, string $action) => $action === $actionBeingEvaluated)
             ->flatten();
     }
 
@@ -96,13 +96,13 @@ final readonly class PolicyBasedAccessControl implements AccessControl
         $this->ensureParameterAcceptsInput(
             reflector: $policy->getParameter(key: 0),
             input: $resource,
-            throw: static fn (string $expected) => throw PolicyMethodWasInvalid::resourceParameterIsInvalid($policyName, $expected),
+            throw: fn (string $expected) => throw PolicyMethodWasInvalid::resourceParameterIsInvalid($policyName, $expected),
         );
 
         $this->ensureParameterAcceptsInput(
             reflector: $policy->getParameter(key: 1),
             input: $subject,
-            throw: static fn (string $expected) => throw PolicyMethodWasInvalid::subjectParameterIsInvalid($policyName, $expected),
+            throw: fn (string $expected) => throw PolicyMethodWasInvalid::subjectParameterIsInvalid($policyName, $expected),
         );
 
         $decision = $policy->invokeArgs(

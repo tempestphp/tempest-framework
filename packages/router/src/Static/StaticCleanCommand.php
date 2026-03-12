@@ -56,11 +56,9 @@ final readonly class StaticCleanCommand
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator($directoryIterator) as $file) {
-            if ($file->getExtension() !== 'html') {
-                continue;
+            if ($file->getExtension() === 'html') {
+                $files[] = $file;
             }
-
-            $files[] = $file;
         }
 
         foreach ($files as $file) {

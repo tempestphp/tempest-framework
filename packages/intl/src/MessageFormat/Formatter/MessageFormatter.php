@@ -375,8 +375,8 @@ final class MessageFormatter
         }
 
         return arr($this->markupFormatters)
-            ->filter(static fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof MarkupFormatter)
-            ->first(static fn (MarkupFormatter $fn) => $fn->supportsTag($tag));
+            ->filter(fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof MarkupFormatter)
+            ->first(fn (MarkupFormatter $fn) => $fn->supportsTag($tag));
     }
 
     private function getStandaloneMarkupFormatter(?string $tag): ?StandaloneMarkupFormatter
@@ -386,8 +386,8 @@ final class MessageFormatter
         }
 
         return arr($this->markupFormatters)
-            ->filter(static fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof StandaloneMarkupFormatter)
-            ->first(static fn (StandaloneMarkupFormatter $fn) => $fn->supportsTag($tag));
+            ->filter(fn (MarkupFormatter|StandaloneMarkupFormatter $fn) => $fn instanceof StandaloneMarkupFormatter)
+            ->first(fn (StandaloneMarkupFormatter $fn) => $fn->supportsTag($tag));
     }
 
     private function getSelectorFunction(?string $name): ?SelectorFunction
@@ -397,8 +397,8 @@ final class MessageFormatter
         }
 
         return arr($this->functions)
-            ->filter(static fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof SelectorFunction)
-            ->first(static fn (SelectorFunction $fn) => $fn->name === $name);
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof SelectorFunction)
+            ->first(fn (SelectorFunction $fn) => $fn->name === $name);
     }
 
     private function getFormattingFunction(?string $name): ?FormattingFunction
@@ -408,7 +408,7 @@ final class MessageFormatter
         }
 
         return arr($this->functions)
-            ->filter(static fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof FormattingFunction)
-            ->first(static fn (FormattingFunction $fn) => $fn->name === $name);
+            ->filter(fn (FormattingFunction|SelectorFunction $fn) => $fn instanceof FormattingFunction)
+            ->first(fn (FormattingFunction $fn) => $fn->name === $name);
     }
 }

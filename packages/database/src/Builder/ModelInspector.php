@@ -311,11 +311,9 @@ final class ModelInspector
             $relationFields = arr();
 
             foreach ($this->reflector->getPublicProperties() as $property) {
-                if (! ($relation = $this->getRelation($property->getName()))) {
-                    continue;
+                if ($relation = $this->getRelation($property->getName())) {
+                    $relationFields[] = $relation;
                 }
-
-                $relationFields[] = $relation;
             }
 
             return $relationFields;
@@ -572,7 +570,7 @@ final class ModelInspector
         }
 
         $primaryKeys = arr($this->reflector->getProperties())
-            ->filter(static fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
+            ->filter(fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
 
         return match ($primaryKeys->count()) {
             0 => null,

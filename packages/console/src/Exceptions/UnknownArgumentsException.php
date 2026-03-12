@@ -20,7 +20,7 @@ final class UnknownArgumentsException extends ConsoleException
         $console->error(sprintf(
             'Unknown arguments: %s',
             $this->invalidArguments
-                ->map(static fn (ConsoleInputArgument $argument) => sprintf(
+                ->map(fn (ConsoleInputArgument $argument) => sprintf(
                     '<code>%s</code>',
                     $argument->name,
                 ))

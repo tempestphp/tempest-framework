@@ -20,7 +20,7 @@ final class HasConditionsTest extends TestCase
             public bool $value = false;
         };
 
-        $class->when(true, static fn ($c) => $c->value = true);
+        $class->when(true, fn ($c) => $c->value = true);
 
         $this->assertTrue($class->value);
     }
@@ -33,7 +33,7 @@ final class HasConditionsTest extends TestCase
             public bool $value = false;
         };
 
-        $class->when(static fn () => true, static fn ($c) => $c->value = true);
+        $class->when(fn () => true, fn ($c) => $c->value = true);
 
         $this->assertTrue($class->value);
     }
@@ -46,7 +46,7 @@ final class HasConditionsTest extends TestCase
             public bool $value = false;
         };
 
-        $class->unless(true, static fn ($c) => $c->value = true);
+        $class->unless(true, fn ($c) => $c->value = true);
 
         $this->assertFalse($class->value);
     }
@@ -59,7 +59,7 @@ final class HasConditionsTest extends TestCase
             public bool $value = false;
         };
 
-        $class->unless(static fn () => true, static fn ($c) => $c->value = true);
+        $class->unless(fn () => true, fn ($c) => $c->value = true);
 
         $this->assertFalse($class->value);
     }
@@ -80,7 +80,7 @@ final class HasConditionsTest extends TestCase
             }
         };
 
-        $class->when(true, static function ($c): void {
+        $class->when(true, function ($c): void {
             $c->append('bar');
         });
 

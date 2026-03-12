@@ -39,8 +39,8 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
         );
 
         $this->searchOptionCount = arr($this->get(ViewConfig::class)->viewComponents)
-            ->filter(static fn (mixed $input) => $input instanceof ViewComponent)
-            ->filter(static fn (ViewComponent $viewComponent) => $viewComponent->isVendorComponent)
+            ->filter(fn (mixed $input) => $input instanceof ViewComponent)
+            ->filter(fn (ViewComponent $viewComponent) => $viewComponent->isVendorComponent)
             ->count();
     }
 

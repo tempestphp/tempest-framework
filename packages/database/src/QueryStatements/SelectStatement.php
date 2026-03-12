@@ -71,32 +71,32 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
 
         if ($this->join->isNotEmpty()) {
             $query[] = $this->join
-                ->map(static fn (JoinStatement $join) => $join->compile($dialect))
+                ->map(fn (JoinStatement $join) => $join->compile($dialect))
                 ->implode(' ');
         }
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(static fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
-                ->filter(static fn (string $compiled) => $compiled !== '')
+                ->map(fn (WhereStatement|WhereGroupStatement $where) => $where->compile($dialect))
+                ->filter(fn (string $compiled) => $compiled !== '')
                 ->implode(' ');
         }
 
         if ($this->groupBy->isNotEmpty()) {
             $query[] = 'GROUP BY ' . $this->groupBy
-                ->map(static fn (GroupByStatement $groupBy) => $groupBy->compile($dialect))
+                ->map(fn (GroupByStatement $groupBy) => $groupBy->compile($dialect))
                 ->implode(', ');
         }
 
         if ($this->having->isNotEmpty()) {
             $query[] = 'HAVING ' . $this->having
-                ->map(static fn (HavingStatement $having) => $having->compile($dialect))
+                ->map(fn (HavingStatement $having) => $having->compile($dialect))
                 ->implode(' ');
         }
 
         if ($this->orderBy->isNotEmpty()) {
             $query[] = 'ORDER BY ' . $this->orderBy
-                ->map(static fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
+                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
                 ->implode(', ');
         }
 
@@ -110,7 +110,7 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
 
         if ($this->raw->isNotEmpty()) {
             $query[] = $this->raw
-                ->map(static fn (RawStatement $raw) => $raw->compile($dialect))
+                ->map(fn (RawStatement $raw) => $raw->compile($dialect))
                 ->implode(' ')
                 ->toString();
         }

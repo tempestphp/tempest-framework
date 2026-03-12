@@ -69,7 +69,7 @@ final class IdempotencyMiddlewareTest extends TestCase
 
         $response = $middleware(
             new GenericRequest(Method::POST, '/orders', body: ['amount' => 100]),
-            new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+            new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
                 $calls++;
 
                 return new GenericResponse(Status::CREATED, ['ok' => true]);
@@ -93,7 +93,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             headers: ['Idempotency-Key' => 'order-100'],
         );
 
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(Status::CREATED, ['id' => 'order-1']);
@@ -115,7 +115,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $middleware = $this->createMiddleware('create');
         $calls = 0;
 
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(Status::CREATED, ['id' => 'order-1']);
@@ -176,7 +176,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         );
 
         $calls = 0;
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(Status::CREATED, ['id' => 'order-' . $calls]);
@@ -238,7 +238,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         );
 
         $calls = 0;
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(Status::CREATED, ['id' => 'order-' . $calls]);
@@ -269,7 +269,7 @@ final class IdempotencyMiddlewareTest extends TestCase
 
         $response = $middleware(
             new GenericRequest(Method::POST, '/drafts', body: ['draft' => true]),
-            new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+            new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
                 $calls++;
 
                 return new GenericResponse(Status::CREATED, ['ok' => true]);
@@ -375,7 +375,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             headers: ['Idempotency-Key' => 'non-serializable-body'],
         );
 
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(
@@ -408,7 +408,7 @@ final class IdempotencyMiddlewareTest extends TestCase
             headers: ['Idempotency-Key' => 'json-serializable-body'],
         );
 
-        $next = new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+        $next = new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
             $calls++;
 
             return new GenericResponse(Status::CREATED, new SerializableBody('order-1'));
@@ -454,14 +454,14 @@ final class IdempotencyMiddlewareTest extends TestCase
             key: 'stale-order',
             fingerprint: new RequestFingerprintGenerator()->generate($request),
             ttlInSeconds: 120,
-            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99_999_999, 'stale-owner'),
+            pendingOwner: sprintf('%s|%d|%s', php_uname('n'), 99999999, 'stale-owner'),
             pendingHeartbeatAt: time(),
         );
 
         $calls = 0;
         $response = $middleware(
             $request,
-            new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+            new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
                 $calls++;
 
                 return new GenericResponse(Status::CREATED, ['id' => 'order-1']);
@@ -510,7 +510,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $calls = 0;
         $response = $middleware(
             $request,
-            new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+            new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
                 $calls++;
 
                 return new GenericResponse(Status::CREATED, ['id' => 'order-1']);
@@ -559,7 +559,7 @@ final class IdempotencyMiddlewareTest extends TestCase
         $calls = 0;
         $response = $middleware(
             $request,
-            new HttpMiddlewareCallable(static function (Request $_) use (&$calls): Response {
+            new HttpMiddlewareCallable(function (Request $_) use (&$calls): Response {
                 $calls++;
 
                 return new GenericResponse(Status::CREATED, ['id' => 'order-1']);

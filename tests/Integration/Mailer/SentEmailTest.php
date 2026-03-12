@@ -123,9 +123,9 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $this->sendTestEmail(
             text: 'Hello',
             attachments: [
-                Attachment::fromClosure(static fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
+                Attachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
             ],
-        )->assertAttached('file.txt', static function (AttachmentTester $attachment): void {
+        )->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -140,7 +140,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             attachments: [
                 Attachment::fromFilesystem(__FILE__),
             ],
-        )->assertAttached('SentEmailTest.php', static function (AttachmentTester $attachment): void {
+        )->assertAttached('SentEmailTest.php', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('SentEmailTest.php');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');
@@ -160,7 +160,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             attachments: [
                 Attachment::fromStorage($storage, 'file.txt'),
             ],
-        )->assertAttached('file.txt', static function (AttachmentTester $attachment): void {
+        )->assertAttached('file.txt', function (AttachmentTester $attachment): void {
             $attachment->assertNamed('file.txt');
             $attachment->assertNotNamed('foo.txt');
             $attachment->assertType('text');

@@ -144,50 +144,50 @@ final class TimestampTest extends TestCase
     public static function provide_format_parsing_data(): iterable
     {
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::FULL_DATE_TIME,
             Timezone::UTC,
             Locale::ENGLISH,
             'Sunday, March 31, 2024 20:44:57',
         ];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::FULL_DATE_TIME,
             Timezone::ASIA_SHANGHAI,
             Locale::CHINESE_TRADITIONAL,
             '星期一, 4月 01, 2024 04:44:57',
         ];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::COOKIE,
             Timezone::AMERICA_NEW_YORK,
             Locale::ENGLISH_UNITED_STATES,
             'Sunday, 31-Mar-2024 16:44:57 EDT',
         ];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::HTTP,
             Timezone::EUROPE_VIENNA,
             Locale::GERMAN_AUSTRIA,
             'So., 31 März 2024 22:44:57 MESZ',
         ];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::EMAIL,
             Timezone::EUROPE_MADRID,
             Locale::SPANISH_SPAIN,
             'dom, 31 mar 2024 22:44:57 GMT+02:00',
         ];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::SQL_DATE_TIME,
             Timezone::AFRICA_TUNIS,
             Locale::ARABIC_TUNISIA,
             '2024-03-31 21:44:57',
         ];
-        yield [1_711_832_400, FormatPattern::ISO_ORDINAL_DATE, Timezone::EUROPE_MOSCOW, Locale::RUSSIAN_RUSSIA, '2024-091'];
+        yield [1711832400, FormatPattern::ISO_ORDINAL_DATE, Timezone::EUROPE_MOSCOW, Locale::RUSSIAN_RUSSIA, '2024-091'];
         yield [
-            1_711_917_897,
+            1711917897,
             FormatPattern::ISO8601,
             Timezone::EUROPE_LONDON,
             Locale::ENGLISH_UNITED_KINGDOM,
@@ -444,15 +444,15 @@ final class TimestampTest extends TestCase
 
     public function test_json_serialization(): void
     {
-        $serialized = Timestamp::fromParts(1_711_917_232, 12)->jsonSerialize();
+        $serialized = Timestamp::fromParts(1711917232, 12)->jsonSerialize();
 
-        $this->assertSame(1_711_917_232, $serialized['seconds']);
+        $this->assertSame(1711917232, $serialized['seconds']);
         $this->assertSame(12, $serialized['nanoseconds']);
     }
 
     public function test_to_rfc3999(): void
     {
-        $timestamp = Timestamp::fromParts(1_711_917_232, 12);
+        $timestamp = Timestamp::fromParts(1711917232, 12);
 
         $this->assertSame('2024-03-31T20:33:52.12+00:00', $timestamp->toRfc3339());
         $this->assertSame('2024-03-31T20:33:52+00:00', $timestamp->toRfc3339(secondsStyle: SecondsStyle::Seconds));
@@ -494,9 +494,9 @@ final class TimestampTest extends TestCase
 
     public function test_at_the_same_time_edge_cases(): void
     {
-        $timestamp1 = Timestamp::fromParts(1_234_567_890, 123_456_789);
-        $timestamp2 = Timestamp::fromParts(1_234_567_890, 123_456_789);
-        $timestamp3 = Timestamp::fromParts(1_234_567_890, 123_456_790);
+        $timestamp1 = Timestamp::fromParts(1234567890, 123456789);
+        $timestamp2 = Timestamp::fromParts(1234567890, 123456789);
+        $timestamp3 = Timestamp::fromParts(1234567890, 123456790);
 
         $this->assertTrue($timestamp1->atTheSameTime($timestamp2));
         $this->assertFalse($timestamp1->atTheSameTime($timestamp3));
@@ -547,9 +547,9 @@ final class TimestampTest extends TestCase
 
     public function test_nano_precision_temporal_comparisons(): void
     {
-        $base = Timestamp::fromParts(1_234_567_890, 0);
-        $plusOneNano = Timestamp::fromParts(1_234_567_890, 1);
-        $minusOneNano = Timestamp::fromParts(1_234_567_889, 999_999_999);
+        $base = Timestamp::fromParts(1234567890, 0);
+        $plusOneNano = Timestamp::fromParts(1234567890, 1);
+        $minusOneNano = Timestamp::fromParts(1234567889, 999999999);
 
         $this->assertTrue($base->isAfter($minusOneNano));
         $this->assertTrue($base->isBefore($plusOneNano));
@@ -592,20 +592,20 @@ final class TimestampTest extends TestCase
 
     public function test_since_and_between_duration_methods(): void
     {
-        $start = Timestamp::fromParts(1000, 500_000_000);
-        $end = Timestamp::fromParts(1005, 750_000_000);
+        $start = Timestamp::fromParts(1000, 500000000);
+        $end = Timestamp::fromParts(1005, 750000000);
 
         $duration = $end->since($start);
         $this->assertSame(5, $duration->getSeconds());
-        $this->assertSame(250_000_000, $duration->getNanoseconds());
+        $this->assertSame(250000000, $duration->getNanoseconds());
 
         $reverseDuration = $start->since($end);
         $this->assertSame(-5, $reverseDuration->getSeconds());
-        $this->assertSame(-250_000_000, $reverseDuration->getNanoseconds());
+        $this->assertSame(-250000000, $reverseDuration->getNanoseconds());
 
         $betweenDuration = $start->between($end);
         $this->assertSame(-5, $betweenDuration->getSeconds());
-        $this->assertSame(-250_000_000, $betweenDuration->getNanoseconds());
+        $this->assertSame(-250000000, $betweenDuration->getNanoseconds());
 
         $sameDuration = $start->since($start);
         $this->assertSame(0, $sameDuration->getSeconds());
@@ -614,8 +614,8 @@ final class TimestampTest extends TestCase
 
     public function test_temporal_comparison_with_large_values(): void
     {
-        $large1 = Timestamp::fromParts(9_223_372_036, 999_999_999);
-        $large2 = Timestamp::fromParts(9_223_372_036, 999_999_998);
+        $large1 = Timestamp::fromParts(9223372036, 999999999);
+        $large2 = Timestamp::fromParts(9223372036, 999999998);
 
         $this->assertTrue($large1->isAfter($large2));
         $this->assertFalse($large1->isBefore($large2));
@@ -626,8 +626,8 @@ final class TimestampTest extends TestCase
 
     public function test_temporal_comparison_edge_case_overflow_boundary(): void
     {
-        $maxSeconds = Timestamp::fromParts(9_223_372_036_854_775_806, 0);
-        $nearMax = Timestamp::fromParts(9_223_372_036_854_775_805, 999_999_999);
+        $maxSeconds = Timestamp::fromParts(9223372036854775806, 0);
+        $nearMax = Timestamp::fromParts(9223372036854775805, 999999999);
 
         $this->assertTrue($maxSeconds->isAfter($nearMax));
         $this->assertFalse($maxSeconds->isBefore($nearMax));

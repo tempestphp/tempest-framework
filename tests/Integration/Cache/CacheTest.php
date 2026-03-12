@@ -38,7 +38,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $item = $pool->getItem('a');
         $this->assertFalse($item->isHit());
-        $this->assertNull($item->get());
+        $this->assertSame(null, $item->get());
 
         $item = $pool->getItem('b');
         $this->assertTrue($item->isHit());
@@ -152,7 +152,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
         $clock->plus($interval);
 
-        $this->assertNull($cache->get('a'));
+        $this->assertSame(null, $cache->get('a'));
         $this->assertSame('b', $cache->get('b'));
     }
 
@@ -171,7 +171,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $values = $cache->getMany(['foo2', 'foo3']);
 
         $this->assertSame('bar2', $values['foo2']);
-        $this->assertNull($values['foo3']);
+        $this->assertSame(null, $values['foo3']);
     }
 
     public function test_resolve(): void
@@ -180,18 +180,18 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $clock = $this->clock();
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
 
-        $a = $cache->resolve('a', static fn () => 'a', $clock->now()->plus($interval));
+        $a = $cache->resolve('a', fn () => 'a', $clock->now()->plus($interval));
         $this->assertSame('a', $a);
 
-        $b = $cache->resolve('b', static fn () => 'b');
+        $b = $cache->resolve('b', fn () => 'b');
         $this->assertSame('b', $b);
 
         $clock->plus($interval);
 
-        $this->assertNull($cache->get('a'));
+        $this->assertSame(null, $cache->get('a'));
         $this->assertSame('b', $cache->get('b'));
 
-        $b = $cache->resolve('b', static fn () => 'b');
+        $b = $cache->resolve('b', fn () => 'b');
         $this->assertSame('b', $b);
     }
 
@@ -227,7 +227,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
         );
 
         // Cache value can be stale for 1min, but will be refreshed in the background
-        $retrieve = static fn (string $value) => $cache->resolve('test', static fn () => $value, expiration: Duration::minute(), stale: Duration::minute());
+        $retrieve = fn (string $value) => $cache->resolve('test', fn () => $value, expiration: Duration::minute(), stale: Duration::minute());
 
         // We fetch the value within the allowed duration, there is no deferring
         $this->assertSame('update1', $retrieve('update1'));

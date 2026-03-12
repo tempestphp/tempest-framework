@@ -82,7 +82,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
         $lock = $cache->lock('processing');
 
-        $this->assertTrue($lock->execute(static fn () => true)); // @phpstan-ignore method.alreadyNarrowedType
+        $this->assertTrue($lock->execute(fn () => true)); // @phpstan-ignore method.alreadyNarrowedType
         $this->assertFalse($lock->release());
     }
 
@@ -97,7 +97,7 @@ final class LockTest extends FrameworkIntegrationTestCase
         $externalLock->acquire();
 
         // Try executing a callback, should timeout instantly
-        $cache->lock('processing')->execute(static fn () => true);
+        $cache->lock('processing')->execute(fn () => true);
     }
 
     public function test_lock_execution_when_already_locked_by_another_owner_with_timeout(): void
@@ -114,7 +114,7 @@ final class LockTest extends FrameworkIntegrationTestCase
 
         // Try executing a callback for the specified duration
         /** @phpstan-ignore-next-line */
-        $this->assertTrue($cache->lock('processing')->execute(static fn () => true, wait: Duration::hours(1)));
+        $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1)));
     }
 
     public function test_lock_can_be_reacquired_after_expiration(): void

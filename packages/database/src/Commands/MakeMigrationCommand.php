@@ -176,7 +176,7 @@ final class MakeMigrationCommand
         $classFileName = str($className)
             ->when(
                 condition: str($name)->contains(['\\', '/']),
-                callback: static fn ($path) => $path->prepend(str($name)->beforeLast(['\\', '/'])->toString(), '/'),
+                callback: fn ($path) => $path->prepend(str($name)->beforeLast(['\\', '/'])->toString(), '/'),
             )
             ->toString();
 

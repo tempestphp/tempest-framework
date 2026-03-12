@@ -113,14 +113,14 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->count()
             ->when(
                 true,
-                static fn (CountQueryBuilder $query) => $query
+                fn (CountQueryBuilder $query) => $query
                     ->whereRaw('`title` = ?', 'Timeline Taxi')
                     ->andWhereRaw('`index` <> ?', '1')
                     ->orWhereRaw('`createdAt` > ?', '2025-01-01'),
             )
             ->when(
                 false,
-                static fn (CountQueryBuilder $query) => $query
+                fn (CountQueryBuilder $query) => $query
                     ->whereRaw('`title` = ?', 'Timeline Uber')
                     ->andWhereRaw('`index` <> ?', '2')
                     ->orWhereRaw('`createdAt` > ?', '2025-01-02'),
@@ -498,7 +498,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->count()
             ->whereIn('status', ['published', 'featured'])
-            ->andWhereGroup(static function ($group): void {
+            ->andWhereGroup(function ($group): void {
                 $group
                     ->whereNotNull('published_at')
                     ->orWhereBetween('rating', 4.0, 5.0);
@@ -516,7 +516,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->count()
             ->whereRaw('published = ?', true)
-            ->orWhereGroup(static function ($group): void {
+            ->orWhereGroup(function ($group): void {
                 $group
                     ->whereRaw('status = ?', 'featured')
                     ->andWhereRaw('rating >= ?', 4.5);

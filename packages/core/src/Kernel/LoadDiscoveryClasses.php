@@ -256,11 +256,9 @@ final class LoadDiscoveryClasses
         }
 
         foreach ($discoveries as $discovery) {
-            if (! $discovery instanceof DiscoversPath) {
-                continue;
+            if ($discovery instanceof DiscoversPath) {
+                $discovery->discoverPath($location, $input);
             }
-
-            $discovery->discoverPath($location, $input);
         }
     }
 

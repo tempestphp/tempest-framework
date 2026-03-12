@@ -133,7 +133,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
     {
         $storage = $this->storage->fake();
 
-        $storage->createPublicUrlsUsing(static fn (string $path) => sprintf('https://localhost/%s', $path));
+        $storage->createPublicUrlsUsing(fn (string $path) => sprintf('https://localhost/%s', $path));
 
         $storage = $this->container->get(Storage::class);
         $storage->write('foo.txt', 'bar');
@@ -145,7 +145,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
     {
         $storage = $this->storage->fake();
 
-        $storage->createTemporaryUrlsUsing(static fn (string $path, DateTimeInterface $expiresAt) => sprintf(
+        $storage->createTemporaryUrlsUsing(fn (string $path, DateTimeInterface $expiresAt) => sprintf(
             'https://localhost/%s?expires=%s',
             $path,
             $expiresAt->format(DateTimeInterface::RFC3339),

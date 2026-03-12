@@ -107,7 +107,7 @@ final class TestingOAuthClient implements OAuthClient
         return $token;
     }
 
-    public function fetchUser(#[\SensitiveParameter] AccessToken $token): OAuthUser
+    public function fetchUser(AccessToken $token): OAuthUser
     {
         $this->users[] = [
             'token' => $token,
@@ -217,7 +217,7 @@ final class TestingOAuthClient implements OAuthClient
     public function assertUserFetched(string $code): void
     {
         Assert::assertNotEmpty(
-            actual: array_filter($this->users, static fn (array $user) => $user['code'] === $code),
+            actual: array_filter($this->users, fn (array $user) => $user['code'] === $code),
             message: sprintf('User with code "%s" was not handled.', $code),
         );
     }
@@ -231,7 +231,7 @@ final class TestingOAuthClient implements OAuthClient
 
         if ($code !== null) {
             Assert::assertNotEmpty(
-                actual: array_filter($this->accessTokens, static fn (#[\SensitiveParameter] array $token) => $token['code'] === $code),
+                actual: array_filter($this->accessTokens, fn (array $token) => $token['code'] === $code),
                 message: sprintf('No access token was retrieved for code "%s".', $code),
             );
         }

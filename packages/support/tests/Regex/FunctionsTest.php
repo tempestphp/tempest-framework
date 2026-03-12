@@ -53,8 +53,8 @@ final class FunctionsTest extends TestCase
 
     public function test_replace_with_callback(): void
     {
-        $this->assertSame('Hello, Jon!', replace('Hello, World!', '/World/', static fn () => 'Jon'));
-        $this->assertSame('Count: 2', replace('Count: 1', '/\d/', static fn (array $matches) => $matches[0] + 1));
+        $this->assertSame('Hello, Jon!', replace('Hello, World!', '/World/', fn () => 'Jon'));
+        $this->assertSame('Count: 2', replace('Count: 1', '/\d/', fn (array $matches) => $matches[0] + 1));
     }
 
     public function test_replace_with_invalid_pattern(): void
@@ -87,7 +87,7 @@ final class FunctionsTest extends TestCase
         $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/', match: 1));
         $this->assertSame([0 => '10-abc', 1 => '10'], get_match('10-abc', '/(\d+)-.*/'));
         $this->assertSame('10-abc', get_match('10-abc', '/\d+-.*/', match: 0));
-        $this->assertNull(get_match('10-abc', '/\d+-.*/', match: 1));
+        $this->assertSame(null, get_match('10-abc', '/\d+-.*/', match: 1));
 
         $this->assertSame(
             expected: [

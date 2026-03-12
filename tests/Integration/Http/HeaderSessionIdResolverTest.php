@@ -43,7 +43,7 @@ final class HeaderSessionIdResolverTest extends FrameworkIntegrationTestCase
     {
         $request = new GenericRequest(Method::GET, '/', [], ['tempest_session_id' => $id]);
 
-        $this->container->singleton(Request::class, static fn () => $request);
-        $this->container->singleton(GenericRequest::class, static fn () => $request);
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 }

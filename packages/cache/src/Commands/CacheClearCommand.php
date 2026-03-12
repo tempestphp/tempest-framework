@@ -93,8 +93,8 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             /** @var GenericContainer $container */
             $container = $this->container;
             $cacheTags = arr($container->getSingletons(CacheConfig::class))
-                ->map(static fn ($_, string $key) => $key === CacheConfig::class ? self::DEFAULT_CACHE : Str\after_last($key, '#'))
-                ->filter(static fn (string $value) => $tag === null || $value === $tag)
+                ->map(fn ($_, string $key) => $key === CacheConfig::class ? self::DEFAULT_CACHE : Str\after_last($key, '#'))
+                ->filter(fn (string $value) => $tag === null || $value === $tag)
                 ->values();
 
             if ($all === false && count($cacheTags) > 1) {

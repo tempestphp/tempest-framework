@@ -16,7 +16,7 @@ final class InvokedProcessPool implements Countable
     public ImmutableArray $running {
         get => $this->processes
             ->toImmutableArray()
-            ->filter(static fn (InvokedProcess $process) => $process->running);
+            ->filter(fn (InvokedProcess $process) => $process->running);
     }
 
     /**
@@ -38,7 +38,7 @@ final class InvokedProcessPool implements Countable
      */
     public function signal(int $signal): ImmutableArray
     {
-        return $this->running->each(static fn (InvokedProcess $process) => $process->signal($signal));
+        return $this->running->each(fn (InvokedProcess $process) => $process->signal($signal));
     }
 
     /**
@@ -46,7 +46,7 @@ final class InvokedProcessPool implements Countable
      */
     public function stop(float|int|Duration $timeout = 10, ?int $signal = null): ImmutableArray
     {
-        return $this->running->each(static fn (InvokedProcess $process) => $process->stop($timeout, $signal));
+        return $this->running->each(fn (InvokedProcess $process) => $process->stop($timeout, $signal));
     }
 
     /**
@@ -55,7 +55,7 @@ final class InvokedProcessPool implements Countable
     public function wait(): ProcessPoolResults
     {
         return new ProcessPoolResults(
-            $this->all->map(static fn (InvokedProcess $process) => $process->wait()),
+            $this->all->map(fn (InvokedProcess $process) => $process->wait()),
         );
     }
 
@@ -66,7 +66,7 @@ final class InvokedProcessPool implements Countable
      */
     public function forEachRunning(\Closure $callback): self
     {
-        $this->running->each(static fn (InvokedProcess $process) => $callback($process));
+        $this->running->each(fn (InvokedProcess $process) => $callback($process));
 
         return $this;
     }
@@ -78,7 +78,7 @@ final class InvokedProcessPool implements Countable
      */
     public function forEach(\Closure $callback): self
     {
-        $this->processes->each(static fn (InvokedProcess $process) => $callback($process));
+        $this->processes->each(fn (InvokedProcess $process) => $callback($process));
 
         return $this;
     }

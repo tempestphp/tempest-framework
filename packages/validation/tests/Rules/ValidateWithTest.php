@@ -49,4 +49,11 @@ final class ValidateWithTest extends TestCase
         $this->assertFalse($rule->isValid(null));
         $this->assertFalse($rule->isValid(false));
     }
+
+    public function test_static_closure_required(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new ValidateWith(fn (mixed $value): bool => str_contains((string) $value, '@'));
+    }
 }

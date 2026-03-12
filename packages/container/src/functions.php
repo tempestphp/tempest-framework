@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use Tempest\Container\GenericContainer;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 

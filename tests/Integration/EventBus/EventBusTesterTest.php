@@ -56,12 +56,12 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch('event-bus-fake-event');
-        $this->eventBus->assertDispatched('event-bus-fake-event', static function (string $event) {
+        $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
             return $event === 'event-bus-fake-event';
         });
 
         $this->bus->dispatch(new FakeEvent('foo'));
-        $this->eventBus->assertDispatched(FakeEvent::class, static function (FakeEvent $event) {
+        $this->eventBus->assertDispatched(FakeEvent::class, function (FakeEvent $event) {
             return $event->value === 'foo';
         });
     }
@@ -108,7 +108,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch('event-bus-fake-event');
-        $this->eventBus->assertDispatched('event-bus-fake-event', static function (string $event) {
+        $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
             return $event !== 'event-bus-fake-event';
         });
     }
@@ -122,7 +122,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch(new FakeEvent('foo'));
-        $this->eventBus->assertDispatched(FakeEvent::class, static function (FakeEvent $event) {
+        $this->eventBus->assertDispatched(FakeEvent::class, function (FakeEvent $event) {
             return $event->value === 'foobar';
         });
     }
@@ -178,7 +178,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
     {
         $this->eventBus->preventEventHandling();
 
-        $this->bus->listen(static function (FakeEvent $_): never {
+        $this->bus->listen(function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
         });
 
@@ -191,13 +191,13 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
     {
         $this->eventBus->preventEventHandling();
 
-        $this->bus->listen(static function (FakeEvent $_): never {
+        $this->bus->listen(function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
         });
 
         $this->eventBus->assertListeningTo(FakeEvent::class, count: 1);
 
-        $this->bus->listen(static function (FakeEvent $_): never {
+        $this->bus->listen(function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
         });
 
@@ -223,7 +223,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
         $this->eventBus->preventEventHandling();
 
-        $this->bus->listen(static function (FakeEvent $_): never {
+        $this->bus->listen(function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
         });
 
@@ -235,7 +235,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->recordEventDispatches();
 
         $handled = false;
-        $this->bus->listen(static function (FakeEvent $_) use (&$handled): void {
+        $this->bus->listen(function (FakeEvent $_) use (&$handled): void {
             $handled = true;
         });
 

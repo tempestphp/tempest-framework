@@ -43,7 +43,7 @@ trait RendersControls
         $separator = '  <style="dim fg-gray">·</style>  ';
         $marginLeft = '  ';
         $render = arr($controls)
-            ->map(static fn (string $label, string $shortcut) => "<style=\"dim\"><style=\"fg-gray\">{$shortcut}</style> {$label}</style>")
+            ->map(fn (string $label, string $shortcut) => "<style=\"dim\"><style=\"fg-gray\">{$shortcut}</style> {$label}</style>")
             ->implode($separator)
             ->prepend($marginLeft);
 

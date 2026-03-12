@@ -76,7 +76,7 @@ final readonly class AboutCommand
     {
         return arr($value)
             ->filter()
-            ->map(static function (Stringable|Insight|string $value) {
+            ->map(function (Stringable|Insight|string $value) {
                 if ($value instanceof Insight) {
                     return $value->formattedValue;
                 }
@@ -91,7 +91,7 @@ final readonly class AboutCommand
     {
         return arr($value)
             ->filter()
-            ->map(static function (Stringable|Insight|string $value) {
+            ->map(function (Stringable|Insight|string $value) {
                 if ($value instanceof Insight) {
                     return $value->value;
                 }

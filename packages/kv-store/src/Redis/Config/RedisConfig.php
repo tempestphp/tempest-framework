@@ -18,7 +18,6 @@ final class RedisConfig
         /**
          * Password to the Redis instance.
          */
-        #[\SensitiveParameter]
         public ?string $password = null,
 
         /**

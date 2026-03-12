@@ -136,7 +136,7 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
 
         return array_filter(
             $data,
-            static fn (string $name) => str_contains(strtolower($name), strtolower($query)),
+            fn (string $name) => str_contains(strtolower($name), strtolower($query)),
         );
     }
 }

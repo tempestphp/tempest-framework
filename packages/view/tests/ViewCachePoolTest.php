@@ -33,7 +33,7 @@ final class ViewCachePoolTest extends TestCase
         $directory = path(self::DIRECTORY);
 
         if ($directory->isDirectory()) {
-            $directory->glob('/*.php')->each(static fn (string $file) => unlink($file));
+            $directory->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             rmdir(self::DIRECTORY);
         }

@@ -213,11 +213,9 @@ final class StacktraceTest extends TestCase
         $this->assertNotEmpty($frames);
 
         foreach ($frames as $frame) {
-            if (! str_starts_with($frame->absoluteFile, $rootPath)) {
-                continue;
+            if (str_starts_with($frame->absoluteFile, $rootPath)) {
+                $this->assertFalse($frame->isVendor);
             }
-
-            $this->assertFalse($frame->isVendor);
         }
     }
 

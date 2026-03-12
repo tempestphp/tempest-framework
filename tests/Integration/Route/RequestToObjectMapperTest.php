@@ -81,7 +81,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(1, $request->intParam);
         $this->assertSame('a', $request->stringParam);
-        $this->assertTrue($request->boolParam);
+        $this->assertSame(true, $request->boolParam);
         $this->assertSame(0.1, $request->floatParam);
     }
 
@@ -115,7 +115,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
     {
         $this->assertException(
             expectedExceptionClass: RequestParametersIncludedReservedNames::class,
-            handler: static function (): void {
+            handler: function (): void {
                 map(new GenericRequest(
                     method: Method::GET,
                     uri: '/books?uri=invalid',

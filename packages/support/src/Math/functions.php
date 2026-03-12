@@ -356,11 +356,9 @@ function max(array $numbers): null|int|float
     $max = null;
 
     foreach ($numbers as $number) {
-        if (! (null === $max || $number > $max)) {
-            continue;
+        if (null === $max || $number > $max) {
+            $max = $number;
         }
-
-        $max = $number;
     }
 
     return $max;
@@ -382,11 +380,9 @@ function maxva(int|float $first, int|float $second, int|float ...$rest): int|flo
     $max = \max($first, $second);
 
     foreach ($rest as $number) {
-        if ($number <= $max) {
-            continue;
+        if ($number > $max) {
+            $max = $number;
         }
-
-        $max = $number;
     }
 
     return $max;
@@ -492,11 +488,9 @@ function min(array $numbers): null|float|int
     $min = null;
 
     foreach ($numbers as $number) {
-        if (! (null === $min || $number < $min)) {
-            continue;
+        if (null === $min || $number < $min) {
+            $min = $number;
         }
-
-        $min = $number;
     }
 
     return $min;
@@ -518,11 +512,9 @@ function minva(int|float $first, int|float $second, int|float ...$rest): int|flo
     $min = \min($first, $second);
 
     foreach ($rest as $number) {
-        if ($number >= $min) {
-            continue;
+        if ($number < $min) {
+            $min = $number;
         }
-
-        $min = $number;
     }
 
     return $min;

@@ -24,13 +24,13 @@ final class TimezoneTest extends TestCase
 
     public function test_get_offset(): void
     {
-        $temporal = Timestamp::fromParts(seconds: 1_716_956_903);
+        $temporal = Timestamp::fromParts(seconds: 1716956903);
 
         $this->assertSame(3600., Timezone::EUROPE_LONDON->getOffset($temporal)->getTotalSeconds());
-        $this->assertSame(-14_400., Timezone::AMERICA_NEW_YORK->getOffset($temporal)->getTotalSeconds());
-        $this->assertSame(28_800., Timezone::ASIA_SHANGHAI->getOffset($temporal)->getTotalSeconds());
-        $this->assertSame(12_600., Timezone::PLUS_0330->getOffset($temporal)->getTotalSeconds());
-        $this->assertSame(-12_600., Timezone::MINUS_0330->getOffset($temporal)->getTotalSeconds());
+        $this->assertSame(-14400., Timezone::AMERICA_NEW_YORK->getOffset($temporal)->getTotalSeconds());
+        $this->assertSame(28800., Timezone::ASIA_SHANGHAI->getOffset($temporal)->getTotalSeconds());
+        $this->assertSame(12600., Timezone::PLUS_0330->getOffset($temporal)->getTotalSeconds());
+        $this->assertSame(-12600., Timezone::MINUS_0330->getOffset($temporal)->getTotalSeconds());
         $this->assertSame(3600., Timezone::PLUS_0100->getOffset($temporal)->getTotalSeconds());
         $this->assertSame(-3600., Timezone::MINUS_0100->getOffset($temporal)->getTotalSeconds());
 
@@ -45,8 +45,8 @@ final class TimezoneTest extends TestCase
     }
 
     #[TestWith([Timezone::EUROPE_LONDON, 0])]
-    #[TestWith([Timezone::AMERICA_NEW_YORK, -18_000])]
-    #[TestWith([Timezone::ASIA_SHANGHAI, 28_800])]
+    #[TestWith([Timezone::AMERICA_NEW_YORK, -18000])]
+    #[TestWith([Timezone::ASIA_SHANGHAI, 28800])]
     public function test_raw_offset(Timezone $timezone, int $expected): void
     {
         $this->assertSame($expected, (int) $timezone->getRawOffset()->getTotalSeconds());

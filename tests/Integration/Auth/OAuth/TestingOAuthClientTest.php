@@ -246,7 +246,7 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
                 method: Method::GET,
                 uri: Uri\set_query('/oauth/callback', code: 'authorization-code-from-github', state: $client->getState()),
             ),
-            map: static fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
+            map: fn (OAuthUser $user): User => query(User::class)->updateOrCreate([
                 'github_id' => $user->id,
             ], [
                 'email' => $user->email,

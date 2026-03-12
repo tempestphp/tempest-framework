@@ -23,7 +23,7 @@ final class SecondsStyleTest extends TestCase
     {
         return [
             [SecondsStyle::Seconds,      Timestamp::fromParts(0)],
-            [SecondsStyle::Milliseconds, Timestamp::fromParts(0, 1_000_000)],
+            [SecondsStyle::Milliseconds, Timestamp::fromParts(0, 1000000)],
             [SecondsStyle::Microseconds, Timestamp::fromParts(0, 1000)],
             [SecondsStyle::Nanoseconds,  Timestamp::fromParts(0, 1)],
         ];

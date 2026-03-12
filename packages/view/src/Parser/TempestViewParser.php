@@ -66,7 +66,7 @@ final class TempestViewParser
         return $ast;
     }
 
-    private function openScope(#[\SensitiveParameter] Token $token): void
+    private function openScope(Token $token): void
     {
         $this->scope[] = $token;
     }

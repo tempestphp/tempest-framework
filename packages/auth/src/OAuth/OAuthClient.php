@@ -38,7 +38,7 @@ interface OAuthClient
     /**
      * Gets user information from an OAuth provider using an access token.
      */
-    public function fetchUser(#[\SensitiveParameter] AccessToken $token): OAuthUser;
+    public function fetchUser(AccessToken $token): OAuthUser;
 
     /**
      * Authenticates a user based on the given OAuth callback request.

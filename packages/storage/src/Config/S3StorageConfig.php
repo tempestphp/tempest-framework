@@ -35,7 +35,6 @@ final class S3StorageConfig implements StorageConfig
         /**
          * AWS session token (typically used with temporary credentials). If null, the SDK will attempt to use the default credential provider chain.
          */
-        #[\SensitiveParameter]
         public ?string $sessionToken = null,
 
         /**

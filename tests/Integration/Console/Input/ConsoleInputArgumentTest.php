@@ -41,19 +41,19 @@ final class ConsoleInputArgumentTest extends TestCase
 
         $input = ConsoleInputArgument::fromString('--noFooBar');
         $this->assertSame('foo-bar', $input->name);
-        $this->assertFalse($input->value);
+        $this->assertSame(false, $input->value);
 
         $input = ConsoleInputArgument::fromString('--no-interaction');
         $this->assertSame('interaction', $input->name);
-        $this->assertFalse($input->value);
+        $this->assertSame(false, $input->value);
 
         $input = ConsoleInputArgument::fromString('--no-interaction=true');
         $this->assertSame('interaction', $input->name);
-        $this->assertFalse($input->value);
+        $this->assertSame(false, $input->value);
 
         $input = ConsoleInputArgument::fromString('--no-interaction=false');
         $this->assertSame('interaction', $input->name);
-        $this->assertTrue($input->value);
+        $this->assertSame(true, $input->value);
 
         $input = ConsoleInputArgument::fromString('--no-foo=baz');
         $this->assertSame('no-foo', $input->name);

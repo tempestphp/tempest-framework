@@ -22,7 +22,7 @@ final class ProcessTesterAssertNotRanTest extends FrameworkIntegrationTestCase
     public function test_succeeds_with_callback_when_no_command_ran(): void
     {
         $this->process->recordProcessExecutions();
-        $this->process->assertCommandDidNotRun(static function (): void {});
+        $this->process->assertCommandDidNotRun(function (): void {});
     }
 
     public function test_succeeds_with_callback_when_other_commands_ran(): void
@@ -30,7 +30,7 @@ final class ProcessTesterAssertNotRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', 'hello');
         $this->executor->run('echo "hello"');
 
-        $this->process->assertCommandDidNotRun(static function (PendingProcess $process) {
+        $this->process->assertCommandDidNotRun(function (PendingProcess $process) {
             // this returns false, so expectation succeeds
             return $process->command === 'echo "world"';
         });
@@ -44,7 +44,7 @@ final class ProcessTesterAssertNotRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', 'hello');
         $this->executor->run('echo "hello"');
 
-        $this->process->assertCommandDidNotRun(static function (PendingProcess $process) {
+        $this->process->assertCommandDidNotRun(function (PendingProcess $process) {
             // this returns true, so expectation fails
             return $process->command === 'echo "hello"';
         });

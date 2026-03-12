@@ -37,12 +37,10 @@ trait IsElement
         $tailingAttributes = [];
 
         foreach ($attributes as $name => $value) {
-            if (! ($name === ':foreach' || $name === ':if')) {
-                continue;
+            if ($name === ':foreach' || $name === ':if') {
+                unset($attributes[$name]);
+                $tailingAttributes[$name] = $value;
             }
-
-            unset($attributes[$name]);
-            $tailingAttributes[$name] = $value;
         }
 
         // Tailing attributes are reversed because they need to be applied in reverse order

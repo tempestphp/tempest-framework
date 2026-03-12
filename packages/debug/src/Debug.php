@@ -125,7 +125,7 @@ final readonly class Debug
         $cloner = new VarCloner();
         $output = '';
 
-        $dumper = new CliDumper(static function ($line, $depth) use (&$output): void {
+        $dumper = new CliDumper(function ($line, $depth) use (&$output): void {
             if ($depth < 0) {
                 return;
             }

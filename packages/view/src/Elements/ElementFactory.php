@@ -42,7 +42,7 @@ final class ElementFactory
         return $clone;
     }
 
-    public function make(#[\SensitiveParameter] Token $token, Element $parent): ?Element
+    public function make(Token $token, Element $parent): ?Element
     {
         if (
             $token->type === TokenType::OPEN_TAG_END

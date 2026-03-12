@@ -25,7 +25,6 @@ final class DiscordOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Discord OAuth application.
          */
-        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

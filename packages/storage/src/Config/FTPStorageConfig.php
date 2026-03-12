@@ -19,7 +19,6 @@ final class FTPStorageConfig implements StorageConfig
         public string $host,
         public string $root,
         public string $username,
-        #[\SensitiveParameter]
         public string $password,
         public int $port = 21,
         public bool $ssl = false,

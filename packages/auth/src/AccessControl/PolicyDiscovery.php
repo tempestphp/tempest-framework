@@ -2,6 +2,7 @@
 
 namespace Tempest\Auth\AccessControl;
 
+use Tempest\Auth\AccessControl\Policy;
 use Tempest\Auth\AuthConfig;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;

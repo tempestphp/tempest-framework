@@ -26,7 +26,6 @@ final class TwitchOAuthConfig implements OAuthConfig
         /**
          * The client secret for the Twitch OAuth application.
          */
-        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

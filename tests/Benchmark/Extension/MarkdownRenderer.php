@@ -110,7 +110,7 @@ final readonly class MarkdownRenderer implements RendererInterface
     private function renderSeparatorRow(array $columns): string
     {
         return $this->renderRow(array_map(
-            static fn (string $column): string => str_repeat('-', max(3, mb_strlen($column))),
+            fn (string $column): string => str_repeat('-', max(3, mb_strlen($column))),
             $columns,
         ));
     }
@@ -128,7 +128,7 @@ final readonly class MarkdownRenderer implements RendererInterface
             return [$columns, $rows, false];
         }
 
-        $rows = array_map(static function (array $row) use ($columnIndexes): array {
+        $rows = array_map(function (array $row) use ($columnIndexes): array {
             $set = trim((string) $row[$columnIndexes['set']]);
 
             return [
@@ -189,7 +189,7 @@ final readonly class MarkdownRenderer implements RendererInterface
     {
         $columnIndexes = array_flip($columns);
 
-        if (array_any(self::COMPACT_SOURCE_COLUMNS, static fn ($column) => ! array_key_exists($column, $columnIndexes))) {
+        if (array_any(self::COMPACT_SOURCE_COLUMNS, fn ($column) => ! array_key_exists($column, $columnIndexes))) {
             return null;
         }
 

@@ -50,7 +50,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $received = null;
 
         $eventbus = $this->container->get(EventBus::class);
-        $eventbus->listen(static function (TranslationMiss $event) use (&$received): void {
+        $eventbus->listen(function (TranslationMiss $event) use (&$received): void {
             $received = $event;
         });
 
@@ -68,7 +68,7 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $received = null;
 
         $eventbus = $this->container->get(EventBus::class);
-        $eventbus->listen(static function (TranslationFailure $event) use (&$received): void {
+        $eventbus->listen(function (TranslationFailure $event) use (&$received): void {
             $received = $event;
         });
 

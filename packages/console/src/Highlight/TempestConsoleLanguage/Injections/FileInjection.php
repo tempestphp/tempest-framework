@@ -20,7 +20,7 @@ final readonly class FileInjection implements Injection
         return new ParsedInjection(preg_replace_callback(
             subject: $content,
             pattern: '/(?<match>\<file=(?<quote>[\"\'])(?<file>.+)\k<quote>\s*\/?>)/',
-            callback: static function (array $matches) {
+            callback: function (array $matches) {
                 $href = $matches['file'];
                 $exists = Filesystem\normalize_path($href) !== null;
                 $file = $exists

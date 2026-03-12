@@ -26,7 +26,6 @@ final class GitHubOAuthConfig implements OAuthConfig
         /**
          * The client secret for the GitHub OAuth application.
          */
-        #[\SensitiveParameter]
         public string $clientSecret,
 
         /**

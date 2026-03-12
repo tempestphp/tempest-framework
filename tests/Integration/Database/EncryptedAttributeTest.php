@@ -108,7 +108,6 @@ final class UserWithEncryptedData
 
     public function __construct(
         public string $email,
-        #[\SensitiveParameter]
         #[Encrypted]
         public string $secret,
     ) {}
@@ -123,7 +122,6 @@ final class UserWithNullableEncryptedData
 
     public function __construct(
         public string $email,
-        #[\SensitiveParameter]
         #[Encrypted]
         public ?string $secret,
     ) {}

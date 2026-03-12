@@ -17,7 +17,7 @@ final readonly class LinkInjection implements Injection
         return new ParsedInjection(preg_replace_callback(
             subject: $content,
             pattern: '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/',
-            callback: static function (array $matches) {
+            callback: function (array $matches) {
                 $quote = $matches['quote'];
                 $match = $matches['match'];
                 $href = $matches['href'];

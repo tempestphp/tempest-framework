@@ -59,11 +59,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             if (! $search) {
                 $search = $this->ask(
                     question: 'Please choose an installer',
-                    options: $installers->mapWithKeys(static fn (Installer $installer) => yield $installer::class => $installer->name)->toArray(),
+                    options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->name)->toArray(),
                 );
             }
 
-            return $installers->first(static fn (Installer $installer) => $installer::class === $search || $installer->name === $search);
+            return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->name === $search);
         }
     }
 }

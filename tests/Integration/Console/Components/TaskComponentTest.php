@@ -76,7 +76,7 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             ->withoutPrompting()
             ->call(function (Console $console): void {
                 $terminal = new Terminal($console);
-                $component = new TaskComponent('Task in progress', static function (): void {});
+                $component = new TaskComponent('Task in progress', function (): void {});
 
                 $frames = iterator_to_array($component->render($terminal));
 
@@ -93,7 +93,7 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             ->withoutPrompting()
             ->call(function (Console $console): void {
                 $terminal = new Terminal($console);
-                $component = new TaskComponent('Task in progress', static function (): never {
+                $component = new TaskComponent('Task in progress', function (): never {
                     throw new Exception('Failure');
                 });
 

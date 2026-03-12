@@ -206,11 +206,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             )
             ->when(
                 true,
-                static fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 10),
+                fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 10),
             )
             ->when(
                 false,
-                static fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 20),
+                fn (UpdateQueryBuilder $query) => $query->whereRaw('`id` = ?', 20),
             )
             ->build();
 
@@ -285,7 +285,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query('books')
             ->update(status: 'archived')
             ->whereRaw('published = ?', true)
-            ->andWhereGroup(static function ($group): void {
+            ->andWhereGroup(function ($group): void {
                 $group
                     ->whereRaw('views < ?', 100)
                     ->orWhereRaw('last_accessed < ?', '2023-01-01');

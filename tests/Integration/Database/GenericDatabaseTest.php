@@ -28,7 +28,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 
         $db = $this->container->get(Database::class);
 
-        $db->withinTransaction(static function (): void {
+        $db->withinTransaction(function (): void {
             query(Author::class)
                 ->insert(
                     name: 'Brent',
@@ -45,7 +45,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 
         $db = $this->container->get(Database::class);
 
-        $db->withinTransaction(static function (): never {
+        $db->withinTransaction(function (): never {
             query(Author::class)
                 ->insert(
                     name: 'Brent',
@@ -75,14 +75,14 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 
     public function test_query_was_invalid_exception_is_thrown_on_fetch(): void
     {
-        $this->assertException(QueryWasInvalid::class, static function (): void {
+        $this->assertException(QueryWasInvalid::class, function (): void {
             query('books')->select()->orderByRaw('title DES')->first();
         });
     }
 
     public function test_query_was_invalid_exception_is_thrown_on_execute(): void
     {
-        $this->assertException(QueryWasInvalid::class, static function (): void {
+        $this->assertException(QueryWasInvalid::class, function (): void {
             query('books')->update(title: 'Timeline Taxi')->whereRaw('title = ?')->execute();
         });
     }

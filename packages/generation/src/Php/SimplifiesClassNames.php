@@ -118,7 +118,7 @@ trait SimplifiesClassNames
                 }
 
                 array_map(
-                    static function ($param) use (&$types): void {
+                    function ($param) use (&$types): void {
                         $types[] = $param->getType(true);
                     },
                     $class->getProperties(),
@@ -136,11 +136,9 @@ trait SimplifiesClassNames
                     }
 
                     foreach ($type->getTypes() as $subtype) {
-                        if (! ($subtype->isClass() && ! $subtype->isClassKeyword())) {
-                            continue;
+                        if ($subtype->isClass() && ! $subtype->isClassKeyword()) {
+                            $namespace->addUse((string) $subtype);
                         }
-
-                        $namespace->addUse((string) $subtype);
                     }
                 }
             }
@@ -154,7 +152,7 @@ trait SimplifiesClassNames
         preg_match_all('/(?:\\\\?[A-Za-z_][\w\d_]*\\\\)+[A-Za-z_][\w\d_]*/', $body, $matches);
 
         return array_filter(array_unique(
-            array_map(static fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0]),
+            array_map(fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0]),
         ));
     }
 }

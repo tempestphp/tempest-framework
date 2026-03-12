@@ -14,7 +14,7 @@ final class TempestViewAst implements IteratorAggregate, ArrayAccess
 
     private(set) bool $isHtml = true;
 
-    public function add(#[\SensitiveParameter] Token $token): self
+    public function add(Token $token): self
     {
         if ($token->type === TokenType::XML) {
             $this->isHtml = false;
@@ -28,7 +28,7 @@ final class TempestViewAst implements IteratorAggregate, ArrayAccess
     public function compile(): string
     {
         return implode('', array_map(
-            static fn (#[\SensitiveParameter] Token $token) => $token->compile(),
+            fn (Token $token) => $token->compile(),
             iterator_to_array($this->tokens),
         ));
     }

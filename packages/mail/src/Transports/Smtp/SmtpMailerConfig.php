@@ -41,7 +41,6 @@ final class SmtpMailerConfig implements MailerConfig, ProvidesDefaultSender
         /**
          * Password used for connecting to the SMTP server.
          */
-        #[\SensitiveParameter]
         public ?string $password,
 
         /**

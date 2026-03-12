@@ -25,7 +25,7 @@ final class ViewComponentsInstaller implements Installer
     public function install(): void
     {
         $searchOptions = arr($this->viewConfig->viewComponents)
-            ->filter(static fn (ViewComponent $viewComponent) => $viewComponent->isVendorComponent);
+            ->filter(fn (ViewComponent $viewComponent) => $viewComponent->isVendorComponent);
 
         if ($searchOptions->isEmpty()) {
             $this->error('No installable view vendor components found.');

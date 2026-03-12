@@ -38,7 +38,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
                 manipulations: [
-                    static function (ClassManipulator $stubClass) use ($isSingleton) {
+                    function (ClassManipulator $stubClass) use ($isSingleton) {
                         $stubClass->removeClassAttribute(SkipDiscovery::class);
 
                         if ($isSingleton) {

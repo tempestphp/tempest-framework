@@ -25,11 +25,11 @@ final readonly class Manifest
 
     public static function fromArray(array $chunks): self
     {
-        $chunks = arr($chunks)->map(static fn (array $value) => Chunk::fromArray($value));
+        $chunks = arr($chunks)->map(fn (array $value) => Chunk::fromArray($value));
 
         return new self(
             chunks: $chunks,
-            entrypoints: $chunks->filter(static fn (Chunk $entry) => $entry->isEntry),
+            entrypoints: $chunks->filter(fn (Chunk $entry) => $entry->isEntry),
         );
     }
 }

@@ -20,7 +20,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
     {
         return new self(array_combine(
             array_map(strtolower(...), array_keys($headers)),
-            array_values(array_map(static fn (mixed $value) => Str\parse($value), $headers)),
+            array_values(array_map(fn (mixed $value) => Str\parse($value), $headers)),
         ));
     }
 
@@ -45,7 +45,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
     {
         $header = array_find(
             array: $this->headers,
-            callback: static fn (mixed $_, string $header) => strcasecmp($header, $name) === 0,
+            callback: fn (mixed $_, string $header) => strcasecmp($header, $name) === 0,
         );
 
         return $header ?? $default;

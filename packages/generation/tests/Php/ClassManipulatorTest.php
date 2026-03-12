@@ -165,7 +165,7 @@ final class ClassManipulatorTest extends TestCase
         $class = new ClassManipulator(WelcomeController::class);
         $class->setNamespace('App\\Controllers');
         $class->setClassName('WelcomeController');
-        $class->manipulate(static fn (ImmutableString $string) => $string->replace('welcome', 'home'));
+        $class->manipulate(fn (ImmutableString $string) => $string->replace('welcome', 'home'));
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -190,7 +190,7 @@ final class ClassManipulatorTest extends TestCase
     public function make_replacements_before_converting_fqcn(): void
     {
         $class = new ClassManipulator(ClassWithDummyStringToBeReplacedByFqcn::class);
-        $class->manipulate(static fn (ImmutableString $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
+        $class->manipulate(fn (ImmutableString $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
 
         $this->assertMatchesSnapshot($class->print());
     }

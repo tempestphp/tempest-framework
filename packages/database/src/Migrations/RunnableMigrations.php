@@ -36,11 +36,9 @@ final class RunnableMigrations implements IteratorAggregate
     public function up(): Traversable
     {
         foreach ($this->getIterator() as $migration) {
-            if (! $migration instanceof MigratesUp) {
-                continue;
+            if ($migration instanceof MigratesUp) {
+                yield $migration;
             }
-
-            yield $migration;
         }
     }
 
@@ -50,11 +48,9 @@ final class RunnableMigrations implements IteratorAggregate
     public function down(): Traversable
     {
         foreach ($this->getIterator() as $migration) {
-            if (! $migration instanceof MigratesDown) {
-                continue;
+            if ($migration instanceof MigratesDown) {
+                yield $migration;
             }
-
-            yield $migration;
         }
     }
 }

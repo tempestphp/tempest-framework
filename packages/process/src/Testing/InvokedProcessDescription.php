@@ -113,7 +113,7 @@ final class InvokedProcessDescription
             ->filter(static fn (array $output) => $output['type'] === $expectedType)
             ->map(static fn (array $output) => rtrim($output['buffer'], "\n"))
             ->implode("\n")
-            ->when(static fn ($s) => $s->isNotEmpty(), static fn ($s) => $s->finish("\n"))
+            ->when(fn ($s) => $s->isNotEmpty(), fn ($s) => $s->finish("\n"))
             ->toString();
     }
 }
