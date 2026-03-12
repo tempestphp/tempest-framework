@@ -14,6 +14,7 @@
 /.github/workflows/benchmark.yml                     @xHeaven
 /.github/workflows/benchmark-comment.yml             @xHeaven
 /src/                                                @brendt
+/utils/rector/                                       @xHeaven
 /docs/                                               @brendt @innocenzi
 /packages/auth/                                      @innocenzi
 /packages/cache/                                     @innocenzi

@@ -237,7 +237,8 @@
             "Tempest\\Validation\\Tests\\": "packages/validation/tests",
             "Tempest\\View\\Tests\\": "packages/view/tests",
             "Tempest\\Vite\\Tests\\": "packages/vite/tests",
-            "Tests\\Tempest\\": "tests"
+            "Tests\\Tempest\\": "tests",
+            "Tempest\\Rector\\": "utils/rector/src"
         }
     },
     "bin": [
