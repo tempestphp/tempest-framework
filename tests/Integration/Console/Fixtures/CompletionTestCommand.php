@@ -13,6 +13,5 @@ final readonly class CompletionTestCommand
         string $value,
         bool $flag = false,
         array $items = [],
-    ): void {
-    }
+    ): void {}
 }

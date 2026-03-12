@@ -88,10 +88,10 @@ final readonly class JsonExceptionRenderer implements ExceptionRenderer
             'message' => $message ?? $status->description(),
         ];
 
-        if ($this->environment->isLocal() && $throwable !== null) {
+        if ($this->environment->isLocal() && $throwable instanceof Throwable) {
             $body['debug'] = array_filter([
                 'message' => $throwable->getMessage(),
-                'exception' => get_class($throwable),
+                'exception' => $throwable::class,
                 'file' => $throwable->getFile(),
                 'line' => $throwable->getLine(),
                 'trace' => Arr\map(

@@ -2,6 +2,7 @@
 
 namespace Tempest\Process\Testing;
 
+use RuntimeException;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\InvokedSystemProcess;
@@ -29,7 +30,7 @@ final class TestingProcessExecutor implements ProcessExecutor
 
     public function run(string|PendingProcess $command): ProcessResult
     {
-        if ($result = $this->findMockedProcess($command)) {
+        if (($result = $this->findMockedProcess($command)) instanceof ProcessResult) {
             return $this->recordExecution($command, $result);
         }
 
@@ -42,7 +43,7 @@ final class TestingProcessExecutor implements ProcessExecutor
 
     public function start(string|PendingProcess $command): InvokedProcess
     {
-        if ($processResult = $this->findInvokedProcessDescription($command)) {
+        if (($processResult = $this->findInvokedProcessDescription($command)) instanceof InvokedProcessDescription) {
             $this->recordExecution($command, $process = new InvokedTestingProcess($processResult));
         } else {
             if (! $this->allowRunningActualProcesses) {
@@ -117,7 +118,7 @@ final class TestingProcessExecutor implements ProcessExecutor
             $result instanceof ProcessResult => $result,
             $result instanceof InvokedTestingProcess => $result->getProcessResult(),
             $result instanceof InvokedSystemProcess => $result->wait(), // TODO: fix
-            default => throw new \RuntimeException('Unexpected result type.'),
+            default => throw new RuntimeException('Unexpected result type.'),
         };
 
         $this->executions[$process->command] ??= [];

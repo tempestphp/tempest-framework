@@ -5,6 +5,7 @@ namespace Tempest\Process\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
+use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Process\GenericProcessExecutor;
@@ -73,7 +74,7 @@ final class ProcessTester
     {
         $this->allowRunningActualProcesses = true;
 
-        if ($this->executor) {
+        if ($this->executor instanceof TestingProcessExecutor) {
             $this->executor->allowRunningActualProcesses = true;
         } else {
             $this->recordProcessExecutions();
@@ -87,7 +88,7 @@ final class ProcessTester
     {
         $this->allowRunningActualProcesses = false;
 
-        if ($this->executor) {
+        if ($this->executor instanceof TestingProcessExecutor) {
             $this->executor->allowRunningActualProcesses = false;
         } else {
             $this->recordProcessExecutions();
@@ -109,7 +110,7 @@ final class ProcessTester
     {
         $this->ensureTestingSetUp();
 
-        throw new \RuntimeException(var_export($this->executor->executions, true));
+        throw new RuntimeException(var_export($this->executor->executions, true));
     }
 
     /**
@@ -125,7 +126,7 @@ final class ProcessTester
      *
      * @param null|Closure(): mixed|Closure(ProcessResult): mixed|Closure(ProcessResult, PendingProcess): mixed $callback
      */
-    public function assertCommandRan(string $command, ?\Closure $callback = null): self
+    public function assertCommandRan(string $command, ?Closure $callback = null): self
     {
         $this->ensureTestingSetUp();
 
@@ -160,7 +161,7 @@ final class ProcessTester
      *
      * @param Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $callback
      */
-    public function assertRan(\Closure $callback): self
+    public function assertRan(Closure $callback): self
     {
         $this->ensureTestingSetUp();
 
@@ -188,7 +189,7 @@ final class ProcessTester
      *
      * @param string|Closure(): mixed|Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $command
      */
-    public function assertCommandDidNotRun(string|\Closure $command): self
+    public function assertCommandDidNotRun(string|Closure $command): self
     {
         $this->ensureTestingSetUp();
 
@@ -238,11 +239,11 @@ final class ProcessTester
      *
      * @param string|\Closure(PendingProcess,ProcessResult):bool $command
      */
-    public function assertRanTimes(string|\Closure $command, int $times): self
+    public function assertRanTimes(string|Closure $command, int $times): self
     {
         $this->ensureTestingSetUp();
 
-        if ($command instanceof \Closure) {
+        if ($command instanceof Closure) {
             $count = 0;
             foreach ($this->executor->executions as $executions) {
                 foreach ($executions as [$process, $result]) {

@@ -5,6 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use ArrayAccess;
 use BackedEnum;
 use Countable;
+use InvalidArgumentException;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
@@ -42,7 +43,7 @@ trait HasConvenientWhereMethods
                 }
 
                 if (! is_array($value)) {
-                    throw new \InvalidArgumentException("{$operator->value} operator requires an array of values");
+                    throw new InvalidArgumentException("{$operator->value} operator requires an array of values");
                 }
 
                 $value = array_map(fn (mixed $value) => match (true) {
@@ -60,7 +61,7 @@ trait HasConvenientWhereMethods
             case WhereOperator::BETWEEN:
             case WhereOperator::NOT_BETWEEN:
                 if (! is_array($value) || count($value) !== 2) {
-                    throw new \InvalidArgumentException("{$operator->value} operator requires an array with exactly 2 values");
+                    throw new InvalidArgumentException("{$operator->value} operator requires an array with exactly 2 values");
                 }
 
                 $sql .= " {$operator->value} ? AND ?";
@@ -75,7 +76,7 @@ trait HasConvenientWhereMethods
 
             default:
                 if ($operator->requiresValue() && $value === null) {
-                    throw new \InvalidArgumentException("{$operator->value} operator requires a value");
+                    throw new InvalidArgumentException("{$operator->value} operator requires a value");
                 }
 
                 if ($operator->requiresValue()) {
@@ -84,6 +85,7 @@ trait HasConvenientWhereMethods
                 } else {
                     $sql .= " {$operator->value}";
                 }
+
                 break;
         }
 
@@ -99,11 +101,7 @@ trait HasConvenientWhereMethods
             return false;
         }
 
-        if (! Str\contains($statement, [' ', ...array_map(fn (WhereOperator $op) => $op->value, WhereOperator::cases())])) {
-            return false;
-        }
-
-        return true;
+        return Str\contains($statement, [' ', ...array_map(fn (WhereOperator $op) => $op->value, WhereOperator::cases())]);
     }
 
     /**

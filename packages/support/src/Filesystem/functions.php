@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Support\Filesystem;
 
 use FilesystemIterator;
+use Phar;
+use Tempest\Support\Filesystem\Exceptions\NameWasInvalid;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotADirectory;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotAFile;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotASymbolicLink;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotFound;
+use Tempest\Support\Filesystem\Exceptions\PathWasNotReadable;
+use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 use Tempest\Support\Json;
 use Tempest\Support\Str;
 
@@ -49,15 +57,15 @@ function copy_file(string $source, string $destination, bool $overwrite = false)
     }
 
     if (namespace\is_directory($source)) {
-        throw new Exceptions\PathWasNotAFile($source);
+        throw new PathWasNotAFile($source);
     }
 
     if (! namespace\is_file($source)) {
-        throw Exceptions\PathWasNotFound::forFile($source);
+        throw PathWasNotFound::forFile($source);
     }
 
     if (! namespace\is_readable($source)) {
-        throw Exceptions\PathWasNotReadable::forFile($source);
+        throw PathWasNotReadable::forFile($source);
     }
 
     namespace\create_directory_for_file($destination);
@@ -65,7 +73,7 @@ function copy_file(string $source, string $destination, bool $overwrite = false)
     [$result, $errorMessage] = box(static fn (): bool => php_copy($source, $destination));
 
     if ($result === false) {
-        throw new Exceptions\RuntimeException(
+        throw new RuntimeException(
             sprintf('Failed to copy source file "%s" to destination "%s": %s', $source, $destination, $errorMessage),
         );
     }
@@ -77,15 +85,15 @@ function copy_file(string $source, string $destination, bool $overwrite = false)
 function copy_directory(string $source, string $destination, bool $overwrite = false): void
 {
     if (! namespace\exists($source)) {
-        throw Exceptions\PathWasNotFound::forDirectory($source);
+        throw PathWasNotFound::forDirectory($source);
     }
 
     if (! namespace\is_directory($source)) {
-        throw new Exceptions\PathWasNotADirectory($source);
+        throw new PathWasNotADirectory($source);
     }
 
     if (! namespace\is_readable($source)) {
-        throw Exceptions\PathWasNotReadable::forDirectory($source);
+        throw PathWasNotReadable::forDirectory($source);
     }
 
     if (! $overwrite && namespace\is_directory($destination)) {
@@ -138,7 +146,7 @@ function write_file(string $filename, mixed $content, int $flags = 0): void
     [$result, $errorMessage] = box(static fn (): int|false => file_put_contents($filename, $content, $flags));
 
     if (false === $result) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to write to file "%s": %s.',
             $filename,
             $errorMessage ?? 'internal error',
@@ -160,17 +168,17 @@ function read_json(string $filename, bool $associative = true): array
 function read_file(string $filename): string
 {
     if (! namespace\exists($filename)) {
-        throw Exceptions\PathWasNotFound::forFile($filename);
+        throw PathWasNotFound::forFile($filename);
     }
 
     if (! namespace\is_readable($filename)) {
-        throw Exceptions\PathWasNotReadable::forFile($filename);
+        throw PathWasNotReadable::forFile($filename);
     }
 
     [$result, $message] = box(static fn (): false|string => file_get_contents($filename));
 
     if (false === $result) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to read file "%s": %s',
             $filename,
             $message ?? 'internal error',
@@ -186,17 +194,17 @@ function read_file(string $filename): string
 function read_locked_file(string $filename, LockType $type = LockType::SHARED): string
 {
     if (! namespace\exists($filename)) {
-        throw Exceptions\PathWasNotFound::forFile($filename);
+        throw PathWasNotFound::forFile($filename);
     }
 
     if (! namespace\is_readable($filename)) {
-        throw Exceptions\PathWasNotReadable::forFile($filename);
+        throw PathWasNotReadable::forFile($filename);
     }
 
     [$handle, $openMessage] = box(static fn () => fopen($filename, 'rb'));
 
     if ($handle === false) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to open file "%s": %s',
             $filename,
             $openMessage ?? 'internal error',
@@ -206,7 +214,7 @@ function read_locked_file(string $filename, LockType $type = LockType::SHARED): 
     if (! flock($handle, $type->value)) {
         fclose($handle);
 
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to acquire lock on file "%s"',
             $filename,
         ));
@@ -218,7 +226,7 @@ function read_locked_file(string $filename, LockType $type = LockType::SHARED): 
     fclose($handle);
 
     if ($content === false) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to read file "%s": %s',
             $filename,
             $readMessage ?? 'internal error',
@@ -250,7 +258,7 @@ function create_directory(string $directory, int $permissions = 0o777): void
     [$result, $errorMessage] = box(static fn (): bool => mkdir($directory, $permissions, recursive: true));
 
     if ($result === false && ! namespace\is_directory($directory)) { // @phpstan-ignore booleanNot.alwaysTrue
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to create directory "%s": %s.',
             $directory,
             $errorMessage ?? 'internal error',
@@ -306,7 +314,7 @@ function create_file(string $filename, ?int $time = null, ?int $accessTime = nul
     [$result, $errorMessage] = box($fun);
 
     if (false === $result && ! namespace\is_file($filename)) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to create file "%s": %s.',
             $filename,
             $errorMessage ?? 'internal error',
@@ -347,7 +355,7 @@ function delete_file(string $file): void
         [$result, $errorMessage] = box(static fn (): bool => unlink($file));
 
         if ($result === false && namespace\is_symbolic_link($file)) { // @phpstan-ignore booleanAnd.rightAlwaysTrue
-            throw new Exceptions\RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Failed to delete symbolic link "%s": %s.',
                 $file,
                 $errorMessage ?? 'internal error',
@@ -358,17 +366,17 @@ function delete_file(string $file): void
     }
 
     if (! namespace\exists($file)) {
-        throw Exceptions\PathWasNotFound::forFile($file);
+        throw PathWasNotFound::forFile($file);
     }
 
     if (! namespace\is_file($file)) {
-        throw new Exceptions\PathWasNotAFile($file);
+        throw new PathWasNotAFile($file);
     }
 
     [$result, $errorMessage] = box(static fn (): bool => unlink($file));
 
     if ($result === false && namespace\is_file($file)) { // @phpstan-ignore booleanAnd.rightAlwaysTrue
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to delete file "%s": %s.',
             $file,
             $errorMessage ?? 'internal error',
@@ -382,13 +390,13 @@ function delete_file(string $file): void
 function get_permissions(string $path): int
 {
     if (! namespace\exists($path)) {
-        throw Exceptions\PathWasNotFound::forPath($path);
+        throw PathWasNotFound::forPath($path);
     }
 
     [$result, $message] = box(static fn (): int|false => fileperms($path));
 
     if (false === $result) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to retrieve permissions of file "%s": %s',
             $path,
             $message ?? 'internal error',
@@ -404,7 +412,7 @@ function get_permissions(string $path): int
 function ensure_directory_empty(string $directory): void
 {
     if (namespace\exists($directory) && ! namespace\is_directory($directory)) {
-        throw new Exceptions\PathWasNotADirectory($directory);
+        throw new PathWasNotADirectory($directory);
     }
 
     if (! namespace\is_directory($directory)) {
@@ -444,18 +452,18 @@ function delete_directory(string $directory, bool $recursive = true): void
         }
     } else {
         if (! namespace\exists($directory)) {
-            throw Exceptions\PathWasNotFound::forDirectory($directory);
+            throw PathWasNotFound::forDirectory($directory);
         }
 
         if (! namespace\is_directory($directory)) {
-            throw new Exceptions\PathWasNotADirectory($directory);
+            throw new PathWasNotADirectory($directory);
         }
     }
 
     [$result, $errorMessage] = box(static fn (): bool => rmdir($directory));
 
     if (false === $result && namespace\is_directory($directory)) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to delete directory "%s": %s.',
             $directory,
             $errorMessage ?? 'internal error',
@@ -469,7 +477,7 @@ function delete_directory(string $directory, bool $recursive = true): void
 function rename(string $source, string $name, bool $overwrite = false): void
 {
     if (Str\contains($name, ['/', '\\'])) {
-        throw Exceptions\NameWasInvalid::forName($name);
+        throw NameWasInvalid::forName($name);
     }
 
     namespace\move(
@@ -485,11 +493,11 @@ function rename(string $source, string $name, bool $overwrite = false): void
 function move(string $source, string $destination, bool $overwrite = false): void
 {
     if (! namespace\exists($source)) {
-        throw Exceptions\PathWasNotFound::forPath($source);
+        throw PathWasNotFound::forPath($source);
     }
 
     if (! namespace\is_readable($source)) {
-        throw Exceptions\PathWasNotReadable::forFile($source);
+        throw PathWasNotReadable::forFile($source);
     }
 
     if (namespace\exists($destination) && $overwrite === false) {
@@ -505,7 +513,7 @@ function move(string $source, string $destination, bool $overwrite = false): voi
     [$result, $errorMessage] = box(static fn (): bool => php_rename($source, $destination));
 
     if ($result === false) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to move "%s" to "%s": %s',
             $source,
             $destination,
@@ -571,15 +579,15 @@ function is_directory(string $path): bool
 function list_directory(string $directory): array
 {
     if (! namespace\exists($directory)) {
-        throw Exceptions\PathWasNotFound::forDirectory($directory);
+        throw PathWasNotFound::forDirectory($directory);
     }
 
     if (! namespace\is_directory($directory)) {
-        throw new Exceptions\PathWasNotADirectory($directory);
+        throw new PathWasNotADirectory($directory);
     }
 
     if (! namespace\is_readable($directory)) {
-        throw Exceptions\PathWasNotReadable::forDirectory($directory);
+        throw PathWasNotReadable::forDirectory($directory);
     }
 
     /** @var array<non-empty-string> */
@@ -595,17 +603,17 @@ function list_directory(string $directory): array
 function read_symbolic_link(string $path): string
 {
     if (! namespace\exists($path)) {
-        throw Exceptions\PathWasNotFound::forSymbolicLink($path);
+        throw PathWasNotFound::forSymbolicLink($path);
     }
 
     if (! namespace\is_symbolic_link($path)) {
-        throw new Exceptions\PathWasNotASymbolicLink($path);
+        throw new PathWasNotASymbolicLink($path);
     }
 
     [$result, $message] = box(static fn (): false|string => readlink($path));
 
     if (false === $result) {
-        throw new Exceptions\RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Failed to retrieve the target of symbolic link "%s": %s',
             $path,
             $message ?? 'internal error',
@@ -620,7 +628,7 @@ function read_symbolic_link(string $path): string
  */
 function normalize_path(string $path): ?string
 {
-    if (str_starts_with($path, 'phar:') && class_exists(\Phar::class) && \Phar::running(false) !== '') {
+    if (str_starts_with($path, 'phar:') && class_exists(Phar::class) && Phar::running(false) !== '') {
         return $path;
     }
 

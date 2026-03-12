@@ -58,7 +58,7 @@ final class Vite
      */
     public function clearManifestCache(): self
     {
-        static::$manifest = null;
+        self::$manifest = null;
 
         return $this;
     }
@@ -68,7 +68,7 @@ final class Vite
      */
     public function clearBridgeCache(): self
     {
-        static::$bridgeFile = null;
+        self::$bridgeFile = null;
 
         return $this;
     }
@@ -94,15 +94,15 @@ final class Vite
 
     private function getManifest(): Manifest
     {
-        if (static::$manifest !== null) {
-            return static::$manifest;
+        if (self::$manifest instanceof Manifest) {
+            return self::$manifest;
         }
 
         if (! is_file($path = root_path('public', $this->viteConfig->buildDirectory, $this->viteConfig->manifest))) {
             throw new ManifestWasNotFound($path);
         }
 
-        return static::$manifest = Manifest::fromArray(Json\decode(
+        return self::$manifest = Manifest::fromArray(Json\decode(
             Filesystem\read_file($path),
         ));
     }
@@ -113,11 +113,7 @@ final class Vite
             return false;
         }
 
-        if ($this->isDevelopmentServerRunning()) {
-            return false;
-        }
-
-        return true;
+        return ! $this->isDevelopmentServerRunning();
     }
 
     private function isDevelopmentServerRunning(): bool
@@ -127,8 +123,8 @@ final class Vite
 
     private function getBridgeFile(): ViteBridgeFile
     {
-        if (static::$bridgeFile !== null) {
-            return static::$bridgeFile;
+        if (self::$bridgeFile instanceof ViteBridgeFile) {
+            return self::$bridgeFile;
         }
 
         if (! $this->isDevelopmentServerRunning()) {
@@ -138,7 +134,7 @@ final class Vite
         $file = Filesystem\read_file($this->getBridgeFilePath());
         $content = arr(Json\decode($file));
 
-        return static::$bridgeFile = new ViteBridgeFile(
+        return self::$bridgeFile = new ViteBridgeFile(
             url: $content->get('url'),
             needsReactRefresh: $content->get('needsReactRefresh', default: false),
         );

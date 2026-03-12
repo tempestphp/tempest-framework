@@ -68,9 +68,7 @@ final readonly class Validator
         return new ValidationFailed(
             failingRules: $failingRules,
             subject: $subject,
-            errorMessages: Arr\map($failingRules, function (array $rules, string $field) {
-                return Arr\map($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field));
-            }),
+            errorMessages: Arr\map($failingRules, fn (array $rules, string $field) => Arr\map($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field))),
             targetClass: $targetClass,
         );
     }

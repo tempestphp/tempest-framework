@@ -19,7 +19,7 @@ final class RootElement implements Element
             $compiled[] = $element->compile();
         }
 
-        return implode($compiled);
+        return implode('', $compiled);
     }
 
     public function getImports(): array

@@ -10,6 +10,7 @@ use Tempest\Http\Session\SessionManager;
 final readonly class SessionAuthenticator implements Authenticator
 {
     public const string AUTHENTICATABLE_KEY = '#authenticatable:id';
+
     public const string AUTHENTICATABLE_CLASS = '#authenticatable:class';
 
     public function __construct(
@@ -35,6 +36,7 @@ final readonly class SessionAuthenticator implements Authenticator
     {
         $this->session->remove(self::AUTHENTICATABLE_KEY);
         $this->session->remove(self::AUTHENTICATABLE_CLASS);
+
         $this->sessionManager->save($this->session);
     }
 

@@ -506,7 +506,7 @@ final class UpdateSpell
 
     public PrimaryKey $spell_id;
 
-    #[BelongsTo(ownerJoin: 'creator_uuid', relationJoin: 'mage_uuid')]
+    #[BelongsTo(relationJoin: 'mage_uuid', ownerJoin: 'creator_uuid')]
     public ?UpdateMage $creator = null;
 
     public function __construct(
@@ -539,7 +539,7 @@ final class UpdateAdventurer
 
     public PrimaryKey $adventurer_id;
 
-    #[BelongsTo(ownerJoin: 'party_uuid', relationJoin: 'party_id')]
+    #[BelongsTo(relationJoin: 'party_id', ownerJoin: 'party_uuid')]
     public ?UpdateParty $party = null;
 
     public function __construct(

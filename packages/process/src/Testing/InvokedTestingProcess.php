@@ -2,6 +2,7 @@
 
 namespace Tempest\Process\Testing;
 
+use Closure;
 use Tempest\DateTime\Duration;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\OutputChannel;
@@ -72,7 +73,7 @@ final class InvokedTestingProcess implements InvokedProcess
      *
      * @var null|\Closure(OutputChannel, string): void
      */
-    private ?\Closure $outputHandler = null;
+    private ?Closure $outputHandler = null;
 
     /**
      * The number of times the process should indicate that it is "running".
@@ -118,12 +119,12 @@ final class InvokedTestingProcess implements InvokedProcess
     public function wait(?callable $output = null): ProcessResult
     {
         if ($output !== null) {
-            $this->outputHandler = $output instanceof \Closure
+            $this->outputHandler = $output instanceof Closure
                 ? $output
-                : \Closure::fromCallable($output);
+                : Closure::fromCallable($output);
         }
 
-        if (! $this->outputHandler) {
+        if (! $this->outputHandler instanceof Closure) {
             $this->remainingRunIterations = 0;
 
             return $this->getProcessResult();
@@ -185,7 +186,7 @@ final class InvokedTestingProcess implements InvokedProcess
      */
     private function invokeOutputHandlerWithNextLineOfOutput(): bool
     {
-        if (! $this->outputHandler) {
+        if (! $this->outputHandler instanceof Closure) {
             return false;
         }
 

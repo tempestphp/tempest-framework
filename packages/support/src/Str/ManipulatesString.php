@@ -7,8 +7,11 @@ namespace Tempest\Support\Str;
 use ArrayAccess;
 use Closure;
 use Countable;
+use RuntimeException;
 use Stringable;
+use Tempest\Debug\Debug;
 use Tempest\Intl;
+use Tempest\Intl\Pluralizer\Pluralizer;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Random;
 use Tempest\Support\Regex;
@@ -837,8 +840,8 @@ trait ManipulatesString
 
     private function ensurePluralizerInstalled(string $function): void
     {
-        if (! interface_exists(Intl\Pluralizer\Pluralizer::class)) {
-            throw new \RuntimeException("The `tempest/intl` package is required to use `{$function}`.");
+        if (! interface_exists(Pluralizer::class)) {
+            throw new RuntimeException("The `tempest/intl` package is required to use `{$function}`.");
         }
     }
 
@@ -874,7 +877,7 @@ trait ManipulatesString
 
     private function debugLog(array $items, bool $terminate = false): void
     {
-        $debugClass = \Tempest\Debug\Debug::class;
+        $debugClass = Debug::class;
 
         if (class_exists($debugClass)) {
             $debugClass::resolve()->log($items);

@@ -262,11 +262,7 @@ final class HttpRouterTester
 
         $_COOKIE = $cookies;
 
-        if (is_array($body)) {
-            $_POST = $body;
-        } else {
-            $_POST = [];
-        }
+        $_POST = is_array($body) ? $body : [];
 
         return ServerRequestFactory::fromGlobals()->withUploadedFiles($files);
     }
@@ -278,11 +274,11 @@ final class HttpRouterTester
             callback: fn (mixed $_, string $headerKey): bool => strcasecmp($headerKey, 'accept') === 0,
         );
 
-        if ($this->contentType !== null) {
+        if ($this->contentType instanceof ContentType) {
             $headers[$key ?? 'accept'] = $this->contentType->value;
         }
 
-        if ($this->includeSecFetchHeaders === true) {
+        if ($this->includeSecFetchHeaders) {
             if (! array_key_exists('sec-fetch-site', array_change_key_case($headers, case: CASE_LOWER))) {
                 $headers['sec-fetch-site'] = SecFetchSite::SAME_ORIGIN;
             }

@@ -829,11 +829,11 @@ enum Locale: string
 
         $locale = to_lower_case($language);
 
-        if ($script) {
+        if ($script !== '' && $script !== '0') {
             $locale .= '_' . upper_first($script);
         }
 
-        if ($region) {
+        if ($region !== '' && $region !== '0') {
             $locale .= '_' . to_upper_case($region);
         }
 

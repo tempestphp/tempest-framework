@@ -7,6 +7,7 @@ use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Locale;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\Rules;
+use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\TranslationKey;
 use Tempest\Validation\Validator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -35,7 +36,7 @@ final class TranslationKeyTest extends FrameworkIntegrationTestCase
 final class ValidatableObject
 {
     public function __construct(
-        #[Rules\HasLength(min: 5, max: 50)]
+        #[HasLength(min: 5, max: 50)]
         #[TranslationKey('book_title')]
         public string $title,
     ) {}

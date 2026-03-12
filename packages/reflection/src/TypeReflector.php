@@ -7,7 +7,9 @@ namespace Tempest\Reflection;
 use BackedEnum;
 use DateTimeInterface;
 use Generator;
+use InvalidArgumentException;
 use Iterator;
+use LogicException;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionClassConstant as PHPReflectionClassConstant;
 use ReflectionEnumUnitCase as PHPReflectionEnumUnitCase;
@@ -141,7 +143,7 @@ final readonly class TypeReflector implements Reflector
     {
         $parts = explode('\\', $this->definition);
 
-        return $parts[array_key_last($parts)];
+        return array_last($parts);
     }
 
     public function isBuiltIn(): bool
@@ -172,7 +174,7 @@ final readonly class TypeReflector implements Reflector
     public function asEnumCase(): PHPReflectionEnumUnitCase
     {
         if (! $this->reflector instanceof PHPReflectionEnumUnitCase) {
-            throw new \LogicException(sprintf('Cannot get enum case from `%s`.', $this->definition));
+            throw new LogicException(sprintf('Cannot get enum case from `%s`.', $this->definition));
         }
 
         return $this->reflector;
@@ -214,7 +216,7 @@ final readonly class TypeReflector implements Reflector
             return true;
         }
 
-        return in_array($this->cleanDefinition, ['string'], strict: true);
+        return $this->cleanDefinition === 'string';
     }
 
     public function isNullable(): bool
@@ -271,19 +273,19 @@ final readonly class TypeReflector implements Reflector
 
         if ($reflector instanceof PHPReflectionUnionType) {
             return implode('|', array_map(
-                fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
+                $this->resolveDefinition(...),
                 $reflector->getTypes(),
             ));
         }
 
         if ($reflector instanceof PHPReflectionIntersectionType) {
             return implode('&', array_map(
-                fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
+                $this->resolveDefinition(...),
                 $reflector->getTypes(),
             ));
         }
 
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
             sprintf('Could not resolve type for reflector of type: %s', get_debug_type($reflector)),
         );
     }

@@ -34,8 +34,8 @@ final class TempestViewParserTest extends TestCase
         $parsed = new TempestViewParser($tokens)->parse();
 
         $this->assertSame(<<<'HTML'
-        <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
-        HTML, $parsed->compile());
+            <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
+            HTML, $parsed->compile());
     }
 
     public function test_parse_self_closing_tag_with_attributes(): void
@@ -52,8 +52,8 @@ final class TempestViewParserTest extends TestCase
         $parsed = new TempestViewParser($tokens)->parse();
 
         $this->assertSame(<<<'HTML'
-        <x-foo x-bar="bar" x-baz="baz" />
-        HTML, $parsed->compile());
+            <x-foo x-bar="bar" x-baz="baz" />
+            HTML, $parsed->compile());
     }
 
     public function test_self_closing_tags_with_attributes(): void
@@ -63,8 +63,8 @@ final class TempestViewParserTest extends TestCase
         $ast = new TempestViewParser($tokens)->parse();
 
         $this->assertSame(<<<'HTML'
-        <x-foo foo="bar"/><x-bar foo="bar"/>
-        HTML, $ast->compile());
+            <x-foo foo="bar"/><x-bar foo="bar"/>
+            HTML, $ast->compile());
     }
 
     public function test_invalid_closing_tag(): void
@@ -79,19 +79,19 @@ final class TempestViewParserTest extends TestCase
     public function test_invalid_closing_tag_ignores_commented_out_code(): void
     {
         $tokens = new TempestViewLexer(<<<HTML
-        <h1>
-            <!-- <svg xmlns="http://www.w3.org/2000/svg">
-            </svg> -->
-        </h1>
-        HTML)->lex();
+            <h1>
+                <!-- <svg xmlns="http://www.w3.org/2000/svg">
+                </svg> -->
+            </h1>
+            HTML)->lex();
 
         $compiled = new TempestViewParser($tokens)->parse()->compile();
         $this->assertSame(<<<HTML
-        <h1>
-            <!-- <svg xmlns="http://www.w3.org/2000/svg">
-            </svg> -->
-        </h1>
-        HTML, $compiled);
+            <h1>
+                <!-- <svg xmlns="http://www.w3.org/2000/svg">
+                </svg> -->
+            </h1>
+            HTML, $compiled);
     }
 
     public function test_doctype(): void
@@ -106,15 +106,15 @@ final class TempestViewParserTest extends TestCase
         $parsed = new TempestViewParser($tokens)->parse();
 
         $this->assertSame(<<<'HTML'
-        <!doctype html><html></html>
-        HTML, $parsed->compile());
+            <!doctype html><html></html>
+            HTML, $parsed->compile());
     }
 
     public function test_void_tags(): void
     {
         $html = <<<'HTML'
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/main.css" rel="stylesheet"><div></div>
-        HTML;
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/main.css" rel="stylesheet"><div></div>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 

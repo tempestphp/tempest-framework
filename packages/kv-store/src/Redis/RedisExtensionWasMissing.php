@@ -4,6 +4,7 @@ namespace Tempest\KeyValue\Redis;
 
 use Exception;
 use Predis;
+use Predis\Client;
 
 final class RedisExtensionWasMissing extends Exception implements RedisException
 {
@@ -12,7 +13,7 @@ final class RedisExtensionWasMissing extends Exception implements RedisException
         parent::__construct(
             'Redis client not found.' . match ($fqcn) {
                 \Redis::class => ' You may be missing the `redis` extension.',
-                Predis\Client::class => ' You may need to install the `predis/predis` package.',
+                Client::class => ' You may need to install the `predis/predis` package.',
                 default => ' Install the `redis` extension or the `predis/predis` package.',
             },
         );

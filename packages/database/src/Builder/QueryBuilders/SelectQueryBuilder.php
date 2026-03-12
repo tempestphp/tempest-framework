@@ -104,7 +104,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
             return null;
         }
 
-        return $result[array_key_first($result)];
+        return array_first($result);
     }
 
     /**
@@ -203,7 +203,8 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         $offset = 0;
 
         do {
-            $data = $this->clone()
+            $data = $this
+                ->clone()
                 ->limit($amountPerChunk)
                 ->offset($offset)
                 ->all();

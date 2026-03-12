@@ -7,6 +7,7 @@ use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\Locale;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
+use Throwable;
 
 final readonly class GenericTranslator implements Translator
 {
@@ -34,7 +35,7 @@ final readonly class GenericTranslator implements Translator
 
         try {
             return $this->formatter->format(mb_trim($message), ...$arguments);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->eventBus?->dispatch(new TranslationFailure(
                 locale: $locale,
                 key: $key,

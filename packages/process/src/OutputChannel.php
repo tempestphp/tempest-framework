@@ -3,6 +3,7 @@
 namespace Tempest\Process;
 
 use Symfony\Component\Process\Process;
+use UnexpectedValueException;
 
 enum OutputChannel: string
 {
@@ -14,7 +15,7 @@ enum OutputChannel: string
         return match ($type) {
             Process::OUT => self::OUTPUT,
             Process::ERR => self::ERROR,
-            default => throw new \UnexpectedValueException(sprintf('Unsupported output type "%s".', $type)),
+            default => throw new UnexpectedValueException(sprintf('Unsupported output type "%s".', $type)),
         };
     }
 }

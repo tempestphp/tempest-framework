@@ -48,11 +48,7 @@ final readonly class IsPassword implements Rule, HasTranslationVariables
             return false;
         }
 
-        if ($this->symbols && ! preg_match('/\p{Z}|\p{S}|\p{P}/u', $value)) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->symbols && ! preg_match('/\p{Z}|\p{S}|\p{P}/u', $value));
     }
 
     public function getTranslationVariables(): array

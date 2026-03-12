@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime;
+use Tempest\DateTime\Duration;
 use Tempest\Support\Comparison\Order;
 use Tempest\Support\Json;
 
@@ -20,7 +21,7 @@ final class DurationTest extends TestCase
 
     public function test_getters(): void
     {
-        $t = DateTime\Duration::fromParts(1, 2, 3, 4);
+        $t = Duration::fromParts(1, 2, 3, 4);
 
         $this->assertSame(1, $t->getHours());
         $this->assertSame(2, $t->getMinutes());
@@ -31,20 +32,20 @@ final class DurationTest extends TestCase
 
     public function test_named_constructors(): void
     {
-        $this->assertSame(168.0, DateTime\Duration::weeks(1)->getTotalHours());
-        $this->assertSame(168.0, DateTime\Duration::week()->getTotalHours());
-        $this->assertSame(24.0, DateTime\Duration::days(1)->getTotalHours());
-        $this->assertSame(24.0, DateTime\Duration::day()->getTotalHours());
-        $this->assertSame(1.0, DateTime\Duration::hours(1)->getTotalHours());
-        $this->assertSame(1.0, DateTime\Duration::hour()->getTotalHours());
-        $this->assertSame(1.0, DateTime\Duration::minutes(1)->getTotalMinutes());
-        $this->assertSame(1.0, DateTime\Duration::minute()->getTotalMinutes());
-        $this->assertSame(1.0, DateTime\Duration::seconds(1)->getTotalSeconds());
-        $this->assertSame(1.0, DateTime\Duration::second()->getTotalSeconds());
-        $this->assertSame(1.0, DateTime\Duration::milliseconds(1)->getTotalMilliseconds());
-        $this->assertSame(1.0, DateTime\Duration::microseconds(1)->getTotalMicroseconds());
-        $this->assertSame(1, DateTime\Duration::nanoseconds(1)->getNanoseconds());
-        $this->assertSame(0.0, DateTime\Duration::zero()->getTotalSeconds());
+        $this->assertSame(168.0, Duration::weeks(1)->getTotalHours());
+        $this->assertSame(168.0, Duration::week()->getTotalHours());
+        $this->assertSame(24.0, Duration::days(1)->getTotalHours());
+        $this->assertSame(24.0, Duration::day()->getTotalHours());
+        $this->assertSame(1.0, Duration::hours(1)->getTotalHours());
+        $this->assertSame(1.0, Duration::hour()->getTotalHours());
+        $this->assertSame(1.0, Duration::minutes(1)->getTotalMinutes());
+        $this->assertSame(1.0, Duration::minute()->getTotalMinutes());
+        $this->assertSame(1.0, Duration::seconds(1)->getTotalSeconds());
+        $this->assertSame(1.0, Duration::second()->getTotalSeconds());
+        $this->assertSame(1.0, Duration::milliseconds(1)->getTotalMilliseconds());
+        $this->assertSame(1.0, Duration::microseconds(1)->getTotalMicroseconds());
+        $this->assertSame(1, Duration::nanoseconds(1)->getNanoseconds());
+        $this->assertSame(0.0, Duration::zero()->getTotalSeconds());
     }
 
     #[TestWith([0, 0, 0, 0, 0.0])]
@@ -62,7 +63,7 @@ final class DurationTest extends TestCase
         int $nanoseconds,
         float $expectedHours,
     ): void {
-        $time = DateTime\Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
+        $time = Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
         $this->assertSame($expectedHours, $time->getTotalHours());
     }
 
@@ -76,7 +77,7 @@ final class DurationTest extends TestCase
     #[TestWith([-2, -15, -30, 0, -135.5])]
     public function test_get_total_minutes(int $hours, int $minutes, int $seconds, int $nanoseconds, float $expectedMinutes): void
     {
-        $time = DateTime\Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
+        $time = Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
         $this->assertSame($expectedMinutes, $time->getTotalMinutes());
     }
 
@@ -90,7 +91,7 @@ final class DurationTest extends TestCase
     #[TestWith([-2, -15, -30, 0, -8130.0])]
     public function test_get_total_seconds(int $hours, int $minutes, int $seconds, int $nanoseconds, float $expectedSeconds): void
     {
-        $time = DateTime\Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
+        $time = Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
         $this->assertSame($expectedSeconds, $time->getTotalSeconds());
     }
 
@@ -104,7 +105,7 @@ final class DurationTest extends TestCase
     #[TestWith([-2, -15, -30, 0, -8130000.0])]
     public function test_get_total_milliseconds(int $hours, int $minutes, int $seconds, int $nanoseconds, float $expectedMilliseconds): void
     {
-        $time = DateTime\Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
+        $time = Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
         $this->assertSame($expectedMilliseconds, $time->getTotalMilliseconds());
     }
 
@@ -118,13 +119,13 @@ final class DurationTest extends TestCase
     #[TestWith([-2, -15, -30, 0, -8130000000.0])]
     public function test_get_total_microseconds(int $hours, int $minutes, int $seconds, int $nanoseconds, float $expectedMicroseconds): void
     {
-        $time = DateTime\Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
+        $time = Duration::fromParts($hours, $minutes, $seconds, $nanoseconds);
         $this->assertSame($expectedMicroseconds, $time->getTotalMicroseconds());
     }
 
     public function test_setters(): void
     {
-        $t = DateTime\Duration::fromParts(1, 2, 3, 4);
+        $t = Duration::fromParts(1, 2, 3, 4);
 
         $this->assertSame([42, 2, 3, 4], $t->withHours(42)->getParts());
         $this->assertSame([1, 42, 3, 4], $t->withMinutes(42)->getParts());
@@ -138,16 +139,16 @@ final class DurationTest extends TestCase
 
     public function test_fractions_of_second(): void
     {
-        $this->assertSame([0, 0, 0, 0], DateTime\Duration::zero()->getParts());
-        $this->assertSame([0, 0, 0, 42], DateTime\Duration::nanoseconds(42)->getParts());
+        $this->assertSame([0, 0, 0, 0], Duration::zero()->getParts());
+        $this->assertSame([0, 0, 0, 42], Duration::nanoseconds(42)->getParts());
         $this->assertSame(
             [0, 0, 1, 42],
-            DateTime\Duration::nanoseconds(DateTime\NANOSECONDS_PER_SECOND + 42)->getParts(),
+            Duration::nanoseconds(DateTime\NANOSECONDS_PER_SECOND + 42)->getParts(),
         );
-        $this->assertSame([0, 0, 0, 42000], DateTime\Duration::microseconds(42)->getParts());
-        $this->assertSame([0, 0, 1, 42000], DateTime\Duration::microseconds(1000042)->getParts());
-        $this->assertSame([0, 0, 0, 42000000], DateTime\Duration::milliseconds(42)->getParts());
-        $this->assertSame([0, 0, 1, 42000000], DateTime\Duration::milliseconds(1042)->getParts());
+        $this->assertSame([0, 0, 0, 42000], Duration::microseconds(42)->getParts());
+        $this->assertSame([0, 0, 1, 42000], Duration::microseconds(1000042)->getParts());
+        $this->assertSame([0, 0, 0, 42000000], Duration::milliseconds(42)->getParts());
+        $this->assertSame([0, 0, 1, 42000000], Duration::milliseconds(1042)->getParts());
     }
 
     #[TestWith([0, 0, 0, 0])]
@@ -164,22 +165,22 @@ final class DurationTest extends TestCase
     {
         $this->assertSame(
             [0, 0, $normalized_s, $normalized_ns],
-            DateTime\Duration::fromParts(0, 0, $input_s, $input_ns)->getParts(),
+            Duration::fromParts(0, 0, $input_s, $input_ns)->getParts(),
         );
     }
 
     public function test_normalized_hms(): void
     {
-        $this->assertSame([3, 5, 4, 0], DateTime\Duration::fromParts(2, 63, 124)->getParts());
-        $this->assertSame([0, 59, 4, 0], DateTime\Duration::fromParts(2, -63, 124)->getParts());
+        $this->assertSame([3, 5, 4, 0], Duration::fromParts(2, 63, 124)->getParts());
+        $this->assertSame([0, 59, 4, 0], Duration::fromParts(2, -63, 124)->getParts());
         $this->assertSame(
             [-1, 0, -55, -(DateTime\NANOSECONDS_PER_SECOND - 42)],
-            DateTime\Duration::fromParts(0, -63, 124, 42)->getParts(),
+            Duration::fromParts(0, -63, 124, 42)->getParts(),
         );
-        $this->assertSame([42, 0, 0, 0], DateTime\Duration::hours(42)->getParts());
-        $this->assertSame([1, 3, 0, 0], DateTime\Duration::minutes(63)->getParts());
-        $this->assertSame([0, -1, -3, 0], DateTime\Duration::seconds(-63)->getParts());
-        $this->assertSame([0, 0, -1, 0], DateTime\Duration::nanoseconds(-DateTime\NANOSECONDS_PER_SECOND)->getParts());
+        $this->assertSame([42, 0, 0, 0], Duration::hours(42)->getParts());
+        $this->assertSame([1, 3, 0, 0], Duration::minutes(63)->getParts());
+        $this->assertSame([0, -1, -3, 0], Duration::seconds(-63)->getParts());
+        $this->assertSame([0, 0, -1, 0], Duration::nanoseconds(-DateTime\NANOSECONDS_PER_SECOND)->getParts());
     }
 
     #[TestWith([0, 0, 0, 0, 0])]
@@ -188,7 +189,7 @@ final class DurationTest extends TestCase
     #[TestWith([1, -63, 0, 0, -1])]
     public function test_positive_negative(int $h, int $m, int $s, int $ns, int $expected_sign): void
     {
-        $t = DateTime\Duration::fromParts($h, $m, $s, $ns);
+        $t = Duration::fromParts($h, $m, $s, $ns);
         $this->assertSame($expected_sign === 0, $t->isZero());
         $this->assertSame($expected_sign === 1, $t->isPositive());
         $this->assertSame($expected_sign === -1, $t->isNegative());
@@ -200,17 +201,17 @@ final class DurationTest extends TestCase
     public static function provide_compare_data(): array
     {
         return [
-            [DateTime\Duration::seconds(20), DateTime\Duration::seconds(10), Order::GREATER],
-            [DateTime\Duration::seconds(10), DateTime\Duration::seconds(20), Order::LESS],
-            [DateTime\Duration::seconds(10), DateTime\Duration::seconds(10), Order::EQUAL],
-            [DateTime\Duration::hours(1), DateTime\Duration::minutes(42), Order::GREATER],
-            [DateTime\Duration::minutes(2), DateTime\Duration::seconds(120), Order::EQUAL],
-            [DateTime\Duration::zero(), DateTime\Duration::nanoseconds(1), Order::LESS],
+            [Duration::seconds(20), Duration::seconds(10), Order::GREATER],
+            [Duration::seconds(10), Duration::seconds(20), Order::LESS],
+            [Duration::seconds(10), Duration::seconds(10), Order::EQUAL],
+            [Duration::hours(1), Duration::minutes(42), Order::GREATER],
+            [Duration::minutes(2), Duration::seconds(120), Order::EQUAL],
+            [Duration::zero(),      Duration::nanoseconds(1), Order::LESS],
         ];
     }
 
     #[DataProvider('provide_compare_data')]
-    public function test_compare(DateTime\Duration $a, DateTime\Duration $b, Order $expected): void
+    public function test_compare(Duration $a, Duration $b, Order $expected): void
     {
         $opposite = Order::from(-$expected->value);
 
@@ -233,9 +234,9 @@ final class DurationTest extends TestCase
 
     public function test_is_between(): void
     {
-        $a = DateTime\Duration::hours(1);
-        $b = DateTime\Duration::minutes(64);
-        $c = DateTime\Duration::fromParts(1, 30);
+        $a = Duration::hours(1);
+        $b = Duration::minutes(64);
+        $c = Duration::fromParts(1, 30);
         $this->assertTrue($b->betweenExclusive($a, $c));
         $this->assertTrue($b->betweenExclusive($c, $a));
         $this->assertTrue($b->betweenInclusive($a, $c));
@@ -248,9 +249,9 @@ final class DurationTest extends TestCase
 
     public function test_operations(): void
     {
-        $z = DateTime\Duration::zero();
-        $a = DateTime\Duration::fromParts(0, 2, 25);
-        $b = DateTime\Duration::fromParts(0, 0, -63, 42);
+        $z = Duration::zero();
+        $a = Duration::fromParts(0, 2, 25);
+        $b = Duration::fromParts(0, 0, -63, 42);
         $this->assertSame([0, 0, 0, 0], $z->invert()->getParts());
         $this->assertSame([0, -2, -25, 0], $a->invert()->getParts());
         $this->assertSame([0, 1, 2, DateTime\NANOSECONDS_PER_SECOND - 42], $b->invert()->getParts());
@@ -282,12 +283,12 @@ final class DurationTest extends TestCase
     #[TestWith([0, 0, 0, -420000000, '-0.42 second(s)'])]
     public function test_to_string(int $h, int $m, int $s, int $ns, string $expected): void
     {
-        $this->assertSame($expected, DateTime\Duration::fromParts($h, $m, $s, $ns)->toString());
+        $this->assertSame($expected, Duration::fromParts($h, $m, $s, $ns)->toString());
     }
 
     public function test_serialization(): void
     {
-        $timeInterval = DateTime\Duration::fromParts(1, 30, 45, 500000000);
+        $timeInterval = Duration::fromParts(1, 30, 45, 500000000);
         $serialized = serialize($timeInterval);
         $deserialized = unserialize($serialized);
 
@@ -296,7 +297,7 @@ final class DurationTest extends TestCase
 
     public function test_json_encoding(): void
     {
-        $timeInterval = DateTime\Duration::fromParts(1, 30, 45, 500000000);
+        $timeInterval = Duration::fromParts(1, 30, 45, 500000000);
         $jsonEncoded = Json\encode($timeInterval);
         $jsonDecoded = Json\decode($jsonEncoded, associative: true);
 

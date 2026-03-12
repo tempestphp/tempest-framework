@@ -41,7 +41,7 @@ final class GenericTagCompilerTest extends FrameworkIntegrationTestCase
     public function test_generate_legacy_script_tag_with_polyfills(): void
     {
         $generator = $this->container->get(GenericTagCompiler::class);
-        $tag = $generator->compileScriptTag('/build/main.js', $this->createChunk(legacy: true, src: 'vite/legacy-polyfills'));
+        $tag = $generator->compileScriptTag('/build/main.js', $this->createChunk(src: 'vite/legacy-polyfills', legacy: true));
 
         $this->assertStringContainsString('<script nomodule>', $tag);
         $this->assertStringContainsString('<script type="module">', $tag);
@@ -119,11 +119,11 @@ final class GenericTagCompilerTest extends FrameworkIntegrationTestCase
     private function createChunk(?string $src = null, bool $entry = true, ?string $integrity = null, bool $legacy = false): Chunk
     {
         return new Chunk(
-            src: $src ?? 'main.ts',
             file: 'main.js',
+            src: $src ?? 'main.ts',
+            isEntry: $entry,
             isDynamicEntry: true,
             isLegacyEntry: $legacy,
-            isEntry: $entry,
             css: [],
             imports: [],
             dynamicImports: [],

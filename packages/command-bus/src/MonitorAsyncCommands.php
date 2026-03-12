@@ -13,7 +13,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class MonitorAsyncCommands
     {
         use HasConsole;
@@ -48,11 +48,15 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                             );
                         }
 
-                        if ($output = trim($process->getOutput())) {
+                        $output = trim($process->getOutput());
+
+                        if ($output !== '' && $output !== '0') {
                             $this->writeln($output);
                         }
 
-                        if ($errorOutput = trim($process->getErrorOutput())) {
+                        $errorOutput = trim($process->getErrorOutput());
+
+                        if ($errorOutput !== '' && $errorOutput !== '0') {
                             $this->writeln($errorOutput);
                         }
 

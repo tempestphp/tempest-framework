@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
+use BackedEnum;
 use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\ConfigurableCaster;
@@ -51,7 +52,7 @@ final readonly class EnumCaster implements Caster, DynamicCaster, ConfigurableCa
             return constant("{$this->enum}::{$input}");
         }
 
-        if (! is_a($this->enum, \BackedEnum::class, allow_string: true)) {
+        if (! is_a($this->enum, BackedEnum::class, allow_string: true)) {
             return null;
         }
 

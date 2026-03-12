@@ -14,6 +14,7 @@ use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Icon;
+use Tempest\Icon\IconCache;
 use Tempest\Icon\IconConfig;
 use Tempest\Icon\IconDownloaded;
 use Tempest\Icon\IconDownloadFailed;
@@ -68,7 +69,7 @@ final class IconTest extends FrameworkIntegrationTestCase
             serverHits: $this->exactly(2),
         );
 
-        $iconCache = $this->container->get(Icon\IconCache::class);
+        $iconCache = $this->container->get(IconCache::class);
         $icon = $this->container->get(Icon\Icon::class);
 
         // first fetch, we cache the failure
@@ -136,7 +137,7 @@ final class IconTest extends FrameworkIntegrationTestCase
 
         $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
-        $this->container->singleton(Icon\IconCache::class, new Icon\IconCache(
+        $this->container->singleton(IconCache::class, new IconCache(
             enabled: true,
             pool: new ArrayAdapter(clock: $clock?->toPsrClock()),
         ));

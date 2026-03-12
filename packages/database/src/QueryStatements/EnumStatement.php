@@ -29,7 +29,7 @@ final readonly class EnumStatement implements QueryStatement
             ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
             ->map(fn (string $value) => "'{$value}'");
 
-        if ($this->default !== null) {
+        if ($this->default instanceof UnitEnum) {
             $defaultValue = $this->default instanceof BackedEnum ? $this->default->value : $this->default->name;
         } else {
             $defaultValue = null;

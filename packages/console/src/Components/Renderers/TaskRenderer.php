@@ -23,7 +23,7 @@ final class TaskRenderer
         $this->prepareRender($terminal, $state);
         $this->label($this->label);
 
-        $runtime = fn (float $finishedAt) => $finishedAt
+        $runtime = fn (float $finishedAt) => $finishedAt !== 0.0
             ? number_format(($finishedAt - $startedAt) / 1_000_000, decimals: 0)
             : null;
 

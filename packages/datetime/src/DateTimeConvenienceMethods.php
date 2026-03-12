@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use Override;
 use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 
@@ -61,10 +62,10 @@ trait DateTimeConvenienceMethods
      *
      * @param null|Timezone $timezone The timezone to convert to.
      */
-    #[\Override]
+    #[Override]
     public function convertToTimezone(?Timezone $timezone): static
     {
-        if ($timezone === null) {
+        if (! $timezone instanceof Timezone) {
             return $this;
         }
 
@@ -925,7 +926,7 @@ trait DateTimeConvenienceMethods
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
     {
         $timestamp = $this->getTimestamp();
@@ -964,7 +965,7 @@ trait DateTimeConvenienceMethods
      *
      * @see https://datatracker.ietf.org/doc/html/rfc3339
      */
-    #[\Override]
+    #[Override]
     public function toRfc3339(?SecondsStyle $secondsStyle = null, bool $useZ = false): string
     {
         return namespace\format_rfc3339($this->getTimestamp(), $secondsStyle, $useZ, $this->getTimezone());
@@ -996,7 +997,7 @@ trait DateTimeConvenienceMethods
      * @see TimeStyle::default()
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function toString(
         ?DateStyle $dateStyle = null,
         ?TimeStyle $timeStyle = null,

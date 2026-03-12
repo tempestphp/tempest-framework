@@ -2,6 +2,7 @@
 
 namespace Tempest\Storage\Testing;
 
+use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Storage\Storage;
@@ -37,7 +38,7 @@ final readonly class StorageTester
     public function preventUsageWithoutFake(): void
     {
         if (! $this->container instanceof GenericContainer) {
-            throw new \RuntimeException('Container is not a GenericContainer, unable to prevent usage without fake.');
+            throw new RuntimeException('Container is not a GenericContainer, unable to prevent usage without fake.');
         }
 
         $this->container->unregister(Storage::class, tagged: true);

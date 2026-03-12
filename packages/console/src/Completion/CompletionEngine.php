@@ -47,7 +47,11 @@ final readonly class CompletionEngine
         $candidates = [];
 
         foreach ($metadata->commands as $name => $command) {
-            if (! is_string($name) || ! $command instanceof CompletionCommand) {
+            if (! is_string($name)) {
+                continue;
+            }
+
+            if (! $command instanceof CompletionCommand) {
                 continue;
             }
 

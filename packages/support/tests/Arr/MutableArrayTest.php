@@ -62,8 +62,8 @@ final class MutableArrayTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection->add('name')->toArray(),
             expected: [1, 2, '', null, false, [], 'name'],
+            actual: $collection->add('name')->toArray(),
         );
     }
 

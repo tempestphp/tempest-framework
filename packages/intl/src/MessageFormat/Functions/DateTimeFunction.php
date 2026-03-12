@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\MessageFormat\Functions;
 
+use RuntimeException;
 use Tempest\DateTime\DateStyle;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\TimeStyle;
@@ -16,7 +17,7 @@ final class DateTimeFunction implements FormattingFunction
     public function format(mixed $value, array $parameters): FormattedValue
     {
         if (! class_exists(DateTime::class)) {
-            throw new \RuntimeException('`tempest/datetime` is required to use the `datetime` function.');
+            throw new RuntimeException('`tempest/datetime` is required to use the `datetime` function.');
         }
 
         $datetime = DateTime::parse($value);

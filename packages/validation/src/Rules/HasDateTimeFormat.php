@@ -10,6 +10,7 @@ use Tempest\DateTime\DateTime;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
+use Throwable;
 
 /**
  * Validates that the value is a valid date string in a specified format.
@@ -37,7 +38,7 @@ final readonly class HasDateTimeFormat implements Rule, HasTranslationVariables
     {
         try {
             return $value === DateTime::fromPattern($value, $this->format)->format($this->format);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return false;
         }
     }

@@ -10,6 +10,4 @@ use Stringable;
 /**
  * @internal This interface is not meant to be used in userland.
  */
-interface StringInterface extends Stringable, JsonSerializable
-{
-}
+interface StringInterface extends Stringable, JsonSerializable {}

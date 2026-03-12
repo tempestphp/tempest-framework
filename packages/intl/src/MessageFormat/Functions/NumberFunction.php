@@ -36,11 +36,7 @@ final class NumberFunction implements FormattingFunction, SelectorFunction
             return true;
         }
 
-        if ($key === $this->pluralRules->getPluralCategory($this->intlConfig->currentLocale, $number)) {
-            return true;
-        }
-
-        return false;
+        return $key === $this->pluralRules->getPluralCategory($this->intlConfig->currentLocale, $number);
     }
 
     private function matchExists(string $key, mixed $value): bool

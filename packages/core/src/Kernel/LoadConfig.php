@@ -113,7 +113,11 @@ final readonly class LoadConfig
 
             foreach ($subPaths as $subPath) {
                 // `.` and `..` are skipped
-                if ($subPath === '.' || $subPath === '..') {
+                if ($subPath === '.') {
+                    continue;
+                }
+
+                if ($subPath === '..') {
                     continue;
                 }
 

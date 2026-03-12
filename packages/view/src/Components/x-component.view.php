@@ -17,10 +17,10 @@ $attributeString = $attributes
 $content = $slots[Slot::DEFAULT]->content ?? '';
 
 $template = sprintf(<<<'HTML'
-<%s %s>
-%s
-</%s>
-HTML, $is, $attributeString, $content, $is);
+    <%s %s>
+    %s
+    </%s>
+    HTML, $is, $attributeString, $content, $is);
 
 $data = $scopedVariables ?? $_data ?? [];
 $data = is_array($data) ? $data : [];

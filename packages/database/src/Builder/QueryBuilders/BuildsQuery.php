@@ -16,23 +16,17 @@ interface BuildsQuery
      *
      * @return array<mixed>
      */
-    public array $bindings {
-        get;
-    }
+    public array $bindings { get; }
 
     /**
      * The model inspector for this query builder.
      */
-    public ModelInspector $model {
-        get;
-    }
+    public ModelInspector $model { get; }
 
     /**
      * The database tag for targeting a specific database connection.
      */
-    public null|string|UnitEnum $onDatabase {
-        get;
-    }
+    public null|string|UnitEnum $onDatabase { get; }
 
     /**
      * Creates a {@see Query} instance with the specified optional bindings.

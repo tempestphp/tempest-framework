@@ -37,9 +37,7 @@ final class GenericDatabaseTest extends TestCase
             new SerializerFactory(new GenericContainer()),
         );
 
-        $result = $database->withinTransaction(function () {
-            return true;
-        });
+        $result = $database->withinTransaction(fn () => true);
 
         $this->assertTrue($result);
     }

@@ -66,7 +66,7 @@ final class InteractiveComponentRenderer
 
                 // If we're running within a fiber, we'll suspend here as well so that the parent can continue
                 // This is needed for our testing helper
-                if (Fiber::getCurrent() !== null) {
+                if (Fiber::getCurrent() instanceof Fiber) {
                     Fiber::suspend();
                 }
             }
@@ -246,11 +246,7 @@ final class InteractiveComponentRenderer
             return false;
         }
 
-        if (! Terminal::supportsTty()) {
-            return false;
-        }
-
-        return true;
+        return Terminal::supportsTty();
     }
 
     private function createTerminal(Console $console): Terminal

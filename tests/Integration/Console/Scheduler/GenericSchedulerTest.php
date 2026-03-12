@@ -117,12 +117,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
     }
 
     // dummy handler for testing
-    public function handler(): void
-    {
-    }
+    public function handler(): void {}
 
     // dummy command for testing
-    public function command(): void
-    {
-    }
+    public function command(): void {}
 }

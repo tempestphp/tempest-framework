@@ -29,11 +29,6 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
     public function test_resolve_tags(): void
     {
         $this->vite->call(
-            files: [
-                'src/main.ts' => '',
-                'src/foo.ts' => '',
-                'src/tailwind.css' => '',
-            ],
             callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
@@ -50,6 +45,11 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
                     actual: $resolver->resolveTags(['src/main.ts', 'src/foo.ts', 'src/tailwind.css']),
                 );
             },
+            files: [
+                'src/main.ts' => '',
+                'src/foo.ts' => '',
+                'src/tailwind.css' => '',
+            ],
         );
     }
 
@@ -58,9 +58,6 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
         $this->expectException(FileSystemEntrypointWasNotFoundException::class);
 
         $this->vite->call(
-            files: [
-                'src/main.ts' => '',
-            ],
             callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
@@ -69,6 +66,9 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
 
                 $resolver->resolveTags(['src/main.ts', 'src/foo.ts']);
             },
+            files: [
+                'src/main.ts' => '',
+            ],
         );
     }
 
@@ -80,11 +80,6 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
         );
 
         $this->vite->call(
-            files: [
-                'src/main.ts' => '',
-                'src/foo.ts' => '',
-                'src/bar/baz.ts' => '',
-            ],
             callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
@@ -101,6 +96,11 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
                     actual: $resolver->resolveTags(['src/main.ts', 'src/foo.ts', './src/bar/baz.ts']),
                 );
             },
+            files: [
+                'src/main.ts' => '',
+                'src/foo.ts' => '',
+                'src/bar/baz.ts' => '',
+            ],
         );
     }
 }

@@ -17,6 +17,5 @@ final class MyConsole
         int $times = 1,
         bool $force = false,
         ?string $optional = null,
-    ): void {
-    }
+    ): void {}
 }

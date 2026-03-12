@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Core\Exceptions;
 
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
+use Stringable;
 use Tempest\Core\Exceptions\LoggingExceptionReporter;
 use Tempest\Core\ProvidesContext;
 use Tempest\Log\Logger;
@@ -77,47 +78,47 @@ final class TestLogger implements Logger
 {
     public array $logs = [];
 
-    public function emergency(string|\Stringable $message, array $context = []): void
+    public function emergency(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'emergency', 'message' => $message, 'context' => $context];
     }
 
-    public function alert(string|\Stringable $message, array $context = []): void
+    public function alert(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'alert', 'message' => $message, 'context' => $context];
     }
 
-    public function critical(string|\Stringable $message, array $context = []): void
+    public function critical(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'critical', 'message' => $message, 'context' => $context];
     }
 
-    public function error(string|\Stringable $message, array $context = []): void
+    public function error(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'error', 'message' => $message, 'context' => $context];
     }
 
-    public function warning(string|\Stringable $message, array $context = []): void
+    public function warning(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'warning', 'message' => $message, 'context' => $context];
     }
 
-    public function notice(string|\Stringable $message, array $context = []): void
+    public function notice(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'notice', 'message' => $message, 'context' => $context];
     }
 
-    public function info(string|\Stringable $message, array $context = []): void
+    public function info(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'info', 'message' => $message, 'context' => $context];
     }
 
-    public function debug(string|\Stringable $message, array $context = []): void
+    public function debug(string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => 'debug', 'message' => $message, 'context' => $context];
     }
 
-    public function log(mixed $level, string|\Stringable $message, array $context = []): void
+    public function log(mixed $level, string|Stringable $message, array $context = []): void
     {
         $this->logs[] = ['level' => $level, 'message' => $message, 'context' => $context];
     }

@@ -15,7 +15,7 @@ use Tempest\Http\Status;
  */
 final class StatusTest extends TestCase
 {
-    private static function descriptionToStatus(string $description): Status
+    private function descriptionToStatus(string $description): Status
     {
         $description = strtoupper(
             str_replace("'", '', str_replace([' ', '-'], '_', $description)),
@@ -30,7 +30,7 @@ final class StatusTest extends TestCase
         $status = Status::fromCode($code);
 
         $this->assertSame(
-            self::descriptionToStatus($description),
+            $this->descriptionToStatus($description),
             $status,
         );
 

@@ -26,7 +26,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
             return false;
         }
 
-        return $input->getIterableType() !== null;
+        return $input->getIterableType() instanceof TypeReflector;
     }
 
     public static function configure(PropertyReflector $property, Context $context): self
@@ -53,11 +53,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
         $values = [];
 
         foreach ($input as $key => $item) {
-            if (is_object($item) && $iterableType->matches($item::class)) {
-                $values[$key] = $item;
-            } else {
-                $values[$key] = $caster->cast($item);
-            }
+            $values[$key] = is_object($item) && $iterableType->matches($item::class) ? $item : $caster->cast($item);
         }
 
         return $values;

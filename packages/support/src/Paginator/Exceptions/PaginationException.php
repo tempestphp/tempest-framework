@@ -2,6 +2,4 @@
 
 namespace Tempest\Support\Paginator\Exceptions;
 
-interface PaginationException
-{
-}
+interface PaginationException {}

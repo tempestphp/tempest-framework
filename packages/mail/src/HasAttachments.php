@@ -7,7 +7,5 @@ interface HasAttachments
     /**
      * @var \Tempest\Mail\Attachment[] $attachments
      */
-    public array $attachments {
-        get;
-    }
+    public array $attachments { get; }
 }

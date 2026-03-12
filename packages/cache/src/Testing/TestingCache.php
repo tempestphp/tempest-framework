@@ -28,6 +28,7 @@ final class TestingCache implements Cache
     }
 
     private Cache $cache;
+
     private ArrayAdapter $adapter;
 
     public function __construct(

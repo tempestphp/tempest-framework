@@ -23,7 +23,7 @@ final class ArrayOfObjectsSerializer implements Serializer, DynamicSerializer
             return false;
         }
 
-        return $input->getIterableType() !== null;
+        return $input->getIterableType() instanceof TypeReflector;
     }
 
     public function serialize(mixed $input): array

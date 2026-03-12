@@ -92,12 +92,9 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             $searchParts = $search->explode(':');
 
             // `dis:st` will match `discovery:status`
-            if ($searchParts->count() === $currentParts->count()) {
-                if ($searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
-                    $suggestions[$currentName->toString()] = $currentName;
-
-                    continue;
-                }
+            if ($searchParts->count() === $currentParts->count() && $searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
+                $suggestions[$currentName->toString()] = $currentName;
+                continue;
             }
 
             // `generate` will match `discovery:generate`

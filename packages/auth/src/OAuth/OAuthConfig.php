@@ -14,32 +14,24 @@ interface OAuthConfig extends HasTag
     /**
      * The OAuth provider class name.
      */
-    public string $provider {
-        get;
-    }
+    public string $provider { get; }
 
     /**
      * The authorization scopes for this OAuth provider.
      *
      * @return string[]
      */
-    public array $scopes {
-        get;
-    }
+    public array $scopes { get; }
 
     /**
      * The client ID for the OAuth provider.
      */
-    public string $clientId {
-        get;
-    }
+    public string $clientId { get; }
 
     /**
      * The controller action to redirect to after the user authorizes the application.
      */
-    public string|array $redirectTo {
-        get;
-    }
+    public string|array $redirectTo { get; }
 
     /**
      * Creates the OAuth provider instance.

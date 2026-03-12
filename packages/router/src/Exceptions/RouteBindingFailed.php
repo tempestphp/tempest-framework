@@ -6,6 +6,4 @@ namespace Tempest\Router\Exceptions;
 
 use Exception;
 
-final class RouteBindingFailed extends Exception implements RouterException
-{
-}
+final class RouteBindingFailed extends Exception implements RouterException {}

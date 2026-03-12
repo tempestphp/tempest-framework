@@ -29,9 +29,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
-            return $result->output === "hello\n";
-        });
+        $this->process->assertCommandRan('echo *', fn (ProcessResult $result) => $result->output === "hello\n");
     }
 
     public function test_expectation_fails_when_specified_command_is_not_ran(): void
@@ -51,9 +49,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
 
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
-        $this->process->assertCommandRan('echo *', function (ProcessResult $result) {
-            return $result->output !== "hello\n";
-        });
+        $this->process->assertCommandRan('echo *', fn (ProcessResult $result) => $result->output !== "hello\n");
     }
 
     public function test_expectation_succeeds_when_callback_returns_nothing(): void
@@ -68,9 +64,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRan(function (PendingProcess $process): bool {
-            return $process->command === 'echo "hello"';
-        });
+        $this->process->assertRan(fn (PendingProcess $process): bool => $process->command === 'echo "hello"');
     }
 
     public function test_returning_false_from_callback_fails_expectation(): void
@@ -81,9 +75,7 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
 
-        $this->process->assertRan(function (PendingProcess $_process): bool {
-            return false;
-        });
+        $this->process->assertRan(fn (PendingProcess $_process): bool => false);
     }
 
     public function test_returning_true_from_callback_skips_other_iterations(): void

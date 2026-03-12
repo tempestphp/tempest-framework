@@ -172,11 +172,7 @@ final readonly class TempestViewCompiler
 
             foreach ($childElement->getAttributes() as $name => $value) {
                 // TODO: possibly refactor attribute construction to ElementFactory?
-                if ($value instanceof Attribute) {
-                    $attribute = $value;
-                } else {
-                    $attribute = $this->attributeFactory->make($name);
-                }
+                $attribute = $value instanceof Attribute ? $value : $this->attributeFactory->make($name);
 
                 $childElement = $attribute->apply($childElement);
 
@@ -210,11 +206,11 @@ final readonly class TempestViewCompiler
                     $sourcePath = $sourceLocation['sourcePath'];
 
                     if ($sourcePath !== null) {
-                        $compiled[] = self::sourcePathMarker($sourcePath);
+                        $compiled[] = $this->sourcePathMarker($sourcePath);
                     }
                 }
 
-                $compiled[] = self::sourceLineMarker($sourceLocation['sourceLine']);
+                $compiled[] = $this->sourceLineMarker($sourceLocation['sourceLine']);
             }
 
             $compiled[] = $element->compile();
@@ -225,12 +221,12 @@ final readonly class TempestViewCompiler
             ->toString();
     }
 
-    private static function sourcePathMarker(string $sourcePath): string
+    private function sourcePathMarker(string $sourcePath): string
     {
         return sprintf('<?php /*%s%s*/ ?>', self::SOURCE_PATH_MARKER, base64_encode($sourcePath));
     }
 
-    private static function sourceLineMarker(int $sourceLine): string
+    private function sourceLineMarker(int $sourceLine): string
     {
         return sprintf('<?php /*%s%d*/ ?>', self::SOURCE_LINE_MARKER, $sourceLine);
     }
@@ -348,8 +344,11 @@ final readonly class TempestViewCompiler
 
             $compiledLine++;
             $cleanedLines[] = $line;
+            if ($sourceLine === null) {
+                continue;
+            }
 
-            if ($sourceLine === null || $currentSourcePath === null) {
+            if ($currentSourcePath === null) {
                 continue;
             }
 

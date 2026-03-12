@@ -17,9 +17,7 @@ interface SupportsWhereStatements
      *
      * @var ImmutableArray<WhereStatement|WhereGroupStatement>
      */
-    public ImmutableArray $wheres {
-        get;
-    }
+    public ImmutableArray $wheres { get; }
 
     /**
      * Adds a WHERE condition to the query.

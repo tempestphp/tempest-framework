@@ -12,6 +12,7 @@ use Tempest\Core\Environment;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\CompiledView;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\Exceptions\ViewVariableWasReserved;
@@ -93,7 +94,7 @@ final class TempestViewRenderer implements ViewRenderer
             },
         );
 
-        if ($compiledView !== null) {
+        if ($compiledView instanceof CompiledView) {
             $this->viewCache->saveSourceMap($path, $compiledView->sourcePath, $compiledView->lineMap);
         }
 
@@ -111,7 +112,7 @@ final class TempestViewRenderer implements ViewRenderer
     private function processView(View $view): View
     {
         foreach ($this->viewConfig->viewProcessors as $viewProcessorClass) {
-            if ($this->container) {
+            if ($this->container instanceof Container) {
                 /**  @var \Tempest\View\ViewProcessor $viewProcessor */
                 $viewProcessor = $this->container->get($viewProcessorClass);
             } else {
@@ -226,8 +227,11 @@ final class TempestViewRenderer implements ViewRenderer
         foreach ($throwable->getTrace() as $frame) {
             $framePath = $frame['file'] ?? null;
             $frameLine = $frame['line'] ?? null;
+            if (! is_string($framePath)) {
+                continue;
+            }
 
-            if (! is_string($framePath) || ! is_int($frameLine)) {
+            if (! is_int($frameLine)) {
                 continue;
             }
 
@@ -397,7 +401,11 @@ final class TempestViewRenderer implements ViewRenderer
     private function resolveSourceLine(int $compiledLine, ?string $defaultSourcePath, array $lineMap): ?array
     {
         foreach ($lineMap as $entry) {
-            if ($compiledLine < $entry['compiledStartLine'] || $compiledLine > $entry['compiledEndLine']) {
+            if ($compiledLine < $entry['compiledStartLine']) {
+                continue;
+            }
+
+            if ($compiledLine > $entry['compiledEndLine']) {
                 continue;
             }
 

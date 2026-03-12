@@ -12,23 +12,17 @@ interface Lock
     /**
      * The key used to identify the lock. This should be unique across all locks.
      */
-    public string $key {
-        get;
-    }
+    public string $key { get; }
 
     /**
      * The duration of the lock. If null, the lock will not expire.
      */
-    public ?Duration $duration {
-        get;
-    }
+    public ?Duration $duration { get; }
 
     /**
      * The owner of the lock. This is used to verify that the lock is being released by the correct owner.
      */
-    public string $owner {
-        get;
-    }
+    public string $owner { get; }
 
     /**
      * Attempts to acquire a lock.

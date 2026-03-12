@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
 use Rector\Rector\AbstractRector;
@@ -15,7 +16,7 @@ final class UpdateBindableResolveReturnTypeRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Class_::class,
+            Class_::class,
             Interface_::class,
         ];
     }
@@ -32,7 +33,7 @@ final class UpdateBindableResolveReturnTypeRector extends AbstractRector
             return null;
         }
 
-        if (! $node instanceof Node\Stmt\Class_) {
+        if (! $node instanceof Class_) {
             return null;
         }
 
@@ -67,7 +68,11 @@ final class UpdateBindableResolveReturnTypeRector extends AbstractRector
     private function refactorMethods(array $methods): void
     {
         foreach ($methods as $method) {
-            if ($method->name->toString() !== 'resolve' || ! $method->isStatic()) {
+            if ($method->name->toString() !== 'resolve') {
+                continue;
+            }
+
+            if (! $method->isStatic()) {
                 continue;
             }
 

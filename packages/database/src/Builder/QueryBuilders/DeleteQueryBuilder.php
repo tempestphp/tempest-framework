@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\OnDatabase;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Support\Arr\ImmutableArray;
@@ -118,7 +119,7 @@ final class DeleteQueryBuilder implements BuildsQuery, SupportsWhereStatements
         if ($this->model->isObjectModel() && is_object($this->model->instance) && $this->model->hasPrimaryKey()) {
             $primaryKeyValue = $this->model->getPrimaryKeyValue();
 
-            if ($primaryKeyValue !== null) {
+            if ($primaryKeyValue instanceof PrimaryKey) {
                 $this->where($this->model->getPrimaryKey(), $primaryKeyValue->value);
             }
         }

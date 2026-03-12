@@ -52,7 +52,7 @@ final class MailTester
             message: sprintf('Email `%s` was not sent.', $email),
         );
 
-        if ($callback) {
+        if ($callback instanceof Closure) {
             try {
                 if ($callback($sentEmail) === false) {
                     throw new ExpectationFailedException('The assertion callback returned `false`.');
@@ -444,12 +444,10 @@ final class MailTester
     private function convertAddresses(null|string|array|EmailAddress $addresses): array
     {
         return arr($addresses)
-            ->map(function (string|EmailAddress|SymfonyAddress $address) {
-                return match (true) {
-                    $address instanceof SymfonyAddress => $address->getAddress(),
-                    $address instanceof EmailAddress => $address->email,
-                    default => $address,
-                };
+            ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
+                $address instanceof SymfonyAddress => $address->getAddress(),
+                $address instanceof EmailAddress => $address->email,
+                default => $address,
             })
             ->filter()
             ->toArray();

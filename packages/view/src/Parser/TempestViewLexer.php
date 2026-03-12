@@ -148,8 +148,8 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $quote = $this->seek() === '\''
-                        ? '\''
+                    $quote = $this->seek() === "'"
+                        ? "'"
                         : '"';
 
                     $attributeValueLine = $this->line;

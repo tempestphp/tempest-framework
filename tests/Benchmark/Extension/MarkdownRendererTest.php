@@ -40,14 +40,14 @@ final class MarkdownRendererTest extends TestCase
         $renderer->render($reports, new Config('markdown', ['file' => null]));
 
         $this->assertSame(<<<'MARKDOWN'
-        ## Benchmark Results
+            ## Benchmark Results
 
-        | Benchmark | Set | Mem. Peak | Time | Variability |
-        | --------- | --- | --------- | ---- | ----------- |
-        | ContainerBench(benchAutowireSimple) | - | 3.952mb 0.00% | 4.187μs +0.17% | ±2.05% +108.06% |
+            | Benchmark | Set | Mem. Peak | Time | Variability |
+            | --------- | --- | --------- | ---- | ----------- |
+            | ContainerBench(benchAutowireSimple) | - | 3.952mb 0.00% | 4.187μs +0.17% | ±2.05% +108.06% |
 
 
-        MARKDOWN,
+            MARKDOWN,
 
         $output->fetch());
     }
@@ -70,12 +70,12 @@ final class MarkdownRendererTest extends TestCase
         $renderer->render($reports, new Config('markdown', ['file' => null]));
 
         $this->assertSame(<<<'MARKDOWN'
-        | name | value |
-        | ---- | ----- |
-        | Example | 123 |
+            | name | value |
+            | ---- | ----- |
+            | Example | 123 |
 
 
-        MARKDOWN, $output->fetch());
+            MARKDOWN, $output->fetch());
     }
 
     #[Test]
@@ -113,14 +113,14 @@ final class MarkdownRendererTest extends TestCase
         $renderer->render($reports, new Config('markdown', ['file' => null, 'outlier_min_diff' => 1.0]));
 
         $this->assertSame(<<<'MARKDOWN'
-        ## Benchmark Results
+            ## Benchmark Results
 
-        | Benchmark | Set | Mem. Peak | Time | Variability |
-        | --------- | --- | --------- | ---- | ----------- |
-        | ContainerBench(benchAutowireNested) | - | 3.952mb +0.10% | 14.791μs +1.55% | ±0.69% +0.50% |
+            | Benchmark | Set | Mem. Peak | Time | Variability |
+            | --------- | --- | --------- | ---- | ----------- |
+            | ContainerBench(benchAutowireNested) | - | 3.952mb +0.10% | 14.791μs +1.55% | ±0.69% +0.50% |
 
 
-        MARKDOWN,
+            MARKDOWN,
 
         $output->fetch());
     }
@@ -160,12 +160,12 @@ final class MarkdownRendererTest extends TestCase
         $renderer->render($reports, new Config('markdown', ['file' => null, 'outlier_min_diff' => 5.0]));
 
         $this->assertSame(<<<'MARKDOWN'
-        ## Benchmark Results
+            ## Benchmark Results
 
-        _No benchmark changes above ±5%._
+            _No benchmark changes above ±5%._
 
 
-        MARKDOWN,
+            MARKDOWN,
 
         $output->fetch());
     }

@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use stdClass;
 use Tempest\Auth\Authentication\DatabaseAuthenticatableResolver;
 use Tempest\Auth\Exceptions\ModelWasNotAuthenticatable;
 use Tempest\Auth\OAuth\GenericOAuthClient;
@@ -23,7 +24,7 @@ final class AuthenticationAndOAuthSafetyTest extends TestCase
 
         $this->expectException(ModelWasNotAuthenticatable::class);
 
-        $resolve->invoke($resolver, 1, \stdClass::class);
+        $resolve->invoke($resolver, 1, stdClass::class);
     }
 
     #[Test]

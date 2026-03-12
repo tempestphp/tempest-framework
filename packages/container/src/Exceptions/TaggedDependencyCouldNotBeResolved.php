@@ -47,9 +47,7 @@ final class TaggedDependencyCouldNotBeResolved extends Exception implements Cont
 
         $selectionLine = preg_replace_callback(
             pattern: '/(?<prefix>(.*))(?<selection>' . $brokenDependency->getTypeName() . '\s\$\w+)(.*)/',
-            callback: function ($matches) {
-                return str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection']));
-            },
+            callback: fn ($matches) => str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection'])),
             subject: $chain->last()->getShortName(),
         );
 

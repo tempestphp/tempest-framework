@@ -34,13 +34,7 @@ final readonly class DataTransferObjectSerializer implements Serializer, Dynamic
             : $type;
 
         if ($type->isUnion()) {
-            foreach ($type->split() as $memberType) {
-                if (static::accepts($memberType)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any($type->split(), fn ($memberType) => self::accepts($memberType));
         }
 
         return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
@@ -76,7 +70,7 @@ final readonly class DataTransferObjectSerializer implements Serializer, Dynamic
                 $data[$key] = $this->serializeWithType($value);
             }
 
-            $type = $this->mapperConfig->serializationMap[get_class($input)] ?? get_class($input);
+            $type = $this->mapperConfig->serializationMap[$input::class] ?? $input::class;
 
             return [
                 'type' => $type,

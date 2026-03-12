@@ -39,7 +39,7 @@ final readonly class CacheInitializer implements DynamicInitializer
     {
         $globalCacheEnabled = (bool) env('CACHE_ENABLED', default: true);
 
-        if (! $tag) {
+        if ($tag === null) {
             return $globalCacheEnabled;
         }
 

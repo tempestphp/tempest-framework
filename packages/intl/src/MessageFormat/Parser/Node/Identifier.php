@@ -2,7 +2,9 @@
 
 namespace Tempest\Intl\MessageFormat\Parser\Node;
 
-final readonly class Identifier implements Node
+use Stringable;
+
+final readonly class Identifier implements Node, Stringable
 {
     public function __construct(
         public string $name,

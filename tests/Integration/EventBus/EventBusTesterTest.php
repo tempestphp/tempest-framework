@@ -56,14 +56,10 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch('event-bus-fake-event');
-        $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
-            return $event === 'event-bus-fake-event';
-        });
+        $this->eventBus->assertDispatched('event-bus-fake-event', fn (string $event) => $event === 'event-bus-fake-event');
 
         $this->bus->dispatch(new FakeEvent('foo'));
-        $this->eventBus->assertDispatched(FakeEvent::class, function (FakeEvent $event) {
-            return $event->value === 'foo';
-        });
+        $this->eventBus->assertDispatched(FakeEvent::class, fn (FakeEvent $event) => $event->value === 'foo');
     }
 
     #[Test]
@@ -108,9 +104,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch('event-bus-fake-event');
-        $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
-            return $event !== 'event-bus-fake-event';
-        });
+        $this->eventBus->assertDispatched('event-bus-fake-event', fn (string $event) => $event !== 'event-bus-fake-event');
     }
 
     #[Test]
@@ -122,9 +116,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->eventBus->preventEventHandling();
 
         $this->bus->dispatch(new FakeEvent('foo'));
-        $this->eventBus->assertDispatched(FakeEvent::class, function (FakeEvent $event) {
-            return $event->value === 'foobar';
-        });
+        $this->eventBus->assertDispatched(FakeEvent::class, fn (FakeEvent $event) => $event->value === 'foobar');
     }
 
     #[Test]

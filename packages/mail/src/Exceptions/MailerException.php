@@ -2,6 +2,4 @@
 
 namespace Tempest\Mail\Exceptions;
 
-interface MailerException
-{
-}
+interface MailerException {}

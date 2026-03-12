@@ -2,12 +2,14 @@
 
 namespace Tempest\Database;
 
+use Stringable;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str;
 use Tempest\Support\Str\ImmutableString;
 
-final class RawSql
+final class RawSql implements Stringable
 {
     private RawSqlDatabaseContext $context {
         get => $this->context ??= new RawSqlDatabaseContext($this->dialect);
@@ -83,7 +85,7 @@ final class RawSql
                 continue;
             }
 
-            if ($serializer = $this->serializerFactory->in($this->context)->forValue($value)) {
+            if (($serializer = $this->serializerFactory->in($this->context)->forValue($value)) instanceof Serializer) {
                 $bindings[$key] = $serializer->serialize($value);
                 continue;
             }

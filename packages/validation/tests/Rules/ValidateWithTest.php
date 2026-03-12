@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Tempest\Validation\Rules\ValidateWith;
@@ -52,7 +53,7 @@ final class ValidateWithTest extends TestCase
 
     public function test_static_closure_required(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new ValidateWith(fn (mixed $value): bool => str_contains((string) $value, '@'));
     }

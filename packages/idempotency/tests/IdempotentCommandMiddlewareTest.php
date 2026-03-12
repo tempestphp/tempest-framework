@@ -338,7 +338,5 @@ final class SyncInventoryHandler
 {
     #[Idempotent]
     #[CommandHandler]
-    public function handle(SyncInventoryCommand $command): void
-    {
-    }
+    public function handle(SyncInventoryCommand $command): void {}
 }

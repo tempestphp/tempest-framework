@@ -64,7 +64,7 @@ final class InvokedProcessPool implements Countable
      *
      * @param Closure(InvokedProcess): mixed $callback
      */
-    public function forEachRunning(\Closure $callback): self
+    public function forEachRunning(Closure $callback): self
     {
         $this->running->each(fn (InvokedProcess $process) => $callback($process));
 
@@ -76,7 +76,7 @@ final class InvokedProcessPool implements Countable
      *
      * @param Closure(InvokedProcess): mixed $callback
      */
-    public function forEach(\Closure $callback): self
+    public function forEach(Closure $callback): self
     {
         $this->processes->each(fn (InvokedProcess $process) => $callback($process));
 

@@ -50,11 +50,7 @@ final readonly class PreventCrossSiteRequestsMiddleware implements HttpMiddlewar
      */
     private function shouldValidate(Request $request): bool
     {
-        if (in_array($request->method, self::SAFE_METHODS, strict: true)) {
-            return false;
-        }
-
-        return true;
+        return ! in_array($request->method, self::SAFE_METHODS, strict: true);
     }
 
     /**
@@ -76,10 +72,6 @@ final readonly class PreventCrossSiteRequestsMiddleware implements HttpMiddlewar
         }
 
         // same origin, same site and user-originated requests are always allowed
-        if ($secFetchSite !== SecFetchSite::CROSS_SITE) {
-            return true;
-        }
-
-        return false;
+        return $secFetchSite !== SecFetchSite::CROSS_SITE;
     }
 }

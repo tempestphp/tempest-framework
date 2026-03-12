@@ -24,7 +24,7 @@ $svg = str(is_string($name) ? get(Icon::class)->render($name) : null)
         fn (ImmutableString $s): ImmutableString => str("<!-- unknown-icon: {$name} -->"),
     )
     ->replace(
-        search: " width=\"1em\" height=\"1em\"",
+        search: ' width="1em" height="1em"',
         replace: '',
     )
     ->when(
@@ -54,7 +54,7 @@ $svg = str(is_string($name) ? get(Icon::class)->render($name) : null)
         fn (ImmutableString $s): ImmutableString => $s
             ->replace(
                 search: '<svg',
-                replace: "<svg width=\"1em\" height=\"1em\"",
+                replace: '<svg width="1em" height="1em"',
             ),
     )
     ->toString();

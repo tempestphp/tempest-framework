@@ -35,7 +35,9 @@ use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 final class MessageFormatParser
 {
     private string $input;
+
     private int $pos = 0;
+
     private int $len;
 
     /**
@@ -213,6 +215,7 @@ final class MessageFormatParser
             } else {
                 $keys[] = $this->parseLiteral();
             }
+
             $this->consumeOptionalWhitespace();
         } while ($this->peek() !== '{');
 
@@ -331,7 +334,7 @@ final class MessageFormatParser
 
         $this->consumeOptionalWhitespace();
 
-        if ($function === null && $this->peek() === ':') {
+        if (! $function instanceof FunctionCall && $this->peek() === ':') {
             $function = $this->parseFunction();
         }
 
@@ -349,7 +352,7 @@ final class MessageFormatParser
             return new LiteralExpression($subject, $function, $attributes);
         }
 
-        if ($function !== null) {
+        if ($function instanceof FunctionCall) {
             return new FunctionExpression($function, $attributes);
         }
 

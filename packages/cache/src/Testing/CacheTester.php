@@ -2,6 +2,7 @@
 
 namespace Tempest\Cache\Testing;
 
+use RuntimeException;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheInitializer;
 use Tempest\Clock\Clock;
@@ -37,7 +38,7 @@ final readonly class CacheTester
     public function preventUsageWithoutFake(): void
     {
         if (! $this->container instanceof GenericContainer) {
-            throw new \RuntimeException('Container is not a GenericContainer, unable to prevent usage without fake.');
+            throw new RuntimeException('Container is not a GenericContainer, unable to prevent usage without fake.');
         }
 
         $this->container->unregister(Cache::class, tagged: true);

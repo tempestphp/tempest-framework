@@ -18,7 +18,7 @@ final class MappingContext implements Context, Stringable
 
     public static function from(Context|UnitEnum|string|null $context): Context
     {
-        if (! $context) {
+        if ($context === null) {
             return self::default();
         }
 

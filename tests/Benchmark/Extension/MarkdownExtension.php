@@ -13,20 +13,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MarkdownExtension implements ExtensionInterface
 {
-    public function configure(OptionsResolver $resolver): void
-    {
-    }
+    public function configure(OptionsResolver $resolver): void {}
 
     public function load(Container $container): void
     {
         $container->register(
             MarkdownRenderer::class,
-            function (Container $container) {
-                return new MarkdownRenderer(
-                    $container->get(ConsoleExtension::SERVICE_OUTPUT_STD),
-                    $container->get(ExpressionExtension::SERVICE_PLAIN_PRINTER),
-                );
-            },
+            fn (Container $container) => new MarkdownRenderer(
+                $container->get(ConsoleExtension::SERVICE_OUTPUT_STD),
+                $container->get(ExpressionExtension::SERVICE_PLAIN_PRINTER),
+            ),
             [
                 ReportExtension::TAG_REPORT_RENDERER => [
                     'name' => 'markdown',

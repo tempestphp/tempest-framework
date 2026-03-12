@@ -18,7 +18,7 @@ final class ViewCompilationFailed extends Exception implements ProvidesContext
         private(set) readonly ?int $sourceLine = null,
     ) {
         parent::__construct(
-            message: sprintf($previous->getMessage()),
+            message: $previous->getMessage(),
             previous: $previous,
         );
 

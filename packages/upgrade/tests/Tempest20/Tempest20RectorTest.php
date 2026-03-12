@@ -23,7 +23,7 @@ final class Tempest20RectorTest extends TestCase
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MigrateUpAndDownMigration.input.php')
             ->assertContains('implements \Tempest\Database\MigratesUp, \Tempest\Database\MigratesDown')
-            ->assertContains('return new DropTableStatement(\'table\')')
+            ->assertContains("return new DropTableStatement('table')")
             ->assertNotContains('Tempest\Database\DatabaseMigration')
             ->assertContains('public function down(): QueryStatement');
     }

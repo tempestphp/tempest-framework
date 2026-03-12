@@ -183,7 +183,7 @@ final class FrameworkKernel implements Kernel
 
     public function registerInternalStorage(): self
     {
-        $path = isset($this->internalStorage) ? $this->internalStorage : $this->root . '/.tempest';
+        $path = $this->internalStorage ?? $this->root . '/.tempest';
 
         if (! is_dir($path)) {
             if (file_exists($path)) {

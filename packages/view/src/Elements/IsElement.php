@@ -26,11 +26,7 @@ trait IsElement
 
     public function getAttributes(): array
     {
-        if ($this instanceof WrapsElement) {
-            $wrappingAttributes = $this->getWrappingElement()->getAttributes();
-        } else {
-            $wrappingAttributes = [];
-        }
+        $wrappingAttributes = $this instanceof WrapsElement ? $this->getWrappingElement()->getAttributes() : [];
 
         $attributes = [...$this->attributes, ...$wrappingAttributes];
 

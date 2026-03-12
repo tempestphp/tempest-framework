@@ -7,6 +7,7 @@ namespace Tempest\Debug\Stacktrace;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
+use Throwable;
 
 use function Tempest\Support\Path\to_relative_path;
 
@@ -74,7 +75,7 @@ final class Frame
                 callback: fn (ReflectionParameter $param) => $param->getName(),
                 array: $reflection->getParameters(),
             );
-        } catch (\Throwable) {
+        } catch (Throwable) {
             // @mago-expect lint:no-empty-catch-clause
         }
 

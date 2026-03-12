@@ -310,11 +310,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
-            UPDATE authors SET name = ? WHERE authors.id = ?
-            SQL,
+                UPDATE authors SET name = ? WHERE authors.id = ?
+                SQL,
             default => <<<'SQL'
-            UPDATE `authors` SET `name` = ? WHERE `authors`.`id` = ?
-            SQL,
+                UPDATE `authors` SET `name` = ? WHERE `authors`.`id` = ?
+                SQL,
         };
 
         $this->assertSame($expected, $query->compile()->toString());

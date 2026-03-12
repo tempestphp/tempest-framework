@@ -35,12 +35,12 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_add_column(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` ADD `bar` VARCHAR(42) DEFAULT \'xx\' ;';
+        $expected = "ALTER TABLE `table` ADD `bar` VARCHAR(42) DEFAULT 'xx' ;";
         $statement = new AlterTableStatement('table')
             ->add(new VarcharStatement('bar', 42, true, 'xx'))
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -53,7 +53,7 @@ final class AlterTableStatementTest extends TestCase
             ->add(new BelongsToStatement('table.foo', 'parent.bar'))
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -66,7 +66,7 @@ final class AlterTableStatementTest extends TestCase
             ->add(new BelongsToStatement('table.foo', 'parent.bar'))
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -91,7 +91,7 @@ final class AlterTableStatementTest extends TestCase
             ->dropColumn('foo')
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -104,7 +104,7 @@ final class AlterTableStatementTest extends TestCase
             ->dropConstraint('foo')
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -118,19 +118,19 @@ final class AlterTableStatementTest extends TestCase
             ->compile($dialect);
     }
 
-    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::MYSQL, "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     #[TestWith([
         DatabaseDialect::POSTGRESQL,
-        'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;',
+        "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;",
     ])]
-    #[TestWith([DatabaseDialect::SQLITE, 'ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::SQLITE, "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     public function test_alter_table_add_column(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
             ->add(new VarcharStatement('foo', 42, false, 'bar'))
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -145,20 +145,20 @@ final class AlterTableStatementTest extends TestCase
             ->rename('foo', 'bar')
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
 
-    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
-    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT \'bar\' NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::MYSQL, "ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
+    #[TestWith([DatabaseDialect::POSTGRESQL, "ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     public function test_alter_table_modify_column(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
             ->modify(new VarcharStatement('foo', 42, false, 'bar'))
             ->compile($dialect);
 
-        $normalized = self::removeDuplicateWhitespace($statement);
+        $normalized = $this->removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
     }
@@ -173,7 +173,7 @@ final class AlterTableStatementTest extends TestCase
             ->compile($dialect);
     }
 
-    private static function removeDuplicateWhitespace(string $string): string
+    private function removeDuplicateWhitespace(string $string): string
     {
         return trim(preg_replace('/(\n|\s)+/m', ' ', $string));
     }

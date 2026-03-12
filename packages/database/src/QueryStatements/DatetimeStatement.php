@@ -19,7 +19,7 @@ final readonly class DatetimeStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        if ($this->default !== null && $this->current === true) {
+        if ($this->default !== null && $this->current) {
             throw new InvalidArgumentException("Cannot set both `default` and `current` for datetime column `{$this->name}`.");
         }
 

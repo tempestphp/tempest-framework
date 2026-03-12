@@ -6,6 +6,7 @@ namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Router\Route;
 
 final class DiscoveredRoute implements Route
@@ -88,7 +89,7 @@ final class DiscoveredRoute implements Route
 
                 $parameter = $methodReflector->getParameter($paramName);
 
-                if ($parameter === null) {
+                if (! $parameter instanceof ParameterReflector) {
                     return $matches[0];
                 }
 

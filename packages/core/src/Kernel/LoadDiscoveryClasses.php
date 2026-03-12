@@ -24,6 +24,7 @@ use Throwable;
 final class LoadDiscoveryClasses
 {
     private array $appliedDiscovery = [];
+
     private array $shouldSkipForClass = [];
 
     public function __construct(
@@ -72,7 +73,7 @@ final class LoadDiscoveryClasses
 
             // Resolve all other discoveries from the container, optionally loading their cache
             $discoveries = array_map(
-                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
+                $this->resolveDiscovery(...),
                 $kernel->discoveryClasses,
             );
 
@@ -80,17 +81,15 @@ final class LoadDiscoveryClasses
             $this->discover($discoveries, $discoveryLocations);
 
             return [$discoveryDiscovery, ...$discoveries];
-        } else {
-            // Resolve all manually specified discoveries
-            $discoveries = array_map(
-                fn (string $discoveryClass) => $this->resolveDiscovery($discoveryClass),
-                $discoveryClasses,
-            );
-
-            $this->discover($discoveries, $discoveryLocations);
-
-            return $discoveries;
         }
+
+        // Resolve all manually specified discoveries
+        $discoveries = array_map(
+            $this->resolveDiscovery(...),
+            $discoveryClasses,
+        );
+        $this->discover($discoveries, $discoveryLocations);
+        return $discoveries;
     }
 
     /**
@@ -175,7 +174,11 @@ final class LoadDiscoveryClasses
 
         foreach ($subPaths as $subPath) {
             // `.` and `..` are skipped
-            if ($subPath === '.' || $subPath === '..') {
+            if ($subPath === '.') {
+                continue;
+            }
+
+            if ($subPath === '..') {
                 continue;
             }
 

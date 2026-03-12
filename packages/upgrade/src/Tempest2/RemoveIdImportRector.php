@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tempest2;
 
 use PhpParser\Node;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
 
@@ -11,13 +12,13 @@ final class RemoveIdImportRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\UseItem::class,
+            UseItem::class,
         ];
     }
 
     public function refactor(Node $node): ?int
     {
-        if (! $node instanceof Node\UseItem) {
+        if (! $node instanceof UseItem) {
             return null;
         }
 

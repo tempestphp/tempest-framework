@@ -28,8 +28,8 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2024-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
-            path: 'tests/sessions',
             expiration: Duration::seconds(10),
+            path: 'tests/sessions',
         ));
 
         $sessionManager = $this->container->get(SessionManager::class);

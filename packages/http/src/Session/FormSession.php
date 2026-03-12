@@ -14,6 +14,7 @@ use Tempest\Validation\FailingRule;
 final readonly class FormSession
 {
     private const string VALIDATION_ERRORS_KEY = '#validation_errors';
+
     private const string ORIGINAL_VALUES_KEY = '#original_values';
 
     public function __construct(

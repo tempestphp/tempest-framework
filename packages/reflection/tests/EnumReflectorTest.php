@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection\Tests;
 
+use Attribute;
+use BackedEnum;
+use JsonSerializable;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionEnum;
+use stdClass;
 use Tempest\Reflection\EnumReflector;
 use Tempest\Reflection\TypeReflector;
+use UnitEnum;
 
 /**
  * @internal
@@ -153,9 +158,9 @@ final class EnumReflectorTest extends TestCase
     {
         $reflector = new EnumReflector(TestBackedEnum::class);
 
-        $this->assertTrue($reflector->is(\BackedEnum::class));
-        $this->assertTrue($reflector->is(\UnitEnum::class));
-        $this->assertFalse($reflector->is(\stdClass::class));
+        $this->assertTrue($reflector->is(BackedEnum::class));
+        $this->assertTrue($reflector->is(UnitEnum::class));
+        $this->assertFalse($reflector->is(stdClass::class));
     }
 
     #[Test]
@@ -164,7 +169,7 @@ final class EnumReflectorTest extends TestCase
         $reflector = new EnumReflector(TestEnumWithInterface::class);
 
         $this->assertTrue($reflector->implements(TestInterface::class));
-        $this->assertFalse($reflector->implements(\JsonSerializable::class));
+        $this->assertFalse($reflector->implements(JsonSerializable::class));
     }
 
     #[Test]
@@ -271,16 +276,14 @@ enum TestIntBackedEnum: int
     case SECOND = 2;
 }
 
-interface TestInterface
-{
-}
+interface TestInterface {}
 
 enum TestEnumWithInterface: string implements TestInterface
 {
     case VALUE = 'value';
 }
 
-#[\Attribute]
+#[Attribute]
 final class TestAttribute
 {
     public function __construct(

@@ -17,7 +17,7 @@ use Tempest\View\Stubs\ViewStub;
 
 use function Tempest\Support\str;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final class MakeViewCommand
     {
         use PublishesFiles;
@@ -82,7 +82,11 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                     default => throw new InvalidArgumentException(sprintf('The "%s" view type has no supported stub file.', $viewType->value)),
                 };
             } catch (InvalidArgumentException $invalidArgumentException) {
-                throw new FileGenerationFailedException(sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()));
+                throw new FileGenerationFailedException(
+                    sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()),
+                    $invalidArgumentException->getCode(),
+                    $invalidArgumentException,
+                );
             }
         }
     }

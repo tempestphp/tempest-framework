@@ -13,7 +13,7 @@ use Throwable;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class HandleAsyncCommand
     {
         use HasConsole;

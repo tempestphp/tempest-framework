@@ -60,15 +60,15 @@ final class Cookie implements Stringable
             $parts[] = 'Path=' . $this->path;
         }
 
-        if ($this->secure === true) {
+        if ($this->secure) {
             $parts[] = 'Secure';
         }
 
-        if ($this->httpOnly === true) {
+        if ($this->httpOnly) {
             $parts[] = 'HttpOnly';
         }
 
-        if ($this->sameSite !== null) {
+        if ($this->sameSite instanceof SameSite) {
             $parts[] = 'SameSite=' . $this->sameSite->value;
         }
 

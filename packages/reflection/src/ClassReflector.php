@@ -19,6 +19,7 @@ final class ClassReflector implements Reflector
     private array $memoize = [];
 
     private readonly PHPReflectionClass $reflectionClass;
+
     private string $name;
 
     /**
@@ -157,19 +158,19 @@ final class ClassReflector implements Reflector
 
     public function callStatic(string $method, mixed ...$args): mixed
     {
-        $className = $this->getName();
+        $className = $this->name;
 
         return $className::$method(...$args);
     }
 
     public function is(string $className): bool
     {
-        return is_a($this->getName(), $className, allow_string: true);
+        return is_a($this->name, $className, allow_string: true);
     }
 
     public function implements(string $interface): bool
     {
-        return $this->isInstantiable() && is_a($this->getName(), $interface, allow_string: true);
+        return $this->isInstantiable() && is_a($this->name, $interface, allow_string: true);
     }
 
     private function memoize(string $key, Closure $closure): mixed
@@ -183,7 +184,7 @@ final class ClassReflector implements Reflector
 
     public function __serialize(): array
     {
-        return ['name' => $this->getName()];
+        return ['name' => $this->name];
     }
 
     public function __unserialize(array $data): void

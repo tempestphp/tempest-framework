@@ -56,6 +56,6 @@ final class ImmutableString implements StringInterface
      */
     protected function createOrModify(Stringable|string $string): self
     {
-        return new static($string);
+        return new self($string);
     }
 }

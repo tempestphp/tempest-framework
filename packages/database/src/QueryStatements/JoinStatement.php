@@ -18,7 +18,7 @@ final readonly class JoinStatement implements QueryStatement
         $statement = $this->statement;
 
         if (! str($statement)->lower()->startsWith(['join', 'inner join', 'left join', 'right join', 'full join', 'full outer join', 'self join'])) {
-            $statement = sprintf('INNER JOIN %s', $statement);
+            return sprintf('INNER JOIN %s', $statement);
         }
 
         return $statement;

@@ -6,6 +6,4 @@ namespace Tempest\Cache;
 
 use Exception;
 
-final class CacheCouldNotBeCleared extends Exception implements CacheException
-{
-}
+final class CacheCouldNotBeCleared extends Exception implements CacheException {}

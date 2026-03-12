@@ -15,10 +15,7 @@ interface Cache
     /**
      * Whether the cache is enabled.
      */
-    public bool $enabled {
-        get;
-        set;
-    }
+    public bool $enabled { get; set; }
 
     /**
      * Returns a lock for the specified key. The lock is not acquired until `acquire()` is called.

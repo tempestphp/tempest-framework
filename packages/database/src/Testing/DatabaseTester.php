@@ -46,7 +46,7 @@ final class DatabaseTester
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        if (count($migrationClasses) === 0) {
+        if ($migrationClasses === []) {
             $migrationManager->up();
             return;
         }

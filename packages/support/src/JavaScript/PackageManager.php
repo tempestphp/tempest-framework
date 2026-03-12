@@ -62,9 +62,9 @@ enum PackageManager: string
     {
         return array_find(
             array: PackageManager::cases(),
-            callback: fn (PackageManager $packageManager): bool => array_any($packageManager->getLockFiles(), fn (string $lockFile): bool => Filesystem\is_file($cwd
-            . '/'
-            . $lockFile)),
+            callback: fn (PackageManager $packageManager): bool => array_any($packageManager->getLockFiles(), fn (string $lockFile): bool => Filesystem\is_file(
+                $cwd . '/' . $lockFile,
+            )),
         );
     }
 }

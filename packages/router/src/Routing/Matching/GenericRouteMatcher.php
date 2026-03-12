@@ -19,7 +19,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
     public function match(Request $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
-        if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
+        if (($staticRoute = $this->matchStaticRoute($request)) instanceof MatchedRoute) {
             return $staticRoute;
         }
 

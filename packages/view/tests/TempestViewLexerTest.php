@@ -14,8 +14,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_lexer(): void
     {
         $html = <<<HTML
-        <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
-        HTML;
+            <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -144,15 +144,15 @@ final class TempestViewLexerTest extends TestCase
     public function test_multiline_attributes(): void
     {
         $html = <<<'HTML'
-        <div
-            class="abc"
-            foo="bar"
-            x-foo
-            :baz="true"
-        >
+            <div
+                class="abc"
+                foo="bar"
+                x-foo
+                :baz="true"
+            >
 
-        </div>
-        HTML;
+            </div>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -183,8 +183,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_whitespace(): void
     {
         $html = <<<'HTML'
-        <p><strong>Test</strong> <em>Test</em></p>
-        HTML;
+            <p><strong>Test</strong> <em>Test</em></p>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -210,8 +210,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_lexer_with_falsy_values(): void
     {
         $html = <<<'HTML'
-        a0a
-        HTML;
+            a0a
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -245,8 +245,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_php_within_tag(): void
     {
         $html = <<<'HTML'
-        <div <?php if (true) { ?> class="foo" <?php } ?>></div>
-        HTML;
+            <div <?php if (true) { ?> class="foo" <?php } ?>></div>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -267,8 +267,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_doctype(): void
     {
         $html = <<<'HTML'
-        <!DOCTYPE html><html></html>
-        HTML;
+            <!DOCTYPE html><html></html>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -283,8 +283,8 @@ final class TempestViewLexerTest extends TestCase
         );
 
         $html = <<<'HTML'
-        <!doctype html><html></html>
-        HTML;
+            <!doctype html><html></html>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -343,8 +343,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_cdata(): void
     {
         $tokens = new TempestViewLexer(<<<'RSS'
-        <title><![CDATA[ {{ $post['title'] }} ]]></title>
-        RSS)->lex();
+            <title><![CDATA[ {{ $post['title'] }} ]]></title>
+            RSS)->lex();
 
         $this->assertTokens(
             expected: [
@@ -362,8 +362,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_xml(): void
     {
         $tokens = new TempestViewLexer(<<<'XML'
-        <?xml version="1.0" encoding="UTF-8" ?>
-        XML)->lex();
+            <?xml version="1.0" encoding="UTF-8" ?>
+            XML)->lex();
 
         $this->assertTokens(
             expected: [
@@ -376,8 +376,8 @@ final class TempestViewLexerTest extends TestCase
     public function test_single_quote_attributes(): void
     {
         $html = <<<HTML
-        <div class='hello'></div>
-        HTML;
+            <div class='hello'></div>
+            HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -385,7 +385,7 @@ final class TempestViewLexerTest extends TestCase
             expected: [
                 new Token('<div', TokenType::OPEN_TAG_START),
                 new Token(' class=', TokenType::ATTRIBUTE_NAME),
-                new Token('\'hello\'', TokenType::ATTRIBUTE_VALUE),
+                new Token("'hello'", TokenType::ATTRIBUTE_VALUE),
                 new Token('>', TokenType::OPEN_TAG_END),
                 new Token('</div>', TokenType::CLOSING_TAG),
             ],

@@ -72,7 +72,7 @@ trait HasAttributes
     {
         $object = $attribute?->newInstance();
 
-        if (! $object) {
+        if ($object === null) {
             return null;
         }
 

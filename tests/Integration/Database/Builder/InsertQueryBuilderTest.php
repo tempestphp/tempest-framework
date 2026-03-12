@@ -189,11 +189,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
-            INSERT INTO authors (name) VALUES (?) RETURNING *
-            SQL,
+                INSERT INTO authors (name) VALUES (?) RETURNING *
+                SQL,
             default => <<<'SQL'
-            INSERT INTO `authors` (`name`) VALUES (?)
-            SQL,
+                INSERT INTO `authors` (`name`) VALUES (?)
+                SQL,
         };
 
         $this->assertSame($expected, $query->compile()->toString());

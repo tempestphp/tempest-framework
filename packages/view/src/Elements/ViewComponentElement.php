@@ -255,6 +255,7 @@ final class ViewComponentElement implements Element, WithToken
             if ($hasDataAttribute) {
                 $attributes[$name]->append(' ' . $this->dataAttributes[$name]);
             }
+
             if ($hasExpressionAttribute) {
                 $attributes[$name]->append(sprintf(' <?= $%s ?>', $name));
             }
@@ -283,7 +284,7 @@ final class ViewComponentElement implements Element, WithToken
     {
         $imports = [];
 
-        if ($this->parent) {
+        if ($this->parent instanceof Element) {
             $imports = [...$imports, ...$this->parent->getImports()];
         }
 

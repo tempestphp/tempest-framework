@@ -82,7 +82,7 @@ final class StubFileGenerator
 
             $classManipulator->save($targetPath);
         } catch (Throwable $throwable) {
-            throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
+            throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()), $throwable->getCode(), $throwable);
         }
     }
 
@@ -129,8 +129,8 @@ final class StubFileGenerator
             // Run all manipulations
             $fileContent = array_reduce(
                 array: $manipulations,
-                initial: $fileContent,
                 callback: fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
+                initial: $fileContent,
             );
 
             if (Filesystem\is_file($targetPath) && $shouldOverride) {
@@ -139,7 +139,7 @@ final class StubFileGenerator
 
             Filesystem\write_file($targetPath, $fileContent);
         } catch (Throwable $throwable) {
-            throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
+            throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()), $throwable->getCode(), $throwable);
         }
     }
 

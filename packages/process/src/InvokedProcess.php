@@ -9,30 +9,22 @@ interface InvokedProcess
     /**
      * Gets the process identifier.
      */
-    public ?int $pid {
-        get;
-    }
+    public ?int $pid { get; }
 
     /**
      * Whether the process is running.
      */
-    public bool $running {
-        get;
-    }
+    public bool $running { get; }
 
     /**
      * Gets the output of the process.
      */
-    public string $output {
-        get;
-    }
+    public string $output { get; }
 
     /**
      * Gets the error output of the process.
      */
-    public string $errorOutput {
-        get;
-    }
+    public string $errorOutput { get; }
 
     /**
      * Sends a signal to the process.

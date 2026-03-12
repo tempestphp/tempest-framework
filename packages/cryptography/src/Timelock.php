@@ -4,6 +4,7 @@ namespace Tempest\Cryptography;
 
 use Tempest\Clock\Clock;
 use Tempest\DateTime\Duration;
+use Throwable;
 
 final class Timelock
 {
@@ -32,7 +33,7 @@ final class Timelock
 
         try {
             $result = $callback($this);
-        } catch (\Throwable $thrown) {
+        } catch (Throwable $thrown) {
             $exception = $thrown;
         }
 
@@ -42,7 +43,7 @@ final class Timelock
             $this->clock->sleep(Duration::microseconds($remainderInMicroseconds));
         }
 
-        if ($exception) {
+        if ($exception instanceof Throwable) {
             throw $exception;
         }
 

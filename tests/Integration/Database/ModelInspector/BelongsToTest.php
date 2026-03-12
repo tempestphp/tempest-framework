@@ -256,10 +256,10 @@ final class SelfReferencingCategoryModel
 
     public string $name;
 
-    #[BelongsTo(ownerJoin: 'parent_id', relationJoin: 'id')]
+    #[BelongsTo(relationJoin: 'id', ownerJoin: 'parent_id')]
     public ?SelfReferencingCategoryModel $parent = null;
 
-    #[BelongsTo(ownerJoin: 'category_parent_id', relationJoin: 'id')]
+    #[BelongsTo(relationJoin: 'id', ownerJoin: 'category_parent_id')]
     public ?SelfReferencingCategoryModel $parentWithCustomOwnerJoin = null;
 
     /** @var \Tests\Tempest\Integration\Database\ModelInspector\SelfReferencingCategoryModel[] */

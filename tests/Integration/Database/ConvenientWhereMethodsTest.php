@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use InvalidArgumentException;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
@@ -363,7 +364,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
     public function test_where_in_throws_exception_for_invalid_value(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('IN operator requires an array of values');
 
         query(User::class)
@@ -374,7 +375,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
     public function test_where_between_throws_exception_for_invalid_array(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('BETWEEN operator requires an array with exactly 2 values');
 
         query(User::class)
@@ -385,7 +386,7 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
     public function test_where_between_throws_exception_for_too_many_values(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('BETWEEN operator requires an array with exactly 2 values');
 
         query(User::class)

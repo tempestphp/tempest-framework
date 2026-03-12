@@ -7,7 +7,5 @@ use Tempest\Support\Arr\ImmutableArray;
 interface HasWhereStatements
 {
     /** @var ImmutableArray */
-    public ImmutableArray $where {
-        get;
-    }
+    public ImmutableArray $where { get; }
 }

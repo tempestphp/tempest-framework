@@ -108,7 +108,7 @@ final class MessageFormatter
                 } elseif ($declaration instanceof LocalDeclaration) {
                     $variableName = $declaration->variable->name->name;
 
-                    $functionName = $declaration->expression->function
+                    $functionName = $declaration->expression->function instanceof FunctionCall
                         ? (string) $declaration->expression->function->identifier
                         : null;
 
@@ -132,7 +132,7 @@ final class MessageFormatter
             }
         }
 
-        throw new FormattingException('Unknown message type: ' . get_class($message));
+        throw new FormattingException('Unknown message type: ' . $message::class);
     }
 
     private function formatComplexBody(ComplexBody $body): string
@@ -149,7 +149,7 @@ final class MessageFormatter
             return $this->formatMatcher($body);
         }
 
-        throw new FormattingException('Unknown complex body type: ' . get_class($body));
+        throw new FormattingException('Unknown complex body type: ' . $body::class);
     }
 
     private function formatMatcher(Matcher $matcher): string
@@ -176,8 +176,9 @@ final class MessageFormatter
 
             $matches = true;
             $hasWildcard = false;
+            $counter = count($variant->keys);
 
-            for ($i = 0; $i < count($variant->keys); $i++) {
+            for ($i = 0; $i < $counter; $i++) {
                 $keyNode = $variant->keys[$i];
                 $variable = $selectorVariables[$i];
 
@@ -194,7 +195,7 @@ final class MessageFormatter
                 $variantKey = $keyNode->value;
                 $isMatch = false;
 
-                if ($variable->selector) {
+                if ($variable->selector instanceof SelectorFunction) {
                     $isMatch = $variable->selector->match($variantKey, $variable->value, $variable->parameters);
                 } else {
                     $isMatch = $variable->value === $variantKey;
@@ -259,7 +260,7 @@ final class MessageFormatter
             return $this->formatPattern($placeholder->pattern);
         }
 
-        throw new FormattingException('Unknown placeholder type: ' . get_class($placeholder));
+        throw new FormattingException('Unknown placeholder type: ' . $placeholder::class);
     }
 
     private function evaluateExpression(Expression $expression): FormattedValue
@@ -284,7 +285,7 @@ final class MessageFormatter
             $value = null; // Function-only expressions start with null
         }
 
-        if ($expression->function !== null) {
+        if ($expression->function instanceof FunctionCall) {
             $functionName = (string) $expression->function->identifier;
             $parameters = $this->evaluateOptions($expression->function->options);
 
@@ -293,7 +294,7 @@ final class MessageFormatter
             }
         }
 
-        if ($formattingFunction) {
+        if ($formattingFunction instanceof FormattingFunction) {
             return $formattingFunction->format($value, $parameters);
         }
 

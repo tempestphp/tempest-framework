@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Database;
@@ -10,6 +11,8 @@ use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\HasMany;
+use Tempest\Database\HasOne;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
@@ -17,6 +20,7 @@ use Tempest\Database\QueryStatements\UpdateStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
 use Tempest\Intl;
+use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -112,7 +116,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         }
 
         // Execute after callbacks for relation updates
-        if ($this->model->hasPrimaryKey() && $this->after !== [] && $this->primaryKeyForRelations !== null) {
+        if ($this->model->hasPrimaryKey() && $this->after !== [] && $this->primaryKeyForRelations instanceof PrimaryKey) {
             foreach ($this->after as $after) {
                 $query = $after($this->primaryKeyForRelations);
 
@@ -239,7 +243,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $belongsTo = $this->model->getBelongsTo($column);
 
-        if ($belongsTo) {
+        if ($belongsTo instanceof BelongsTo) {
             $column = $belongsTo->getOwnerFieldName();
             $relationModel = inspect($property->getType()->asClass());
             $this->ensureModelHasPrimaryKey($relationModel, 'BelongsTo');
@@ -271,7 +275,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             ->in($this->context)
             ->forProperty($property);
 
-        if ($value !== null && $serializer !== null) {
+        if ($value !== null && $serializer instanceof Serializer) {
             return $serializer->serialize($value);
         }
 
@@ -289,7 +293,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $hasMany = $this->model->getHasMany($key);
 
-        if ($hasMany === null) {
+        if (! $hasMany instanceof HasMany) {
             return false;
         }
 
@@ -306,7 +310,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $hasOne = $this->model->getHasOne($key);
 
-        if ($hasOne === null) {
+        if (! $hasOne instanceof HasOne) {
             return false;
         }
 
@@ -323,7 +327,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $hasMany = $this->model->getHasMany($relationName);
 
-        if ($hasMany === null) {
+        if (! $hasMany instanceof HasMany) {
             return;
         }
 
@@ -357,7 +361,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $hasOne = $this->model->getHasOne($relationName);
 
-        if ($hasOne === null) {
+        if (! $hasOne instanceof HasOne) {
             return;
         }
 
@@ -544,10 +548,13 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     {
         $operator = WhereOperator::fromOperator($operator);
 
-        if ($this->model->hasPrimaryKey() && $field === $this->model->getPrimaryKey() && $this->hasRelationUpdates()) {
-            if ($operator === WhereOperator::EQUALS && (is_string($value) || is_int($value) || $value instanceof PrimaryKey)) {
-                $this->primaryKeyForRelations = new PrimaryKey($value);
-            }
+        if (
+            $this->model->hasPrimaryKey() && $field === $this->model->getPrimaryKey() && $this->hasRelationUpdates() && (
+                $operator === WhereOperator::EQUALS
+                && (is_string($value) || is_int($value) || $value instanceof PrimaryKey)
+            )
+        ) {
+            $this->primaryKeyForRelations = new PrimaryKey($value);
         }
 
         $fieldDefinition = $this->model->getFieldDefinition($field);
@@ -602,7 +609,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             throw CouldNotUpdateRelation::requiresPrimaryKey($this->model);
         }
 
-        if ($this->primaryKeyForRelations === null) {
+        if (! $this->primaryKeyForRelations instanceof PrimaryKey) {
             throw CouldNotUpdateRelation::requiresSingleRecord($this->model);
         }
     }
@@ -613,7 +620,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             return;
         }
 
-        if ($primaryKeyValue = $this->model->getPrimaryKeyValue()) {
+        if (($primaryKeyValue = $this->model->getPrimaryKeyValue()) instanceof PrimaryKey) {
             $this->whereField($this->model->getPrimaryKey(), $primaryKeyValue->value);
         }
     }

@@ -32,7 +32,7 @@ final readonly class ConsoleArgumentDefinition
         $boolean = $type->getName() === 'bool' || is_bool($default);
 
         return new ConsoleArgumentDefinition(
-            name: static::normalizeName($attribute->name ?? $parameter->getName(), boolean: $boolean),
+            name: self::normalizeName($attribute->name ?? $parameter->getName(), boolean: $boolean),
             type: $type->getName(),
             default: $default,
             hasDefault: $parameter->isDefaultValueAvailable(),
@@ -56,7 +56,7 @@ final readonly class ConsoleArgumentDefinition
 
         return array_any(
             array: [$this->name, ...$this->aliases],
-            callback: fn ($match) => $argument->matches(static::normalizeName($match, $this->type === 'bool')),
+            callback: fn ($match) => $argument->matches(self::normalizeName($match, $this->type === 'bool')),
         );
     }
 

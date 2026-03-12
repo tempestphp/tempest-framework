@@ -130,7 +130,7 @@ final readonly class GenericResponseSender implements ResponseSender
         }
 
         foreach ($response->body as $message) {
-            if (connection_aborted()) {
+            if (connection_aborted() !== 0) {
                 break;
             }
 
@@ -142,7 +142,7 @@ final readonly class GenericResponseSender implements ResponseSender
                 echo "id: {$message->id}\n";
             }
 
-            if ($message->retryAfter) {
+            if ($message->retryAfter !== null) {
                 $retry = match (true) {
                     is_int($message->retryAfter) => $message->retryAfter,
                     $message->retryAfter instanceof Duration => $message->retryAfter->getTotalMilliseconds(),

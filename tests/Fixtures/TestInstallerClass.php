@@ -7,6 +7,4 @@ namespace Tests\Tempest\Fixtures;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery]
-final readonly class TestInstallerClass
-{
-}
+final readonly class TestInstallerClass {}

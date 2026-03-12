@@ -3,8 +3,11 @@
 namespace Tempest\Upgrade\Tempest2;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use Rector\Rector\AbstractRector;
 
 final class MigrationRector extends AbstractRector
@@ -12,13 +15,13 @@ final class MigrationRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Class_::class,
+            Class_::class,
         ];
     }
 
     public function refactor(Node $node): ?int
     {
-        if (! $node instanceof Node\Stmt\Class_) {
+        if (! $node instanceof Class_) {
             return null;
         }
 
@@ -27,7 +30,7 @@ final class MigrationRector extends AbstractRector
 
         $implementsDatabaseMigration = array_find_key(
             $implements,
-            static fn (Node\Name $name) => $name->toString() === 'Tempest\Database\DatabaseMigration',
+            static fn (Name $name) => $name->toString() === 'Tempest\Database\DatabaseMigration',
         );
 
         if ($implementsDatabaseMigration === null) {
@@ -38,7 +41,7 @@ final class MigrationRector extends AbstractRector
         unset($implements[$implementsDatabaseMigration]);
 
         // Add the new MigrateUp interface
-        $implements[] = new Node\Name('\Tempest\Database\MigratesUp');
+        $implements[] = new Name('\Tempest\Database\MigratesUp');
         $node->getMethod('up')->returnType = new Name('QueryStatement');
 
         // Check whether the migration has a down method implemented or not
@@ -47,11 +50,11 @@ final class MigrationRector extends AbstractRector
         $migratesDown = true;
 
         foreach ($downStatements as $statement) {
-            if (! $statement instanceof Node\Stmt\Return_) {
+            if (! $statement instanceof Return_) {
                 continue;
             }
 
-            if (! $statement->expr instanceof Node\Expr\ConstFetch) {
+            if (! $statement->expr instanceof ConstFetch) {
                 continue;
             }
 
@@ -62,7 +65,7 @@ final class MigrationRector extends AbstractRector
 
         if ($migratesDown) {
             // If the migration has a down method implemented, we'll add the new MigrateDown interface
-            $implements[] = new Node\Name('\Tempest\Database\MigratesDown');
+            $implements[] = new Name('\Tempest\Database\MigratesDown');
             $node->getMethod('down')->returnType = new Name('QueryStatement');
         } else {
             // If the migration does not have a down method implemented, we'll remove it entirely

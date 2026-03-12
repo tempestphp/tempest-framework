@@ -43,7 +43,7 @@ final readonly class CompletionShowCommand
 
         $shell ??= ($this->resolveShell)('Which shell completion script do you want to see?');
 
-        if ($shell === null) {
+        if (! $shell instanceof Shell) {
             $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;

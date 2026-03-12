@@ -6,6 +6,7 @@ namespace Tempest\Http\Session\Installer;
 
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Migrations\MigrationManager;
@@ -47,7 +48,7 @@ final class DatabaseSessionInstaller implements Installer
     {
         $argument = $this->consoleArgumentBag->get('migrate');
 
-        if ($argument === null || ! is_bool($argument->value)) {
+        if (! $argument instanceof ConsoleInputArgument || ! is_bool($argument->value)) {
             return $this->console->confirm('Do you want to execute migrations?');
         }
 

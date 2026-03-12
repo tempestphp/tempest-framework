@@ -6,6 +6,7 @@ namespace Tempest\DateTime;
 
 use DateTimeInterface as NativeDateTimeInterface;
 use JsonSerializable;
+use Override;
 use Stringable;
 use Tempest\Intl\Locale;
 use Tempest\Support\Comparison\Comparable;
@@ -35,7 +36,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      *
      * @param TemporalInterface $other
      */
-    #[\Override]
+    #[Override]
     public function compare(mixed $other): Order;
 
     /**
@@ -45,7 +46,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      *
      * @param TemporalInterface|string $other
      */
-    #[\Override]
+    #[Override]
     public function equals(mixed $other): bool;
 
     /**
@@ -419,7 +420,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      *
      * @see TemporalInterface::toString()
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string;
 
     /**

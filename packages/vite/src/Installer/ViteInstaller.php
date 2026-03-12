@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Vite\Installer;
 
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Support\JavaScript\DependencyInstaller;
@@ -31,7 +32,7 @@ final class ViteInstaller implements Installer
     {
         $argument = $this->consoleArgumentBag->get('tailwindcss');
 
-        if ($argument === null || ! is_bool($argument->value)) {
+        if (! $argument instanceof ConsoleInputArgument || ! is_bool($argument->value)) {
             return $this->console->confirm('Install Tailwind CSS as well?', default: true);
         }
 

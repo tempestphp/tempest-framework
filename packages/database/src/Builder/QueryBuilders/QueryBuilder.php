@@ -6,6 +6,7 @@ use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\Container\get;
 use function Tempest\Database\inspect;
@@ -200,7 +201,8 @@ final class QueryBuilder
             default => new PrimaryKey($id),
         };
 
-        return $this->select()
+        return $this
+            ->select()
             ->with(...$relations)
             ->get($id);
     }
@@ -212,7 +214,8 @@ final class QueryBuilder
      */
     public function all(array $relations = []): array
     {
-        return $this->select()
+        return $this
+            ->select()
             ->with(...$relations)
             ->all();
     }
@@ -259,7 +262,7 @@ final class QueryBuilder
         $inspector = inspect($this->model);
         $primaryKeyProperty = $inspector->getPrimaryKeyProperty();
 
-        if ($id !== null && $primaryKeyProperty !== null) {
+        if ($id instanceof PrimaryKey && $primaryKeyProperty instanceof PropertyReflector) {
             $primaryKeyName = $primaryKeyProperty->getName();
 
             if (! $inspector->hasUuidPrimaryKey() || $model->{$primaryKeyName} === null) {

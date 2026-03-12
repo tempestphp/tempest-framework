@@ -36,7 +36,7 @@ final class GenericRouterBench
 
     public function setUp(): void
     {
-        $routeConfig = self::makeRouteConfig();
+        $routeConfig = $this->makeRouteConfig();
 
         $routeConfig->middleware = new Middleware(
             HandleRouteExceptionMiddleware::class,
@@ -53,7 +53,7 @@ final class GenericRouterBench
 
         $this->router = new GenericRouter($container, $routeConfig);
 
-        $routeConfigWithoutExceptionMiddleware = self::makeRouteConfig();
+        $routeConfigWithoutExceptionMiddleware = $this->makeRouteConfig();
         $routeConfigWithoutExceptionMiddleware->middleware = new Middleware(
             MatchRouteMiddleware::class,
         );
@@ -109,7 +109,7 @@ final class GenericRouterBench
         return new Ok('OK');
     }
 
-    private static function makeRouteConfig(): RouteConfig
+    private function makeRouteConfig(): RouteConfig
     {
         $handler = new MethodReflector(new ReflectionMethod(self::class, 'handle'));
         $handlerWithParam = new MethodReflector(new ReflectionMethod(self::class, 'handleWithParam'));

@@ -5,6 +5,4 @@ namespace Tempest\Router;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class IsBindingValue
-{
-}
+final class IsBindingValue {}

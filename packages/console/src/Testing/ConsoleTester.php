@@ -68,7 +68,7 @@ final class ConsoleTester
             $console->disablePrompting();
         }
 
-        if ($this->componentRenderer !== null) {
+        if ($this->componentRenderer instanceof InteractiveComponentRenderer) {
             $console->setComponentRenderer($this->componentRenderer);
         }
 
@@ -94,7 +94,7 @@ final class ConsoleTester
 
         $fiber->start();
 
-        if ($clone->componentRenderer !== null) {
+        if ($clone->componentRenderer instanceof InteractiveComponentRenderer) {
             $clone->input("\e[1;1R"); // Set cursor for interactive testing
         }
 
@@ -162,7 +162,7 @@ final class ConsoleTester
 
     public function getBuffer(?callable $callback = null): array
     {
-        $buffer = array_map('trim', $this->output->getBufferWithoutFormatting());
+        $buffer = array_map(trim(...), $this->output->getBufferWithoutFormatting());
 
         $this->output->clear();
 

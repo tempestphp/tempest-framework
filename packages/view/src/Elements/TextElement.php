@@ -22,16 +22,12 @@ final class TextElement implements Element
             // Render {{
             ->replaceRegex(
                 regex: '/{{(?<match>.*?)}}/',
-                replace: function (array $matches): string {
-                    return sprintf('<?= $this->escape(%s); ?>', $matches['match']);
-                },
+                replace: fn (array $matches): string => sprintf('<?= $this->escape(%s); ?>', $matches['match']),
             )
             // Render {!!
             ->replaceRegex(
                 regex: '/{!!(?<match>.*?)!!}/',
-                replace: function (array $matches): string {
-                    return sprintf('<?= %s ?>', $matches['match']);
-                },
+                replace: fn (array $matches): string => sprintf('<?= %s ?>', $matches['match']),
             )
             ->toString();
     }

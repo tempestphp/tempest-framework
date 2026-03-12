@@ -18,7 +18,6 @@ final readonly class FileInjection implements Injection
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
         return new ParsedInjection(preg_replace_callback(
-            subject: $content,
             pattern: '/(?<match>\<file=(?<quote>[\"\'])(?<file>.+)\k<quote>\s*\/?>)/',
             callback: function (array $matches) {
                 $href = $matches['file'];
@@ -29,6 +28,7 @@ final readonly class FileInjection implements Injection
 
                 return TerminalStyle::UNDERLINE((string) $file);
             },
+            subject: $content,
         ));
     }
 }

@@ -19,6 +19,7 @@ use Throwable;
 final readonly class IsBetweenDates implements Rule, HasTranslationVariables
 {
     private DateTimeInterface $first;
+
     private DateTimeInterface $second;
 
     public function __construct(

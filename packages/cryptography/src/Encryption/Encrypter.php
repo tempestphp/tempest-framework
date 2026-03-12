@@ -2,16 +2,16 @@
 
 namespace Tempest\Cryptography\Encryption;
 
+use SensitiveParameter;
+
 interface Encrypter
 {
-    public EncryptionAlgorithm $algorithm {
-        get;
-    }
+    public EncryptionAlgorithm $algorithm { get; }
 
     /**
      * Encrypts the specified data.
      */
-    public function encrypt(#[\SensitiveParameter] string $data): EncryptedData;
+    public function encrypt(#[SensitiveParameter] string $data): EncryptedData;
 
     /**
      * Decrypts the specified data.

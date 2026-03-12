@@ -8,6 +8,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Math;
+use Tempest\Support\Math\Exception\ArithmeticException;
+use Tempest\Support\Math\Exception\DivisionByZeroException;
+use Tempest\Support\Math\Exception\InvalidArgumentException;
+use Tempest\Support\Math\Exception\OverflowException;
 
 use function Tempest\Support\Arr\range;
 
@@ -96,7 +100,7 @@ final class MathsTest extends TestCase
 
     public function test_clamp_invalid_min_max(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected $min to be lower or equal to $max.');
 
         Math\clamp(10, 20, 10);
@@ -123,7 +127,7 @@ final class MathsTest extends TestCase
 
     public function test_div_by_zero(): void
     {
-        $this->expectException(Math\Exception\DivisionByZeroException::class);
+        $this->expectException(DivisionByZeroException::class);
         $this->expectExceptionMessage('Division by zero.');
 
         Math\div(10, 0);
@@ -131,7 +135,7 @@ final class MathsTest extends TestCase
 
     public function test_div_int64_min_by_minus_one(): void
     {
-        $this->expectException(Math\Exception\ArithmeticException::class);
+        $this->expectException(ArithmeticException::class);
         $this->expectExceptionMessage('Division of Math\INT64_MIN by -1 is not an integer.');
 
         Math\div(Math\INT64_MIN, -1);
@@ -166,7 +170,7 @@ final class MathsTest extends TestCase
 
     public function test_invalid_digit_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid digit Z in base 16');
 
         Math\from_base('Z', 16);
@@ -174,7 +178,7 @@ final class MathsTest extends TestCase
 
     public function test_special_char_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid digit * in base 16');
 
         Math\from_base('*', 16);
@@ -184,7 +188,7 @@ final class MathsTest extends TestCase
     {
         $number = str_repeat('A', times: 100);
 
-        $this->expectException(Math\Exception\OverflowException::class);
+        $this->expectException(OverflowException::class);
         $this->expectExceptionMessage('Unexpected integer overflow parsing ' . $number . ' from base 32');
 
         Math\from_base($number, 32);
@@ -201,7 +205,7 @@ final class MathsTest extends TestCase
 
     public function test_negative_input_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$number must be positive.');
 
         Math\log(-45);
@@ -209,7 +213,7 @@ final class MathsTest extends TestCase
 
     public function test_non_positive_base_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$base must be positive.');
 
         Math\log(4.4, 0.0);
@@ -217,7 +221,7 @@ final class MathsTest extends TestCase
 
     public function test_base_one_throws_for_undefined_logarithm(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Logarithm undefined for $base of 1.0.');
 
         Math\log(4.4, 1.0);
@@ -234,7 +238,7 @@ final class MathsTest extends TestCase
         yield [
             'bazqux',
             ['foo', 'bar', 'baz', 'qux', 'foobar', 'bazqux'],
-            static fn (string $value): int => mb_strlen($value),
+            mb_strlen(...),
         ];
 
         yield [
@@ -244,7 +248,7 @@ final class MathsTest extends TestCase
                 ['foo', 'bar'],
                 ['foo', 'bar', 'baz'],
             ],
-            static fn (array $arr): int => count($arr),
+            count(...),
         ];
 
         yield [
@@ -328,7 +332,7 @@ final class MathsTest extends TestCase
         yield [
             'qux',
             ['foo', 'bar', 'baz', 'qux', 'foobar', 'bazqux'],
-            static fn (string $value): int => mb_strlen($value),
+            mb_strlen(...),
         ];
 
         yield [
@@ -338,7 +342,7 @@ final class MathsTest extends TestCase
                 ['foo', 'bar'],
                 ['foo', 'bar', 'baz'],
             ],
-            static fn (array $arr): int => count($arr),
+            count(...),
         ];
 
         yield [

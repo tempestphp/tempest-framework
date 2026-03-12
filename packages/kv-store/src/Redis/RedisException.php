@@ -4,6 +4,4 @@ namespace Tempest\KeyValue\Redis;
 
 use Throwable;
 
-interface RedisException extends Throwable
-{
-}
+interface RedisException extends Throwable {}

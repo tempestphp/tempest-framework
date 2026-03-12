@@ -99,7 +99,7 @@ final class StaticGenerateCommand
                     "<style='fg-gray'>{$event->path}</style>",
                     "<style='fg-red'>NO CONTENT</style>",
                 ),
-                $verbose === true => $this->error("Failed to generate static page: {$event->exception->getMessage()}"),
+                $verbose => $this->error("Failed to generate static page: {$event->exception->getMessage()}"),
                 default => $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-red'>FAILED</style>"),
             };
         });
@@ -181,13 +181,13 @@ final class StaticGenerateCommand
             }
         }
 
-        if ($failures) {
+        if ($failures !== 0) {
             $this->keyValue('Failures', "<style='fg-red'>{$failures}</style>");
         }
 
         $this->keyValue('Static pages generated', "<style='fg-green'>{$generated}</style>");
 
-        if ($deadlinks) {
+        if ($deadlinks !== []) {
             $this->console->header('Dead links');
 
             foreach ($deadlinks as $uri => $deadLinks) {
@@ -197,7 +197,7 @@ final class StaticGenerateCommand
             }
         }
 
-        return $failures > 0 || count($deadlinks) > 0
+        return $failures > 0 || $deadlinks !== []
             ? ExitCode::ERROR
             : ExitCode::SUCCESS;
     }
@@ -224,7 +224,7 @@ final class StaticGenerateCommand
 
             // Check anchors (#)
             if (Str\starts_with($link, '#')) {
-                if (! Regex\matches($html, "/id=\"" . preg_quote(Str\strip_start($link, '#'), '/') . "\"/")) {
+                if (! Regex\matches($html, '/id="' . preg_quote(Str\strip_start($link, '#'), '/') . '"/')) {
                     $deadlinks[] = $link;
                 }
 

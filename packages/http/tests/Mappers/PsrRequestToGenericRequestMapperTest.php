@@ -27,6 +27,7 @@ use Tempest\Http\Method;
 final class PsrRequestToGenericRequestMapperTest extends TestCase
 {
     private PsrRequestToGenericRequestMapper $mapper;
+
     private ReflectionMethod $requestMethod;
 
     protected function setUp(): void

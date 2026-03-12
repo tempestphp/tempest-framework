@@ -68,7 +68,11 @@ final class MakeConfigCommand
                 default => throw new InvalidArgumentException(sprintf('The "%s" config type has no supported stub file.', $configType->value)),
             };
         } catch (InvalidArgumentException $invalidArgumentException) {
-            throw new FileGenerationFailedException(sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()));
+            throw new FileGenerationFailedException(
+                sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()),
+                $invalidArgumentException->getCode(),
+                $invalidArgumentException,
+            );
         }
     }
 }

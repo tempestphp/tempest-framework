@@ -16,7 +16,8 @@ final class File implements Response
     {
         $filename ??= pathinfo($path, PATHINFO_BASENAME);
 
-        $this->addHeader('Content-Disposition', "inline; filename=\"{$filename}\"")
+        $this
+            ->addHeader('Content-Disposition', "inline; filename=\"{$filename}\"")
             ->setContentType(ContentType::fromPath($path))
             ->removeHeader('Transfer-Encoding');
 

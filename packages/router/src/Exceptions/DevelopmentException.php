@@ -86,7 +86,7 @@ final class DevelopmentException implements Response
     {
         $previous = $exception->getPrevious();
 
-        if (! $previous) {
+        if (! $previous instanceof Throwable) {
             return $stacktrace;
         }
 

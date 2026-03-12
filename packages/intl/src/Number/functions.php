@@ -163,13 +163,16 @@ function to_human_readable(int|float $number, int $precision = 0, ?int $maxPreci
         ];
     }
 
-    switch (true) {
-        case floatval($number) === 0.0:
-            return $precision > 0 ? namespace\format(0, $precision, $maxPrecision) : '0';
-        case $number < 0:
-            return sprintf('-%s', namespace\to_human_readable(Math\abs($number), $precision, $maxPrecision, $units));
-        case $number >= 1e15:
-            return sprintf('%s' . end($units), namespace\to_human_readable($number / 1e15, $precision, $maxPrecision, $units));
+    if (floatval($number) === 0.0) {
+        return $precision > 0 ? namespace\format(0, $precision, $maxPrecision) : '0';
+    }
+
+    if ($number < 0) {
+        return sprintf('-%s', namespace\to_human_readable(Math\abs($number), $precision, $maxPrecision, $units));
+    }
+
+    if ($number >= 1e15) {
+        return sprintf('%s' . end($units), namespace\to_human_readable($number / 1e15, $precision, $maxPrecision, $units));
     }
 
     $numberExponent = (int) Math\floor(Math\log($number, base: 10));

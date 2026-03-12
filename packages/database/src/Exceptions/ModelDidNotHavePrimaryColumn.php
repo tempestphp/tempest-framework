@@ -11,7 +11,7 @@ final class ModelDidNotHavePrimaryColumn extends Exception implements DatabaseEx
     public static function neededForMethod(string|object $model, string $method): self
     {
         if (is_object($model)) {
-            $model = get_class($model);
+            $model = $model::class;
         }
 
         return new self("`{$model}` does not have a primary column defined, which is required for the `{$method}` method.");
@@ -20,7 +20,7 @@ final class ModelDidNotHavePrimaryColumn extends Exception implements DatabaseEx
     public static function neededForRelation(string|object $model, string $relationType): self
     {
         if (is_object($model)) {
-            $model = get_class($model);
+            $model = $model::class;
         }
 
         return new self("`{$model}` does not have a primary column defined, which is required for `{$relationType}` relationships.");

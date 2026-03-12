@@ -42,7 +42,7 @@ final readonly class CompletionUninstallCommand
 
         $shell ??= ($this->resolveShell)('Which shell completions do you want to uninstall?');
 
-        if ($shell === null) {
+        if (! $shell instanceof Shell) {
             $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;

@@ -57,12 +57,12 @@ final class R2StorageConfig implements StorageConfig
         return new S3StorageConfig(
             bucket: $this->bucket,
             region: 'auto',
-            endpoint: $this->endpoint,
             accessKeyId: $this->accessKeyId,
             secretAccessKey: $this->secretAccessKey,
             sessionToken: null,
             prefix: $this->prefix,
             readonly: $this->readonly,
+            endpoint: $this->endpoint,
             usePathStyleEndpoint: true,
             options: $this->options,
         )->createAdapter();

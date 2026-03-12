@@ -25,7 +25,7 @@ final readonly class Chunk
         $isEntry = $manifestEntry['isEntry'] ?? false;
         $isLegacyEntry = str_contains($file, '-legacy');
 
-        return new static(
+        return new self(
             file: $file,
             src: $manifestEntry['src'] ?? null,
             isEntry: $isEntry,

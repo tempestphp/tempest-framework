@@ -3,6 +3,7 @@
 namespace Tempest\KeyValue\Redis;
 
 use Predis;
+use Predis\Client;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
@@ -33,13 +34,13 @@ final class RedisInitializer implements Initializer
         return new \Redis();
     }
 
-    private function buildPredisClient(RedisConfig $config): Predis\Client
+    private function buildPredisClient(RedisConfig $config): Client
     {
-        if (! class_exists(Predis\Client::class)) {
-            throw new RedisExtensionWasMissing(Predis\Client::class);
+        if (! class_exists(Client::class)) {
+            throw new RedisExtensionWasMissing(Client::class);
         }
 
-        return new Predis\Client(
+        return new Client(
             parameters: array_filter([
                 'scheme' => $config->scheme->value,
                 'host' => $config->host ?? '127.0.0.1',

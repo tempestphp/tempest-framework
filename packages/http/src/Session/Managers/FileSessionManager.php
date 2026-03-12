@@ -29,7 +29,7 @@ final readonly class FileSessionManager implements SessionManager
         $now = $this->clock->now();
         $session = $this->load($id);
 
-        if ($session === null) {
+        if (! $session instanceof Session) {
             $session = new Session(
                 id: $id,
                 createdAt: $now,
@@ -81,7 +81,7 @@ final readonly class FileSessionManager implements SessionManager
             $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
             $session = $this->load($id);
 
-            if ($session === null) {
+            if (! $session instanceof Session) {
                 continue;
             }
 

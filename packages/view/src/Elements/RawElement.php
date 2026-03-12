@@ -34,17 +34,9 @@ final class RawElement implements Element, WithToken
         foreach ($this->getAttributes() as $name => $value) {
             $name = str($name);
 
-            if ($name->startsWith(':')) {
-                $name = ':' . $name->kebab()->toString();
-            } else {
-                $name = $name->kebab()->toString();
-            }
+            $name = $name->startsWith(':') ? ':' . $name->kebab()->toString() : $name->kebab()->toString();
 
-            if ($value) {
-                $attributes[] = $name . '="' . $value . '"';
-            } else {
-                $attributes[] = $name;
-            }
+            $attributes[] = $value ? $name . '="' . $value . '"' : $name;
         }
 
         $attributes = implode(' ', [...$attributes, ...$this->rawAttributes]);

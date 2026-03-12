@@ -28,7 +28,7 @@ final readonly class DatabaseSessionManager implements SessionManager
         $now = $this->clock->now();
         $session = $this->load($id);
 
-        if ($session === null) {
+        if (! $session instanceof Session) {
             $session = new Session(
                 id: $id,
                 createdAt: $now,

@@ -6,7 +6,5 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final class ImplementsInterfaceA implements InterfaceA
 {
-    public function __invoke(): void
-    {
-    }
+    public function __invoke(): void {}
 }

@@ -4,6 +4,8 @@ namespace Tempest\Upgrade\Tempest28;
 
 use PhpParser\Modifiers;
 use PhpParser\Node;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
 use Rector\Rector\AbstractRector;
 use Tempest\Router\Route;
 
@@ -12,13 +14,13 @@ final class WriteableRouteRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Class_::class,
+            Class_::class,
         ];
     }
 
     public function refactor(Node $node): ?int
     {
-        if (! $node instanceof Node\Stmt\Class_) {
+        if (! $node instanceof Class_) {
             return null;
         }
 
@@ -27,7 +29,7 @@ final class WriteableRouteRector extends AbstractRector
 
         $implementsRoute = array_find_key(
             $implements,
-            static fn (Node\Name $name) => $name->toString() === Route::class,
+            static fn (Name $name) => $name->toString() === Route::class,
         );
 
         if ($implementsRoute === null) {

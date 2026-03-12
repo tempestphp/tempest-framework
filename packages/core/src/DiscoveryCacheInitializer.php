@@ -51,7 +51,7 @@ final class DiscoveryCacheInitializer implements Initializer
 
         $command = $_SERVER['argv'][1] ?? null;
 
-        return $command === 'dg' || $command === 'discovery:generate' || $command === 'd:g';
+        return in_array($command, ['dg', 'discovery:generate', 'd:g'], true);
     }
 
     private function isDiscoveryClearCommand(): bool
@@ -62,6 +62,6 @@ final class DiscoveryCacheInitializer implements Initializer
 
         $command = $_SERVER['argv'][1] ?? null;
 
-        return $command === 'dc' || $command === 'discovery:clear' || $command === 'd:c';
+        return in_array($command, ['dc', 'discovery:clear', 'd:c'], true);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Tempest\Support\Tests\Filesystem;
 
+use JsonSerializable;
+use Phar;
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
@@ -849,7 +851,7 @@ final class UnixFunctionsTest extends TestCase
     {
         $file = $this->fixtures . '/tmp/file.json';
 
-        $data = new class implements \JsonSerializable {
+        $data = new class implements JsonSerializable {
             public function jsonSerialize(): array
             {
                 return ['key' => 'value'];
@@ -1008,12 +1010,12 @@ final class UnixFunctionsTest extends TestCase
     #[Test]
     public function normalize_path_in_phar(): void
     {
-        if (\Phar::canWrite() === false) {
+        if (Phar::canWrite() === false) {
             $this->markTestSkipped('phar.readonly is enabled in php.ini.');
         }
 
         $pharFile = $this->fixtures . '/phar.phar';
-        $phar = new \Phar($pharFile, 0, 'phar.phar');
+        $phar = new Phar($pharFile, 0, 'phar.phar');
         $phar->addFile(__DIR__ . '/../../src/Filesystem/functions.php', 'functions.php');
         $phar->addFile(__DIR__ . '/../Fixtures/Phar/normalize_path.php', 'index.php');
         $phar->createDefaultStub('index.php');

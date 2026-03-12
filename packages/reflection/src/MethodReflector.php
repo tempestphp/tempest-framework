@@ -7,13 +7,14 @@ namespace Tempest\Reflection;
 use Generator;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionParameter;
+use ReflectionType;
 
-final class MethodReflector implements Reflector
+final readonly class MethodReflector implements Reflector
 {
     use HasAttributes;
 
     public function __construct(
-        private readonly PHPReflectionMethod $reflectionMethod,
+        private PHPReflectionMethod $reflectionMethod,
     ) {}
 
     public static function fromParts(string|object $class, string $name): self
@@ -55,7 +56,7 @@ final class MethodReflector implements Reflector
 
     public function getReturnType(): ?TypeReflector
     {
-        if ($this->reflectionMethod->getReturnType() === null) {
+        if (! $this->reflectionMethod->getReturnType() instanceof ReflectionType) {
             return null;
         }
 

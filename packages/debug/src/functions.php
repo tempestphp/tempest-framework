@@ -45,7 +45,7 @@ if (! function_exists('le')) {
      */
     function le(mixed ...$input): void
     {
-        Debug::resolve()->log($input, writeToOut: false, writeToLog: false);
+        Debug::resolve()->log($input, writeToLog: false, writeToOut: false);
     }
 }
 

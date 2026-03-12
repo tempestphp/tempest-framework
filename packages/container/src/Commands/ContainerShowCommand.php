@@ -18,7 +18,7 @@ use function Tempest\Support\Str\after_last;
 use function Tempest\Support\Str\before_last;
 use function Tempest\Support\Str\contains;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class ContainerShowCommand
     {
         public function __construct(
@@ -68,12 +68,12 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
         private function listBindings(string $title, array $bindings, ?Closure $formatKey = null, ?Closure $formatValue = null, ?Closure $reject = null): void
         {
-            if (! $bindings) {
+            if ($bindings === []) {
                 return;
             }
 
             $reject ??= static fn (): bool => false;
-            $formatKey ??= fn (int|string $key): string => $this->formatClassKey($key);
+            $formatKey ??= $this->formatClassKey(...);
             $formatValue ??= fn (int|string $key, mixed $value): string => $this->formatClassValue($value, $key);
 
             $this->console->header($title);

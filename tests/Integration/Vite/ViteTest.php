@@ -190,7 +190,6 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_discovery(): void
     {
         $this->vite->call(
-            root: __DIR__ . '/Fixtures/tmp',
             callback: function (string $path): void {
                 $discovery = $this->container->get(ViteDiscovery::class);
                 $discovery->setItems(new DiscoveryItems([]));
@@ -209,6 +208,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 'src/main.entrypoint.ts' => '',
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
             ],
+            root: __DIR__ . '/Fixtures/tmp',
         );
     }
 }

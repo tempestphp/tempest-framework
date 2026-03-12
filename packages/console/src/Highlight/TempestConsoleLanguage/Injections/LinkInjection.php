@@ -15,7 +15,6 @@ final readonly class LinkInjection implements Injection
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
         return new ParsedInjection(preg_replace_callback(
-            subject: $content,
             pattern: '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/',
             callback: function (array $matches) {
                 $quote = $matches['quote'];
@@ -27,6 +26,7 @@ final readonly class LinkInjection implements Injection
                     ->replaceLast('</href>', "\x1b]8;;\x1b\\")
                     ->toString();
             },
+            subject: $content,
         ));
     }
 }

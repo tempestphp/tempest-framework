@@ -17,7 +17,9 @@ use Tempest\Intl\Translator;
 final class GenericTranslatorTest extends TestCase
 {
     private Catalog $catalog;
+
     private Translator $translator;
+
     private IntlConfig $config;
 
     protected function setUp(): void
@@ -66,12 +68,12 @@ final class GenericTranslatorTest extends TestCase
         $this->config->currentLocale = Locale::FRENCH;
 
         $this->catalog->add(Locale::FRENCH, 'aircraft_count', <<<'MF2'
-        .input {$aircraft :number}
-        .match $aircraft
-            0 {{pas d'avion}}
-            1 {{un avion}}
-            * {{{$aircraft} avions}}
-        MF2);
+            .input {$aircraft :number}
+            .match $aircraft
+                0 {{pas d'avion}}
+                1 {{un avion}}
+                * {{{$aircraft} avions}}
+            MF2);
 
         $this->assertSame("pas d'avion", $this->translator->translate('aircraft_count', aircraft: 0));
         $this->assertSame('un avion', $this->translator->translate('aircraft_count', aircraft: 1));

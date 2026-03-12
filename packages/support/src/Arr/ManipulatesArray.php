@@ -6,6 +6,7 @@ namespace Tempest\Support\Arr;
 
 use Closure;
 use Stringable;
+use Tempest\Debug\Debug;
 use Tempest\Mapper;
 use Tempest\Support\Str\ImmutableString;
 
@@ -825,7 +826,7 @@ trait ManipulatesArray
 
     private function debugLog(array $items, bool $terminate = false): void
     {
-        $debugClass = \Tempest\Debug\Debug::class;
+        $debugClass = Debug::class;
 
         if (class_exists($debugClass)) {
             $debugClass::resolve()->log($items);

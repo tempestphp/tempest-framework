@@ -26,7 +26,7 @@ final class DirectoryListing extends FlysystemDirectoryListing
      */
     public function filter(callable $filter): static
     {
-        return new static(parent::filter($filter));
+        return new self(parent::filter($filter));
     }
 
     /**
@@ -38,7 +38,7 @@ final class DirectoryListing extends FlysystemDirectoryListing
      */
     public function map(callable $mapper): static
     {
-        return new static(parent::map($mapper));
+        return new self(parent::map($mapper));
     }
 
     /**
@@ -46,7 +46,7 @@ final class DirectoryListing extends FlysystemDirectoryListing
      */
     public function sortByPath(): static
     {
-        return new static(parent::sortByPath());
+        return new self(parent::sortByPath());
     }
 
     /**

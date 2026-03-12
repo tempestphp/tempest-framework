@@ -20,7 +20,7 @@ final readonly class TailReader
 
         /** @phpstan-ignore-next-line */
         while (true) {
-            if (Fiber::getCurrent() !== null) {
+            if (Fiber::getCurrent() instanceof Fiber) {
                 Fiber::suspend();
             }
 

@@ -71,15 +71,13 @@ final class SerializerFactory
                 return $this->container->get($serializeWith->className, context: $context);
             }
 
-            if ($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) {
+            if (($serializerAttribute = $property->getAttribute(ProvidesSerializer::class)) instanceof ProvidesSerializer) {
                 return $this->container->get($serializerAttribute->serializer, context: $context);
             }
 
             foreach ($this->resolveSerializers() as [$serializerClass]) {
-                if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
-                    if (! $serializerClass::accepts($property)) {
-                        continue;
-                    }
+                if (is_a($serializerClass, DynamicSerializer::class, allow_string: true) && ! $serializerClass::accepts($property)) {
+                    continue;
                 }
 
                 return $this->resolveSerializer($serializerClass, $property);
@@ -102,10 +100,8 @@ final class SerializerFactory
         }
 
         foreach ($this->resolveSerializers() as [$serializerClass]) {
-            if (is_a($serializerClass, DynamicSerializer::class, allow_string: true)) {
-                if (! $serializerClass::accepts($input)) {
-                    continue;
-                }
+            if (is_a($serializerClass, DynamicSerializer::class, allow_string: true) && ! $serializerClass::accepts($input)) {
+                continue;
             }
 
             return $this->resolveSerializer($serializerClass, $input);

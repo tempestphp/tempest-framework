@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Signing;
 
+use SensitiveParameter;
 use Tempest\DateTime\Duration;
 
 final class SigningConfig
@@ -13,7 +14,7 @@ final class SigningConfig
      */
     public function __construct(
         public SigningAlgorithm $algorithm,
-        #[\SensitiveParameter]
+        #[SensitiveParameter]
         public readonly ?string $key,
         public false|Duration $minimumExecutionDuration,
     ) {}

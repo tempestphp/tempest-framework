@@ -24,7 +24,7 @@ final readonly class IsFloat implements Rule, HasTranslationVariables
             return true;
         }
 
-        if ($value === null || $value === false || $value === '' || $value === []) {
+        if (in_array($value, [null, false, '', []], true)) {
             return false;
         }
 

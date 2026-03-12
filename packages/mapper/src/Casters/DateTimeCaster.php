@@ -15,6 +15,7 @@ use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Validation\Rules\HasDateTimeFormat;
+use Throwable;
 
 #[Priority(Priority::HIGHEST)]
 final readonly class DateTimeCaster implements Caster, DynamicCaster, ConfigurableCaster
@@ -55,7 +56,7 @@ final readonly class DateTimeCaster implements Caster, DynamicCaster, Configurab
             }
 
             return DateTime::parse($input);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null;
         }
     }

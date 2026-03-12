@@ -30,7 +30,7 @@ final class OAuthInstaller
     {
         $providers = $this->getProviders();
 
-        if (count($providers) === 0) {
+        if ($providers === []) {
             return;
         }
 

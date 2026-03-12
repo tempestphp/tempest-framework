@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Intl\Tests;
 
 use Generator;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Locale;
@@ -18,13 +19,13 @@ final class LocaleTest extends TestCase
 {
     private ?string $defaultLocale = null;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->defaultLocale = locale_get_default();
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         if (null !== $this->defaultLocale) {

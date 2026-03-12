@@ -103,7 +103,7 @@ if (trait_exists(HasConsole::class)) {
 
                 $this->publishedFiles[] = $destination;
 
-                if ($callback !== null) {
+                if ($callback instanceof Closure) {
                     $callback($source, $destination);
                 }
 
@@ -115,10 +115,7 @@ if (trait_exists(HasConsole::class)) {
                     throw $throwable;
                 }
 
-                throw new FileGenerationFailedException(
-                    message: 'The file could not be published.',
-                    previous: $throwable,
-                );
+                throw new FileGenerationFailedException(message: 'The file could not be published.', code: $throwable->getCode(), previous: $throwable);
             }
         }
 

@@ -45,7 +45,7 @@ final class UserCacheInsightsProvider implements InsightsProvider
     private function getInsight(Cache $cache): array
     {
         $type = $cache instanceof GenericCache
-            ? match (get_class($cache->adapter)) {
+            ? match ($cache->adapter::class) {
                 FilesystemAdapter::class => new Insight('Filesystem'),
                 PhpFilesAdapter::class => new Insight('PHP'),
                 ArrayAdapter::class => new Insight('In-memory'),

@@ -155,7 +155,7 @@ final class SelectModelMapper implements Mapper
                 $currentModel = inspect($relation);
             }
 
-            if ($key) {
+            if ($key !== '' && $key !== '0') {
                 $data->set($key, $value);
             }
         }

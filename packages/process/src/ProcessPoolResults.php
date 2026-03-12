@@ -3,6 +3,7 @@
 namespace Tempest\Process;
 
 use ArrayAccess;
+use BadMethodCallException;
 use Countable;
 use Iterator;
 use Tempest\Support\Arr\ImmutableArray;
@@ -109,12 +110,12 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        throw new \BadMethodCallException('ProcessPoolResults is immutable and cannot be modified.');
+        throw new BadMethodCallException('ProcessPoolResults is immutable and cannot be modified.');
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        throw new \BadMethodCallException('ProcessPoolResults is immutable and cannot be modified.');
+        throw new BadMethodCallException('ProcessPoolResults is immutable and cannot be modified.');
     }
 
     public function count(): int

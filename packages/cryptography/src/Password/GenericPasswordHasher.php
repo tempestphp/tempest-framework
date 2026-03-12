@@ -3,6 +3,7 @@
 namespace Tempest\Cryptography\Password;
 
 use Error;
+use SensitiveParameter;
 use Tempest\Cryptography\Password\Exceptions\HashingFailed;
 use ValueError;
 
@@ -16,7 +17,7 @@ final class GenericPasswordHasher implements PasswordHasher
         private readonly PasswordHashingConfig $config,
     ) {}
 
-    public function hash(#[\SensitiveParameter] string $password): string
+    public function hash(#[SensitiveParameter] string $password): string
     {
         if ($password === '') {
             throw HashingFailed::forEmptyPassword();
@@ -33,7 +34,7 @@ final class GenericPasswordHasher implements PasswordHasher
         return $hash;
     }
 
-    public function verify(#[\SensitiveParameter] string $password, #[\SensitiveParameter] string $hash): bool
+    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash): bool
     {
         if ($password === '' || $hash === '') {
             return false;
@@ -42,7 +43,7 @@ final class GenericPasswordHasher implements PasswordHasher
         return password_verify($password, $hash);
     }
 
-    public function needsRehash(#[\SensitiveParameter] string $hash): bool
+    public function needsRehash(#[SensitiveParameter] string $hash): bool
     {
         if ($hash === '') {
             return false;
@@ -51,7 +52,7 @@ final class GenericPasswordHasher implements PasswordHasher
         return password_needs_rehash($hash, $this->algorithm->value, $this->config->options);
     }
 
-    public function analyze(#[\SensitiveParameter] string $hash): ?Hash
+    public function analyze(#[SensitiveParameter] string $hash): ?Hash
     {
         if ($hash === '') {
             return null;

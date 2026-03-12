@@ -18,8 +18,8 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
     public function test_resolving_session_from_cookie(): void
     {
         $this->container->config(new FileSessionConfig(
-            path: 'test_sessions',
             expiration: Duration::hours(2),
+            path: 'test_sessions',
         ));
 
         $cookieManager = $this->container->get(CookieManager::class);
@@ -38,8 +38,8 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
-            path: 'test_sessions',
             expiration: Duration::second(),
+            path: 'test_sessions',
         ));
 
         // Resolve the session so that the ID is set

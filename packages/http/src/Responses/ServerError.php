@@ -15,12 +15,11 @@ final class ServerError implements Response
 {
     use IsResponse;
 
-    private(set) ?Exception $exception = null;
-
-    public function __construct(View|Generator|string|array|null $body = null, ?Exception $exception = null)
-    {
+    public function __construct(
+        View|Generator|string|array|null $body = null,
+        private(set) ?Exception $exception = null,
+    ) {
         $this->status = Status::INTERNAL_SERVER_ERROR;
         $this->body = $body;
-        $this->exception = $exception;
     }
 }

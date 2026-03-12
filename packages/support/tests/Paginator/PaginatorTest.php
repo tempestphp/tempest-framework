@@ -140,9 +140,7 @@ final class PaginatorTest extends TestCase
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 3);
 
-        $dataFetcher = function (int $_limit, int $offset): array {
-            return ["item_{$offset}_1", "item_{$offset}_2"];
-        };
+        $dataFetcher = fn (int $_limit, int $offset): array => ["item_{$offset}_1", "item_{$offset}_2"];
 
         $paginatedData = $paginator->paginateWith($dataFetcher);
 

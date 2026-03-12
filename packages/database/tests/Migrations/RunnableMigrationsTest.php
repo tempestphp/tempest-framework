@@ -18,7 +18,7 @@ final class RunnableMigrationsTest extends TestCase
     #[Test]
     public function migration_ordering(array $migrationNames, array $expectedOrder): void
     {
-        $migrations = array_map(fn (string $name) => $this->createDatabaseMigration($name), $migrationNames);
+        $migrations = array_map($this->createDatabaseMigration(...), $migrationNames);
 
         $this->assertSame(
             expected: $expectedOrder,

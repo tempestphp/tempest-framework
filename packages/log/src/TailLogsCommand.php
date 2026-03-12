@@ -26,15 +26,7 @@ final readonly class TailLogsCommand
     #[ConsoleCommand('tail:logs', description: 'Tails the project logs', aliases: ['log:tail', 'logs:tail'])]
     public function __invoke(): void
     {
-        $appendLogChannel = null;
-
-        foreach ($this->config->logChannels as $channel) {
-            if ($channel instanceof AppendLogChannel) {
-                $appendLogChannel = $channel;
-                break;
-            }
-        }
-
+        $appendLogChannel = array_find($this->config->logChannels, fn ($channel) => $channel instanceof AppendLogChannel);
         if ($appendLogChannel === null) {
             $this->console->error('Tailing logs is only supported when a <code>AppendLogChannel</code> is configured.');
             return;

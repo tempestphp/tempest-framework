@@ -51,7 +51,7 @@ final readonly class CompletionInstallCommand
 
         $shell ??= ($this->resolveShell)('Which shell do you want to install completions for?');
 
-        if ($shell === null) {
+        if (! $shell instanceof Shell) {
             $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;

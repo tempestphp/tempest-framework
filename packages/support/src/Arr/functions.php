@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Arr;
 
+use ArrayAccess;
 use Closure;
 use Countable;
 use Generator;
@@ -62,9 +63,7 @@ function chunk(iterable $array, int $size, bool $preserveKeys = true): array
     }
 
     $chunks = [];
-    foreach (array_chunk($array, $size, $preserveKeys) as $chunk) {
-        $chunks[] = $chunk;
-    }
+    $chunks = array_chunk($array, $size, $preserveKeys);
 
     return $chunks;
 }
@@ -615,8 +614,8 @@ function first(iterable $array, ?Closure $filter = null, mixed $default = null):
         return $default;
     }
 
-    if ($filter === null) {
-        return $array[array_key_first($array)] ?? $default;
+    if (! $filter instanceof Closure) {
+        return array_first($array) ?? $default;
     }
 
     return array_find($array, static fn ($value, $key) => $filter($value, $key)) ?? $default;
@@ -666,8 +665,8 @@ function last(iterable $array, ?Closure $filter = null, mixed $default = null): 
         return $default;
     }
 
-    if ($filter === null) {
-        return $array[array_key_last($array)] ?? $default;
+    if (! $filter instanceof Closure) {
+        return array_last($array) ?? $default;
     }
 
     return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key)) ?? $default;
@@ -907,7 +906,7 @@ function get_by_key(iterable $array, int|string $key, mixed $default = null): mi
         : explode('.', $key);
 
     foreach ($keys as $key) {
-        if (! is_array($value) && ! $value instanceof \ArrayAccess) {
+        if (! is_array($value) && ! $value instanceof ArrayAccess) {
             return $default;
         }
 

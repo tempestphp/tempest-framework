@@ -6,6 +6,4 @@ namespace Tempest\Support\VarExport;
 
 use RuntimeException;
 
-final class EmptyFileNameException extends RuntimeException
-{
-}
+final class EmptyFileNameException extends RuntimeException {}

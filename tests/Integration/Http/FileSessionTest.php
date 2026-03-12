@@ -45,8 +45,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
         $this->container->config(new FileSessionConfig(
-            path: 'sessions',
             expiration: Duration::hours(2),
+            path: 'sessions',
         ));
 
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
@@ -160,8 +160,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2025-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
-            path: 'test_sessions',
             expiration: Duration::seconds(10),
+            path: 'test_sessions',
         ));
 
         $session = $this->manager->getOrCreate(new SessionId('expiration_test'));
@@ -185,8 +185,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new FileSessionConfig(
-            path: 'test_sessions',
             expiration: Duration::minutes(30),
+            path: 'test_sessions',
         ));
 
         $active = $this->manager->getOrCreate(new SessionId('active'));

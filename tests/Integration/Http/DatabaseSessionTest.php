@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
 use Tempest\Http\Session\Installer\CreateSessionsTable;
@@ -270,7 +271,7 @@ final class DatabaseSessionTest extends FrameworkIntegrationTestCase
         }
     }
 
-    private function getSessionLastActiveTimestamp(SessionId $sessionId): \Tempest\DateTime\DateTime
+    private function getSessionLastActiveTimestamp(SessionId $sessionId): DateTime
     {
         $session = query(DatabaseSession::class)
             ->select()

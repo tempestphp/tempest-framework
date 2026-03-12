@@ -22,7 +22,7 @@ final class GenericRouteMatcherBench
 
     public function __construct()
     {
-        $config = self::makeRouteConfig();
+        $config = $this->makeRouteConfig();
 
         $this->matcher = new GenericRouteMatcher($config);
     }
@@ -46,7 +46,7 @@ final class GenericRouteMatcherBench
         yield 'Static route' => ['uri' => '/test/5'];
     }
 
-    private static function makeRouteConfig(): RouteConfig
+    private function makeRouteConfig(): RouteConfig
     {
         $routeBuilder = new FakeRouteBuilder();
         $constructor = new RouteConfigurator();

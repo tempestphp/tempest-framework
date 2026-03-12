@@ -30,7 +30,7 @@ final readonly class RedisSessionManager implements SessionManager
         $now = $this->clock->now();
         $session = $this->load($id);
 
-        if ($session === null) {
+        if (! $session instanceof Session) {
             $session = new Session(
                 id: $id,
                 createdAt: $now,
@@ -80,7 +80,7 @@ final readonly class RedisSessionManager implements SessionManager
                 $sessionId = $this->getSessionIdFromKey($key);
                 $session = $this->load($sessionId);
 
-                if ($session === null) {
+                if (! $session instanceof Session) {
                     continue;
                 }
 

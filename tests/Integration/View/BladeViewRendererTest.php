@@ -33,10 +33,10 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
         $html = $renderer->render(view('index'));
 
         $this->assertSame(<<<HTML
-        <html>
-        Hi
-        </html>
+            <html>
+            Hi
+            </html>
 
-        HTML, $html);
+            HTML, $html);
     }
 }

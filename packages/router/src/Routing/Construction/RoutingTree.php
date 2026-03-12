@@ -12,12 +12,9 @@ use Tempest\Router\Routing\Matching\MatchingRegex;
 final class RoutingTree
 {
     /** @var array<string, RouteTreeNode> */
-    private array $roots;
+    private array $roots = [];
 
-    public function __construct()
-    {
-        $this->roots = [];
-    }
+    public function __construct() {}
 
     public function add(MarkedRoute $markedRoute): void
     {

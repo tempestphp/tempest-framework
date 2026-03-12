@@ -15,12 +15,12 @@ use function Tempest\Support\arr;
 use function Tempest\Support\Filesystem\is_file;
 use function Tempest\Support\str;
 
-final class MetaViewComponentCommand
+final readonly class MetaViewComponentCommand
 {
     use HasConsole;
 
     public function __construct(
-        private readonly ViewConfig $viewConfig,
+        private ViewConfig $viewConfig,
     ) {}
 
     #[ConsoleCommand(name: 'meta:view-component', hidden: true)]
@@ -33,7 +33,7 @@ final class MetaViewComponentCommand
 
             $viewComponent = $this->resolveViewComponent($viewComponentName);
 
-            if ($viewComponent === null) {
+            if (! $viewComponent instanceof ViewComponent) {
                 $this->error('Unknown view component `' . $viewComponentName . '`');
                 return;
             }

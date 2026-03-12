@@ -44,7 +44,7 @@ final readonly class CacheIdempotencyStore implements IdempotencyStore
     {
         $record = $this->find($scope, $key);
 
-        if ($record === null || $record->state !== IdempotencyState::PENDING || $record->pendingOwner !== $owner) {
+        if (! $record instanceof IdempotencyRecord || $record->state !== IdempotencyState::PENDING || $record->pendingOwner !== $owner) {
             return;
         }
 

@@ -25,6 +25,7 @@ use Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported;
 use Tempest\Idempotency\Fingerprint\RequestFingerprintGenerator;
 use Tempest\Idempotency\Middleware\IdempotencyMiddleware;
 use Tempest\Idempotency\Store\CacheIdempotencyStore;
+use Tempest\Idempotency\Store\IdempotencyRecord;
 use Tempest\Idempotency\Store\IdempotencyState;
 use Tempest\Idempotency\Store\IdempotencyStore;
 use Tempest\Idempotency\Store\StoredResponse;
@@ -694,7 +695,7 @@ final class ThrowingFindStore implements IdempotencyStore
         private readonly IdempotencyStore $store,
     ) {}
 
-    public function find(string $scope, string $key): ?\Tempest\Idempotency\Store\IdempotencyRecord
+    public function find(string $scope, string $key): ?IdempotencyRecord
     {
         throw new RuntimeException('Simulated store read failure.');
     }

@@ -112,7 +112,7 @@ final class Composer
 
     public function executeUpdate(): self
     {
-        if ($this->executor) {
+        if ($this->executor instanceof ProcessExecutor) {
             $this->executor->run('composer up');
         } else {
             exec('composer update');

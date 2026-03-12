@@ -10,6 +10,4 @@ use Attribute;
  * Virtual properties are ignored by the database mapper.
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final readonly class Virtual
-{
-}
+final readonly class Virtual {}

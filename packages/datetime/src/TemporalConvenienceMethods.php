@@ -6,6 +6,7 @@ namespace Tempest\DateTime;
 
 use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface as NativeDateTimeInterface;
+use Override;
 use Tempest\Intl\Locale;
 use Tempest\Support\Comparison;
 use Tempest\Support\Comparison\Order;
@@ -33,7 +34,7 @@ trait TemporalConvenienceMethods
         $a = $this->getTimestamp()->toParts();
         $b = $other->getTimestamp()->toParts();
 
-        return Comparison\Order::from($a[0] !== $b[0] ? $a[0] <=> $b[0] : $a[1] <=> $b[1]);
+        return Order::from($a[0] !== $b[0] ? $a[0] <=> $b[0] : $a[1] <=> $b[1]);
     }
 
     /**
@@ -59,7 +60,7 @@ trait TemporalConvenienceMethods
             $other = DateTime::parse($other);
         }
 
-        return $this->compare($other) === Comparison\Order::EQUAL;
+        return $this->compare($other) === Order::EQUAL;
     }
 
     /**
@@ -67,7 +68,7 @@ trait TemporalConvenienceMethods
      */
     public function before(TemporalInterface $other): bool
     {
-        return $this->compare($other) === Comparison\Order::LESS;
+        return $this->compare($other) === Order::LESS;
     }
 
     /**
@@ -75,7 +76,7 @@ trait TemporalConvenienceMethods
      */
     public function beforeOrAtTheSameTime(TemporalInterface $other): bool
     {
-        return $this->compare($other) !== Comparison\Order::GREATER;
+        return $this->compare($other) !== Order::GREATER;
     }
 
     /**
@@ -83,7 +84,7 @@ trait TemporalConvenienceMethods
      */
     public function after(TemporalInterface $other): bool
     {
-        return $this->compare($other) === Comparison\Order::GREATER;
+        return $this->compare($other) === Order::GREATER;
     }
 
     /**
@@ -91,7 +92,7 @@ trait TemporalConvenienceMethods
      */
     public function afterOrAtTheSameTime(TemporalInterface $other): bool
     {
-        return $this->compare($other) !== Comparison\Order::LESS;
+        return $this->compare($other) !== Order::LESS;
     }
 
     /**
@@ -102,7 +103,7 @@ trait TemporalConvenienceMethods
         $ca = $this->compare($a);
         $cb = $this->compare($b);
 
-        return $ca === Comparison\Order::EQUAL || $ca !== $cb;
+        return $ca === Order::EQUAL || $ca !== $cb;
     }
 
     /**
@@ -113,7 +114,7 @@ trait TemporalConvenienceMethods
         $ca = $this->compare($a);
         $cb = $this->compare($b);
 
-        return $ca !== Comparison\Order::EQUAL && $cb !== Comparison\Order::EQUAL && $ca !== $cb;
+        return $ca !== Order::EQUAL && $cb !== Order::EQUAL && $ca !== $cb;
     }
 
     /**
@@ -549,7 +550,7 @@ trait TemporalConvenienceMethods
      *
      * @see TemporalInterface::toString()
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

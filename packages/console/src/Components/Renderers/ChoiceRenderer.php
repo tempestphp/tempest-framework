@@ -56,9 +56,9 @@ final class ChoiceRenderer
         // Otherwise, display the filter line
         $this->line(
             $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
-            ! $query->text
-                ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? count($options->getSelectedOptions()) . ' selected' : ''))
-                : $this->style($filtering ? 'fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
+            $query->text
+                ? $this->style($filtering ? 'fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2))
+                : $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? count($options->getSelectedOptions()) . ' selected' : '')),
         )->newLine();
 
         // And the choices.

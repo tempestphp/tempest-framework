@@ -6,6 +6,4 @@ namespace Tempest\Generation\Php\Exceptions;
 
 use Exception;
 
-final class FileGenerationWasAborted extends Exception implements FileGenerationException
-{
-}
+final class FileGenerationWasAborted extends Exception implements FileGenerationException {}

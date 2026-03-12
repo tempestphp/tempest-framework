@@ -3,6 +3,7 @@
 namespace Tempest\Process;
 
 use Symfony\Component\Process\Process as SymfonyProcess;
+use Tempest\DateTime\Duration;
 use Tempest\Support\Arr\ImmutableArray;
 
 final class GenericProcessExecutor implements ProcessExecutor
@@ -52,7 +53,7 @@ final class GenericProcessExecutor implements ProcessExecutor
         $process->setWorkingDirectory((string) ($pending->path ?? getcwd()));
         $process->setTimeout($pending->timeout?->getTotalSeconds());
 
-        if ($pending->idleTimeout) {
+        if ($pending->idleTimeout instanceof Duration) {
             $process->setIdleTimeout($pending->idleTimeout->getTotalSeconds());
         }
 

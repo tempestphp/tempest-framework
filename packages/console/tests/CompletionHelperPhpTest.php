@@ -16,7 +16,9 @@ use Tempest\Console\Completion\CompletionMetadataParser;
 final class CompletionHelperPhpTest extends TestCase
 {
     private CompletionEngine $engine;
+
     private CompletionInputNormalizer $inputNormalizer;
+
     private CompletionMetadataParser $metadataParser;
 
     protected function setUp(): void

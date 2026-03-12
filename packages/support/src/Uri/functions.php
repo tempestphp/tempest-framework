@@ -25,7 +25,7 @@ function merge_query(string $uri, mixed ...$query): string
  */
 function without_query(string $uri, mixed ...$query): string
 {
-    if (count($query) === 0) {
+    if ($query === []) {
         return Uri::from($uri)->removeQuery()->toString();
     }
 

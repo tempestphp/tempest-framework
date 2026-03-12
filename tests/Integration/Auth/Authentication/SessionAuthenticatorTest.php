@@ -42,7 +42,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
         Filesystem\ensure_directory_empty($this->path);
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
-        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
+        $this->container->config(new FileSessionConfig(expiration: Duration::hours(2), path: 'sessions'));
         $this->container->config(new AuthConfig(authenticatables: [User::class]));
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),

@@ -35,7 +35,7 @@ final class PhpIfElement implements Element, WrapsElement
 
     public function setElse(Element $element): self
     {
-        if ($this->else !== null) {
+        if ($this->else instanceof Element) {
             throw new ElementWasInvalid('There can only be one else element.');
         }
 
@@ -70,7 +70,7 @@ final class PhpIfElement implements Element, WrapsElement
             );
         }
 
-        if ($this->else !== null) {
+        if ($this->else instanceof Element) {
             $this->else->consumeAttribute(':else');
 
             $compiled = sprintf(

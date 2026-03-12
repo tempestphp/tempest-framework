@@ -10,7 +10,7 @@ use Tempest\Http\Method;
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
 final class Options implements Route
 {
-    public Method $method;
+    public Method $method = Method::OPTIONS;
 
     /**
      * @param class-string<HttpMiddleware>[] $middleware Middleware specific to this route.
@@ -20,7 +20,5 @@ final class Options implements Route
         public string $uri,
         public array $middleware = [],
         public array $without = [],
-    ) {
-        $this->method = Method::OPTIONS;
-    }
+    ) {}
 }

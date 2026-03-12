@@ -31,7 +31,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        if (! $invocation->argumentBag->getCommandName()) {
+        if ($invocation->argumentBag->getCommandName() === '' || $invocation->argumentBag->getCommandName() === '0') {
             $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));
 
             return ExitCode::SUCCESS;

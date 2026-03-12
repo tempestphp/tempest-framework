@@ -21,7 +21,7 @@ final readonly class TailDebugCommand
     {
         $debugLogPath = $this->debugConfig->logPath;
 
-        if (! $debugLogPath) {
+        if ($debugLogPath === '' || $debugLogPath === '0') {
             $this->console->error('No debug log configured in <code>DebugConfig</code>.');
 
             return;

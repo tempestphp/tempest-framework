@@ -13,9 +13,7 @@ final class GlobalHiddenPathDiscovery implements Discovery
 
     use IsDiscovery;
 
-    public function discover(DiscoveryLocation $location, ClassReflector $class): void
-    {
-    }
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void {}
 
     public function apply(): void
     {

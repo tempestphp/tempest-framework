@@ -2,7 +2,9 @@
 
 namespace Tempest\Intl\MessageFormat\Parser\Node;
 
-final class ParsingException extends \Exception
+use Exception;
+
+final class ParsingException extends Exception
 {
     public function __construct(
         string $message,

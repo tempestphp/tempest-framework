@@ -38,7 +38,7 @@ final class ConfigCache
             $expiresAt = DateTime::now()->plus($expiresAt);
         }
 
-        if ($expiresAt !== null) {
+        if ($expiresAt instanceof DateTimeInterface) {
             $item = $item->expiresAt($expiresAt->toNativeDateTime());
         }
 

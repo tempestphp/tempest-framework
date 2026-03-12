@@ -12,6 +12,7 @@ use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Memoization\HasMemoization;
 use Throwable;
@@ -122,7 +123,11 @@ final class ArrayToObjectMapper implements Mapper
     private function setParentRelations(object $parent, ClassReflector $parentClass): void
     {
         foreach ($parentClass->getPublicProperties() as $property) {
-            if (! $property->isInitialized($parent) || $property->isVirtual()) {
+            if (! $property->isInitialized($parent)) {
+                continue;
+            }
+
+            if ($property->isVirtual()) {
                 continue;
             }
 
@@ -165,11 +170,9 @@ final class ArrayToObjectMapper implements Mapper
 
     public function resolveValue(PropertyReflector $property, mixed $value): mixed
     {
-        $caster = $this->memoize((string) $property, function () use ($property) {
-            return $this->casterFactory
-                ->in($this->context)
-                ->forProperty($property);
-        });
+        $caster = $this->memoize((string) $property, fn () => $this->casterFactory
+            ->in($this->context)
+            ->forProperty($property));
 
         if ($property->isNullable() && $value === null) {
             return null;
@@ -179,7 +182,7 @@ final class ArrayToObjectMapper implements Mapper
             return $value;
         }
 
-        if ($property->getIterableType() !== null) {
+        if ($property->getIterableType() instanceof TypeReflector) {
             return $caster->cast($value);
         }
 

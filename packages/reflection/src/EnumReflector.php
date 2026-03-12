@@ -7,6 +7,7 @@ namespace Tempest\Reflection;
 use Closure;
 use ReflectionEnum as PHPReflectionEnum;
 use ReflectionEnumUnitCase;
+use ReflectionNamedType;
 use UnitEnum;
 
 /**
@@ -73,7 +74,7 @@ final class EnumReflector implements Reflector
     {
         $backingType = $this->reflectionEnum->getBackingType();
 
-        if ($backingType === null) {
+        if (! $backingType instanceof ReflectionNamedType) {
             return null;
         }
 
