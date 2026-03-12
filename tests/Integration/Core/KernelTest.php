@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\TestDependency;
 
@@ -25,9 +26,8 @@ final class KernelTest extends TestCase
             ],
         );
 
-        $this->assertInstanceOf(Container::class, $kernel->container);
-
-        $this->assertNotEmpty($kernel->discoveryConfig->classes);
+        $discoveryConfig = $kernel->container->get(DiscoveryConfig::class);
+        $this->assertNotEmpty($discoveryConfig->classes);
 
         $test = $kernel->container->get(TestDependency::class);
 

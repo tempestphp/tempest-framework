@@ -170,10 +170,10 @@ final class FrameworkKernel implements Kernel
 
         $discoveryConfig->locations = [
             ...$this->discoveryLocations,
-            ...(new AutoloadDiscoveryLocations(
+            ...new AutoloadDiscoveryLocations(
                 rootPath: $this->root,
                 composer: $this->container->get(Composer::class),
-            ))($discoveryConfig),
+            )(),
         ];
 
         $this->container->config($discoveryConfig);

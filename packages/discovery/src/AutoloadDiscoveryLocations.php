@@ -25,13 +25,12 @@ final readonly class AutoloadDiscoveryLocations
     }
 
     /** @return \Tempest\Discovery\DiscoveryLocation[] */
-    public function __invoke(?DiscoveryConfig $config = null): array
+    public function __invoke(): array
     {
         return [
             ...$this->discoverCorePackages(),
             ...$this->discoverVendorPackages(),
             ...$this->discoverAppNamespaces(),
-            ...($config->locations ?? []),
         ];
     }
 
