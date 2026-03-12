@@ -29,7 +29,7 @@ final readonly class CompletionUninstallCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            description: 'The shell to uninstall completions for (zsh, bash)',
+            description: 'The shell to uninstall completions for (zsh, bash, fish)',
             aliases: ['-s'],
         )]
         ?Shell $shell = null,
@@ -43,7 +43,7 @@ final readonly class CompletionUninstallCommand
         $shell ??= ($this->resolveShell)('Which shell completions do you want to uninstall?');
 
         if ($shell === null) {
-            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;
         }

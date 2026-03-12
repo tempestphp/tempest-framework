@@ -91,9 +91,23 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->withoutPrompting()
-            ->call('completion:install --shell=fish')
-            ->assertSee('Invalid argument `fish` for `shell` argument')
+            ->call('completion:install --shell=powershell')
+            ->assertSee('Invalid argument `powershell` for `shell` argument')
             ->assertError();
+    }
+
+    #[Test]
+    public function install_shows_post_install_instructions_for_fish(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::FISH);
+
+        $this->console
+            ->call('completion:install --shell=fish --force')
+            ->assertSee('source')
+            ->assertSee('config.fish')
+            ->assertSuccess();
     }
 
     #[Test]
@@ -131,6 +145,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('completion:install --shell=zsh')
+            ->submit()
             ->assertSee('Installing zsh completions')
             ->deny()
             ->assertSee('Installation cancelled')
@@ -152,6 +167,7 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('completion:install --shell=zsh')
+            ->submit()
             ->confirm()
             ->assertSee('Completion file already exists')
             ->deny()
@@ -174,10 +190,111 @@ final class CompletionInstallCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('completion:install --shell=zsh')
+            ->submit()
             ->confirm()
             ->assertSee('Completion file already exists')
             ->submit()
             ->assertSee('Installed completion script to:')
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function install_with_descriptions_enabled_by_default_for_zsh(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --force')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_flag_for_zsh(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --force --without-descriptions')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=0', $installedScript);
+        $this->assertStringNotContainsString('_TEMPEST_SHOW_DESCRIPTIONS=1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_flag_for_fish(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::FISH);
+
+        $this->console
+            ->call('completion:install --shell=fish --force --without-descriptions')
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS 0', $installedScript);
+        $this->assertStringNotContainsString('_TEMPEST_SHOW_DESCRIPTIONS 1', $installedScript);
+    }
+
+    #[Test]
+    public function install_without_descriptions_skips_question(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh --without-descriptions')
+            ->assertNotSee('Show command descriptions')
+            ->assertSee('Descriptions')
+            ->assertSee('disabled')
+            ->confirm()
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function install_user_denies_descriptions(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH);
+
+        $this->console
+            ->call('completion:install --shell=zsh')
+            ->deny()
+            ->assertSee('disabled')
+            ->confirm()
+            ->assertSuccess();
+
+        $installedScript = Filesystem\read_file($this->installedFile);
+
+        $this->assertStringContainsString('_TEMPEST_SHOW_DESCRIPTIONS=0', $installedScript);
+    }
+
+    #[Test]
+    public function install_bash_does_not_ask_about_descriptions(): void
+    {
+        $this->prepareCompletionRuntime();
+
+        $this->installedFile = $this->completionRuntime->getInstalledCompletionPath(Shell::BASH);
+
+        $this->console
+            ->call('completion:install --shell=bash')
+            ->assertNotSee('Show command descriptions')
+            ->assertNotSee('Descriptions')
+            ->confirm()
             ->assertSuccess();
     }
 

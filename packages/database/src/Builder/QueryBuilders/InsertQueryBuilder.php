@@ -29,7 +29,7 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\str;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  */
 final class InsertQueryBuilder implements BuildsQuery
@@ -56,7 +56,7 @@ final class InsertQueryBuilder implements BuildsQuery
      * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(
-        string|object $model,
+        mixed $model,
         private readonly array $rows,
         private readonly SerializerFactory $serializerFactory,
     ) {

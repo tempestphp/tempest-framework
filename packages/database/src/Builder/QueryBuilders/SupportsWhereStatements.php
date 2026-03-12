@@ -8,7 +8,7 @@ use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Support\Arr\ImmutableArray;
 
 /**
- * @template TModel of object
+ * @template TModel
  */
 interface SupportsWhereStatements
 {

@@ -65,6 +65,7 @@ final class CompletionRuntimeTest extends TestCase
 
         $this->assertSame($home . '/.tempest/completion/tempest.zsh', $this->completionRuntime->getInstalledCompletionPath(Shell::ZSH));
         $this->assertSame($home . '/.tempest/completion/tempest.bash', $this->completionRuntime->getInstalledCompletionPath(Shell::BASH));
+        $this->assertSame($home . '/.tempest/completion/tempest.fish', $this->completionRuntime->getInstalledCompletionPath(Shell::FISH));
     }
 
     #[Test]
@@ -77,5 +78,9 @@ final class CompletionRuntimeTest extends TestCase
         $bashInstructions = $this->completionRuntime->getPostInstallInstructions(Shell::BASH);
         $this->assertNotEmpty($bashInstructions);
         $this->assertStringContainsStringIgnoringCase('source', implode("\n", $bashInstructions));
+
+        $fishInstructions = $this->completionRuntime->getPostInstallInstructions(Shell::FISH);
+        $this->assertNotEmpty($fishInstructions);
+        $this->assertStringContainsStringIgnoringCase('source', implode("\n", $fishInstructions));
     }
 }
