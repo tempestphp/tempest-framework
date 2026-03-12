@@ -11,4 +11,9 @@ final class Registry
         /** @var array<array-key, class-string<\Tempest\Discovery\Discovery>> */
         public array $classes = [],
     ) {}
+
+    public static function autoload(string $path): self
+    {
+        return (new LoadRegistry($path))();
+    }
 }
