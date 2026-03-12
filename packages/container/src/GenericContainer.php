@@ -6,6 +6,7 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
+use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
@@ -41,7 +42,12 @@ final class GenericContainer implements Container
         /** @var ArrayIterator<array-key, class-string[]> $decorators */
         private(set) ArrayIterator $decorators = new ArrayIterator(),
         private(set) ?DependencyChain $chain = null,
-    ) {}
+    ) {
+        GenericContainer::setInstance($this);
+        $this->singleton(Container::class, $this);
+        $this->singleton(ContainerInterface::class, $this);
+        $this->singleton(GenericContainer::class, $this);
+    }
 
     public function setDefinitions(array $definitions): self
     {

@@ -229,35 +229,23 @@ Start by requiring `tempest/discovery`:
 composer require tempest/discovery
 ```
 
-Next, you must create a {b`Tempest\Discovery\Registry`}, this object will keep track of all discovery locations. It's important that you add this registry to whatever container you're using:
-
-```php
-use Tempest\Discovery\Registry;
-
-$registry = Registry::autoload(__DIR__);
-
-// The $container is provided by your project
-$container->singleton(Registry::class, $registry);
-// Or use another method, depending on what your container implementation requires:
-// $container->set(Registry::class, $registry);
-```
-
-With this registry, you can boot discovery:
+Next, you can boot discovery:
 
 ```php
 use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\Registry;
 
 new BootDiscovery(
     container: $container,
-    registry: $registry,
+    registry: Registry::autoload(__DIR__),
 )();
 ```
 
-Whenever this action is run, discovery will find all discovery classes, and run them against all registry locations. 
+Whenever this action is run, discovery will find all discovery classes, and run them against all registry locations.
 
 ### Custom registry
 
-`Registry::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing your composer.json file. If you prefer another way of defining locations to scan, you can manually build a registry like so:
+`Registry::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually build a registry like so:
 
 ```php
 use Tempest\Discovery\Registry;
@@ -267,21 +255,4 @@ $registry = new Registry(locations: [
     new DiscoveryLocation('App\\', 'src/'),
     // …
 ]);
-
-// Don't forget to register the registry in the container of your choice.
-$container->singleton(Registry::class, $registry);
 ```
-
-### Using `tempest/container`
-
-If you're using `tempest/container` with discovery, you'll have to make sure that the container itself is also registered as a singleton:
-
-```php
-use Tempest\Container\Container;
-use Tempest\Container\GenericContainer;
-
-$container = new GenericContainer();
-$container->singleton(Container::class, $container);
-```
-
-This is because `tempest/container` comes with a handful of discovery classes itself, and they rely on the container being a singleton to configure it.

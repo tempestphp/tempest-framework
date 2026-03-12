@@ -6,7 +6,6 @@ namespace Tempest\Core;
 
 use Dotenv\Dotenv;
 use ErrorException;
-use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
@@ -41,7 +40,7 @@ final class FrameworkKernel implements Kernel
         ?Container $container = null,
         ?string $internalStorage = null,
     ) {
-        $this->container = $container ?? $this->createContainer();
+        $this->container = $container ?? new GenericContainer();
         $this->registry = new Registry(locations: $discoveryLocations);
 
         if ($internalStorage !== null) {
@@ -98,19 +97,6 @@ final class FrameworkKernel implements Kernel
             ->event(KernelEvent::SHUTDOWN);
 
         exit($status);
-    }
-
-    public function createContainer(): Container
-    {
-        $container = new GenericContainer();
-
-        GenericContainer::setInstance($container);
-
-        $container->singleton(Container::class, $container);
-        $container->singleton(ContainerInterface::class, $container);
-        $container->singleton(GenericContainer::class, $container);
-
-        return $container;
     }
 
     public function loadComposer(): self

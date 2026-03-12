@@ -51,6 +51,7 @@ final class BootDiscovery
         if ($discoveryClasses === null) {
             // DiscoveryDiscovery needs to be applied before we can build all other discoveries
             $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
+            $discoveryDiscovery->setRegistry($this->registry);
 
             // The first pass over all directories to find all discovery classes
             $this->discover([$discoveryDiscovery], $discoveryLocations);
@@ -250,7 +251,9 @@ final class BootDiscovery
     /**
      * Create a discovery instance from a class name.
      * Optionally set the cached discovery items whenever caching is enabled.
-     * @param class-string<Discovery> $discoveryClass
+     * @template T of Discovery
+     * @param class-string<T> $discoveryClass
+     * @return T
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
