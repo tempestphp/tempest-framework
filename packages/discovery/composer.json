@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tempest\\Discovery\\Tests": "tests"
+            "Tempest\\Discovery\\Tests\\": "tests"
         }
     }
 }
