@@ -232,11 +232,11 @@ composer require tempest/discovery
 Next, you must create a {b`Tempest\Discovery\Registry`}, this object will keep track of all discovery locations. It's important that you add this registry to whatever container you're using:
 
 ```php
-use Tempest\Discovery\LoadRegistry;
+use Tempest\Discovery\Registry;
+
+$registry = Registry::autoload(__DIR__);
 
 // The $container is provided by your project
-
-$registry = new LoadRegistry(rootPath: __DIR__)();
 $container->singleton(Registry::class, $registry);
 // Or use another method, depending on what your container implementation requires:
 // $container->set(Registry::class, $registry);
@@ -253,16 +253,19 @@ new BootDiscovery(
 )();
 ```
 
+Whenever this action is run, discovery will find all discovery classes, and run them against all registry locations. 
+
 ### Custom registry
 
-{b`Tempest\Discovery\LoadRegistry`} will scan a given root path for discovery locations. It does so by analyzing your composer.json file. If you prefer another way of defining locations to scan, you can manually build a registry like so:
+`Registry::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing your composer.json file. If you prefer another way of defining locations to scan, you can manually build a registry like so:
 
 ```php
 use Tempest\Discovery\Registry;
 use Tempest\Discovery\DiscoveryLocation;
 
 $registry = new Registry(locations: [
-    new DiscoveryLocation('App\\', 'src/')
+    new DiscoveryLocation('App\\', 'src/'),
+    // …
 ]);
 
 // Don't forget to register the registry in the container of your choice.
