@@ -2,7 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.1](https://github.com/tempestphp/tempest-framework/compare/v3.2.0..3.2.1)  —  2026-02-19
+## [3.3.1](https://github.com/tempestphp/tempest-framework/compare/v3.3.0..3.3.1)  —  2026-03-11
+
+### 🐛 Bug fixes
+
+- **auth**: handle OIDC provider identifier keys (#2035) ([32d847b](https://github.com/tempestphp/tempest-framework/commit/32d847bc35a08185c9c2f59d058fa5841e5067ec))
+- **http**: fix database session installer with migrations (#2034) ([44c5c73](https://github.com/tempestphp/tempest-framework/commit/44c5c732f8c155144fdba4b20011e33e9bb975e0))
+
+
+## [3.3.0](https://github.com/tempestphp/tempest-framework/compare/v3.2.1..v3.3.0)  —  2026-03-10
+
+### 🚨 Breaking changes
+
+- **router**: [**breaking**] return 404 when model binding fails (#2014) ([e53ac47](https://github.com/tempestphp/tempest-framework/commit/e53ac473ed58c69bee95f3b4c40b0f4931ae1acf))
+
+### 🚀 Features
+
+- **console**: improve completion support (#2015) ([8b53d5b](https://github.com/tempestphp/tempest-framework/commit/8b53d5b93b8d2de6e512dea410ba8bfaf6c55947))
+- **database**: support datetime columns with `CURRENT_TIMESTAMP` as the default value (#2017) ([a33b15a](https://github.com/tempestphp/tempest-framework/commit/a33b15a9537072887410f14353ca4c0049c99df9))
+- **database**: on database support for isdatabasemodel (#2009) ([f0cf890](https://github.com/tempestphp/tempest-framework/commit/f0cf8900df61ae7976a966dd33620f36c144525b))
+- **idempotency**: add idempotency package (#1997) ([47e0de7](https://github.com/tempestphp/tempest-framework/commit/47e0de7218beb551bb301db53564908cc2b3df01))
+
+### ⚡ Performance
+
+- **database**: add query execution benchmark (#2030) ([b63eee8](https://github.com/tempestphp/tempest-framework/commit/b63eee8d735f9635736dc252d1563e1989b305b8))
+- **discovery**: improve discovery performance (#2002) ([14add85](https://github.com/tempestphp/tempest-framework/commit/14add85dc130685270f22652a34a8524da133c5f))
+
+### 🐛 Bug fixes
+
+- **auth**: manually map facebook oauth user data (#2021) ([a196baa](https://github.com/tempestphp/tempest-framework/commit/a196baa1a865b84a0e363db0581c5ef536f632e8))
+- **console**: remove path check from completion script (#2008) ([ead8ed6](https://github.com/tempestphp/tempest-framework/commit/ead8ed6945a74e38d5f0533766f03d0571694ad9))
+- **core**: fall back to scanning when discovery cache is incomplete (#1991) ([092791b](https://github.com/tempestphp/tempest-framework/commit/092791b48782454545faf396cb9433b8afb22c8e))
+- **mapper**: handle primitive array types in collection caster (#2025) ([b00568b](https://github.com/tempestphp/tempest-framework/commit/b00568b84bfe9c2aa84cf821a19b2be6ce341f97))
+- **view**: add props for width and height to x-icon (#1969) ([b298f25](https://github.com/tempestphp/tempest-framework/commit/b298f25c1ec098ce735eb2a65c874075f425099a))
+
+
+## [3.2.1](https://github.com/tempestphp/tempest-framework/compare/v3.2.0..v3.2.1)  —  2026-02-19
 
 ### 🐛 Bug fixes
 
@@ -17,7 +52,7 @@ All notable changes to this project will be documented in this file.
 - **view**: [**breaking**] improved view component rendering (#1980) ([b830a16](https://github.com/tempestphp/tempest-framework/commit/b830a1601c5d8d3ecd2502e3b49be2e8f6078500))
 
 
-## [3.0.2](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.0.2)  —  2026-02-16
+## [3.1.0](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.1.0)  —  2026-02-16
 
 ### 🚨 Breaking changes
 
@@ -952,7 +987,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
 
 ### 🚨 Breaking changes
 

@@ -12,7 +12,7 @@ use function Tempest\Mapper\map;
 /**
  * @internal
  */
-final class ObjectToJsonMapperTestCase extends FrameworkIntegrationTestCase
+final class ObjectToJsonMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_object_to_json(): void
     {

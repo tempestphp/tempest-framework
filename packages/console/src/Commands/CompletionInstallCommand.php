@@ -34,10 +34,14 @@ final readonly class CompletionInstallCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            description: 'The shell to install completions for (zsh, bash)',
+            description: 'The shell to install completions for (zsh, bash, fish)',
             aliases: ['-s'],
         )]
         ?Shell $shell = null,
+        #[ConsoleArgument(
+            description: 'Hide command descriptions from completion suggestions (zsh and fish only)',
+        )]
+        bool $withoutDescriptions = false,
     ): ExitCode {
         if (! $this->completionRuntime->isSupportedPlatform()) {
             $this->console->error($this->completionRuntime->getUnsupportedPlatformMessage());
@@ -48,10 +52,12 @@ final readonly class CompletionInstallCommand
         $shell ??= ($this->resolveShell)('Which shell do you want to install completions for?');
 
         if ($shell === null) {
-            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash.');
+            $this->console->error('Could not detect shell. Please specify one using the --shell option. Possible values are: zsh, bash, fish.');
 
             return ExitCode::ERROR;
         }
+
+        $showDescriptions = ! $withoutDescriptions;
 
         $sourcePath = $this->getSourcePath($shell);
         $targetDir = $this->completionRuntime->getInstallationDirectory();
@@ -64,9 +70,18 @@ final readonly class CompletionInstallCommand
         }
 
         if (! $this->console->isForced) {
+            if (! $withoutDescriptions && $shell->supportsCompletionDescriptions()) {
+                $showDescriptions = $this->console->confirm('Show command descriptions in completions?', default: true);
+            }
+
             $this->console->info("Installing {$shell->value} completions");
             $this->console->keyValue('Source', $sourcePath);
             $this->console->keyValue('Target', $targetPath);
+
+            if ($shell->supportsCompletionDescriptions()) {
+                $this->console->keyValue('Descriptions', $showDescriptions ? 'enabled' : 'disabled');
+            }
+
             $this->console->writeln();
 
             if (! $this->console->confirm('Proceed with installation?', default: true)) {
@@ -87,6 +102,11 @@ final readonly class CompletionInstallCommand
         }
 
         $script = Filesystem\read_file($sourcePath);
+
+        if (! $showDescriptions && $shell->supportsCompletionDescriptions()) {
+            $script = $this->disableCompletionDescriptions($script);
+        }
+
         Filesystem\write_file($targetPath, $script);
 
         $this->console->success("Installed completion script to: {$targetPath}");
@@ -96,6 +116,15 @@ final readonly class CompletionInstallCommand
         $this->console->instructions($this->completionRuntime->getPostInstallInstructions($shell));
 
         return ExitCode::SUCCESS;
+    }
+
+    private function disableCompletionDescriptions(string $script): string
+    {
+        return str_replace(
+            ['_TEMPEST_SHOW_DESCRIPTIONS=1', '_TEMPEST_SHOW_DESCRIPTIONS 1'],
+            ['_TEMPEST_SHOW_DESCRIPTIONS=0', '_TEMPEST_SHOW_DESCRIPTIONS 0'],
+            $script,
+        );
     }
 
     private function getSourcePath(Shell $shell): string

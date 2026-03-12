@@ -86,6 +86,10 @@ final class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
+            if ($property->isReadonly()) {
+                continue;
+            }
+
             $property->unset($targetObject);
         }
 

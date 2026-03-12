@@ -60,8 +60,8 @@ final class CompletionGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame(['--flag', '--items=', '--value='], $flags);
         $this->assertSame('Install shell completion for Tempest', $metadata['commands']['completion:install']['description']);
         $this->assertSame(['-s'], $installFlags['shell']['aliases']);
-        $this->assertSame('The shell to install completions for (zsh, bash)', $installFlags['shell']['description']);
-        $this->assertSame(['bash', 'zsh'], $installFlags['shell']['value_options']);
+        $this->assertSame('The shell to install completions for (zsh, bash, fish)', $installFlags['shell']['description']);
+        $this->assertSame(['bash', 'fish', 'zsh'], $installFlags['shell']['value_options']);
     }
 
     #[Test]

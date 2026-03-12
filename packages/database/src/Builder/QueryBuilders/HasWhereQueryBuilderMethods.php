@@ -9,14 +9,8 @@ use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\str;
 
-/**
- * @template TModel of object
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
- * @phpstan-require-implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
- */
 trait HasWhereQueryBuilderMethods
 {
-    /** @use HasConvenientWhereMethods<TModel> */
     use HasConvenientWhereMethods;
 
     protected function appendWhere(WhereStatement|WhereGroupStatement $where): void
@@ -32,7 +26,6 @@ trait HasWhereQueryBuilderMethods
      * ->where('price > ?', $value); // calls `whereRaw`
      * ->where('price', $value); // calls `whereField`
      * ```
-     * @return self<TModel>
      */
     public function where(string $statement, mixed ...$bindings): self
     {
@@ -45,8 +38,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds a where condition to the query.
-     *
-     * @return self<TModel>
      */
     public function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -66,8 +57,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds an `AND WHERE` condition to the query.
-     *
-     * @return self<TModel>
      */
     public function andWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -83,8 +72,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds an `OR WHERE` condition to the query.
-     *
-     * @return self<TModel>
      */
     public function orWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self
     {
@@ -100,8 +87,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds a raw SQL `WHERE` condition to the query.
-     *
-     * @return self<TModel>
      */
     public function whereRaw(string $statement, mixed ...$bindings): self
     {
@@ -117,8 +102,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds a raw SQL `AND WHERE` condition to the query.
-     *
-     * @return self<TModel>
      */
     public function andWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
@@ -130,8 +113,6 @@ trait HasWhereQueryBuilderMethods
 
     /**
      * Adds a raw SQL `OR WHERE` condition to the query.
-     *
-     * @return self<TModel>
      */
     public function orWhereRaw(string $rawCondition, mixed ...$bindings): self
     {
@@ -144,8 +125,6 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped where statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder<TModel>):void $callback
-     * @return self<TModel>
      */
     public function whereGroup(Closure $callback): self
     {
@@ -165,8 +144,6 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped `AND WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder<TModel>):void $callback
-     * @return self<TModel>
      */
     public function andWhereGroup(Closure $callback): self
     {
@@ -180,8 +157,6 @@ trait HasWhereQueryBuilderMethods
     /**
      * Adds a grouped `OR WHERE` statement. The callback accepts a builder, which may be used to add more nested `WHERE` statements.
      *
-     * @param Closure(WhereGroupBuilder<TModel>):void $callback
-     * @return self<TModel>
      */
     public function orWhereGroup(Closure $callback): self
     {

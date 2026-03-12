@@ -21,10 +21,4 @@ if (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') {
     return;
 }
 
-$script = $_SERVER['SCRIPT_FILENAME'] ?? null;
-
-if (! is_string($script) || realpath($script) !== __FILE__) {
-    return;
-}
-
 new CompletionApplication()->run(array_slice($_SERVER['argv'] ?? [], 1));

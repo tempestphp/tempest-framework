@@ -377,6 +377,13 @@ try {
     $version = (string)str($new)->afterLast(': ');
     $tag = "v{$version}";
 
+    function task(string $task, Closure $handler): void
+    {
+        global $console;
+        $console->header($task);
+        $handler();
+    }
+
     // Check the tag
     ensureTagDoesNotExist($tag);
 
@@ -386,8 +393,8 @@ try {
     }
 
     // Bump PHP packages
-    $console->task(
-        label: 'Bumping PHP packages',
+    task(
+        task: 'Bumping PHP packages',
         handler: function () use ($version, $isMajor) {
             bumpKernelVersion($version);
             bumpPhpPackages($version, $isMajor);
@@ -395,26 +402,26 @@ try {
     );
 
     // Bump JavaScript packages
-    $console->task(
-        label: 'Bumping JavaScript packages',
+    task(
+        task: 'Bumping JavaScript packages',
         handler: fn () => bumpJavaScriptPackages($version),
     );
 
     // Update changelog
-    $console->task(
-        label: 'Updating changelog',
+    task(
+        task: 'Updating changelog',
         handler: fn () => updateChangelog($version),
     );
 
     // Disable protection
-    $console->task(
-        label: 'Disabling branch protection',
+    task(
+        task: 'Disabling branch protection',
         handler: fn () => updateBranchProtection(enabled: false),
     );
 
     // Push tags
-    $console->task(
-        label: 'Releasing',
+    task(
+        task: 'Releasing',
         handler: function () use ($tag) {
             commit("chore: release {$tag}");
             executeCommands([
@@ -425,8 +432,8 @@ try {
     );
 
     // Clean up
-    $console->task(
-        label: 'Cleaning up',
+    task(
+        task: 'Cleaning up',
         handler: function () {
             cleanUpAfterRelease();
             commit('chore: post-release clean up');
@@ -435,13 +442,13 @@ try {
     );
 
     // Enable branch protection
-    $console->task(
-        label: 'Enabling branch protection',
+    task(
+        task: 'Enabling branch protection',
         handler: fn () => updateBranchProtection(enabled: true),
     );
 
-    $console->task(
-            label: 'Trigger subsplit',
+    task(
+            task: 'Trigger subsplit',
             handler: fn () => triggerSubsplit(),
     );
 

@@ -5,7 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Relation;
 
 /**
- * @template TModel of object
+ * @template TModel
  */
 interface SupportsRelations
 {

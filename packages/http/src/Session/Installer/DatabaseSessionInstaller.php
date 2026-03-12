@@ -6,14 +6,11 @@ namespace Tempest\Http\Session\Installer;
 
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Migrations\MigrationManager;
 
-use function Tempest\root_path;
 use function Tempest\src_path;
-use function Tempest\Support\Namespace\to_fqcn;
 
 final class DatabaseSessionInstaller implements Installer
 {
@@ -23,7 +20,6 @@ final class DatabaseSessionInstaller implements Installer
 
     public function __construct(
         private readonly MigrationManager $migrationManager,
-        private readonly Container $container,
         private readonly Console $console,
         private readonly ConsoleArgumentBag $consoleArgumentBag,
     ) {}
@@ -43,9 +39,7 @@ final class DatabaseSessionInstaller implements Installer
         $this->publishImports();
 
         if ($migration && $this->shouldMigrate()) {
-            $this->migrationManager->executeUp(
-                migration: $this->container->get(to_fqcn($migration, root: root_path())),
-            );
+            $this->migrationManager->up();
         }
     }
 
@@ -54,7 +48,7 @@ final class DatabaseSessionInstaller implements Installer
         $argument = $this->consoleArgumentBag->get('migrate');
 
         if ($argument === null || ! is_bool($argument->value)) {
-            return $this->console->confirm('Do you want to execute migrations?', default: false);
+            return $this->console->confirm('Do you want to execute migrations?');
         }
 
         return (bool) $argument->value;

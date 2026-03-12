@@ -115,6 +115,70 @@ In order to _run_ an asynchronous command, you'll have to run the `tempest comma
 
 Note that async command handling is still an early feature, and will receive many improvements over time.
 
+## Idempotent commands
+
+Commands that should not be processed more than once—such as payment processing or invoice imports—can be marked with {b`Tempest\Idempotency\Attributes\Idempotent`}. The attribute can be placed on the command class or on the handler method. Duplicate dispatches with the same payload are silently skipped.
+
+```php
+// app/ImportInvoicesCommand.php
+
+use Tempest\Idempotency\Attributes\Idempotent;
+
+#[Idempotent]
+final readonly class ImportInvoicesCommand
+{
+    public function __construct(
+        public string $vendorId,
+        public string $month,
+    ) {}
+}
+```
+
+Alternatively, the attribute can be placed on the handler method instead:
+
+```php
+// app/ImportInvoicesHandler.php
+
+use Tempest\CommandBus\CommandHandler;
+use Tempest\Idempotency\Attributes\Idempotent;
+
+final class ImportInvoicesHandler
+{
+    #[Idempotent]
+    #[CommandHandler]
+    public function handle(ImportInvoicesCommand $command): void { /* … */ }
+}
+```
+
+By default, the deduplication key is derived from the command's properties. Two commands with identical property values are considered duplicates. For explicit control over the key, implement the {b`Tempest\Idempotency\HasIdempotencyKey`} interface:
+
+```php
+// app/ProcessPaymentCommand.php
+
+use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\HasIdempotencyKey;
+
+#[Idempotent]
+final readonly class ProcessPaymentCommand implements HasIdempotencyKey
+{
+    public function __construct(
+        public string $paymentId,
+        public int $amount,
+    ) {}
+
+    public function getIdempotencyKey(): string
+    {
+        return $this->paymentId;
+    }
+}
+```
+
+When using explicit keys, the payload fingerprint is still verified. Dispatching the same key with a different payload throws {b`Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed`}.
+
+:::info
+Read the full [idempotency documentation](./19-idempotency.md) for details on configuration, TTL overrides, custom stores, and HTTP route idempotency.
+:::
+
 ## Command bus middleware
 
 Whenever commands are dispatched, they are passed to the command bus, which will pass the command along to each of its handlers. Similar to web requests and console commands, this command bus supports middleware. Command bus middleware can be used to, for example, do logging for specific commands, add metadata to commands, or anything else. Command bus middleware are classes that implement the `CommandBusMiddleware` interface, and look like this:
