@@ -197,7 +197,7 @@ final class BootDiscovery
                 } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
                 }
-            } catch (AssertionError) {
+            } catch (AssertionError|\Pest\Exceptions\InvalidPestCommand) {
                 // Workaround for Pest test files autoloading.
                 // @mago-expect lint:no-empty-catch-clause
             }
