@@ -42,6 +42,7 @@ final class DiscoveryConfig
         return false;
     }
 
+    /** @param (Closure(string): bool) $closure */
     public function skipUsing(Closure $closure): self
     {
         $this->skipUsing[] = $closure;
