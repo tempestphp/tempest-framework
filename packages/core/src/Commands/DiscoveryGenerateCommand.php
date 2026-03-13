@@ -78,7 +78,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         public function resolveKernel(): Kernel
         {
             $container = new GenericContainer();
-            $container->singleton(Container::class, $container);
             $container->singleton(DiscoveryConfig::class, $this->discoveryConfig);
 
             return new FrameworkKernel(
