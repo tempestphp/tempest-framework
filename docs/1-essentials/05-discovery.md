@@ -221,33 +221,46 @@ Most of Tempest's features are built on top of discovery. The following is a non
 
 ## Discovery as a standalone package
 
-`tempest/discovery` can be used as a standalone package in any application. All it needs is a PSR-11 compliant container.
+Discovery can be used as a standalone package in any application that uses a [PSR-11](https://www.php-fig.org/psr/psr-11/) compliant container, which includes Laravel and Symfony applications.
 
-Start by requiring `tempest/discovery`:
+First, you may require `tempest/discovery`:
 
 ```console
 composer require tempest/discovery
 ```
 
-Next, you can boot discovery:
+Next, you may boot discovery by calling {b`Tempest\Discovery\BootDiscovery`}:
 
 ```php
 use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryConfig;
 
-// $container is any PSR-11 compliant container, already available in your app
-
 new BootDiscovery(
     container: $container,
-    config: DiscoveryConfig::autoload(__DIR__),
+    config: DiscoveryConfig::autoload($rootPath),
 )();
 ```
 
-Whenever this action is run, discovery will find all discovery classes, and run them against all registered locations.
+The `$container` in this example is a PSR-11 implementation that must already be available in your application. For instance, in a Laravel application, you can access it in a service provider:
 
-### Manually specify discovery locations
+```php
+final class DiscoveryServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        new BootDiscovery(
+            container: $this->app,
+            config: DiscoveryConfig::autoload(base_path()),
+        )();
+    }
+}
+```
 
-`DiscoveryConfig::autoload()` will scan a given root path and automatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually provide them via `DiscoveryConfig`:
+### Specifying discovery locations
+
+`DiscoveryConfig::autoload()` scans the given root path, finds a `composer.json` in it, and registers all PSR-4 locations defined in it for discovery, in addition to vendor locations.
+
+If you prefer to have more control over which locations are registered for discovery, you can create a {b`Tempest\Discovery\DiscoveryConfig`} instance manually and pass in the desired locations:
 
 ```php
 use Tempest\Discovery\DiscoveryConfig;
@@ -259,9 +272,9 @@ $config = new DiscoveryConfig(locations: [
 ]);
 ```
 
-### Config
+### Skipping classes and paths
 
-You can pass config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
+The {b`Tempest\Discovery\DiscoveryConfig`} instance also allows you to skip specific classes and paths from discovery. This is useful for excluding code that you don't want to be discovered, or that is causing issues during discovery, such as Pest test files.
 
 ```php
 use Tempest\Discovery\BootDiscovery;
@@ -278,36 +291,76 @@ new BootDiscovery(
         )
         ->skipPaths(
             __DIR__ . '/../vendor/tempest/support'
-        ),
-    cache: new DiscoveryCache(
-        strategy: DiscoveryCacheStrategy::PARTIAL,
-        pool: new PhpFilesAdapter(
-            directory: __DIR__ . '/.cache/discovery'
         )
-    ),
+        ->skipUsing(static function (string $input) {
+            if (str_ends_with($input, needle: 'Test.php')) {
+                return true;
+            }
+
+            if (str_ends_with($input, needle: 'Pest.php')) {
+                return true;
+            }
+
+            return false;
+        }),
 )();
 ```
 
-### Generating and clearing Discovery cache
+### Caching discovery
 
-By default, discovery cache will be set to `partial`, meaning that all vendor locations will be cached. Discovery cache needs to be generated before it can be used, though. If you're using `tempest/discovery` as a standalone package, you'll have to take care of generating this cache yourself. In Tempest, this is done with a `discovery:generate` CLI command, but you're free to implement it in any other way you seem fit.
+By default, discovery is not cached, meaning all configured discovery locations are scanned on every request. This is fine for development, but in production, it's recommended to cache discovery to remove any performance overhead.
 
-Actually generating the cache can be with the {b`\Tempest\Discovery\GenerateDiscoveryCache`} action:
+You may call the {b`Tempest\Discovery\GenerateDiscoveryCache`} action to generate the discovery cache. This action accepts a {b`Tempest\Discovery\DiscoveryCache`} instance, which allows you to specify the caching strategy, which usually depend on the environment:
 
 ```php
 use Tempest\Discovery\GenerateDiscoveryCache;
 use Tempest\Discovery\DiscoveryConfig;
 
-($this->generateDiscoveryCache)(
-    container: new Container(), // Pass in a clean container
-    config: $discoveryConfig, // You probably already have a configured `DiscoveryConfig` from setting up discovery
-    cache: $discoveryCache->withStrategy($strategy), // Make sure to set the strategy which you want to use for caching
+(new GenerateDiscoveryCache())(
+    container: $this->container,
+    config: $config,
+    cache: new DiscoveryCache(
+        strategy: $this->isProduction
+            ? DiscoveryCacheStrategy::FULL
+            : DiscoveryCacheStrategy::NONE,
+        pool: new PhpFilesAdapter(
+            directory: base_path('.discovery'),
+        ),
+    ),
 );
 ```
 
-It's important to note that discovery cache only works if the strategy used during generation is the same as subsequent requests. It's advised to always run cache generation code from within a script that doesn't have discovery cache enabled. For example:
+:::warning
+The discovery cache only works if the strategy used during the cache generation is the same as the strategy defined in subsequent requests.
+:::
 
-```console
-~ DISCOVERY_CACHE=false bin/console discovery:generate 
-~ DISCOVERY_CACHE=false artisan discovery:generate
+It's advised to always run cache generation code from within a script that doesn't have discovery cache enabled. For example:
+
+:::code-group
+
+```sh "bin/console"
+{:hl-property:DISCOVERY_CACHE:}=false {:hl-keyword:php:} bin/console discovery:generate
+```
+
+```sh "artisan"
+{:hl-property:DISCOVERY_CACHE:}=false {:hl-keyword:php:} artisan discovery:generate
+```
+
+:::
+
+### Clearing the discovery cache
+
+You may call the {b`Tempest\Discovery\ClearDiscoveryCache`} action to clear the discovery cache. The {b`Tempest\Discovery\DiscoveryCache`} instance must have the same pool and strategy as the one used during cache generation:
+
+```php
+use Tempest\Discovery\ClearDiscoveryCache;
+
+(new ClearDiscoveryCache())(new DiscoveryCache(
+    strategy: $this->isProduction
+        ? DiscoveryCacheStrategy::FULL
+        : DiscoveryCacheStrategy::NONE,
+    pool: new PhpFilesAdapter(
+        directory: base_path('.discovery'),
+    ),
+));
 ```
