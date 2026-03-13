@@ -14,6 +14,7 @@ excludes = [
 	"**/*.input.php",
 	"**/*.expected.php",
 	"**/.tempest",
+	"./vendor/rector", #see https://github.com/carthage-software/mago/issues/1237 rector clashes and throws errors in tests
 ]
 
 [formatter]
