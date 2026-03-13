@@ -57,8 +57,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                     ($this->generateDiscoveryCache)(
                         container: $kernel->container,
                         config: $this->discoveryConfig,
-                        cache: $this->discoveryCache,
-                        strategy: $strategy,
+                        cache: $this->discoveryCache->withStrategy($strategy),
                     );
                 },
             );

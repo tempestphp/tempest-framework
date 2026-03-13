@@ -10,8 +10,8 @@ final class GenerateDiscoveryCache
         ContainerInterface $container,
         DiscoveryConfig $config,
         DiscoveryCache $cache,
-        DiscoveryCacheStrategy $strategy,
     ): void {
+        $originalStrategy = $cache->strategy;
         $cache = $cache->withStrategy(DiscoveryCacheStrategy::NONE);
 
         $bootDiscovery = new BootDiscovery(
@@ -26,6 +26,6 @@ final class GenerateDiscoveryCache
             $cache->store($location, $discoveries);
         }
 
-        $cache->storeStrategy($strategy);
+        $cache->storeStrategy($originalStrategy);
     }
 }
