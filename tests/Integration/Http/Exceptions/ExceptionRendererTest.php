@@ -48,8 +48,6 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             {
                 $this->root = $kernel->root;
                 $this->internalStorage = $kernel->internalStorage;
-                $this->discoveryLocations = $kernel->discoveryConfig->locations;
-                $this->discoveryClasses = $kernel->discoveryConfig->classes;
                 $this->container = $kernel->container;
             }
 
