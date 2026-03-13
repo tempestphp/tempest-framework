@@ -8,6 +8,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\Tests\Fixtures\ContainerWithoutAutowiring;
 use Tempest\Discovery\Tests\Fixtures\MyDiscoveryClass;
 
 final class DiscoveryTest extends TestCase
@@ -40,6 +41,24 @@ final class DiscoveryTest extends TestCase
     public function test_discovery_with_other_container(): void
     {
         $container = new Container();
+
+        (new BootDiscovery(
+            container: $container,
+            config: new DiscoveryConfig(locations: [
+                new DiscoveryLocation(
+                    namespace: 'Tempest\Discovery\Tests\Fixtures',
+                    path: __DIR__ . '/Fixtures',
+                ),
+            ]),
+        ))();
+
+        $this->assertNotNull(MyDiscoveryClass::$discoveredItem);
+        $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
+    }
+
+    public function test_non_autowired_container_with_fallback(): void
+    {
+        $container = new ContainerWithoutAutowiring();
 
         (new BootDiscovery(
             container: $container,

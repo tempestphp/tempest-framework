@@ -6,6 +6,7 @@ namespace Tempest\Discovery;
 
 use AssertionError;
 use Psr\Container\ContainerInterface;
+use Tempest\Container\GenericContainer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
@@ -257,7 +258,11 @@ final class BootDiscovery
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
         /** @var Discovery $discovery */
-        $discovery = $this->container->get($discoveryClass);
+        if ($this->container instanceof GenericContainer || $this->container->has($discoveryClass)) {
+            $discovery = $this->container->get($discoveryClass);
+        } else {
+            $discovery = new $discoveryClass();
+        }
 
         $discovery->setItems(new DiscoveryItems());
 
