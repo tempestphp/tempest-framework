@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Commands;
 
-use Closure;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\ClearDiscoveryCache;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
