@@ -7,13 +7,15 @@ namespace Tempest\Core\Commands;
 use Closure;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
+use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel;
 use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\ClearDiscoveryCache;
 use Tempest\Discovery\DiscoveryCache;
 use Tempest\Discovery\DiscoveryCacheStrategy;
 use Tempest\Discovery\DiscoveryConfig;
+use Tempest\Discovery\GenerateDiscoveryCache;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryGenerateCommand
@@ -21,9 +23,12 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         use HasConsole;
 
         public function __construct(
-            private DiscoveryConfig $discoveryConfig,
             private FrameworkKernel $kernel,
+            private Container $container,
+            private DiscoveryConfig $discoveryConfig,
             private DiscoveryCache $discoveryCache,
+            private GenerateDiscoveryCache $generateDiscoveryCache,
+            private ClearDiscoveryCache $clearDiscoveryCache,
         ) {}
 
         #[ConsoleCommand(
@@ -41,20 +46,26 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                 return;
             }
 
-            $this->clearDiscoveryCache();
+            $this->console->task(
+                label: 'Clearing discovery cache',
+                handler: fn () => ($this->clearDiscoveryCache)($this->discoveryCache),
+            );
 
             $this->console->task(
-                label: "Generating discovery cache using the `{$strategy->value}` strategy",
-                handler: fn (Closure $log) => $this->generateDiscoveryCache($strategy, $log),
+                label: "Generating {$strategy->value} discovery cache",
+                handler: function () use ($strategy) {
+                    $kernel = $this->resolveKernel();
+
+                    ($this->generateDiscoveryCache)(
+                        $kernel->container,
+                        $kernel->discoveryConfig,
+                        $this->discoveryCache->withStrategy($strategy),
+                    );
+                },
             );
         }
 
-        public function clearDiscoveryCache(): void
-        {
-            $this->console->call(DiscoveryClearCommand::class);
-        }
-
-        public function generateDiscoveryCache(DiscoveryCacheStrategy $strategy, Closure $log): void
+        private function generateDiscoveryCache(DiscoveryCacheStrategy $strategy, Closure $log): void
         {
             $kernel = $this->resolveKernel();
 
@@ -74,7 +85,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $this->discoveryCache->storeStrategy($strategy);
         }
 
-        public function resolveKernel(): Kernel
+        private function resolveKernel(): FrameworkKernel
         {
             $container = new GenericContainer();
             $container->singleton(DiscoveryConfig::class, $this->discoveryConfig);
@@ -86,6 +97,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             )
                 ->registerKernel()
                 ->loadComposer()
+                ->loadDiscoveryConfig()
                 ->loadConfig();
         }
     }

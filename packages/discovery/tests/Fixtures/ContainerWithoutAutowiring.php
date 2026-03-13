@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 
 final class ContainerWithoutAutowiring implements ContainerInterface
 {
-    public function get(string $id)
+    public function get(string $id): null
     {
         return null;
     }

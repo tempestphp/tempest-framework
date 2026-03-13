@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Commands;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\HasConsole;
+use Tempest\Discovery\ClearDiscoveryCache;
 use Tempest\Discovery\DiscoveryCache;
 
 if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
     final readonly class DiscoveryClearCommand
     {
+        use HasConsole;
+
         public function __construct(
             private DiscoveryCache $discoveryCache,
-            private Console $console,
+            private ClearDiscoveryCache $clearDiscoveryCache,
         ) {}
 
         #[ConsoleCommand(
@@ -25,7 +28,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $this->console->task(
                 label: 'Clearing discovery cache',
-                handler: fn () => $this->discoveryCache->clear(),
+                handler: fn () => ($this->clearDiscoveryCache)($this->discoveryCache),
             );
         }
     }

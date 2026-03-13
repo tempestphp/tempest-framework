@@ -23,12 +23,19 @@ final class DiscoveryCache
     }
 
     public function __construct(
-        private(set) DiscoveryCacheStrategy $strategy,
+        private(set) readonly DiscoveryCacheStrategy $strategy,
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
             directory: self::getCachePath(),
         );
+    }
+
+    public function withStrategy(DiscoveryCacheStrategy $strategy): self
+    {
+        return clone($this, [
+            'strategy' => $strategy,
+        ]);
     }
 
     /**
