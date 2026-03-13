@@ -197,7 +197,7 @@ final class BootDiscovery
                 } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
                 }
-            } catch (AssertionError|\Pest\Exceptions\InvalidPestCommand) {
+            } catch (AssertionError|\Pest\Exceptions\InvalidPestCommand) { // @phpstan-ignore class.notFound
                 // Workaround for Pest test files autoloading.
                 // @mago-expect lint:no-empty-catch-clause
             }
