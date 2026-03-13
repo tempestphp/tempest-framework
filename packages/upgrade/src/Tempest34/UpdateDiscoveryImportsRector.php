@@ -15,6 +15,8 @@ final class UpdateDiscoveryImportsRector extends AbstractRector
         'Tempest\Core\DiscoveryCachingStrategyWasChanged' => 'Tempest\Discovery\DiscoveryCachingStrategyWasChanged',
         'Tempest\Core\DiscoveryConfig' => 'Tempest\Discovery\DiscoveryConfig',
         'Tempest\Core\CouldNotStoreDiscoveryCache' => 'Tempest\Discovery\CouldNotStoreDiscoveryCache',
+        'Tempest\Core\DiscoveryCacheInitializer' => 'Tempest\Discovery\DiscoveryCacheInitializer',
+        'Tempest\Core\DiscoveryDiscovery' => 'Tempest\Discovery\DiscoveryDiscovery',
     ];
 
     public function getNodeTypes(): array
