@@ -41,9 +41,9 @@ final class UpdateKernelDiscoveryPropertiesRector extends AbstractRector
             return null;
         }
 
-        // Transform $kernel->discoveryLocations to $kernel->registry->locations
+        // Transform $kernel->discoveryLocations to $kernel->discoveryConfig->locations
         return new PropertyFetch(
-            new PropertyFetch($node->var, 'registry'),
+            new PropertyFetch($node->var, 'discoveryConfig'),
             self::PROPERTY_RENAMES[$propertyName],
         );
     }
