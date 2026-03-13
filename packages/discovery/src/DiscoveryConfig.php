@@ -2,11 +2,15 @@
 
 namespace Tempest\Discovery;
 
+use Closure;
 use Tempest\Support\Filesystem;
 
 final class DiscoveryConfig
 {
     private array $skipDiscovery = [];
+
+    /** @var array<Closure(string): bool> */
+    private array $skipUsing = [];
 
     /** @var array<array-key, class-string<\Tempest\Discovery\Discovery>> The loaded discovery classes that will be used during discovery */
     public array $classes = [];
@@ -25,7 +29,24 @@ final class DiscoveryConfig
 
     public function shouldSkip(string $input): bool
     {
-        return $this->skipDiscovery[$input] ?? false;
+        if (array_key_exists($input, $this->skipDiscovery)) {
+            return true;
+        }
+
+        foreach ($this->skipUsing as $closure) {
+            if ($closure($input) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function skipUsing(Closure $closure): self
+    {
+        $this->skipUsing[] = $closure;
+
+        return $this;
     }
 
     public function skipClasses(string ...$classNames): self
