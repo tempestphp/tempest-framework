@@ -27,8 +27,6 @@ final class FrameworkKernel implements Kernel
 {
     public readonly Container $container;
 
-    public bool $discoveryCache;
-
     public string $internalStorage;
 
     public DiscoveryConfig $discoveryConfig;
