@@ -325,9 +325,9 @@ final class ContainerTest extends TestCase
         } catch (TaggedDependencyCouldNotBeResolved $cannotResolveTaggedDependency) {
             $this->assertStringContainsStringIgnoringLineEndings(
                 <<<'TXT'
-                    	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
-                    	└── Tempest\Container\Tests\Fixtures\TaggedDependency
-                    TXT,
+                	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
+                	└── Tempest\Container\Tests\Fixtures\TaggedDependency
+                TXT,
                 $cannotResolveTaggedDependency->getMessage(),
             );
         }

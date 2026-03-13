@@ -25,11 +25,11 @@ final class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
             })
             ->assertContains(
                 <<<TXT
-                    [==========>                    ] (1/3)
-                    [====================>          ] (2/3)
-                    [===============================] (3/3)
-                    ["aa","bb","cc"]
-                    TXT,
+                [==========>                    ] (1/3)
+                [====================>          ] (2/3)
+                [===============================] (3/3)
+                ["aa","bb","cc"]
+                TXT,
                 true,
             );
     }

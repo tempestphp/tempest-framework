@@ -270,9 +270,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-                <div>a</div>
-                <div>b</div>
-                HTML,
+            <div>a</div>
+            <div>b</div>
+            HTML,
             $this->view->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div>')->data(items: ['a', 'b'])),
         );
     }
@@ -281,39 +281,39 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $html = $this->view->render(
             <<<'HTML'
-                <x-base :items="$items">
-                    <table>
-                        <tr :foreach="$items as $item">
-                            <td>{{ $item }}</td>
-                        </tr>
-                    </table>
-                </x-base>
-                HTML,
+            <x-base :items="$items">
+                <table>
+                    <tr :foreach="$items as $item">
+                        <td>{{ $item }}</td>
+                    </tr>
+                </table>
+            </x-base>
+            HTML,
             items: ['a', 'b'],
         );
 
         $this->assertSnippetsMatch(
             <<<'HTML'
-                <html lang="en">
-                    <head>
-                        <title>Home</title>
-                    </head>
-                    <body>
-                    
-                    
-                <table>
-                        <tr>
-                            <td>a</td>
-                        </tr>
-                <tr>
-                            <td>b</td>
-                        </tr>
-                    </table>
+            <html lang="en">
+                <head>
+                    <title>Home</title>
+                </head>
+                <body>
+                
+                
+            <table>
+                    <tr>
+                        <td>a</td>
+                    </tr>
+            <tr>
+                        <td>b</td>
+                    </tr>
+                </table>
 
 
-                    </body>
-                    </html>
-                HTML,
+                </body>
+                </html>
+            HTML,
             $html,
         );
     }
@@ -322,15 +322,15 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-                <div>Empty</div>
-                HTML,
+            <div>Empty</div>
+            HTML,
             $this->view->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: [])),
         );
 
         $this->assertSame(
             <<<'HTML'
-                <div>a</div>
-                HTML,
+            <div>a</div>
+            HTML,
             $this->view->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
         );
     }
@@ -339,8 +339,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-                <div data="test">Empty</div>
-                HTML,
+            <div data="test">Empty</div>
+            HTML,
             $this->view->render('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse :data="$data">Empty</div>', items: [], data: 'test'),
         );
     }
@@ -349,14 +349,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
-                <div class="base">Test</div>
-                HTML,
+            <div class="base">Test</div>
+            HTML,
             $this->view->render(
                 <<<'HTML'
-                    <x-base-layout>
-                        Test
-                    </x-base-layout>
-                    HTML,
+                <x-base-layout>
+                    Test
+                </x-base-layout>
+                HTML,
             ),
         );
     }
@@ -365,18 +365,18 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
-                <div class="base">
-                    
-                    Test
+            <div class="base">
+                
+                Test
 
-                </div>
-                HTML,
+            </div>
+            HTML,
             $this->view->render(
                 <<<'HTML'
-                    <x-base-layout>
-                        Test
-                    </x-base-layout>
-                    HTML,
+                <x-base-layout>
+                    Test
+                </x-base-layout>
+                HTML,
             ),
         );
     }
@@ -385,41 +385,41 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
-                injected scripts
-                    
+            injected scripts
+                
 
 
-                <div class="base">
-                    
-                    Test
-                    
-                    
+            <div class="base">
+                
+                Test
+                
+                
 
-                    
-                    Hi
+                
+                Hi
 
-                </div>
+            </div>
 
 
 
-                    injected styles
-                HTML,
+                injected styles
+            HTML,
             $this->view->render(
                 <<<'HTML'
-                    <x-complex-base>
-                        Test
-                        
-                        <x-slot name="scripts">
-                        injected scripts
-                        </x-slot>
-                        
-                        <x-slot name="styles">
-                        injected styles
-                        </x-slot>
-                        
-                        Hi
-                    </x-complex-base>
-                    HTML,
+                <x-complex-base>
+                    Test
+                    
+                    <x-slot name="scripts">
+                    injected scripts
+                    </x-slot>
+                    
+                    <x-slot name="styles">
+                    injected styles
+                    </x-slot>
+                    
+                    Hi
+                </x-complex-base>
+                HTML,
             ),
         );
     }
@@ -428,18 +428,18 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
+            <pre>a
+                    <span class="hl-prop">b</span>
+                <span class="hl-type">c</span>
+            </pre>
+            HTML,
+            $this->view->render(
+                <<<'HTML'
                 <pre>a
                         <span class="hl-prop">b</span>
                     <span class="hl-type">c</span>
                 </pre>
                 HTML,
-            $this->view->render(
-                <<<'HTML'
-                    <pre>a
-                            <span class="hl-prop">b</span>
-                        <span class="hl-type">c</span>
-                    </pre>
-                    HTML,
             ),
         );
     }
@@ -456,10 +456,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-            &lt;h1&gt;hi&lt;/h1&gt;
-            &lt;H1&gt;HI&lt;/H1&gt;
-            <h1>hi</h1>
-            HTML, $html);
+        &lt;h1&gt;hi&lt;/h1&gt;
+        &lt;H1&gt;HI&lt;/H1&gt;
+        <h1>hi</h1>
+        HTML, $html);
     }
 
     public function test_html_string(): void
@@ -468,10 +468,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-                <h1>hi</h1>
-                &lt;H1&gt;HI&lt;/H1&gt;
-                <h1>hi</h1>
-                HTML,
+            <h1>hi</h1>
+            &lt;H1&gt;HI&lt;/H1&gt;
+            <h1>hi</h1>
+            HTML,
             actual: $html,
         );
     }
@@ -482,10 +482,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->view->render(
             <<<'HTML'
-                <div :if="false"></div>
-                <div :else></div>
-                <div :else></div>
-                HTML,
+            <div :if="false"></div>
+            <div :else></div>
+            <div :else></div>
+            HTML,
         );
     }
 
@@ -493,25 +493,25 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->view->render(
             <<<'HTML'
-                <div :if="false"></div>
-                <div :else></div>
-                HTML,
+            <div :if="false"></div>
+            <div :else></div>
+            HTML,
         );
 
         $this->view->render(
             <<<'HTML'
-                <div :if="false"></div>
-                <div :elseif="false"></div>
-                <div :else></div>
-                HTML,
+            <div :if="false"></div>
+            <div :elseif="false"></div>
+            <div :else></div>
+            HTML,
         );
 
         $this->expectException(ElementWasInvalid::class);
 
         $this->view->render(
             <<<'HTML'
-                <div :else></div>
-                HTML,
+            <div :else></div>
+            HTML,
         );
     }
 
@@ -519,18 +519,18 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->view->render(
             <<<'HTML'
-                <div :if="false"></div>
-                <div :elseif="false"></div>
-                <div :elseif="false"></div>
-                HTML,
+            <div :if="false"></div>
+            <div :elseif="false"></div>
+            <div :elseif="false"></div>
+            HTML,
         );
 
         $this->expectException(ElementWasInvalid::class);
 
         $this->view->render(
             <<<'HTML'
-                <div :elseif="false"></div>
-                HTML,
+            <div :elseif="false"></div>
+            HTML,
         );
     }
 
@@ -538,17 +538,17 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->view->render(
             view(<<<'HTML'
-                <div :foreach="$foo as $bar"></div>
-                <div :forelse></div>
-                HTML, foo: []),
+            <div :foreach="$foo as $bar"></div>
+            <div :forelse></div>
+            HTML, foo: []),
         );
 
         $this->expectException(ElementWasInvalid::class);
 
         $this->view->render(
             <<<'HTML'
-                <div :forelse></div>
-                HTML,
+            <div :forelse></div>
+            HTML,
         );
     }
 
@@ -556,19 +556,19 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->view->render(
             view(<<<'HTML'
-                <div :foreach="$foo as $bar"></div>
-                <div :forelse></div>
-                HTML, foo: []),
+            <div :foreach="$foo as $bar"></div>
+            <div :forelse></div>
+            HTML, foo: []),
         );
 
         $this->expectException(ElementWasInvalid::class);
 
         $this->view->render(
             view(<<<'HTML'
-                <div :foreach="$foo as $bar"></div>
-                <div :forelse></div>
-                <div :forelse></div>
-                HTML, foo: []),
+            <div :foreach="$foo as $bar"></div>
+            <div :forelse></div>
+            <div :forelse></div>
+            HTML, foo: []),
         );
     }
 
@@ -576,8 +576,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $view = view(
             <<<HTML
-                <div data-theme="tempest"></div>
-                HTML,
+            <div data-theme="tempest"></div>
+            HTML,
         );
 
         $html = $this->view->render($view);
@@ -612,19 +612,19 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
-                <div class="base"><!-- example of comment -->
+            <div class="base"><!-- example of comment -->
 
-                    Test
+                Test
 
-                </div>
-                HTML,
+            </div>
+            HTML,
             $this->view->render(
                 <<<'HTML'
-                    <x-base-layout>
-                        <!-- example of comment -->
-                        Test
-                    </x-base-layout>
-                    HTML,
+                <x-base-layout>
+                    <!-- example of comment -->
+                    Test
+                </x-base-layout>
+                HTML,
             ),
         );
     }
@@ -652,21 +652,21 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_html_tags(): void
     {
         $view = <<<'HTML'
-            <!doctype html> 
-            <html lang="en"> 
-            <!-- test comment -->
-            <head> 
-                <title>Tempest</title>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="/main.css" rel="stylesheet">
-            </head> 
-            <body class="flex justify-center items-center">
+        <!doctype html> 
+        <html lang="en"> 
+        <!-- test comment -->
+        <head> 
+            <title>Tempest</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="/main.css" rel="stylesheet">
+        </head> 
+        <body class="flex justify-center items-center">
 
-            <h1 class="font-bold text-[#4f95d1] text-5xl">Tempest</h1>
-            </body> 
-            </html>
-            HTML;
+        <h1 class="font-bold text-[#4f95d1] text-5xl">Tempest</h1>
+        </body> 
+        </html>
+        HTML;
 
         $html = $this->view->render($view);
 
@@ -693,8 +693,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <button @click="foo">test</button>
-                HTML,
+            <button @click="foo">test</button>
+            HTML,
             $rendered,
         );
     }
@@ -707,8 +707,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <button x-on:click="foo">test</button>
-                HTML,
+            <button x-on:click="foo">test</button>
+            HTML,
             $rendered,
         );
     }
@@ -718,10 +718,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $this->view->render(
             view(
                 <<<'HTML'
-                        <a :foreach="$items as $item" :href="$item->uri">
-                            {{ $item->title }}
-                        </a>
-                    HTML,
+                    <a :foreach="$items as $item" :href="$item->uri">
+                        {{ $item->title }}
+                    </a>
+                HTML,
             )
                 ->data(items: [
                     new class {
@@ -738,16 +738,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSnippetsMatch(<<<'HTML'
-            <a href="/item-1">Item 1</a><a href="/item-2">Item 2</a>
-            HTML, $html);
+        <a href="/item-1">Item 1</a><a href="/item-2">Item 2</a>
+        HTML, $html);
     }
 
     public function test_if_and_foreach_precedence(): void
     {
         $html = $this->view->render(
             <<<'HTML'
-                <div :foreach="$items as $item" :if="$item->show">{{ $item->name }}</div>    
-                HTML,
+            <div :foreach="$items as $item" :if="$item->show">{{ $item->name }}</div>    
+            HTML,
             items: [
                 (object) ['name' => 'A', 'show' => true],
                 (object) ['name' => 'B', 'show' => false],
@@ -759,8 +759,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
-                HTML,
+            <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
+            HTML,
             show: true,
             items: [
                 (object) ['name' => 'A', 'show' => true],
@@ -773,8 +773,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
-                HTML,
+            <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             show: true,
             items: [
                 (object) ['name' => 'A', 'show' => true],
@@ -787,8 +787,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
-                HTML,
+            <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
+            HTML,
             show: false,
             items: [
                 (object) ['name' => 'A', 'show' => true],
@@ -801,8 +801,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
-                HTML,
+            <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             show: false,
             items: [
                 (object) ['name' => 'A', 'show' => true],
@@ -815,8 +815,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :if="$item->show" :foreach="$items as $item">{{ $item->name }}</div>    
-                HTML,
+            <div :if="$item->show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             item: (object) ['show' => true],
             items: [
                 (object) ['name' => 'A', 'show' => true],
@@ -829,8 +829,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $this->view->render(
             <<<'HTML'
-                <div :if="$item->show ?? null" :foreach="$items as $item">{{ $item->name }}</div>    
-                HTML,
+            <div :if="$item->show ?? null" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             items: [
                 (object) ['name' => 'A', 'show' => true],
                 (object) ['name' => 'B', 'show' => false],
@@ -851,8 +851,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_unclosed_php_tag(): void
     {
         $html = $this->view->render(<<<'HTML'
-            <?php echo 'hi';
-            HTML);
+        <?php echo 'hi';
+        HTML);
 
         $this->assertSame('hi', $html);
     }
@@ -860,8 +860,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_view_comments(): void
     {
         $html = $this->view->render(<<<'HTML'
-            <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
-            HTML);
+        <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
+        HTML);
 
         $this->assertSnippetsMatch('<p>this is rendered text</p>', $html);
     }
@@ -869,19 +869,19 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_multiline_view_comments(): void
     {
         $html = $this->view->render(<<<'HTML'
-            {{-- this is a comment
-                    <div>
-                        <!-- Start -->
-                        <x-label>{{ Tempest\Intl\translate('test_2') }}</x-label>
-                    <x-input
-                        name="test"
-                        type="text"
-                        class="block dark:bg-neutral-900 disabled:opacity-50 px-4 py-2.5 sm:py-3 border-1 border-gray-500 focus:border-blue-500 dark:border-neutral-700 rounded-lg focus:ring-blue-500 dark:focus:ring-neutral-600 w-full dark:text-neutral-400 sm:text-sm disabled:pointer-events-none dark:placeholder-neutral-500" placeholder="This is placeholder" />
-                    <!-- end -->
-                </div>
-                --}}
-            <p>This should be rendered</p>
-            HTML);
+        {{-- this is a comment
+                <div>
+                    <!-- Start -->
+                    <x-label>{{ Tempest\Intl\translate('test_2') }}</x-label>
+                <x-input
+                    name="test"
+                    type="text"
+                    class="block dark:bg-neutral-900 disabled:opacity-50 px-4 py-2.5 sm:py-3 border-1 border-gray-500 focus:border-blue-500 dark:border-neutral-700 rounded-lg focus:ring-blue-500 dark:focus:ring-neutral-600 w-full dark:text-neutral-400 sm:text-sm disabled:pointer-events-none dark:placeholder-neutral-500" placeholder="This is placeholder" />
+                <!-- end -->
+            </div>
+            --}}
+        <p>This should be rendered</p>
+        HTML);
 
         $this->assertSnippetsMatch('<p>This should be rendered</p>', $html);
     }
@@ -893,17 +893,17 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         }
 
         $rss = <<<'XML'
-            <?xml version="1.0" encoding="UTF-8" ?>
-            <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-                <id>https://tempestphp.com/rss</id>
-                <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
-                <title>Tempest</title>
-                <entry :foreach="$posts as $post">
-                    <title><![CDATA[ {!! $post['title'] !!} ]]></title>
-                    <media:content :url="$post['url']" medium="image" />
-                </entry>
-            </feed>
-            XML;
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+            <id>https://tempestphp.com/rss</id>
+            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
+            <title>Tempest</title>
+            <entry :foreach="$posts as $post">
+                <title><![CDATA[ {!! $post['title'] !!} ]]></title>
+                <media:content :url="$post['url']" medium="image" />
+            </entry>
+        </feed>
+        XML;
 
         $parsed = $this->view->render($rss, posts: [
             ['title' => '<h1>A</h1>', 'url' => 'https://tempestphp.com/a'],
@@ -911,27 +911,27 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         ]);
 
         $this->assertSnippetsMatch(<<<'RSS'
-            <?xml version="1.0" encoding="UTF-8" ?>
-            <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-                <id>https://tempestphp.com/rss</id>
-                <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
-                <title>Tempest</title>
-                <entry>
-                    <title><![CDATA[ <h1>A</h1> ]]></title>
-                    <media:content medium="image" url="https://tempestphp.com/a"></media:content>
-                </entry>
-                <entry><title><![CDATA[ B ]]></title>
-                    <media:content medium="image" url="https://tempestphp.com/b"></media:content>
-                </entry>
-            </feed>
-            RSS, $parsed);
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+            <id>https://tempestphp.com/rss</id>
+            <link rel="self" type="application/atom+xml" href="https://tempestphp.com/rss" />
+            <title>Tempest</title>
+            <entry>
+                <title><![CDATA[ <h1>A</h1> ]]></title>
+                <media:content medium="image" url="https://tempestphp.com/a"></media:content>
+            </entry>
+            <entry><title><![CDATA[ B ]]></title>
+                <media:content medium="image" url="https://tempestphp.com/b"></media:content>
+            </entry>
+        </feed>
+        RSS, $parsed);
     }
 
     public function test_attributes_with_single_quotes(): void
     {
         $html = $this->view->render(<<<'HTML'
-            <div class='hello'></div>
-            HTML);
+        <div class='hello'></div>
+        HTML);
 
         $this->assertSnippetsMatch('<div class="hello"></div>', $html);
     }
@@ -939,8 +939,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_zero_in_attribute(): void
     {
         $html = $this->view->render(<<<'HTML'
-            <table border="0"></table>
-            HTML);
+        <table border="0"></table>
+        HTML);
 
         $this->assertSnippetsMatch('<table border="0"></table>', $html);
     }

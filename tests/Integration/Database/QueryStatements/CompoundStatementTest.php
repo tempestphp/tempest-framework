@@ -18,9 +18,9 @@ final class CompoundStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             <<<SQL
-                SELECT 1;
-                SELECT 2;
-                SQL,
+            SELECT 1;
+            SELECT 2;
+            SQL,
             $statement->compile(DatabaseDialect::SQLITE),
         );
     }

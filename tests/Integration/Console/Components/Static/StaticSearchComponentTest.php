@@ -26,22 +26,22 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->submit('a')
             ->assertContains(
                 <<<TXT
-                    - [0] Cancel
-                    - [1] Search again
-                    - [2] Paul
-                    - [3] Aidan
-                    - [4] Roman
-                    TXT,
+                - [0] Cancel
+                - [1] Search again
+                - [2] Paul
+                - [3] Aidan
+                - [4] Roman
+                TXT,
                 true,
             )
             ->submit(1)
             ->submit('b')
             ->assertContains(
                 <<<TXT
-                    - [0] Cancel
-                    - [1] Search again
-                    - [2] Brent
-                    TXT,
+                - [0] Cancel
+                - [1] Search again
+                - [2] Brent
+                TXT,
                 true,
             )
             ->submit(2)
@@ -62,9 +62,9 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->submit()
             ->assertContains(
                 text: <<<TXT
-                    - [0] Cancel
-                    - [1] Search again
-                    TXT,
+                - [0] Cancel
+                - [1] Search again
+                TXT,
                 ignoreLineEndings: true,
             )
             ->submit(0)
@@ -86,9 +86,9 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->submit()
             ->assertContains(
                 text: <<<TXT
-                    - [0] Cancel
-                    - [1] Search again
-                    TXT,
+                - [0] Cancel
+                - [1] Search again
+                TXT,
                 ignoreLineEndings: true,
             )
             ->submit(0)

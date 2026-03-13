@@ -117,14 +117,14 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
             $db = str_replace('.php', '.sqlite', $config);
 
             Filesystem\write_file(__DIR__ . '/Fixtures/' . $config, <<<PHP
-                <?php
+            <?php
 
-                use Tempest\Database\Config\SQLiteConfig;
+            use Tempest\Database\Config\SQLiteConfig;
 
-                return new SQLiteConfig(
-                    path: '{$db}',
-                );
-                PHP);
+            return new SQLiteConfig(
+                path: '{$db}',
+            );
+            PHP);
         }
     }
 }

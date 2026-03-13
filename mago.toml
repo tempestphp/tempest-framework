@@ -14,7 +14,7 @@ excludes = [
 	"**/*.input.php",
 	"**/*.expected.php",
 	"**/.tempest",
-	"./vendor/rector", #see https://github.com/carthage-software/mago/issues/1237 rector clashes and throws errors in tests
+	"./vendor/rector", # see https://github.com/carthage-software/mago/issues/1237 rector clashes and throws errors in tests
 	"packages/intl/bin/plural-rules.php",
 ]
 
@@ -22,6 +22,7 @@ excludes = [
 print-width = 180
 tab-width = 4
 use-tabs = false
+indent-heredoc = false
 space-after-logical-not-unary-prefix-operator = true
 null-type-hint = "question"
 space-before-arrow-function-parameter-list-parenthesis = true
@@ -43,12 +44,12 @@ trait-name = { psr = false }
 class-name = { psr = false }
 literal-named-argument = { enabled = false } # todo
 no-error-control-operator = { enabled = false }
-#no-boolean-literal-comparison = { enabled = false }
+# no-boolean-literal-comparison = { enabled = false }
 too-many-methods = { enabled = false }
 kan-defect = { enabled = false }
 cyclomatic-complexity = { enabled = false }
-#return-type = { ignore-arrow-function = true, ignore-closure = true }
-#parameter-type = { ignore-arrow-function = true, ignore-closure = true }
+# return-type = { ignore-arrow-function = true, ignore-closure = true }
+# parameter-type = { ignore-arrow-function = true, ignore-closure = true }
 too-many-enum-cases = { enabled = false }
 no-redundant-file = { enabled = false }
 assertion-style = { style = "this" }

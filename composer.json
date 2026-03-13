@@ -229,6 +229,7 @@
             "Tempest\\Mail\\Tests\\": "packages/mail/tests",
             "Tempest\\Mapper\\Tests\\": "packages/mapper/tests",
             "Tempest\\Process\\Tests\\": "packages/process/tests",
+            "Tempest\\Rector\\": "utils/rector/src",
             "Tempest\\Reflection\\Tests\\": "packages/reflection/tests",
             "Tempest\\Router\\Tests\\": "packages/router/tests",
             "Tempest\\Storage\\Tests\\": "packages/storage/tests",
@@ -237,8 +238,7 @@
             "Tempest\\Validation\\Tests\\": "packages/validation/tests",
             "Tempest\\View\\Tests\\": "packages/view/tests",
             "Tempest\\Vite\\Tests\\": "packages/vite/tests",
-            "Tests\\Tempest\\": "tests",
-            "Tempest\\Rector\\": "utils/rector/src"
+            "Tests\\Tempest\\": "tests"
         }
     },
     "bin": [

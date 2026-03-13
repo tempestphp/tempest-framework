@@ -71,13 +71,13 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
     private function createReactRefreshTag(): string
     {
         return <<<HTML
-                <script type="module">
-                    import RefreshRuntime from '{$this->bridgeFile->url}/@react-refresh';
-                    RefreshRuntime.injectIntoGlobalHook(window);
-                    window.\$RefreshReg$ = () => {};
-                    window.\$RefreshSig$ = () => (type) => type;
-                    window.__vite_plugin_react_preamble_installed__ = true;
-                </script>
-            HTML;
+            <script type="module">
+                import RefreshRuntime from '{$this->bridgeFile->url}/@react-refresh';
+                RefreshRuntime.injectIntoGlobalHook(window);
+                window.\$RefreshReg$ = () => {};
+                window.\$RefreshSig$ = () => (type) => type;
+                window.__vite_plugin_react_preamble_installed__ = true;
+            </script>
+        HTML;
     }
 }

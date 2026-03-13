@@ -207,12 +207,12 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $content = match (true) {
             $html instanceof View => $html,
             $html !== null => <<<HTML_WRAP
-                    <html>
-                        <body>
-                            <h1>{$html}</h1>
-                        </body>
-                    </html>
-                HTML_WRAP,
+                <html>
+                    <body>
+                        <h1>{$html}</h1>
+                    </body>
+                </html>
+            HTML_WRAP,
             $text !== null => $text,
             default => 'Hello Jon in Text',
         };

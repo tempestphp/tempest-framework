@@ -30,11 +30,11 @@ final class CircularDependencyExceptionTest extends TestCase
             );
 
             $expected = <<<'TXT'
-                	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
-                	│   CircularB::__construct(CircularC $c)
-                	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-                	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
-                TXT;
+            	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
+            	│   CircularB::__construct(CircularC $c)
+            	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
+            	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
+            TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 
@@ -59,12 +59,12 @@ final class CircularDependencyExceptionTest extends TestCase
             );
 
             $expected = <<<'TXT'
-                	    CircularZ::__construct(CircularA $a)
-                	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
-                	│   CircularB::__construct(CircularC $c)
-                	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-                	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
-                TXT;
+            	    CircularZ::__construct(CircularA $a)
+            	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
+            	│   CircularB::__construct(CircularC $c)
+            	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
+            	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
+            TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 

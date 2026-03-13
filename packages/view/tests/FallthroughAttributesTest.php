@@ -29,10 +29,10 @@ final class FallthroughAttributesTest extends TestCase
         );
 
         $this->assertEquals(str_replace([' ', PHP_EOL], '', <<<'HTML'
-            <div class="in-component component-class"></div>
-            <div class="in-component component-class"></div>
-            <div class="component-class" style="display: block;"></div>
-            <div class="component-class" style="display: block;"></div>
-            HTML), str_replace([' ', PHP_EOL], '', $html));
+        <div class="in-component component-class"></div>
+        <div class="in-component component-class"></div>
+        <div class="component-class" style="display: block;"></div>
+        <div class="component-class" style="display: block;"></div>
+        HTML), str_replace([' ', PHP_EOL], '', $html));
     }
 }

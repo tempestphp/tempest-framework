@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Installer;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleInputArgument;
