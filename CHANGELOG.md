@@ -1104,5 +1104,3 @@ All notable changes to this project will be documented in this file.
 - phpunit fixes (#436) ([759134f](https://github.com/tempestphp/tempest-framework/commit/759134f50f2327efb04f9334e78baa88d877a5e7))
 - tag console highlighter (#437) ([b7c5332](https://github.com/tempestphp/tempest-framework/commit/b7c53325ff22905f3d09015f466391791f8f886f))
 - update console readme (#444) ([7c6f1b0](https://github.com/tempestphp/tempest-framework/commit/7c6f1b083fd429d58cbde2d30b4af2143e9c58f0))
-
-

@@ -25,7 +25,6 @@ if (class_exists(ConsoleCommand::class)) {
         public function __construct(
             private readonly MigrationManager $migrationManager,
             private readonly Container $container,
-            private readonly Console $console,
             private readonly ConsoleArgumentBag $consoleArgumentBag,
         ) {}
 
