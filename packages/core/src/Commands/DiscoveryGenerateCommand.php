@@ -6,7 +6,6 @@ namespace Tempest\Core\Commands;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
-use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Discovery\ClearDiscoveryCache;
