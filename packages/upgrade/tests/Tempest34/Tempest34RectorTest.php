@@ -79,7 +79,7 @@ final class Tempest34RectorTest extends TestCase
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/KernelDiscoveryLocations.input.php')
-            ->assertContains('$this->kernel->registry->locations')
+            ->assertContains('$this->kernel->discoveryConfig->locations')
             ->assertNotContains('$this->kernel->discoveryLocations');
     }
 
