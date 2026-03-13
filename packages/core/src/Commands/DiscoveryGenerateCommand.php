@@ -22,7 +22,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
         public function __construct(
             private FrameworkKernel $kernel,
-            private Container $container,
             private DiscoveryConfig $discoveryConfig,
             private DiscoveryCache $discoveryCache,
             private GenerateDiscoveryCache $generateDiscoveryCache,

@@ -257,10 +257,11 @@ final class BootDiscovery
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
-        /** @var Discovery $discovery */
         if ($this->container instanceof GenericContainer || $this->container->has($discoveryClass)) {
+            /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
         } else {
+            /** @var Discovery $discovery */
             $discovery = new $discoveryClass();
         }
 
