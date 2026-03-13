@@ -57,43 +57,21 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
                     $kernel = $this->resolveKernel();
 
                     ($this->generateDiscoveryCache)(
-                        $kernel->container,
-                        $kernel->discoveryConfig,
-                        $this->discoveryCache->withStrategy($strategy),
+                        container: $kernel->container,
+                        config: $this->discoveryConfig,
+                        cache: $this->discoveryCache,
+                        strategy: $strategy,
                     );
                 },
             );
         }
 
-        private function generateDiscoveryCache(DiscoveryCacheStrategy $strategy, Closure $log): void
-        {
-            $kernel = $this->resolveKernel();
-
-            $bootDiscovery = new BootDiscovery(
-                container: $kernel->container,
-                config: $kernel->container->get(DiscoveryConfig::class),
-                cache: $this->discoveryCache,
-            );
-
-            $discoveries = $bootDiscovery->build();
-
-            foreach ($this->discoveryConfig->locations as $location) {
-                $this->discoveryCache->store($location, $discoveries);
-                $log($location->path);
-            }
-
-            $this->discoveryCache->storeStrategy($strategy);
-        }
-
         private function resolveKernel(): FrameworkKernel
         {
-            $container = new GenericContainer();
-            $container->singleton(DiscoveryConfig::class, $this->discoveryConfig);
-
             return new FrameworkKernel(
                 root: $this->kernel->root,
                 discoveryLocations: $this->kernel->discoveryConfig->locations,
-                container: $container,
+                container: new GenericContainer(),
             )
                 ->registerKernel()
                 ->loadComposer()
