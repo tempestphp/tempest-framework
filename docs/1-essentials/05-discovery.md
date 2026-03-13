@@ -247,7 +247,7 @@ Whenever this action is run, discovery will find all discovery classes, and run 
 
 ### Manually specify discovery locations
 
-`DiscoveryConfig::autoload()` will scan a given root path and autmatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually provide them via `DiscoveryConfig`:
+`DiscoveryConfig::autoload()` will scan a given root path and automatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually provide them via `DiscoveryConfig`:
 
 ```php
 use Tempest\Discovery\DiscoveryConfig;
