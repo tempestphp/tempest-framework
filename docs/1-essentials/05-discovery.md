@@ -259,7 +259,7 @@ $config = new DiscoveryConfig(locations: [
 ]);
 ```
 
-### Config and caching
+### Config
 
 You can pass config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
 
@@ -286,4 +286,28 @@ new BootDiscovery(
         )
     ),
 )();
+```
+
+### Generating and clearing Discovery cache
+
+By default, discovery cache will be set to `partial`, meaning that all vendor locations will be cached. Discovery cache needs to be generated before it can be used, though. If you're using `tempest/discovery` as a standalone package, you'll have to take care of generating this cache yourself. In Tempest, this is done with a `discovery:generate` CLI command, but you're free to implement it in any other way you seem fit.
+
+Actually generating the cache can be with the {b`\Tempest\Discovery\GenerateDiscoveryCache`} action:
+
+```php
+use Tempest\Discovery\GenerateDiscoveryCache;
+use Tempest\Discovery\DiscoveryConfig;
+
+($this->generateDiscoveryCache)(
+    container: new Container(), // Pass in a clean container
+    config: $discoveryConfig, // You probably already have a configured `DiscoveryConfig` from setting up discovery
+    cache: $discoveryCache->withStrategy($strategy), // Make sure to set the strategy which you want to use for caching
+);
+```
+
+It's important to note that discovery cache only works if the strategy used during generation is the same as subsequent requests. It's advised to always run cache generation code from within a script that doesn't have discovery cache enabled. For example:
+
+```console
+~ DISCOVERY_CACHE=false bin/console discovery:generate 
+~ DISCOVERY_CACHE=false artisan discovery:generate
 ```
