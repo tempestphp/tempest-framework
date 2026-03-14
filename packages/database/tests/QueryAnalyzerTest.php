@@ -26,6 +26,7 @@ use Tempest\Mapper\SerializerFactory;
 final class QueryAnalyzerTest extends TestCase
 {
     private FakeEventBus $eventBus;
+
     private GenericDatabase $database;
 
     protected function setUp(): void
@@ -67,7 +68,7 @@ final class QueryAnalyzerTest extends TestCase
 
     private function lastEvent(): QueryExecuted
     {
-        return $this->eventBus->dispatched[array_key_last($this->eventBus->dispatched)];
+        return array_last($this->eventBus->dispatched);
     }
 
     #[Test]

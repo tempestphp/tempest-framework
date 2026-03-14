@@ -12,6 +12,7 @@ use function Tempest\Support\Arr\contains;
 final class QueryAnalyzer
 {
     private ?array $explainResult = null;
+
     private bool $explainComputed = false;
 
     public function __construct(

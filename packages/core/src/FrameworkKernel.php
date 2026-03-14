@@ -31,18 +31,14 @@ final class FrameworkKernel implements Kernel
 
     public DiscoveryConfig $discoveryConfig;
 
-    /** @var DiscoveryLocation[] */
-    private array $discoveryLocations;
-
     public function __construct(
         public string $root,
-        /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
-        array $discoveryLocations = [],
+        /** @var DiscoveryLocation[] */
+        private array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
     ) {
         $this->container = $container ?? $this->createContainer();
-        $this->discoveryLocations = $discoveryLocations;
 
         if ($internalStorage !== null) {
             $this->internalStorage = $internalStorage;

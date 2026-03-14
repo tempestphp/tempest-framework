@@ -3,6 +3,9 @@
 namespace Tempest\Upgrade\Tempest34;
 
 use PhpParser\Node;
+use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\UseItem;
 use Rector\Rector\AbstractRector;
 
 final class UpdateDiscoveryImportsRector extends AbstractRector
@@ -22,18 +25,18 @@ final class UpdateDiscoveryImportsRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\UseItem::class,
-            Node\Name\FullyQualified::class,
+            UseItem::class,
+            FullyQualified::class,
         ];
     }
 
     public function refactor(Node $node): ?Node
     {
-        if ($node instanceof Node\UseItem) {
+        if ($node instanceof UseItem) {
             $name = $node->name->toString();
 
             if (isset(self::CLASS_RENAMES[$name])) {
-                $node->name = new Node\Name(self::CLASS_RENAMES[$name]);
+                $node->name = new Name(self::CLASS_RENAMES[$name]);
 
                 return $node;
             }
@@ -41,11 +44,11 @@ final class UpdateDiscoveryImportsRector extends AbstractRector
             return null;
         }
 
-        if ($node instanceof Node\Name\FullyQualified) {
+        if ($node instanceof FullyQualified) {
             $name = $node->toString();
 
             if (isset(self::CLASS_RENAMES[$name])) {
-                return new Node\Name\FullyQualified(self::CLASS_RENAMES[$name]);
+                return new FullyQualified(self::CLASS_RENAMES[$name]);
             }
         }
 

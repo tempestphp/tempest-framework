@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tempest34;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
 use Rector\Rector\AbstractRector;
@@ -48,16 +49,10 @@ final class UpdateKernelDiscoveryPropertiesRector extends AbstractRector
         );
     }
 
-    private function isKernelType(Node\Expr $expr): bool
+    private function isKernelType(Expr $expr): bool
     {
         $type = $this->nodeTypeResolver->getType($expr);
 
-        foreach ($type->getObjectClassNames() as $className) {
-            if ($className === 'Tempest\Core\Kernel' || is_subclass_of($className, 'Tempest\Core\Kernel')) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($type->getObjectClassNames(), fn ($className) => $className === 'Tempest\Core\Kernel' || is_subclass_of($className, 'Tempest\Core\Kernel'));
     }
 }

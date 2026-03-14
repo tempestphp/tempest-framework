@@ -16,7 +16,7 @@ final readonly class AutoloadDiscoveryLocations
         private string $rootPath,
         ?Composer $composer = null,
     ) {
-        if (! $composer) {
+        if (! $composer instanceof Composer) {
             $composer = new Composer($rootPath);
             $composer->load();
         }

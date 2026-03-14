@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryExecuted;
 use Tempest\EventBus\EventBus;
@@ -81,7 +82,7 @@ final class QueryExecutedTest extends FrameworkIntegrationTestCase
 
         try {
             Book::select()->orderByRaw('title DES')->first();
-        } catch (\Tempest\Database\Exceptions\QueryWasInvalid) { // @mago-expect lint:no-empty-catch-clause
+        } catch (QueryWasInvalid) { // @mago-expect lint:no-empty-catch-clause
         }
 
         $this->assertNotEmpty($this->dispatched);
