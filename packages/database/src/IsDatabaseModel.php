@@ -204,7 +204,7 @@ trait IsDatabaseModel
 
         $loadedRelations = $model
             ->getRelations()
-            ->filter(fn (Relation $relation) => $model->isRelationLoaded($relation));
+            ->filter($model->isRelationLoaded(...));
 
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);

@@ -45,7 +45,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
      */
     public function getItems(array $keys = []): ImmutableArray
     {
-        return arr($keys)->map(fn (string $key) => $this->getItem($key));
+        return arr($keys)->map($this->getItem(...));
     }
 
     public function hasItem(string $key): bool

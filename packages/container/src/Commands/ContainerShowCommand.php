@@ -38,7 +38,7 @@ if (class_exists(ConsoleCommand::class)) {
             $this->listBindings(
                 title: 'Initializers',
                 bindings: sort($this->container->getInitializers()),
-                formatKey: fn (string $class): string => $this->formatClassKey($class),
+                formatKey: $this->formatClassKey(...),
                 formatValue: fn (string $_, string $initializer): string => $this->formatClassValue($initializer),
                 reject: static fn (string $_, string $initializer): bool => contains($initializer, ['\\Stubs', '\\Fixtures']),
             );

@@ -160,7 +160,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function isSelected(Option $option): bool
     {
-        return (bool) arr($this->selectedOptions)->first(fn (Option $other) => $option->equals($other));
+        return (bool) arr($this->selectedOptions)->first($option->equals(...));
     }
 
     public function isActive(Option $option): bool

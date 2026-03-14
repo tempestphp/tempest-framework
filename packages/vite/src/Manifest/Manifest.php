@@ -25,7 +25,7 @@ final readonly class Manifest
 
     public static function fromArray(array $chunks): self
     {
-        $chunks = arr($chunks)->map(fn (array $value) => Chunk::fromArray($value));
+        $chunks = arr($chunks)->map(Chunk::fromArray(...));
 
         return new self(
             chunks: $chunks,

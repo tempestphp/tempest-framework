@@ -312,7 +312,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         return Arr\map(
             array: $this->rows,
-            map: fn (object|iterable $model) => $this->resolveModelData($model),
+            map: $this->resolveModelData(...),
         );
     }
 

@@ -107,7 +107,7 @@ final class MailTester
         get => Arr\map(
             array: $this->sentSymfonyEmail->getAttachments(),
             map: fn (DataPart $attachment) => new Attachment(
-                resolve: fn () => $attachment->getBody(),
+                resolve: $attachment->getBody(...),
                 name: $attachment->getFilename(),
                 contentType: $attachment->getMediaType() . '/' . $attachment->getMediaSubtype(),
             ),

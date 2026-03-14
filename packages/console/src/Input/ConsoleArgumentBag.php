@@ -56,7 +56,7 @@ final class ConsoleArgumentBag
             array: $this->arguments,
             callback: static fn ($argument) => array_any(
                 array: $names,
-                callback: static fn ($name) => $argument->matches($name),
+                callback: $argument->matches(...),
             ),
         );
     }

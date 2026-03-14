@@ -25,7 +25,7 @@ final readonly class LoadConfig
 
     public function __invoke(): void
     {
-        $configPaths = $this->cache->resolve('config_cache', fn () => $this->find());
+        $configPaths = $this->cache->resolve('config_cache', $this->find(...));
 
         foreach ($configPaths as $path) {
             $configFile = require $path;
