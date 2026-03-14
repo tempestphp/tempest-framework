@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class DiscoveryDiscovery implements Discovery
@@ -14,7 +11,7 @@ final class DiscoveryDiscovery implements Discovery
     use IsDiscovery;
 
     public function __construct(
-        private readonly Kernel $kernel,
+        private readonly DiscoveryConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
@@ -33,7 +30,7 @@ final class DiscoveryDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as $className) {
-            $this->kernel->discoveryClasses[] = $className;
+            $this->config->classes[] = $className;
         }
     }
 }

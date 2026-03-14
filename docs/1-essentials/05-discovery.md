@@ -218,3 +218,96 @@ Most of Tempest's features are built on top of discovery. The following is a non
 - {b`Tempest\Vite\ViteDiscovery`} discovers `*.entrypoint.{ts,js,css}` files and register them as [entrypoints](../2-features/02-asset-bundling.md#entrypoints).
 - {b`Tempest\Auth\AccessControl\PolicyDiscovery`} discovers methods annotated with the {b`#[Tempest\Auth\AccessControl\Policy]`} attribute and registers them as [access control policies](../2-features/04-authentication.md#access-control).
 - {b`Tempest\Core\InsightsProviderDiscovery`} discovers classes that implement {b`Tempest\Core\InsightsProvider`} and registers them as insights providers, which power the `tempest about` command.
+
+## Discovery as a standalone package
+
+`tempest/discovery` can be used as a standalone package in any application. All it needs is a PSR-11 compliant container.
+
+Start by requiring `tempest/discovery`:
+
+```console
+composer require tempest/discovery
+```
+
+Next, you can boot discovery:
+
+```php
+use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\DiscoveryConfig;
+
+// $container is any PSR-11 compliant container, already available in your app
+
+new BootDiscovery(
+    container: $container,
+    config: DiscoveryConfig::autoload(__DIR__),
+)();
+```
+
+Whenever this action is run, discovery will find all discovery classes, and run them against all registered locations.
+
+### Manually specify discovery locations
+
+`DiscoveryConfig::autoload()` will scan a given root path and automatically determine discovery locations by analyzing the composer.json file in that path. If you prefer another way of defining locations to scan, you can manually provide them via `DiscoveryConfig`:
+
+```php
+use Tempest\Discovery\DiscoveryConfig;
+use Tempest\Discovery\DiscoveryLocation;
+
+$config = new DiscoveryConfig(locations: [
+    new DiscoveryLocation('App\\', 'src/'),
+    // …
+]);
+```
+
+### Config
+
+You can pass config and cache parameters into the `BootDiscovery` action, with these you can exclude files and classes from discovery, as well as config caching behavior:
+
+```php
+use Tempest\Discovery\BootDiscovery;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryConfig;
+
+new BootDiscovery(
+    container: $container,
+    config: DiscoveryConfig::autoload(__DIR__)
+        ->skipClasses(
+            \App\Foo::class,
+            \Tempest\Container\AutowireDiscovery::class
+        )
+        ->skipPaths(
+            __DIR__ . '/../vendor/tempest/support'
+        ),
+    cache: new DiscoveryCache(
+        strategy: DiscoveryCacheStrategy::PARTIAL,
+        pool: new PhpFilesAdapter(
+            directory: __DIR__ . '/.cache/discovery'
+        )
+    ),
+)();
+```
+
+### Generating and clearing Discovery cache
+
+By default, discovery cache will be set to `partial`, meaning that all vendor locations will be cached. Discovery cache needs to be generated before it can be used, though. If you're using `tempest/discovery` as a standalone package, you'll have to take care of generating this cache yourself. In Tempest, this is done with a `discovery:generate` CLI command, but you're free to implement it in any other way you seem fit.
+
+Actually generating the cache can be with the {b`\Tempest\Discovery\GenerateDiscoveryCache`} action:
+
+```php
+use Tempest\Discovery\GenerateDiscoveryCache;
+use Tempest\Discovery\DiscoveryConfig;
+
+($this->generateDiscoveryCache)(
+    container: new Container(), // Pass in a clean container
+    config: $discoveryConfig, // You probably already have a configured `DiscoveryConfig` from setting up discovery
+    cache: $discoveryCache->withStrategy($strategy), // Make sure to set the strategy which you want to use for caching
+);
+```
+
+It's important to note that discovery cache only works if the strategy used during generation is the same as subsequent requests. It's advised to always run cache generation code from within a script that doesn't have discovery cache enabled. For example:
+
+```console
+~ DISCOVERY_CACHE=false bin/console discovery:generate 
+~ DISCOVERY_CACHE=false artisan discovery:generate
+```

@@ -5,6 +5,7 @@ namespace Tests\Tempest\Integration\Core\Config;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\Core\Kernel\LoadConfig;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -25,9 +26,9 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         Filesystem\ensure_directory_empty(__DIR__ . '/Fixtures');
 
         $this->container->get(ConfigCache::class)->clear();
-        $this->kernel->discoveryLocations = [
+        $this->container->singleton(DiscoveryConfig::class, new DiscoveryConfig(locations: [
             new DiscoveryLocation('App', __DIR__ . '/Fixtures'),
-        ];
+        ]));
     }
 
     public function test_config_loaded_in_order(): void

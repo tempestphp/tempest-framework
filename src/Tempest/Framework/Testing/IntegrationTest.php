@@ -18,7 +18,6 @@ use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Exceptions\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel;
 use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
@@ -50,7 +49,7 @@ abstract class IntegrationTest extends TestCase
     /** @var \Tempest\Discovery\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
 
-    protected Kernel $kernel;
+    protected FrameworkKernel $kernel;
 
     protected GenericContainer $container;
 

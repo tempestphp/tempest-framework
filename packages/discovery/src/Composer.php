@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Arr;
@@ -107,7 +107,7 @@ final class Composer
 
     public function save(): self
     {
-        Filesystem\write_json($this->composerPath, $this->composer, pretty: true);
+        Filesystem\write_json($this->composerPath, $this->composer);
 
         return $this;
     }
@@ -126,7 +126,7 @@ final class Composer
     private function loadComposerFile(string $path): array
     {
         if (! Filesystem\is_file($path)) {
-            throw new ComposerJsonCouldNotBeLocated('Could not locate composer.json.');
+            throw new ComposerJsonCouldNotBeLocated("Could not locate {$path}");
         }
 
         return Filesystem\read_json($path);

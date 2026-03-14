@@ -42,18 +42,12 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
 
             public string $internalStorage;
 
-            public array $discoveryLocations;
-
-            public array $discoveryClasses;
-
             public Container $container;
 
             public function __construct(FrameworkKernel $kernel)
             {
                 $this->root = $kernel->root;
                 $this->internalStorage = $kernel->internalStorage;
-                $this->discoveryLocations = $kernel->discoveryLocations;
-                $this->discoveryClasses = $kernel->discoveryClasses;
                 $this->container = $kernel->container;
             }
 

@@ -2,31 +2,35 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Kernel;
+namespace Tempest\Discovery;
 
-use Tempest\Core\Composer;
-use Tempest\Core\Kernel;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\DiscoveryLocationCouldNotBeLoaded;
 use Tempest\Support\Filesystem;
 
 use function Tempest\Support\Path\normalize;
 
-/** @internal */
-final readonly class LoadDiscoveryLocations
+final readonly class AutoloadDiscoveryLocations
 {
-    public function __construct(
-        private Kernel $kernel,
-        private Composer $composer,
-    ) {}
+    private Composer $composer;
 
-    public function __invoke(): void
+    public function __construct(
+        private string $rootPath,
+        ?Composer $composer = null,
+    ) {
+        if (! $composer) {
+            $composer = new Composer($rootPath);
+            $composer->load();
+        }
+
+        $this->composer = $composer;
+    }
+
+    /** @return \Tempest\Discovery\DiscoveryLocation[] */
+    public function __invoke(): array
     {
-        $this->kernel->discoveryLocations = [
+        return [
             ...$this->discoverCorePackages(),
             ...$this->discoverVendorPackages(),
             ...$this->discoverAppNamespaces(),
-            ...$this->kernel->discoveryLocations,
         ];
     }
 
@@ -35,7 +39,7 @@ final readonly class LoadDiscoveryLocations
      */
     private function discoverCorePackages(): array
     {
-        $composerPath = normalize($this->kernel->root, 'vendor/composer');
+        $composerPath = normalize($this->rootPath, 'vendor/composer');
         $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 
@@ -69,7 +73,7 @@ final readonly class LoadDiscoveryLocations
         $discoveredLocations = [];
 
         foreach ($this->composer->namespaces as $namespace) {
-            $path = normalize($this->kernel->root, $namespace->path);
+            $path = normalize($this->rootPath, $namespace->path);
 
             $discoveredLocations[] = new DiscoveryLocation($namespace->namespace, $path);
         }
@@ -82,7 +86,7 @@ final readonly class LoadDiscoveryLocations
      */
     private function discoverVendorPackages(): array
     {
-        $composerPath = normalize($this->kernel->root, 'vendor/composer');
+        $composerPath = normalize($this->rootPath, 'vendor/composer');
         $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 

@@ -8,7 +8,9 @@
         "nette/php-generator": "4.2.1",
         "nette/schema": "^1.3.4",
         "nikic/php-parser": "^5.3",
-        "tempest/support": "3.x-dev"
+        "tempest/container": "3.x-dev",
+        "tempest/support": "3.x-dev",
+        "psr/container": "^2.0"
     },
     "autoload": {
         "psr-4": {

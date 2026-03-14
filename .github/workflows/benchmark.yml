@@ -12,6 +12,8 @@ on:
       - 'packages/view/src/**'
       - 'packages/clock/src/**'
       - 'packages/console/src/**'
+      - 'packages/database/src/**'
+      - 'packages/event-bus/src/**'
       - 'packages/reflection/src/**'
       - 'phpbench.json'
       - '.github/workflows/benchmark.yml'

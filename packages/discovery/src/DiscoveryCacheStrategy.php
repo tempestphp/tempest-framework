@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
+
+use Tempest\Core\Environment;
 
 use function Tempest\env;
 
@@ -30,6 +32,10 @@ enum DiscoveryCacheStrategy: string
 
     public static function resolveFromEnvironment(): self
     {
+        if (! class_exists(Environment::class)) {
+            throw new DiscoveryCacheStrategyCouldNotBeDeterminedWithEnvironment();
+        }
+
         $environment = Environment::guessFromEnvironment();
 
         return static::resolveFromInput(env('DISCOVERY_CACHE', default: match (true) {

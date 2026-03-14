@@ -15,6 +15,8 @@ use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Query;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\EventBus\EventBusConfig;
+use Tempest\EventBus\GenericEventBus;
 use Tempest\Mapper\SerializerFactory;
 
 final class QueryExecutionBench
@@ -33,6 +35,7 @@ final class QueryExecutionBench
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory($container),
+            new GenericEventBus($container, new EventBusConfig()),
         );
 
         $container->singleton(Database::class, $this->database);

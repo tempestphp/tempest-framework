@@ -1,9 +1,8 @@
 <?php
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Exception;
-use Tempest\Discovery\DiscoveryLocation;
 
 final class CouldNotStoreDiscoveryCache extends Exception
 {

@@ -2,35 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Kernel;
+namespace Tempest\Discovery;
 
 use AssertionError;
-use Tempest\Container\Container;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\DiscoveryConfig;
-use Tempest\Core\DiscoveryDiscovery;
-use Tempest\Core\Kernel;
-use Tempest\Discovery\DiscoversPath;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\DiscoveryItems;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\SkipDiscovery;
+use Psr\Container\ContainerInterface;
+use Tempest\Container\GenericContainer;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
 
-/** @internal */
-final class LoadDiscoveryClasses
+final class BootDiscovery
 {
     private array $appliedDiscovery = [];
 
     private array $shouldSkipForClass = [];
 
     public function __construct(
-        private readonly Container $container,
-        private readonly DiscoveryConfig $discoveryConfig,
-        private readonly DiscoveryCache $discoveryCache,
+        private readonly ContainerInterface $container,
+        private readonly DiscoveryConfig $config,
+        private readonly DiscoveryCache $cache = new DiscoveryCache(DiscoveryCacheStrategy::NONE),
     ) {}
 
     /**
@@ -57,13 +47,12 @@ final class LoadDiscoveryClasses
         ?array $discoveryClasses = null,
         ?array $discoveryLocations = null,
     ): array {
-        $kernel = $this->container->get(Kernel::class);
-
-        $discoveryLocations ??= $kernel->discoveryLocations;
+        $discoveryLocations ??= $this->config->locations;
 
         if ($discoveryClasses === null) {
             // DiscoveryDiscovery needs to be applied before we can build all other discoveries
-            $discoveryDiscovery = $this->resolveDiscovery(DiscoveryDiscovery::class);
+            $discoveryDiscovery = new DiscoveryDiscovery($this->config);
+            $discoveryDiscovery->setItems(new DiscoveryItems());
 
             // The first pass over all directories to find all discovery classes
             $this->discover([$discoveryDiscovery], $discoveryLocations);
@@ -74,7 +63,7 @@ final class LoadDiscoveryClasses
             // Resolve all other discoveries from the container, optionally loading their cache
             $discoveries = array_map(
                 $this->resolveDiscovery(...),
-                $kernel->discoveryClasses,
+                $this->config->classes,
             );
 
             // The second pass over all directories to apply all other discovery classes
@@ -114,7 +103,7 @@ final class LoadDiscoveryClasses
             return false;
         }
 
-        $cachedForLocation = $this->discoveryCache->restore($location);
+        $cachedForLocation = $this->cache->restore($location);
 
         if (! $this->isCachedLocationUsable($discoveries, $cachedForLocation)) {
             return false;
@@ -193,11 +182,8 @@ final class LoadDiscoveryClasses
         $pathInfo = pathinfo($input);
         $extension = $pathInfo['extension'] ?? null;
         $fileName = $pathInfo['filename'] ?: null;
-        $className = null;
 
         // If this is a PHP file starting with an uppercase letter, we assume it's a class.
-        // TODO: Figure out if we can refactor this to checking composer's autoload map (it might not always be available)
-        //       An other idea is to check whether composer has a check to verify whether a file is a class?
         if ($extension === 'php' && ucfirst($fileName) === $fileName) {
             $className = $location->toClassName($input);
 
@@ -270,11 +256,19 @@ final class LoadDiscoveryClasses
     /**
      * Create a discovery instance from a class name.
      * Optionally set the cached discovery items whenever caching is enabled.
+     * @template T of Discovery
+     * @param class-string<T> $discoveryClass
+     * @return T
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
-        /** @var Discovery $discovery */
-        $discovery = $this->container->get($discoveryClass);
+        if ($this->container instanceof GenericContainer || $this->container->has($discoveryClass)) {
+            /** @var Discovery $discovery */
+            $discovery = $this->container->get($discoveryClass);
+        } else {
+            /** @var Discovery $discovery */
+            $discovery = new $discoveryClass();
+        }
 
         $discovery->setItems(new DiscoveryItems());
 
@@ -304,7 +298,7 @@ final class LoadDiscoveryClasses
             $input = $input->getName();
         }
 
-        return $this->discoveryConfig->shouldSkip($input);
+        return $this->config->shouldSkip($input);
     }
 
     /**
@@ -312,11 +306,11 @@ final class LoadDiscoveryClasses
      */
     private function isLocationCached(DiscoveryLocation $location): bool
     {
-        if (! $this->discoveryCache->enabled) {
+        if (! $this->cache->enabled) {
             return false;
         }
 
-        return match ($this->discoveryCache->strategy) {
+        return match ($this->cache->strategy) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
             DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
             // If discover cache is enabled, all locations cache should be skipped

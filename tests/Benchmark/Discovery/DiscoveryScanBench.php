@@ -10,12 +10,12 @@ use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Container\Container;
-use Tempest\Core\DiscoveryCache;
-use Tempest\Core\DiscoveryCacheStrategy;
-use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use Tempest\Discovery\BootDiscovery;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCacheStrategy;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 
 final class DiscoveryScanBench
@@ -30,21 +30,24 @@ final class DiscoveryScanBench
 
     private string $root;
 
+    private DiscoveryConfig $discoveryConfig;
+
     public function __construct()
     {
         $this->root = dirname(__DIR__, 3);
         $kernel = FrameworkKernel::boot(root: $this->root);
         $this->container = $kernel->container;
-        $this->discoveryLocations = $kernel->discoveryLocations;
-        $this->discoveryClasses = $kernel->discoveryClasses;
+        $this->discoveryConfig = $kernel->discoveryConfig;
+        $this->discoveryLocations = $kernel->discoveryConfig->locations;
+        $this->discoveryClasses = $kernel->discoveryConfig->classes;
     }
 
-    private function createLoader(): LoadDiscoveryClasses
+    private function createLoader(): BootDiscovery
     {
-        return new LoadDiscoveryClasses(
+        return new BootDiscovery(
             container: $this->container,
-            discoveryConfig: new DiscoveryConfig(),
-            discoveryCache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),
+            config: $this->discoveryConfig,
+            cache: new DiscoveryCache(DiscoveryCacheStrategy::NONE),
         );
     }
 

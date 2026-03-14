@@ -13,6 +13,7 @@ use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Transactions\TransactionManager;
+use Tempest\EventBus\EventBus;
 use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Support\Str\ImmutableString;
@@ -43,6 +44,7 @@ final class GenericDatabase implements Database
         private(set) readonly Connection $connection,
         private(set) readonly TransactionManager $transactionManager,
         private(set) readonly SerializerFactory $serializerFactory,
+        private readonly EventBus $eventBus,
     ) {}
 
     public function execute(BuildsQuery|Query $query): void
@@ -51,17 +53,13 @@ final class GenericDatabase implements Database
             $query = $query->build();
         }
 
-        $bindings = $this->resolveBindings($query);
-
-        try {
-            $statement = $this->connection->prepare($query->compile()->toString());
+        $this->runQuery($query, function (string $sql, array $bindings) use ($query): void {
+            $statement = $this->connection->prepare($sql);
             $statement->execute($bindings);
 
             $this->lastStatement = $statement;
             $this->lastQuery = $query;
-        } catch (PDOException $pdoException) {
-            throw new QueryWasInvalid($query, $bindings, $pdoException);
-        }
+        });
     }
 
     public function getLastInsertId(): ?PrimaryKey
@@ -95,16 +93,12 @@ final class GenericDatabase implements Database
             $query = $query->build();
         }
 
-        $bindings = $this->resolveBindings($query);
-
-        try {
-            $pdoQuery = $this->connection->prepare($query->compile()->toString());
+        return $this->runQuery($query, function (string $sql, array $bindings): array {
+            $pdoQuery = $this->connection->prepare($sql);
             $pdoQuery->execute($bindings);
 
             return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
-        } catch (PDOException $pdoException) {
-            throw new QueryWasInvalid($query, $bindings, $pdoException);
-        }
+        });
     }
 
     public function fetchFirst(BuildsQuery|Query $query): ?array
@@ -162,5 +156,33 @@ final class GenericDatabase implements Database
         }
 
         return $bindings;
+    }
+
+    private function runQuery(Query $query, callable $runner): mixed
+    {
+        $bindings = $this->resolveBindings($query);
+        $sql = $query->compile()->toString();
+        $failed = true;
+        $startTime = hrtime(true);
+
+        try {
+            $result = $runner($sql, $bindings);
+            $failed = false;
+
+            return $result;
+        } catch (PDOException $pdoException) {
+            throw new QueryWasInvalid($query, $bindings, $pdoException);
+        } finally {
+            try {
+                $this->eventBus->dispatch(new QueryExecuted(
+                    sql: $sql,
+                    bindings: $bindings,
+                    durationMs: (hrtime(true) - $startTime) / 1_000_000,
+                    connectionName: $this->tag,
+                    failed: $failed,
+                ));
+            } catch (Throwable) { // @mago-ignore lint:no-empty-catch-clause
+            }
+        }
     }
 }

@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\DiscoveryItems;
-use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Filesystem;
 use Throwable;
 
@@ -26,12 +23,19 @@ final class DiscoveryCache
     }
 
     public function __construct(
-        private(set) DiscoveryCacheStrategy $strategy,
+        private(set) readonly DiscoveryCacheStrategy $strategy,
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
-            directory: internal_storage_path('cache/discovery'),
+            directory: self::getCachePath(),
         );
+    }
+
+    public function withStrategy(DiscoveryCacheStrategy $strategy): self
+    {
+        return clone($this, [
+            'strategy' => $strategy,
+        ]);
     }
 
     /**
@@ -99,6 +103,15 @@ final class DiscoveryCache
             return internal_storage_path('current_discovery_strategy');
         } catch (Throwable) {
             return __DIR__ . '/current_discovery_strategy';
+        }
+    }
+
+    private static function getCachePath(): string
+    {
+        try {
+            return internal_storage_path('cache/discovery');
+        } catch (Throwable) {
+            return __DIR__ . '/../.tempest/cache';
         }
     }
 }

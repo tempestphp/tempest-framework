@@ -27,6 +27,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
         __DIR__ . '/packages',
     ])
+    ->withSkipPath(__DIR__ . '/tests/PHPStan/QueryFunctionDynamicReturnTypeExtension.php')
     ->withConfiguredRule(AddSensitiveParameterAttributeRector::class, [
         'sensitive_parameters' => [
             'password',

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\Composer;
-use Tempest\Core\ComposerJsonCouldNotBeLocated;
+use Tempest\Discovery\Composer;
+use Tempest\Discovery\ComposerJsonCouldNotBeLocated;
 use Tempest\Process\ProcessExecutor;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
