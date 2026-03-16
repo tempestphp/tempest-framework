@@ -6,10 +6,16 @@ use Psr\Container\ContainerInterface;
 
 final class GenerateDiscoveryCache
 {
+    /**
+     * @param class-string<Discovery>[]|null $discoveryClasses
+     * @param DiscoveryLocation[]|null $discoveryLocations
+     */
     public function __invoke(
         ContainerInterface $container,
         DiscoveryConfig $config,
         DiscoveryCache $cache,
+        ?array $discoveryClasses = null,
+        ?array $discoveryLocations = null,
     ): void {
         $originalStrategy = $cache->strategy;
         $cache = $cache->withStrategy(DiscoveryCacheStrategy::NONE);
@@ -20,7 +26,7 @@ final class GenerateDiscoveryCache
             cache: $cache,
         );
 
-        $discoveries = $bootDiscovery->build();
+        $discoveries = $bootDiscovery->build($discoveryClasses, $discoveryLocations);
 
         foreach ($config->locations as $location) {
             $cache->store($location, $discoveries);
