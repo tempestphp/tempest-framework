@@ -7,9 +7,9 @@ namespace Tempest\Database\Enums;
 enum DatabaseTextLength: int
 {
     case TINY = 255;
-    case DEFAULT = 65535;
-    case MEDIUM = 16777215;
-    case LONG = 4294967295;
+    case DEFAULT = 65_535;
+    case MEDIUM = 16_777_215;
+    case LONG = 4_294_967_295;
 
     public static function fromLength(int $length): self
     {
