@@ -14,10 +14,10 @@ enum DatabaseTextLength: int
     public static function fromLength(int $length): self
     {
         return match (true) {
-            $length <= DatabaseTextLength::TINY => DatabaseTextLength::TINY,
-            $length <= DatabaseTextLength::DEFAULT => DatabaseTextLength::DEFAULT,
-            $length <= DatabaseTextLength::MEDIUM => DatabaseTextLength::MEDIUM,
-            $length <= DatabaseTextLength::LONG => DatabaseTextLength::LONG,
+            $length <= DatabaseTextLength::TINY->value => DatabaseTextLength::TINY,
+            $length <= DatabaseTextLength::DEFAULT->value => DatabaseTextLength::DEFAULT,
+            $length <= DatabaseTextLength::MEDIUM->value => DatabaseTextLength::MEDIUM,
+            $length <= DatabaseTextLength::LONG->value => DatabaseTextLength::LONG,
             default => DatabaseTextLength::DEFAULT,
         };
     }
