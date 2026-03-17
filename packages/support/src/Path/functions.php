@@ -55,7 +55,7 @@ function is_absolute_path(null|Stringable|string ...$parts): bool
 {
     $path = namespace\normalize(...$parts);
 
-    if (strlen($path) === 0 || '.' === $path[0]) {
+    if ($path === '' || '.' === $path[0]) {
         return false;
     }
 
@@ -128,7 +128,7 @@ function normalize(null|Stringable|string ...$paths): string
 
     // Trim forward and backward slashes
     $parts = array_map(fn (string $part) => trim($part, '/\\'), $parts);
-    $parts = array_filter($parts, fn (string $part) => $part !== '');
+    $parts = array_filter($parts, fn (string $part) => $part !== '' && $part !== '.');
 
     // Glue parts together
     $path = implode('/', $parts);
@@ -149,7 +149,7 @@ function normalize(null|Stringable|string ...$paths): string
 
     // Restore virtual phar prefix
     if (str_starts_with($path, 'phar:')) {
-        $path = str_replace('phar:', 'phar://', $path);
+        return str_replace('phar:', 'phar://', $path);
     }
 
     return $path;

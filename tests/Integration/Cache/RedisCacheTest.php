@@ -3,12 +3,14 @@
 namespace Tests\Tempest\Integration\Cache;
 
 use Predis;
+use Predis\Client;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Tempest\Cache\GenericCache;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\PhpRedisClient;
 use Tempest\KeyValue\Redis\PredisClient;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Throwable;
 
 final class RedisCacheTest extends FrameworkIntegrationTestCase
 {
@@ -38,7 +40,7 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
 
         try {
             $redis->connect();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->markTestSkipped('Could not connect to Redis.');
         }
 
@@ -52,11 +54,11 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
 
     public function test_predis_cache(): void
     {
-        if (! class_exists(Predis\Client::class)) {
+        if (! class_exists(Client::class)) {
             $this->markTestSkipped('The `predis/predis` package is not installed.');
         }
 
-        $redis = new PredisClient(new Predis\Client(
+        $redis = new PredisClient(new Client(
             parameters: [
                 'database' => 6,
                 'timeout' => .2,
@@ -66,7 +68,7 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
 
         try {
             $redis->connect();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->markTestSkipped('Could not connect to Redis.');
         }
 

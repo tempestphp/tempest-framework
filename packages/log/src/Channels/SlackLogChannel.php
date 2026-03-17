@@ -41,9 +41,9 @@ final readonly class SlackLogChannel implements LogChannel
                 webhookUrl: $this->webhookUrl,
                 channel: $this->channelId,
                 username: $this->username,
-                level: $level,
                 useAttachment: $this->mode === PresentationMode::BLOCKS || $this->mode === PresentationMode::BLOCKS_WITH_CONTEXT,
                 includeContextAndExtra: $this->mode === PresentationMode::BLOCKS_WITH_CONTEXT,
+                level: $level,
             ),
         ];
     }

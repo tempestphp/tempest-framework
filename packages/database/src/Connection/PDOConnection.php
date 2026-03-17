@@ -20,7 +20,7 @@ final class PDOConnection implements Connection
 
     public function beginTransaction(): bool
     {
-        if ($this->pdo === null) {
+        if (! $this->pdo instanceof PDO) {
             throw new ConnectionClosed();
         }
 
@@ -29,7 +29,7 @@ final class PDOConnection implements Connection
 
     public function commit(): bool
     {
-        if ($this->pdo === null) {
+        if (! $this->pdo instanceof PDO) {
             throw new ConnectionClosed();
         }
 
@@ -38,7 +38,7 @@ final class PDOConnection implements Connection
 
     public function rollback(): bool
     {
-        if ($this->pdo === null) {
+        if (! $this->pdo instanceof PDO) {
             throw new ConnectionClosed();
         }
 
@@ -47,7 +47,7 @@ final class PDOConnection implements Connection
 
     public function lastInsertId(): false|string
     {
-        if ($this->pdo === null) {
+        if (! $this->pdo instanceof PDO) {
             throw new ConnectionClosed();
         }
 
@@ -56,7 +56,7 @@ final class PDOConnection implements Connection
 
     public function prepare(string $sql): PDOStatement
     {
-        if ($this->pdo === null) {
+        if (! $this->pdo instanceof PDO) {
             throw new ConnectionClosed();
         }
 
@@ -94,7 +94,7 @@ final class PDOConnection implements Connection
 
     public function connect(): void
     {
-        if ($this->pdo !== null) {
+        if ($this->pdo instanceof PDO) {
             return;
         }
 

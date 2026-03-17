@@ -26,7 +26,7 @@ trait IsTagInjection
             callback: function ($matches) use ($highlighter) {
                 $content = $matches['match'] ?? '';
 
-                if (! $content) {
+                if ($content === '' || $content === '0') {
                     return $matches[0];
                 }
 

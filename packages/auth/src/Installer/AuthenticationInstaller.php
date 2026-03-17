@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Installer;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
@@ -24,7 +24,6 @@ if (class_exists(ConsoleCommand::class)) {
         public function __construct(
             private readonly MigrationManager $migrationManager,
             private readonly Container $container,
-            private readonly Console $console,
             private readonly ConsoleArgumentBag $consoleArgumentBag,
         ) {}
 
@@ -47,7 +46,7 @@ if (class_exists(ConsoleCommand::class)) {
         {
             $argument = $this->consoleArgumentBag->get('migrate');
 
-            if ($argument === null || ! is_bool($argument->value)) {
+            if (! $argument instanceof ConsoleInputArgument || ! is_bool($argument->value)) {
                 return $this->console->confirm('Do you want to execute migrations?', default: false);
             }
 
@@ -58,7 +57,7 @@ if (class_exists(ConsoleCommand::class)) {
         {
             $argument = $this->consoleArgumentBag->get('oauth');
 
-            if ($argument === null || ! is_bool($argument->value)) {
+            if (! $argument instanceof ConsoleInputArgument || ! is_bool($argument->value)) {
                 return $this->console->confirm('Do you want to install OAuth?', default: false);
             }
 

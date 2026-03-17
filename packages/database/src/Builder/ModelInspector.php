@@ -89,7 +89,7 @@ final class ModelInspector
 
     public function isObjectModel(): bool
     {
-        return $this->reflector !== null;
+        return $this->reflector instanceof ClassReflector;
     }
 
     public function getTableDefinition(): TableDefinition
@@ -113,12 +113,10 @@ final class ModelInspector
 
     public function getFieldDefinition(string $field): FieldDefinition
     {
-        return $this->memoize('getFieldDefinition' . $field, function () use ($field) {
-            return new FieldDefinition(
-                $this->getTableDefinition(),
-                $field,
-            );
-        });
+        return $this->memoize('getFieldDefinition' . $field, fn () => new FieldDefinition(
+            $this->getTableDefinition(),
+            $field,
+        ));
     }
 
     public function getTableName(): string
@@ -152,7 +150,11 @@ final class ModelInspector
                     continue;
                 }
 
-                if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName())) {
+                if ($this->getHasMany($property->getName()) instanceof HasMany) {
+                    continue;
+                }
+
+                if ($this->getHasOne($property->getName()) instanceof HasOne) {
                     continue;
                 }
 
@@ -186,7 +188,7 @@ final class ModelInspector
 
             $property = $this->reflector->getProperty($name);
 
-            if ($belongsTo = $property->getAttribute(BelongsTo::class)) {
+            if (($belongsTo = $property->getAttribute(BelongsTo::class)) instanceof BelongsTo) {
                 return $belongsTo;
             }
 
@@ -238,7 +240,7 @@ final class ModelInspector
 
             $property = $this->reflector->getProperty($name);
 
-            if ($hasOne = $property->getAttribute(HasOne::class)) {
+            if (($hasOne = $property->getAttribute(HasOne::class)) instanceof HasOne) {
                 return $hasOne;
             }
 
@@ -261,7 +263,7 @@ final class ModelInspector
 
             $property = $this->reflector->getProperty($name);
 
-            if ($hasMany = $property->getAttribute(HasMany::class)) {
+            if (($hasMany = $property->getAttribute(HasMany::class)) instanceof HasMany) {
                 return $hasMany;
             }
 
@@ -284,18 +286,17 @@ final class ModelInspector
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
-        return $this->memoize('isRelation' . $name, function () use ($name) {
-            return $this->getBelongsTo($name) !== null || $this->getHasOne($name) !== null || $this->getHasMany($name) !== null;
-        });
+        return $this->memoize(
+            'isRelation' . $name,
+            fn () => $this->getBelongsTo($name) instanceof BelongsTo || $this->getHasOne($name) instanceof HasOne || $this->getHasMany($name) instanceof HasMany,
+        );
     }
 
     public function getRelation(string|PropertyReflector $name): ?Relation
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
-        return $this->memoize('getRelation' . $name, function () use ($name) {
-            return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
-        });
+        return $this->memoize('getRelation' . $name, fn () => $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name));
     }
 
     /**
@@ -311,9 +312,11 @@ final class ModelInspector
             $relationFields = arr();
 
             foreach ($this->reflector->getPublicProperties() as $property) {
-                if ($relation = $this->getRelation($property->getName())) {
-                    $relationFields[] = $relation;
+                if (! ($relation = $this->getRelation($property->getName())) instanceof Relation) {
+                    continue;
                 }
+
+                $relationFields[] = $relation;
             }
 
             return $relationFields;
@@ -360,7 +363,7 @@ final class ModelInspector
             $relation = $this->getRelation($relation);
         }
 
-        if (! $relation) {
+        if (! $relation instanceof Relation) {
             return false;
         }
 
@@ -368,11 +371,7 @@ final class ModelInspector
             return false;
         }
 
-        if ($relation->property->getValue($this->instance) === null) {
-            return false;
-        }
-
-        return true;
+        return $relation->property->getValue($this->instance) !== null;
     }
 
     public function getSelectFields(): ImmutableArray
@@ -383,18 +382,25 @@ final class ModelInspector
 
         $selectFields = arr();
 
-        if ($primaryKey = $this->getPrimaryKeyProperty()) {
+        if (($primaryKey = $this->getPrimaryKeyProperty()) instanceof PropertyReflector) {
             $selectFields[] = $primaryKey->getName();
         }
 
         foreach ($this->reflector->getPublicProperties() as $property) {
             $relation = $this->getRelation($property->getName());
-
-            if ($relation instanceof HasMany || $relation instanceof HasOne) {
+            if ($relation instanceof HasMany) {
                 continue;
             }
 
-            if ($property->isVirtual() || $property->hasAttribute(Virtual::class)) {
+            if ($relation instanceof HasOne) {
+                continue;
+            }
+
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
                 continue;
             }
 
@@ -428,7 +434,7 @@ final class ModelInspector
 
         $currentRelation = $this->getRelation($currentRelationName);
 
-        if ($currentRelation === null) {
+        if (! $currentRelation instanceof Relation) {
             return [];
         }
 
@@ -473,7 +479,7 @@ final class ModelInspector
             $currentRelationName = $property->getName();
             $currentRelation = $this->getRelation($currentRelationName);
 
-            if (! $currentRelation) {
+            if (! $currentRelation instanceof Relation) {
                 continue;
             }
 
@@ -537,7 +543,7 @@ final class ModelInspector
 
     public function getName(): string
     {
-        if ($this->reflector) {
+        if ($this->reflector instanceof ClassReflector) {
             return $this->reflector->getName();
         }
 
@@ -560,7 +566,7 @@ final class ModelInspector
 
     public function hasPrimaryKey(): bool
     {
-        return $this->getPrimaryKeyProperty() !== null;
+        return $this->getPrimaryKeyProperty() instanceof PropertyReflector;
     }
 
     public function getPrimaryKeyProperty(): ?PropertyReflector
@@ -590,7 +596,7 @@ final class ModelInspector
 
         $primaryKeyProperty = $this->getPrimaryKeyProperty();
 
-        if ($primaryKeyProperty === null) {
+        if (! $primaryKeyProperty instanceof PropertyReflector) {
             return null;
         }
 

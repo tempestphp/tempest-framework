@@ -364,7 +364,7 @@ final class Spell
 
     public PrimaryKey $spell_id;
 
-    #[BelongsTo(ownerJoin: 'creator_uuid', relationJoin: 'mage_uuid')]
+    #[BelongsTo(relationJoin: 'mage_uuid', ownerJoin: 'creator_uuid')]
     public ?Mage $creator = null;
 
     public function __construct(
@@ -395,7 +395,7 @@ final class Adventurer
 
     public PrimaryKey $adventurer_id;
 
-    #[BelongsTo(ownerJoin: 'party_uuid', relationJoin: 'party_id')]
+    #[BelongsTo(relationJoin: 'party_id', ownerJoin: 'party_uuid')]
     public ?Party $party = null;
 
     public function __construct(

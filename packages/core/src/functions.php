@@ -6,11 +6,10 @@ namespace Tempest;
 
 use Closure;
 use Stringable;
-use Tempest\Container;
-use Tempest\Core\Composer;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\EnvironmentVariableValidationFailed;
 use Tempest\Core\Kernel;
+use Tempest\Discovery\Composer;
 use Tempest\Intl\Translator;
 use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Validation\Rule;

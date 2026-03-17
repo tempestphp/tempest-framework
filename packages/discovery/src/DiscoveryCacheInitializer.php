@@ -1,0 +1,67 @@
+<?php
+
+namespace Tempest\Discovery;
+
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
+use Tempest\Support\Filesystem;
+
+final class DiscoveryCacheInitializer implements Initializer
+{
+    #[Singleton]
+    public function initialize(Container $container): DiscoveryCache
+    {
+        return new DiscoveryCache(
+            strategy: $this->resolveDiscoveryCacheStrategy(),
+        );
+    }
+
+    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
+    {
+        if ($this->isDiscoveryGenerateCommand() || $this->isDiscoveryClearCommand()) {
+            return DiscoveryCacheStrategy::NONE;
+        }
+
+        $current = DiscoveryCacheStrategy::resolveFromEnvironment();
+
+        if ($current === DiscoveryCacheStrategy::NONE) {
+            return $current;
+        }
+
+        $path = DiscoveryCache::getCurrentDiscoverStrategyCachePath();
+        $stored = Filesystem\exists($path)
+            ? Filesystem\read_file($path)
+            : null;
+
+        $original = DiscoveryCacheStrategy::resolveFromInput($stored);
+
+        if ($current !== $original) {
+            return DiscoveryCacheStrategy::INVALID;
+        }
+
+        return $current;
+    }
+
+    private function isDiscoveryGenerateCommand(): bool
+    {
+        if (PHP_SAPI !== 'cli') {
+            return false;
+        }
+
+        $command = $_SERVER['argv'][1] ?? null;
+
+        return in_array($command, ['dg', 'discovery:generate', 'd:g'], true);
+    }
+
+    private function isDiscoveryClearCommand(): bool
+    {
+        if (PHP_SAPI !== 'cli') {
+            return false;
+        }
+
+        $command = $_SERVER['argv'][1] ?? null;
+
+        return in_array($command, ['dc', 'discovery:clear', 'd:c'], true);
+    }
+}

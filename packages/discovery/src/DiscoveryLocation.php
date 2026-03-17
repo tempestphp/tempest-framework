@@ -9,7 +9,6 @@ use Tempest\Support\Namespace\Psr4Namespace;
 
 final class DiscoveryLocation
 {
-    public readonly string $namespace;
     public readonly string $path;
 
     public string $key {
@@ -17,10 +16,9 @@ final class DiscoveryLocation
     }
 
     public function __construct(
-        string $namespace,
+        public readonly string $namespace,
         string $path,
     ) {
-        $this->namespace = $namespace;
         $this->path = Filesystem\normalize_path(rtrim($path, '\\/'));
     }
 

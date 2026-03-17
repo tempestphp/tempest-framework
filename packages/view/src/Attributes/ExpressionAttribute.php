@@ -35,7 +35,7 @@ final readonly class ExpressionAttribute implements Attribute
 
             $element->setAttribute(
                 ltrim($this->name, ':'),
-                sprintf('%s', $value),
+                $value,
             );
         } else {
             $attributeName = ltrim($this->name, ':');

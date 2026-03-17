@@ -6,9 +6,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 interface ExportableViewObject
 {
-    public ImmutableArray $exportData {
-        get;
-    }
+    public ImmutableArray $exportData { get; }
 
     public static function restore(mixed ...$data): self;
 }

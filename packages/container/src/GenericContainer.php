@@ -6,7 +6,9 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
+use Psr\Container\ContainerInterface;
 use ReflectionFunction;
+use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\Exceptions\DecoratorDidNotImplementInterface;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\Exceptions\DependencyCouldNotBeInstantiated;
@@ -40,7 +42,11 @@ final class GenericContainer implements Container
         /** @var ArrayIterator<array-key, class-string[]> $decorators */
         private(set) ArrayIterator $decorators = new ArrayIterator(),
         private(set) ?DependencyChain $chain = null,
-    ) {}
+    ) {
+        $this->singleton(Container::class, $this);
+        $this->singleton(ContainerInterface::class, $this);
+        $this->singleton(GenericContainer::class, $this);
+    }
 
     public function setDefinitions(array $definitions): self
     {
@@ -172,6 +178,8 @@ final class GenericContainer implements Container
      * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName
+     * @throws CircularDependencyEncountered
+     * @throws TaggedDependencyCouldNotBeResolved
      */
     public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
@@ -326,7 +334,7 @@ final class GenericContainer implements Container
         $instance = $this->resolveDependency($className, $tag, ...$params);
 
         if ($this->decorators[$className] ?? null) {
-            $instance = $this->resolveDecorator($className, $instance, $tag, ...$params);
+            return $this->resolveDecorator($className, $instance, $tag, ...$params);
         }
 
         return $instance;
@@ -378,7 +386,7 @@ final class GenericContainer implements Container
         }
 
         // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
-        if ($tag) {
+        if ($tag !== null) {
             throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
         }
 
@@ -433,15 +441,15 @@ final class GenericContainer implements Container
             throw new DependencyCouldNotBeInstantiated($classReflector, $this->chain);
         }
 
-        $instance = $constructor === null
+        $instance = $constructor instanceof MethodReflector
             // trying to build it.
             // If there isn't a constructor, don't waste time
-            ? $classReflector->newInstanceWithoutConstructor()
+            ? $classReflector->newInstanceArgs(
+                $this->autowireDependencies($constructor, $params),
+            )
             // build up each parameter.
             // Otherwise, use our autowireDependencies helper to automagically
-            : $classReflector->newInstanceArgs(
-                $this->autowireDependencies($constructor, $params),
-            );
+            : $classReflector->newInstanceWithoutConstructor();
 
         if (
             ! $classReflector->getType()->matches(Initializer::class)
@@ -546,9 +554,7 @@ final class GenericContainer implements Container
             return $type
                 ->asClass()
                 ->getReflection()
-                ->newLazyProxy(function () use ($type, $tag) {
-                    return $this->resolve(className: $type->getName(), tag: $tag);
-                });
+                ->newLazyProxy(fn () => $this->resolve(className: $type->getName(), tag: $tag));
         }
 
         // If we can successfully retrieve an instance
@@ -612,7 +618,7 @@ final class GenericContainer implements Container
 
     private function resolveChain(): DependencyChain
     {
-        if ($this->chain === null) {
+        if (! $this->chain instanceof DependencyChain) {
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
             $this->chain = new DependencyChain($trace[1]['file'] . ':' . $trace[1]['line']);

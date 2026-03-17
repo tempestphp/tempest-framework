@@ -8,6 +8,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Math;
+use Tempest\Support\Math\Exception\ArithmeticException;
+use Tempest\Support\Math\Exception\DivisionByZeroException;
+use Tempest\Support\Math\Exception\InvalidArgumentException;
+use Tempest\Support\Math\Exception\OverflowException;
 
 use function Tempest\Support\Arr\range;
 
@@ -23,37 +27,37 @@ final class MathsTest extends TestCase
     }
 
     #[TestWith([0.0, 1.0])]
-    #[TestWith([1.2661036727794992, 0.3])]
-    #[TestWith([1.0471975511965979, 0.5])]
+    #[TestWith([1.266_103_672_779_499_2, 0.3])]
+    #[TestWith([1.047_197_551_196_597_9, 0.5])]
     public function test_acos(float $expected, float $number): void
     {
         $this->assertFloatEquals($expected, Math\acos($number));
     }
 
-    #[TestWith([0.5235987755982989, 0.5])]
-    #[TestWith([0.9272952180016123, 0.8])]
+    #[TestWith([0.523_598_775_598_298_9, 0.5])]
+    #[TestWith([0.927_295_218_001_612_3, 0.8])]
     #[TestWith([0.0, 0.0])]
-    #[TestWith([0.41151684606748806, 0.4])]
+    #[TestWith([0.411_516_846_067_488_06, 0.4])]
     public function test_asin(float $expected, float $number): void
     {
         $this->assertFloatEquals($expected, Math\asin($number));
     }
 
-    #[TestWith([0.7853981633974483, 1.0, 1.0])]
-    #[TestWith([0.8960553845713439, 1.0, 0.8])]
+    #[TestWith([0.785_398_163_397_448_3, 1.0, 1.0])]
+    #[TestWith([0.896_055_384_571_343_9, 1.0, 0.8])]
     #[TestWith([0.0, 0.0, 0.0])]
-    #[TestWith([0.7853981633974483, 0.4, 0.4])]
-    #[TestWith([-2.260001062633476, -0.5, -0.412])]
+    #[TestWith([0.785_398_163_397_448_3, 0.4, 0.4])]
+    #[TestWith([-2.260_001_062_633_476, -0.5, -0.412])]
     public function test_atan2(float $expected, float $y, float $x): void
     {
         $this->assertFloatEquals($expected, Math\atan2($y, $x));
     }
 
-    #[TestWith([0.7853981633974483, 1.0])]
-    #[TestWith([0.6747409422235527, 0.8])]
+    #[TestWith([0.785_398_163_397_448_3, 1.0])]
+    #[TestWith([0.674_740_942_223_552_7, 0.8])]
     #[TestWith([0.0, 0.0])]
-    #[TestWith([0.3805063771123649, 0.4])]
-    #[TestWith([-0.4636476090008061, -0.5])]
+    #[TestWith([0.380_506_377_112_364_9, 0.4])]
+    #[TestWith([-0.463_647_609_000_806_1, -0.5])]
     public function test_atan(float $expected, float $number): void
     {
         $this->assertFloatEquals($expected, Math\atan($number));
@@ -96,17 +100,17 @@ final class MathsTest extends TestCase
 
     public function test_clamp_invalid_min_max(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected $min to be lower or equal to $max.');
 
         Math\clamp(10, 20, 10);
     }
 
-    #[TestWith([0.5403023058681398, 1.0])]
+    #[TestWith([0.540_302_305_868_139_8, 1.0])]
     #[TestWith([1.0, 0.0])]
-    #[TestWith([0.10291095660695612, 45.45])]
-    #[TestWith([0.28366218546322625, -5])]
-    #[TestWith([-0.9983206000589924, -15.65])]
+    #[TestWith([0.102_910_956_606_956_12, 45.45])]
+    #[TestWith([0.283_662_185_463_226_25, -5])]
+    #[TestWith([-0.998_320_600_058_992_4, -15.65])]
     public function test_cos(float $expected, float $number): void
     {
         $this->assertFloatEquals($expected, Math\cos($number));
@@ -123,7 +127,7 @@ final class MathsTest extends TestCase
 
     public function test_div_by_zero(): void
     {
-        $this->expectException(Math\Exception\DivisionByZeroException::class);
+        $this->expectException(DivisionByZeroException::class);
         $this->expectExceptionMessage('Division by zero.');
 
         Math\div(10, 0);
@@ -131,15 +135,15 @@ final class MathsTest extends TestCase
 
     public function test_div_int64_min_by_minus_one(): void
     {
-        $this->expectException(Math\Exception\ArithmeticException::class);
+        $this->expectException(ArithmeticException::class);
         $this->expectExceptionMessage('Division of Math\INT64_MIN by -1 is not an integer.');
 
         Math\div(Math\INT64_MIN, -1);
     }
 
-    #[TestWith([162754.79141900392, 12.0])]
-    #[TestWith([298.8674009670603, 5.7])]
-    #[TestWith([Math\INFINITY, 1000000])]
+    #[TestWith([162_754.791_419_003_92, 12.0])]
+    #[TestWith([298.867_400_967_060_3, 5.7])]
+    #[TestWith([Math\INFINITY, 1_000_000])]
     public function test_exp(float $expected, float $number): void
     {
         $this->assertSame($expected, Math\exp($number));
@@ -156,7 +160,7 @@ final class MathsTest extends TestCase
     }
 
     #[TestWith([5497, '1010101111001', 2])]
-    #[TestWith([2014587925987, 'pphlmw9v', 36])]
+    #[TestWith([2_014_587_925_987, 'pphlmw9v', 36])]
     #[TestWith([Math\INT32_MAX, 'zik0zj', 36])]
     #[TestWith([15, 'F', 16])]
     public function test_from_base(int $expected, string $value, int $from_base): void
@@ -166,7 +170,7 @@ final class MathsTest extends TestCase
 
     public function test_invalid_digit_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid digit Z in base 16');
 
         Math\from_base('Z', 16);
@@ -174,7 +178,7 @@ final class MathsTest extends TestCase
 
     public function test_special_char_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid digit * in base 16');
 
         Math\from_base('*', 16);
@@ -184,15 +188,15 @@ final class MathsTest extends TestCase
     {
         $number = str_repeat('A', times: 100);
 
-        $this->expectException(Math\Exception\OverflowException::class);
+        $this->expectException(OverflowException::class);
         $this->expectExceptionMessage('Unexpected integer overflow parsing ' . $number . ' from base 32');
 
         Math\from_base($number, 32);
     }
 
-    #[TestWith([1.6863989535702288, 5.4, null])]
-    #[TestWith([0.6574784600188808, 5.4, 13])]
-    #[TestWith([1.7323937598229686, 54.0, 10])]
+    #[TestWith([1.686_398_953_570_228_8, 5.4, null])]
+    #[TestWith([0.657_478_460_018_880_8, 5.4, 13])]
+    #[TestWith([1.732_393_759_822_968_6, 54.0, 10])]
     #[TestWith([0, 1, null])]
     public function test_log(float $expected, float $number, ?float $base = null): void
     {
@@ -201,7 +205,7 @@ final class MathsTest extends TestCase
 
     public function test_negative_input_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$number must be positive.');
 
         Math\log(-45);
@@ -209,7 +213,7 @@ final class MathsTest extends TestCase
 
     public function test_non_positive_base_throws(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$base must be positive.');
 
         Math\log(4.4, 0.0);
@@ -217,7 +221,7 @@ final class MathsTest extends TestCase
 
     public function test_base_one_throws_for_undefined_logarithm(): void
     {
-        $this->expectException(Math\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Logarithm undefined for $base of 1.0.');
 
         Math\log(4.4, 1.0);
@@ -234,7 +238,7 @@ final class MathsTest extends TestCase
         yield [
             'bazqux',
             ['foo', 'bar', 'baz', 'qux', 'foobar', 'bazqux'],
-            static fn (string $value): int => mb_strlen($value),
+            mb_strlen(...),
         ];
 
         yield [
@@ -244,7 +248,7 @@ final class MathsTest extends TestCase
                 ['foo', 'bar'],
                 ['foo', 'bar', 'baz'],
             ],
-            static fn (array $arr): int => count($arr),
+            count(...),
         ];
 
         yield [
@@ -293,8 +297,8 @@ final class MathsTest extends TestCase
     {
         return [
             [5.0, [10, 5, 0, 2, 4, 6, 8]],
-            [7.357142857142858, [18, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15]],
-            [26.785714285714285, [19, 15, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 52, 64]],
+            [7.357_142_857_142_858, [18, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15]],
+            [26.785_714_285_714_285, [19, 15, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 52, 64]],
             [100.0, array_fill(0, 100, 100)],
             [null, []],
         ];
@@ -328,7 +332,7 @@ final class MathsTest extends TestCase
         yield [
             'qux',
             ['foo', 'bar', 'baz', 'qux', 'foobar', 'bazqux'],
-            static fn (string $value): int => mb_strlen($value),
+            mb_strlen(...),
         ];
 
         yield [
@@ -338,7 +342,7 @@ final class MathsTest extends TestCase
                 ['foo', 'bar'],
                 ['foo', 'bar', 'baz'],
             ],
-            static fn (array $arr): int => count($arr),
+            count(...),
         ];
 
         yield [
@@ -384,33 +388,33 @@ final class MathsTest extends TestCase
         ];
     }
 
-    #[TestWith([5.46, 5.45663, 2])]
+    #[TestWith([5.46, 5.456_63, 2])]
     #[TestWith([4.8, 4.811, 1])]
     #[TestWith([5.0, 5.42, 0])]
     #[TestWith([5.0, 4.8, 0])]
     #[TestWith([0.0, 0.4242, 0])]
     #[TestWith([0.5, 0.4634, 1])]
-    #[TestWith([-6.57778, -6.5777777777, 5])]
+    #[TestWith([-6.577_78, -6.577_777_777_7, 5])]
     public function test_round(float $expected, float $number, int $precision = 0): void
     {
         $this->assertSame($expected, Math\round($number, $precision));
     }
 
-    #[TestWith([-0.9589242746631385, 5.0])]
-    #[TestWith([-0.9961646088358407, 4.8])]
+    #[TestWith([-0.958_924_274_663_138_5, 5.0])]
+    #[TestWith([-0.996_164_608_835_840_7, 4.8])]
     #[TestWith([0.0, 0.0])]
-    #[TestWith([0.3894183423086505, 0.4])]
-    #[TestWith([-0.21511998808781552, -6.5])]
+    #[TestWith([0.389_418_342_308_650_5, 0.4])]
+    #[TestWith([-0.215_119_988_087_815_52, -6.5])]
     public function test_sin(float $expected, float $number): void
     {
         $this->assertFloatEquals($expected, Math\sin($number));
     }
 
-    #[TestWith([2.23606797749979, 5.0])]
-    #[TestWith([2.1908902300206643, 4.8])]
-    #[TestWith([0.6324555320336759, 0.4])]
-    #[TestWith([2.5495097567963922, 6.5])]
-    #[TestWith([1.4142135623730951, 2])]
+    #[TestWith([2.236_067_977_499_79, 5.0])]
+    #[TestWith([2.190_890_230_020_664_3, 4.8])]
+    #[TestWith([0.632_455_532_033_675_9, 0.4])]
+    #[TestWith([2.549_509_756_796_392_2, 6.5])]
+    #[TestWith([1.414_213_562_373_095_1, 2])]
     #[TestWith([1, 1])]
     public function test_sqrt(float $expected, float $number): void
     {
@@ -426,7 +430,7 @@ final class MathsTest extends TestCase
     public static function provide_sum_floats_data(): array
     {
         return [
-            [116.70000000000005, [10.9, 5, ...range(0, 9.8798, 0.48)]],
+            [116.700_000_000_000_05, [10.9, 5, ...range(0, 9.8798, 0.48)]],
             [103.0, [18, 15, ...range(0, 10), 15]],
             [323.54, [19.5, 15.8, ...range(0.5, 45, 5.98), 52.8, 64]],
         ];
@@ -447,18 +451,18 @@ final class MathsTest extends TestCase
         ];
     }
 
-    #[TestWith([-3.380515006246586, 5.0, 0.00000000000001])]
-    #[TestWith([-11.384870654242922, 4.8])]
+    #[TestWith([-3.380_515_006_246_586, 5.0, 0.000_000_000_000_01])]
+    #[TestWith([-11.384_870_654_242_922, 4.8])]
     #[TestWith([0.0, 0.0])]
-    #[TestWith([0.4227932187381618, 0.4])]
-    #[TestWith([-0.22027720034589682, -6.5])]
+    #[TestWith([0.422_793_218_738_161_8, 0.4])]
+    #[TestWith([-0.220_277_200_345_896_82, -6.5])]
     public function test_tan(float $expected, float $number, float $epsilon = PHP_FLOAT_EPSILON): void
     {
         $this->assertFloatEquals($expected, Math\tan($number), $epsilon);
     }
 
     #[TestWith(['1010101111001', 5497, 2])]
-    #[TestWith(['pphlmw9v', 2014587925987, 36])]
+    #[TestWith(['pphlmw9v', 2_014_587_925_987, 36])]
     #[TestWith(['zik0zj', Math\INT32_MAX, 36])]
     #[TestWith(['f', 15, 16])]
     public function test_to_base(string $expected, int $value, int $to_base): void

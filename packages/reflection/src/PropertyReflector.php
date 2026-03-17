@@ -6,13 +6,14 @@ namespace Tempest\Reflection;
 
 use Error;
 use ReflectionProperty as PHPReflectionProperty;
+use Stringable;
 
-final class PropertyReflector implements Reflector
+final readonly class PropertyReflector implements Reflector, Stringable
 {
     use HasAttributes;
 
     public function __construct(
-        private readonly PHPReflectionProperty $reflectionProperty,
+        private PHPReflectionProperty $reflectionProperty,
     ) {}
 
     public static function fromParts(string|object $class, string $name): self

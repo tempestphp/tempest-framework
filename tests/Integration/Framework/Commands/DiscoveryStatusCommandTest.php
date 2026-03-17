@@ -17,11 +17,11 @@ final class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
     {
         $output = $this->console->call('discovery:status -cl');
 
-        foreach ($this->kernel->discoveryClasses as $discoveryClass) {
+        foreach ($this->kernel->discoveryConfig->classes as $discoveryClass) {
             $output->assertContains(basename(str_replace('\\', '/', $discoveryClass)));
         }
 
-        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
+        foreach ($this->kernel->discoveryConfig->locations as $discoveryLocation) {
             // @TODO(aidan-casey): remove the src/ directory.
             $output->assertContains(str(realpath($discoveryLocation->path))->afterLast(['src/', 'packages/', 'vendor/', 'tests/'])->toString());
         }

@@ -15,11 +15,9 @@ final class ViewCacheInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): ViewCache
     {
-        $viewCache = new ViewCache(
+        return new ViewCache(
             enabled: $this->shouldCacheBeEnabled(),
         );
-
-        return $viewCache;
     }
 
     private function shouldCacheBeEnabled(): bool

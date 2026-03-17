@@ -56,7 +56,7 @@ final class ConsoleArgumentBag
             array: $this->arguments,
             callback: static fn ($argument) => array_any(
                 array: $names,
-                callback: static fn ($name) => $argument->matches($name),
+                callback: $argument->matches(...),
             ),
         );
     }
@@ -117,9 +117,11 @@ final class ConsoleArgumentBag
         $values = [];
 
         foreach ($this->arguments as $argument) {
-            if ($argumentDefinition->matchesArgument($argument)) {
-                $values[] = $argument->value;
+            if (! $argumentDefinition->matchesArgument($argument)) {
+                continue;
             }
+
+            $values[] = $argument->value;
         }
 
         return new ConsoleInputArgument(
@@ -137,13 +139,15 @@ final class ConsoleArgumentBag
         $arguments = [];
 
         foreach ($this->arguments as $argument) {
-            if ($argument->position >= $argumentDefinition->position) {
-                $arguments[] = new ConsoleInputArgument(
-                    name: $argumentDefinition->name,
-                    position: $argument->position,
-                    value: $this->resolveArgumentValue($argumentDefinition, $argument)->value,
-                );
+            if ($argument->position < $argumentDefinition->position) {
+                continue;
             }
+
+            $arguments[] = new ConsoleInputArgument(
+                name: $argumentDefinition->name,
+                position: $argument->position,
+                value: $this->resolveArgumentValue($argumentDefinition, $argument)->value,
+            );
         }
 
         return $arguments;
@@ -173,16 +177,18 @@ final class ConsoleArgumentBag
 
         // Otherwise, $arguments is an array of flags or positional argument.
         foreach ($arguments as $key => $argument) {
-            if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
-                $flags = str_split($argument);
-                unset($flags[0]);
-
-                foreach ($flags as $flag) {
-                    $arguments[] = "-{$flag}";
-                }
-
-                unset($arguments[$key]);
+            if (! (str_starts_with($argument, '-') && ! str_starts_with($argument, '--'))) {
+                continue;
             }
+
+            $flags = str_split($argument);
+            unset($flags[0]);
+
+            foreach ($flags as $flag) {
+                $arguments[] = "-{$flag}";
+            }
+
+            unset($arguments[$key]);
         }
 
         $position = count($this->arguments);

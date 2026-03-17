@@ -17,7 +17,7 @@ final class SerializationMapDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($attribute = $class->getAttribute(SerializeAs::class)) {
+        if (($attribute = $class->getAttribute(SerializeAs::class)) instanceof SerializeAs) {
             $this->discoveryItems->add($location, [$class->getName(), $attribute->name]);
         }
     }

@@ -9,6 +9,7 @@ use Tempest\Mapper\Context;
 use Tempest\Mapper\Hidden;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
+use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -64,15 +65,17 @@ final readonly class ObjectToArrayMapper implements Mapper
 
         if ($property->getIterableType()?->isClass()) {
             foreach ($propertyValue as $key => $value) {
-                if (is_object($value)) {
-                    $propertyValue[$key] = map($value)->toArray();
+                if (! is_object($value)) {
+                    continue;
                 }
+
+                $propertyValue[$key] = map($value)->toArray();
             }
 
             return $propertyValue;
         }
 
-        if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) !== null) {
+        if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) instanceof Serializer) {
             return $serializer->serialize($propertyValue);
         }
 

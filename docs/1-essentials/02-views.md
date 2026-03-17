@@ -559,6 +559,75 @@ This component provides the ability to inject any icon from the [Iconify](https:
 ```html
 <x-icon name="material-symbols:php" class="size-4 text-indigo-400" />
 ```
+will render
+```html
+<svg class="size-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+        fill="currentcolor"
+        d="m3 15v9h3.5q.6 0 1.05.45t8 10.5v1q0 .6-.45 1.05t6.5 13h-2v2zm6.5 0v9h11v2h2v9h1.5v6h13v-2.5h-2v15zm7 0v9h20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05t20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"
+    />
+</svg>
+```
+
+This component includes some optional props you can use to control width and height. As a fallback, if you specify no class, no style, no width & height, the component will render a default width and height, but you can override this behaviour in any of the following ways.
+
+```html
+<x-icon name="material-symbols:php" />
+```
+will render
+```html
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+    <path
+        fill="currentcolor"
+        d="m3 15v9h3.5q.6 0 1.05.45t8 10.5v1q0 .6-.45 1.05t6.5 13h-2v2zm6.5 0v9h11v2h2v9h1.5v6h13v-2.5h-2v15zm7 0v9h20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05t20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"
+    />
+</svg>
+```
+
+Firstly, you can set width and height using Tailwind or custom classes. As long as you pass the `class` prop, the component will assume you are providing suitable dimensions, and will not check, or assert, any default dimensions.
+
+```html
+<x-icon name="material-symbols:php" class="w-[24px] h-[24px] text-indigo-400" />
+```
+will render
+```html
+<svg class="w-[24px] h-[24px] text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+        fill="currentcolor"
+        d="m3 15v9h3.5q.6 0 1.05.45t8 10.5v1q0 .6-.45 1.05t6.5 13h-2v2zm6.5 0v9h11v2h2v9h1.5v6h13v-2.5h-2v15zm7 0v9h20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05t20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"
+    />
+</svg>
+```
+
+Secondly, if you aren't using Tailwind, or wish to set for a single icon without making a class, you can instead pass dimensions via the `style` prop. Again, as long as you pass `style`, the component will assume you are providing suitable dimensions, and will not check, or assert, any default dimensions.
+
+```html
+<x-icon name="material-symbols:php" style="width: 24px; height: 24px;" />
+```
+will render
+```html
+<svg style="width: 24px; height: 24px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path
+        fill="currentcolor"
+        d="m3 15v9h3.5q.6 0 1.05.45t8 10.5v1q0 .6-.45 1.05t6.5 13h-2v2zm6.5 0v9h11v2h2v9h1.5v6h13v-2.5h-2v15zm7 0v9h20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05t20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"
+    />
+</svg>
+```
+
+Finally, you may provide the width and height properties directly with the props `width` and `height`. The component requires both to be set, or will render the fallback dimensions.
+
+```html
+<x-icon name="material-symbols:php" width="24px" height="24px" />
+```
+will render
+```html
+<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+    <path
+        fill="currentcolor"
+        d="m3 15v9h3.5q.6 0 1.05.45t8 10.5v1q0 .6-.45 1.05t6.5 13h-2v2zm6.5 0v9h11v2h2v9h1.5v6h13v-2.5h-2v15zm7 0v9h20q.6 0 1.05.45t.45 1.05v1q0 .6-.45 1.05t20 13h-2v2zm-12-3.5h2v-1h-2zm13.5 0h2v-1h-2z"
+    />
+</svg>
+```
 
 The first time a specific icon is being rendered, Tempest will query the [Iconify API](https://iconify.design/docs/api/queries.html) to fetch the corresponding SVG tag. The result of this query will be cached indefinitely, so it can be reused at no further cost.
 

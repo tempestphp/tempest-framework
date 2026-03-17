@@ -4,9 +4,7 @@ namespace Tempest\Cryptography\Signing;
 
 interface Signer
 {
-    public SigningAlgorithm $algorithm {
-        get;
-    }
+    public SigningAlgorithm $algorithm { get; }
 
     /**
      * Signs the given data.

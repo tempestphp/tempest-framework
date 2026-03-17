@@ -50,7 +50,7 @@ final class ExceptionTester
             Assert::assertCount($count, $reports, sprintf('Expected %s report(s), got %s.', $count, count($reports)));
         }
 
-        if ($callback !== null) {
+        if ($callback instanceof Closure) {
             foreach ($reports as $dispatch) {
                 Assert::assertNotFalse($callback($dispatch), 'The callback failed.');
             }
@@ -92,11 +92,7 @@ final class ExceptionTester
                 return true;
             }
 
-            if (class_exists($exception) && is_a($reported, $exception, allow_string: true)) {
-                return true;
-            }
-
-            return false;
+            return class_exists($exception) && is_a($reported, $exception, allow_string: true);
         });
     }
 

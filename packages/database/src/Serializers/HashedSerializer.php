@@ -2,7 +2,9 @@
 
 namespace Tempest\Database\Serializers;
 
+use Tempest\Cryptography\Password\Hash;
 use Tempest\Cryptography\Password\PasswordHasher;
+use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 
 final readonly class HashedSerializer implements Serializer
@@ -14,10 +16,10 @@ final readonly class HashedSerializer implements Serializer
     public function serialize(mixed $input): string
     {
         if (! is_string($input)) {
-            return $input;
+            throw new ValueCouldNotBeSerialized('string');
         }
 
-        if (! $this->passwordHasher->analyze($input)) {
+        if (! $this->passwordHasher->analyze($input) instanceof Hash) {
             return $this->passwordHasher->hash($input);
         }
 

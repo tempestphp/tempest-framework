@@ -11,27 +11,19 @@ interface TypeScriptGenerationConfig
      *
      * @var class-string<TypeScriptWriter>
      */
-    public string $writer {
-        get;
-    }
+    public string $writer { get; }
 
     /**
      * The list of source classes to generate types for.
      *
      * @var array<class-string>
      */
-    public array $sources {
-        get;
-        set;
-    }
+    public array $sources { get; set; }
 
     /**
      * The list of type resolvers for property-level type mapping.
      *
      * @var array<class-string<TypeResolver>>
      */
-    public array $resolvers {
-        get;
-        set;
-    }
+    public array $resolvers { get; set; }
 }

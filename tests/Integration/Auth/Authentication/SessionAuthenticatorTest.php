@@ -23,7 +23,6 @@ use Tempest\DateTime\Duration;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -43,11 +42,11 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
         Filesystem\ensure_directory_empty($this->path);
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
-        $this->container->config(new FileSessionConfig(path: 'sessions', expiration: Duration::hours(2)));
+        $this->container->config(new FileSessionConfig(expiration: Duration::hours(2), path: 'sessions'));
         $this->container->config(new AuthConfig(authenticatables: [User::class]));
         $this->container->singleton(SessionManager::class, fn () => new FileSessionManager(
             $this->container->get(Clock::class),
-            $this->container->get(SessionConfig::class),
+            $this->container->get(FileSessionConfig::class),
         ));
 
         $this->database->migrate(CreateMigrationsTable::class, CreateUsersTableMigration::class, CreateApiKeysTableMigration::class);

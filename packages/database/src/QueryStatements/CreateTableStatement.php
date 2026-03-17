@@ -229,13 +229,17 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
 
     /**
      * Adds a datetime column to the table. Uses `DATETIME` for MySQL/SQLite and `TIMESTAMP` for PostgreSQL.
+     *
+     * @param string|null $default The default value for the column. Cannot be set if `current` is `true`.
+     * @param bool $current Whether to use `CURRENT_TIMESTAMP` as the default value. Cannot be set if `default` is not `null`.
      */
-    public function datetime(string $name, bool $nullable = false, ?string $default = null): self
+    public function datetime(string $name, bool $nullable = false, ?string $default = null, bool $current = false): self
     {
         $this->statements[] = new DatetimeStatement(
             name: $name,
             nullable: $nullable,
             default: $default,
+            current: $current,
         );
 
         return $this;
@@ -393,7 +397,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $createTable = sprintf(
+        return sprintf(
             'CREATE TABLE %s (%s);',
             new TableDefinition($this->tableName),
             arr($this->statements)
@@ -405,7 +409,5 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),
         );
-
-        return $createTable;
     }
 }

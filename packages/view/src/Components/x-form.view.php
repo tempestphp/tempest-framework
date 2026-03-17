@@ -14,7 +14,7 @@ if ($method instanceof Method) {
     $method = $method->value;
 }
 
-$needsSpoofing = Method::trySpoofingFrom($method) !== null;
+$needsSpoofing = Method::trySpoofingFrom($method) instanceof Method;
 $formMethod = $needsSpoofing ? 'POST' : $method;
 ?>
 

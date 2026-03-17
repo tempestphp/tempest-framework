@@ -327,7 +327,7 @@ final class TestResponseHelper
             ),
         );
 
-        if ($callback !== null) {
+        if ($callback instanceof Closure) {
             $callback($session, $data);
         }
 
@@ -352,7 +352,7 @@ final class TestResponseHelper
             ),
         );
 
-        if ($callback !== null) {
+        if ($callback instanceof Closure) {
             $callback($validationErrors);
         }
 
@@ -428,7 +428,7 @@ final class TestResponseHelper
             ),
         );
 
-        if ($callback !== null && $callback($data, $value) === false) {
+        if ($callback instanceof Closure && $callback($data, $value) === false) {
             Assert::fail(sprintf('Failed validating view data for [%s]', $key));
         }
 
@@ -509,7 +509,7 @@ final class TestResponseHelper
             actual: $this->body,
         );
 
-        if ($callback !== null && $callback($this->body) === false) {
+        if ($callback instanceof Closure && $callback($this->body) === false) {
             Assert::fail('Failed validating view model');
         }
 
@@ -711,7 +711,7 @@ final class TestResponseHelper
      */
     public function dd(): never
     {
-        if ($this->throwable !== null) {
+        if ($this->throwable instanceof Throwable) {
             dump(sprintf('There was a [%s] exception during this request handling: %s', $this->throwable::class, $this->throwable->getMessage())); // @phpstan-ignore disallowed.function
         }
 
@@ -720,7 +720,7 @@ final class TestResponseHelper
 
     private function assertHasContainer(): void
     {
-        if ($this->container === null) {
+        if (! $this->container instanceof Container) {
             Assert::fail('This assertion requires a container.');
         }
     }

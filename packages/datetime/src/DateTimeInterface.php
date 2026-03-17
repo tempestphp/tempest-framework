@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use Override;
 use Tempest\Intl\Locale;
 
 interface DateTimeInterface extends TemporalInterface
@@ -633,7 +634,7 @@ interface DateTimeInterface extends TemporalInterface
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
 
     /**
@@ -662,7 +663,7 @@ interface DateTimeInterface extends TemporalInterface
      * @see TimeStyle::default()
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function toString(?DateStyle $dateStyle = null, ?TimeStyle $timeStyle = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
 
     /**
@@ -690,7 +691,7 @@ interface DateTimeInterface extends TemporalInterface
      *
      * @see https://datatracker.ietf.org/doc/html/rfc3339
      */
-    #[\Override]
+    #[Override]
     public function toRfc3339(?SecondsStyle $secondsStyle = null, bool $useZ = false): string;
 
     /**
@@ -709,7 +710,7 @@ interface DateTimeInterface extends TemporalInterface
      *
      * @see TemporalInterface::toString()
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string;
 
     /**
@@ -717,6 +718,6 @@ interface DateTimeInterface extends TemporalInterface
      *
      * @param null|Timezone $timezone The timezone to convert to.
      */
-    #[\Override]
+    #[Override]
     public function convertToTimezone(?Timezone $timezone): static;
 }

@@ -53,7 +53,7 @@ interface Console
     /**
      * Asks the user a question and returns the answer.
      *
-     * @param null|array|iterable|class-string<BackedEnum> $options
+     * @param null|iterable|class-string<BackedEnum> $options
      * @param mixed|null $default
      * @param \Tempest\Validation\Rule[] $validation
      */
@@ -161,7 +161,5 @@ interface Console
     /**
      * Whether the console is in forced mode (skipping confirmations).
      */
-    public bool $isForced {
-        get;
-    }
+    public bool $isForced { get; }
 }

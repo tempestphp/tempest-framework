@@ -9,6 +9,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Enums\MigrationType;
+use Tempest\Database\Migrations\TableGuess;
 use Tempest\Database\Migrations\TableGuesser;
 use Tempest\Database\Stubs\ObjectAlterMigrationStub;
 use Tempest\Database\Stubs\ObjectMigrationStub;
@@ -81,14 +82,15 @@ final class MakeMigrationCommand
                 );
 
             $alter ??= $yes
-                ? $guess !== null && ! $guess->isCreate
+                ? $guess instanceof TableGuess && ! $guess->isCreate
                 : $this->confirm(
                     question: 'Is this an alteration?',
-                    default: $guess !== null && ! $guess->isCreate,
+                    default: $guess instanceof TableGuess && ! $guess->isCreate,
                 );
 
             $table = $this->resolveTableName($table);
             [$migrationName, $className] = $this->resolveNames($name, $alter);
+            /** @var MigrationType $migrationType */
             $stub = $this->resolveStub($migrationType, $alter);
 
             $targetPath = match ($migrationType) {

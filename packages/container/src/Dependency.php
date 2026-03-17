@@ -40,7 +40,7 @@ final readonly class Dependency
         if (is_string($dependency)) {
             $parts = explode('\\', $dependency);
 
-            return $parts[array_key_last($parts)];
+            return array_last($parts);
         }
 
         return match ($dependency::class) {

@@ -4,7 +4,5 @@ namespace Tempest\Database;
 
 interface HasTrailingStatements
 {
-    public array $trailingStatements {
-        get;
-    }
+    public array $trailingStatements { get; }
 }

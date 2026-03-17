@@ -13,6 +13,7 @@ use Tempest\Http\Request;
 final readonly class PreviousUrl
 {
     private const string PREVIOUS_URL_SESSION_KEY = '#previous_url';
+
     private const string INTENDED_URL_SESSION_KEY = '#intended_url';
 
     public function __construct(
@@ -65,10 +66,6 @@ final readonly class PreviousUrl
             return true;
         }
 
-        if ($request->headers->get('purpose') === 'prefetch') {
-            return true;
-        }
-
-        return false;
+        return $request->headers->get('purpose') === 'prefetch';
     }
 }

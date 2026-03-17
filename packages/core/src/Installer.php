@@ -6,9 +6,7 @@ namespace Tempest\Core;
 
 interface Installer
 {
-    public string $name {
-        get;
-    }
+    public string $name { get; }
 
     public function install(): void;
 }

@@ -9,7 +9,5 @@ use Tempest\Router\Get;
 final readonly class DocsController
 {
     #[Get('/docs/{category}/{slug}')]
-    public function __invoke(string $category, string $slug): void
-    {
-    }
+    public function __invoke(string $category, string $slug): void {}
 }

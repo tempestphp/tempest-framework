@@ -3,6 +3,9 @@
 namespace Tempest\Upgrade\Tempest3;
 
 use PhpParser\Node;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\UseItem;
 use Rector\Rector\AbstractRector;
 
 final class UpdateHasContextRector extends AbstractRector
@@ -10,39 +13,41 @@ final class UpdateHasContextRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\UseItem::class,
-            Node\Stmt\Class_::class,
+            UseItem::class,
+            Class_::class,
         ];
     }
 
-    public function refactor(Node $node): void
+    public function refactor(Node $node): ?int
     {
-        if ($node instanceof Node\UseItem) {
+        if ($node instanceof UseItem) {
             $name = $node->name->toString();
 
             if ($name === 'Tempest\Core\HasContext' || $name === 'HasContext') {
-                $node->name = new Node\Name('Tempest\Core\ProvidesContext');
+                $node->name = new Name('Tempest\Core\ProvidesContext');
             }
 
-            return;
+            return null;
         }
 
-        if (! $node instanceof Node\Stmt\Class_) {
-            return;
+        if (! $node instanceof Class_) {
+            return null;
         }
 
         $implements = $node->implements;
 
         $implementsHasContext = array_find_key(
             array: $implements,
-            callback: static fn (Node\Name $name) => $name->toString() === 'Tempest\Core\HasContext' || $name->toString() === 'HasContext',
+            callback: static fn (Name $name) => $name->toString() === 'Tempest\Core\HasContext' || $name->toString() === 'HasContext',
         );
 
         if ($implementsHasContext === null) {
-            return;
+            return null;
         }
 
-        $implements[$implementsHasContext] = new Node\Name('\Tempest\Core\ProvidesContext');
+        $implements[$implementsHasContext] = new Name('\Tempest\Core\ProvidesContext');
         $node->implements = $implements;
+
+        return null;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\MessageFormat\Markup;
 
+use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Icon\Icon;
 use Tempest\Intl\MessageFormat\StandaloneMarkupFormatter;
@@ -21,7 +22,7 @@ final readonly class IconMarkupFormatter implements StandaloneMarkupFormatter
     public function format(string $tag, array $options): string
     {
         if (! class_exists(Icon::class)) {
-            throw new \RuntimeException('The `tempest\icon` package is required to use the `icon` tag inside a translation string.');
+            throw new RuntimeException('The `tempest\icon` package is required to use the `icon` tag inside a translation string.');
         }
 
         $icon = Str\after_first($tag, 'icon-');

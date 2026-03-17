@@ -2,6 +2,7 @@
 
 namespace Tempest\KeyValue\Redis;
 
+use InvalidArgumentException;
 use Stringable;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
@@ -57,7 +58,7 @@ final readonly class PhpRedisClient implements Redis
         }
 
         if ($this->config->options && ! is_associative($this->config->options)) {
-            throw new \InvalidArgumentException('The `options` property of the Redis configuration must be an associative array.');
+            throw new InvalidArgumentException('The `options` property of the Redis configuration must be an associative array.');
         }
 
         foreach ($this->config->options as $key => $value) {
@@ -109,7 +110,7 @@ final readonly class PhpRedisClient implements Redis
         $this->command('SET', ...array_filter([
             (string) $key, // key
             $this->serializeValue($value), // value
-            $expiration ? 'PX' : null, // ttl format
+            $expiration instanceof Duration ? 'PX' : null, // ttl format
             (int) $expiration?->getTotalMilliseconds(), // ttl
         ]));
     }

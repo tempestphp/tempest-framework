@@ -90,7 +90,7 @@ final class AlterTableStatement implements QueryStatement, HasTrailingStatements
     public function compile(DatabaseDialect $dialect): string
     {
         if ($this->statements !== []) {
-            $alterTable = sprintf(
+            return sprintf(
                 'ALTER TABLE %s %s;',
                 new TableDefinition($this->tableName),
                 arr($this->statements)
@@ -100,10 +100,8 @@ final class AlterTableStatement implements QueryStatement, HasTrailingStatements
                     ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                     ->toString(),
             );
-        } else {
-            $alterTable = '';
         }
 
-        return $alterTable;
+        return '';
     }
 }

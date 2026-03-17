@@ -5,9 +5,7 @@ namespace Tempest\Intl;
 use Countable;
 use Stringable;
 use Tempest\Container\GenericContainer;
-use Tempest\Intl\Locale;
 use Tempest\Intl\Pluralizer\Pluralizer;
-use Tempest\Intl\Translator;
 
 use function Tempest\Container\get;
 

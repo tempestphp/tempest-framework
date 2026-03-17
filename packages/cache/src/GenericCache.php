@@ -56,7 +56,7 @@ final class GenericCache implements Cache
             $expiration = DateTime::now()->plus($expiration);
         }
 
-        if ($expiration !== null) {
+        if ($expiration instanceof DateTimeInterface) {
             $item = $item->expiresAt($expiration->toNativeDateTime());
         }
 
@@ -74,6 +74,7 @@ final class GenericCache implements Cache
         foreach ($values as $key => $value) {
             $items[(string) $key] = $this->put($key, $value, $expiration);
         }
+
         return $items;
     }
 
@@ -149,7 +150,7 @@ final class GenericCache implements Cache
             return $callback();
         }
 
-        if ($stale) {
+        if ($stale instanceof Duration) {
             if ($expiration instanceof Duration) {
                 $expiration = DateTime::now()->plus($expiration);
             }
@@ -168,7 +169,7 @@ final class GenericCache implements Cache
 
     private function resolveAllowingStale(Stringable|string $key, Closure $callback, DateTimeInterface $expiration, Duration $stale): mixed
     {
-        if (! $this->deferredTasks) {
+        if (! $this->deferredTasks instanceof DeferredTasks) {
             return $this->resolve($key, $callback, $expiration);
         }
 

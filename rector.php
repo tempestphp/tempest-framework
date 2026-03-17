@@ -2,70 +2,70 @@
 
 declare(strict_types=1);
 
-use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector;
+use Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
-use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
+use Rector\EarlyReturn\Rector\Return_\ReturnBinaryOrToEarlyReturnRector;
+use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
-use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
 use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
-use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 use Rector\Php82\Rector\Param\AddSensitiveParameterAttributeRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
-use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
+use Rector\Php85\Rector\FuncCall\ArrayKeyExistsNullToEmptyStringRector;
 use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
-use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\NarrowObjectReturnTypeRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector;
-use Rector\TypeDeclaration\Rector\Empty_\EmptyOnNullableObjectToInstanceOfRector;
+use Tempest\Rector\ImportClassNamesRector;
 
 return RectorConfig::configure()
     ->withCache('./.cache/rector', FileCacheStorage::class)
     ->withPaths([
         __DIR__ . '/src',
         __DIR__ . '/tests',
+        __DIR__ . '/packages',
     ])
+    ->withSkipPath(__DIR__ . '/tests/PHPStan/QueryFunctionDynamicReturnTypeExtension.php')
     ->withConfiguredRule(AddSensitiveParameterAttributeRector::class, [
         'sensitive_parameters' => [
             'password',
             'secret',
         ],
     ])
-    ->withRules([
-        ExplicitNullableParamTypeRector::class,
-    ])
     ->withSkip([
+        '*.stub.php',
+        '*.input.php',
+        '*.expected.php',
+        '*/Fixtures/*',
+        __DIR__ . '/packages/intl/bin/plural-rules.php',
         AddOverrideAttributeToOverriddenMethodsRector::class,
-        ArgumentAdderRector::class,
-        ClosureToArrowFunctionRector::class,
-        EmptyOnNullableObjectToInstanceOfRector::class,
         ArrayToFirstClassCallableRector::class,
         NullToStrictStringFuncCallArgRector::class,
-        ReadOnlyClassRector::class,
         ReadOnlyPropertyRector::class,
-        RemoveNullPropertyInitializationRector::class,
         AddSensitiveParameterAttributeRector::class,
         RestoreDefaultNullToNullableTypePropertyRector::class,
-        ReturnNeverTypeRector::class,
         StaticCallOnNonStaticToInstanceCallRector::class,
         EncapsedStringsToSprintfRector::class,
-        AddArrowFunctionReturnTypeRector::class,
         PrivatizeFinalClassMethodRector::class,
-        NarrowObjectReturnTypeRector::class,
+        IssetOnPropertyObjectToPropertyExistsRector::class,
+        CatchExceptionNameMatchingTypeRector::class,
+        ArrayKeyExistsNullToEmptyStringRector::class,
+        StringClassNameToClassConstantRector::class,
+        ReturnBinaryOrToEarlyReturnRector::class,
     ])
-    ->withParallel(300, 10, 10)
+    ->withConfiguredRule(ImportClassNamesRector::class, [
+        'importShortClasses' => true,
+        'excludedClasses' => [
+            '\Redis',
+        ],
+    ])
     ->withPreparedSets(
-        codeQuality: false,
+        codeQuality: true,
         codingStyle: true,
         privatization: true,
         naming: false,
         earlyReturn: true,
     )
-    ->withDeadCodeLevel(40)
-    ->withMemoryLimit('3G')
-    ->withPhpSets(php83: true)
-    ->withTypeCoverageLevel(37);
+    ->withPhpSets(php85: true);

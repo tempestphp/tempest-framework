@@ -26,11 +26,11 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
     {
         $matchedRoute = $this->routeMatcher->match($request);
 
-        if ($matchedRoute === null && $request->method === Method::HEAD && $request instanceof GenericRequest) {
+        if (! $matchedRoute instanceof MatchedRoute && $request->method === Method::HEAD && $request instanceof GenericRequest) {
             $matchedRoute = $this->routeMatcher->match($request->withMethod(Method::GET));
         }
 
-        if ($matchedRoute === null) {
+        if (! $matchedRoute instanceof MatchedRoute) {
             return new NotFound();
         }
 
@@ -56,16 +56,17 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
             // If the parameter's type is an instance of Request…
-            if ($parameter->getType()->matches(Request::class)) {
-                // We'll use that specific request class
-                $requestClass = $parameter->getType()->getName();
-
-                break;
+            if (! $parameter->getType()->matches(Request::class)) {
+                continue;
             }
+
+            $requestClass = $parameter->getType()->getName();
+
+            break;
         }
 
         if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {
-            $request = map($request)->with(RequestToObjectMapper::class)->to($requestClass);
+            return map($request)->with(RequestToObjectMapper::class)->to($requestClass);
         }
 
         return $request;

@@ -7,7 +7,6 @@ namespace Tempest\Router;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\UriGenerator;
 
 use function Tempest\Container\get;
 

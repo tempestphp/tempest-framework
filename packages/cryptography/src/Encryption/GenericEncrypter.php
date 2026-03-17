@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Encryption;
 
+use SensitiveParameter;
 use Tempest\Cryptography\Encryption\Exceptions\AlgorithmMismatched;
 use Tempest\Cryptography\Encryption\Exceptions\DecryptionFailed;
 use Tempest\Cryptography\Encryption\Exceptions\EncryptionFailed;
@@ -23,7 +24,7 @@ final class GenericEncrypter implements Encrypter
         private readonly EncryptionConfig $config,
     ) {}
 
-    public function encrypt(#[\SensitiveParameter] string $data): EncryptedData
+    public function encrypt(#[SensitiveParameter] string $data): EncryptedData
     {
         $iv = random_bytes($this->algorithm->getIvLength());
         $tag = '';

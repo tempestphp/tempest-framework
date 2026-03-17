@@ -22,9 +22,9 @@ use function Tempest\Support\arr;
 final readonly class AboutCommand
 {
     public function __construct(
-        private readonly Console $console,
-        private readonly Container $container,
-        private readonly AppConfig $appConfig,
+        private Console $console,
+        private Container $container,
+        private AppConfig $appConfig,
     ) {}
 
     #[ConsoleCommand(name: 'about', description: 'Shows insights about the application', aliases: ['insights'])]

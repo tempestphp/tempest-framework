@@ -21,12 +21,12 @@ final class FunctionsTest extends TestCase
         $this->assertSame('10', Number\format(10));
         $this->assertSame('25', Number\format(25));
         $this->assertSame('100', Number\format(100));
-        $this->assertSame('100,000', Number\format(100000));
-        $this->assertSame('100,000.00', Number\format(100000, precision: 2));
-        $this->assertSame('100,000.12', Number\format(100000.123, precision: 2));
-        $this->assertSame('100,000.123', Number\format(100000.1234, maxPrecision: 3));
-        $this->assertSame('100,000.124', Number\format(100000.1236, maxPrecision: 3));
-        $this->assertSame('123,456,789', Number\format(123456789));
+        $this->assertSame('100,000', Number\format(100_000));
+        $this->assertSame('100,000.00', Number\format(100_000, precision: 2));
+        $this->assertSame('100,000.12', Number\format(100_000.123, precision: 2));
+        $this->assertSame('100,000.123', Number\format(100_000.123_4, maxPrecision: 3));
+        $this->assertSame('100,000.124', Number\format(100_000.123_6, maxPrecision: 3));
+        $this->assertSame('123,456,789', Number\format(123_456_789));
 
         $this->assertSame('-1', Number\format(-1));
         $this->assertSame('-10', Number\format(-10));
@@ -77,8 +77,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('10', Number\spell_out(10, until: 10));
         $this->assertSame('11', Number\spell_out(11, until: 10));
 
-        $this->assertSame('ten thousand', Number\spell_out(10000, until: 50000));
-        $this->assertSame('100,000', Number\spell_out(100000, until: 50000));
+        $this->assertSame('ten thousand', Number\spell_out(10_000, until: 50_000));
+        $this->assertSame('100,000', Number\spell_out(100_000, until: 50_000));
     }
 
     #[RequiresPhpExtension('intl')]
@@ -114,10 +114,10 @@ final class FunctionsTest extends TestCase
         $this->assertSame('2%', Number\to_percentage(1.75));
         $this->assertSame('1.75%', Number\to_percentage(1.75, precision: 2));
         $this->assertSame('1.750%', Number\to_percentage(1.75, precision: 3));
-        $this->assertSame('0%', Number\to_percentage(0.12345));
+        $this->assertSame('0%', Number\to_percentage(0.123_45));
         $this->assertSame('0.00%', Number\to_percentage(0, precision: 2));
-        $this->assertSame('0.12%', Number\to_percentage(0.12345, precision: 2));
-        $this->assertSame('0.1235%', Number\to_percentage(0.12345, precision: 4));
+        $this->assertSame('0.12%', Number\to_percentage(0.123_45, precision: 2));
+        $this->assertSame('0.1235%', Number\to_percentage(0.123_45, precision: 4));
     }
 
     #[RequiresPhpExtension('intl')]
@@ -147,8 +147,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('1,00 $', Number\currency(1, Currency::USD, Locale::GERMAN));
         $this->assertSame('1,00 £', Number\currency(1, Currency::GBP, Locale::GERMAN));
 
-        $this->assertSame('123.456.789,12 $', Number\currency(123456789.12345, Currency::USD, Locale::GERMAN));
-        $this->assertSame('123.456.789,12 €', Number\currency(123456789.12345, Currency::EUR, Locale::GERMAN));
+        $this->assertSame('123.456.789,12 $', Number\currency(123_456_789.123_45, Currency::USD, Locale::GERMAN));
+        $this->assertSame('123.456.789,12 €', Number\currency(123_456_789.123_45, Currency::EUR, Locale::GERMAN));
         $this->assertSame('1 234,56 $US', Number\currency(1234.56, Currency::USD, Locale::FRENCH));
     }
 
@@ -180,7 +180,7 @@ final class FunctionsTest extends TestCase
         $this->assertSame('2 KiB', Number\to_file_size(2048, useBinaryPrefix: true));
         $this->assertSame('2.00 KiB', Number\to_file_size(2048, precision: 2, useBinaryPrefix: true));
         $this->assertSame('1.23 KiB', Number\to_file_size(1264, precision: 2, useBinaryPrefix: true));
-        $this->assertSame('1.234 KiB', Number\to_file_size(1264.12345, maxPrecision: 3, useBinaryPrefix: true));
+        $this->assertSame('1.234 KiB', Number\to_file_size(1_264.123_45, maxPrecision: 3, useBinaryPrefix: true));
         $this->assertSame('1.234 KiB', Number\to_file_size(1264, 3, useBinaryPrefix: true));
         $this->assertSame('5 GiB', Number\to_file_size(1024 * 1024 * 1024 * 5, useBinaryPrefix: true));
         $this->assertSame('10 TiB', Number\to_file_size((1024 ** 4) * 10, useBinaryPrefix: true));
@@ -204,31 +204,31 @@ final class FunctionsTest extends TestCase
         $this->assertSame('1K', Number\to_human_readable(1000, maxPrecision: 2));
         $this->assertSame('1K', Number\to_human_readable(1230));
         $this->assertSame('1.2K', Number\to_human_readable(1230, maxPrecision: 1));
-        $this->assertSame('1M', Number\to_human_readable(1000000));
-        $this->assertSame('1B', Number\to_human_readable(1000000000));
-        $this->assertSame('1T', Number\to_human_readable(1000000000000));
-        $this->assertSame('1Q', Number\to_human_readable(1000000000000000));
-        $this->assertSame('1KQ', Number\to_human_readable(1000000000000000000));
+        $this->assertSame('1M', Number\to_human_readable(1_000_000));
+        $this->assertSame('1B', Number\to_human_readable(1_000_000_000));
+        $this->assertSame('1T', Number\to_human_readable(1_000_000_000_000));
+        $this->assertSame('1Q', Number\to_human_readable(1_000_000_000_000_000));
+        $this->assertSame('1KQ', Number\to_human_readable(1_000_000_000_000_000_000));
 
         $this->assertSame('123', Number\to_human_readable(123));
         $this->assertSame('1K', Number\to_human_readable(1234));
         $this->assertSame('1.23K', Number\to_human_readable(1234, precision: 2));
-        $this->assertSame('12K', Number\to_human_readable(12345));
-        $this->assertSame('1M', Number\to_human_readable(1234567));
-        $this->assertSame('1B', Number\to_human_readable(1234567890));
-        $this->assertSame('1T', Number\to_human_readable(1234567890123));
-        $this->assertSame('1.23T', Number\to_human_readable(1234567890123, precision: 2));
-        $this->assertSame('1Q', Number\to_human_readable(1234567890123456));
-        $this->assertSame('1.23KQ', Number\to_human_readable(1234567890123456789, precision: 2));
-        $this->assertSame('490K', Number\to_human_readable(489939));
-        $this->assertSame('489.9390K', Number\to_human_readable(489939, precision: 4));
-        $this->assertSame('500.00000M', Number\to_human_readable(500000000, precision: 5));
+        $this->assertSame('12K', Number\to_human_readable(12_345));
+        $this->assertSame('1M', Number\to_human_readable(1_234_567));
+        $this->assertSame('1B', Number\to_human_readable(1_234_567_890));
+        $this->assertSame('1T', Number\to_human_readable(1_234_567_890_123));
+        $this->assertSame('1.23T', Number\to_human_readable(1_234_567_890_123, precision: 2));
+        $this->assertSame('1Q', Number\to_human_readable(1_234_567_890_123_456));
+        $this->assertSame('1.23KQ', Number\to_human_readable(1_234_567_890_123_456_789, precision: 2));
+        $this->assertSame('490K', Number\to_human_readable(489_939));
+        $this->assertSame('489.9390K', Number\to_human_readable(489_939, precision: 4));
+        $this->assertSame('500.00000M', Number\to_human_readable(500_000_000, precision: 5));
 
-        $this->assertSame('1MQ', Number\to_human_readable(1000000000000000000000));
-        $this->assertSame('1BQ', Number\to_human_readable(1000000000000000000000000));
-        $this->assertSame('1TQ', Number\to_human_readable(1000000000000000000000000000));
-        $this->assertSame('1QQ', Number\to_human_readable(1000000000000000000000000000000));
-        $this->assertSame('1KQQ', Number\to_human_readable(1000000000000000000000000000000000));
+        $this->assertSame('1MQ', Number\to_human_readable(1_000_000_000_000_000_000_000));
+        $this->assertSame('1BQ', Number\to_human_readable(1_000_000_000_000_000_000_000_000));
+        $this->assertSame('1TQ', Number\to_human_readable(1_000_000_000_000_000_000_000_000_000));
+        $this->assertSame('1QQ', Number\to_human_readable(1_000_000_000_000_000_000_000_000_000_000));
+        $this->assertSame('1KQQ', Number\to_human_readable(1_000_000_000_000_000_000_000_000_000_000_000));
 
         $this->assertSame('0', Number\to_human_readable(0));
         $this->assertSame('0', Number\to_human_readable(0.0));
@@ -241,12 +241,12 @@ final class FunctionsTest extends TestCase
         $this->assertSame('-1K', Number\to_human_readable(-1000));
         $this->assertSame('-1.23K', Number\to_human_readable(-1234, precision: 2));
         $this->assertSame('-1.2K', Number\to_human_readable(-1234, maxPrecision: 1));
-        $this->assertSame('-1M', Number\to_human_readable(-1000000));
-        $this->assertSame('-1B', Number\to_human_readable(-1000000000));
-        $this->assertSame('-1T', Number\to_human_readable(-1000000000000));
-        $this->assertSame('-1.1T', Number\to_human_readable(-1100000000000, maxPrecision: 1));
-        $this->assertSame('-1Q', Number\to_human_readable(-1000000000000000));
-        $this->assertSame('-1KQ', Number\to_human_readable(-1000000000000000000));
+        $this->assertSame('-1M', Number\to_human_readable(-1_000_000));
+        $this->assertSame('-1B', Number\to_human_readable(-1_000_000_000));
+        $this->assertSame('-1T', Number\to_human_readable(-1_000_000_000_000));
+        $this->assertSame('-1.1T', Number\to_human_readable(-1_100_000_000_000, maxPrecision: 1));
+        $this->assertSame('-1Q', Number\to_human_readable(-1_000_000_000_000_000));
+        $this->assertSame('-1KQ', Number\to_human_readable(-1_000_000_000_000_000_000));
     }
 
     public function test_parse_int(): void

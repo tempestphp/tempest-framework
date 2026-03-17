@@ -113,11 +113,7 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
             return true;
         }
 
-        if ($throwable->status === Status::NOT_FOUND) {
-            return false;
-        }
-
-        return true;
+        return $throwable->status !== Status::NOT_FOUND;
     }
 
     private function renderValidationFailedResponse(ValidationFailed $exception): Response
@@ -163,9 +159,11 @@ final readonly class HtmlExceptionRenderer implements ExceptionRenderer
         $reflector = new ClassReflector($targetClass);
 
         foreach ($reflector->getPublicProperties() as $property) {
-            if ($property->hasAttribute(SensitiveField::class)) {
-                unset($body[$property->getName()]);
+            if (! $property->hasAttribute(SensitiveField::class)) {
+                continue;
             }
+
+            unset($body[$property->getName()]);
         }
 
         return $body;

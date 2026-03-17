@@ -11,7 +11,6 @@ use Tempest\Core\AppConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Request;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
-use Tempest\Http\Session\SessionConfig;
 
 final readonly class SessionIdResolverInitializer implements Initializer
 {

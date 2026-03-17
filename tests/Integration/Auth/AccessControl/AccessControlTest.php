@@ -134,7 +134,7 @@ final class ArticlePolicy
     #[Policy(Article::class, action: 'edit')]
     public function edit(Article $article, ?TestUser $subject): bool
     {
-        if ($subject === null) {
+        if (! $subject instanceof TestUser) {
             return false;
         }
 
@@ -144,7 +144,7 @@ final class ArticlePolicy
     #[Policy(Article::class, action: 'delete')]
     public function delete(Article $article, ?TestUser $subject): bool|AccessDecision
     {
-        if ($subject === null) {
+        if (! $subject instanceof TestUser) {
             return AccessDecision::denied('Authentication required');
         }
 
@@ -177,7 +177,7 @@ final class CommentPolicy
     #[Policy(ArticleComment::class, action: 'edit')]
     public function edit(ArticleComment $comment, ?TestUser $subject): bool
     {
-        if ($subject === null) {
+        if (! $subject instanceof TestUser) {
             return false;
         }
 

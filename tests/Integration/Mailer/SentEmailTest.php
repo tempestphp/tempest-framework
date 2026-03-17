@@ -68,10 +68,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_send_to_address_vo(): void
     {
-        $this->sendTestEmail(
-            to: [new EmailAddress('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
-            from: 'no-reply@tempestphp.com',
-        )
+        $this
+            ->sendTestEmail(
+                to: [new EmailAddress('recipient1@example.com', 'Jon Doe'), 'recipient2@example.com'],
+                from: 'no-reply@tempestphp.com',
+            )
             ->assertSentTo('recipient1@example.com')
             ->assertSentTo('recipient2@example.com');
     }
@@ -89,10 +90,11 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     public function test_assert_sent_to(): void
     {
-        $this->sendTestEmail(
-            to: ['recipient1@example.com', 'recipient2@example.com'],
-            from: 'no-reply@tempestphp.com',
-        )
+        $this
+            ->sendTestEmail(
+                to: ['recipient1@example.com', 'recipient2@example.com'],
+                from: 'no-reply@tempestphp.com',
+            )
             ->assertSentTo('recipient1@example.com')
             ->assertSentTo('recipient2@example.com')
             ->assertSentTo(['recipient1@example.com', 'recipient2@example.com'])

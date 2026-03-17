@@ -30,7 +30,7 @@ final class OAuthInstaller
     {
         $providers = $this->getProviders();
 
-        if (count($providers) === 0) {
+        if ($providers === []) {
             return;
         }
 
@@ -143,7 +143,7 @@ final class OAuthInstaller
     private function updateEnvFile(SupportedOAuthProvider ...$providers): void
     {
         arr($providers)
-            ->map(fn (SupportedOAuthProvider $provider) => $this->extractSettings($provider))
+            ->map($this->extractSettings(...))
             ->filter()
             ->flatten()
             ->each(function (string $setting) {

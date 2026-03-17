@@ -22,6 +22,10 @@ use Tempest\Validation\Rules\IsString;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+/**
+ * @phpstan-type ValidationClosure Closure(mixed $value): (bool|string|null)
+ * @phpstan-type ValidationRule Rule|ValidationClosure|false|null
+ */
 #[Singleton]
 final readonly class Validator
 {
@@ -56,7 +60,7 @@ final readonly class Validator
     /**
      * Creates a {@see ValidationFailed} exception from the given rule failures, populated with error messages.
      *
-     * @param array<string,FailingRule[]> $failingRules
+     * @param array<string,list<FailingRule>> $failingRules
      * @param class-string|null $targetClass
      */
     public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
@@ -64,9 +68,7 @@ final readonly class Validator
         return new ValidationFailed(
             failingRules: $failingRules,
             subject: $subject,
-            errorMessages: Arr\map($failingRules, function (array $rules, string $field) {
-                return Arr\map($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field));
-            }),
+            errorMessages: Arr\map($failingRules, fn (array $rules, string $field) => Arr\map($rules, fn (FailingRule $rule) => $this->getErrorMessage($rule, $field))),
             targetClass: $targetClass,
         );
     }
@@ -75,7 +77,7 @@ final readonly class Validator
      * Validates the specified `$values` for the corresponding public properties on the specified `$class`, using built-in PHP types and attribute rules.
      *
      * @param ClassReflector|class-string $class
-     * @return array<string,FailingRule[]>
+     * @return array<string,list<FailingRule>>
      */
     public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
     {
@@ -126,7 +128,7 @@ final readonly class Validator
     /**
      * Validates `$value` against the specified `$property`, using built-in PHP types and attribute rules.
      *
-     * @return FailingRule[]
+     * @return list<FailingRule>
      */
     public function validateValueForProperty(PropertyReflector $property, mixed $value): array
     {
@@ -160,8 +162,8 @@ final readonly class Validator
     /**
      * Validates the specified `$value` against the specified set of `$rules`. If a rule is a closure, it may return a string as a validation error.
      *
-     * @param Rule|array<Rule|(Closure(mixed $value):string|false)>|(Closure(mixed $value):string|false) $rules
-     * @return FailingRule[]
+     * @param Rule|ValidationClosure|array<ValidationRule> $rules
+     * @return list<FailingRule>
      */
     public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
@@ -187,10 +189,10 @@ final readonly class Validator
      * The `$rules` array is expected to have the same keys as `$values`, associated with instance of {@see Tempest\Validation\Rule}.
      * If `$rules` doesn't contain a key for a value, it will not be validated.
      *
-     * @param array<string,mixed> $values
-     * @param array<string,Rule|(Closure(mixed $value):string|false)> $rules
+     * @param iterable<string,mixed> $values
+     * @param array<string,Rule|ValidationClosure|array<ValidationRule>> $rules
      *
-     * @return Rule[]
+     * @return array<string,list<FailingRule>>
      */
     public function validateValues(iterable $values, array $rules): array
     {

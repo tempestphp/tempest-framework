@@ -385,7 +385,7 @@ final class TempestViewLexerTest extends TestCase
             expected: [
                 new Token('<div', TokenType::OPEN_TAG_START),
                 new Token(' class=', TokenType::ATTRIBUTE_NAME),
-                new Token('\'hello\'', TokenType::ATTRIBUTE_VALUE),
+                new Token("'hello'", TokenType::ATTRIBUTE_VALUE),
                 new Token('>', TokenType::OPEN_TAG_END),
                 new Token('</div>', TokenType::CLOSING_TAG),
             ],

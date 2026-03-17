@@ -113,11 +113,11 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     {
         if (! $this->bufferEnabled && $key === '/') {
             $this->bufferEnabled = true;
-
             return;
-        } elseif ($this->bufferEnabled && $key === '/') {
-            $this->bufferEnabled = false;
+        }
 
+        if ($this->bufferEnabled && $key === '/') {
+            $this->bufferEnabled = false;
             return;
         }
 

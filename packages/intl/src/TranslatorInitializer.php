@@ -7,7 +7,6 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\EventBus\EventBus;
 use Tempest\Intl\Catalog\Catalog;
-use Tempest\Intl\IntlConfig;
 use Tempest\Intl\MessageFormat\Formatter\MessageFormatter;
 
 final class TranslatorInitializer implements Initializer

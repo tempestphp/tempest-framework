@@ -65,19 +65,17 @@ final class CasterFactory
                 $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
             }
 
-            if ($castWith) {
+            if ($castWith instanceof CastWith) {
                 return $this->container->get($castWith->className, context: $context);
             }
 
-            if ($casterAttribute = $property->getAttribute(ProvidesCaster::class)) {
+            if (($casterAttribute = $property->getAttribute(ProvidesCaster::class)) instanceof ProvidesCaster) {
                 return $this->container->get($casterAttribute->caster, context: $context);
             }
 
             foreach ($this->resolveCasters() as [$casterClass]) {
-                if (is_a($casterClass, DynamicCaster::class, allow_string: true)) {
-                    if (! $casterClass::accepts($property)) {
-                        continue;
-                    }
+                if (is_a($casterClass, DynamicCaster::class, allow_string: true) && ! $casterClass::accepts($property)) {
+                    continue;
                 }
 
                 if (is_a($casterClass, ConfigurableCaster::class, allow_string: true)) {

@@ -32,7 +32,7 @@ final class GenericLock implements Lock
             return false;
         }
 
-        $expiration = $this->duration !== null
+        $expiration = $this->duration instanceof Duration
             ? DateTime::now()->plus($this->duration)
             : null;
 

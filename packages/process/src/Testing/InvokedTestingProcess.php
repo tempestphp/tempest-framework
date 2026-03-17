@@ -2,6 +2,7 @@
 
 namespace Tempest\Process\Testing;
 
+use Closure;
 use Tempest\DateTime\Duration;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\OutputChannel;
@@ -42,9 +43,11 @@ final class InvokedTestingProcess implements InvokedProcess
             $output = [];
 
             for ($i = 0; $i < $this->nextOutputIndex; $i++) {
-                if ($this->description->output[$i]['type'] === OutputChannel::OUTPUT) {
-                    $output[] = $this->description->output[$i]['buffer'];
+                if ($this->description->output[$i]['type'] !== OutputChannel::OUTPUT) {
+                    continue;
                 }
+
+                $output[] = $this->description->output[$i]['buffer'];
             }
 
             return rtrim(implode('', $output), "\n") . "\n";
@@ -58,9 +61,11 @@ final class InvokedTestingProcess implements InvokedProcess
             $output = [];
 
             for ($i = 0; $i < $this->nextErrorOutputIndex; $i++) {
-                if ($this->description->output[$i]['type'] === OutputChannel::ERROR) {
-                    $output[] = $this->description->output[$i]['buffer'];
+                if ($this->description->output[$i]['type'] !== OutputChannel::ERROR) {
+                    continue;
                 }
+
+                $output[] = $this->description->output[$i]['buffer'];
             }
 
             return rtrim(implode('', $output), "\n") . "\n";
@@ -69,8 +74,10 @@ final class InvokedTestingProcess implements InvokedProcess
 
     /**
      * The general output handler callback.
+     *
+     * @var null|\Closure(OutputChannel, string): void
      */
-    private ?\Closure $outputHandler = null;
+    private ?Closure $outputHandler = null;
 
     /**
      * The number of times the process should indicate that it is "running".
@@ -95,11 +102,6 @@ final class InvokedTestingProcess implements InvokedProcess
      */
     private int $nextErrorOutputIndex = 0;
 
-    /**
-     * The signals that have been received.
-     */
-    private array $receivedSignals = [];
-
     public function __construct(
         private readonly InvokedProcessDescription $description,
     ) {}
@@ -107,8 +109,6 @@ final class InvokedTestingProcess implements InvokedProcess
     public function signal(int $signal): self
     {
         $this->invokeOutputHandlerWithNextLineOfOutput();
-
-        $this->receivedSignals[] = $signal;
 
         return $this;
     }
@@ -122,9 +122,13 @@ final class InvokedTestingProcess implements InvokedProcess
 
     public function wait(?callable $output = null): ProcessResult
     {
-        $this->outputHandler = $output ?: $this->outputHandler;
+        if ($output !== null) {
+            $this->outputHandler = $output instanceof Closure
+                ? $output
+                : Closure::fromCallable($output);
+        }
 
-        if (! $this->outputHandler) {
+        if (! $this->outputHandler instanceof Closure) {
             $this->remainingRunIterations = 0;
 
             return $this->getProcessResult();
@@ -186,7 +190,7 @@ final class InvokedTestingProcess implements InvokedProcess
      */
     private function invokeOutputHandlerWithNextLineOfOutput(): bool
     {
-        if (! $this->outputHandler) {
+        if (! $this->outputHandler instanceof Closure) {
             return false;
         }
 
@@ -203,7 +207,7 @@ final class InvokedTestingProcess implements InvokedProcess
 
                 $this->nextOutputIndex = $i + 1;
 
-                return $currentOutput;
+                return true;
             }
 
             if ($currentOutput['type'] === OutputChannel::ERROR && $i >= $this->nextErrorOutputIndex) {
@@ -211,7 +215,7 @@ final class InvokedTestingProcess implements InvokedProcess
 
                 $this->nextErrorOutputIndex = $i + 1;
 
-                return $currentOutput;
+                return true;
             }
         }
 

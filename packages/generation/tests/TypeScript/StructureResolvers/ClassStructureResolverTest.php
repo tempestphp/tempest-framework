@@ -23,6 +23,7 @@ use Tempest\Reflection\TypeReflector;
 final class ClassStructureResolverTest extends TestCase
 {
     private ClassStructureResolver $resolver;
+
     private GenericTypeScriptGenerator $generator;
 
     #[PreCondition]
@@ -78,5 +79,6 @@ final class ClassStructureResolverTest extends TestCase
 final class Badge
 {
     public string $name;
+
     public int $value;
 }

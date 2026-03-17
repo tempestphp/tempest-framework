@@ -41,7 +41,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
                 ->toString() ?: 'no option';
 
             $continue = $console->confirm(
-                question: $answers
+                question: $answers !== []
                     ? "You picked {$answerAsString}; continue?"
                     : "Continue with {$answerAsString}?",
                 default: true,
@@ -97,11 +97,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
                             return true;
                         }
 
-                        if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
-                            return true;
-                        }
-
-                        return false;
+                        return $this->options->getOptions()->isList() && $answer === (string) $option->key;
                     });
             })
             ->filter()

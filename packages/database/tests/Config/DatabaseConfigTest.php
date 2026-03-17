@@ -76,8 +76,8 @@ final class DatabaseConfigTest extends TestCase
     {
         yield 'mysql with SSL' => [
             new MysqlConfig(
-                certificateAuthority: '/etc/ssl/certs/ca-certificates.crt',
                 persistent: true,
+                certificateAuthority: '/etc/ssl/certs/ca-certificates.crt',
             ),
             [
                 PDO::ATTR_PERSISTENT => true,
@@ -87,8 +87,8 @@ final class DatabaseConfigTest extends TestCase
 
         yield 'mysql with all SSL options' => [
             new MysqlConfig(
-                certificateAuthority: '/etc/ssl/certs/ca-certificates.crt',
                 verifyServerCertificate: false,
+                certificateAuthority: '/etc/ssl/certs/ca-certificates.crt',
                 clientCertificate: '/path/to/cert.pem',
                 clientKey: '/path/to/key.pem',
             ),

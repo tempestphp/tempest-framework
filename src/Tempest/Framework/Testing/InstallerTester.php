@@ -6,8 +6,8 @@ namespace Tempest\Framework\Testing;
 
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
-use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Discovery\Composer;
 use Tempest\Process\Testing\ProcessTester;
 use Tempest\Support\Arr;
 use Tempest\Support\Filesystem;

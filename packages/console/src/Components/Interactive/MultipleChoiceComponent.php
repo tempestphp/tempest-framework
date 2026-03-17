@@ -109,12 +109,12 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
         if (! $this->bufferEnabled && $key === '/') {
             $this->bufferEnabled = true;
             $this->updateQuery();
-
             return;
-        } elseif ($this->bufferEnabled && $key === '/') {
+        }
+
+        if ($this->bufferEnabled && $key === '/') {
             $this->bufferEnabled = false;
             $this->updateQuery();
-
             return;
         }
 

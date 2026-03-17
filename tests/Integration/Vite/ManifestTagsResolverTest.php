@@ -59,10 +59,10 @@ final class ManifestTagsResolverTest extends FrameworkIntegrationTestCase
     public function test_resolve_script_with_prefetching(PrefetchStrategy $strategy): void
     {
         $this->container->config(new ViteConfig(
-            nonce: '123',
             prefetching: new PrefetchConfig(
                 strategy: $strategy,
             ),
+            nonce: '123',
         ));
 
         $resolver = new ManifestTagsResolver(

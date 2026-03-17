@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use Override;
 use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 
@@ -61,10 +62,10 @@ trait DateTimeConvenienceMethods
      *
      * @param null|Timezone $timezone The timezone to convert to.
      */
-    #[\Override]
+    #[Override]
     public function convertToTimezone(?Timezone $timezone): static
     {
-        if ($timezone === null) {
+        if (! $timezone instanceof Timezone) {
             return $this;
         }
 
@@ -338,8 +339,7 @@ trait DateTimeConvenienceMethods
     /**
      * Adds a year to this date-time object, returning a new instance with the added year.
      *
-     * @throws Exception\UnderflowException If adding the years results in an arithmetic underflow.
-     * @throws Exception\OverflowException If adding the years results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If adding the year results in an arithmetic issue.
      */
     public function plusYear(): static
     {
@@ -359,8 +359,7 @@ trait DateTimeConvenienceMethods
     /**
      * Subtracts a year from this date-time object, returning a new instance with the subtracted year.
      *
-     * @throws Exception\UnderflowException If subtracting the years results in an arithmetic underflow.
-     * @throws Exception\OverflowException If subtracting the years results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If subtracting the year results in an arithmetic issue.
      */
     public function minusYear(): static
     {
@@ -380,8 +379,7 @@ trait DateTimeConvenienceMethods
     /**
      * Adds a month to this date-time object, returning a new instance with the added month.
      *
-     * @throws Exception\UnderflowException If adding the months results in an arithmetic underflow.
-     * @throws Exception\OverflowException If adding the months results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If adding the month results in an arithmetic issue.
      */
     public function plusMonth(): static
     {
@@ -424,8 +422,7 @@ trait DateTimeConvenienceMethods
     /**
      * Subtracts a month from this date-time object, returning a new instance with the subtracted month.
      *
-     * @throws Exception\UnderflowException If subtracting the months results in an arithmetic underflow.
-     * @throws Exception\OverflowException If subtracting the months results in an arithmetic overflow.
+     * @throws Exception\UnexpectedValueException If subtracting the month results in an arithmetic issue.
      */
     public function minusMonth(): static
     {
@@ -929,7 +926,7 @@ trait DateTimeConvenienceMethods
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
     {
         $timestamp = $this->getTimestamp();
@@ -968,7 +965,7 @@ trait DateTimeConvenienceMethods
      *
      * @see https://datatracker.ietf.org/doc/html/rfc3339
      */
-    #[\Override]
+    #[Override]
     public function toRfc3339(?SecondsStyle $secondsStyle = null, bool $useZ = false): string
     {
         return namespace\format_rfc3339($this->getTimestamp(), $secondsStyle, $useZ, $this->getTimezone());
@@ -1000,7 +997,7 @@ trait DateTimeConvenienceMethods
      * @see TimeStyle::default()
      * @see Locale::default()
      */
-    #[\Override]
+    #[Override]
     public function toString(
         ?DateStyle $dateStyle = null,
         ?TimeStyle $timeStyle = null,

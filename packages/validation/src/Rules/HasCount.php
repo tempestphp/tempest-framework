@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use Countable;
 use InvalidArgumentException;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
@@ -26,7 +27,7 @@ final readonly class HasCount implements Rule, HasTranslationVariables
 
     public function isValid(mixed $value): bool
     {
-        if (! is_array($value) && ! $value instanceof \Countable) {
+        if (! is_array($value) && ! $value instanceof Countable) {
             return false;
         }
 

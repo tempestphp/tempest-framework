@@ -21,7 +21,6 @@ use function Tempest\Support\arr;
 
 final class MailTester
 {
-    private ?Email $sentEmail = null;
     private ?SymfonyEmail $sentSymfonyEmail = null;
 
     public function __construct(
@@ -32,7 +31,6 @@ final class MailTester
     {
         $this->mailer->send($email);
 
-        $this->sentEmail = $email;
         $this->sentSymfonyEmail = map($email)->with(EmailToSymfonyEmailMapper::class)->do();
 
         return $this;
@@ -54,7 +52,7 @@ final class MailTester
             message: sprintf('Email `%s` was not sent.', $email),
         );
 
-        if ($callback) {
+        if ($callback instanceof Closure) {
             try {
                 if ($callback($sentEmail) === false) {
                     throw new ExpectationFailedException('The assertion callback returned `false`.');
@@ -109,7 +107,7 @@ final class MailTester
         get => Arr\map(
             array: $this->sentSymfonyEmail->getAttachments(),
             map: fn (DataPart $attachment) => new Attachment(
-                resolve: fn () => $attachment->getBody(),
+                resolve: $attachment->getBody(...),
                 name: $attachment->getFilename(),
                 contentType: $attachment->getMediaType() . '/' . $attachment->getMediaSubtype(),
             ),
@@ -371,13 +369,15 @@ final class MailTester
         );
 
         foreach ($attachments as $attachment) {
-            if ($attachment->getFilename() === $filename) {
-                if ($callback && $callback(new AttachmentTester($attachment)) === false) {
-                    Assert::fail(sprintf('The assertion callback returned `false` for attachment `%s`.', $filename));
-                }
-
-                return $this;
+            if ($attachment->getFilename() !== $filename) {
+                continue;
             }
+
+            if ($callback && $callback(new AttachmentTester($attachment)) === false) {
+                Assert::fail(sprintf('The assertion callback returned `false` for attachment `%s`.', $filename));
+            }
+
+            return $this;
         }
 
         Assert::fail(sprintf(
@@ -385,8 +385,6 @@ final class MailTester
             $filename,
             Arr\join(Arr\map($attachments, fn (DataPart $attachment) => $attachment->getName())),
         ));
-
-        return $this;
     }
 
     /**
@@ -448,13 +446,10 @@ final class MailTester
     private function convertAddresses(null|string|array|EmailAddress $addresses): array
     {
         return arr($addresses)
-            ->map(function (string|EmailAddress|SymfonyAddress $address) {
-                return match (true) {
-                    $address instanceof SymfonyAddress => $address->getAddress(),
-                    $address instanceof EmailAddress => $address->email,
-                    is_string($address) => $address,
-                    default => null,
-                };
+            ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
+                $address instanceof SymfonyAddress => $address->getAddress(),
+                $address instanceof EmailAddress => $address->email,
+                default => $address,
             })
             ->filter()
             ->toArray();

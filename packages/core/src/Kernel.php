@@ -8,29 +8,13 @@ use Tempest\Container\Container;
 
 interface Kernel
 {
-    public const string VERSION = '3.0.1';
+    public const string VERSION = '3.4.1';
 
-    public string $root {
-        get;
-    }
+    public string $root { get; }
 
-    public string $internalStorage {
-        get;
-    }
+    public string $internalStorage { get; }
 
-    public array $discoveryLocations {
-        get;
-        set;
-    }
-
-    public array $discoveryClasses {
-        get;
-        set;
-    }
-
-    public Container $container {
-        get;
-    }
+    public Container $container { get; }
 
     public static function boot(
         string $root,

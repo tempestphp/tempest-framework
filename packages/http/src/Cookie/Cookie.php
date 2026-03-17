@@ -17,8 +17,8 @@ final class Cookie implements Stringable
      * @param null|int $maxAge The maximum age of the cookie in seconds. This is an alternative to the expiration date. If set, the cookie will expire after the specified number of seconds.
      * @param null|string $domain This specifies the domain for which the cookie is valid. If set, the cookie will be sent to this domain and its subdomains. If `⁠null`, it defaults to the current domain.
      * @param null|string $path The URL path that must exist in the requested URL for the cookie to be sent. If set, the cookie will only be sent for requests to this path and its subdirectories.
-     * @param null|bool $secure When `true`, this cookie is only transmitted over secure connections.
-     * @param null|bool $httpOnly When `true`, this cookie will not be accessible using JavaScript.
+     * @param bool $secure When `true`, this cookie is only transmitted over secure connections.
+     * @param bool $httpOnly When `true`, this cookie will not be accessible using JavaScript.
      * @param null|SameSite $sameSite See {@see \Tempest\Http\Cookie\SameSite}.
      */
     public function __construct(
@@ -30,7 +30,7 @@ final class Cookie implements Stringable
         public ?string $path = '/',
         public bool $secure = true,
         public bool $httpOnly = false,
-        public SameSite $sameSite = SameSite::LAX,
+        public ?SameSite $sameSite = SameSite::LAX,
     ) {}
 
     public function withValue(string $value): self
@@ -60,15 +60,15 @@ final class Cookie implements Stringable
             $parts[] = 'Path=' . $this->path;
         }
 
-        if ($this->secure === true) {
+        if ($this->secure) {
             $parts[] = 'Secure';
         }
 
-        if ($this->httpOnly === true) {
+        if ($this->httpOnly) {
             $parts[] = 'HttpOnly';
         }
 
-        if ($this->sameSite !== null) {
+        if ($this->sameSite instanceof SameSite) {
             $parts[] = 'SameSite=' . $this->sameSite->value;
         }
 
@@ -116,6 +116,7 @@ final class Cookie implements Stringable
             }
 
             if ($attributeName === 'max-age') {
+                $cookie['max-age'] = (int) $attributeValue;
                 $cookie['expires'] = time() + (int) $attributeValue;
             }
         }

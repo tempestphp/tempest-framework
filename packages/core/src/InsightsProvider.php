@@ -10,9 +10,7 @@ interface InsightsProvider
     /**
      * Display name of this provider.
      */
-    public string $name {
-        get;
-    }
+    public string $name { get; }
 
     /**
      * Gets insights in the form of key/value pairs.

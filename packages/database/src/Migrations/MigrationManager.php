@@ -194,10 +194,6 @@ final class MigrationManager
 
         $statement = $migration->up();
 
-        if ($statement === null) {
-            return;
-        }
-
         if ($statement instanceof CompoundStatement) {
             $statements = $statement->statements;
         } else {
@@ -215,8 +211,11 @@ final class MigrationManager
         try {
             foreach ($statements as $statement) {
                 $sql = $statement->compile($this->dialect);
+                if (trim($sql) === '') {
+                    continue;
+                }
 
-                if (! trim($sql)) {
+                if (trim($sql) === '0') {
                     continue;
                 }
 
@@ -296,7 +295,7 @@ final class MigrationManager
             fn (array $item) => match ($this->dialect) {
                 DatabaseDialect::SQLITE => new TableMigrationDefinition($item['name']),
                 DatabaseDialect::POSTGRESQL => new TableMigrationDefinition($item['table_name']),
-                DatabaseDialect::MYSQL => new TableMigrationDefinition(array_values($item)[0]),
+                DatabaseDialect::MYSQL => new TableMigrationDefinition(array_first($item)),
             },
             new ShowTablesStatement()->fetch($this->dialect),
         );
@@ -319,7 +318,7 @@ final class MigrationManager
 
     private function getMinifiedSqlFromStatement(?QueryStatement $statement): string
     {
-        if ($statement === null) {
+        if (! $statement instanceof QueryStatement) {
             return '';
         }
 
@@ -330,8 +329,6 @@ final class MigrationManager
         $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
 
         // Remove blank lines and excessive spaces
-        $sql = preg_replace('/\s+/', ' ', trim($sql));
-
-        return $sql;
+        return preg_replace('/\s+/', ' ', trim($sql));
     }
 }

@@ -189,9 +189,9 @@ final class TestingStorage implements Storage
 
     public function createTemporaryUrlsUsing(Closure $closure): void
     {
-        $generator = new class($closure) implements TemporaryUrlGenerator {
+        $generator = new readonly class($closure) implements TemporaryUrlGenerator {
             public function __construct(
-                private readonly Closure $closure,
+                private Closure $closure,
             ) {}
 
             public function temporaryUrl(string $path, DateTimeInterface $expiresAt, Config $config): string
@@ -205,9 +205,9 @@ final class TestingStorage implements Storage
 
     public function createPublicUrlsUsing(Closure $closure): void
     {
-        $generator = new class($closure) implements PublicUrlGenerator {
+        $generator = new readonly class($closure) implements PublicUrlGenerator {
             public function __construct(
-                private readonly Closure $closure,
+                private Closure $closure,
             ) {}
 
             public function publicUrl(string $path, Config $config): string

@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\TestCase;
 use Predis;
+use Predis\Client;
 use Tempest\KeyValue\Redis\PredisClient;
 use Throwable;
 
@@ -16,19 +17,19 @@ final class PredisClientTest extends TestCase
     #[PreCondition]
     protected function configure(): void
     {
-        if (! class_exists(Predis\Client::class)) {
+        if (! class_exists(Client::class)) {
             $this->markTestSkipped('The `predis/predis` package is not installed.');
         }
 
         $this->redis = new PredisClient(
-            client: new Predis\Client(
-                parameters: array_filter([
+            client: new Client(
+                parameters: [
                     'scheme' => 'tcp',
                     'host' => '127.0.0.1',
                     'port' => 6379,
                     'database' => 6,
                     'timeout' => .2,
-                ]),
+                ],
                 options: ['prefix' => 'tempest_test:'],
             ),
         );
@@ -52,7 +53,7 @@ final class PredisClientTest extends TestCase
     public function test_basic(): void
     {
         $this->assertSame('response', $this->redis->command('PING', 'response'));
-        $this->assertInstanceOf(Predis\Client::class, $this->redis->getClient());
+        $this->assertInstanceOf(Client::class, $this->redis->getClient());
     }
 
     public function test_set(): void

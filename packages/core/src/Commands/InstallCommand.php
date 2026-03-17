@@ -14,7 +14,7 @@ use Tempest\Core\InstallerConfig;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class InstallCommand
     {
         use HasConsole;
@@ -35,7 +35,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $installer = $this->resolveInstaller($installer);
 
-            if ($installer === null) {
+            if (! $installer instanceof Installer) {
                 $this->error('Installer not found');
 
                 return;

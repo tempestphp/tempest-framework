@@ -13,12 +13,16 @@ excludes = [
 	"**/*.stub.php",
 	"**/*.input.php",
 	"**/*.expected.php",
+	"**/.tempest",
+	"./vendor/rector", # see https://github.com/carthage-software/mago/issues/1237 rector clashes and throws errors in tests
+	"packages/intl/bin/plural-rules.php",
 ]
 
 [formatter]
 print-width = 180
 tab-width = 4
 use-tabs = false
+indent-heredoc = false
 space-after-logical-not-unary-prefix-operator = true
 null-type-hint = "question"
 space-before-arrow-function-parameter-list-parenthesis = true
@@ -40,12 +44,9 @@ trait-name = { psr = false }
 class-name = { psr = false }
 literal-named-argument = { enabled = false } # todo
 no-error-control-operator = { enabled = false }
-no-boolean-literal-comparison = { enabled = false }
 too-many-methods = { enabled = false }
 kan-defect = { enabled = false }
 cyclomatic-complexity = { enabled = false }
-return-type = { ignore-arrow-function = true, ignore-closure = true }
-parameter-type = { ignore-arrow-function = true, ignore-closure = true }
 too-many-enum-cases = { enabled = false }
 no-redundant-file = { enabled = false }
 assertion-style = { style = "this" }
@@ -54,11 +55,15 @@ no-else-clause = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
 no-shorthand-ternary = { enabled = false }
 no-assign-in-condition = { enabled = false }
-strict-types = { enabled = false } # https://github.com/carthage-software/mago/issues/146
+strict-types = { enabled = false } # lots of issues with ImmutableString
 tagged-todo = { enabled = false } # CONSIDER ENABLING
-excessive-parameter-list = { enabled = false } # https://github.com/carthage-software/mago/issues/206
+excessive-parameter-list = { enabled = false } # too many false positives
 halstead = { enabled = false }
-prefer-arrow-function = { enabled = false } # enable when references are fixed
-prefer-first-class-callable = { enabled = false } # enable when arguments are fixed
 strict-behavior = { allow-loose-behavior = true }
 no-redundant-use = { enabled = true }
+no-empty-comment = { enabled = false }
+single-class-per-file = { enabled = false }
+no-isset = { enabled = false }
+instanceof-stringable = { enabled = false }
+prefer-static-closure = { enabled = false }
+sensitive-parameter = { enabled = false }

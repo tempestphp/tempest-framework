@@ -16,10 +16,10 @@ use Tempest\Support\Str;
 /**
  * Writes TypeScript definitions to a single .d.ts file using TypeScript namespaces.
  */
-final class NamespacedFileWriter implements TypeScriptWriter
+final readonly class NamespacedFileWriter implements TypeScriptWriter
 {
     public function __construct(
-        private readonly NamespacedTypeScriptGenerationConfig $config,
+        private NamespacedTypeScriptGenerationConfig $config,
     ) {}
 
     public function write(TypeScriptOutput $output): void

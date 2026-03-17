@@ -9,10 +9,10 @@ use Throwable;
 /**
  * An exception reporter that write exceptions through the {@see Logger}.
  */
-final class LoggingExceptionReporter implements ExceptionReporter
+final readonly class LoggingExceptionReporter implements ExceptionReporter
 {
     public function __construct(
-        private readonly Logger $logger,
+        private Logger $logger,
     ) {}
 
     public function report(Throwable $throwable): void

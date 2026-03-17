@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\CommandBus;
 
 use DateTimeImmutable;
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
@@ -14,7 +13,7 @@ use Throwable;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class HandleAsyncCommand
     {
         use HasConsole;
@@ -22,7 +21,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         public function __construct(
             private CommandBusConfig $commandBusConfig,
             private Container $container,
-            private Console $console,
             private CommandRepository $repository,
         ) {}
 

@@ -26,7 +26,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
             return false;
         }
 
-        return $input->getIterableType() !== null;
+        return $input->getIterableType() instanceof TypeReflector;
     }
 
     public static function configure(PropertyReflector $property, Context $context): self
@@ -36,23 +36,24 @@ final readonly class ArrayToObjectCollectionCaster implements Caster, DynamicCas
 
     public function cast(mixed $input): mixed
     {
-        $values = [];
         $iterableType = $this->property->getIterableType();
-
-        $caster = $iterableType->isEnum()
-            ? new EnumCaster($iterableType->getName())
-            : new ObjectCaster($iterableType);
 
         if (Json\is_valid($input)) {
             $input = Json\decode($input);
         }
 
+        if ($iterableType->isBuiltIn()) {
+            return $input;
+        }
+
+        $caster = $iterableType->isEnum()
+            ? new EnumCaster($iterableType->getName())
+            : new ObjectCaster($iterableType);
+
+        $values = [];
+
         foreach ($input as $key => $item) {
-            if (is_object($item) && $iterableType->matches($item::class)) {
-                $values[$key] = $item;
-            } else {
-                $values[$key] = $caster->cast($item);
-            }
+            $values[$key] = is_object($item) && $iterableType->matches($item::class) ? $item : $caster->cast($item);
         }
 
         return $values;

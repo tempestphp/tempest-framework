@@ -19,6 +19,6 @@ final readonly class IsNumeric implements Rule
             return false;
         }
 
-        return boolval(preg_match('/^[0-9]+$/', $value));
+        return boolval(preg_match('/^\d+$/', $value));
     }
 }

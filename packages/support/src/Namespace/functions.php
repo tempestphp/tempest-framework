@@ -123,9 +123,11 @@ function prepare_namespace(Stringable|string $path, null|Stringable|string $root
     // If the path is a to a PHP file, we exclude the file name. Otherwise,
     // it's a path to a directory, which should be included in the namespace.
     if ($normalized->endsWith('.php')) {
-        return $normalized->contains(['/', '\\'])
-            ? $normalized->beforeLast(['/', '\\'])
-            : new ImmutableString();
+        return (
+            $normalized->contains(['/', '\\'])
+                ? $normalized->beforeLast(['/', '\\'])
+                : new ImmutableString()
+        );
     }
 
     return $normalized;

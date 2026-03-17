@@ -40,7 +40,7 @@ final class RouteTreeNode
     public function findOrCreateNodeForSegment(string $routeSegment): self
     {
         // Translates a path segment like {id} into it's matching regex. Static segments remain the same
-        $regexRouteSegment = self::convertDynamicSegmentToRegex($routeSegment);
+        $regexRouteSegment = $this->convertDynamicSegmentToRegex($routeSegment);
 
         // Returns a static or dynamic child node depending on the segment is dynamic or static
         if ($routeSegment === $regexRouteSegment) {
@@ -52,14 +52,14 @@ final class RouteTreeNode
 
     public function setTargetRoute(MarkedRoute $markedRoute): void
     {
-        if ($this->targetRoute !== null) {
+        if ($this->targetRoute instanceof MarkedRoute) {
             throw new DuplicateRouteException($markedRoute->route);
         }
 
         $this->targetRoute = $markedRoute;
     }
 
-    private static function convertDynamicSegmentToRegex(string $uriPart): string
+    private function convertDynamicSegmentToRegex(string $uriPart): string
     {
         $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_OPTIONAL_REGEX . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 

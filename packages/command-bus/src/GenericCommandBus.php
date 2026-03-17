@@ -20,7 +20,7 @@ final class GenericCommandBus implements CommandBus
     {
         $commandHandler = $this->getCommandHandler($command);
 
-        if ($commandHandler === null) {
+        if (! $commandHandler instanceof CommandHandler) {
             throw new CommandHandlerWasNotFound($command);
         }
 

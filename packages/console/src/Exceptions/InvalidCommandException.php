@@ -24,7 +24,7 @@ final class InvalidCommandException extends ConsoleException
             $this->invalidArguments,
         ));
 
-        if ($missingArguments) {
+        if ($missingArguments !== '' && $missingArguments !== '0') {
             $console->writeln();
             $console->error("Missing arguments: {$missingArguments}");
         } else {

@@ -13,8 +13,8 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\ConfigCache;
-use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Environment;
+use Tempest\Discovery\DiscoveryCache;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
@@ -81,7 +81,6 @@ if (class_exists(ConsoleCommand::class)) {
 
             $this->console->header('User caches');
 
-            /** @var Cache $cache */
             foreach ($caches as $cache) {
                 $this->console->keyValue(
                     key: $this->getCacheName($cache),

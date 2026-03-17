@@ -132,7 +132,7 @@ final readonly class InteractiveCommand
         $result = $this->console->progressBar(
             data: array_fill(0, 10, 'a'),
             handler: function ($i) {
-                usleep(100000);
+                usleep(100_000);
 
                 return $i . $i;
             },

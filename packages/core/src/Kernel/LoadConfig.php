@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use Tempest\Container\Container;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
-use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Support\Arr\MutableArray;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
@@ -18,19 +19,25 @@ use function Tempest\root_path;
 final readonly class LoadConfig
 {
     public function __construct(
-        private Kernel $kernel,
+        private DiscoveryConfig $discoveryConfig,
+        private Container $container,
         private ConfigCache $cache,
         private Environment $environment,
     ) {}
 
     public function __invoke(): void
     {
-        $configPaths = $this->cache->resolve('config_cache', fn () => $this->find());
+        $configPaths = $this->cache->resolve('config_cache', $this->find(...));
 
         foreach ($configPaths as $path) {
             $configFile = require $path;
 
-            $this->kernel->container->config($configFile);
+            if ($configFile instanceof DiscoveryConfig) {
+                $configFile->locations = [...$this->discoveryConfig->locations, ...$configFile->locations];
+                $configFile->classes = [...$this->discoveryConfig->classes, ...$configFile->classes];
+            }
+
+            $this->container->config($configFile);
         }
     }
 
@@ -42,7 +49,7 @@ final readonly class LoadConfig
         $configPaths = new MutableArray();
 
         // Scan for config files in all discovery locations
-        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
+        foreach ($this->discoveryConfig->locations as $discoveryLocation) {
             $this->scan($discoveryLocation->path, $configPaths);
         }
 
@@ -113,7 +120,11 @@ final readonly class LoadConfig
 
             foreach ($subPaths as $subPath) {
                 // `.` and `..` are skipped
-                if ($subPath === '.' || $subPath === '..') {
+                if ($subPath === '.') {
+                    continue;
+                }
+
+                if ($subPath === '..') {
                     continue;
                 }
 

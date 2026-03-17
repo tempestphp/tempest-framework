@@ -36,7 +36,7 @@ final class ConfirmRenderer
             }, "\n"),
             default => $this->line(
                 $this->style(
-                    $answer === true ? 'fg-green bold' : 'fg-gray dim',
+                    $answer ? 'fg-green bold' : 'fg-gray dim',
                     '<style="dim">→</style> ' . $this->yes,
                 ),
                 '   ',

@@ -9,9 +9,7 @@ interface FormattingFunction
     /**
      * Identifier of the formatting function.
      */
-    public string $name {
-        get;
-    }
+    public string $name { get; }
 
     /**
      * Formats the given value with the given parameters.

@@ -43,8 +43,8 @@ final class StaticSearchComponent implements StaticConsoleComponent
             $answer = $console->ask(
                 question: 'Please select a result',
                 options: $options,
-                multiple: $this->multiple,
                 default: $this->multiple ? [] : self::CANCEL,
+                multiple: $this->multiple,
             );
 
             if ($answer === self::SEARCH_AGAIN) {

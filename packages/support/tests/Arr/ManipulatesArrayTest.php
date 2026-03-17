@@ -203,7 +203,7 @@ final class ManipulatesArrayTest extends TestCase
 
     public function test_last(): void
     {
-        $this->assertSame(null, arr()->last());
+        $this->assertNull(arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
 
         $this->assertSame('foo', arr()->last(default: 'foo'));
@@ -213,7 +213,7 @@ final class ManipulatesArrayTest extends TestCase
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
-        $this->assertSame(null, arr()->first());
+        $this->assertNull(arr()->first());
 
         $this->assertSame('foo', arr()->first(default: 'foo'));
         $this->assertSame(1, arr([1, 2])->first(default: 'foo'));
@@ -950,8 +950,8 @@ final class ManipulatesArrayTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection->add('name')->toArray(),
             expected: ['name'],
+            actual: $collection->add('name')->toArray(),
         );
     }
 
@@ -1639,9 +1639,7 @@ final class ManipulatesArrayTest extends TestCase
             ['age' => 35, 'active' => true],
         ]);
 
-        $result = $collection->findKey(function ($item) {
-            return $item['age'] > 28 && $item['active'] === true;
-        });
+        $result = $collection->findKey(fn ($item) => $item['age'] > 28 && $item['active'] === true);
 
         $this->assertSame(2, $result);
     }
@@ -1698,18 +1696,18 @@ final class ManipulatesArrayTest extends TestCase
         $collection = arr(['foo', 'bar']);
 
         $this->assertSame(
-            actual: $collection->append('foo')->toArray(),
             expected: ['foo', 'bar', 'foo'],
+            actual: $collection->append('foo')->toArray(),
         );
 
         $this->assertSame(
-            actual: $collection->append(1, 'b')->toArray(),
             expected: ['foo', 'bar', 1, 'b'],
+            actual: $collection->append(1, 'b')->toArray(),
         );
 
         $this->assertSame(
-            actual: $collection->append(['a' => 'b'])->toArray(),
             expected: ['foo', 'bar', ['a' => 'b']],
+            actual: $collection->append(['a' => 'b'])->toArray(),
         );
     }
 
@@ -1718,18 +1716,18 @@ final class ManipulatesArrayTest extends TestCase
         $collection = arr(['foo', 'bar']);
 
         $this->assertSame(
-            actual: $collection->prepend('foo')->toArray(),
             expected: ['foo', 'foo', 'bar'],
+            actual: $collection->prepend('foo')->toArray(),
         );
 
         $this->assertSame(
-            actual: $collection->prepend(1, 'b')->toArray(),
             expected: [1, 'b', 'foo', 'bar'],
+            actual: $collection->prepend(1, 'b')->toArray(),
         );
 
         $this->assertSame(
-            actual: $collection->prepend(['a' => 'b'])->toArray(),
             expected: [['a' => 'b'], 'foo', 'bar'],
+            actual: $collection->prepend(['a' => 'b'])->toArray(),
         );
     }
 
@@ -1809,7 +1807,7 @@ final class ManipulatesArrayTest extends TestCase
 
     public function test_partition(): void
     {
-        $this->assertSame([[true, true], [false]], arr([true, true, false])->partition(fn (bool $value) => $value === true)->toArray());
+        $this->assertSame([[true, true], [false]], arr([true, true, false])->partition(fn (bool $value) => $value)->toArray());
     }
 
     public function test_json_encode(): void

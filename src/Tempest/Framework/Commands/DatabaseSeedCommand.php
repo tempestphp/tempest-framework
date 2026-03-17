@@ -10,13 +10,13 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Database\Config\SeederConfig;
 
-final class DatabaseSeedCommand
+final readonly class DatabaseSeedCommand
 {
     use HasConsole;
 
     public function __construct(
-        private readonly Container $container,
-        private readonly SeederConfig $seederConfig,
+        private Container $container,
+        private SeederConfig $seederConfig,
     ) {}
 
     #[ConsoleCommand(

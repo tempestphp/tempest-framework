@@ -42,9 +42,9 @@ final class BelongsTo implements Relation
         if ($this->ownerJoin) {
             if (str_contains($this->ownerJoin, '.')) {
                 return explode('.', $this->ownerJoin)[1];
-            } else {
-                return $this->ownerJoin;
             }
+
+            return $this->ownerJoin;
         }
 
         $relationModel = inspect($this->property->getType()->asClass());
@@ -66,15 +66,13 @@ final class BelongsTo implements Relation
 
         return $relationModel
             ->getSelectFields()
-            ->map(function ($field) use ($tableReference) {
-                return new FieldStatement(
-                    $tableReference . '.' . $field,
+            ->map(fn ($field) => new FieldStatement(
+                $tableReference . '.' . $field,
+            )
+                ->withAlias(
+                    sprintf('%s.%s', $this->property->getName(), $field),
                 )
-                    ->withAlias(
-                        sprintf('%s.%s', $this->property->getName(), $field),
-                    )
-                    ->withAliasPrefix($this->parent);
-            });
+                ->withAliasPrefix($this->parent));
     }
 
     public function getJoinStatement(): JoinStatement

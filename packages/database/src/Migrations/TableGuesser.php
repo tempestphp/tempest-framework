@@ -15,7 +15,7 @@ final class TableGuesser
         if (Str\starts_with($migration, 'create_')) {
             $table = Str\strip_end(Str\after_first($migration, 'create_'), '_table');
 
-            return ! Str\is_empty($table) ? new TableGuess($table, isCreate: true) : null;
+            return Str\is_empty($table) ? null : new TableGuess($table, isCreate: true);
         }
 
         if (! Str\contains($migration, self::PREPOSITIONS)) {
@@ -24,6 +24,6 @@ final class TableGuesser
 
         $table = Str\strip_end(Str\after_last($migration, self::PREPOSITIONS), '_table');
 
-        return ! Str\is_empty($table) ? new TableGuess($table, isCreate: false) : null;
+        return Str\is_empty($table) ? null : new TableGuess($table, isCreate: false);
     }
 }

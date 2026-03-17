@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Query;
+use UnitEnum;
 
 /**
  * @template TModel
@@ -15,16 +16,17 @@ interface BuildsQuery
      *
      * @return array<mixed>
      */
-    public array $bindings {
-        get;
-    }
+    public array $bindings { get; }
 
     /**
      * The model inspector for this query builder.
      */
-    public ModelInspector $model {
-        get;
-    }
+    public ModelInspector $model { get; }
+
+    /**
+     * The database tag for targeting a specific database connection.
+     */
+    public null|string|UnitEnum $onDatabase { get; }
 
     /**
      * Creates a {@see Query} instance with the specified optional bindings.

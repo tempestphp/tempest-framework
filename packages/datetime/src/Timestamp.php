@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use Override;
 use Tempest\Clock\Clock;
 use Tempest\Container\GenericContainer;
+use Tempest\DateTime\Exception\OverflowException;
+use Tempest\DateTime\Exception\UnderflowException;
 use Tempest\Intl\Locale;
 use Tempest\Support\Math;
 use Tempest\Support\Math\Exception\ArithmeticException;
@@ -46,11 +49,11 @@ final readonly class Timestamp implements TemporalInterface
     {
         // Check for potential overflow or underflow before doing any operation
         if ($seconds === Math\INT64_MAX && $nanoseconds >= NANOSECONDS_PER_SECOND) {
-            throw new Exception\OverflowException('Adding nanoseconds would cause an overflow.');
+            throw new OverflowException('Adding nanoseconds would cause an overflow.');
         }
 
         if ($seconds === Math\INT64_MIN && $nanoseconds <= -NANOSECONDS_PER_SECOND) {
-            throw new Exception\UnderflowException('Subtracting nanoseconds would cause an underflow.');
+            throw new UnderflowException('Subtracting nanoseconds would cause an underflow.');
         }
 
         $seconds_adjustment = Math\div($nanoseconds, NANOSECONDS_PER_SECOND);
@@ -170,7 +173,7 @@ final readonly class Timestamp implements TemporalInterface
     /**
      * Returns this Timestamp instance itself, as it already represents a timestamp.
      */
-    #[\Override]
+    #[Override]
     public function getTimestamp(): self
     {
         return $this;
@@ -224,7 +227,7 @@ final readonly class Timestamp implements TemporalInterface
      * @throws Exception\UnderflowException If adding the duration results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the duration results in an arithmetic overflow.
      */
-    #[\Override]
+    #[Override]
     public function plus(Duration $duration): static
     {
         [$h, $m, $s, $ns] = $duration->getParts();
@@ -242,7 +245,7 @@ final readonly class Timestamp implements TemporalInterface
      * @throws Exception\UnderflowException If subtracting the duration results in an arithmetic underflow.
      * @throws Exception\OverflowException If subtracting the duration results in an arithmetic overflow.
      */
-    #[\Override]
+    #[Override]
     public function minus(Duration $duration): static
     {
         [$h, $m, $s, $ns] = $duration->getParts();
@@ -273,7 +276,7 @@ final readonly class Timestamp implements TemporalInterface
             ->timestamp();
     }
 
-    #[\Override]
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

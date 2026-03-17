@@ -18,7 +18,7 @@ use function Tempest\Support\Str\after_last;
 use function Tempest\Support\Str\before_last;
 use function Tempest\Support\Str\contains;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class ContainerShowCommand
     {
         public function __construct(
@@ -38,7 +38,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $this->listBindings(
                 title: 'Initializers',
                 bindings: sort($this->container->getInitializers()),
-                formatKey: fn (string $class): string => $this->formatClassKey($class),
+                formatKey: $this->formatClassKey(...),
                 formatValue: fn (string $_, string $initializer): string => $this->formatClassValue($initializer),
                 reject: static fn (string $_, string $initializer): bool => contains($initializer, ['\\Stubs', '\\Fixtures']),
             );
@@ -68,12 +68,12 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
         private function listBindings(string $title, array $bindings, ?Closure $formatKey = null, ?Closure $formatValue = null, ?Closure $reject = null): void
         {
-            if (! $bindings) {
+            if ($bindings === []) {
                 return;
             }
 
             $reject ??= static fn (): bool => false;
-            $formatKey ??= fn (int|string $key): string => $this->formatClassKey($key);
+            $formatKey ??= $this->formatClassKey(...);
             $formatValue ??= fn (int|string $key, mixed $value): string => $this->formatClassValue($value, $key);
 
             $this->console->header($title);

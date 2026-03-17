@@ -34,12 +34,12 @@ final class DependencyChain
 
     public function first(): Dependency
     {
-        return $this->dependencies[array_key_first($this->dependencies)];
+        return array_first($this->dependencies);
     }
 
     public function last(): Dependency
     {
-        return $this->dependencies[array_key_last($this->dependencies)];
+        return array_last($this->dependencies);
     }
 
     /** @return \Tempest\Container\Dependency[] */

@@ -17,16 +17,12 @@ interface Database
     /**
      * The dialect of this database.
      */
-    public DatabaseDialect $dialect {
-        get;
-    }
+    public DatabaseDialect $dialect { get; }
 
     /**
      * The tag associated with this database, if any.
      */
-    public null|string|UnitEnum $tag {
-        get;
-    }
+    public null|string|UnitEnum $tag { get; }
 
     /**
      * Executes the given query.

@@ -3,12 +3,14 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
+use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseContext;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
@@ -29,12 +31,14 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\str;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  */
 final class InsertQueryBuilder implements BuildsQuery
 {
-    use HasConditions, OnDatabase, TransformsQueryBuilder;
+    use HasConditions;
+    use OnDatabase;
+    use TransformsQueryBuilder;
 
     private InsertStatement $insert;
 
@@ -56,7 +60,7 @@ final class InsertQueryBuilder implements BuildsQuery
      * @param class-string<TModel>|string|TModel $model
      */
     public function __construct(
-        string|object $model,
+        mixed $model,
         private readonly array $rows,
         private readonly SerializerFactory $serializerFactory,
     ) {
@@ -71,7 +75,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $id = $this->build()->execute(...$bindings);
 
-        if ($id === null) {
+        if (! $id instanceof PrimaryKey) {
             return null;
         }
 
@@ -209,7 +213,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $hasMany = $this->model->getHasMany($relationName);
 
-        if ($hasMany === null) {
+        if (! $hasMany instanceof HasMany) {
             return;
         }
 
@@ -243,7 +247,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $hasOne = $this->model->getHasOne($relationName);
 
-        if ($hasOne === null) {
+        if (! $hasOne instanceof HasOne) {
             return;
         }
 
@@ -308,7 +312,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         return Arr\map(
             array: $this->rows,
-            map: fn (object|iterable $model) => $this->resolveModelData($model),
+            map: $this->resolveModelData(...),
         );
     }
 
@@ -346,7 +350,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $hasMany = $this->model->getHasMany($key);
 
-        if ($hasMany === null) {
+        if (! $hasMany instanceof HasMany) {
             return false;
         }
 
@@ -363,7 +367,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $hasOne = $this->model->getHasOne($key);
 
-        if ($hasOne === null) {
+        if (! $hasOne instanceof HasOne) {
             return false;
         }
 
@@ -380,7 +384,7 @@ final class InsertQueryBuilder implements BuildsQuery
     {
         $belongsTo = $this->model->getBelongsTo($key);
 
-        if ($belongsTo === null || ! is_object($value) && ! is_array($value)) {
+        if (! $belongsTo instanceof BelongsTo || ! is_object($value) && ! is_array($value)) {
             return false;
         }
 
@@ -424,7 +428,7 @@ final class InsertQueryBuilder implements BuildsQuery
 
             $value = $property->getValue($model);
 
-            if ($definition->getHasMany($propertyName)) {
+            if ($definition->getHasMany($propertyName) instanceof HasMany) {
                 if (is_iterable($value)) {
                     $this->addHasManyRelationCallback($propertyName, $value);
                 }
@@ -432,7 +436,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
-            if ($definition->getHasOne($propertyName)) {
+            if ($definition->getHasOne($propertyName) instanceof HasOne) {
                 if (is_object($value) || is_array($value)) {
                     $this->addHasOneRelationCallback($propertyName, $value);
                 }
@@ -468,7 +472,7 @@ final class InsertQueryBuilder implements BuildsQuery
         }
 
         $belongsTo = $definition->getBelongsTo($property->getName());
-        $column = $belongsTo
+        $column = $belongsTo instanceof BelongsTo
             ? $belongsTo->getOwnerFieldName()
             : $property->getName() . '_' . $primaryKey;
 
@@ -509,7 +513,7 @@ final class InsertQueryBuilder implements BuildsQuery
             return $value;
         }
 
-        if (! $this->model?->reflector->hasProperty($key)) {
+        if (! $this->model->reflector->hasProperty($key)) {
             return $value;
         }
 

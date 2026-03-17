@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Tempest\DateTime;
 
 use JsonSerializable;
+use Override;
 use Stringable;
 use Tempest\Support\Comparison;
+use Tempest\Support\Comparison\Comparable;
+use Tempest\Support\Comparison\Equable;
+use Tempest\Support\Comparison\Order;
 use Tempest\Support\Str;
 
 /**
@@ -23,7 +27,7 @@ use Tempest\Support\Str;
  * @implements Comparison\Comparable<Duration>
  * @implements Comparison\Equable<Duration>
  */
-final readonly class Duration implements Comparison\Comparable, Comparison\Equable, JsonSerializable, Stringable
+final readonly class Duration implements Comparable, Equable, JsonSerializable, Stringable
 {
     /**
      * Initializes a new instance of Duration with specified hours, minutes, seconds, and nanoseconds.
@@ -405,22 +409,22 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      *
      * @param Duration $other
      */
-    #[\Override]
-    public function compare(mixed $other): Comparison\Order
+    #[Override]
+    public function compare(mixed $other): Order
     {
         if ($this->hours !== $other->hours) {
-            return Comparison\Order::from($this->hours <=> $other->hours);
+            return Order::from($this->hours <=> $other->hours);
         }
 
         if ($this->minutes !== $other->minutes) {
-            return Comparison\Order::from($this->minutes <=> $other->minutes);
+            return Order::from($this->minutes <=> $other->minutes);
         }
 
         if ($this->seconds !== $other->seconds) {
-            return Comparison\Order::from($this->seconds <=> $other->seconds);
+            return Order::from($this->seconds <=> $other->seconds);
         }
 
-        return Comparison\Order::from($this->nanoseconds <=> $other->nanoseconds);
+        return Order::from($this->nanoseconds <=> $other->nanoseconds);
     }
 
     /**
@@ -428,10 +432,10 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      *
      * @param Duration $other
      */
-    #[\Override]
+    #[Override]
     public function equals(mixed $other): bool
     {
-        return $this->compare($other) === Comparison\Order::EQUAL;
+        return $this->compare($other) === Order::EQUAL;
     }
 
     /**
@@ -439,7 +443,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      */
     public function shorter(self $other): bool
     {
-        return $this->compare($other) === Comparison\Order::LESS;
+        return $this->compare($other) === Order::LESS;
     }
 
     /**
@@ -447,7 +451,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      */
     public function shorterOrEqual(self $other): bool
     {
-        return $this->compare($other) !== Comparison\Order::GREATER;
+        return $this->compare($other) !== Order::GREATER;
     }
 
     /**
@@ -455,7 +459,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      */
     public function longer(self $other): bool
     {
-        return $this->compare($other) === Comparison\Order::GREATER;
+        return $this->compare($other) === Order::GREATER;
     }
 
     /**
@@ -463,7 +467,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      */
     public function longerOrEqual(self $other): bool
     {
-        return $this->compare($other) !== Comparison\Order::LESS;
+        return $this->compare($other) !== Order::LESS;
     }
 
     /**
@@ -477,7 +481,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
         $ca = $this->compare($a);
         $cb = $this->compare($b);
 
-        return $ca === Comparison\Order::EQUAL || $ca !== $cb;
+        return $ca === Order::EQUAL || $ca !== $cb;
     }
 
     /**
@@ -491,7 +495,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
         $ca = $this->compare($a);
         $cb = $this->compare($b);
 
-        return $ca !== Comparison\Order::EQUAL && $cb !== Comparison\Order::EQUAL && $ca !== $cb;
+        return $ca !== Order::EQUAL && $cb !== Order::EQUAL && $ca !== $cb;
     }
 
     /**
@@ -613,7 +617,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
     /**
      * Returns a string representation of the time duration.
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
@@ -624,7 +628,7 @@ final readonly class Duration implements Comparison\Comparable, Comparison\Equab
      *
      * @return array{hours: int, minutes: int, seconds: int, nanoseconds: int}
      */
-    #[\Override]
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

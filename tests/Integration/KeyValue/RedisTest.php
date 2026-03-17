@@ -29,7 +29,7 @@ final class RedisTest extends FrameworkIntegrationTestCase
 
         try {
             $this->redis->connect();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->markTestSkipped('Could not connect to Redis.');
         }
     }

@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Tempest\DateTime;
 
 use DateTimeInterface as NativeDateTimeInterface;
+use DateTimeZone;
 use IntlCalendar;
+use Override;
+use Tempest\DateTime\Exception\InvalidArgumentException;
+use Tempest\DateTime\Exception\OverflowException;
+use Tempest\DateTime\Exception\UnexpectedValueException;
 use Tempest\Intl\Locale;
 
 /**
@@ -72,27 +77,27 @@ final readonly class DateTime implements DateTimeInterface
         int $nanoseconds,
     ) {
         if ($nanoseconds < 0 || $nanoseconds >= NANOSECONDS_PER_SECOND) {
-            throw Exception\InvalidArgumentException::forNanoseconds($nanoseconds);
+            throw InvalidArgumentException::forNanoseconds($nanoseconds);
         }
 
         if ($seconds < 0 || $seconds >= 60) {
-            throw Exception\InvalidArgumentException::forSeconds($seconds);
+            throw InvalidArgumentException::forSeconds($seconds);
         }
 
         if ($minutes < 0 || $minutes >= 60) {
-            throw Exception\InvalidArgumentException::forMinutes($minutes);
+            throw InvalidArgumentException::forMinutes($minutes);
         }
 
         if ($hours < 0 || $hours >= 24) {
-            throw Exception\InvalidArgumentException::forHours($hours);
+            throw InvalidArgumentException::forHours($hours);
         }
 
         if ($month < 1 || $month > 12) {
-            throw Exception\InvalidArgumentException::forMonth($month);
+            throw InvalidArgumentException::forMonth($month);
         }
 
         if ($day < 1 || $day > 31 || $day > Month::from($month)->getDaysForYear($year)) {
-            throw Exception\InvalidArgumentException::forDay($day, $month, $year);
+            throw InvalidArgumentException::forDay($day, $month, $year);
         }
 
         $this->year = $year;
@@ -171,28 +176,42 @@ final readonly class DateTime implements DateTimeInterface
             $seconds,
         );
 
-        if ($seconds !== $calendar->get(IntlCalendar::FIELD_SECOND)) {
-            throw Exception\UnexpectedValueException::forSeconds($seconds, $calendar->get(IntlCalendar::FIELD_SECOND));
+        $calendarYear = $calendar->get(IntlCalendar::FIELD_YEAR);
+        $calendarMonth = $calendar->get(IntlCalendar::FIELD_MONTH);
+        $calendarDay = $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH);
+        $calendarHours = $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY);
+        $calendarMinutes = $calendar->get(IntlCalendar::FIELD_MINUTE);
+        $calendarSeconds = $calendar->get(IntlCalendar::FIELD_SECOND);
+
+        if ($calendarYear === false || $calendarMonth === false || $calendarDay === false || $calendarHours === false || $calendarMinutes === false || $calendarSeconds === false) {
+            throw new OverflowException(sprintf(
+                'The year value "%d" exceeds the range supported by the calendar.',
+                $year,
+            ));
         }
 
-        if ($minutes !== $calendar->get(IntlCalendar::FIELD_MINUTE)) {
-            throw Exception\UnexpectedValueException::forMinutes($minutes, $calendar->get(IntlCalendar::FIELD_MINUTE));
+        if ($seconds !== $calendarSeconds) {
+            throw UnexpectedValueException::forSeconds($seconds, $calendarSeconds);
         }
 
-        if ($hours !== $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY)) {
-            throw Exception\UnexpectedValueException::forHours($hours, $calendar->get(IntlCalendar::FIELD_HOUR_OF_DAY));
+        if ($minutes !== $calendarMinutes) {
+            throw UnexpectedValueException::forMinutes($minutes, $calendarMinutes);
         }
 
-        if ($day !== $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH)) {
-            throw Exception\UnexpectedValueException::forDay($day, $calendar->get(IntlCalendar::FIELD_DAY_OF_MONTH));
+        if ($hours !== $calendarHours) {
+            throw UnexpectedValueException::forHours($hours, $calendarHours);
         }
 
-        if ($month !== ($calendar->get(IntlCalendar::FIELD_MONTH) + 1)) {
-            throw Exception\UnexpectedValueException::forMonth($month, $calendar->get(IntlCalendar::FIELD_MONTH) + 1);
+        if ($day !== $calendarDay) {
+            throw UnexpectedValueException::forDay($day, $calendarDay);
         }
 
-        if ($year !== $calendar->get(IntlCalendar::FIELD_YEAR)) {
-            throw Exception\UnexpectedValueException::forYear($year, $calendar->get(IntlCalendar::FIELD_YEAR));
+        if ($month !== ($calendarMonth + 1)) {
+            throw UnexpectedValueException::forMonth($month, $calendarMonth + 1);
+        }
+
+        if ($year !== $calendarYear) {
+            throw UnexpectedValueException::forYear($year, $calendarYear);
         }
 
         $timestamp_in_seconds = (int) ($calendar->getTime() / (float) MILLISECONDS_PER_SECOND);
@@ -209,7 +228,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @see Timezone::default()
      */
-    #[\Override]
+    #[Override]
     public static function fromTimestamp(int|Timestamp $timestamp, ?Timezone $timezone = null): static
     {
         $timezone ??= Timezone::default();
@@ -231,7 +250,7 @@ final readonly class DateTime implements DateTimeInterface
         $second = $calendar->get(IntlCalendar::FIELD_SECOND);
         $nanoseconds = $timestamp->getNanoseconds();
 
-        return new static($timezone, $timestamp, $year, $month, $day, $hour, $minute, $second, $nanoseconds);
+        return new self($timezone, $timestamp, $year, $month, $day, $hour, $minute, $second, $nanoseconds);
     }
 
     /**
@@ -263,9 +282,11 @@ final readonly class DateTime implements DateTimeInterface
         }
 
         if ($string instanceof NativeDateTimeInterface) {
+            $nativeTimezone = $string->getTimezone();
+
             return self::fromTimestamp(
                 timestamp: Timestamp::fromParts($string->getTimestamp()),
-                timezone: $timezone ?? Timezone::tryFrom($string->getTimezone()?->getName() ?? ''),
+                timezone: $timezone ?? ($nativeTimezone instanceof DateTimeZone ? Timezone::tryFrom($nativeTimezone->getName()) : null),
             );
         }
 
@@ -352,7 +373,7 @@ final readonly class DateTime implements DateTimeInterface
     /**
      * Returns the timestamp representation of this date time object.
      */
-    #[\Override]
+    #[Override]
     public function getTimestamp(): Timestamp
     {
         return $this->timestamp;
@@ -370,7 +391,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int The year, formatted according to ISO-8601 standards, where 1 AD is 1, 1 BC is 0, 2 BC is -1, etc.
      */
-    #[\Override]
+    #[Override]
     public function getYear(): int
     {
         return $this->year;
@@ -381,7 +402,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<1, 12>
      */
-    #[\Override]
+    #[Override]
     public function getMonth(): int
     {
         return $this->month;
@@ -392,7 +413,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<1, 31>
      */
-    #[\Override]
+    #[Override]
     public function getDay(): int
     {
         return $this->day;
@@ -403,7 +424,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<0, 23>
      */
-    #[\Override]
+    #[Override]
     public function getHours(): int
     {
         return $this->hours;
@@ -414,7 +435,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<0, 59>
      */
-    #[\Override]
+    #[Override]
     public function getMinutes(): int
     {
         return $this->minutes;
@@ -425,7 +446,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<0, 59>
      */
-    #[\Override]
+    #[Override]
     public function getSeconds(): int
     {
         return $this->seconds;
@@ -436,7 +457,7 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @return int<0, 999999999>
      */
-    #[\Override]
+    #[Override]
     public function getNanoseconds(): int
     {
         return $this->nanoseconds;
@@ -445,7 +466,7 @@ final readonly class DateTime implements DateTimeInterface
     /**
      * Gets the timezone associated with the date and time.
      */
-    #[\Override]
+    #[Override]
     public function getTimezone(): Timezone
     {
         return $this->timezone;
@@ -459,10 +480,10 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @throws Exception\UnexpectedValueException If any of the provided date components do not align with calendar expectations.
      */
-    #[\Override]
+    #[Override]
     public function withDate(int $year, Month|int $month, int $day): static
     {
-        return static::fromParts(
+        return self::fromParts(
             $this->timezone,
             $year,
             $month,
@@ -484,10 +505,10 @@ final readonly class DateTime implements DateTimeInterface
      *
      * @throws Exception\UnexpectedValueException If any of the provided time components do not align with calendar expectations.
      */
-    #[\Override]
+    #[Override]
     public function withTime(int $hours, int $minutes, int $seconds = 0, int $nanoseconds = 0): static
     {
-        return static::fromParts(
+        return self::fromParts(
             $this->timezone,
             $this->year,
             $this->month,
@@ -499,7 +520,7 @@ final readonly class DateTime implements DateTimeInterface
         );
     }
 
-    #[\Override]
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

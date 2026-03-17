@@ -27,7 +27,7 @@ final class PhpForeachElement implements Element, WrapsElement
 
     public function setElse(Element $element): self
     {
-        if ($this->else !== null) {
+        if ($this->else instanceof Element) {
             throw new ElementWasInvalid('There can only be one forelse element.');
         }
 
@@ -40,7 +40,7 @@ final class PhpForeachElement implements Element, WrapsElement
     {
         $foreachAttribute = $this->wrappingElement->consumeAttribute(':foreach');
 
-        if ($viewComponent = $this->unwrap(ViewComponentElement::class)) {
+        if (($viewComponent = $this->unwrap(ViewComponentElement::class)) instanceof ViewComponentElement) {
             $name = trim(str($foreachAttribute)->explode('as')->last());
 
             $viewComponent->addVariable($name);
@@ -59,7 +59,7 @@ final class PhpForeachElement implements Element, WrapsElement
             $compiled,
         );
 
-        if ($this->else !== null) {
+        if ($this->else instanceof Element) {
             $collectionName = str($foreachAttribute)->match('/^(?<match>.*)\s+as/', 'match');
 
             $this->else->consumeAttribute(':forelse');

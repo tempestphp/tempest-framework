@@ -20,6 +20,8 @@ final class ClassReflector implements Reflector
 
     private readonly PHPReflectionClass $reflectionClass;
 
+    private string $name;
+
     /**
      * @param class-string<TClassName>|TClassName|PHPReflectionClass<TClassName> $reflectionClass
      */
@@ -34,6 +36,7 @@ final class ClassReflector implements Reflector
         }
 
         $this->reflectionClass = $reflectionClass;
+        $this->name = $reflectionClass->getName();
     }
 
     public function getReflection(): PHPReflectionClass
@@ -104,7 +107,7 @@ final class ClassReflector implements Reflector
      */
     public function getName(): string
     {
-        return $this->reflectionClass->getName();
+        return $this->name;
     }
 
     public function getShortName(): string
@@ -155,19 +158,19 @@ final class ClassReflector implements Reflector
 
     public function callStatic(string $method, mixed ...$args): mixed
     {
-        $className = $this->getName();
+        $className = $this->name;
 
         return $className::$method(...$args);
     }
 
     public function is(string $className): bool
     {
-        return $this->getType()->matches($className);
+        return is_a($this->name, $className, allow_string: true);
     }
 
     public function implements(string $interface): bool
     {
-        return $this->isInstantiable() && $this->getType()->matches($interface);
+        return $this->isInstantiable() && is_a($this->name, $interface, allow_string: true);
     }
 
     private function memoize(string $key, Closure $closure): mixed
@@ -181,11 +184,12 @@ final class ClassReflector implements Reflector
 
     public function __serialize(): array
     {
-        return ['name' => $this->getName()];
+        return ['name' => $this->name];
     }
 
     public function __unserialize(array $data): void
     {
         $this->reflectionClass = new PHPReflectionClass($data['name']);
+        $this->name = $data['name'];
     }
 }

@@ -49,7 +49,11 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
         $contents = explode(';', Filesystem\read_file($path));
 
         foreach ($contents as $i => $content) {
-            if (! $content) {
+            if ($content === '') {
+                continue;
+            }
+
+            if ($content === '0') {
                 continue;
             }
 

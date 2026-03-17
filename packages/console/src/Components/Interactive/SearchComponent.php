@@ -9,6 +9,7 @@ use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\Option;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticSearchComponent;
@@ -157,7 +158,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             return $this->options->getRawSelectedOptions() ?: $this->default;
         }
 
-        if (($active = $this->options->getActive()) !== null) {
+        if (($active = $this->options->getActive()) instanceof Option) {
             return $active->value;
         }
 

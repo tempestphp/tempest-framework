@@ -11,21 +11,17 @@ use Tempest\Database\Query;
 
 final class QueryWasInvalid extends Exception implements ProvidesContext
 {
-    public readonly PDOException $pdoException;
-
     public function __construct(
         private(set) Query $query,
         private(set) array $bindings,
-        PDOException $previous,
+        public readonly PDOException $pdoException,
     ) {
-        $this->pdoException = $previous;
-
-        $message = $previous->getMessage();
+        $message = $this->pdoException->getMessage();
         $message .= PHP_EOL . PHP_EOL . $query->toRawSql();
 
         parent::__construct(
             message: $message,
-            previous: $previous,
+            previous: $this->pdoException,
         );
     }
 

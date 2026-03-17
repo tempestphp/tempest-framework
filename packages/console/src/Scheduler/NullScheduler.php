@@ -9,7 +9,5 @@ use Tempest\Console\Scheduler;
 
 final class NullScheduler implements Scheduler
 {
-    public function run(?DateTime $date = null): void
-    {
-    }
+    public function run(?DateTime $date = null): void {}
 }

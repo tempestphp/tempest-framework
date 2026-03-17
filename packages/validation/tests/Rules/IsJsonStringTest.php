@@ -37,7 +37,7 @@ final class IsJsonStringTest extends TestCase
     {
         // Not sure if there is a better way of asserting that a php function was called with a given argument
         $this->expectException(ValueError::class);
-        $rule = new IsJsonString(flags: 232312312); // we intentionally send something that is not valid
+        $rule = new IsJsonString(flags: 232_312_312); // we intentionally send something that is not valid
         $rule->isValid('{"test": "test"}');
     }
 }

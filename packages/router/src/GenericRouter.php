@@ -39,13 +39,11 @@ final readonly class GenericRouter implements Router
     private function getCallable(): HttpMiddlewareCallable
     {
         $callControllerAction = function (Request $_) {
-            $matchedRoute = $this->container->get(MatchedRoute::class);
-
-            if ($matchedRoute === null) {
-                // At this point, the `MatchRouteMiddleware` should have run.
-                // If that's not the case, then someone messed up by clearing all HTTP middleware
+            if (! $this->container->has(MatchedRoute::class)) {
                 throw new MatchedRouteCouldNotBeResolved();
             }
+
+            $matchedRoute = $this->container->get(MatchedRoute::class);
 
             $route = $matchedRoute->route;
 

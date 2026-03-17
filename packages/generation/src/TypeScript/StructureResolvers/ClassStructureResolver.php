@@ -17,11 +17,11 @@ use Tempest\Reflection\TypeReflector;
 /**
  * Resolves PHP classes into TypeScript interfaces.
  */
-final class ClassStructureResolver implements StructureResolver
+final readonly class ClassStructureResolver implements StructureResolver
 {
     public function __construct(
-        private readonly TypeScriptGenerationConfig $config,
-        private readonly Container $container,
+        private TypeScriptGenerationConfig $config,
+        private Container $container,
     ) {}
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): InterfaceDefinition
@@ -47,7 +47,7 @@ final class ClassStructureResolver implements StructureResolver
         if ($type->isIterable()) {
             $elementTypeReflector = $property->getIterableType();
 
-            if ($elementTypeReflector !== null) {
+            if ($elementTypeReflector instanceof TypeReflector) {
                 $result = $this->resolveType($elementTypeReflector, $generator);
 
                 return new PropertyDefinition(

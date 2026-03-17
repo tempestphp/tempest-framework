@@ -11,6 +11,7 @@ use function Tempest\Support\arr;
 final class FieldStatement implements QueryStatement
 {
     private null|bool|string $alias = null;
+
     private ?string $aliasPrefix = null;
 
     public function __construct(

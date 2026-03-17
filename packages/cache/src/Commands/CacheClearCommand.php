@@ -14,15 +14,14 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\ConfigCache;
-use Tempest\Core\DiscoveryCache;
+use Tempest\Discovery\DiscoveryCache;
 use Tempest\Icon\IconCache;
 use Tempest\Support\Str;
 use Tempest\View\ViewCache;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class CacheClearCommand
     {
         use HasConsole;
@@ -30,7 +29,6 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         private const string DEFAULT_CACHE = 'default';
 
         public function __construct(
-            private Cache $cache,
             private Container $container,
         ) {}
 
@@ -59,7 +57,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
         {
             $caches = [ConfigCache::class, ViewCache::class, IconCache::class, DiscoveryCache::class];
 
-            if ($all === false && count($caches) > 1) {
+            if (! $all) {
                 $caches = $this->ask(
                     question: 'Which caches do you want to clear?',
                     options: $caches,
@@ -96,7 +94,7 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
             $container = $this->container;
             $cacheTags = arr($container->getSingletons(CacheConfig::class))
                 ->map(fn ($_, string $key) => $key === CacheConfig::class ? self::DEFAULT_CACHE : Str\after_last($key, '#'))
-                ->filter(fn ($_, string $key) => in_array($tag, [null, self::DEFAULT_CACHE], strict: true) ? true : str($key)->afterLast('#')->equals($tag))
+                ->filter(fn (string $value) => $tag === null || $value === $tag)
                 ->values();
 
             if ($all === false && count($cacheTags) > 1) {

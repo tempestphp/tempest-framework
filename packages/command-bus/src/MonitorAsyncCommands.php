@@ -13,7 +13,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 
 use function Tempest\Support\arr;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class MonitorAsyncCommands
     {
         use HasConsole;
@@ -35,29 +35,35 @@ if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
 
             while (true) { // @phpstan-ignore-line
                 foreach ($processes as $uuid => $process) {
-                    if ($process->isTerminated()) {
-                        if ($process->isSuccessful()) {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-green bold'>SUCCESS</style>",
-                            );
-                        } else {
-                            $this->console->keyValue(
-                                key: "<style='fg-gray'>{$uuid}</style>",
-                                value: "<style='fg-red bold'>FAILED</style>",
-                            );
-                        }
-
-                        if ($output = trim($process->getOutput())) {
-                            $this->writeln($output);
-                        }
-
-                        if ($errorOutput = trim($process->getErrorOutput())) {
-                            $this->writeln($errorOutput);
-                        }
-
-                        unset($processes[$uuid]);
+                    if (! $process->isTerminated()) {
+                        continue;
                     }
+
+                    if ($process->isSuccessful()) {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-green bold'>SUCCESS</style>",
+                        );
+                    } else {
+                        $this->console->keyValue(
+                            key: "<style='fg-gray'>{$uuid}</style>",
+                            value: "<style='fg-red bold'>FAILED</style>",
+                        );
+                    }
+
+                    $output = trim($process->getOutput());
+
+                    if ($output !== '' && $output !== '0') {
+                        $this->writeln($output);
+                    }
+
+                    $errorOutput = trim($process->getErrorOutput());
+
+                    if ($errorOutput !== '' && $errorOutput !== '0') {
+                        $this->writeln($errorOutput);
+                    }
+
+                    unset($processes[$uuid]);
                 }
 
                 $availableCommands = arr($this->repository->getPendingCommands())

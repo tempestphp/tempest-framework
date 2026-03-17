@@ -316,9 +316,11 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::select()->whereRaw("title <> 'A'")->chunk(function (array $chunk) use (&$results): void {
-            $results = [...$results, ...$chunk];
-        }, 2);
+        Book::select()
+            ->whereRaw("title <> 'A'")
+            ->chunk(function (array $chunk) use (&$results): void {
+                $results = [...$results, ...$chunk];
+            }, 2);
         $this->assertCount(3, $results);
     }
 
@@ -337,9 +339,11 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'B', author: $author)->save();
 
         $results = [];
-        Book::select()->with('author')->chunk(function (array $chunk) use (&$results): void {
-            $results = [...$results, ...$chunk];
-        }, 1);
+        Book::select()
+            ->with('author')
+            ->chunk(function (array $chunk) use (&$results): void {
+                $results = [...$results, ...$chunk];
+            }, 1);
         $this->assertCount(2, $results);
     }
 
@@ -530,9 +534,9 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $page1->offset);
         $this->assertSame(2, $page1->limit);
         $this->assertSame(2, $page1->nextPage);
-        $this->assertSame(null, $page1->previousPage);
-        $this->assertSame(true, $page1->hasNext);
-        $this->assertSame(false, $page1->hasPrevious);
+        $this->assertNull($page1->previousPage);
+        $this->assertTrue($page1->hasNext);
+        $this->assertFalse($page1->hasPrevious);
 
         $this->assertSame('LOTR 1.1', $page1->data[0]->title);
         $this->assertSame('LOTR 1.2', $page1->data[1]->title);

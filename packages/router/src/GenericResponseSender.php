@@ -19,8 +19,10 @@ use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
 use Tempest\Http\ServerSentEvent;
 use Tempest\Http\ServerSentMessage;
+use Tempest\Router\Exceptions\DevelopmentException;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
+use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
@@ -104,12 +106,21 @@ final readonly class GenericResponseSender implements ResponseSender
         } elseif (is_array($body) || $body instanceof JsonSerializable) {
             echo json_encode($body);
         } elseif ($body instanceof View) {
-            echo $this->viewRenderer->render($body);
+            $this->renderView($response);
         } else {
             echo $body;
         }
 
         ob_flush();
+    }
+
+    private function renderView(Response $response): void
+    {
+        if ($response instanceof DevelopmentException) {
+            echo $this->container->get(TempestViewRenderer::class)->render($response->body);
+        } else {
+            echo $this->viewRenderer->render($response->body);
+        }
     }
 
     private function sendEventStream(EventStream $response): void
@@ -119,7 +130,7 @@ final readonly class GenericResponseSender implements ResponseSender
         }
 
         foreach ($response->body as $message) {
-            if (connection_aborted()) {
+            if (connection_aborted() !== 0) {
                 break;
             }
 
@@ -131,7 +142,7 @@ final readonly class GenericResponseSender implements ResponseSender
                 echo "id: {$message->id}\n";
             }
 
-            if ($message->retryAfter) {
+            if ($message->retryAfter !== null) {
                 $retry = match (true) {
                     is_int($message->retryAfter) => $message->retryAfter,
                     $message->retryAfter instanceof Duration => $message->retryAfter->getTotalMilliseconds(),

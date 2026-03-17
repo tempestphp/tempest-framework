@@ -6,6 +6,7 @@ namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Router\Route;
 
 final class DiscoveredRoute implements Route
@@ -34,7 +35,7 @@ final class DiscoveredRoute implements Route
             optionalParameters: $uri['optional'],
             middleware: $route->middleware,
             handler: $methodReflector,
-            without: $route->without ?? [],
+            without: $route->without,
         );
     }
 
@@ -49,6 +50,7 @@ final class DiscoveredRoute implements Route
         /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $middleware,
         public MethodReflector $handler,
+        /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $without = [],
     ) {
         $this->isDynamic = $parameters !== [];
@@ -87,7 +89,7 @@ final class DiscoveredRoute implements Route
 
                 $parameter = $methodReflector->getParameter($paramName);
 
-                if ($parameter === null) {
+                if (! $parameter instanceof ParameterReflector) {
                     return $matches[0];
                 }
 

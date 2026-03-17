@@ -6,12 +6,14 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Router\IsBindingValue;
 use Tempest\Validation\SkipValidation;
+use UnitEnum;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -21,6 +23,37 @@ trait IsDatabaseModel
     #[IsBindingValue, SkipValidation]
     public PrimaryKey $id;
 
+    #[SkipValidation, Virtual]
+    private null|string|UnitEnum $onDatabase = null;
+
+    /**
+     * Returns a query builder targeting the specified database connection.
+     *
+     * @return QueryBuilder<self>
+     */
+    public static function on(null|string|UnitEnum $databaseTag): QueryBuilder
+    {
+        return self::queryBuilder()->onDatabase(databaseTag: $databaseTag);
+    }
+
+    /**
+     * Targets a specific database connection for this model instance.
+     */
+    public function onDatabase(null|string|UnitEnum $databaseTag): self
+    {
+        $clone = clone $this;
+
+        $clone->onDatabase = $databaseTag;
+
+        return $clone;
+    }
+
+    /** @return QueryBuilder<self> */
+    protected static function queryBuilder(): QueryBuilder
+    {
+        return query(self::class);
+    }
+
     /**
      * Returns a builder for selecting records using this model's table.
      *
@@ -28,7 +61,7 @@ trait IsDatabaseModel
      */
     public static function select(): SelectQueryBuilder
     {
-        return query(self::class)->select();
+        return self::queryBuilder()->select();
     }
 
     /**
@@ -38,7 +71,7 @@ trait IsDatabaseModel
      */
     public static function insert(): InsertQueryBuilder
     {
-        return query(self::class)->insert();
+        return self::queryBuilder()->insert();
     }
 
     /**
@@ -48,7 +81,7 @@ trait IsDatabaseModel
      */
     public static function count(): CountQueryBuilder
     {
-        return query(self::class)->count();
+        return self::queryBuilder()->count();
     }
 
     /**
@@ -56,23 +89,23 @@ trait IsDatabaseModel
      */
     public static function new(mixed ...$params): self
     {
-        return query(self::class)->new(...$params);
+        return self::queryBuilder()->new(...$params);
     }
 
     /**
      * Finds a model instance by its ID.
      */
-    public static function findById(string|int|PrimaryKey $id): self
+    public static function findById(string|int|PrimaryKey $id): ?self
     {
         return self::get($id);
     }
 
     /**
-     * Finds a model instance by its ID. Use through {@see Tempest\Router\Bindable}.
+     * Finds a model instance by its ID. Use through {@see \Tempest\Router\Bindable}.
      */
-    public static function resolve(string $input): self
+    public static function resolve(string $input): ?self
     {
-        return query(self::class)->resolve($input);
+        return self::queryBuilder()->resolve($input);
     }
 
     /**
@@ -80,7 +113,7 @@ trait IsDatabaseModel
      */
     public static function get(string|int|PrimaryKey $id, array $relations = []): ?self
     {
-        return query(self::class)->get($id, $relations);
+        return self::queryBuilder()->get($id, $relations);
     }
 
     /**
@@ -90,7 +123,7 @@ trait IsDatabaseModel
      */
     public static function all(array $relations = []): array
     {
-        return query(self::class)->all($relations);
+        return self::queryBuilder()->all($relations);
     }
 
     /**
@@ -105,7 +138,7 @@ trait IsDatabaseModel
      */
     public static function find(mixed ...$conditions): SelectQueryBuilder
     {
-        return query(self::class)->find(...$conditions);
+        return self::queryBuilder()->find(...$conditions);
     }
 
     /**
@@ -120,7 +153,7 @@ trait IsDatabaseModel
      */
     public static function create(mixed ...$params): self
     {
-        return query(self::class)->create(...$params);
+        return self::queryBuilder()->create(...$params);
     }
 
     /**
@@ -140,7 +173,7 @@ trait IsDatabaseModel
      */
     public static function findOrNew(array $find, array $update): self
     {
-        return query(self::class)->findOrNew($find, $update);
+        return self::queryBuilder()->findOrNew($find, $update);
     }
 
     /**
@@ -159,7 +192,7 @@ trait IsDatabaseModel
      */
     public static function updateOrCreate(array $find, array $update): self
     {
-        return query(self::class)->updateOrCreate($find, $update);
+        return self::queryBuilder()->updateOrCreate($find, $update);
     }
 
     /**
@@ -171,12 +204,14 @@ trait IsDatabaseModel
 
         $loadedRelations = $model
             ->getRelations()
-            ->filter(fn (Relation $relation) => $model->isRelationLoaded($relation));
+            ->filter($model->isRelationLoaded(...));
 
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = self::select()
+        $new = self::queryBuilder()
+            ->onDatabase($this->onDatabase)
+            ->select()
             ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
             ->get($primaryKeyValue);
 
@@ -207,7 +242,9 @@ trait IsDatabaseModel
         $primaryKeyProperty = $model->getPrimaryKeyProperty();
         $primaryKeyValue = $primaryKeyProperty->getValue($this);
 
-        $new = self::get($primaryKeyValue, $relations);
+        $new = self::queryBuilder()
+            ->onDatabase($this->onDatabase)
+            ->get($primaryKeyValue, $relations);
 
         $fieldsToUpdate = arr($relations)
             ->map(fn (string $relation) => str($relation)->before('.')->toString())
@@ -231,6 +268,7 @@ trait IsDatabaseModel
         // Models without primary keys always insert
         if (! $model->hasPrimaryKey()) {
             query($this::class)
+                ->onDatabase($this->onDatabase)
                 ->insert($this)
                 ->execute();
 
@@ -245,6 +283,7 @@ trait IsDatabaseModel
         // to generate the id and populate the model instance with it
         if ($primaryKeyValue === null) {
             $id = query($this::class)
+                ->onDatabase($this->onDatabase)
                 ->insert($this)
                 ->execute();
 
@@ -255,8 +294,9 @@ trait IsDatabaseModel
             return $this;
         }
 
-        // Is the model was already save, we update it
+        // Is the model was already saved, we update it
         query($this)
+            ->onDatabase($this->onDatabase)
             ->update(...inspect($this)->getPropertyValues())
             ->execute();
 
@@ -273,6 +313,7 @@ trait IsDatabaseModel
         $model->validate(...$params);
 
         query($this)
+            ->onDatabase($this->onDatabase)
             ->update(...$params)
             ->whereField($model->getPrimaryKey(), $model->getPrimaryKeyValue())
             ->execute();
@@ -290,6 +331,7 @@ trait IsDatabaseModel
     public function delete(): void
     {
         query($this)
+            ->onDatabase($this->onDatabase)
             ->delete()
             ->build()
             ->execute();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tempest\Validation\Rules\IsTime;
 
 /**
@@ -85,7 +86,7 @@ final class IsTimeTest extends TestCase
         $rule = new IsTime(twentyFourHour: true);
 
         $this->assertFalse($rule->isValid([]));
-        $this->assertFalse($rule->isValid(new \stdClass()));
+        $this->assertFalse($rule->isValid(new stdClass()));
         $this->assertFalse($rule->isValid(null));
     }
 }

@@ -13,12 +13,13 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str;
+use Throwable;
 use UnitEnum;
 
 /**
- * @template Subject of object
- * @template Resource of object
- * @implements AccessControl<Subject, Resource>
+ * @template TSubject of object
+ * @template TResource of object
+ * @implements AccessControl<TSubject, TResource>
  */
 final readonly class PolicyBasedAccessControl implements AccessControl
 {
@@ -45,7 +46,7 @@ final readonly class PolicyBasedAccessControl implements AccessControl
             throw new NoPolicyWereFoundForResource($resource);
         }
 
-        $resource = ! is_object($resource) ? null : $resource;
+        $resource = is_object($resource) ? $resource : null;
 
         foreach ($policies as $policy) {
             $decision = $this->evaluatePolicy($policy, $resource, $subject);
@@ -60,13 +61,13 @@ final readonly class PolicyBasedAccessControl implements AccessControl
 
     private function resolveSubject(?object $subject): ?object
     {
-        if ($subject) {
+        if ($subject !== null) {
             return $subject;
         }
 
         try {
             return $this->container->get(Authenticator::class)->current();
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -113,17 +114,15 @@ final readonly class PolicyBasedAccessControl implements AccessControl
         return AccessDecision::from($decision);
     }
 
-    private function ensureParameterAcceptsInput(?ParameterReflector $reflector, mixed $input, \Closure $throw): void
+    private function ensureParameterAcceptsInput(?ParameterReflector $reflector, mixed $input, Closure $throw): void
     {
-        if ($reflector === null || $input === null) {
+        if (! $reflector instanceof ParameterReflector || $input === null) {
             return;
         }
 
-        if (! ($type = $reflector?->getType())) {
-            return;
-        }
+        $type = $reflector->getType();
 
-        if ($type?->accepts($input)) {
+        if ($type->accepts($input)) {
             return;
         }
 

@@ -19,7 +19,6 @@ final readonly class DynamicInjection implements Injection
 
         do {
             $content = preg_replace_callback(
-                subject: $content,
                 pattern: $pattern,
                 callback: function ($matches) use ($highlighter) {
                     $theme = $highlighter->getTheme();
@@ -40,6 +39,7 @@ final readonly class DynamicInjection implements Injection
                         ->replaceLast('</style>', $after)
                         ->toString();
                 },
+                subject: $content,
             );
         } while (preg_match($pattern, $content));
 

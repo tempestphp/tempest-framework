@@ -6,6 +6,12 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Priority;
 use Tempest\Mapper;
+use Tempest\Mapper\Caster;
+use Tempest\Mapper\CasterFactory;
+use Tempest\Mapper\DynamicCaster;
+use Tempest\Mapper\DynamicSerializer;
+use Tempest\Mapper\Serializer;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -36,8 +42,8 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
             name: 'test',
         );
 
-        $factory = $this->container->get(Mapper\SerializerFactory::class);
-        $factory->addSerializer(CustomStringSerializer::class, context: $context, priority: Priority::HIGHEST);
+        $factory = $this->container->get(SerializerFactory::class);
+        $factory->addSerializer(CustomStringSerializer::class, priority: Priority::HIGHEST, context: $context);
 
         $serialized = Mapper\map($author)
             ->in($context)
@@ -51,7 +57,7 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     #[TestWith([TestMapperContextEnum::VALUE], name: 'enum')]
     public function uses_casters_from_given_context(mixed $context): void
     {
-        $factory = $this->container->get(Mapper\CasterFactory::class);
+        $factory = $this->container->get(CasterFactory::class);
         $factory->addCaster(CustomStringSerializer::class, context: $context);
 
         $author = Mapper\make(Author::class)
@@ -64,7 +70,7 @@ final class MapperContextTest extends FrameworkIntegrationTestCase
     }
 }
 
-final readonly class CustomStringSerializer implements Mapper\Serializer, Mapper\Caster, Mapper\DynamicSerializer, Mapper\DynamicCaster
+final readonly class CustomStringSerializer implements Serializer, Caster, DynamicSerializer, DynamicCaster
 {
     public static function accepts(PropertyReflector|TypeReflector $input): bool
     {

@@ -16,7 +16,8 @@ final class Download implements Response
     {
         $filename ??= pathinfo($path, PATHINFO_BASENAME);
 
-        $this->addHeader('Content-Disposition', "attachment; filename=\"{$filename}\"")
+        $this
+            ->addHeader('Content-Disposition', "attachment; filename=\"{$filename}\"")
             ->setContentType(ContentType::fromPath($path))
             ->removeHeader('Transfer-Encoding');
 

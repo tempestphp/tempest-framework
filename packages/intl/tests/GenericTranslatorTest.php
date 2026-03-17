@@ -17,7 +17,9 @@ use Tempest\Intl\Translator;
 final class GenericTranslatorTest extends TestCase
 {
     private Catalog $catalog;
+
     private Translator $translator;
+
     private IntlConfig $config;
 
     protected function setUp(): void
@@ -37,7 +39,7 @@ final class GenericTranslatorTest extends TestCase
             formatter: new MessageFormatter([
                 new StringFunction(),
                 new NumberFunction($this->config),
-                new DateTimeFunction($this->config),
+                new DateTimeFunction(),
             ]),
         );
     }

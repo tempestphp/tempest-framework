@@ -29,7 +29,7 @@ function to_title_case(Stringable|string $string): string
 function to_sentence_case(Stringable|string $string): string
 {
     $words = array_map(
-        callback: fn (string $string) => to_lower_case($string),
+        callback: to_lower_case(...),
         array: to_words($string),
     );
 
@@ -658,13 +658,7 @@ function slice(Stringable|string $string, int $start, ?int $length = null): stri
  */
 function contains(Stringable|string $string, Stringable|string|array $needle): bool
 {
-    foreach (Arr\wrap($needle) as $item) {
-        if (str_contains((string) $string, (string) $item)) {
-            return true;
-        }
-    }
-
-    return false;
+    return array_any(Arr\wrap($needle), fn ($item) => str_contains((string) $string, (string) $item));
 }
 
 /**
@@ -698,11 +692,7 @@ function chunk(Stringable|string $string, int $length): array
 
     $chunks = [];
 
-    foreach (str_split($string, $length) as $chunk) {
-        $chunks[] = $chunk;
-    }
-
-    return $chunks;
+    return str_split($string, $length);
 }
 
 /**

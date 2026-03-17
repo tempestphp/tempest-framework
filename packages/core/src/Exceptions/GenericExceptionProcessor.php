@@ -8,11 +8,11 @@ use Throwable;
 /**
  * Reports exceptions to registered exception processors.
  */
-final class GenericExceptionProcessor implements ExceptionProcessor
+final readonly class GenericExceptionProcessor implements ExceptionProcessor
 {
     public function __construct(
-        private readonly ExceptionsConfig $config,
-        private readonly Container $container,
+        private ExceptionsConfig $config,
+        private Container $container,
     ) {}
 
     public function process(Throwable $throwable): void

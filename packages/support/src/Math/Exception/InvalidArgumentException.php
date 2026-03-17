@@ -6,6 +6,4 @@ namespace Tempest\Support\Math\Exception;
 
 use InvalidArgumentException as PhpInvalidArgumentException;
 
-final class InvalidArgumentException extends PhpInvalidArgumentException implements MathException
-{
-}
+final class InvalidArgumentException extends PhpInvalidArgumentException implements MathException {}

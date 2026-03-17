@@ -5,6 +5,10 @@ namespace Tempest\Support\Math;
 use ArithmeticError;
 use Closure;
 use DivisionByZeroError;
+use Tempest\Support\Math\Exception\ArithmeticException;
+use Tempest\Support\Math\Exception\DivisionByZeroException;
+use Tempest\Support\Math\Exception\InvalidArgumentException;
+use Tempest\Support\Math\Exception\OverflowException;
 use Tempest\Support\Str;
 
 use function acos as php_acos;
@@ -38,7 +42,7 @@ use function tan as php_tan;
 function sqrt(float $number): float
 {
     if ($number < 0) {
-        throw new Exception\InvalidArgumentException('$number must be a non-negative number.');
+        throw new InvalidArgumentException('$number must be a non-negative number.');
     }
 
     return php_sqrt($number);
@@ -47,11 +51,7 @@ function sqrt(float $number): float
 /**
  * Returns the absolute value of the given number.
  *
- * @template T of int|float
- *
- * @param T $number
- *
- * @return T
+ * @return ($number is int ? int<0, max> : float)
  */
 function abs(int|float $number): int|float
 {
@@ -119,7 +119,7 @@ function base_convert(string $value, int $fromBase, int $toBase): string
         $digitNumeric = stripos($fromAlphabet, $digit);
 
         if (false === $digitNumeric) {
-            throw new Exception\InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
+            throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
         }
 
         $resultDecimal = bcadd($resultDecimal, bcmul((string) $digitNumeric, $placeValue));
@@ -165,7 +165,7 @@ function ceil(float $number): float
 function clamp(int|float $number, int|float $min, int|float $max): int|float
 {
     if ($max < $min) {
-        throw new Exception\InvalidArgumentException('Expected $min to be lower or equal to $max.');
+        throw new InvalidArgumentException('Expected $min to be lower or equal to $max.');
     }
 
     if ($number < $min) {
@@ -198,9 +198,9 @@ function div(int $numerator, int $denominator): int
     try {
         return intdiv($numerator, $denominator);
     } catch (DivisionByZeroError $error) {
-        throw new Exception\DivisionByZeroException(sprintf('%s.', $error->getMessage()), $error->getCode(), $error);
+        throw new DivisionByZeroException(sprintf('%s.', $error->getMessage()), $error->getCode(), $error);
     } catch (ArithmeticError $error) {
-        throw new Exception\ArithmeticException(
+        throw new ArithmeticException(
             'Division of Math\INT64_MIN by -1 is not an integer.',
             $error->getCode(),
             $error,
@@ -240,7 +240,7 @@ function from_base(string $number, int $fromBase): int
     $result = 0;
 
     foreach (str_split($number) as $digit) {
-        $oval = ord($digit);
+        $oval = ord($digit[0]);
 
         // Branches sorted by guesstimated frequency of use. */
         if (/* '0' - '9' */ $oval <= 57 && $oval >= 48) {
@@ -254,13 +254,13 @@ function from_base(string $number, int $fromBase): int
         }
 
         if ($fromBase < $dval) {
-            throw new Exception\InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
+            throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
         }
 
         $oldval = $result;
         $result = ($fromBase * $result) + $dval;
         if ($oldval > $limit || $oldval > $result) {
-            throw new Exception\OverflowException(sprintf('Unexpected integer overflow parsing %s from base %d', $number, $fromBase));
+            throw new OverflowException(sprintf('Unexpected integer overflow parsing %s from base %d', $number, $fromBase));
         }
     }
 
@@ -297,7 +297,7 @@ function to_base(int $number, int $base): string
 function log(float $number, ?float $base = null): float
 {
     if ($number <= 0) {
-        throw new Exception\InvalidArgumentException('$number must be positive.');
+        throw new InvalidArgumentException('$number must be positive.');
     }
 
     if (null === $base) {
@@ -305,11 +305,11 @@ function log(float $number, ?float $base = null): float
     }
 
     if ($base <= 0) {
-        throw new Exception\InvalidArgumentException('$base must be positive.');
+        throw new InvalidArgumentException('$base must be positive.');
     }
 
     if ($base === 1.0) {
-        throw new Exception\InvalidArgumentException('Logarithm undefined for $base of 1.0.');
+        throw new InvalidArgumentException('Logarithm undefined for $base of 1.0.');
     }
 
     return php_log($number, $base);
@@ -360,9 +360,11 @@ function max(array $numbers): null|int|float
     $max = null;
 
     foreach ($numbers as $number) {
-        if (null === $max || $number > $max) {
-            $max = $number;
+        if (null !== $max && $number <= $max) {
+            continue;
         }
+
+        $max = $number;
     }
 
     return $max;
@@ -384,9 +386,11 @@ function maxva(int|float $first, int|float $second, int|float ...$rest): int|flo
     $max = \max($first, $second);
 
     foreach ($rest as $number) {
-        if ($number > $max) {
-            $max = $number;
+        if ($number <= $max) {
+            continue;
         }
+
+        $max = $number;
     }
 
     return $max;
@@ -492,9 +496,11 @@ function min(array $numbers): null|float|int
     $min = null;
 
     foreach ($numbers as $number) {
-        if (null === $min || $number < $min) {
-            $min = $number;
+        if (null !== $min && $number >= $min) {
+            continue;
         }
+
+        $min = $number;
     }
 
     return $min;
@@ -516,9 +522,11 @@ function minva(int|float $first, int|float $second, int|float ...$rest): int|flo
     $min = \min($first, $second);
 
     foreach ($rest as $number) {
-        if ($number < $min) {
-            $min = $number;
+        if ($number >= $min) {
+            continue;
         }
+
+        $min = $number;
     }
 
     return $min;

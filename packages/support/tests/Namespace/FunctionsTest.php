@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
+use Tempest\Vite\Vite;
 
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\Namespace\to_fqcn;
@@ -72,7 +73,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['spp/Vite.php', 'Vite'])]
     #[TestWith(['Vite.php', 'Vite'])]
     #[TestWith(['Vite', 'Vite'])]
-    #[TestWith([\Tempest\Vite\Vite::class, 'Vite'])]
+    #[TestWith([Vite::class, 'Vite'])]
     #[Test]
     public function to_base_class_name(string $path, string $expected): void
     {

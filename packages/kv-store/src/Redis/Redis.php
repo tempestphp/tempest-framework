@@ -2,6 +2,7 @@
 
 namespace Tempest\KeyValue\Redis;
 
+use Predis\Client;
 use Stringable;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
@@ -11,7 +12,7 @@ interface Redis
     /**
      * Get the underlying client. This breaks abstraction and should only be used if absolutely necessary.
      */
-    public function getClient(): \Redis|\Predis\Client;
+    public function getClient(): \Redis|Client;
 
     /**
      * Flushes the Redis database.

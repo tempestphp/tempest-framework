@@ -8,8 +8,8 @@ use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 /**
  * Creates a new query builder instance for the given model or table name.
  *
- * @template TModel of object
- * @param class-string<TModel>|string|TModel $model
+ * @template TModel
+ * @param TModel $model
  * @return QueryBuilder<TModel>
  */
 function query(string|object $model): QueryBuilder
@@ -20,9 +20,9 @@ function query(string|object $model): QueryBuilder
 /**
  * Inspects the given model or table name to provide database insights.
  *
- * @template TModel of object
+ * @template TModel
  * @param class-string<TModel>|string|TModel $model
- * @return ModelInspector<TModel>
+ * @return ModelInspector
  * @internal
  */
 function inspect(string|object $model): ModelInspector

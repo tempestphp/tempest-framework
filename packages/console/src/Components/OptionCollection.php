@@ -83,7 +83,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function toggleCurrent(): void
     {
-        if (($active = $this->getActive()) === null) {
+        if (! ($active = $this->getActive()) instanceof Option) {
             return;
         }
 
@@ -133,7 +133,7 @@ final class OptionCollection implements Iterator, Countable
     {
         $option = $this->getActive();
 
-        if ($option === null) {
+        if (! $option instanceof Option) {
             return $default;
         }
 
@@ -160,7 +160,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function isSelected(Option $option): bool
     {
-        return (bool) arr($this->selectedOptions)->first(fn (Option $other) => $option->equals($other));
+        return (bool) arr($this->selectedOptions)->first($option->equals(...));
     }
 
     public function isActive(Option $option): bool

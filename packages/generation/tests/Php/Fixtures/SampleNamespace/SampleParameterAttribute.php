@@ -7,6 +7,4 @@ namespace Tempest\Generation\Tests\Php\Fixtures\SampleNamespace;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PARAMETER)]
-final class SampleParameterAttribute
-{
-}
+final class SampleParameterAttribute {}

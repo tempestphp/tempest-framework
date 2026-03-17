@@ -25,7 +25,7 @@ final readonly class MatchingRegex
                 throw new RuntimeException('Failed to use matching regex. Got error ' . preg_last_error());
             }
 
-            if (! $matchResult) {
+            if ($matchResult === 0) {
                 continue;
             }
 

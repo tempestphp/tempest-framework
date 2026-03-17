@@ -10,11 +10,7 @@ final class MappingValuesWereMissing extends Exception
 {
     public function __construct(object|string $objectOrClass, array $missingValues)
     {
-        if (is_string($objectOrClass)) {
-            $className = $objectOrClass;
-        } else {
-            $className = $objectOrClass::class;
-        }
+        $className = is_string($objectOrClass) ? $objectOrClass : $objectOrClass::class;
 
         $missingValues = implode(', ', $missingValues);
 

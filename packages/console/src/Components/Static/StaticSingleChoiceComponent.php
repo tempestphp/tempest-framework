@@ -71,11 +71,7 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
                     return true;
                 }
 
-                if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
-                    return true;
-                }
-
-                return false;
+                return $this->options->getOptions()->isList() && $answer === (string) $option->key;
             });
 
         if ($selectedOption !== null) {

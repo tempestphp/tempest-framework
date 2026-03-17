@@ -5,6 +5,7 @@ namespace Tempest\Process\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
+use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 use Tempest\Process\GenericProcessExecutor;
@@ -73,7 +74,7 @@ final class ProcessTester
     {
         $this->allowRunningActualProcesses = true;
 
-        if ($this->executor) {
+        if ($this->executor instanceof TestingProcessExecutor) {
             $this->executor->allowRunningActualProcesses = true;
         } else {
             $this->recordProcessExecutions();
@@ -87,7 +88,7 @@ final class ProcessTester
     {
         $this->allowRunningActualProcesses = false;
 
-        if ($this->executor) {
+        if ($this->executor instanceof TestingProcessExecutor) {
             $this->executor->allowRunningActualProcesses = false;
         } else {
             $this->recordProcessExecutions();
@@ -104,12 +105,12 @@ final class ProcessTester
 
     /**
      * Stops the process and dumps the recorded process executions.
-     *
-     * @mago-expect lint:no-debug-symbols
      */
     public function debugExecutedProcesses(): never
     {
-        dd($this->executor->executions);
+        $this->ensureTestingSetUp();
+
+        throw new RuntimeException(var_export($this->executor->executions, true));
     }
 
     /**
@@ -123,9 +124,9 @@ final class ProcessTester
     /**
      * Asserts that the given command has been ran. Alternatively, a callback may be passed.
      *
-     * @param (\Closure(ProcessResult,PendingProcess=):false|void)|string $command
+     * @param null|Closure(): mixed|Closure(ProcessResult): mixed|Closure(ProcessResult, PendingProcess): mixed $callback
      */
-    public function assertCommandRan(string $command, ?\Closure $callback = null): self
+    public function assertCommandRan(string $command, ?Closure $callback = null): self
     {
         $this->ensureTestingSetUp();
 
@@ -158,9 +159,9 @@ final class ProcessTester
     /**
      * Asserts that the a command has been ran by the given callback.
      *
-     * @param \Closure(PendingProcess,ProcessResult=):false|void $callback
+     * @param Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $callback
      */
-    public function assertRan(\Closure $callback): self
+    public function assertRan(Closure $callback): self
     {
         $this->ensureTestingSetUp();
 
@@ -186,9 +187,9 @@ final class ProcessTester
     /**
      * Asserts that the given command did not run. Alternatively, a callback may be passed.
      *
-     * @param (\Closure(PendingProcess,ProcessResult=):false|void)|string $command
+     * @param string|Closure(): mixed|Closure(PendingProcess): mixed|Closure(PendingProcess, ProcessResult): mixed $command
      */
-    public function assertCommandDidNotRun(string|\Closure $command): self
+    public function assertCommandDidNotRun(string|Closure $command): self
     {
         $this->ensureTestingSetUp();
 
@@ -238,17 +239,19 @@ final class ProcessTester
      *
      * @param string|\Closure(PendingProcess,ProcessResult):bool $command
      */
-    public function assertRanTimes(string|\Closure $command, int $times): self
+    public function assertRanTimes(string|Closure $command, int $times): self
     {
         $this->ensureTestingSetUp();
 
-        if ($command instanceof \Closure) {
+        if ($command instanceof Closure) {
             $count = 0;
             foreach ($this->executor->executions as $executions) {
                 foreach ($executions as [$process, $result]) {
-                    if ($command($process, $result) === true) {
-                        $count++;
+                    if ($command($process, $result) !== true) {
+                        continue;
                     }
+
+                    $count++;
                 }
             }
         } else { // @mago-expects linter:no-else-clause
@@ -274,9 +277,11 @@ final class ProcessTester
         $executions = [];
 
         foreach ($this->executor->executions as $command => $commandExecutions) {
-            if ($this->executor->commandMatchesPattern($command, $pattern)) {
-                $executions[] = $commandExecutions;
+            if (! $this->executor->commandMatchesPattern($command, $pattern)) {
+                continue;
             }
+
+            $executions[] = $commandExecutions;
         }
 
         return Arr\flatten($executions, depth: 1);

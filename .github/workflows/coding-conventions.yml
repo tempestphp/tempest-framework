@@ -4,6 +4,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check-style:
     name: Run style check
@@ -20,7 +24,6 @@ jobs:
       - name: Install dependencies
         run: |
           composer update --prefer-dist --no-interaction  --ignore-platform-reqs
-          composer mago:install-binary
 
       - name: Run Mago
         run: |

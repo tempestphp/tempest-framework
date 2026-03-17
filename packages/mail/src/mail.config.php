@@ -15,10 +15,13 @@ if (env('MAIL_SENDER_NAME') && env('MAIL_SENDER_EMAIL')) {
     );
 }
 
+$scheme = strtolower(env('MAIL_SMTP_SCHEME', default: 'smtp'));
+
 return new SmtpMailerConfig(
-    scheme: match (strtolower(env('MAIL_SMTP_SCHEME', default: 'smtp'))) {
+    scheme: match ($scheme) {
         'smtps' => SmtpScheme::SMTPS,
         'smtp' => SmtpScheme::SMTP,
+        default => throw new InvalidArgumentException(sprintf('Unsupported SMTP scheme "%s". Supported schemes: smtp, smtps.', $scheme)),
     },
     host: env('MAIL_SMTP_HOST', default: '127.0.0.1'),
     port: env('MAIL_SMTP_PORT', default: 2525),

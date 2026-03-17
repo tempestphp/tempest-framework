@@ -16,10 +16,10 @@ use Tempest\Support\Str;
 /**
  * Writes TypeScript definitions to separate .ts files organized by namespace in a directory structure.
  */
-final class DirectoryWriter implements TypeScriptWriter
+final readonly class DirectoryWriter implements TypeScriptWriter
 {
     public function __construct(
-        private readonly DirectoryTypeScriptGenerationConfig $config,
+        private DirectoryTypeScriptGenerationConfig $config,
     ) {}
 
     public function write(TypeScriptOutput $output): void
@@ -88,24 +88,26 @@ final class DirectoryWriter implements TypeScriptWriter
 
         foreach ($namespaces as $namespace => $definitions) {
             foreach ($definitions as $definition) {
-                if ($definition instanceof InterfaceDefinition) {
-                    foreach ($definition->properties as $property) {
-                        if ($property->fqcn === null) {
-                            continue;
-                        }
+                if (! $definition instanceof InterfaceDefinition) {
+                    continue;
+                }
 
-                        $targetNamespace = Str\before_last($property->fqcn, '\\');
-
-                        if (in_array($targetNamespace, $currentNamespaces, strict: true)) {
-                            continue;
-                        }
-
-                        $typeName = Str\after_last($property->fqcn, '\\');
-                        $importPath = $this->computeImportPath($namespace, $targetNamespace);
-                        $importKey = "{$importPath}::{$typeName}";
-
-                        $imports[$importKey] ??= "import type { {$typeName} } from '{$importPath}';";
+                foreach ($definition->properties as $property) {
+                    if ($property->fqcn === null) {
+                        continue;
                     }
+
+                    $targetNamespace = Str\before_last($property->fqcn, '\\');
+
+                    if (in_array($targetNamespace, $currentNamespaces, strict: true)) {
+                        continue;
+                    }
+
+                    $typeName = Str\after_last($property->fqcn, '\\');
+                    $importPath = $this->computeImportPath($namespace, $targetNamespace);
+                    $importKey = "{$importPath}::{$typeName}";
+
+                    $imports[$importKey] ??= "import type { {$typeName} } from '{$importPath}';";
                 }
             }
         }
@@ -179,15 +181,13 @@ final class DirectoryWriter implements TypeScriptWriter
         $targetDiff = array_slice($targetParts, $commonLength);
         $targetKebab = Arr\map($targetDiff, fn (string $part) => Str\to_kebab_case($part));
 
-        if ($upLevels === 0 && count($targetKebab) === 0) {
+        if ($upLevels === 0 && $targetKebab === []) {
             return './';
         }
 
         $upPath = $upLevels > 0 ? str_repeat('../', $upLevels) : './';
-        $downPath = count($targetKebab) > 0 ? (string) Arr\implode($targetKebab, glue: '/') : '';
+        $downPath = $targetKebab !== [] ? (string) Arr\implode($targetKebab, glue: '/') : '';
 
-        $fullPath = rtrim($upPath . $downPath, '/');
-
-        return $fullPath;
+        return rtrim($upPath . $downPath, '/');
     }
 }

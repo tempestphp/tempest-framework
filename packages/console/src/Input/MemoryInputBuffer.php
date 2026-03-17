@@ -7,6 +7,7 @@ namespace Tempest\Console\Input;
 use Exception;
 use Fiber;
 use FiberError;
+use RuntimeException;
 use Tempest\Console\InputBuffer;
 use Tempest\Console\Key;
 
@@ -29,7 +30,7 @@ final class MemoryInputBuffer implements InputBuffer
         try {
             $this->fiber?->resume();
         } catch (FiberError) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Tried to send [%s] to the console, but no input was expected.',
                 implode(
                     separator: ', ',

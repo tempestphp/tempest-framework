@@ -17,11 +17,11 @@ use Tempest\Reflection\TypeReflector;
 /**
  * Resolves PHP enums into TypeScript union types.
  */
-final class EnumStructureResolver implements StructureResolver
+final readonly class EnumStructureResolver implements StructureResolver
 {
     public function __construct(
-        private readonly TypeScriptGenerationConfig $config,
-        private readonly Container $container,
+        private TypeScriptGenerationConfig $config,
+        private Container $container,
     ) {}
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeDefinition

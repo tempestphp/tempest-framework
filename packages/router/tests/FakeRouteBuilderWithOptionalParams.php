@@ -21,6 +21,7 @@ final class FakeRouteBuilderWithOptionalParams implements Route
         public string $uri = '/',
         /** @var class-string<HttpMiddleware>[] */
         public array $middleware = [],
+        /** @var class-string<HttpMiddleware>[] */
         public array $without = [],
         private string $handlerMethod = 'handler',
     ) {
@@ -52,19 +53,11 @@ final class FakeRouteBuilderWithOptionalParams implements Route
         return DiscoveredRoute::fromRoute($this, [], $this->handler);
     }
 
-    public function handler(): void
-    {
-    }
+    public function handler(): void {}
 
-    public function handlerWithOptionalId(string $id = 'default-id'): void
-    {
-    }
+    public function handlerWithOptionalId(string $id = 'default-id'): void {}
 
-    public function handlerWithTwoOptionalParams(string $id = 'default-id', string $slug = 'default-slug'): void
-    {
-    }
+    public function handlerWithTwoOptionalParams(string $id = 'default-id', string $slug = 'default-slug'): void {}
 
-    public function handlerWithRequiredAndOptional(string $id, string $slug = 'default-slug'): void
-    {
-    }
+    public function handlerWithRequiredAndOptional(string $id, string $slug = 'default-slug'): void {}
 }

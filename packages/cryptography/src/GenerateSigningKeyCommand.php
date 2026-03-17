@@ -13,7 +13,7 @@ use Tempest\Support\Str;
 
 use function Tempest\root_path;
 
-if (class_exists(\Tempest\Console\ConsoleCommand::class)) {
+if (class_exists(ConsoleCommand::class)) {
     final readonly class GenerateSigningKeyCommand
     {
         public function __construct(

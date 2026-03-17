@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Core\Kernel;
+use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ElementWasInvalid;
@@ -947,10 +947,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_discovery_locations_are_passed_to_compiler(): void
     {
-        /** @var \Tempest\Core\Kernel $kernel */
-        $kernel = $this->get(Kernel::class);
+        $discoveryConfig = $this->get(DiscoveryConfig::class);
 
-        $kernel->discoveryLocations[] = new DiscoveryLocation(
+        $discoveryConfig->locations[] = new DiscoveryLocation(
             'Tests\Tempest\Integration\View\Fixtures',
             __DIR__ . '/Fixtures',
         );

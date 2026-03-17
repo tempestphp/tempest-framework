@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Support\Json;
 
 use JsonException;
+use Tempest\Support\Json\Exception\JsonCouldNotBeDecoded;
+use Tempest\Support\Json\Exception\JsonCouldNotBeEncoded;
 
 use function json_decode;
 use function json_encode;
@@ -27,7 +29,7 @@ function decode(string $json, bool $associative = true, bool $base64 = false): m
         $json = base64_decode($json, strict: true);
 
         if ($json === false) {
-            throw new Exception\JsonCouldNotBeDecoded('The provided base64 string is not valid.');
+            throw new JsonCouldNotBeDecoded('The provided base64 string is not valid.');
         }
     }
 
@@ -35,7 +37,7 @@ function decode(string $json, bool $associative = true, bool $base64 = false): m
         /** @var mixed $value */
         $value = json_decode($json, $associative, 512, JSON_BIGINT_AS_STRING | JSON_THROW_ON_ERROR);
     } catch (JsonException $jsonException) {
-        throw new Exception\JsonCouldNotBeDecoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
+        throw new JsonCouldNotBeDecoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
     }
 
     return $value;
@@ -60,7 +62,7 @@ function encode(mixed $value, bool $pretty = false, int $flags = 0, bool $base64
         /** @var non-empty-string $json */
         $json = json_encode($value, $flags);
     } catch (JsonException $jsonException) {
-        throw new Exception\JsonCouldNotBeEncoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
+        throw new JsonCouldNotBeEncoded(sprintf('%s.', $jsonException->getMessage()), $jsonException->getCode(), $jsonException);
     }
 
     if ($base64) {

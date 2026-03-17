@@ -2,9 +2,10 @@
 
 namespace Tempest\Intl\MessageFormat\Formatter;
 
+use Exception;
 use Tempest\Core\ProvidesContext;
 
-final class FormattingException extends \Exception implements ProvidesContext
+final class FormattingException extends Exception implements ProvidesContext
 {
     public function __construct(
         string $message,

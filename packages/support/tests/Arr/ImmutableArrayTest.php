@@ -62,8 +62,8 @@ final class ImmutableArrayTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection->add('name')->toArray(),
             expected: ['name'],
+            actual: $collection->add('name')->toArray(),
         );
     }
 

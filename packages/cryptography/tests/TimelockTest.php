@@ -3,6 +3,7 @@
 namespace Tempest\Cryptography\Tests;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tempest\Clock\GenericClock;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Timelock;
@@ -57,10 +58,10 @@ final class TimelockTest extends TestCase
 
         try {
             $timelock->invoke(
-                callback: fn () => throw new \RuntimeException('This is an error.'),
+                callback: fn () => throw new RuntimeException('This is an error.'),
                 duration: Duration::milliseconds(100),
             );
-        } catch (\RuntimeException) {
+        } catch (RuntimeException) {
             $elapsed = microtime(true) - $start;
             $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015, windowsMargin: 0.025);
         }

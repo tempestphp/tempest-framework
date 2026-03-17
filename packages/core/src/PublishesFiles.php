@@ -9,6 +9,7 @@ use Exception;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
+use Tempest\Discovery\Composer;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\Php\ClassManipulator;
 use Tempest\Generation\Php\DataObjects\StubFile;
@@ -103,7 +104,7 @@ if (trait_exists(HasConsole::class)) {
 
                 $this->publishedFiles[] = $destination;
 
-                if ($callback !== null) {
+                if ($callback instanceof Closure) {
                     $callback($source, $destination);
                 }
 
@@ -115,10 +116,7 @@ if (trait_exists(HasConsole::class)) {
                     throw $throwable;
                 }
 
-                throw new FileGenerationFailedException(
-                    message: 'The file could not be published.',
-                    previous: $throwable,
-                );
+                throw new FileGenerationFailedException(message: 'The file could not be published.', code: $throwable->getCode(), previous: $throwable);
             }
         }
 
@@ -248,9 +246,11 @@ if (trait_exists(HasConsole::class)) {
                     // PHP will output empty arrays for empty dependencies,
                     // which is invalid and will make package managers crash.
                     foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
-                        if (isset($json[$key]) && ! $json[$key]) {
-                            unset($json[$key]);
+                        if (! (isset($json[$key]) && ! $json[$key])) {
+                            continue;
                         }
+
+                        unset($json[$key]);
                     }
 
                     $content = preg_replace_callback(

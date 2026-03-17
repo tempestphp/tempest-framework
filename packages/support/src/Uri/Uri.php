@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Uri;
 
+use Stringable;
 use Tempest\Support\Str;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 
 use function parse_url;
 
-final class Uri
+final class Uri implements Stringable
 {
     /**
      * The path segments as an array.
      */
     public array $segments {
         get {
-            if ($this->path === null || $this->path === '' || $this->path === '/') {
+            if (in_array($this->path, [null, '', '/'], true)) {
                 return [];
             }
 
@@ -180,10 +181,8 @@ final class Uri
         foreach ($query as $key => $value) {
             if (is_int($key)) {
                 unset($currentQuery[$value]);
-            } else {
-                if (isset($currentQuery[$key]) && $currentQuery[$key] === $value) {
-                    unset($currentQuery[$key]);
-                }
+            } elseif (isset($currentQuery[$key]) && $currentQuery[$key] === $value) {
+                unset($currentQuery[$key]);
             }
         }
 
@@ -263,9 +262,7 @@ final class Uri
         }
 
         $queryString = http_build_query($processedQuery, arg_separator: '&', encoding_type: PHP_QUERY_RFC3986);
-        $queryString = preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
-
-        return $queryString;
+        return preg_replace('/([^=&]+)=(?=&|$)/', replacement: '$1', subject: $queryString);
     }
 
     /**

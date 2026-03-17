@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Arr;
 
+use ArrayAccess;
 use Closure;
 use Countable;
 use Generator;
@@ -62,11 +63,7 @@ function chunk(iterable $array, int $size, bool $preserveKeys = true): array
     }
 
     $chunks = [];
-    foreach (array_chunk($array, $size, $preserveKeys) as $chunk) {
-        $chunks[] = $chunk;
-    }
-
-    return $chunks;
+    return array_chunk($array, $size, $preserveKeys);
 }
 
 /**
@@ -102,9 +99,13 @@ function reduce(iterable $array, callable $callback, mixed $initial = null): mix
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TDefault
  *
  * @param array<TKey,TValue> $array
- * @param array-key $key
+ * @param TKey $key
+ * @param TDefault $default
+ *
+ * @return TValue|TDefault
  */
 function pull(array &$array, string|int $key, mixed $default = null): mixed
 {
@@ -155,7 +156,7 @@ function remove_keys(iterable $array, string|int|array $keys): array
  * @param TValue|array<TValue> $values The values to remove.
  * @return array<TKey,TValue>
  */
-function remove_values(array $array, string|int|array $values): array
+function remove_values(array $array, mixed $values): array
 {
     $array = to_array($array);
 
@@ -193,14 +194,16 @@ function forget_keys(array &$array, string|int|array $keys): array
  * @param TValue|array<TValue> $values The values to remove.
  * @return array<TKey,TValue>
  */
-function forget_values(array &$array, string|int|array $values): array
+function forget_values(array &$array, mixed $values): array
 {
     $values = is_array($values) ? $values : [$values];
 
     foreach ($values as $value) {
-        if (! is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
-            unset($array[$key]);
+        if (is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
+            continue;
         }
+
+        unset($array[$key]);
     }
 
     return $array;
@@ -231,10 +234,14 @@ function is_associative(iterable $array): bool
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param int $number The number of random values to get.
+ * @param positive-int $number The number of random values to get.
  * @param bool $preserveKey Whether to include the keys of the original array.
  *
- * @return array<TKey, TValue>|mixed The random values, or a single value if `$number` is 1.
+ * @return (
+ *   $number is 1
+ *      ? TValue
+ *      : ($preserveKey is true ? ImmutableArray<TKey, TValue> : ImmutableArray<int, TValue>)
+ * ) The random values, or a single value if `$number` is 1.
  */
 function random(iterable $array, int $number = 1, bool $preserveKey = false): mixed
 {
@@ -272,8 +279,21 @@ function random(iterable $array, int $number = 1, bool $preserveKey = false): mi
  * Retrieves values from a given key in each sub-array of the current array.
  * Optionally, you can pass a second parameter to also get the keys following the same pattern.
  *
+ * @template TItem of array<array-key,mixed>
+ * @template TValueKey of string
+ * @template TIndexKey of string
+ *
+ * @param iterable<array-key,TItem> $array
  * @param string $value The key to assign the values from, support dot notation.
  * @param string|null $key The key to assign the keys from, support dot notation.
+ * @phpstan-param TValueKey $value
+ * @phpstan-param TIndexKey|null $key
+ *
+ * @return (
+ *   $key is null
+ *      ? list<(TValueKey is key-of<TItem> ? TItem[TValueKey]|null : mixed)>
+ *      : array<array-key, (TValueKey is key-of<TItem> ? TItem[TValueKey]|null : mixed)>
+ * )
  */
 function pluck(iterable $array, string $value, ?string $key = null): array
 {
@@ -308,9 +328,12 @@ function pluck(iterable $array, string $value, ?string $key = null): array
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TPrepended
  *
  * @param iterable<TKey,TValue> $array
- * @param TValue $values
+ * @param TPrepended $values
+ *
+ * @return array<array-key, TValue|TPrepended>
  */
 function prepend(iterable $array, mixed ...$values): array
 {
@@ -328,9 +351,12 @@ function prepend(iterable $array, mixed ...$values): array
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TAppended
  *
  * @param iterable<TKey,TValue> $array
- * @param TValue $values
+ * @param TAppended $values
+ *
+ * @return array<array-key, TValue|TAppended>
  */
 function append(iterable $array, mixed ...$values): array
 {
@@ -348,9 +374,12 @@ function append(iterable $array, mixed ...$values): array
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TPushed
  *
  * @param iterable<TKey,TValue> $array
- * @param TValue $value
+ * @param TPushed $value
+ *
+ * @return array<array-key, TValue|TPushed>
  */
 function push(iterable $array, mixed $value): array
 {
@@ -362,6 +391,15 @@ function push(iterable $array, mixed $value): array
 
 /**
  * Pads the array to the specified size with a value.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ * @template TPad
+ *
+ * @param iterable<TKey,TValue> $array
+ * @param TPad $value
+ *
+ * @return array<array-key, TValue|TPad>
  */
 function pad(iterable $array, int $size, mixed $value): array
 {
@@ -389,8 +427,14 @@ function flip(iterable $array): array
 /**
  * Returns a new array with only unique items from the original array.
  *
- * @param string|null|Closure $key The key to use as the uniqueness criteria in nested arrays.
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ * @param string|null|Closure(TValue, array<TKey, TValue>): mixed $key The key to use as the uniqueness criteria in nested arrays.
  * @param bool $shouldBeStrict Whether the comparison should be strict, only used when giving a key parameter.
+ *
+ * @return array<TKey, TValue>|list<TValue>
  */
 function unique(iterable $array, null|Closure|string $key = null, bool $shouldBeStrict = false): array
 {
@@ -439,6 +483,8 @@ function unique(iterable $array, null|Closure|string $key = null, bool $shouldBe
  *
  * @param iterable<TKey,TValue> $array
  * @param array<TKey, TValue> ...$arrays
+ *
+ * @return array<TKey, TValue>
  */
 function diff(iterable $array, array ...$arrays): array
 {
@@ -453,6 +499,8 @@ function diff(iterable $array, array ...$arrays): array
  *
  * @param iterable<TKey,TValue> $array
  * @param array<TKey, TValue> ...$arrays
+ *
+ * @return array<TKey, TValue>
  */
 function diff_keys(iterable $array, array ...$arrays): array
 {
@@ -467,6 +515,8 @@ function diff_keys(iterable $array, array ...$arrays): array
  *
  * @param iterable<TKey,TValue> $array
  * @param array<TKey, TValue> ...$arrays
+ *
+ * @return array<TKey, TValue>
  */
 function intersect(iterable $array, array ...$arrays): array
 {
@@ -481,6 +531,8 @@ function intersect(iterable $array, array ...$arrays): array
  *
  * @param iterable<TKey,TValue> $array
  * @param array<TKey, TValue> ...$arrays
+ *
+ * @return array<TKey, TValue>
  */
 function intersect_keys(iterable $array, array ...$arrays): array
 {
@@ -495,6 +547,8 @@ function intersect_keys(iterable $array, array ...$arrays): array
  *
  * @param iterable<TKey,TValue> $array
  * @param array<TKey, TValue> ...$arrays The arrays to merge.
+ *
+ * @return array<array-key, TValue>
  */
 function merge(iterable $array, iterable ...$arrays): array
 {
@@ -544,11 +598,13 @@ function equals(iterable $array, iterable $other): bool
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TDefault
  *
  * @param iterable<TKey,TValue> $array
  * @param null|Closure(TValue $value, TKey $key): bool $filter
+ * @param TDefault $default
  *
- * @return TValue
+ * @return TValue|TDefault
  */
 function first(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
 {
@@ -558,8 +614,8 @@ function first(iterable $array, ?Closure $filter = null, mixed $default = null):
         return $default;
     }
 
-    if ($filter === null) {
-        return $array[array_key_first($array)] ?? $default;
+    if (! $filter instanceof Closure) {
+        return array_first($array) ?? $default;
     }
 
     return array_find($array, static fn ($value, $key) => $filter($value, $key)) ?? $default;
@@ -593,11 +649,13 @@ function at(iterable $array, int $index, mixed $default = null): mixed
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TDefault
  *
  * @param iterable<TKey,TValue> $array
  * @param null|Closure(TValue $value, TKey $key): bool $filter
+ * @param TDefault $default
  *
- * @return TValue
+ * @return TValue|TDefault
  */
 function last(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
 {
@@ -607,8 +665,8 @@ function last(iterable $array, ?Closure $filter = null, mixed $default = null): 
         return $default;
     }
 
-    if ($filter === null) {
-        return $array[array_key_last($array)] ?? $default;
+    if (! $filter instanceof Closure) {
+        return array_last($array) ?? $default;
     }
 
     return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key)) ?? $default;
@@ -617,7 +675,14 @@ function last(iterable $array, ?Closure $filter = null, mixed $default = null): 
 /**
  * Returns a copy of the given array without the last value.
  *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
  * @param mixed $value The popped value will be stored in this variable.
+ * @param-out TValue|null $value
+ *
+ * @return list<TValue>
  */
 function pop(iterable $array, mixed &$value = null): array
 {
@@ -630,7 +695,14 @@ function pop(iterable $array, mixed &$value = null): array
 /**
  * Returns a copy of the given array without the first value.
  *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
  * @param mixed $value The unshifted value will be stored in this variable
+ * @param-out TValue|null $value
+ *
+ * @return list<TValue>
  */
 function unshift(iterable $array, mixed &$value = null): array
 {
@@ -642,6 +714,13 @@ function unshift(iterable $array, mixed &$value = null): array
 
 /**
  * Returns a copy of the given array in reverse order.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ *
+ * @return array<array-key, TValue>
  */
 function reverse(iterable $array): array
 {
@@ -666,6 +745,13 @@ function implode(iterable $array, string $glue): ImmutableString
 
 /**
  * Returns a copy of the given array with the keys of this array as values.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey, TValue> $array
+ *
+ * @return list<TKey>
  */
 function keys(iterable $array): array
 {
@@ -674,6 +760,13 @@ function keys(iterable $array): array
 
 /**
  * Returns a copy of the given array without its keys.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey, TValue> $array
+ *
+ * @return list<TValue>
  */
 function values(iterable $array): array
 {
@@ -689,6 +782,8 @@ function values(iterable $array): array
  *
  * @param iterable<TKey,TValue> $array
  * @param null|Closure(TValue $value, TKey $key): bool $filter
+ *
+ * @return array<TKey,TValue>
  */
 function filter(iterable $array, ?Closure $filter = null): array
 {
@@ -696,9 +791,11 @@ function filter(iterable $array, ?Closure $filter = null): array
     $filter ??= static fn (mixed $value, mixed $_) => ! in_array($value, [false, null], strict: true);
 
     foreach (to_array($array) as $key => $value) {
-        if ($filter($value, $key)) {
-            $result[$key] = $value;
+        if (! $filter($value, $key)) {
+            continue;
         }
+
+        $result[$key] = $value;
     }
 
     return $result;
@@ -711,7 +808,9 @@ function filter(iterable $array, ?Closure $filter = null): array
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param Closure(TKey $value, TValue $key): void $each
+ * @param Closure(TValue $value, TKey $key): mixed $each
+ *
+ * @return array<TKey,TValue>
  */
 function each(iterable $array, Closure $each): array
 {
@@ -759,9 +858,13 @@ function map(iterable $array, Closure $map): array
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TMapKey of array-key
+ * @template TMapValue
  *
  * @param iterable<TKey,TValue> $array
- * @param Closure(TValue $value, TKey $key): Generator $map
+ * @param Closure(TValue $value, TKey $key): Generator<TMapKey, TMapValue, mixed, mixed> $map
+ *
+ * @return array<TMapKey, TMapValue>
  */
 function map_with_keys(iterable $array, Closure $map): array
 {
@@ -770,7 +873,6 @@ function map_with_keys(iterable $array, Closure $map): array
     foreach (to_array($array) as $key => $value) {
         $generator = $map($value, $key);
 
-        // @phpstan-ignore instanceof.alwaysTrue
         if (! $generator instanceof Generator) {
             throw new MapWithKeysDidNotUseAGenerator();
         }
@@ -800,7 +902,7 @@ function get_by_key(iterable $array, int|string $key, mixed $default = null): mi
         : explode('.', $key);
 
     foreach ($keys as $key) {
-        if (! is_array($value) && ! $value instanceof \ArrayAccess) {
+        if (! is_array($value) && ! $value instanceof ArrayAccess) {
             return $default;
         }
 
@@ -884,6 +986,13 @@ function every(iterable $array, ?Closure $callback = null): bool
 
 /**
  * Returns a copy of the array with the given `$value` associated to the given `$key`.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ *
+ * @return array<array-key,mixed>
  */
 function set_by_key(iterable $array, string $key, mixed $value): array
 {
@@ -921,6 +1030,13 @@ function set_by_key(iterable $array, string $key, mixed $value): array
 
 /**
  * Returns a copy of the array that converts the dot-notated keys to a set of nested arrays.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ *
+ * @return array<array-key,mixed>
  */
 function undot(iterable $array): array
 {
@@ -953,6 +1069,13 @@ function undot(iterable $array): array
 
 /**
  * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ *
+ * @return array<string,mixed>
  */
 function dot(iterable $array, string $prefix = ''): array
 {
@@ -1002,6 +1125,12 @@ function join(iterable $array, string $glue = ', ', ?string $finalGlue = ' and '
  * ```php
  * flatten(['foo', ['bar', 'baz']]); // ['foo', 'bar', 'baz']
  * ```
+ *
+ * @template TFlattenValue
+ *
+ * @param iterable<array-key, TFlattenValue|array<array-key, TFlattenValue>> $array
+ *
+ * @return list<TFlattenValue>
  */
 function flatten(iterable $array, int|float $depth = INF): array
 {
@@ -1054,8 +1183,12 @@ function flatten(iterable $array, int|float $depth = INF): array
  *
  * @template TKey of array-key
  * @template TValue
+ * @template TGroupKey of array-key
+ *
  * @param iterable<TKey,TValue> $array
- * @param Closure(TValue, TKey): array-key $keyExtracor
+ * @param Closure(TValue, TKey): TGroupKey $keyExtracor
+ *
+ * @return array<TGroupKey, list<TValue>>
  */
 function group_by(iterable $array, Closure $keyExtracor): array
 {
@@ -1080,9 +1213,9 @@ function group_by(iterable $array, Closure $keyExtracor): array
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param Closure(TValue,TKey): TMapValue[] $map
+ * @param Closure(TValue,TKey): array<array-key, TMapValue> $map
  *
- * @return array<TKey,TMapValue>
+ * @return list<TMapValue>
  */
 function flat_map(iterable $array, Closure $map, int|float $depth = 1): array
 {
@@ -1095,7 +1228,13 @@ function flat_map(iterable $array, Closure $map, int|float $depth = 1): array
  * @see Tempest\Mapper\map()
  *
  * @template T
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
  * @param class-string<T> $to
+ *
+ * @return array<array-key, T>
  */
 function map_to(iterable $array, string $to): array
 {
@@ -1139,7 +1278,7 @@ function sort(iterable $array, bool $desc = false, ?bool $preserveKeys = null, i
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param \Closure(TValue $a, TValue $b) $callback The function to use for comparing values. It should accept two parameters and return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+ * @param \Closure(TValue, TValue): int $callback The function to use for comparing values.
  * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`. Defaults to `null`, which auto-detects preservation based on array type (associative or list).
  * @return array<array-key, TValue> Key type depends on whether array keys are preserved or not.
  */
@@ -1183,7 +1322,7 @@ function sort_keys(iterable $array, bool $desc = false, int $flags = SORT_REGULA
  * @template TValue
  *
  * @param iterable<TKey,TValue> $array
- * @param callable $callback The function to use for comparing keys. It should accept two parameters
+ * @param callable(TKey, TKey): int $callback The function to use for comparing keys. It should accept two parameters
  *                           and return an integer less than, equal to, or greater than zero if the
  *                           first argument is considered to be respectively less than, equal to, or
  *                           greater than the second.
@@ -1205,6 +1344,13 @@ function sort_keys_by_callback(iterable $array, callable $callback): array
  * ```php
  * slice([1, 2, 3, 4, 5], 2); // [3, 4, 5]
  * ```
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param iterable<TKey,TValue> $array
+ *
+ * @return list<TValue>
  */
 function slice(iterable $array, int $offset, ?int $length = null): array
 {
@@ -1263,10 +1409,6 @@ function range(int|float $start, int|float $end, int|float|null $step = null): a
 
         $result = [];
 
-        /**
-         * @var int|float $start
-         * @var int|float $step
-         */
         for ($i = $start; $i <= $end; $i += $step) {
             $result[] = $i;
         }
@@ -1285,10 +1427,6 @@ function range(int|float $start, int|float $end, int|float|null $step = null): a
 
     $result = [];
 
-    /**
-     * @var int|float $start
-     * @var int|float $step
-     */
     for ($i = $start; $i >= $end; $i += $step) {
         $result[] = $i;
     }
@@ -1304,7 +1442,7 @@ function range(int|float $start, int|float $end, int|float|null $step = null): a
  * @param iterable<T> $iterable
  * @param (Closure(T): bool) $predicate
  *
- * @return array{0: array<T>, 1: array<T>}
+ * @return array{0: list<T>, 1: list<T>}
  */
 function partition(iterable $iterable, Closure $predicate): array
 {
@@ -1353,12 +1491,24 @@ function wrap(mixed $input = []): array
  * Converts various data structures to a PHP array.
  * As opposed to `{@see \Tempest\Support\Arr\wrap}`, this function converts {@see Traversable} and {@see Countable} instances to arrays.
  *
- * @param mixed $input Any value that can be converted to an array:
- *                     - Arrays are returned as-is
- *                     - Scalar values are wrapped in an array
- *                     - Traversable objects are converted using `{@see iterator_to_array}`
- *                     - {@see Countable} objects are converted to arrays
- *                     - {@see null} becomes an empty array
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param null|array<TKey,TValue>|ArrayInterface<TKey,TValue>|Traversable<TKey,TValue>|Countable|scalar|object $input Any value that can be converted to an array:
+ *
+ * @return (
+ *   $input is null ? array{} :
+ *   ($input is array<TKey,TValue> ? array<TKey,TValue> :
+ *   ($input is ArrayInterface<TKey,TValue> ? array<TKey,TValue> :
+ *   ($input is Traversable<TKey,TValue> ? array<TKey,TValue> : array<int,mixed>)))
+ * )
+ *
+ * Supported input shapes:
+ * - Arrays are returned as-is
+ * - Scalar values are wrapped in an array
+ * - Traversable objects are converted using `{@see iterator_to_array}`
+ * - {@see Countable} objects are converted to arrays
+ * - {@see null} becomes an empty array
  */
 function to_array(mixed $input): array
 {
@@ -1379,9 +1529,11 @@ function to_array(mixed $input): array
         $result = [];
 
         for ($i = 0; $i < $count; $i++) {
-            if (isset($input[$i])) {
-                $result[$i] = $input[$i];
+            if (! isset($input[$i])) {
+                continue;
             }
+
+            $result[$i] = $input[$i];
         }
 
         return $result;

@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Intl;
 use Countable;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Intl;
+use Tempest\Intl\Locale;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -48,6 +49,6 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
 
     public function test_current_locale(): void
     {
-        $this->assertSame(Intl\Locale::ENGLISH_UNITED_STATES, Intl\current_locale());
+        $this->assertSame(Locale::ENGLISH_UNITED_STATES, Intl\current_locale());
     }
 }

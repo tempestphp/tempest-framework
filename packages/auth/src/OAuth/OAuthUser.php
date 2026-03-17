@@ -12,7 +12,7 @@ final readonly class OAuthUser
         /**
          * The unique identifier for the user from the OAuth provider.
          */
-        #[MapFrom('id', 'Id', 'uid', 'uuid')]
+        #[MapFrom('id', 'Id', 'uid', 'uuid', 'sub')]
         public string $id,
 
         /**

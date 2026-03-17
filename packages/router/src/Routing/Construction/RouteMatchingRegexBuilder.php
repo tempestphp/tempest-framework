@@ -9,7 +9,7 @@ use Tempest\Router\Routing\Matching\MatchingRegex;
 final readonly class RouteMatchingRegexBuilder
 {
     // This limit is guesstimated using a small script with an ever in pattern feed into preg_match
-    private const int PREG_REGEX_SIZE_LIMIT = 32768;
+    private const int PREG_REGEX_SIZE_LIMIT = 32_768;
 
     private const int REGEX_SIZE_MARGIN = 256;
 
@@ -59,14 +59,14 @@ final readonly class RouteMatchingRegexBuilder
 
                 // Rebuild the regex match prefix based on the current visited parent nodes, known as 'the stack'
                 foreach ($stack as $previousNode) {
-                    $regex .= '|' . self::routeNodeSegmentRegex($previousNode);
+                    $regex .= '|' . $this->routeNodeSegmentRegex($previousNode);
                     $regex .= '(?';
                 }
             }
 
             // Add the node route segment to the current regex
-            $regex .= '|' . self::routeNodeSegmentRegex($node);
-            $targetRouteRegex = self::routeNodeTargetRegex($node);
+            $regex .= '|' . $this->routeNodeSegmentRegex($node);
+            $targetRouteRegex = $this->routeNodeTargetRegex($node);
 
             // Check if node has children to ensure we only use branches if the node has children
             if ($node->dynamicPaths !== [] || $node->staticPaths !== []) {
@@ -77,7 +77,7 @@ final readonly class RouteMatchingRegexBuilder
                 $stack[] = $node;
 
                 // Add target route regex as an alteration group
-                if ($targetRouteRegex) {
+                if ($targetRouteRegex !== '' && $targetRouteRegex !== '0') {
                     $regex .= '|' . $targetRouteRegex;
                 }
 
@@ -112,9 +112,9 @@ final readonly class RouteMatchingRegexBuilder
      *  a key `"MARK"` with value `"x"`, it is used to track which route has been matched.
      * Returns an empty string for nodes without a target.
      */
-    private static function routeNodeTargetRegex(RouteTreeNode $node): string
+    private function routeNodeTargetRegex(RouteTreeNode $node): string
     {
-        if ($node->targetRoute === null) {
+        if (! $node->targetRoute instanceof MarkedRoute) {
             return '';
         }
 
@@ -124,7 +124,7 @@ final readonly class RouteMatchingRegexBuilder
     /**
      * Creates the regex for a route node's segment
      */
-    private static function routeNodeSegmentRegex(RouteTreeNode $node): string
+    private function routeNodeSegmentRegex(RouteTreeNode $node): string
     {
         return match ($node->type) {
             RouteTreeNodeType::Root => '^',

@@ -27,6 +27,7 @@ use Tempest\Http\Method;
 final class PsrRequestToGenericRequestMapperTest extends TestCase
 {
     private PsrRequestToGenericRequestMapper $mapper;
+
     private ReflectionMethod $requestMethod;
 
     protected function setUp(): void
@@ -145,8 +146,6 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
         }
 
         $stream = new Stream('php://temp', 'r+');
-        $request = $request->withBody($stream);
-
-        return $request;
+        return $request->withBody($stream);
     }
 }

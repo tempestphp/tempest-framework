@@ -179,11 +179,11 @@ final readonly class ManifestTagsResolver implements TagsResolver
         };
 
         $assets = array_values(array_map(
-            callback: fn (array $asset) => array_map('strval', $asset),
+            callback: fn (array $asset) => array_map(strval(...), $asset),
             array: array_unique($findPrefetchableAssets($chunk), flags: SORT_REGULAR),
         ));
 
-        if (count($assets) === 0) {
+        if ($assets === []) {
             return null;
         }
 

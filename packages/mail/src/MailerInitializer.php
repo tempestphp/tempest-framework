@@ -6,7 +6,6 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\EventBus\EventBus;
-use Tempest\Mail\MailerConfig;
 
 final class MailerInitializer implements Initializer
 {

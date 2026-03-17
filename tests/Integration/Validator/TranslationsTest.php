@@ -6,6 +6,55 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Rules;
+use Tempest\Validation\Rules\DoesNotEndWith;
+use Tempest\Validation\Rules\DoesNotStartWith;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\Exists;
+use Tempest\Validation\Rules\HasCount;
+use Tempest\Validation\Rules\HasDateTimeFormat;
+use Tempest\Validation\Rules\HasLength;
+use Tempest\Validation\Rules\IsAfterDate;
+use Tempest\Validation\Rules\IsAlpha;
+use Tempest\Validation\Rules\IsAlphaNumeric;
+use Tempest\Validation\Rules\IsArrayList;
+use Tempest\Validation\Rules\IsBeforeDate;
+use Tempest\Validation\Rules\IsBetween;
+use Tempest\Validation\Rules\IsBetweenDates;
+use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsDivisibleBy;
+use Tempest\Validation\Rules\IsEmail;
+use Tempest\Validation\Rules\IsEnum;
+use Tempest\Validation\Rules\IsEvenNumber;
+use Tempest\Validation\Rules\IsFalsy;
+use Tempest\Validation\Rules\IsFloat;
+use Tempest\Validation\Rules\IsHexColor;
+use Tempest\Validation\Rules\IsIn;
+use Tempest\Validation\Rules\IsInteger;
+use Tempest\Validation\Rules\IsIP;
+use Tempest\Validation\Rules\IsIPv4;
+use Tempest\Validation\Rules\IsIPv6;
+use Tempest\Validation\Rules\IsJsonString;
+use Tempest\Validation\Rules\IsLowercase;
+use Tempest\Validation\Rules\IsMacAddress;
+use Tempest\Validation\Rules\IsMultipleOf;
+use Tempest\Validation\Rules\IsNotEmptyString;
+use Tempest\Validation\Rules\IsNotIn;
+use Tempest\Validation\Rules\IsNotNull;
+use Tempest\Validation\Rules\IsNumeric;
+use Tempest\Validation\Rules\IsOddNumber;
+use Tempest\Validation\Rules\IsPassword;
+use Tempest\Validation\Rules\IsPhoneNumber;
+use Tempest\Validation\Rules\IsString;
+use Tempest\Validation\Rules\IsTime;
+use Tempest\Validation\Rules\IsTimezone;
+use Tempest\Validation\Rules\IsTruthy;
+use Tempest\Validation\Rules\IsUlid;
+use Tempest\Validation\Rules\IsUnixTimestamp;
+use Tempest\Validation\Rules\IsUppercase;
+use Tempest\Validation\Rules\IsUrl;
+use Tempest\Validation\Rules\IsUuid;
+use Tempest\Validation\Rules\MatchesRegEx;
+use Tempest\Validation\Rules\StartsWith;
 use Tempest\Validation\Validator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -29,12 +78,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be after or equal to January 1, 2024', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsAfterDate(date: '2024-01-01', inclusive: true), field: $field),
+            actual: $this->translate(new IsAfterDate(date: '2024-01-01', inclusive: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be after January 1, 2024', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsAfterDate(date: '2024-01-01', inclusive: false), field: $field),
+            actual: $this->translate(new IsAfterDate(date: '2024-01-01', inclusive: false), field: $field),
         );
     }
 
@@ -44,12 +93,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date before or equal to January 1, 2024', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsBeforeDate(date: '2024-01-01', inclusive: true), field: $field),
+            actual: $this->translate(new IsBeforeDate(date: '2024-01-01', inclusive: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date before January 1, 2024', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsBeforeDate(date: '2024-01-01', inclusive: false), field: $field),
+            actual: $this->translate(new IsBeforeDate(date: '2024-01-01', inclusive: false), field: $field),
         );
     }
 
@@ -59,12 +108,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date between January 1, 2024 and January 1, 2025, included', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsBetweenDates(first: '2024-01-01', second: '2025-01-01', inclusive: true), field: $field),
+            actual: $this->translate(new IsBetweenDates(first: '2024-01-01', second: '2025-01-01', inclusive: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date between January 1, 2024 and January 1, 2025', $field, expected: 'Date'),
-            actual: $this->translate(new Rules\IsBetweenDates(first: '2024-01-01', second: '2025-01-01'), field: $field),
+            actual: $this->translate(new IsBetweenDates(first: '2024-01-01', second: '2025-01-01'), field: $field),
         );
     }
 
@@ -74,7 +123,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain only alphabetic characters', $field),
-            actual: $this->translate(new Rules\IsAlpha(), field: $field),
+            actual: $this->translate(new IsAlpha(), field: $field),
         );
     }
 
@@ -84,7 +133,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain only alphanumeric characters', $field),
-            actual: $this->translate(new Rules\IsAlphaNumeric(), field: $field),
+            actual: $this->translate(new IsAlphaNumeric(), field: $field),
         );
     }
 
@@ -94,7 +143,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a list', $field),
-            actual: $this->translate(new Rules\IsArrayList(), field: $field),
+            actual: $this->translate(new IsArrayList(), field: $field),
         );
     }
 
@@ -104,12 +153,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be between 0 and 2', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsBetween(min: 0, max: 2), field: $field),
+            actual: $this->translate(new IsBetween(min: 0, max: 2), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be between 2 and 4', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsBetween(min: 2, max: 4), field: $field),
+            actual: $this->translate(new IsBetween(min: 2, max: 4), field: $field),
         );
     }
 
@@ -119,27 +168,27 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must have at least 3 items', $field),
-            actual: $this->translate(new Rules\HasCount(min: 3), field: $field),
+            actual: $this->translate(new HasCount(min: 3), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must have at least 0 items', $field),
-            actual: $this->translate(new Rules\HasCount(min: 0), field: $field),
+            actual: $this->translate(new HasCount(min: 0), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must have at most 10 items', $field),
-            actual: $this->translate(new Rules\HasCount(max: 10), field: $field),
+            actual: $this->translate(new HasCount(max: 10), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must have between 3 and 10 items', $field),
-            actual: $this->translate(new Rules\HasCount(min: 3, max: 10), field: $field),
+            actual: $this->translate(new HasCount(min: 3, max: 10), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must have between 0 and 2 items', $field),
-            actual: $this->translate(new Rules\HasCount(min: 0, max: 2), field: $field),
+            actual: $this->translate(new HasCount(min: 0, max: 2), field: $field),
         );
     }
 
@@ -149,12 +198,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must use the format yyyy-MM-dd', $field),
-            actual: $this->translate(new Rules\HasDateTimeFormat('yyyy-MM-dd'), field: $field),
+            actual: $this->translate(new HasDateTimeFormat('yyyy-MM-dd'), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must use the format MM/dd/yyyy', $field),
-            actual: $this->translate(new Rules\HasDateTimeFormat(FormatPattern::AMERICAN), field: $field),
+            actual: $this->translate(new HasDateTimeFormat(FormatPattern::AMERICAN), field: $field),
         );
     }
 
@@ -164,7 +213,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be divisible by 1', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsDivisibleBy(divisor: 1), field: $field),
+            actual: $this->translate(new IsDivisibleBy(divisor: 1), field: $field),
         );
     }
 
@@ -174,7 +223,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not end with "foo"', $field),
-            actual: $this->translate(new Rules\DoesNotEndWith(needle: 'foo'), field: $field),
+            actual: $this->translate(new DoesNotEndWith(needle: 'foo'), field: $field),
         );
     }
 
@@ -184,7 +233,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid email address', $field, expected: 'Email'),
-            actual: $this->translate(new Rules\IsEmail(), field: $field),
+            actual: $this->translate(new IsEmail(), field: $field),
         );
     }
 
@@ -194,7 +243,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not start with "foo"', $field),
-            actual: $this->translate(new Rules\DoesNotStartWith(needle: 'foo'), field: $field),
+            actual: $this->translate(new DoesNotStartWith(needle: 'foo'), field: $field),
         );
     }
 
@@ -204,7 +253,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must end with "foo"', $field),
-            actual: $this->translate(new Rules\EndsWith(needle: 'foo'), field: $field),
+            actual: $this->translate(new EndsWith(needle: 'foo'), field: $field),
         );
     }
 
@@ -214,7 +263,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s could not be found', $field),
-            actual: $this->translate(new Rules\Exists(table: 'non-existing-table', column: 'non-existing-column'), field: $field),
+            actual: $this->translate(new Exists(table: 'non-existing-table', column: 'non-existing-column'), field: $field),
         );
     }
 
@@ -224,7 +273,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be even', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsEvenNumber(), field: $field),
+            actual: $this->translate(new IsEvenNumber(), field: $field),
         );
     }
 
@@ -234,7 +283,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a hexadecimal color', $field),
-            actual: $this->translate(new Rules\IsHexColor(), field: $field),
+            actual: $this->translate(new IsHexColor(), field: $field),
         );
     }
 
@@ -244,17 +293,17 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a', $field),
-            actual: $this->translate(new Rules\IsIn(['a']), field: $field),
+            actual: $this->translate(new IsIn(['a']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a or b', $field),
-            actual: $this->translate(new Rules\IsIn(['a', 'b']), field: $field),
+            actual: $this->translate(new IsIn(['a', 'b']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a, b or c', $field),
-            actual: $this->translate(new Rules\IsIn(['a', 'b', 'c']), field: $field),
+            actual: $this->translate(new IsIn(['a', 'b', 'c']), field: $field),
         );
     }
 
@@ -267,9 +316,9 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     public function test_ip(string $ip, ?string $field = null): void
     {
         $class = match ($ip) {
-            'IPv4' => Rules\IsIPv4::class,
-            'IPv6' => Rules\IsIPv6::class,
-            default => Rules\IsIP::class,
+            'IPv4' => IsIPv4::class,
+            'IPv6' => IsIPv6::class,
+            default => IsIP::class,
         };
 
         $this->assertSame(
@@ -299,12 +348,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a boolean', $field),
-            actual: $this->translate(new Rules\IsBoolean(), field: $field),
+            actual: $this->translate(new IsBoolean(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a boolean if specified', $field),
-            actual: $this->translate(new Rules\IsBoolean(orNull: true), field: $field),
+            actual: $this->translate(new IsBoolean(orNull: true), field: $field),
         );
     }
 
@@ -314,22 +363,22 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be FOO, BAR or BAZ', $field),
-            actual: $this->translate(new Rules\IsEnum(UnitEnumFixture::class), field: $field),
+            actual: $this->translate(new IsEnum(UnitEnumFixture::class), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be FOO or BAZ', $field),
-            actual: $this->translate(new Rules\IsEnum(UnitEnumFixture::class, except: [UnitEnumFixture::BAR]), field: $field),
+            actual: $this->translate(new IsEnum(UnitEnumFixture::class, except: [UnitEnumFixture::BAR]), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be foo, bar or baz', $field),
-            actual: $this->translate(new Rules\IsEnum(BackedEnumFixture::class), field: $field),
+            actual: $this->translate(new IsEnum(BackedEnumFixture::class), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be foo or baz', $field),
-            actual: $this->translate(new Rules\IsEnum(BackedEnumFixture::class, except: [BackedEnumFixture::BAR]), field: $field),
+            actual: $this->translate(new IsEnum(BackedEnumFixture::class, except: [BackedEnumFixture::BAR]), field: $field),
         );
     }
 
@@ -339,12 +388,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a floating point number', $field),
-            actual: $this->translate(new Rules\IsFloat(), field: $field),
+            actual: $this->translate(new IsFloat(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a floating point number if specified', $field),
-            actual: $this->translate(new Rules\IsFloat(orNull: true), field: $field),
+            actual: $this->translate(new IsFloat(orNull: true), field: $field),
         );
     }
 
@@ -354,12 +403,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a number', $field),
-            actual: $this->translate(new Rules\IsInteger(), field: $field),
+            actual: $this->translate(new IsInteger(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a number if specified', $field),
-            actual: $this->translate(new Rules\IsInteger(orNull: true), field: $field),
+            actual: $this->translate(new IsInteger(orNull: true), field: $field),
         );
     }
 
@@ -369,12 +418,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a string', $field),
-            actual: $this->translate(new Rules\IsString(), field: $field),
+            actual: $this->translate(new IsString(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a string or be empty', $field),
-            actual: $this->translate(new Rules\IsString(orNull: true), field: $field),
+            actual: $this->translate(new IsString(orNull: true), field: $field),
         );
     }
 
@@ -384,7 +433,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid JSON string', $field),
-            actual: $this->translate(new Rules\IsJsonString(), field: $field),
+            actual: $this->translate(new IsJsonString(), field: $field),
         );
     }
 
@@ -394,17 +443,17 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be at least 0', $field),
-            actual: $this->translate(new Rules\HasLength(min: 0), field: $field),
+            actual: $this->translate(new HasLength(min: 0), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be at most 0', $field),
-            actual: $this->translate(new Rules\HasLength(max: 0), field: $field),
+            actual: $this->translate(new HasLength(max: 0), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be between 0 and 2', $field),
-            actual: $this->translate(new Rules\HasLength(min: 0, max: 2), field: $field),
+            actual: $this->translate(new HasLength(min: 0, max: 2), field: $field),
         );
     }
 
@@ -414,7 +463,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a lowercase string', $field),
-            actual: $this->translate(new Rules\IsLowercase(), field: $field),
+            actual: $this->translate(new IsLowercase(), field: $field),
         );
     }
 
@@ -424,7 +473,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid MAC address', $field),
-            actual: $this->translate(new Rules\IsMacAddress(), field: $field),
+            actual: $this->translate(new IsMacAddress(), field: $field),
         );
     }
 
@@ -434,7 +483,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a multiple of 5', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsMultipleOf(divisor: 5), field: $field),
+            actual: $this->translate(new IsMultipleOf(divisor: 5), field: $field),
         );
     }
 
@@ -444,7 +493,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not be empty', $field),
-            actual: $this->translate(new Rules\IsNotEmptyString(), field: $field),
+            actual: $this->translate(new IsNotEmptyString(), field: $field),
         );
     }
 
@@ -454,17 +503,17 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not be a', $field),
-            actual: $this->translate(new Rules\IsNotIn(['a']), field: $field),
+            actual: $this->translate(new IsNotIn(['a']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must not be a or b', $field),
-            actual: $this->translate(new Rules\IsNotIn(['a', 'b']), field: $field),
+            actual: $this->translate(new IsNotIn(['a', 'b']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must not be a, b or c', $field),
-            actual: $this->translate(new Rules\IsNotIn(['a', 'b', 'c']), field: $field),
+            actual: $this->translate(new IsNotIn(['a', 'b', 'c']), field: $field),
         );
     }
 
@@ -474,7 +523,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be specified', $field),
-            actual: $this->translate(new Rules\IsNotNull(), field: $field),
+            actual: $this->translate(new IsNotNull(), field: $field),
         );
     }
 
@@ -484,7 +533,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be numeric', $field),
-            actual: $this->translate(new Rules\IsNumeric(), field: $field),
+            actual: $this->translate(new IsNumeric(), field: $field),
         );
     }
 
@@ -494,7 +543,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be odd', $field, expected: 'Number'),
-            actual: $this->translate(new Rules\IsOddNumber(), field: $field),
+            actual: $this->translate(new IsOddNumber(), field: $field),
         );
     }
 
@@ -504,32 +553,32 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(), field: $field),
+            actual: $this->translate(new IsPassword(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 4 characters', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(min: 4), field: $field),
+            actual: $this->translate(new IsPassword(min: 4), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one uppercase and one lowercase letter', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(mixedCase: true), field: $field),
+            actual: $this->translate(new IsPassword(mixedCase: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters and one number', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(numbers: true), field: $field),
+            actual: $this->translate(new IsPassword(numbers: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters and one symbol', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters and one letter', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(letters: true), field: $field),
+            actual: $this->translate(new IsPassword(letters: true), field: $field),
         );
 
         $this->assertSame(
@@ -538,42 +587,42 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
                 $field,
                 expected: 'Password',
             ),
-            actual: $this->translate(new Rules\IsPassword(mixedCase: true, numbers: true, symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(mixedCase: true, numbers: true, symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one uppercase and one lowercase letter, and one number', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(mixedCase: true, numbers: true), field: $field),
+            actual: $this->translate(new IsPassword(mixedCase: true, numbers: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one uppercase and one lowercase letter, and one symbol', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(mixedCase: true, symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(mixedCase: true, symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one number, one letter and one symbol', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(letters: true, numbers: true, symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(numbers: true, letters: true, symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one number and one letter', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(letters: true, numbers: true), field: $field),
+            actual: $this->translate(new IsPassword(numbers: true, letters: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one letter and one symbol', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(letters: true, symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(letters: true, symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one number and one symbol', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(numbers: true, symbols: true), field: $field),
+            actual: $this->translate(new IsPassword(numbers: true, symbols: true), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters, one number and one letter', $field, expected: 'Password'),
-            actual: $this->translate(new Rules\IsPassword(letters: true, numbers: true), field: $field),
+            actual: $this->translate(new IsPassword(numbers: true, letters: true), field: $field),
         );
     }
 
@@ -583,7 +632,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a phone number', $field),
-            actual: $this->translate(new Rules\IsPhoneNumber(), field: $field),
+            actual: $this->translate(new IsPhoneNumber(), field: $field),
         );
     }
 
@@ -593,7 +642,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must match the pattern /[A-Z]/', $field),
-            actual: $this->translate(new Rules\MatchesRegEx('/[A-Z]/'), field: $field),
+            actual: $this->translate(new MatchesRegEx('/[A-Z]/'), field: $field),
         );
     }
 
@@ -603,7 +652,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be false', $field),
-            actual: $this->translate(new Rules\IsFalsy(), field: $field),
+            actual: $this->translate(new IsFalsy(), field: $field),
         );
     }
 
@@ -613,7 +662,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be true', $field),
-            actual: $this->translate(new Rules\IsTruthy(), field: $field),
+            actual: $this->translate(new IsTruthy(), field: $field),
         );
     }
 
@@ -623,7 +672,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must start with foo', $field),
-            actual: $this->translate(new Rules\StartsWith('foo'), field: $field),
+            actual: $this->translate(new StartsWith('foo'), field: $field),
         );
     }
 
@@ -633,12 +682,12 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid time in 24-hour format', $field),
-            actual: $this->translate(new Rules\IsTime(), field: $field),
+            actual: $this->translate(new IsTime(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid time in 12-hour format', $field),
-            actual: $this->translate(new Rules\IsTime(false), field: $field),
+            actual: $this->translate(new IsTime(false), field: $field),
         );
     }
 
@@ -648,7 +697,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid timestamp', $field),
-            actual: $this->translate(new Rules\IsUnixTimestamp(), field: $field),
+            actual: $this->translate(new IsUnixTimestamp(), field: $field),
         );
     }
 
@@ -658,7 +707,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid timezone', $field),
-            actual: $this->translate(new Rules\IsTimezone(), field: $field),
+            actual: $this->translate(new IsTimezone(), field: $field),
         );
     }
 
@@ -668,7 +717,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a lexicographically sortable identifier', $field),
-            actual: $this->translate(new Rules\IsUlid(), field: $field),
+            actual: $this->translate(new IsUlid(), field: $field),
         );
     }
 
@@ -678,7 +727,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be an uppercase string', $field),
-            actual: $this->translate(new Rules\IsUppercase(), field: $field),
+            actual: $this->translate(new IsUppercase(), field: $field),
         );
     }
 
@@ -688,22 +737,22 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid URL', $field),
-            actual: $this->translate(new Rules\IsUrl(), field: $field),
+            actual: $this->translate(new IsUrl(), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a URL using https', $field),
-            actual: $this->translate(new Rules\IsUrl(['https']), field: $field),
+            actual: $this->translate(new IsUrl(['https']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a URL using https or http', $field),
-            actual: $this->translate(new Rules\IsUrl(['https', 'http']), field: $field),
+            actual: $this->translate(new IsUrl(['https', 'http']), field: $field),
         );
 
         $this->assertSame(
             expected: $this->formatWithField('%s must be a URL using ftp, https or http', $field),
-            actual: $this->translate(new Rules\IsUrl(['ftp', 'https', 'http']), field: $field),
+            actual: $this->translate(new IsUrl(['ftp', 'https', 'http']), field: $field),
         );
     }
 
@@ -713,7 +762,7 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a universally unique identifier', $field),
-            actual: $this->translate(new Rules\IsUuid(), field: $field),
+            actual: $this->translate(new IsUuid(), field: $field),
         );
     }
 }

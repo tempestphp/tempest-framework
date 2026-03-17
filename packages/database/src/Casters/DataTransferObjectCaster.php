@@ -34,13 +34,7 @@ final readonly class DataTransferObjectCaster implements Caster, DynamicCaster
             : $type;
 
         if ($type->isUnion()) {
-            foreach ($type->split() as $memberType) {
-                if (static::accepts($memberType)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return array_any($type->split(), self::accepts(...));
         }
 
         return $type->isClass() && $type->asClass()->getAttribute(SerializeAs::class) !== null;
@@ -77,7 +71,7 @@ final readonly class DataTransferObjectCaster implements Caster, DynamicCaster
         }
 
         if (is_array($input)) {
-            return array_map(fn (mixed $value) => $this->deserialize($value), $input);
+            return array_map($this->deserialize(...), $input);
         }
 
         return $input;

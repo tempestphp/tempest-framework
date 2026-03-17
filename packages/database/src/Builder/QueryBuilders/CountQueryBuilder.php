@@ -18,14 +18,16 @@ use function Tempest\Database\inspect;
 use function Tempest\Support\arr;
 
 /**
- * @template TModel of object
+ * @template TModel
  * @implements \Tempest\Database\Builder\QueryBuilders\BuildsQuery<TModel>
  * @implements \Tempest\Database\Builder\QueryBuilders\SupportsWhereStatements<TModel>
- * @use \Tempest\Database\Builder\QueryBuilders\HasWhereQueryBuilderMethods<TModel>
  */
 final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
 {
-    use HasConditions, OnDatabase, HasWhereQueryBuilderMethods, TransformsQueryBuilder;
+    use HasConditions;
+    use OnDatabase;
+    use HasWhereQueryBuilderMethods;
+    use TransformsQueryBuilder;
 
     private CountStatement $count;
 
@@ -43,7 +45,7 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * @param class-string<TModel>|string|TModel $model
      */
-    public function __construct(string|object $model, ?string $column = null)
+    public function __construct(mixed $model, ?string $column = null)
     {
         $this->model = inspect($model);
 
@@ -56,18 +58,18 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
     /**
      * Creates an instance from another query builder, inheriting conditions and bindings.
      *
-     * @template TSourceModel of object
+     * @template TSourceModel
      * @param (BuildsQuery<TSourceModel>&SupportsWhereStatements<TSourceModel>) $source
      * @param string|null $column
      * @return CountQueryBuilder<TSourceModel>
      */
     public static function fromQueryBuilder(BuildsQuery&SupportsWhereStatements $source, ?string $column = null): CountQueryBuilder
     {
-        $builder = new self($source->model->model, $column);
+        $builder = new self($source->model->getName(), $column);
         $builder->bind(...$source->bindings);
 
         foreach ($source->wheres as $where) {
-            $builder->wheres[] = $where;
+            $builder->appendWhere($where);
         }
 
         if ($source instanceof SupportsJoins) {
@@ -80,6 +82,9 @@ final class CountQueryBuilder implements BuildsQuery, SupportsWhereStatements
             }
         }
 
+        $builder->onDatabase = $source->onDatabase;
+
+        /** @var CountQueryBuilder<TSourceModel> $builder */
         return $builder;
     }
 

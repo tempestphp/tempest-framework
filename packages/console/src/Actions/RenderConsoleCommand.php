@@ -30,10 +30,8 @@ final readonly class RenderConsoleCommand
             }
         }
 
-        if ($this->renderDescription) {
-            if ($consoleCommand->description !== null && $consoleCommand->description !== '') {
-                $parts[] = "<style='dim'>{$consoleCommand->description}</style>";
-            }
+        if ($this->renderDescription && ($consoleCommand->description !== null && $consoleCommand->description !== '')) {
+            $parts[] = "<style='dim'>{$consoleCommand->description}</style>";
         }
 
         $this->console->writeln(implode(' ', $parts));

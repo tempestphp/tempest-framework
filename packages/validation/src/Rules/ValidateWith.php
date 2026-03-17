@@ -18,14 +18,10 @@ use Tempest\Validation\Rule;
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
 final readonly class ValidateWith implements Rule
 {
-    private Closure $callback;
-
     public function __construct(
-        Closure $callback,
+        private Closure $callback,
     ) {
-        $this->callback = $callback;
-
-        $reflection = new ReflectionFunction($callback);
+        $reflection = new ReflectionFunction($this->callback);
 
         // Must be static
         if (! $reflection->isStatic()) {

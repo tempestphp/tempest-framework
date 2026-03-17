@@ -8,14 +8,14 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 
-final class GenerateTypesCommand
+final readonly class GenerateTypesCommand
 {
     use HasConsole;
 
     public function __construct(
-        private readonly TypeScriptGenerationConfig $config,
-        private readonly TypeScriptGenerator $generator,
-        private readonly Container $container,
+        private TypeScriptGenerationConfig $config,
+        private TypeScriptGenerator $generator,
+        private Container $container,
     ) {}
 
     #[ConsoleCommand(

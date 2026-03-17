@@ -5,7 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\QueryStatements\JoinStatement;
 
 /**
- * @template TModel of object
+ * @template TModel
  */
 interface SupportsJoins
 {
@@ -14,7 +14,5 @@ interface SupportsJoins
      *
      * @return array<JoinStatement|string>
      */
-    public array $joins {
-        get;
-    }
+    public array $joins { get; }
 }

@@ -21,6 +21,7 @@ final class FakeRouteBuilder implements Route
         public string $uri = '/',
         /** @var class-string<HttpMiddleware>[] */
         public array $middleware = [],
+        /** @var class-string<HttpMiddleware>[] */
         public array $without = [],
     ) {
         $this->handler = new MethodReflector(new ReflectionMethod($this, 'handler'));
@@ -46,7 +47,5 @@ final class FakeRouteBuilder implements Route
         return DiscoveredRoute::fromRoute($this, [], $this->handler);
     }
 
-    public function handler(): void
-    {
-    }
+    public function handler(): void {}
 }

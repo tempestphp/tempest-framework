@@ -13,8 +13,8 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\AppConfig;
-use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Priority;
+use Tempest\Discovery\DiscoveryCache;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -31,7 +31,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        if (! $invocation->argumentBag->getCommandName()) {
+        if ($invocation->argumentBag->getCommandName() === '' || $invocation->argumentBag->getCommandName() === '0') {
             $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));
 
             return ExitCode::SUCCESS;

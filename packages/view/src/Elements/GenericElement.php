@@ -41,11 +41,7 @@ final class GenericElement implements Element, WithToken
         $attributes = [];
 
         foreach ($this->getAttributes() as $name => $value) {
-            if ($value !== null && $value !== '') {
-                $attributes[] = $name . '="' . $value . '"';
-            } else {
-                $attributes[] = $name;
-            }
+            $attributes[] = $value !== null && $value !== '' ? $name . '="' . $value . '"' : $name;
         }
 
         $attributes = implode(' ', [...$attributes, ...$this->rawAttributes]);
@@ -58,9 +54,9 @@ final class GenericElement implements Element, WithToken
         if (is_void_tag($this->tag)) {
             if ($this->isHtml) {
                 return "<{$this->tag}{$attributes}>";
-            } else {
-                return "<{$this->tag}{$attributes} />";
             }
+
+            return "<{$this->tag}{$attributes} />";
         }
 
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";

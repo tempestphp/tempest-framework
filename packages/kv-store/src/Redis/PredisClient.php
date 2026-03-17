@@ -72,7 +72,7 @@ final readonly class PredisClient implements Redis
         $this->command('SET', ...array_filter([
             (string) $key, // key
             $this->serializeValue($value), // value
-            $expiration ? 'PX' : null, // ttl format
+            $expiration instanceof Duration ? 'PX' : null, // ttl format
             (int) $expiration?->getTotalMilliseconds(), // ttl
         ]));
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
+use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
@@ -21,7 +21,7 @@ final readonly class FileSessionManager implements SessionManager
 {
     public function __construct(
         private Clock $clock,
-        private SessionConfig $sessionConfig,
+        private FileSessionConfig $sessionConfig, // TODO: rename to $config, see RedisSessionManager and DatabaseSessionManager
     ) {}
 
     public function getOrCreate(SessionId $id): Session
@@ -29,7 +29,7 @@ final readonly class FileSessionManager implements SessionManager
         $now = $this->clock->now();
         $session = $this->load($id);
 
-        if ($session === null) {
+        if (! $session instanceof Session) {
             $session = new Session(
                 id: $id,
                 createdAt: $now,
@@ -81,7 +81,7 @@ final readonly class FileSessionManager implements SessionManager
             $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
             $session = $this->load($id);
 
-            if ($session === null) {
+            if (! $session instanceof Session) {
                 continue;
             }
 

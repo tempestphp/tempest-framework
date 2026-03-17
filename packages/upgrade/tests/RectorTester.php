@@ -12,6 +12,7 @@ use Rector\ValueObject\Configuration;
 final class RectorTester
 {
     private(set) string $fixturePath;
+
     private(set) string $actual;
 
     public function __construct(
@@ -95,13 +96,5 @@ final class RectorTester
         $diff = preg_replace('/^\+/m', '', $diff);
 
         return trim($diff);
-    }
-
-    /**
-     * @mago-expect lint:no-debug-symbols
-     */
-    public function dd(): never
-    {
-        dd($this->actual);
     }
 }

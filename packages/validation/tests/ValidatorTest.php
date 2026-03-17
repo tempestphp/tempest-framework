@@ -7,6 +7,7 @@ namespace Tempest\Validation\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\HasErrorMessage;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEmail;
 use Tempest\Validation\Rules\IsEnum;
@@ -50,29 +51,26 @@ final class ValidatorTest extends TestCase
 
     public function test_closure_fails_with_false_response(): void
     {
-        $failingRules = $this->validator->validateValue('a', function (mixed $_) {
-            return false;
-        });
+        $failingRules = $this->validator->validateValue('a', fn (mixed $_) => false);
 
         $this->assertCount(1, $failingRules);
     }
 
     public function test_closure_fails_with_string_response(): void
     {
-        $failingRules = $this->validator->validateValue('a', function (mixed $_) {
-            return 'I expected b';
-        });
+        $failingRules = $this->validator->validateValue('a', fn (mixed $_) => 'I expected b');
+
+        $rule = $failingRules[0]->rule;
 
         $this->assertCount(1, $failingRules);
-        $this->assertSame('I expected b', $failingRules[0]->rule->message);
+        $this->assertInstanceOf(HasErrorMessage::class, $rule);
+        $this->assertSame('I expected b', $rule->getErrorMessage());
     }
 
     public function test_closure_passes_with_null_response(): void
     {
         $validator = $this->validator;
-        $validator->validateValue('a', function (mixed $_) {
-            return null;
-        });
+        $validator->validateValue('a', fn (mixed $_) => null);
 
         $this->expectNotToPerformAssertions();
     }
@@ -80,9 +78,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_true_response(): void
     {
         $validator = $this->validator;
-        $validator->validateValue('a', function (mixed $_) {
-            return true;
-        });
+        $validator->validateValue('a', fn (mixed $_) => true);
 
         $this->expectNotToPerformAssertions();
     }
@@ -91,17 +87,9 @@ final class ValidatorTest extends TestCase
     {
         $validator = $this->validator;
 
-        $validator->validateValue('a', function (mixed $value) {
-            return $value === 'a';
-        });
+        $validator->validateValue('a', fn (mixed $value) => $value === 'a');
 
-        $validator->validateValue('a', function (mixed $value) {
-            if ($value === 'a') {
-                return true;
-            }
-
-            return false;
-        });
+        $validator->validateValue('a', fn (mixed $value) => $value === 'a');
 
         $this->expectNotToPerformAssertions();
     }

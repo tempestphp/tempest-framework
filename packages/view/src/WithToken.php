@@ -8,7 +8,5 @@ use Tempest\View\Parser\Token;
 
 interface WithToken
 {
-    public Token $token {
-        get;
-    }
+    public Token $token { get; }
 }

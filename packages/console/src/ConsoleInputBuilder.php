@@ -42,7 +42,7 @@ final readonly class ConsoleInputBuilder
                 ? $this->argumentBag->findArrayFor($argumentDefinition)
                 : $this->argumentBag->findFor($argumentDefinition);
 
-            if ($argument === null) {
+            if (! $argument instanceof ConsoleInputArgument) {
                 $invalidArguments[] = $argumentDefinition;
 
                 continue;

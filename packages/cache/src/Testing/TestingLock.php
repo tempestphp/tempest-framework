@@ -61,7 +61,7 @@ final class TestingLock implements Lock
                 : "Lock `{$this->key}` is not being held.",
         );
 
-        if ($for) {
+        if ($for !== null) {
             if ($for instanceof DateTimeInterface) {
                 $for = $for->since(DateTime::now());
             }

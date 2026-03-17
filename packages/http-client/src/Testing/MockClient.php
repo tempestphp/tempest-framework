@@ -97,11 +97,11 @@ final class MockClient implements ClientInterface
         $this->lastRequest = $request;
         $this->requests[] = $request;
 
-        if ($response = $this->resolveFakeResponse($request)) {
+        if (($response = $this->resolveFakeResponse($request)) instanceof ResponseInterface) {
             return $response;
         }
 
-        if ($response = $this->resolveWildcardFakeResponse($request)) {
+        if (($response = $this->resolveWildcardFakeResponse($request)) instanceof ResponseInterface) {
             return $response;
         }
 

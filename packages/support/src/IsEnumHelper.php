@@ -103,7 +103,7 @@ trait IsEnumHelper
             default => throw new InvalidArgumentException(sprintf('The given value must be an iterable value, "%s" given', get_debug_type($enums))),
         };
 
-        return array_any(to_array($iterator), fn ($enum) => $this->is($enum));
+        return array_any(to_array($iterator), $this->is(...));
     }
 
     /**

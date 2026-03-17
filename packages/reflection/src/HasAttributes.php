@@ -63,7 +63,7 @@ trait HasAttributes
     public function getAttributes(string $attributeClass): array
     {
         return array_map(
-            fn (PHPReflectionAttribute $attribute) => $this->instantiate($attribute),
+            $this->instantiate(...),
             $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF),
         );
     }
@@ -72,7 +72,7 @@ trait HasAttributes
     {
         $object = $attribute?->newInstance();
 
-        if (! $object) {
+        if ($object === null) {
             return null;
         }
 

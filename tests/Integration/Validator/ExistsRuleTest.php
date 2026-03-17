@@ -45,8 +45,8 @@ final class ExistsRuleTest extends FrameworkIntegrationTestCase
     {
         Book::create(title: 'Timeline Taxi');
 
-        $this->assertFalse(new Exists(Book::class)->isValid(99999));
-        $this->assertFalse(new Exists(Book::class)->isValid(12345));
+        $this->assertFalse(new Exists(Book::class)->isValid(99_999));
+        $this->assertFalse(new Exists(Book::class)->isValid(12_345));
         $this->assertFalse(new Exists(Book::class, column: 'title')->isValid('Timeline Taxi 2'));
     }
 
@@ -60,6 +60,6 @@ final class ExistsRuleTest extends FrameworkIntegrationTestCase
         $this->assertTrue(new Exists(Book::class)->isValid($book1->id));
         $this->assertTrue(new Exists(Book::class)->isValid($book2->id));
         $this->assertTrue(new Exists(Book::class)->isValid($book3->id));
-        $this->assertFalse(new Exists(Book::class)->isValid(99999));
+        $this->assertFalse(new Exists(Book::class)->isValid(99_999));
     }
 }

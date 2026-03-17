@@ -474,11 +474,7 @@ final class MultiAuthenticatablePolicy
     #[Policy]
     public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
     {
-        if (! $subject instanceof Authenticatable) {
-            return false;
-        }
-
-        return true;
+        return $subject instanceof Authenticatable;
     }
 }
 
@@ -517,7 +513,7 @@ final class PolicyWithoutActionNames
     #[Policy(Post::class)]
     public function canMarkAsPublished(?Post $post, ?User $user): bool
     {
-        if ($user === null) {
+        if (! $user instanceof User) {
             return false;
         }
 
@@ -527,7 +523,7 @@ final class PolicyWithoutActionNames
     #[Policy(Post::class)]
     public function approveForPublication(?Post $post, ?User $user): bool
     {
-        if ($user === null) {
+        if (! $user instanceof User) {
             return false;
         }
 

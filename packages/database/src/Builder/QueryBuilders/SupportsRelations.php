@@ -5,7 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Database\Relation;
 
 /**
- * @template TModel of object
+ * @template TModel
  */
 interface SupportsRelations
 {
@@ -14,9 +14,7 @@ interface SupportsRelations
      *
      * @return array<string>
      */
-    public array $relations {
-        get;
-    }
+    public array $relations { get; }
 
     /**
      * Gets all resolved relations with their join statements.

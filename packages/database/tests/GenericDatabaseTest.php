@@ -10,6 +10,9 @@ use Tempest\Container\GenericContainer;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\EventBus\EventBusConfig;
+use Tempest\EventBus\GenericEventBus;
+use Tempest\EventBus\Testing\FakeEventBus;
 use Tempest\Mapper\SerializerFactory;
 
 /**
@@ -31,15 +34,18 @@ final class GenericDatabaseTest extends TestCase
             ->withAnyParameters()
             ->willReturn(true);
 
+        $container = new GenericContainer();
+        $eventBusConfig = new EventBusConfig();
+        $eventBus = new FakeEventBus(new GenericEventBus($container, $eventBusConfig), $eventBusConfig);
+
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
+            $eventBus,
         );
 
-        $result = $database->withinTransaction(function () {
-            return true;
-        });
+        $result = $database->withinTransaction(fn () => true);
 
         $this->assertTrue($result);
     }
@@ -58,10 +64,15 @@ final class GenericDatabaseTest extends TestCase
             ->withAnyParameters()
             ->willReturn(true);
 
+        $container = new GenericContainer();
+        $eventBusConfig = new EventBusConfig();
+        $eventBus = new FakeEventBus(new GenericEventBus($container, $eventBusConfig), $eventBusConfig);
+
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
             new SerializerFactory(new GenericContainer()),
+            $eventBus,
         );
 
         $result = $database->withinTransaction(function (): never {

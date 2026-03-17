@@ -29,7 +29,7 @@ final class TempestViewParser
         $withinTag = false;
 
         foreach ($this->tokens as $token) {
-            if ($this->currentScope === null) {
+            if (! $this->currentScope instanceof Token) {
                 $ast->add($token);
             }
 

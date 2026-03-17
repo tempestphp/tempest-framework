@@ -2,6 +2,8 @@
 
 namespace Tempest\Cryptography\Encryption;
 
+use SensitiveParameter;
+
 final class EncryptionConfig
 {
     /**
@@ -10,7 +12,7 @@ final class EncryptionConfig
      */
     public function __construct(
         public EncryptionAlgorithm $algorithm,
-        #[\SensitiveParameter]
+        #[SensitiveParameter]
         public readonly ?string $key,
     ) {}
 }
