@@ -192,7 +192,7 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             $singularizedName = $name->singularizeLastWord();
 
@@ -201,7 +201,11 @@ final class ModelInspector
             }
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
@@ -256,7 +260,7 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             $singularizedName = $name->singularizeLastWord();
 
@@ -265,7 +269,11 @@ final class ModelInspector
             }
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
@@ -285,10 +293,14 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
@@ -327,7 +339,7 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             $singularizedName = $name->singularizeLastWord();
 
@@ -336,7 +348,11 @@ final class ModelInspector
             }
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
@@ -356,10 +372,14 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
@@ -379,10 +399,14 @@ final class ModelInspector
                 return null;
             }
 
-            $name = str($name)->camel();
+            $name = str($name);
 
             if (! $this->reflector->hasProperty($name)) {
-                return null;
+                $name = $name->camel();
+
+                if (! $this->reflector->hasProperty($name)) {
+                    return null;
+                }
             }
 
             $property = $this->reflector->getProperty($name);
