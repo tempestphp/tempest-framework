@@ -176,7 +176,7 @@ function to_human_readable(int|float $number, int $precision = 0, ?int $maxPreci
     }
 
     $numberExponent = (int) Math\floor(Math\log($number, base: 10));
-    $displayExponent = $numberExponent - ($numberExponent % 3);
+    $displayExponent = $numberExponent - $numberExponent % 3;
     $number /= 10 ** $displayExponent;
 
     return trim(sprintf('%s%s', namespace\format($number, $precision, $maxPrecision), $units[$displayExponent] ?? ''));

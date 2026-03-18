@@ -75,7 +75,7 @@ final class TimestampTest extends TestCase
         $this->assertSame(20, $timestamp->getSeconds());
         $this->assertSame(0, $timestamp->getNanoseconds());
 
-        $timestamp = Timestamp::fromParts(0, 100 + (NANOSECONDS_PER_SECOND * 20));
+        $timestamp = Timestamp::fromParts(0, 100 + NANOSECONDS_PER_SECOND * 20);
 
         $this->assertSame(20, $timestamp->getSeconds());
         $this->assertSame(100, $timestamp->getNanoseconds());
@@ -85,7 +85,7 @@ final class TimestampTest extends TestCase
         $this->assertSame(10, $timestamp->getSeconds());
         $this->assertSame(0, $timestamp->getNanoseconds());
 
-        $timestamp = Timestamp::fromParts(10, 100 + (-NANOSECONDS_PER_SECOND * 20));
+        $timestamp = Timestamp::fromParts(10, 100 + -NANOSECONDS_PER_SECOND * 20);
 
         $this->assertSame(-10, $timestamp->getSeconds());
         $this->assertSame(100, $timestamp->getNanoseconds());

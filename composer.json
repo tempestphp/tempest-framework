@@ -250,7 +250,8 @@
     ],
     "config": {
         "allow-plugins": {
-            "carthage-software/mago": true
+            "carthage-software/mago": true,
+            "php-http/discovery": true
         },
         "audit": {
             "ignore": {

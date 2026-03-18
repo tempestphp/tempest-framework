@@ -716,7 +716,7 @@ function align_center(Stringable|string $string, ?int $width, int $padding = 0):
 {
     $text = trim((string) $string);
     $textLength = length($text);
-    $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+    $actualWidth = max($width ?? 0, $textLength + 2 * $padding);
     $leftPadding = (int) floor(($actualWidth - $textLength) / 2);
     $rightPadding = $actualWidth - $leftPadding - $textLength;
 
@@ -730,7 +730,7 @@ function align_right(Stringable|string $string, ?int $width, int $padding = 0): 
 {
     $text = trim((string) $string);
     $textLength = length($text);
-    $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+    $actualWidth = max($width ?? 0, $textLength + 2 * $padding);
     $leftPadding = $actualWidth - $textLength - $padding;
 
     return str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $padding);
@@ -743,7 +743,7 @@ function align_left(Stringable|string $string, ?int $width, int $padding = 0): s
 {
     $text = trim((string) $string);
     $textLength = length($text);
-    $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+    $actualWidth = max($width ?? 0, $textLength + 2 * $padding);
     $rightPadding = $actualWidth - $textLength - $padding;
 
     return str_repeat(' ', $padding) . $text . str_repeat(' ', $rightPadding);

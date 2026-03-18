@@ -51,7 +51,7 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
     public static function fromParts(int $hours, int $minutes = 0, int $seconds = 0, int $nanoseconds = 0): self
     {
         // This is where the normalization happens.
-        $s = (SECONDS_PER_HOUR * $hours) + (SECONDS_PER_MINUTE * $minutes) + $seconds + (int) ($nanoseconds / NANOSECONDS_PER_SECOND);
+        $s = SECONDS_PER_HOUR * $hours + SECONDS_PER_MINUTE * $minutes + $seconds + (int) ($nanoseconds / NANOSECONDS_PER_SECOND);
         $ns = $nanoseconds % NANOSECONDS_PER_SECOND;
         if ($s < 0 && $ns > 0) {
             ++$s;
@@ -255,7 +255,7 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
      */
     public function getTotalHours(): float
     {
-        return $this->hours + ($this->minutes / MINUTES_PER_HOUR) + ($this->seconds / SECONDS_PER_HOUR) + ($this->nanoseconds / (SECONDS_PER_HOUR * NANOSECONDS_PER_SECOND));
+        return $this->hours + $this->minutes / MINUTES_PER_HOUR + $this->seconds / SECONDS_PER_HOUR + $this->nanoseconds / (SECONDS_PER_HOUR * NANOSECONDS_PER_SECOND);
     }
 
     /**
@@ -264,7 +264,7 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
      */
     public function getTotalMinutes(): float
     {
-        return ($this->hours * MINUTES_PER_HOUR) + $this->minutes + ($this->seconds / SECONDS_PER_MINUTE) + ($this->nanoseconds / (SECONDS_PER_MINUTE * NANOSECONDS_PER_SECOND));
+        return $this->hours * MINUTES_PER_HOUR + $this->minutes + $this->seconds / SECONDS_PER_MINUTE + $this->nanoseconds / (SECONDS_PER_MINUTE * NANOSECONDS_PER_SECOND);
     }
 
     /**
@@ -273,7 +273,7 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
      */
     public function getTotalSeconds(): float
     {
-        return $this->seconds + ($this->minutes * SECONDS_PER_MINUTE) + ($this->hours * SECONDS_PER_HOUR) + ($this->nanoseconds / NANOSECONDS_PER_SECOND);
+        return $this->seconds + $this->minutes * SECONDS_PER_MINUTE + $this->hours * SECONDS_PER_HOUR + $this->nanoseconds / NANOSECONDS_PER_SECOND;
     }
 
     /**
@@ -283,10 +283,14 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
     public function getTotalMilliseconds(): float
     {
         return (
-            ($this->hours * SECONDS_PER_HOUR * MILLISECONDS_PER_SECOND)
-            + ($this->minutes * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND)
-            + ($this->seconds * MILLISECONDS_PER_SECOND)
-            + ($this->nanoseconds / NANOSECONDS_PER_MILLISECOND)
+            $this->hours
+            * SECONDS_PER_HOUR
+            * MILLISECONDS_PER_SECOND
+            + $this->minutes
+            * SECONDS_PER_MINUTE
+            * MILLISECONDS_PER_SECOND
+            + $this->seconds * MILLISECONDS_PER_SECOND
+            + $this->nanoseconds / NANOSECONDS_PER_MILLISECOND
         );
     }
 
@@ -297,10 +301,14 @@ final readonly class Duration implements Comparable, Equable, JsonSerializable, 
     public function getTotalMicroseconds(): float
     {
         return (
-            ($this->hours * SECONDS_PER_HOUR * MICROSECONDS_PER_SECOND)
-            + ($this->minutes * SECONDS_PER_MINUTE * MICROSECONDS_PER_SECOND)
-            + ($this->seconds * MICROSECONDS_PER_SECOND)
-            + ($this->nanoseconds / NANOSECONDS_PER_MICROSECOND)
+            $this->hours
+            * SECONDS_PER_HOUR
+            * MICROSECONDS_PER_SECOND
+            + $this->minutes
+            * SECONDS_PER_MINUTE
+            * MICROSECONDS_PER_SECOND
+            + $this->seconds * MICROSECONDS_PER_SECOND
+            + $this->nanoseconds / NANOSECONDS_PER_MICROSECOND
         );
     }
 

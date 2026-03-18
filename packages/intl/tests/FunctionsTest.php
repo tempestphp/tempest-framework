@@ -165,8 +165,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('1.234 KB', Number\to_file_size(1234, maxPrecision: 3));
         $this->assertSame('1.234 KB', Number\to_file_size(1234, 3));
         $this->assertSame('5 GB', Number\to_file_size(1000 * 1000 * 1000 * 5));
-        $this->assertSame('10 TB', Number\to_file_size((1000 ** 4) * 10));
-        $this->assertSame('10 PB', Number\to_file_size((1000 ** 5) * 10));
+        $this->assertSame('10 TB', Number\to_file_size(1000 ** 4 * 10));
+        $this->assertSame('10 PB', Number\to_file_size(1000 ** 5 * 10));
         $this->assertSame('1 ZB', Number\to_file_size(1000 ** 7));
         $this->assertSame('1 YB', Number\to_file_size(1000 ** 8));
         $this->assertSame('1 RB', Number\to_file_size(1000 ** 9));
@@ -183,8 +183,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('1.234 KiB', Number\to_file_size(1_264.123_45, maxPrecision: 3, useBinaryPrefix: true));
         $this->assertSame('1.234 KiB', Number\to_file_size(1264, 3, useBinaryPrefix: true));
         $this->assertSame('5 GiB', Number\to_file_size(1024 * 1024 * 1024 * 5, useBinaryPrefix: true));
-        $this->assertSame('10 TiB', Number\to_file_size((1024 ** 4) * 10, useBinaryPrefix: true));
-        $this->assertSame('10 PiB', Number\to_file_size((1024 ** 5) * 10, useBinaryPrefix: true));
+        $this->assertSame('10 TiB', Number\to_file_size(1024 ** 4 * 10, useBinaryPrefix: true));
+        $this->assertSame('10 PiB', Number\to_file_size(1024 ** 5 * 10, useBinaryPrefix: true));
         $this->assertSame('1 ZiB', Number\to_file_size(1024 ** 7, useBinaryPrefix: true));
         $this->assertSame('1 YiB', Number\to_file_size(1024 ** 8, useBinaryPrefix: true));
         $this->assertSame('1 RiB', Number\to_file_size(1024 ** 9, useBinaryPrefix: true));

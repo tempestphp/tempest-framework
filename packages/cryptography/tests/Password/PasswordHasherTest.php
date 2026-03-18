@@ -29,7 +29,7 @@ final class PasswordHasherTest extends TestCase
 
         $this->assertSame(
             ['cost' => 10],
-            (new BcryptConfig(cost: 10))->options,
+            new BcryptConfig(cost: 10)->options,
         );
     }
 

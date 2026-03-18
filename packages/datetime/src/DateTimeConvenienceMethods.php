@@ -402,7 +402,7 @@ trait DateTimeConvenienceMethods
         }
 
         $plus_years = intdiv($months, MONTHS_PER_YEAR);
-        $months_left = $months - ($plus_years * MONTHS_PER_YEAR);
+        $months_left = $months - $plus_years * MONTHS_PER_YEAR;
         $target_month = $this->getMonth() + $months_left;
 
         if ($target_month > MONTHS_PER_YEAR) {
@@ -445,7 +445,7 @@ trait DateTimeConvenienceMethods
         }
 
         $minus_years = intdiv($months, MONTHS_PER_YEAR);
-        $months_left = $months - ($minus_years * MONTHS_PER_YEAR);
+        $months_left = $months - $minus_years * MONTHS_PER_YEAR;
         $target_month = $this->getMonth() - $months_left;
 
         if ($target_month <= 0) {
@@ -937,7 +937,7 @@ trait DateTimeConvenienceMethods
             $pattern,
             $timezone ?? $this->getTimezone(),
             $locale,
-        )->format($timestamp->getSeconds() + ($timestamp->getNanoseconds() / NANOSECONDS_PER_SECOND));
+        )->format($timestamp->getSeconds() + $timestamp->getNanoseconds() / NANOSECONDS_PER_SECOND);
     }
 
     /**

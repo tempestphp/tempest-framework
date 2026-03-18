@@ -37,7 +37,7 @@ final class Timelock
             $exception = $thrown;
         }
 
-        $remainderInMicroseconds = intval($duration->getTotalMicroseconds() - ((microtime(true) - $start) * 1_000_000));
+        $remainderInMicroseconds = intval($duration->getTotalMicroseconds() - (microtime(true) - $start) * 1_000_000);
 
         if (! $this->canReturnEarly && $remainderInMicroseconds > 0) {
             $this->clock->sleep(Duration::microseconds($remainderInMicroseconds));

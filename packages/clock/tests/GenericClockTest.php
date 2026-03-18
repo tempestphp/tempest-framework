@@ -46,7 +46,7 @@ final class GenericClockTest extends TestCase
         new GenericClock()->sleep(milliseconds: 250);
         $timeAfter = hrtime(true);
 
-        $this->assertGreaterThanOrEqual($timeBefore + (250 * NANOSECONDS_PER_MILLISECOND), $timeAfter);
+        $this->assertGreaterThanOrEqual($timeBefore + 250 * NANOSECONDS_PER_MILLISECOND, $timeAfter);
     }
 
     public function test_that_generic_clock_sleeps_with_duration(): void
@@ -59,6 +59,6 @@ final class GenericClockTest extends TestCase
         new GenericClock()->sleep(Duration::milliseconds(250));
         $timeAfter = hrtime(true);
 
-        $this->assertGreaterThanOrEqual($timeBefore + (250 * NANOSECONDS_PER_MILLISECOND), $timeAfter);
+        $this->assertGreaterThanOrEqual($timeBefore + 250 * NANOSECONDS_PER_MILLISECOND, $timeAfter);
     }
 }

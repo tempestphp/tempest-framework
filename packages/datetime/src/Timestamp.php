@@ -205,7 +205,7 @@ final readonly class Timestamp implements TemporalInterface
     public function getMilliseconds(): int
     {
         try {
-            return ($this->seconds * MILLISECONDS_PER_SECOND) + Math\div($this->nanoseconds, NANOSECONDS_PER_MILLISECOND);
+            return $this->seconds * MILLISECONDS_PER_SECOND + Math\div($this->nanoseconds, NANOSECONDS_PER_MILLISECOND);
         } catch (DivisionByZeroException $divisionByZeroException) {
             throw new ArithmeticException('Division by zero occurred while calculating milliseconds.', 0, $divisionByZeroException);
         }
@@ -231,7 +231,7 @@ final readonly class Timestamp implements TemporalInterface
     public function plus(Duration $duration): static
     {
         [$h, $m, $s, $ns] = $duration->getParts();
-        $totalSeconds = (SECONDS_PER_MINUTE * $m) + (SECONDS_PER_HOUR * $h) + $s;
+        $totalSeconds = SECONDS_PER_MINUTE * $m + SECONDS_PER_HOUR * $h + $s;
         $newSeconds = $this->seconds + $totalSeconds;
         $newNanoseconds = $this->nanoseconds + $ns;
 
@@ -249,7 +249,7 @@ final readonly class Timestamp implements TemporalInterface
     public function minus(Duration $duration): static
     {
         [$h, $m, $s, $ns] = $duration->getParts();
-        $totalSeconds = (SECONDS_PER_MINUTE * $m) + (SECONDS_PER_HOUR * $h) + $s;
+        $totalSeconds = SECONDS_PER_MINUTE * $m + SECONDS_PER_HOUR * $h + $s;
         $newSeconds = $this->seconds - $totalSeconds;
         $newNanoseconds = $this->nanoseconds - $ns;
 
