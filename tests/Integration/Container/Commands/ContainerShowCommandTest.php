@@ -92,9 +92,11 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function reset(): void
+                public function reset(): Container
                 {
                     $this->container->reset();
+
+                    return $this;
                 }
             },
         );

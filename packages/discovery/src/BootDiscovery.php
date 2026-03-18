@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
-use Pest\Exceptions\InvalidPestCommand;
 use AssertionError;
+use Pest\Exceptions\InvalidPestCommand;
 use Psr\Container\ContainerInterface;
 use Tempest\Container\GenericContainer;
 use Tempest\Reflection\ClassReflector;

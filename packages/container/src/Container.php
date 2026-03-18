@@ -46,5 +46,5 @@ interface Container extends ContainerInterface
      */
     public function addResettable(ClassReflector|string $resettableClass): self;
 
-    public function reset(): void;
+    public function reset(): self;
 }

@@ -694,7 +694,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function reset(): void
+    public function reset(): self
     {
         foreach ($this->resettables as $resettableClass) {
             /** @var Resettable $resettable */
@@ -702,5 +702,7 @@ final class GenericContainer implements Container
 
             $resettable->reset();
         }
+
+        return $this;
     }
 }
