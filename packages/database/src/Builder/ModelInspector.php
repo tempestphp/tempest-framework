@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder;
 
 use ReflectionException;
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
@@ -56,6 +57,7 @@ final class ModelInspector
             is_string($model) => $model,
             $model instanceof HasMany => $model->property->getIterableType()->getName(),
             $model instanceof HasManyThrough => $model->property->getIterableType()->getName(),
+            $model instanceof BelongsToMany => $model->property->getIterableType()->getName(),
             $model instanceof BelongsTo => $model->property->getType()->getName(),
             $model instanceof HasOne => $model->property->getType()->getName(),
             $model instanceof HasOneThrough => $model->property->getType()->getName(),
@@ -73,7 +75,7 @@ final class ModelInspector
     public function __construct(
         private(set) object|string $model,
     ) {
-        if ($model instanceof HasMany || $model instanceof HasManyThrough) {
+        if ($model instanceof HasMany || $model instanceof HasManyThrough || $model instanceof BelongsToMany) {
             $model = $model->property->getIterableType()->asClass();
             $this->reflector = $model;
         } elseif ($model instanceof BelongsTo || $model instanceof HasOne || $model instanceof HasOneThrough) {
@@ -170,6 +172,10 @@ final class ModelInspector
                     continue;
                 }
 
+                if ($this->getBelongsToMany($property->getName()) instanceof BelongsToMany) {
+                    continue;
+                }
+
                 $name = $property->getName();
 
                 $values[$name] = $property->getValue($this->instance);
@@ -232,6 +238,10 @@ final class ModelInspector
                 return null;
             }
 
+            if ($property->hasAttribute(BelongsToMany::class)) {
+                return null;
+            }
+
             $belongsTo = new BelongsTo();
             $belongsTo->property = $property;
 
@@ -288,6 +298,10 @@ final class ModelInspector
             }
 
             if ($property->hasAttribute(HasManyThrough::class)) {
+                return null;
+            }
+
+            if ($property->hasAttribute(BelongsToMany::class)) {
                 return null;
             }
 
@@ -358,6 +372,29 @@ final class ModelInspector
         });
     }
 
+    public function getBelongsToMany(string $name): ?BelongsToMany
+    {
+        return $this->memoize('getBelongsToMany' . $name, function () use ($name) {
+            if (! $this->isObjectModel()) {
+                return null;
+            }
+
+            $name = str($name)->camel();
+
+            if (! $this->reflector->hasProperty($name)) {
+                return null;
+            }
+
+            $property = $this->reflector->getProperty($name);
+
+            if (($belongsToMany = $property->getAttribute(BelongsToMany::class)) instanceof BelongsToMany) {
+                return $belongsToMany;
+            }
+
+            return null;
+        });
+    }
+
     public function isRelation(string|PropertyReflector $name): bool
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
@@ -370,6 +407,7 @@ final class ModelInspector
                 || $this->getHasMany($name) instanceof HasMany
                 || $this->getHasOneThrough($name) instanceof HasOneThrough
                 || $this->getHasManyThrough($name) instanceof HasManyThrough
+                || $this->getBelongsToMany($name) instanceof BelongsToMany
             ),
         );
     }
@@ -380,7 +418,11 @@ final class ModelInspector
 
         return $this->memoize(
             'getRelation' . $name,
-            fn () => $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name) ?? $this->getHasOneThrough($name) ?? $this->getHasManyThrough($name),
+            fn () => (
+                $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name) ?? $this->getHasOneThrough($name) ?? $this->getHasManyThrough(
+                    $name,
+                ) ?? $this->getBelongsToMany($name)
+            ),
         );
     }
 
@@ -486,6 +528,10 @@ final class ModelInspector
             }
 
             if ($relation instanceof HasManyThrough) {
+                continue;
+            }
+
+            if ($relation instanceof BelongsToMany) {
                 continue;
             }
 
