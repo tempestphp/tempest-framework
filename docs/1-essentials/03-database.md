@@ -293,6 +293,30 @@ public ?Address $address = null;
 - `throughOwnerJoin`: FK on the target table pointing to the intermediate
 - `throughRelationJoin`: PK on the intermediate table
 
+### Has many through
+
+The {b`#[Tempest\Database\HasManyThrough]`} attribute defines a one-to-many relationship that traverses an intermediate model. This lets you access a collection of distant relations directly, resolved in a single SQL query with two JOINs.
+
+```php
+use Tempest\Database\HasManyThrough;
+
+final class Author
+{
+    /** @var \App\Payment\Payment[] */
+    #[HasManyThrough(Contract::class)]
+    public array $payments = [];
+}
+```
+
+The `through` parameter specifies the intermediate model class. The target model is inferred from the docblock's array type. This generates SQL like:
+
+```sql
+LEFT JOIN contracts ON contracts.author_id = authors.id
+LEFT JOIN payments ON payments.contract_id = contracts.id
+```
+
+The same optional parameters as `HasOneThrough` are available for custom join fields: `ownerJoin`, `relationJoin`, `throughOwnerJoin`, and `throughRelationJoin`.
+
 ### Using UUIDs as primary keys
 
 By default, Tempest uses auto-incrementing integers as primary keys. UUIDs can be used as primary keys instead by annotating the {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest automatically generates a UUID v7 when a new model is created:
