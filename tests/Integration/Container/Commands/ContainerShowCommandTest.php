@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Container\Commands;
 
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
+use Tempest\Reflection\ClassReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use UnitEnum;
 
@@ -82,6 +83,16 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     $this->container->addDecorator($decoratorClass, $decoratedClass);
 
                     return $this;
+                }
+
+                public function addResettable(string|ClassReflector $resettableClass): Container
+                {
+                    $this->container->addResettable($resettableClass);
+                }
+
+                public function reset(): void
+                {
+                    $this->container->reset();
                 }
             },
         );

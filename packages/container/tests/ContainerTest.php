@@ -53,6 +53,7 @@ use Tempest\Container\Tests\Fixtures\InvokableClass;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithDependencies;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
+use Tempest\Container\Tests\Fixtures\ResettableDependency;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
 use Tempest\Container\Tests\Fixtures\SingletonInitializer;
 use Tempest\Container\Tests\Fixtures\SlowDependency;
@@ -689,5 +690,18 @@ final class ContainerTest extends TestCase
         $instance = $container->get(DecoratedInterface::class);
 
         $this->assertInstanceOf(DecoratorWithoutConstructor::class, $instance);
+    }
+
+    public function test_resettables(): void
+    {
+        ResettableDependency::$reset = false;
+
+        $container = new GenericContainer();
+
+        $container->addResettable(ResettableDependency::class);
+
+        $container->reset();
+
+        $this->assertTrue(ResettableDependency::$reset);
     }
 }

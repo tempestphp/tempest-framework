@@ -41,6 +41,10 @@ final class GenericContainer implements Container
 
         /** @var ArrayIterator<array-key, class-string[]> $decorators */
         private(set) ArrayIterator $decorators = new ArrayIterator(),
+
+        /** @var ArrayIterator<array-key, class-string<\Tempest\Container\Resettable>> $resettables */
+        private(set) ArrayIterator $resettables = new ArrayIterator(),
+
         private(set) ?DependencyChain $chain = null,
     ) {
         $this->singleton(Container::class, $this);
@@ -677,5 +681,26 @@ final class GenericContainer implements Container
         }
 
         return $instance;
+    }
+
+    public function addResettable(string|ClassReflector $resettableClass): Container
+    {
+        if ($resettableClass instanceof ClassReflector) {
+            $resettableClass = $resettableClass->getName();
+        }
+
+        $this->resettables[] = $resettableClass;
+
+        return $this;
+    }
+
+    public function reset(): void
+    {
+        foreach ($this->resettables as $resettableClass) {
+            /** @var Resettable $resettable */
+            $resettable = $this->get($resettableClass);
+
+            $resettable->reset();
+        }
     }
 }

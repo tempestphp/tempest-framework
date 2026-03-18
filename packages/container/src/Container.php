@@ -39,4 +39,12 @@ interface Container extends ContainerInterface
     public function addInitializer(ClassReflector|string $initializerClass): self;
 
     public function addDecorator(ClassReflector|string $decoratorClass, ClassReflector|string $decoratedClass): self;
+
+    /**
+     * @template T of \Tempest\Container\Resettable
+     * @param ClassReflector<T>|class-string<T> $resettableClass
+     */
+    public function addResettable(ClassReflector|string $resettableClass): self;
+
+    public function reset(): void;
 }
