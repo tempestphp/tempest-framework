@@ -8,6 +8,7 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\HasOneThrough;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Relation;
 use Tempest\Database\Table;
@@ -55,6 +56,7 @@ final class ModelInspector
             $model instanceof HasMany => $model->property->getIterableType()->getName(),
             $model instanceof BelongsTo => $model->property->getType()->getName(),
             $model instanceof HasOne => $model->property->getType()->getName(),
+            $model instanceof HasOneThrough => $model->property->getType()->getName(),
             $model instanceof ClassReflector => $model->getName(),
             default => null,
         };
@@ -72,7 +74,7 @@ final class ModelInspector
         if ($model instanceof HasMany) {
             $model = $model->property->getIterableType()->asClass();
             $this->reflector = $model;
-        } elseif ($model instanceof BelongsTo || $model instanceof HasOne) {
+        } elseif ($model instanceof BelongsTo || $model instanceof HasOne || $model instanceof HasOneThrough) {
             $model = $model->property->getType()->asClass();
             $this->reflector = $model;
         } elseif ($model instanceof ClassReflector) {
@@ -158,6 +160,10 @@ final class ModelInspector
                     continue;
                 }
 
+                if ($this->getHasOneThrough($property->getName()) instanceof HasOneThrough) {
+                    continue;
+                }
+
                 $name = $property->getName();
 
                 $values[$name] = $property->getValue($this->instance);
@@ -209,6 +215,10 @@ final class ModelInspector
             }
 
             if ($property->hasAttribute(HasOne::class)) {
+                return null;
+            }
+
+            if ($property->hasAttribute(HasOneThrough::class)) {
                 return null;
             }
 
@@ -282,13 +292,47 @@ final class ModelInspector
         });
     }
 
+    public function getHasOneThrough(string $name): ?HasOneThrough
+    {
+        return $this->memoize('getHasOneThrough' . $name, function () use ($name) {
+            if (! $this->isObjectModel()) {
+                return null;
+            }
+
+            $name = str($name)->camel();
+
+            $singularizedName = $name->singularizeLastWord();
+
+            if (! $singularizedName->equals($name)) {
+                return $this->getHasOneThrough($singularizedName);
+            }
+
+            if (! $this->reflector->hasProperty($name)) {
+                return null;
+            }
+
+            $property = $this->reflector->getProperty($name);
+
+            if (($hasOneThrough = $property->getAttribute(HasOneThrough::class)) instanceof HasOneThrough) {
+                return $hasOneThrough;
+            }
+
+            return null;
+        });
+    }
+
     public function isRelation(string|PropertyReflector $name): bool
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
         return $this->memoize(
             'isRelation' . $name,
-            fn () => $this->getBelongsTo($name) instanceof BelongsTo || $this->getHasOne($name) instanceof HasOne || $this->getHasMany($name) instanceof HasMany,
+            fn () => (
+                $this->getBelongsTo($name) instanceof BelongsTo
+                || $this->getHasOne($name) instanceof HasOne
+                || $this->getHasMany($name) instanceof HasMany
+                || $this->getHasOneThrough($name) instanceof HasOneThrough
+            ),
         );
     }
 
@@ -296,7 +340,7 @@ final class ModelInspector
     {
         $name = $name instanceof PropertyReflector ? $name->getName() : $name;
 
-        return $this->memoize('getRelation' . $name, fn () => $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name));
+        return $this->memoize('getRelation' . $name, fn () => $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name) ?? $this->getHasOneThrough($name));
     }
 
     /**
@@ -393,6 +437,10 @@ final class ModelInspector
             }
 
             if ($relation instanceof HasOne) {
+                continue;
+            }
+
+            if ($relation instanceof HasOneThrough) {
                 continue;
             }
 
