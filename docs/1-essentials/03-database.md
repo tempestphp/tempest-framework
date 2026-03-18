@@ -317,6 +317,54 @@ LEFT JOIN payments ON payments.contract_id = contracts.id
 
 The same optional parameters as `HasOneThrough` are available for custom join fields: `ownerJoin`, `relationJoin`, `throughOwnerJoin`, and `throughRelationJoin`.
 
+### Belongs to many
+
+The {b`#[Tempest\Database\BelongsToMany]`} attribute defines a many-to-many relationship using a pivot table. Both sides of the relationship can declare the attribute.
+
+```php
+use Tempest\Database\BelongsToMany;
+
+final class Author
+{
+    /** @var \App\Tag\Tag[] */
+    #[BelongsToMany]
+    public array $tags = [];
+}
+
+final class Tag
+{
+    /** @var \App\Author\Author[] */
+    #[BelongsToMany]
+    public array $authors = [];
+}
+```
+
+The pivot table name is inferred alphabetically from both model table names (e.g., `authors` + `tags` = `authors_tags`). This generates SQL like:
+
+```sql
+LEFT JOIN authors_tags ON authors_tags.author_id = authors.id
+LEFT JOIN tags ON tags.id = authors_tags.tag_id
+```
+
+A custom pivot table name and join fields can be specified:
+
+```php
+#[BelongsToMany(
+    pivot: 'custom_pivot_table',
+    ownerJoin: 'custom_author_fk',
+    relationJoin: 'uuid',
+    relatedOwnerJoin: 'custom_tag_fk',
+    relatedRelationJoin: 'uuid',
+)]
+public array $tags = [];
+```
+
+- `pivot`: Custom pivot table name
+- `ownerJoin`: FK on pivot pointing to the owner model
+- `relationJoin`: PK on the owner model
+- `relatedOwnerJoin`: FK on pivot pointing to the related model
+- `relatedRelationJoin`: PK on the related model
+
 ### Using UUIDs as primary keys
 
 By default, Tempest uses auto-incrementing integers as primary keys. UUIDs can be used as primary keys instead by annotating the {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest automatically generates a UUID v7 when a new model is created:
