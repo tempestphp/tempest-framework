@@ -88,6 +88,8 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                 public function addResettable(string|ClassReflector $resettableClass): Container
                 {
                     $this->container->addResettable($resettableClass);
+
+                    return $this;
                 }
 
                 public function reset(): void
