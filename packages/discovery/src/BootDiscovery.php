@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
+use Pest\Exceptions\InvalidPestCommand;
 use AssertionError;
 use Psr\Container\ContainerInterface;
 use Tempest\Container\GenericContainer;
@@ -200,7 +201,7 @@ final class BootDiscovery
                 } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
                 }
-            } catch (AssertionError|\Pest\Exceptions\InvalidPestCommand) { // @phpstan-ignore class.notFound
+            } catch (AssertionError|InvalidPestCommand) { // @phpstan-ignore class.notFound
                 // Workaround for Pest test files autoloading.
                 // @mago-expect lint:no-empty-catch-clause
             }

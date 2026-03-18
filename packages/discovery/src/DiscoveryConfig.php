@@ -32,14 +32,7 @@ final class DiscoveryConfig
         if (array_key_exists($input, $this->skipDiscovery)) {
             return true;
         }
-
-        foreach ($this->skipUsing as $closure) {
-            if ($closure($input) === true) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->skipUsing, fn($closure) => $closure($input) === true);
     }
 
     /** @param (Closure(string): bool) $closure */
