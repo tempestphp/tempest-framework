@@ -3,6 +3,7 @@
 namespace Tempest\Database\Mappers;
 
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasManyThrough;
@@ -94,7 +95,7 @@ final class SelectModelMapper implements Mapper
                 continue;
             }
 
-            if ($relation instanceof HasMany || $relation instanceof HasManyThrough) {
+            if ($relation instanceof HasMany || $relation instanceof HasManyThrough || $relation instanceof BelongsToMany) {
                 $mapped = [];
                 $relationModel = inspect($relation);
 
@@ -135,7 +136,7 @@ final class SelectModelMapper implements Mapper
                 if ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof HasOneThrough) {
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
-                } elseif ($relation instanceof HasMany || $relation instanceof HasManyThrough) {
+                } elseif ($relation instanceof HasMany || $relation instanceof HasManyThrough || $relation instanceof BelongsToMany) {
                     $hasManyId = $data->get($key . $relation->idField()) ?? $row[$originalKey . $relation->idField()] ?? null;
 
                     $originalKey .= $relation->name . '.';
