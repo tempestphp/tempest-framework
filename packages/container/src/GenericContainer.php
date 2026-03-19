@@ -728,4 +728,16 @@ final class GenericContainer implements Container
 
         return $this;
     }
+
+    public function getResettables(): array
+    {
+        return $this->resettables->getArrayCopy();
+    }
+
+    public function setResettables(array $resettables): self
+    {
+        $this->resettables = new ArrayIterator($resettables);
+
+        return $this;
+    }
 }
