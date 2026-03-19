@@ -178,6 +178,7 @@ final class GenericContainer implements Container
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
         $this->singletonDefinitions[$dependencyName] = $definition;
+        unset($this->resolvedSingletons[$dependencyName]);
 
         return $this;
     }
