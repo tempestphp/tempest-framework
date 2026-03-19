@@ -112,6 +112,8 @@ trait ManipulatesArray
 
     /**
      * Shuffles the array.
+     *
+     * @return static<TKey, TValue>
      */
     public function shuffle(): self
     {
@@ -122,6 +124,8 @@ trait ManipulatesArray
      * Removes the specified keys and their values from the array.
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
+     *
+     * @return static<TKey, TValue>
      */
     public function removeKeys(string|int|array $keys): self
     {
@@ -132,6 +136,8 @@ trait ManipulatesArray
      * Removes the specified keys and their values from the array. Alias of `removeKeys`.
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
+     *
+     * @return static<TKey, TValue>
      */
     public function forget(string|int|array $keys): self
     {
@@ -142,6 +148,8 @@ trait ManipulatesArray
      * Removes the specified values from the array.
      *
      * @param TValue|array<TValue> $values The values to remove.
+     *
+     * @return static<TKey, TValue>
      */
     public function removeValues(mixed $values): self
     {
@@ -195,6 +203,8 @@ trait ManipulatesArray
      * Prepends the specified values to the array.
      *
      * @param TValue $values
+     *
+     * @return static<TKey, TValue>
      */
     public function prepend(mixed ...$values): self
     {
@@ -205,6 +215,8 @@ trait ManipulatesArray
      * Appends the specified values to the instance.
      *
      * @param TValue $values
+     *
+     * @return static<TKey, TValue>
      */
     public function append(mixed ...$values): self
     {
@@ -223,6 +235,8 @@ trait ManipulatesArray
 
     /**
      * @alias of `add`.
+     *
+     * @return static<TKey, TValue>
      */
     public function push(mixed $value): self
     {
@@ -401,6 +415,8 @@ trait ManipulatesArray
      * Returns an instance of the array without the last value.
      *
      * @param mixed $value The popped value will be stored in this variable
+     *
+     * @return static<TKey, TValue>
      */
     public function pop(mixed &$value = null): self
     {
@@ -411,6 +427,8 @@ trait ManipulatesArray
      * Returns an instance of the array without the first value.
      *
      * @param mixed $value The unshifted value will be stored in this variable
+     *
+     * @return static<TKey, TValue>
      */
     public function unshift(mixed &$value = null): self
     {
@@ -419,6 +437,8 @@ trait ManipulatesArray
 
     /**
      * Returns a new instance of the array in reverse order.
+     *
+     * @return static<TKey, TValue>
      */
     public function reverse(): self
     {
@@ -473,7 +493,9 @@ trait ManipulatesArray
      * Returns a new instance of this array with only the items that pass the given `$filter`.
      * If `$filter` is `null`, the new instance will contain only values that are not `false` or `null`.
      *
-     * @param null|Closure(mixed $value, mixed $key): bool $filter
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     *
+     * @return static<TKey, TValue>
      */
     public function filter(?Closure $filter = null): self
     {
@@ -484,6 +506,8 @@ trait ManipulatesArray
      * Applies the given callback to all items of the instance.
      *
      * @param Closure(TValue, TKey): mixed $each
+     *
+     * @return static<TKey, TValue>
      */
     public function each(Closure $each): self
     {
@@ -513,7 +537,12 @@ trait ManipulatesArray
      * arr(['a', 'b'])->mapWithKeys(fn (mixed $value, mixed $key) => yield $key => $value);
      * ```
      *
-     * @param Closure(mixed $value, mixed $key): \Generator $map
+     * @template TMapKey of array-key
+     * @template TMapValue
+     *
+     * @param Closure(TValue $value, TKey $key): \Generator<TMapKey, TMapValue> $map
+     *
+     * @return static<TMapKey, TMapValue>
      */
     public function mapWithKeys(Closure $map): self
     {
@@ -532,6 +561,8 @@ trait ManipulatesArray
 
     /**
      * Associates the given `$value` to the given `$key` on the instance.
+     *
+     * @return static<TKey, TValue>
      */
     public function set(string $key, mixed $value): self
     {
@@ -540,6 +571,8 @@ trait ManipulatesArray
 
     /**
      * @alias of `set`
+     *
+     * @return static<TKey, TValue>
      */
     public function put(string $key, mixed $value): self
     {
@@ -600,6 +633,8 @@ trait ManipulatesArray
 
     /**
      * Converts the dot-notation keys of the instance to a set of nested arrays.
+     *
+     * @return static<TKey, TValue>
      */
     public function undot(): self
     {
@@ -608,6 +643,8 @@ trait ManipulatesArray
 
     /**
      * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
+     *
+     * @return static<TKey, TValue>
      */
     public function dot(): self
     {
@@ -626,6 +663,8 @@ trait ManipulatesArray
      * Groups the array by the results of the provided keyExtractor.
      *
      * @param Closure(TValue, TKey): array-key $keyExtractor
+     *
+     * @return static<array-key, array<TKey, TValue>>
      */
     public function groupBy(Closure $keyExtractor): self
     {
@@ -764,6 +803,8 @@ trait ManipulatesArray
      * ```php
      * arr([1, 2, 3, 4, 5])->slice(2); // [3, 4, 5]
      * ```
+     *
+     * @return static<TKey, TValue>
      */
     public function slice(int $offset, ?int $length = null): self
     {
@@ -798,6 +839,8 @@ trait ManipulatesArray
      * Executes callback with the given `$value` and returns the same `$value`.
      *
      * @param (Closure(static): void) $callback
+     *
+     * @return static<TKey, TValue>
      */
     public function tap(Closure $callback): self
     {
@@ -808,6 +851,8 @@ trait ManipulatesArray
 
     /**
      * Dumps the instance.
+     *
+     * @return static<TKey, TValue>
      */
     public function dump(mixed ...$dumps): self
     {
