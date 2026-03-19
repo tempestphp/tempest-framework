@@ -241,10 +241,10 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $tinyText = new CreateTableStatement('test-table')
             ->text('content', false, DatabaseTextLength::TINY, null)
             ->compile(dialect: DatabaseDialect::MYSQL);
-        $mediumText = new CreateTableStatement('test-table')
+        $text = new CreateTableStatement('test-table')
             ->text('content', false, DatabaseTextLength::DEFAULT)
             ->compile(dialect: DatabaseDialect::MYSQL);
-        $text = new CreateTableStatement('test-table')
+        $mediumText = new CreateTableStatement('test-table')
             ->text('content', false, DatabaseTextLength::MEDIUM)
             ->compile(dialect: DatabaseDialect::MYSQL);
         $longText = new CreateTableStatement('test-table')
@@ -258,8 +258,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             ->compile(dialect: DatabaseDialect::MYSQL);
 
         $this->assertStringContainsString('TINYTEXT', $tinyText);
-        $this->assertStringContainsString('MEDIUMTEXT', $mediumText);
         $this->assertStringContainsString('TEXT', $text);
+        $this->assertStringContainsString('MEDIUMTEXT', $mediumText);
         $this->assertStringContainsString('LONGTEXT', $longText);
         $this->assertStringContainsString('TEXT', $default);
         $this->assertStringContainsString('TINYTEXT', $value);
