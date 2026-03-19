@@ -250,6 +250,49 @@ final class Book
 }
 ```
 
+### Has one through
+
+The {b`#[Tempest\Database\HasOneThrough]`} attribute defines a one-to-one relationship that traverses an intermediate model. This lets you access a distant relation directly, resolved in a single SQL query with two JOINs.
+
+```php
+use Tempest\Database\HasOne;
+use Tempest\Database\HasOneThrough;
+
+final class Author
+{
+    #[HasOne]
+    public ?Profile $profile = null;
+
+    #[HasOneThrough(Profile::class)]
+    public ?Address $address = null;
+}
+```
+
+The `through` parameter specifies the intermediate model class. The target model is inferred from the property type. This generates SQL like:
+
+```sql
+LEFT JOIN profiles ON profiles.author_id = authors.id
+LEFT JOIN addresses ON addresses.profile_id = profiles.id
+```
+
+When conventions don't match, optional parameters can override the join fields:
+
+```php
+#[HasOneThrough(
+    through: Profile::class,
+    ownerJoin: 'custom_author_fk',
+    relationJoin: 'uuid',
+    throughOwnerJoin: 'custom_profile_fk',
+    throughRelationJoin: 'uuid',
+)]
+public ?Address $address = null;
+```
+
+- `ownerJoin`: FK on the intermediate table pointing to the owner
+- `relationJoin`: PK on the owner table
+- `throughOwnerJoin`: FK on the target table pointing to the intermediate
+- `throughRelationJoin`: PK on the intermediate table
+
 ### Using UUIDs as primary keys
 
 By default, Tempest uses auto-incrementing integers as primary keys. UUIDs can be used as primary keys instead by annotating the {b`Tempest\Database\PrimaryKey`} property with the {b`#[Tempest\Database\Uuid]`} attribute. Tempest automatically generates a UUID v7 when a new model is created:

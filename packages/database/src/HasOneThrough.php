@@ -1,0 +1,278 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Database;
+
+use Attribute;
+use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\QueryStatements\FieldStatement;
+use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
+
+use function Tempest\Support\str;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
+final class HasOneThrough implements Relation
+{
+    public PropertyReflector $property;
+
+    public string $name {
+        get => $this->property->getName();
+    }
+
+    private ?string $parent = null;
+
+    /**
+     * @param class-string $through
+     */
+    public function __construct(
+        public string $through,
+        public ?string $ownerJoin = null,
+        public ?string $relationJoin = null,
+        public ?string $throughOwnerJoin = null,
+        public ?string $throughRelationJoin = null,
+    ) {}
+
+    public function setParent(string $name): self
+    {
+        $this->parent = $name;
+
+        return $this;
+    }
+
+    public function getSelectFields(): ImmutableArray
+    {
+        $targetModel = inspect(
+            model: $this->property
+                ->getType()
+                ->asClass(),
+        );
+
+        return $targetModel
+            ->getSelectFields()
+            ->map(
+                map: fn (
+                    $field,
+                ) => new FieldStatement(
+                    field: $targetModel->getTableName() . '.' . $field,
+                )
+                    ->withAlias(
+                        alias: sprintf(
+                            '%s.%s',
+                            $this->property->getName(),
+                            $field,
+                        ),
+                    )
+                    ->withAliasPrefix(prefix: $this->parent),
+            );
+    }
+
+    public function getJoinStatement(): JoinStatement
+    {
+        $intermediateModel = inspect(model: $this->through);
+
+        return new JoinStatement(
+            statement: sprintf(
+                '%s %s',
+                $this->buildFirstJoin(
+                    ownerModel: inspect(model: $this->property->getClass()),
+                    intermediateModel: $intermediateModel,
+                ),
+                $this->buildSecondJoin(
+                    intermediateModel: $intermediateModel,
+                    targetModel: inspect(
+                        model: $this->property
+                            ->getType()
+                            ->asClass(),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    private function buildFirstJoin(
+        ModelInspector $ownerModel,
+        ModelInspector $intermediateModel,
+    ): string {
+        return sprintf(
+            'LEFT JOIN %s ON %s = %s',
+            $intermediateModel->getTableName(),
+            $this->resolveOwnerJoin(intermediateModel: $intermediateModel, ownerModel: $ownerModel),
+            $this->resolveRelationJoin(ownerModel: $ownerModel),
+        );
+    }
+
+    private function buildSecondJoin(
+        ModelInspector $intermediateModel,
+        ModelInspector $targetModel,
+    ): string {
+        return sprintf(
+            'LEFT JOIN %s ON %s = %s',
+            $targetModel->getTableName(),
+            $this->resolveThroughOwnerJoin(
+                targetModel: $targetModel,
+                intermediateModel: $intermediateModel,
+            ),
+            $this->resolveThroughRelationJoin(intermediateModel: $intermediateModel),
+        );
+    }
+
+    private function resolveOwnerJoin(
+        ModelInspector $intermediateModel,
+        ModelInspector $ownerModel,
+    ): string {
+        $ownerJoin = $this->ownerJoin;
+
+        if (
+            $ownerJoin
+            && ! strpos(
+                haystack: $ownerJoin,
+                needle: '.',
+            )
+        ) {
+            return sprintf(
+                '%s.%s',
+                $intermediateModel->getTableName(),
+                $ownerJoin,
+            );
+        }
+
+        if ($ownerJoin) {
+            return $ownerJoin;
+        }
+
+        $primaryKey = $ownerModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation(
+                model: $ownerModel->getName(),
+                relationType: 'HasOneThrough',
+            );
+        }
+
+        return sprintf(
+            '%s.%s',
+            $intermediateModel->getTableName(),
+            str(string: $ownerModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
+        );
+    }
+
+    private function resolveRelationJoin(ModelInspector $ownerModel): string
+    {
+        $relationJoin = $this->relationJoin;
+
+        if (
+            $relationJoin
+            && ! strpos(
+                haystack: $relationJoin,
+                needle: '.',
+            )
+        ) {
+            return sprintf(
+                '%s.%s',
+                $ownerModel->getTableName(),
+                $relationJoin,
+            );
+        }
+
+        if ($relationJoin) {
+            return $relationJoin;
+        }
+
+        $primaryKey = $ownerModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation(
+                model: $ownerModel->getName(),
+                relationType: 'HasOneThrough',
+            );
+        }
+
+        return sprintf(
+            '%s.%s',
+            $ownerModel->getTableName(),
+            $primaryKey,
+        );
+    }
+
+    private function resolveThroughOwnerJoin(
+        ModelInspector $targetModel,
+        ModelInspector $intermediateModel,
+    ): string {
+        $throughOwnerJoin = $this->throughOwnerJoin;
+
+        if (
+            $throughOwnerJoin
+            && ! strpos(
+                haystack: $throughOwnerJoin,
+                needle: '.',
+            )
+        ) {
+            return sprintf(
+                '%s.%s',
+                $targetModel->getTableName(),
+                $throughOwnerJoin,
+            );
+        }
+
+        if ($throughOwnerJoin) {
+            return $throughOwnerJoin;
+        }
+
+        $primaryKey = $intermediateModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation(
+                model: $intermediateModel->getName(),
+                relationType: 'HasOneThrough',
+            );
+        }
+
+        return sprintf(
+            '%s.%s',
+            $targetModel->getTableName(),
+            str(string: $intermediateModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
+        );
+    }
+
+    private function resolveThroughRelationJoin(ModelInspector $intermediateModel): string
+    {
+        $throughRelationJoin = $this->throughRelationJoin;
+
+        if (
+            $throughRelationJoin
+            && ! strpos(
+                haystack: $throughRelationJoin,
+                needle: '.',
+            )
+        ) {
+            return sprintf(
+                '%s.%s',
+                $intermediateModel->getTableName(),
+                $throughRelationJoin,
+            );
+        }
+
+        if ($throughRelationJoin) {
+            return $throughRelationJoin;
+        }
+
+        $primaryKey = $intermediateModel->getPrimaryKey();
+
+        if ($primaryKey === null) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation(
+                model: $intermediateModel->getName(),
+                relationType: 'HasOneThrough',
+            );
+        }
+
+        return sprintf(
+            '%s.%s',
+            $intermediateModel->getTableName(),
+            $primaryKey,
+        );
+    }
+}

@@ -6,6 +6,7 @@ use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\HasOneThrough;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Mapper;
@@ -130,7 +131,7 @@ final class SelectModelMapper implements Mapper
             foreach ($parts as $part) {
                 $relation = $currentModel->getRelation($part);
 
-                if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
+                if ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof HasOneThrough) {
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
                 } elseif ($relation instanceof HasMany) {
