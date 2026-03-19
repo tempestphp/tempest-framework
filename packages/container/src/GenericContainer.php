@@ -710,7 +710,7 @@ final class GenericContainer implements Container
             $resettableClass = $resettableClass->getName();
         }
 
-        $this->resettables[] = $resettableClass;
+        $this->resettables[$resettableClass] = $resettableClass;
 
         return $this;
     }
