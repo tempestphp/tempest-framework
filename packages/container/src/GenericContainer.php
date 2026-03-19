@@ -21,6 +21,7 @@ use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\TypeReflector;
 use Throwable;
 use UnitEnum;
+use const ARRAY_FILTER_USE_BOTH;
 
 final class GenericContainer implements Container
 {
@@ -64,7 +65,7 @@ final class GenericContainer implements Container
 
     public function setSingletons(array $singletons): self
     {
-        $this->resolvedSingletons = new ArrayIterator($singletons);
+        $this->singletonDefinitions = new ArrayIterator($singletons);
 
         return $this;
     }
@@ -100,7 +101,7 @@ final class GenericContainer implements Container
      */
     public function getSingletons(?string $interface = null): array
     {
-        $singletons = $this->resolvedSingletons->getArrayCopy();
+        $singletons = $this->singletonDefinitions->getArrayCopy();
 
         if (is_null($interface)) {
             return $singletons;
@@ -109,7 +110,7 @@ final class GenericContainer implements Container
         return array_filter(
             array: $singletons,
             callback: static fn (mixed $_, string $key) => str_starts_with($key, "{$interface}#") || $key === $interface,
-            mode: \ARRAY_FILTER_USE_BOTH,
+            mode: ARRAY_FILTER_USE_BOTH,
         );
     }
 
