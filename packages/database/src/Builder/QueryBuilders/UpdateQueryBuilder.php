@@ -230,11 +230,11 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     private function handleRelationUpdate(string $column, mixed $value): bool
     {
         return (
-            $this->handleHasManyRelation($column, $value)
-            || $this->handleHasOneRelation($column, $value)
-            || $this->handleBelongsToManyRelation($column, $value)
-            || $this->handleHasManyThroughRelation($column)
-            || $this->handleHasOneThroughRelation($column)
+            $this->handleHasManyRelation(key: $column, relations: $value)
+            || $this->handleHasOneRelation(key: $column, relation: $value)
+            || $this->handleBelongsToManyRelation(key: $column, relations: $value)
+            || $this->handleHasManyThroughRelation(key: $column)
+            || $this->handleHasOneThroughRelation(key: $column)
         );
     }
 
@@ -335,14 +335,14 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function handleBelongsToManyRelation(string $key, mixed $relations): bool
     {
-        $belongsToMany = $this->model->getBelongsToMany($key);
+        $belongsToMany = $this->model->getBelongsToMany(name: $key);
 
         if (! $belongsToMany instanceof BelongsToMany) {
             return false;
         }
 
         if (is_iterable($relations)) {
-            $this->addBelongsToManyRelationCallback($key, $relations);
+            $this->addBelongsToManyRelationCallback(relationName: $key, relations: $relations);
         }
 
         return true;
@@ -350,47 +350,47 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function handleHasManyThroughRelation(string $key): bool
     {
-        return $this->model->getHasManyThrough($key) instanceof HasManyThrough;
+        return $this->model->getHasManyThrough(name: $key) instanceof HasManyThrough;
     }
 
     private function handleHasOneThroughRelation(string $key): bool
     {
-        return $this->model->getHasOneThrough($key) instanceof HasOneThrough;
+        return $this->model->getHasOneThrough(name: $key) instanceof HasOneThrough;
     }
 
     private function addBelongsToManyRelationCallback(string $relationName, iterable $relations): void
     {
-        $belongsToMany = $this->model->getBelongsToMany($relationName);
+        $belongsToMany = $this->model->getBelongsToMany(name: $relationName);
 
         if (! $belongsToMany instanceof BelongsToMany) {
             return;
         }
 
-        $this->ensureModelHasPrimaryKey($this->model, 'BelongsToMany');
+        $this->ensureModelHasPrimaryKey(model: $this->model, relationType: 'BelongsToMany');
 
         $this->after[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
-            $ownerModel = inspect($this->model->getName());
-            $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
+            $ownerModel = inspect(model: $this->model->getName());
+            $targetModel = inspect(model: $belongsToMany->property->getIterableType()->asClass());
 
-            $pivotTable = $belongsToMany->pivot ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+            $pivotTable = $belongsToMany->pivot ?? implode(separator: '_', array: Arr\sort(array: [$ownerModel->getTableName(), $targetModel->getTableName()]));
 
             $ownerFk = $belongsToMany->ownerJoin
-                ? $this->removeTablePrefix($belongsToMany->ownerJoin)
-                : Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+                ? $this->removeTablePrefix(column: $belongsToMany->ownerJoin)
+                : Intl\singularize_last_word(value: $ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
 
             $targetPk = $targetModel->getPrimaryKey();
 
             if (! $targetPk) {
-                throw ModelDidNotHavePrimaryColumn::neededForRelation($targetModel->getName(), 'BelongsToMany');
+                throw ModelDidNotHavePrimaryColumn::neededForRelation(model: $targetModel->getName(), relationType: 'BelongsToMany');
             }
 
             $targetFk = $belongsToMany->relatedOwnerJoin
-                ? $this->removeTablePrefix($belongsToMany->relatedOwnerJoin)
-                : Intl\singularize_last_word($targetModel->getTableName()) . '_' . $targetPk;
+                ? $this->removeTablePrefix(column: $belongsToMany->relatedOwnerJoin)
+                : Intl\singularize_last_word(value: $targetModel->getTableName()) . '_' . $targetPk;
 
             // Delete existing pivot rows
-            new DeleteQueryBuilder($pivotTable)
-                ->whereField($ownerFk, $parentId->value)
+            new DeleteQueryBuilder(model: $pivotTable)
+                ->whereField(field: $ownerFk, value: $parentId->value)
                 ->build()
                 ->onDatabase($this->onDatabase)
                 ->execute();
@@ -704,11 +704,11 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
     private function isRelationField(string $field): bool
     {
         return (
-            $this->model->getHasMany($field)
-            || $this->model->getHasOne($field)
-            || $this->model->getBelongsToMany($field) instanceof BelongsToMany
-            || $this->model->getHasManyThrough($field) instanceof HasManyThrough
-            || $this->model->getHasOneThrough($field) instanceof HasOneThrough
+            $this->model->getHasMany(name: $field)
+            || $this->model->getHasOne(name: $field)
+            || $this->model->getBelongsToMany(name: $field) instanceof BelongsToMany
+            || $this->model->getHasManyThrough(name: $field) instanceof HasManyThrough
+            || $this->model->getHasOneThrough(name: $field) instanceof HasOneThrough
         );
     }
 

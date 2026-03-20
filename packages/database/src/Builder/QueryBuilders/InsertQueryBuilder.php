@@ -265,35 +265,35 @@ final class InsertQueryBuilder implements BuildsQuery
 
     private function addBelongsToManyRelationCallback(string $relationName, iterable $relations): void
     {
-        $belongsToMany = $this->model->getBelongsToMany($relationName);
+        $belongsToMany = $this->model->getBelongsToMany(name: $relationName);
 
         if (! $belongsToMany instanceof BelongsToMany) {
             return;
         }
 
         if (! $this->model->hasPrimaryKey()) {
-            throw ModelDidNotHavePrimaryColumn::neededForRelation($this->model->getName(), 'BelongsToMany');
+            throw ModelDidNotHavePrimaryColumn::neededForRelation(model: $this->model->getName(), relationType: 'BelongsToMany');
         }
 
         $this->after[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
-            $ownerModel = inspect($this->model->getName());
-            $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
+            $ownerModel = inspect(model: $this->model->getName());
+            $targetModel = inspect(model: $belongsToMany->property->getIterableType()->asClass());
 
-            $pivotTable = $belongsToMany->pivot ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+            $pivotTable = $belongsToMany->pivot ?? implode(separator: '_', array: Arr\sort(array: [$ownerModel->getTableName(), $targetModel->getTableName()]));
 
             $ownerFk = $belongsToMany->ownerJoin
-                ? $this->removeTablePrefix($belongsToMany->ownerJoin)
-                : Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+                ? $this->removeTablePrefix(columnName: $belongsToMany->ownerJoin)
+                : Intl\singularize_last_word(value: $ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
 
             $targetPk = $targetModel->getPrimaryKey();
 
             if (! $targetPk) {
-                throw ModelDidNotHavePrimaryColumn::neededForRelation($targetModel->getName(), 'BelongsToMany');
+                throw ModelDidNotHavePrimaryColumn::neededForRelation(model: $targetModel->getName(), relationType: 'BelongsToMany');
             }
 
             $targetFk = $belongsToMany->relatedOwnerJoin
-                ? $this->removeTablePrefix($belongsToMany->relatedOwnerJoin)
-                : Intl\singularize_last_word($targetModel->getTableName()) . '_' . $targetPk;
+                ? $this->removeTablePrefix(columnName: $belongsToMany->relatedOwnerJoin)
+                : Intl\singularize_last_word(value: $targetModel->getTableName()) . '_' . $targetPk;
 
             $pivotRows = [];
 
@@ -511,19 +511,19 @@ final class InsertQueryBuilder implements BuildsQuery
                 continue;
             }
 
-            if ($definition->getBelongsToMany($propertyName) instanceof BelongsToMany) {
+            if ($definition->getBelongsToMany(name: $propertyName) instanceof BelongsToMany) {
                 if (is_iterable($value)) {
-                    $this->addBelongsToManyRelationCallback($propertyName, $value);
+                    $this->addBelongsToManyRelationCallback(relationName: $propertyName, relations: $value);
                 }
 
                 continue;
             }
 
-            if ($definition->getHasManyThrough($propertyName) instanceof HasManyThrough) {
+            if ($definition->getHasManyThrough(name: $propertyName) instanceof HasManyThrough) {
                 continue;
             }
 
-            if ($definition->getHasOneThrough($propertyName) instanceof HasOneThrough) {
+            if ($definition->getHasOneThrough(name: $propertyName) instanceof HasOneThrough) {
                 continue;
             }
 
