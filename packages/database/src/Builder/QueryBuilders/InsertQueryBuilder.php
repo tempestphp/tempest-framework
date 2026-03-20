@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseContext;
@@ -11,7 +12,9 @@ use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
+use Tempest\Database\HasManyThrough;
 use Tempest\Database\HasOne;
+use Tempest\Database\HasOneThrough;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
@@ -442,6 +445,18 @@ final class InsertQueryBuilder implements BuildsQuery
                     $this->addHasOneRelationCallback($propertyName, $value);
                 }
 
+                continue;
+            }
+
+            if ($definition->getBelongsToMany($propertyName) instanceof BelongsToMany) {
+                continue;
+            }
+
+            if ($definition->getHasManyThrough($propertyName) instanceof HasManyThrough) {
+                continue;
+            }
+
+            if ($definition->getHasOneThrough($propertyName) instanceof HasOneThrough) {
                 continue;
             }
 
