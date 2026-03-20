@@ -3,6 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\BelongsTo;
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Database;
@@ -12,7 +13,9 @@ use Tempest\Database\Exceptions\HasManyRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeUpdated;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasMany;
+use Tempest\Database\HasManyThrough;
 use Tempest\Database\HasOne;
+use Tempest\Database\HasOneThrough;
 use Tempest\Database\OnDatabase;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Query;
@@ -24,6 +27,7 @@ use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Str\ImmutableString;
@@ -225,7 +229,11 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function handleRelationUpdate(string $column, mixed $value): bool
     {
-        return $this->handleHasManyRelation($column, $value) || $this->handleHasOneRelation($column, $value);
+        return $this->handleHasManyRelation($column, $value)
+            || $this->handleHasOneRelation($column, $value)
+            || $this->handleBelongsToManyRelation($column, $value)
+            || $this->handleHasManyThroughRelation($column)
+            || $this->handleHasOneThroughRelation($column);
     }
 
     private function resolvePropertyValue(PropertyReflector $property, string $column, mixed $value): array
@@ -321,6 +329,100 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         $this->addHasOneRelationCallback($key, $relation);
 
         return true;
+    }
+
+    private function handleBelongsToManyRelation(string $key, mixed $relations): bool
+    {
+        $belongsToMany = $this->model->getBelongsToMany($key);
+
+        if (! $belongsToMany instanceof BelongsToMany) {
+            return false;
+        }
+
+        if (is_iterable($relations)) {
+            $this->addBelongsToManyRelationCallback($key, $relations);
+        }
+
+        return true;
+    }
+
+    private function handleHasManyThroughRelation(string $key): bool
+    {
+        return $this->model->getHasManyThrough($key) instanceof HasManyThrough;
+    }
+
+    private function handleHasOneThroughRelation(string $key): bool
+    {
+        return $this->model->getHasOneThrough($key) instanceof HasOneThrough;
+    }
+
+    private function addBelongsToManyRelationCallback(string $relationName, iterable $relations): void
+    {
+        $belongsToMany = $this->model->getBelongsToMany($relationName);
+
+        if (! $belongsToMany instanceof BelongsToMany) {
+            return;
+        }
+
+        $this->ensureModelHasPrimaryKey($this->model, 'BelongsToMany');
+
+        $this->after[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
+            $ownerModel = inspect($this->model->getName());
+            $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
+
+            $pivotTable = $belongsToMany->pivot
+                ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+
+            $ownerFk = $belongsToMany->ownerJoin
+                ? $this->removeTablePrefix($belongsToMany->ownerJoin)
+                : Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+
+            $targetPk = $targetModel->getPrimaryKey();
+
+            if (! $targetPk) {
+                throw ModelDidNotHavePrimaryColumn::neededForRelation($targetModel->getName(), 'BelongsToMany');
+            }
+
+            $targetFk = $belongsToMany->relatedOwnerJoin
+                ? $this->removeTablePrefix($belongsToMany->relatedOwnerJoin)
+                : Intl\singularize_last_word($targetModel->getTableName()) . '_' . $targetPk;
+
+            // Delete existing pivot rows
+            new DeleteQueryBuilder($pivotTable)
+                ->whereField($ownerFk, $parentId->value)
+                ->build()
+                ->onDatabase($this->onDatabase)
+                ->execute();
+
+            $pivotRows = [];
+
+            foreach ($relations as $related) {
+                $relatedId = match (true) {
+                    is_object($related) && isset($related->{$targetPk}) => $related->{$targetPk},
+                    is_array($related) && isset($related[$targetPk]) => $related[$targetPk],
+                    default => new InsertQueryBuilder(
+                        model: $targetModel->getName(),
+                        rows: [$related],
+                        serializerFactory: $this->serializerFactory,
+                    )->execute(),
+                };
+
+                $pivotRows[] = [
+                    $ownerFk => $parentId,
+                    $targetFk => $relatedId,
+                ];
+            }
+
+            if ($pivotRows === []) {
+                return null;
+            }
+
+            return new InsertQueryBuilder(
+                model: $pivotTable,
+                rows: $pivotRows,
+                serializerFactory: $this->serializerFactory,
+            );
+        };
     }
 
     private function addHasManyRelationCallback(string $relationName, iterable $relations): void
@@ -600,7 +702,11 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function isRelationField(string $field): bool
     {
-        return $this->model->getHasMany($field) || $this->model->getHasOne($field);
+        return $this->model->getHasMany($field)
+            || $this->model->getHasOne($field)
+            || $this->model->getBelongsToMany($field) instanceof BelongsToMany
+            || $this->model->getHasManyThrough($field) instanceof HasManyThrough
+            || $this->model->getHasOneThrough($field) instanceof HasOneThrough;
     }
 
     private function validateRelationUpdateConstraints(): void
