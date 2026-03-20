@@ -10,7 +10,9 @@ use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -201,18 +203,37 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['test'], $query->bindings);
     }
 
-    public function test_insert_skips_belongs_to_many_property(): void
+    public function test_insert_with_belongs_to_many_creates_pivot_rows(): void
     {
-        $tag = Tag::new(label: 'php');
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
 
-        $query = query(Tag::class)
+        $book1Id = query(Book::class)->insert(title: 'Book One')->execute();
+        $book2Id = query(Book::class)->insert(title: 'Book Two')->execute();
+
+        $tag = Tag::new(
+            label: 'php',
+            books: [
+                Book::new(id: $book1Id, title: 'Book One'),
+                Book::new(id: $book2Id, title: 'Book Two'),
+            ],
+        );
+
+        $tagId = query(Tag::class)
             ->insert($tag)
-            ->build();
+            ->execute();
 
-        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+        $this->assertNotNull($tagId);
 
-        $this->assertSameWithoutBackticks($expected, $query->compile());
-        $this->assertSame(['php'], $query->bindings);
+        $pivotCount = query('books_tags')->count()->execute();
+
+        $this->assertSame(2, $pivotCount);
     }
 
     public function test_insert_skips_has_many_through_property(): void

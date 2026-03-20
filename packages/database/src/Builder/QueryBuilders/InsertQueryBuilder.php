@@ -263,6 +263,70 @@ final class InsertQueryBuilder implements BuildsQuery
         };
     }
 
+    private function addBelongsToManyRelationCallback(string $relationName, iterable $relations): void
+    {
+        $belongsToMany = $this->model->getBelongsToMany($relationName);
+
+        if (! $belongsToMany instanceof BelongsToMany) {
+            return;
+        }
+
+        if (! $this->model->hasPrimaryKey()) {
+            throw ModelDidNotHavePrimaryColumn::neededForRelation($this->model->getName(), 'BelongsToMany');
+        }
+
+        $this->after[] = function (PrimaryKey $parentId) use ($belongsToMany, $relations) {
+            $ownerModel = inspect($this->model->getName());
+            $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
+
+            $pivotTable = $belongsToMany->pivot
+                ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+
+            $ownerFk = $belongsToMany->ownerJoin
+                ? $this->removeTablePrefix($belongsToMany->ownerJoin)
+                : Intl\singularize_last_word($ownerModel->getTableName()) . '_' . $ownerModel->getPrimaryKey();
+
+            $targetPk = $targetModel->getPrimaryKey();
+
+            if (! $targetPk) {
+                throw ModelDidNotHavePrimaryColumn::neededForRelation($targetModel->getName(), 'BelongsToMany');
+            }
+
+            $targetFk = $belongsToMany->relatedOwnerJoin
+                ? $this->removeTablePrefix($belongsToMany->relatedOwnerJoin)
+                : Intl\singularize_last_word($targetModel->getTableName()) . '_' . $targetPk;
+
+            $pivotRows = [];
+
+            foreach ($relations as $related) {
+                $relatedId = match (true) {
+                    is_object($related) && isset($related->{$targetPk}) => $related->{$targetPk},
+                    is_array($related) && isset($related[$targetPk]) => $related[$targetPk],
+                    default => new InsertQueryBuilder(
+                        model: $targetModel->getName(),
+                        rows: [$related],
+                        serializerFactory: $this->serializerFactory,
+                    )->execute(),
+                };
+
+                $pivotRows[] = [
+                    $ownerFk => $parentId,
+                    $targetFk => $relatedId,
+                ];
+            }
+
+            if ($pivotRows === []) {
+                return null;
+            }
+
+            return new InsertQueryBuilder(
+                model: $pivotTable,
+                rows: $pivotRows,
+                serializerFactory: $this->serializerFactory,
+            );
+        };
+    }
+
     private function handleCustomHasOneRelation(HasOne $hasOne, object|array $relation, PrimaryKey $parentId): null
     {
         $relatedModelId = new InsertQueryBuilder(
@@ -449,6 +513,10 @@ final class InsertQueryBuilder implements BuildsQuery
             }
 
             if ($definition->getBelongsToMany($propertyName) instanceof BelongsToMany) {
+                if (is_iterable($value)) {
+                    $this->addBelongsToManyRelationCallback($propertyName, $value);
+                }
+
                 continue;
             }
 
