@@ -44,7 +44,7 @@ if (class_exists(ConsoleCommand::class)) {
             );
 
             $this->listBindings(
-                title: 'Dyanmic initializers',
+                title: 'Dynamic initializers',
                 bindings: sort($this->container->getDynamicInitializers()),
                 formatKey: fn (int $_, string $class): string => $this->formatClassKey($class),
                 formatValue: static function (int $_, string $class): string {
