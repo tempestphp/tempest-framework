@@ -229,11 +229,13 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function handleRelationUpdate(string $column, mixed $value): bool
     {
-        return $this->handleHasManyRelation($column, $value)
+        return (
+            $this->handleHasManyRelation($column, $value)
             || $this->handleHasOneRelation($column, $value)
             || $this->handleBelongsToManyRelation($column, $value)
             || $this->handleHasManyThroughRelation($column)
-            || $this->handleHasOneThroughRelation($column);
+            || $this->handleHasOneThroughRelation($column)
+        );
     }
 
     private function resolvePropertyValue(PropertyReflector $property, string $column, mixed $value): array
@@ -370,8 +372,7 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
             $ownerModel = inspect($this->model->getName());
             $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
 
-            $pivotTable = $belongsToMany->pivot
-                ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+            $pivotTable = $belongsToMany->pivot ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
 
             $ownerFk = $belongsToMany->ownerJoin
                 ? $this->removeTablePrefix($belongsToMany->ownerJoin)
@@ -702,11 +703,13 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
 
     private function isRelationField(string $field): bool
     {
-        return $this->model->getHasMany($field)
+        return (
+            $this->model->getHasMany($field)
             || $this->model->getHasOne($field)
             || $this->model->getBelongsToMany($field) instanceof BelongsToMany
             || $this->model->getHasManyThrough($field) instanceof HasManyThrough
-            || $this->model->getHasOneThrough($field) instanceof HasOneThrough;
+            || $this->model->getHasOneThrough($field) instanceof HasOneThrough
+        );
     }
 
     private function validateRelationUpdateConstraints(): void

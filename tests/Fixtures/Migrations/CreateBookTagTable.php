@@ -16,7 +16,7 @@ final class CreateBookTagTable implements MigratesUp, MigratesDown
 
     public function up(): QueryStatement
     {
-        return (new CreateTableStatement('books_tags'))
+        return new CreateTableStatement('books_tags')
             ->primary()
             ->belongsTo('books_tags.book_id', 'books.id')
             ->belongsTo('books_tags.tag_id', 'tags.id');

@@ -17,6 +17,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -682,5 +683,56 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
                 ['title' => 'Timeline Taxi Chapter 4', 'book_id' => 4],
             )
             ->execute();
+    }
+
+    public function test_select_on_model_with_belongs_to_many_and_through_relations(): void
+    {
+        $query = query(Tag::class)
+            ->select()
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT `tags`.`id` AS `tags.id`, `tags`.`label` AS `tags.label` FROM `tags`',
+            $query->compile(),
+        );
+    }
+
+    public function test_select_with_belongs_to_many_relation(): void
+    {
+        $query = query(Tag::class)
+            ->select()
+            ->with('books')
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS `tags.id`, tags.label AS `tags.label`, books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id` FROM `tags` LEFT JOIN books_tags ON books_tags.tag_id = tags.id LEFT JOIN books ON books.id = books_tags.book_id',
+            $query->compile(),
+        );
+    }
+
+    public function test_select_with_has_many_through_relation(): void
+    {
+        $query = query(Tag::class)
+            ->select()
+            ->with('reviewers')
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS `tags.id`, tags.label AS `tags.label`, reviewers.id AS `reviewers.id`, reviewers.name AS `reviewers.name`, reviewers.book_review_id AS `reviewers.book_review_id` FROM `tags` LEFT JOIN book_reviews ON book_reviews.tag_id = tags.id LEFT JOIN reviewers ON reviewers.book_review_id = book_reviews.id',
+            $query->compile(),
+        );
+    }
+
+    public function test_select_with_has_one_through_relation(): void
+    {
+        $query = query(Tag::class)
+            ->select()
+            ->with('topReviewer')
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS `tags.id`, tags.label AS `tags.label`, reviewers.id AS `topReviewer.id`, reviewers.name AS `topReviewer.name`, reviewers.book_review_id AS `topReviewer.book_review_id` FROM `tags` LEFT JOIN book_reviews ON book_reviews.tag_id = tags.id LEFT JOIN reviewers ON reviewers.book_review_id = book_reviews.id',
+            $query->compile(),
+        );
     }
 }

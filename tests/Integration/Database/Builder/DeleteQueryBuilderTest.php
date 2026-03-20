@@ -9,6 +9,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -162,5 +163,21 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->where('book_id', 1);
 
         $this->assertCount(1, DeleteQueryBuilder::fromQueryBuilder($query)->wheres);
+    }
+
+    public function test_delete_on_model_with_belongs_to_many_and_through_relations(): void
+    {
+        $tag = Tag::new(id: new PrimaryKey(1), label: 'php');
+
+        $query = query($tag)
+            ->delete()
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'DELETE FROM `tags` WHERE `tags`.`id` = ?',
+            $query->compile(),
+        );
+
+        $this->assertSame(1, $query->bindings[0]);
     }
 }

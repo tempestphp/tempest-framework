@@ -11,6 +11,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -536,6 +537,18 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->where('book_id', 1);
 
         $this->assertCount(1, CountQueryBuilder::fromQueryBuilder($query)->wheres);
+    }
+
+    public function test_count_on_model_with_belongs_to_many_and_through_relations(): void
+    {
+        $query = query(Tag::class)
+            ->count()
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT COUNT(*) AS `count` FROM `tags`',
+            $query->compile(),
+        );
     }
 }
 

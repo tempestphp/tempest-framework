@@ -279,8 +279,7 @@ final class InsertQueryBuilder implements BuildsQuery
             $ownerModel = inspect($this->model->getName());
             $targetModel = inspect($belongsToMany->property->getIterableType()->asClass());
 
-            $pivotTable = $belongsToMany->pivot
-                ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
+            $pivotTable = $belongsToMany->pivot ?? implode('_', Arr\sort([$ownerModel->getTableName(), $targetModel->getTableName()]));
 
             $ownerFk = $belongsToMany->ownerJoin
                 ? $this->removeTablePrefix($belongsToMany->ownerJoin)
