@@ -777,13 +777,13 @@ Several [console commands](../3-console/02-building-console-commands) are provid
 When deploying the application to production, use `php tempest migrate:up` to apply the latest migrations.
 
 ```sh
-{:hl-comment:# Apply migrations not yet run in the current environment}
+{:hl-comment:# Apply migrations not yet run in the current environment:}
 ./tempest migrate:up
 
-{:hl-comment:# Drop all tables and rerun migrate:up}
+{:hl-comment:# Drop all tables and rerun migrate:up:}
 ./tempest migrate:fresh
 
-{:hl-comment:# Validate the integrity of migration files}
+{:hl-comment:# Validate the integrity of migration files:}
 ./tempest migrate:validate
 ```
 
