@@ -214,14 +214,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTagTable::class,
         );
 
-        $book1Id = query(model: Book::class)->insert(title: 'Book One')->execute();
-        $book2Id = query(model: Book::class)->insert(title: 'Book Two')->execute();
-
         $tag = Tag::new(
             label: 'php',
             books: [
-                Book::new(id: $book1Id, title: 'Book One'),
-                Book::new(id: $book2Id, title: 'Book Two'),
+                Book::new(title: 'Book One'),
+                Book::new(title: 'Book Two'),
             ],
         );
 
@@ -231,8 +228,10 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertNotNull($tagId);
 
+        $bookCount = query(model: 'books')->count()->execute();
         $pivotCount = query(model: 'books_tags')->count()->execute();
 
+        $this->assertSame(2, $bookCount);
         $this->assertSame(2, $pivotCount);
     }
 

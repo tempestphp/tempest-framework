@@ -522,15 +522,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTagTable::class,
         );
 
-        $book1Id = query(model: Book::class)->insert(title: 'Book One')->execute();
-        $book2Id = query(model: Book::class)->insert(title: 'Book Two')->execute();
-        $book3Id = query(model: Book::class)->insert(title: 'Book Three')->execute();
-
         $tagId = query(model: Tag::class)->insert(
             Tag::new(
                 label: 'php',
                 books: [
-                    Book::new(id: $book1Id, title: 'Book One'),
+                    Book::new(title: 'Book One'),
                 ],
             ),
         )->execute();
@@ -539,15 +535,17 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         query(model: Tag::class)
             ->update(
                 books: [
-                    Book::new(id: $book2Id, title: 'Book Two'),
-                    Book::new(id: $book3Id, title: 'Book Three'),
+                    Book::new(title: 'Book Two'),
+                    Book::new(title: 'Book Three'),
                 ],
             )
             ->whereField(field: 'id', value: $tagId)
             ->execute();
 
+        $bookCount = query(model: 'books')->count()->execute();
         $pivotCount = query(model: 'books_tags')->count()->execute();
 
+        $this->assertSame(3, $bookCount);
         $this->assertSame(2, $pivotCount);
     }
 
