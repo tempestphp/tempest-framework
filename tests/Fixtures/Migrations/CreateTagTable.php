@@ -17,13 +17,13 @@ final class CreateTagTable implements MigratesUp, MigratesDown
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(Tag::class)
+        return CreateTableStatement::forModel(modelClass: Tag::class)
             ->primary()
-            ->text('label');
+            ->text(name: 'label');
     }
 
     public function down(): QueryStatement
     {
-        return DropTableStatement::forModel(Tag::class);
+        return DropTableStatement::forModel(modelClass: Tag::class);
     }
 }
