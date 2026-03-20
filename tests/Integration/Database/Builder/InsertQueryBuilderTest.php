@@ -15,6 +15,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -198,5 +199,47 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame($expected, $query->compile()->toString());
         $this->assertSame(['test'], $query->bindings);
+    }
+
+    public function test_insert_skips_belongs_to_many_property(): void
+    {
+        $tag = Tag::new(label: 'php');
+
+        $query = query(Tag::class)
+            ->insert($tag)
+            ->build();
+
+        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['php'], $query->bindings);
+    }
+
+    public function test_insert_skips_has_many_through_property(): void
+    {
+        $tag = Tag::new(label: 'php');
+
+        $query = query(Tag::class)
+            ->insert($tag)
+            ->build();
+
+        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['php'], $query->bindings);
+    }
+
+    public function test_insert_skips_has_one_through_property(): void
+    {
+        $tag = Tag::new(label: 'php');
+
+        $query = query(Tag::class)
+            ->insert($tag)
+            ->build();
+
+        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(['php'], $query->bindings);
     }
 }
