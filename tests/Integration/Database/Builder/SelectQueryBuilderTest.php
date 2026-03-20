@@ -687,7 +687,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_on_model_with_belongs_to_many_and_through_relations(): void
     {
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->select()
             ->build();
 
@@ -699,7 +699,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_with_belongs_to_many_relation(): void
     {
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->select()
             ->with('books')
             ->build();
@@ -712,7 +712,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_with_has_many_through_relation(): void
     {
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->select()
             ->with('reviewers')
             ->build();
@@ -725,7 +725,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_with_has_one_through_relation(): void
     {
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->select()
             ->with('topReviewer')
             ->build();

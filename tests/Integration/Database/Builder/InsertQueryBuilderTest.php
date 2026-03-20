@@ -214,8 +214,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTagTable::class,
         );
 
-        $book1Id = query(Book::class)->insert(title: 'Book One')->execute();
-        $book2Id = query(Book::class)->insert(title: 'Book Two')->execute();
+        $book1Id = query(model: Book::class)->insert(title: 'Book One')->execute();
+        $book2Id = query(model: Book::class)->insert(title: 'Book Two')->execute();
 
         $tag = Tag::new(
             label: 'php',
@@ -225,13 +225,13 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $tagId = query(Tag::class)
+        $tagId = query(model: Tag::class)
             ->insert($tag)
             ->execute();
 
         $this->assertNotNull($tagId);
 
-        $pivotCount = query('books_tags')->count()->execute();
+        $pivotCount = query(model: 'books_tags')->count()->execute();
 
         $this->assertSame(2, $pivotCount);
     }
@@ -240,11 +240,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $tag = Tag::new(label: 'php');
 
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->insert($tag)
             ->build();
 
-        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+        $expected = $this->buildExpectedInsert(query: 'INSERT INTO `tags` (`label`) VALUES (?)');
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['php'], $query->bindings);
@@ -254,11 +254,11 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $tag = Tag::new(label: 'php');
 
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->insert($tag)
             ->build();
 
-        $expected = $this->buildExpectedInsert('INSERT INTO `tags` (`label`) VALUES (?)');
+        $expected = $this->buildExpectedInsert(query: 'INSERT INTO `tags` (`label`) VALUES (?)');
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['php'], $query->bindings);

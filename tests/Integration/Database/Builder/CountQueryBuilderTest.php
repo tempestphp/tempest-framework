@@ -541,7 +541,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_count_on_model_with_belongs_to_many_and_through_relations(): void
     {
-        $query = query(Tag::class)
+        $query = query(model: Tag::class)
             ->count()
             ->build();
 

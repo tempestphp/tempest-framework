@@ -167,9 +167,9 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_delete_on_model_with_belongs_to_many_and_through_relations(): void
     {
-        $tag = Tag::new(id: new PrimaryKey(1), label: 'php');
+        $tag = Tag::new(id: new PrimaryKey(value: 1), label: 'php');
 
-        $query = query($tag)
+        $query = query(model: $tag)
             ->delete()
             ->build();
 

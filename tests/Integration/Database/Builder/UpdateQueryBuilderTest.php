@@ -476,11 +476,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_update_skips_has_many_through_property(): void
     {
         $tag = Tag::new(
-            id: new PrimaryKey(1),
+            id: new PrimaryKey(value: 1),
             label: 'php',
         );
 
-        $query = query($tag)
+        $query = query(model: $tag)
             ->update(label: 'php8')
             ->build();
 
@@ -495,11 +495,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
     public function test_update_skips_has_one_through_property(): void
     {
         $tag = Tag::new(
-            id: new PrimaryKey(1),
+            id: new PrimaryKey(value: 1),
             label: 'php',
         );
 
-        $query = query($tag)
+        $query = query(model: $tag)
             ->update(label: 'php8')
             ->build();
 
@@ -522,11 +522,11 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTagTable::class,
         );
 
-        $book1Id = query(Book::class)->insert(title: 'Book One')->execute();
-        $book2Id = query(Book::class)->insert(title: 'Book Two')->execute();
-        $book3Id = query(Book::class)->insert(title: 'Book Three')->execute();
+        $book1Id = query(model: Book::class)->insert(title: 'Book One')->execute();
+        $book2Id = query(model: Book::class)->insert(title: 'Book Two')->execute();
+        $book3Id = query(model: Book::class)->insert(title: 'Book Three')->execute();
 
-        $tagId = query(Tag::class)->insert(
+        $tagId = query(model: Tag::class)->insert(
             Tag::new(
                 label: 'php',
                 books: [
@@ -536,17 +536,17 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         )->execute();
 
         // Update: replace book1 with book2 and book3
-        query(Tag::class)
+        query(model: Tag::class)
             ->update(
                 books: [
                     Book::new(id: $book2Id, title: 'Book Two'),
                     Book::new(id: $book3Id, title: 'Book Three'),
                 ],
             )
-            ->whereField('id', $tagId)
+            ->whereField(field: 'id', value: $tagId)
             ->execute();
 
-        $pivotCount = query('books_tags')->count()->execute();
+        $pivotCount = query(model: 'books_tags')->count()->execute();
 
         $this->assertSame(2, $pivotCount);
     }
