@@ -59,7 +59,7 @@ final class HasManyThroughTest extends FrameworkIntegrationTestCase
             ->setParent(name: 'parent');
 
         $this->assertSame(
-            expected: 'target.data AS `parent.targets.data`',
+            expected: 'parent_targets.data AS `parent.targets.data`',
             actual: $relation->getSelectFields()[2]->compile(DatabaseDialect::SQLITE),
         );
     }

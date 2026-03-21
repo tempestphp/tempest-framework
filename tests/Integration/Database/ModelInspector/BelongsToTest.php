@@ -85,7 +85,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         $relation = $model->getRelation('relation')->setParent('parent');
 
         $this->assertSame(
-            'relation.name AS `parent.relation.name`',
+            'parent_relation.name AS `parent.relation.name`',
             $relation->getSelectFields()[1]->compile(DatabaseDialect::SQLITE),
         );
     }

@@ -14,6 +14,15 @@ trait HasTableAlias
             return $tableName;
         }
 
-        return str(string: $this->parent)->replace('.', '_')->append('_', $this->property->getName())->toString();
+        return str(string: $this->parent)
+            ->replace(
+                search: '.',
+                replace: '_',
+            )
+            ->append(
+                '_',
+                $this->property->getName(),
+            )
+            ->toString();
     }
 }

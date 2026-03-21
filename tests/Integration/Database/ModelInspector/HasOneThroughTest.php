@@ -55,7 +55,7 @@ final class HasOneThroughTest extends FrameworkIntegrationTestCase
             ->setParent(name: 'parent');
 
         $this->assertSame(
-            expected: 'target.data AS `parent.target.data`',
+            expected: 'parent_target.data AS `parent.target.data`',
             actual: $relation->getSelectFields()[2]->compile(DatabaseDialect::SQLITE),
         );
     }
