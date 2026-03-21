@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Direction;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
-use Tempest\Database\BelongsToMany;
-use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
