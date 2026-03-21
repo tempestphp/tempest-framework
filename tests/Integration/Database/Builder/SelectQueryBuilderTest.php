@@ -494,7 +494,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = AWithEager::select()->with('b.c')->compile();
 
         $this->assertSameWithoutBackticks(
-            'SELECT a.id AS `a.id`, a.b_id AS `a.b_id`, b.id AS `b.id`, b.c_id AS `b.c_id`, c.id AS `b.c.id`, c.name AS `b.c.name` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c ON c.id = b.c_id',
+            'SELECT a.id AS `a.id`, a.b_id AS `a.b_id`, b.id AS `b.id`, b.c_id AS `b.c_id`, b_c.id AS `b.c.id`, b_c.name AS `b.c.name` FROM `a` LEFT JOIN b ON b.id = a.b_id LEFT JOIN c AS b_c ON b_c.id = b.c_id',
             $query,
         );
     }
