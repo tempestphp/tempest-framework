@@ -347,13 +347,11 @@ trait IsDatabaseModel
             return $property->getValue($this);
         }
 
-        $type = $property->getType();
-
-        if ($type->isRelation()) {
+        if (inspect(model: $this)->isRelation(name: $name)) {
             throw new RelationWasMissing($this, $name);
         }
 
-        if ($type->isBuiltIn()) {
+        if ($property->getType()->isBuiltIn()) {
             throw new ValueWasMissing($this, $name);
         }
 
