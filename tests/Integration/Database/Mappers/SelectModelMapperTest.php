@@ -294,6 +294,11 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(expected: 'LOTR', actual: $book->title);
         $this->assertFalse(condition: inspect(model: $book)->isRelationLoaded(relation: 'chapters'));
+
+        $this->expectException(RelationWasMissing::class);
+        // Accessing unset property triggers RelationWasMissing
+        /** @phpstan-ignore expr.resultUnused */
+        $book->chapters;
     }
 
     public function test_array_of_serialized_enums(): void

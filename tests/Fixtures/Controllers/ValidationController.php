@@ -55,7 +55,7 @@ final readonly class ValidationController
     #[Post(uri: '/test-validation-responses-json/{book}')]
     public function updateBook(BookRequest $request, Book $book): Response
     {
-        $book->load('author');
+        $book->load('author', 'chapters', 'isbn');
 
         $book->update(title: $request->get('title'));
 
