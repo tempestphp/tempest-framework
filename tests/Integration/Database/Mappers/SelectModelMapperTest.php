@@ -2,9 +2,12 @@
 
 namespace Tests\Tempest\Integration\Database\Mappers;
 
+use Tempest\Database\BelongsToMany;
 use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
@@ -301,6 +304,38 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $book->chapters;
     }
 
+    public function test_nested_belongs_to_many_on_belongs_to(): void
+    {
+        $data = [
+            [
+                'parent_with_role.id' => 1,
+                'parent_with_role.name' => 'John',
+                'role.id' => 1,
+                'role.name' => 'admin',
+                'role.permissions.id' => 1,
+                'role.permissions.label' => 'create',
+            ],
+            [
+                'parent_with_role.id' => 1,
+                'parent_with_role.name' => 'John',
+                'role.id' => 1,
+                'role.name' => 'admin',
+                'role.permissions.id' => 2,
+                'role.permissions.label' => 'delete',
+            ],
+        ];
+
+        $users = map($data)->with(mapper: SelectModelMapper::class)->to(to: ParentWithRole::class);
+
+        $user = $users[0];
+
+        $this->assertSame(expected: 'John', actual: $user->name);
+        $this->assertSame(expected: 'admin', actual: $user->role->name);
+        $this->assertCount(expectedCount: 2, haystack: $user->role->permissions);
+        $this->assertSame(expected: 'create', actual: $user->role->permissions[0]->label);
+        $this->assertSame(expected: 'delete', actual: $user->role->permissions[1]->label);
+    }
+
     public function test_array_of_serialized_enums(): void
     {
         $users = map([['id' => 1, 'roles' => json_encode(['admin', 'user'])]])
@@ -459,4 +494,34 @@ enum EnumToBeMappedToArray: string
 {
     case ADMIN = 'admin';
     case USER = 'user';
+}
+
+#[Table(name: 'parent_with_role')]
+final class ParentWithRole
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    public ?RoleWithPermissions $role = null;
+}
+
+#[Table(name: 'roles')]
+final class RoleWithPermissions
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    /** @var \Tests\Tempest\Integration\Database\Mappers\Permission[] */
+    #[BelongsToMany]
+    public array $permissions = [];
+}
+
+#[Table(name: 'permissions')]
+final class Permission
+{
+    use IsDatabaseModel;
+
+    public string $label;
 }
