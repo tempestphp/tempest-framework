@@ -35,7 +35,7 @@ final class CircularEagerLoadingTest extends FrameworkIntegrationTestCase
         $relations = $userInspector->resolveRelations('profile.user.profile');
 
         $this->assertArrayHasKey('profile', $relations);
-        $this->assertArrayHasKey('user', $relations);
+        $this->assertArrayHasKey('profile.user', $relations);
         $this->assertCount(2, $relations);
     }
 
