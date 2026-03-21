@@ -85,6 +85,9 @@ final class SelectModelMapper implements Mapper
             if ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof HasOneThrough) {
                 if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
                     $data[$relation->name] = null;
+                } elseif (is_array($data[$relation->name] ?? null)) {
+                    $relationModel = inspect($relation);
+                    $data[$relation->name] = $this->values($relationModel, $data[$relation->name]);
                 }
 
                 continue;
