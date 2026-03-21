@@ -2,11 +2,22 @@
 
 namespace Tests\Tempest\Integration\Database\Mappers;
 
+use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Mappers\SelectModelMapper;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
+use Tests\Tempest\Fixtures\Modules\Books\Models\TagWithEagerBooks;
+use Tests\Tempest\Fixtures\Modules\Books\Models\TagWithLazyBooks;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Database\inspect;
 use function Tempest\Mapper\map;
 
 final class SelectModelMapperTest extends FrameworkIntegrationTestCase
@@ -101,6 +112,107 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(2, $authors[0]->books[0]->chapters);
         $this->assertCount(1, $authors[0]->books);
+    }
+
+    public function test_lazy_belongs_to_many_not_eager_loaded_is_unset(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        Tag::create(
+            label: 'PHP',
+            books: [
+                Book::new(title: 'Book One'),
+                Book::new(title: 'Book Two'),
+            ],
+        );
+
+        $tags = TagWithLazyBooks::select()->all();
+
+        $tag = $tags[0];
+
+        $this->assertSame(expected: 'PHP', actual: $tag->label);
+        $this->assertFalse(condition: inspect(model: $tag)->isRelationLoaded(relation: 'books'));
+
+        $this->assertCount(expectedCount: 2, haystack: $tag->books);
+        $this->assertSame(expected: 'Book One', actual: $tag->books[0]->title);
+        $this->assertSame(expected: 'Book Two', actual: $tag->books[1]->title);
+    }
+
+    public function test_untagged_belongs_to_many_not_loaded_is_unset(): void
+    {
+        $data = [
+            [
+                'tags.id' => 1,
+                'tags.label' => 'PHP',
+            ],
+        ];
+
+        $tags = map($data)->with(mapper: SelectModelMapper::class)->to(to: Tag::class);
+
+        $tag = $tags[0];
+
+        $this->assertSame(expected: 'PHP', actual: $tag->label);
+        $this->assertFalse(condition: inspect(model: $tag)->isRelationLoaded(relation: 'books'));
+
+        $this->expectException(RelationWasMissing::class);
+        // Accessing unset property triggers RelationWasMissing
+        /** @phpstan-ignore expr.resultUnused */
+        $tag->books;
+    }
+
+    public function test_eager_belongs_to_many_loaded_has_books(): void
+    {
+        $data = [
+            [
+                'tags.id' => 1,
+                'tags.label' => 'PHP',
+                'books.id' => 1,
+                'books.title' => 'LOTR 1',
+            ],
+            [
+                'tags.id' => 1,
+                'tags.label' => 'PHP',
+                'books.id' => 2,
+                'books.title' => 'LOTR 2',
+            ],
+        ];
+
+        $tags = map($data)->with(mapper: SelectModelMapper::class)->to(to: TagWithEagerBooks::class);
+
+        $tag = $tags[0];
+
+        $this->assertSame(expected: 'PHP', actual: $tag->label);
+        $this->assertTrue(condition: inspect(model: $tag)->isRelationLoaded(relation: 'books'));
+        $this->assertCount(expectedCount: 2, haystack: $tag->books);
+        $this->assertSame(expected: 'LOTR 1', actual: $tag->books[0]->title);
+        $this->assertSame(expected: 'LOTR 2', actual: $tag->books[1]->title);
+    }
+
+    public function test_belongs_to_many_loaded_with_no_results_returns_empty_array(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        Tag::create(label: 'PHP');
+
+        $tag = TagWithLazyBooks::select()->with('books')->first();
+
+        $this->assertSame(expected: 'PHP', actual: $tag->label);
+        $this->assertTrue(condition: inspect(model: $tag)->isRelationLoaded(relation: 'books'));
+        $this->assertSame(expected: [], actual: $tag->books);
     }
 
     public function test_array_of_serialized_enums(): void
