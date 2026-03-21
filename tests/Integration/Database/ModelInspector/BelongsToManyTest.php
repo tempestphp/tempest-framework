@@ -54,8 +54,23 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
             ->setParent(name: 'parent');
 
         $this->assertSame(
-            expected: 'target.data AS `parent.targets.data`',
+            expected: 'parent_targets.data AS `parent.targets.data`',
             actual: $relation->getSelectFields()[1]->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_belongs_to_many_with_parent_join_uses_alias(): void
+    {
+        $model = inspect(model: BelongsToManyOwnerModel::class);
+        $relation = $model
+            ->getRelation(name: 'targets')
+            ->setParent(name: 'parent');
+
+        $this->assertSame(
+            expected: 'LEFT JOIN owner_target ON owner_target.owner_id = owner.id LEFT JOIN target AS parent_targets ON parent_targets.id = owner_target.target_id',
+            actual: $relation
+                ->getJoinStatement()
+                ->compile(dialect: DatabaseDialect::SQLITE),
         );
     }
 
