@@ -2,6 +2,9 @@
 
 namespace Tempest\Cryptography\Password;
 
+use const PASSWORD_ARGON2ID;
+use const PASSWORD_BCRYPT;
+
 enum HashingAlgorithm: string
 {
     /**
