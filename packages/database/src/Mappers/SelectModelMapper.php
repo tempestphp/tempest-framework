@@ -5,6 +5,7 @@ namespace Tempest\Database\Mappers;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasManyThrough;
 use Tempest\Database\HasOne;
@@ -48,13 +49,7 @@ final class SelectModelMapper implements Mapper
 
         foreach ($objects as $i => $object) {
             foreach ($model->getRelations() as $relation) {
-                // When a nullable BelongsTo relation wasn't loaded, we need to make sure to unset it if it has a default value.
-                // If we wouldn't do this, the default value would overwrite the "unloaded" value on the next time saving the model
-                if (! $relation instanceof BelongsTo) {
-                    continue;
-                }
-
-                if (! $relation->property->isNullable()) {
+                if ($relation->property->hasAttribute(Eager::class)) {
                     continue;
                 }
 
@@ -87,7 +82,7 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if ($relation instanceof BelongsTo) {
+            if ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof HasOneThrough) {
                 if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
                     $data[$relation->name] = null;
                 }
@@ -142,6 +137,10 @@ final class SelectModelMapper implements Mapper
                     $originalKey .= $relation->name . '.';
 
                     if ($hasManyId === null) {
+                        if ($data->get($key . $relation->name) === null) {
+                            $data->set($key . $relation->name, []);
+                        }
+
                         break;
                     }
 

@@ -167,6 +167,48 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $tag->books;
     }
 
+    public function test_has_many_through_not_loaded_is_unset(): void
+    {
+        $data = [
+            [
+                'tags.id' => 1,
+                'tags.label' => 'PHP',
+            ],
+        ];
+
+        $tags = map($data)->with(mapper: SelectModelMapper::class)->to(to: Tag::class);
+
+        $tag = $tags[0];
+
+        $this->assertFalse(condition: inspect(model: $tag)->isRelationLoaded(relation: 'reviewers'));
+
+        $this->expectException(RelationWasMissing::class);
+        // Accessing unset property triggers RelationWasMissing
+        /** @phpstan-ignore expr.resultUnused */
+        $tag->reviewers;
+    }
+
+    public function test_has_one_through_not_loaded_is_unset(): void
+    {
+        $data = [
+            [
+                'tags.id' => 1,
+                'tags.label' => 'PHP',
+            ],
+        ];
+
+        $tags = map($data)->with(mapper: SelectModelMapper::class)->to(to: Tag::class);
+
+        $tag = $tags[0];
+
+        $this->assertFalse(condition: inspect(model: $tag)->isRelationLoaded(relation: 'topReviewer'));
+
+        $this->expectException(RelationWasMissing::class);
+        // Accessing unset property triggers RelationWasMissing
+        /** @phpstan-ignore expr.resultUnused */
+        $tag->topReviewer;
+    }
+
     public function test_eager_belongs_to_many_loaded_has_books(): void
     {
         $data = [
@@ -213,6 +255,45 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(expected: 'PHP', actual: $tag->label);
         $this->assertTrue(condition: inspect(model: $tag)->isRelationLoaded(relation: 'books'));
         $this->assertSame(expected: [], actual: $tag->books);
+    }
+
+    public function test_has_one_not_loaded_is_unset(): void
+    {
+        $data = [
+            [
+                'books.id' => 1,
+                'books.title' => 'LOTR',
+            ],
+        ];
+
+        $books = map($data)->with(mapper: SelectModelMapper::class)->to(to: Book::class);
+
+        $book = $books[0];
+
+        $this->assertSame(expected: 'LOTR', actual: $book->title);
+        $this->assertFalse(condition: inspect(model: $book)->isRelationLoaded(relation: 'isbn'));
+
+        $this->expectException(RelationWasMissing::class);
+        // Accessing unset property triggers RelationWasMissing
+        /** @phpstan-ignore expr.resultUnused */
+        $book->isbn;
+    }
+
+    public function test_has_many_not_loaded_is_unset(): void
+    {
+        $data = [
+            [
+                'books.id' => 1,
+                'books.title' => 'LOTR',
+            ],
+        ];
+
+        $books = map($data)->with(mapper: SelectModelMapper::class)->to(to: Book::class);
+
+        $book = $books[0];
+
+        $this->assertSame(expected: 'LOTR', actual: $book->title);
+        $this->assertFalse(condition: inspect(model: $book)->isRelationLoaded(relation: 'chapters'));
     }
 
     public function test_array_of_serialized_enums(): void
