@@ -17,6 +17,8 @@ use function Tempest\Support\str;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class BelongsTo implements Relation
 {
+    use HasTableAlias;
+
     public PropertyReflector $property;
 
     public string $name {
@@ -62,7 +64,7 @@ final class BelongsTo implements Relation
         $relationModel = inspect($this->property->getType()->asClass());
         $tableReference = $this->isSelfReferencing()
             ? $this->property->getName()
-            : $relationModel->getTableName();
+            : $this->getTableAlias($relationModel->getTableName());
 
         return $relationModel
             ->getSelectFields()
@@ -79,8 +81,12 @@ final class BelongsTo implements Relation
     {
         $relationModel = inspect($this->property->getType()->asClass());
         $ownerModel = inspect($this->property->getClass());
+        $tableAlias = $this->getTableAlias($relationModel->getTableName());
 
-        $relationJoin = $this->getRelationJoin($relationModel);
+        $relationJoin = $this->getRelationJoin(
+            relationModel: $relationModel,
+            tableAlias: $tableAlias,
+        );
         $ownerJoin = $this->getOwnerJoin($ownerModel);
 
         if ($this->isSelfReferencing()) {
@@ -93,21 +99,26 @@ final class BelongsTo implements Relation
             ));
         }
 
+        $tableName = $relationModel->getTableName();
+        $tableRef = $tableAlias !== $tableName
+            ? sprintf('%s AS %s', $tableName, $tableAlias)
+            : $tableName;
+
         // LEFT JOIN authors ON authors.id = books.author_id
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $relationModel->getTableName(),
+            $tableRef,
             $relationJoin,
             $ownerJoin,
         ));
     }
 
-    private function getRelationJoin(ModelInspector $relationModel): string
+    private function getRelationJoin(ModelInspector $relationModel, string $tableAlias): string
     {
         $relationJoin = $this->relationJoin;
         $tableReference = $this->isSelfReferencing()
             ? $this->property->getName()
-            : $relationModel->getTableName();
+            : $tableAlias;
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
             $relationJoin = sprintf('%s.%s', $tableReference, $relationJoin);

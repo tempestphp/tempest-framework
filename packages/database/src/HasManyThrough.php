@@ -17,6 +17,8 @@ use function Tempest\Support\str;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final class HasManyThrough implements Relation
 {
+    use HasTableAlias;
+
     public PropertyReflector $property;
 
     public string $name {
@@ -56,7 +58,7 @@ final class HasManyThrough implements Relation
             ->map(map: fn (
                 $field,
             ) => new FieldStatement(
-                field: $targetModel->getTableName() . '.' . $field,
+                field: "{$this->getTableAlias(tableName: $targetModel->getTableName())}.{$field}",
             )
                 ->withAlias(
                     alias: sprintf(
@@ -152,12 +154,19 @@ final class HasManyThrough implements Relation
         ModelInspector $intermediateModel,
         ModelInspector $targetModel,
     ): string {
+        $tableAlias = $this->getTableAlias(tableName: $targetModel->getTableName());
+        $tableName = $targetModel->getTableName();
+        $tableRef = $tableAlias !== $tableName
+            ? sprintf('%s AS %s', $tableName, $tableAlias)
+            : $tableName;
+
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $targetModel->getTableName(),
+            $tableRef,
             $this->resolveThroughOwnerJoin(
                 targetModel: $targetModel,
                 intermediateModel: $intermediateModel,
+                tableAlias: $tableAlias,
             ),
             $this->resolveThroughRelationJoin(intermediateModel: $intermediateModel),
         );
@@ -244,6 +253,7 @@ final class HasManyThrough implements Relation
     private function resolveThroughOwnerJoin(
         ModelInspector $targetModel,
         ModelInspector $intermediateModel,
+        string $tableAlias,
     ): string {
         $throughOwnerJoin = $this->throughOwnerJoin;
 
@@ -256,7 +266,7 @@ final class HasManyThrough implements Relation
         ) {
             return sprintf(
                 '%s.%s',
-                $targetModel->getTableName(),
+                $tableAlias,
                 $throughOwnerJoin,
             );
         }
@@ -276,7 +286,7 @@ final class HasManyThrough implements Relation
 
         return sprintf(
             '%s.%s',
-            $targetModel->getTableName(),
+            $tableAlias,
             str(string: $intermediateModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
         );
     }

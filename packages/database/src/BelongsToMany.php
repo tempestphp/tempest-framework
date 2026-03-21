@@ -18,6 +18,8 @@ use function Tempest\Support\str;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final class BelongsToMany implements Relation
 {
+    use HasTableAlias;
+
     public PropertyReflector $property;
 
     public string $name {
@@ -361,14 +363,5 @@ final class BelongsToMany implements Relation
             $tableAlias,
             $primaryKey,
         );
-    }
-
-    private function getTableAlias(string $tableName): string
-    {
-        if ($this->parent === null || $this->parent === '') {
-            return $tableName;
-        }
-
-        return str(string: $this->parent)->replace('.', '_')->append('_', $this->property->getName())->toString();
     }
 }
