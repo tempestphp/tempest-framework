@@ -12,6 +12,9 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tempest\Database\BelongsToMany;
+use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\Table;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
@@ -735,4 +738,51 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             $query->compile(),
         );
     }
+
+    public function test_select_with_duplicate_belongs_to_many_target_table(): void
+    {
+        $query = query(model: UserWithRoleAndDirectPermissions::class)
+            ->select()
+            ->with('role', 'role.permissions', 'permissions')
+            ->build();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT users.id AS `users.id`, users.name AS `users.name`, users.role_id AS `users.role_id`, roles.id AS `role.id`, roles.name AS `role.name`, role_permissions.id AS `role.permissions.id`, role_permissions.label AS `role.permissions.label`, permissions.id AS `permissions.id`, permissions.label AS `permissions.label` FROM `users` LEFT JOIN roles ON roles.id = users.role_id LEFT JOIN permissions_roles ON permissions_roles.role_id = roles.id LEFT JOIN permissions AS role_permissions ON role_permissions.id = permissions_roles.permission_id LEFT JOIN permissions_users ON permissions_users.user_id = users.id LEFT JOIN permissions ON permissions.id = permissions_users.permission_id',
+            $query->compile(),
+        );
+    }
+}
+
+#[Table(name: 'users')]
+final class UserWithRoleAndDirectPermissions
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    public ?RoleWithPermissions $role = null;
+
+    /** @var \Tests\Tempest\Integration\Database\Builder\Permission[] */
+    #[BelongsToMany(pivot: 'permissions_users')]
+    public array $permissions = [];
+}
+
+#[Table(name: 'roles')]
+final class RoleWithPermissions
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    /** @var \Tests\Tempest\Integration\Database\Builder\Permission[] */
+    #[BelongsToMany(pivot: 'permissions_roles')]
+    public array $permissions = [];
+}
+
+#[Table(name: 'permissions')]
+final class Permission
+{
+    use IsDatabaseModel;
+
+    public string $label;
 }
