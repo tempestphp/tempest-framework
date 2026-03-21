@@ -606,8 +606,12 @@ final class ModelInspector
         $relationModel = inspect($currentRelation);
         $modelType = $relationModel->getName();
 
+        $fullPath = $parent !== ''
+            ? "{$parent}.{$currentRelationName}"
+            : $currentRelationName;
+
         if (in_array($modelType, $visitedPaths, true)) {
-            return [$currentRelationName => $currentRelation->setParent($parent)];
+            return [$fullPath => $currentRelation->setParent($parent)];
         }
 
         $newRelationString = implode('.', $relationNames);
@@ -618,7 +622,7 @@ final class ModelInspector
             $currentRelationName,
         ), '.');
 
-        $relations = [$currentRelationName => $currentRelation];
+        $relations = [$fullPath => $currentRelation];
 
         return [
             ...$relations,
@@ -659,7 +663,10 @@ final class ModelInspector
                 continue;
             }
 
-            $relations[$property->getName()] = $currentRelation->setParent($parent);
+            $fullPath = $parent !== ''
+                ? "{$parent}.{$currentRelationName}"
+                : $currentRelationName;
+            $relations[$fullPath] = $currentRelation->setParent($parent);
             $newVisitedPaths = [...$visitedPaths, $this->getName()];
 
             foreach ($relationModel->resolveEagerRelations($newParent, $newVisitedPaths) as $name => $nestedEagerRelation) {

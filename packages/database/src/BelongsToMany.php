@@ -54,7 +54,7 @@ final class BelongsToMany implements Relation
             ->map(map: fn (
                 $field,
             ) => new FieldStatement(
-                field: $this->getTableAlias(tableName: $targetModel->getTableName()) . '.' . $field,
+                field: "{$this->getTableAlias(tableName: $targetModel->getTableName())}.{$field}",
             )
                 ->withAlias(
                     alias: sprintf(
