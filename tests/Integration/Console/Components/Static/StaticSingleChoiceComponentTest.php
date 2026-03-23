@@ -61,7 +61,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("picked {$answer}");
             })
             ->submit(1)
-            ->assertContains('picked B');
+            ->assertContains('picked b');
     }
 
     public function test_assoc_submit_value(): void
@@ -73,7 +73,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("picked {$answer}");
             })
             ->submit('B')
-            ->assertContains('picked B');
+            ->assertContains('picked b');
     }
 
     public function test_enum_submit_value(): void

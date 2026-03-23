@@ -67,6 +67,10 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
                     return true;
                 }
 
+                if (! $this->options->isList() && $answer === (string) $option->key) {
+                    return true;
+                }
+
                 if ($this->options->getOptions()->isList() && $answer === (string) $index) {
                     return true;
                 }
@@ -75,7 +79,9 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
             });
 
         if ($selectedOption !== null) {
-            return $selectedOption->value;
+            return $this->options->isList()
+                ? $selectedOption->value
+                : $selectedOption->key;
         }
 
         return $this->render($console);
