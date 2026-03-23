@@ -25,24 +25,13 @@ if (class_exists(ConsoleCommand::class)) {
             private Container $container,
         ) {}
 
-        #[ConsoleCommand(
-            name: 'install',
-            description: 'Applies the specified installer',
-            middleware: [ForceMiddleware::class],
-            allowDynamicArguments: true,
-        )]
-        public function __invoke(?string $installer = null, bool $_tailwind = false): void
+        #[ConsoleCommand(name: 'install', description: 'Applies the specified installer', middleware: [ForceMiddleware::class], allowDynamicArguments: true)]
+        public function __invoke(?string $installer = null): void
         {
             $installer = $this->resolveInstaller($installer);
 
             if (! $installer instanceof Installer) {
                 $this->error('Installer not found');
-
-                return;
-            }
-
-            if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?", default: true)) {
-                $this->error('Aborted.');
 
                 return;
             }

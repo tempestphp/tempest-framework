@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\PostCondition;
+use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,29 +15,24 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class InstallCommandTest extends FrameworkIntegrationTestCase
 {
-    protected function setUp(): void
+    #[PreCondition]
+    protected function configure(): void
     {
-        parent::setUp();
-
         $this->installer
-            ->configure(
-                $this->internalStorage . '/install',
-                new Psr4Namespace('App\\', $this->internalStorage . '/install/App'),
-            )
+            ->configure($this->internalStorage . '/install', new Psr4Namespace('App\\', $this->internalStorage . '/install/App'))
             ->setRoot($this->internalStorage . '/install');
     }
 
-    protected function tearDown(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         $this->installer->clean();
-
-        parent::tearDown();
     }
 
-    public function test_class_is_adjusted(): void
+    #[Test]
+    public function class_is_adjusted(): void
     {
-        $this->console
-            ->call('install test --force');
+        $this->console->call('install test --force');
 
         $this->installer
             ->assertFileExists(

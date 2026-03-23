@@ -31,13 +31,6 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_it_asks_to_continue_installing(): void
-    {
-        $this->console
-            ->call('install framework')
-            ->assertSee('Running the framework installer, continue?');
-    }
-
     public function test_it_can_force_install(): void
     {
         $this->console
