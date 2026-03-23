@@ -16,11 +16,15 @@ use Tempest\EventBus\EventBus;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Method;
+use Tempest\Http\Session\ManageSessionMiddleware;
+use Tempest\Http\Session\TrackPreviousUrlMiddleware;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Intl;
 use Tempest\Router\DataProvider;
+use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Router\SetCookieHeadersMiddleware;
 use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
 use Tempest\Router\Static\Exceptions\NoTextualBodyException;
@@ -54,6 +58,7 @@ final class StaticGenerateCommand
         private readonly ViewRenderer $viewRenderer,
         private readonly EventBus $eventBus,
         private readonly HttpClient $httpClient,
+        private readonly RouteConfig $routeConfig,
     ) {}
 
     #[ConsoleCommand(name: 'static:generate', description: 'Compiles static pages')]
@@ -103,6 +108,12 @@ final class StaticGenerateCommand
                 default => $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-red'>FAILED</style>"),
             };
         });
+
+        $this->routeConfig->middleware->remove(
+            ManageSessionMiddleware::class,
+            SetCookieHeadersMiddleware::class,
+            TrackPreviousUrlMiddleware::class,
+        );
 
         foreach ($this->staticPageConfig->staticPages as $staticPage) {
             /** @var DataProvider $dataProvider */
