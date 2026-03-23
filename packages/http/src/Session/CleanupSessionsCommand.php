@@ -8,8 +8,10 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\EventBus\EventBus;
 
+#[SkipDiscovery]
 final readonly class CleanupSessionsCommand
 {
     public function __construct(

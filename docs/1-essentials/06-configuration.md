@@ -33,18 +33,18 @@ The configuration object above instructs Tempest to use PostgreSQL as its databa
 To access a configuration object, you may inject it from the container like any other dependency.
 
 ```php
-use Tempest\Core\Environment;
+use Tempest\Core\AppConfig;
 
 final readonly class AboutController
 {
     public function __construct(
-        private Environment $environment,
+        private AppConfig $config,
     ) {}
 
     #[Get('/')]
     public function __invoke(): View
     {
-        return view('about.view.php', environment: $this->environment);
+        return view('about.view.php', name: $this->config->name);
     }
 }
 ```

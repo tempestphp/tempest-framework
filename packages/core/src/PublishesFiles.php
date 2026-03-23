@@ -58,15 +58,20 @@ if (trait_exists(HasConsole::class)) {
          * @param string $source The path to the source file.
          * @param string $destination The path to the destination file.
          * @param Closure(string $source, string $destination): void|null $callback A callback to run after the file is published.
+         * @param bool $confirm Whether to ask for create confirmation before publishing.
          */
-        public function publish(string $source, string $destination, ?Closure $callback = null): string|false
+        public function publish(string $source, string $destination, ?Closure $callback = null, bool $confirm = true): string|false
         {
             try {
-                if (! $this->console->confirm(
-                    question: sprintf('Do you want to create <file="%s" />?', $this->friendlyFileName($destination)),
-                    default: true,
-                )) {
-                    throw new FileGenerationWasAborted('Skipped.');
+                if ($confirm) {
+                    $shouldContinue = $this->console->confirm(
+                        question: sprintf('Do you want to create <file="%s" />?', $this->friendlyFileName($destination)),
+                        default: true,
+                    );
+
+                    if (! $shouldContinue) {
+                        throw new FileGenerationWasAborted('Skipped.');
+                    }
                 }
 
                 if (! $this->askForOverride($destination)) {

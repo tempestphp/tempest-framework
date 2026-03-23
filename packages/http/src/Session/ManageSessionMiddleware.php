@@ -2,6 +2,7 @@
 
 namespace Tempest\Http\Session;
 
+use Tempest\Core\DeferredTasks;
 use Tempest\Core\Priority;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -17,6 +18,8 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
     public function __construct(
         private SessionManager $sessionManager,
         private Session $session,
+        private SessionConfig $config,
+        private DeferredTasks $deferredTasks,
     ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
@@ -26,7 +29,24 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
         } finally {
             $this->session->cleanup();
             $this->sessionManager->save($this->session);
-            $this->sessionManager->deleteExpiredSessions();
+
+            match ($this->config->cleanupStrategy) {
+                CleanupStrategy::EVERY_REQUEST => $this->scheduleSessionCleanup(),
+                CleanupStrategy::RANDOM_REQUESTS => $this->maybeScheduleSessionCleanup(),
+                default => null,
+            };
+        }
+    }
+
+    private function scheduleSessionCleanup(): void
+    {
+        $this->deferredTasks->add($this->sessionManager->deleteExpiredSessions(...));
+    }
+
+    private function maybeScheduleSessionCleanup(): void
+    {
+        if (random_int(min: 2, max: 100) === 2) {
+            $this->scheduleSessionCleanup();
         }
     }
 }

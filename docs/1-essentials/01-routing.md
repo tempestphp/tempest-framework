@@ -919,7 +919,9 @@ public function store(Todo $todo): Redirect
 
 ### Session configuration
 
-Tempest supports file and database-based sessions, the former being the default option. Sessions can be configured by creating a `session.config.php` file, in which the expiration time and the session driver can be specified.
+Tempest supports file, Redis and database-based sessions, the former being the default option.
+
+Sessions can be configured by creating a `session.config.php` file [anywhere](../1-essentials/06-configuration.md#configuration-files), in which the expiration time and the [clean up strategy](#session-cleaning) can be configured.
 
 #### File sessions
 
@@ -939,13 +941,13 @@ return new FileSessionConfig(
 
 Tempest provides a database-based session driver, particularly useful for applications that run on multiple servers, as session data can be shared across all instances.
 
-Before using database sessions, a dedicated table is needed. Tempest provides a migration that can be installed using its installer:
+Before using database sessions, a dedicated table is needed. Tempest provides a dedicated sessions installer that can publish file, database, or Redis session configuration:
 
 ```sh
-./tempest install sessions:database
+./tempest install sessions
 ```
 
-This installer also suggests creating the configuration file that sets up database sessions, with a default expiration of 30 days:
+When choosing the database strategy, the installer can also publish a migration and the configuration file that sets up database sessions, with a default expiration of 30 days:
 
 ```php app/Sessions/session.config.php
 use Tempest\Http\Session\Config\DatabaseSessionConfig;
@@ -960,7 +962,61 @@ return new DatabaseSessionConfig(
 
 Sessions expire based on the last activity time. This means that as long as a user is actively using the application, their session remains valid.
 
-Outdated sessions must occasionally be cleaned up. Tempest provides a built-in command to do so, `session:clean`. This command uses the [scheduler](../2-features/11-scheduling.md): with scheduling enabled, it automatically runs behind the scenes.
+By default, Tempest removes expired session randomly at the end of a request, in a deferred task. This can be configured by specifying a {b`Tempest\Http\Session\CleanupStrategy`} in the [session configuration](#session-configuration).
+
+```php app/Sessions/session.config.php
+use Tempest\Http\Session\Config\DatabaseSessionConfig;
+use Tempest\DateTime\Duration;
+
+return new DatabaseSessionConfig(
+    expiration: Duration::days(30),
+    cleanupStrategy: CleanupStrategy::EVERY_REQUEST,
+);
+```
+
+The default behavior is great for most applications. However, at a certain scale, the performance of random cleanup can decrease as the number of sessions grows. In that case, it is recommended to disable request-based session cleaning and switch to a scheduled cleanup strategy:
+
+:::code-group
+
+```php app/Sessions/session.config.php
+use Tempest\Http\Session\Config\DatabaseSessionConfig;
+use Tempest\DateTime\Duration;
+
+return new DatabaseSessionConfig(
+    expiration: Duration::days(30),
+    cleanupStrategy: CleanupStrategy::DISABLED,
+);
+```
+
+```php app/Sessions/CleanupSessionsCommand.php
+namespace App\Sessions;
+
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Schedule;
+use Tempest\Console\Scheduler\Every;
+use Tempest\Http\Session\SessionManager;
+
+final readonly class CleanupSessionsCommand
+{
+    public function __construct(
+        private SessionManager $sessionManager,
+    ) {
+    }
+
+    #[ConsoleCommand(name: 'session:clean')]
+    #[Schedule(Every::MINUTE)]
+    public function __invoke(): void
+    {
+        $this->sessionManager->deleteExpiredSessions();
+    }
+}
+```
+
+:::
+
+:::info
+This cleanup command can be installed in your codebase by running the `./tempest install sessions` command.
+:::
 
 ## Deferring tasks
 
