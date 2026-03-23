@@ -92,7 +92,6 @@ final class SessionInstaller implements Installer
             };
         }
 
-        /** @var string $driver */
         return $this->ask(
             question: 'Which session storage strategy do you want to use?',
             options: [
@@ -159,10 +158,6 @@ final class SessionInstaller implements Installer
             return __DIR__ . '/session.redis.config.stub.php';
         }
 
-        if (!$cleanupStrategy instanceof CleanupStrategy) {
-            throw new LogicException('Cleanup strategy must be provided for non-Redis session drivers.');
-        }
-
         return match ([$sessionStrategy, $cleanupStrategy]) {
             [self::FILE, CleanupStrategy::EVERY_REQUEST] => __DIR__ . '/session.file.every-request.config.stub.php',
             [self::FILE, CleanupStrategy::RANDOM_REQUESTS] => __DIR__ . '/session.file.random-requests.config.stub.php',
@@ -170,6 +165,7 @@ final class SessionInstaller implements Installer
             [self::DATABASE, CleanupStrategy::EVERY_REQUEST] => __DIR__ . '/session.database.every-request.config.stub.php',
             [self::DATABASE, CleanupStrategy::RANDOM_REQUESTS] => __DIR__ . '/session.database.random-requests.config.stub.php',
             [self::DATABASE, CleanupStrategy::DISABLED] => __DIR__ . '/session.database.disabled.config.stub.php',
+            default => throw new LogicException('Cleanup strategy must be provided for non-Redis session drivers.'),
         };
     }
 

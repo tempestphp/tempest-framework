@@ -21,13 +21,11 @@ final class ScheduleRunCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('schedule:run')
             ->assertSee('scheduled')
-            ->assertSee('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Fixtures\\\\ScheduledCommand::method')
-            ->assertSee('session:clean');
+            ->assertSee('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Fixtures\\\\ScheduledCommand::method');
 
         $this->console
             ->call('schedule:run')
             ->assertNotSee('scheduled')
-            ->assertNotSee('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Fixtures\\\\ScheduledCommand::method')
-            ->assertNotSee('session:clean');
+            ->assertNotSee('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Fixtures\\\\ScheduledCommand::method');
     }
 }

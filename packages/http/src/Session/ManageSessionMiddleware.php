@@ -40,7 +40,10 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
 
     private function scheduleSessionCleanup(): void
     {
-        $this->deferredTasks->add($this->sessionManager->deleteExpiredSessions(...));
+        $this->deferredTasks->add(
+            task: $this->sessionManager->deleteExpiredSessions(...),
+            name: 'tempest:session-cleanup',
+        );
     }
 
     private function maybeScheduleSessionCleanup(): void
