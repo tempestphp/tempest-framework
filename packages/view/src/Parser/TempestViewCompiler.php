@@ -235,7 +235,7 @@ final readonly class TempestViewCompiler
     /** @return array{sourcePath: string|null, sourceLine: int}|null */
     private function resolveSourceLocation(Element $element): ?array
     {
-        if ($element instanceof TextElement && $element->token !== null) {
+        if ($element instanceof TextElement && $element->token instanceof Token) {
             return [
                 'sourcePath' => $element->token->sourcePath,
                 'sourceLine' => $element->token->line,

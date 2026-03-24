@@ -306,6 +306,44 @@ new BootDiscovery(
 )();
 ```
 
+You can also mark classes themselves to be skipped entirely by discovery:
+
+```php
+use Tempest\Discovery\SkipDiscovery;
+
+#[SkipDiscovery]
+final readonly class CautionMiddleware implements ConsoleMiddleware
+{
+    // …
+}
+```
+
+Furthermore, you can skip discovery entirely for a specific class, expect for a specific set of discovery classes:
+
+```php
+use Tempest\Discovery\SkipDiscovery;
+
+#[SkipDiscovery(except: [MigrationDiscovery::class])]
+final class HiddenMigratableDatabaseMigration implements MigratesUp
+{
+    // …
+}
+```
+
+Finally, you can pass in a callable to this `$except` parameter as well, which allows access to the container, and gives you even more flexibility on when a class should be skipped or not:
+
+```php
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Container\Container;
+
+#[SkipDiscovery(static function (Container $container): bool {
+    return ! $container->get(Application::class) instanceof ConsoleApplication;
+})]
+final class BlogPostEventHandlers {
+    // …
+}
+```
+
 ### Caching discovery
 
 By default, discovery is not cached, meaning all configured discovery locations are scanned on every request. This is fine for development, but in production, it's recommended to cache discovery to remove any performance overhead.

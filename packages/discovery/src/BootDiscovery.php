@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use AssertionError;
+use Closure;
 use Pest\Exceptions\InvalidPestCommand;
 use Psr\Container\ContainerInterface;
 use Tempest\Container\GenericContainer;
@@ -213,6 +214,8 @@ final class BootDiscovery
                 $skipDiscovery = $input->getAttribute(SkipDiscovery::class);
 
                 if ($skipDiscovery !== null && $skipDiscovery->except === []) {
+                    $this->shouldSkipForClass[$resolvedClassName] = true;
+                } elseif ($skipDiscovery !== null && $skipDiscovery->except instanceof Closure && ($skipDiscovery->except)($this->container)) {
                     $this->shouldSkipForClass[$resolvedClassName] = true;
                 } elseif ($skipDiscovery !== null) {
                     foreach ($skipDiscovery->except as $except) {

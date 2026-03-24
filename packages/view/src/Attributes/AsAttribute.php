@@ -28,7 +28,7 @@ final readonly class AsAttribute implements Attribute
 
         $generic = $element->unwrap(GenericElement::class);
 
-        if ($generic === null) {
+        if (! $generic instanceof Element) {
             return $element;
         }
 

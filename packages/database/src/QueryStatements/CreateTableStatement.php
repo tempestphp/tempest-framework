@@ -149,8 +149,8 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
-            default: $default,
             length: $length,
+            default: $default,
         );
 
         return $this;
