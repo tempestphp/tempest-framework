@@ -6,6 +6,10 @@ use Psr\Container\ContainerInterface;
 use Tempest\Discovery\SkipDiscovery;
 
 #[SkipDiscovery(static function (ContainerInterface $container): bool {
-    return $container->get(DependencyForItemWithClosureSkip::class)->shouldSkip ?? false;
+    if (! $container->has(DependencyForItemWithClosureSkip::class)) {
+        return false;
+    }
+
+    return $container->get(DependencyForItemWithClosureSkip::class)->shouldSkip;
 })]
 final class ItemWithClosureSkip {}
