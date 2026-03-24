@@ -48,7 +48,7 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
 
     private function maybeScheduleSessionCleanup(): void
     {
-        if (random_int(min: 2, max: 100) === 2) {
+        if (random_int(min: 1, max: 50) === 1) {
             $this->scheduleSessionCleanup();
         }
     }
