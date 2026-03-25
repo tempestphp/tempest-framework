@@ -20,7 +20,7 @@ final readonly class ConsoleArgument
         public ?string $name = null,
         public ?string $description = null,
         public ?string $prompt = null,
-        public string $help = '',
+        public ?string $help = null,
         public array $aliases = [],
     ) {}
 }

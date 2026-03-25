@@ -6,6 +6,9 @@ namespace Tempest\Core;
 
 use Attribute;
 
+/**
+ * Defines an installer that will be available as an option when using the `install` console command.
+ */
 #[Attribute(Attribute::TARGET_METHOD)]
 final readonly class Installer
 {

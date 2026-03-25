@@ -47,7 +47,9 @@ if (class_exists(ConsoleCommand::class)) {
             $installer = $this->resolveInstaller($installer);
 
             if (! $installer instanceof InstallerDefinition) {
-                $this->error('The provided installer was not found.');
+                $this->console->writeln();
+                $this->console->error('The provided installer was not found.');
+
                 return;
             }
 
@@ -86,7 +88,7 @@ if (class_exists(ConsoleCommand::class)) {
             $installerArgumentBag = $this->buildInstallerArgumentBag();
             $argumentDefinitions = $this->buildInstallerArgumentDefinitions($installer);
 
-            do {
+            while (true) {
                 [$validArguments, $invalidArguments] = ($this->resolveConsoleInput)(
                     argumentBag: $installerArgumentBag,
                     argumentDefinitions: $argumentDefinitions,
@@ -114,7 +116,7 @@ if (class_exists(ConsoleCommand::class)) {
                         argumentDefinition: $argumentDefinition,
                     );
                 }
-            } while ($invalidArguments !== []);
+            }
 
             return array_map(
                 callback: fn (ConsoleInputArgument $argument) => $argument->value,

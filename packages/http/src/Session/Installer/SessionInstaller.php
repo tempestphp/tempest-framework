@@ -27,11 +27,17 @@ final class SessionInstaller
         ?SessionStorage $storage = null,
         ?bool $migrate = null,
     ): void {
+        /** @var null|SessionStorage $storage */
         $storage ??= $this->console->ask(
             question: 'Which session storage do you want to use?',
             options: SessionStorage::class,
             default: SessionStorage::FILE,
         );
+
+        if (! $storage instanceof SessionStorage) {
+            $this->console->error('Invalid session storage selected.');
+            return;
+        }
 
         $cleanupStrategy = match ($storage) {
             SessionStorage::REDIS => null,
@@ -67,7 +73,7 @@ final class SessionInstaller
         }
     }
 
-    private function resolveCleanupStrategy(): ?CleanupStrategy
+    private function resolveCleanupStrategy(): CleanupStrategy
     {
         $strategy = [
             'Random requests' => CleanupStrategy::RANDOM_REQUESTS,
@@ -84,13 +90,13 @@ final class SessionInstaller
         return $strategy[$result];
     }
 
-    private function resolveSessionConfigStub(SessionStorage $sessionStrategy, ?CleanupStrategy $cleanupStrategy): string
+    private function resolveSessionConfigStub(SessionStorage $storage, ?CleanupStrategy $cleanupStrategy): string
     {
-        if ($sessionStrategy === SessionStorage::REDIS) {
+        if ($storage === SessionStorage::REDIS) {
             return __DIR__ . '/session.redis.config.stub.php';
         }
 
-        return match ([$sessionStrategy, $cleanupStrategy]) {
+        return match ([$storage, $cleanupStrategy]) {
             [SessionStorage::FILE, CleanupStrategy::EVERY_REQUEST] => __DIR__ . '/session.file.every-request.config.stub.php',
             [SessionStorage::FILE, CleanupStrategy::RANDOM_REQUESTS] => __DIR__ . '/session.file.random-requests.config.stub.php',
             [SessionStorage::FILE, CleanupStrategy::DISABLED] => __DIR__ . '/session.file.disabled.config.stub.php',

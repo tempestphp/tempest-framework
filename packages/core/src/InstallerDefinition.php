@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Tempest\Reflection\MethodReflector;
+use Tempest\Support\Str;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\Str\to_kebab_case;
 
 final class InstallerDefinition
 {
@@ -38,7 +38,7 @@ final class InstallerDefinition
     public array $aliases {
         get => $this->aliases ??= arr($this->installer->alias)
             ->push($this->handler->getDeclaringClass()->getName())
-            ->push(to_kebab_case($this->name))
+            ->push(Str\to_kebab_case($this->name))
             ->filter()
             ->unique()
             ->toArray();
