@@ -8,9 +8,6 @@ use function Tempest\root_path;
 use function Tempest\Support\str;
 
 if (trait_exists(PublishesFiles::class)) {
-    /**
-     * @phpstan-require-implements \Tempest\Core\Installer
-     */
     trait IsComponentInstaller
     {
         use PublishesFiles;

@@ -10,10 +10,11 @@ use Tempest\Console\Input\ConsoleArgumentDefinition;
 
 final class InvalidCommandException extends ConsoleException
 {
+    /**
+     * @param ConsoleArgumentDefinition[] $invalidArguments
+     */
     public function __construct(
         public readonly ConsoleCommand $consoleCommand,
-
-        /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidArguments */
         public readonly array $invalidArguments,
     ) {}
 

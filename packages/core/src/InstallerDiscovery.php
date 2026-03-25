@@ -8,6 +8,7 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class InstallerDiscovery implements Discovery
 {
@@ -19,15 +20,21 @@ final class InstallerDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->implements(Installer::class)) {
-            $this->discoveryItems->add($location, $class->getName());
+        foreach ($class->getPublicMethods() as $method) {
+            $installer = $method->getAttribute(Installer::class);
+
+            if (! $installer) {
+                continue;
+            }
+
+            $this->discoveryItems->add($location, [$method, $installer]);
         }
     }
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems as $className) {
-            $this->installerConfig->installers[] = $className;
+        foreach ($this->discoveryItems as [$method, $installer]) {
+            $this->installerConfig->addInstaller($method, $installer);
         }
     }
 }

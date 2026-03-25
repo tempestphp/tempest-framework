@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Tempest\Console\Actions\ResolveConsoleInput;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleInputArgument;
@@ -20,42 +21,13 @@ final readonly class ConsoleInputBuilder
      */
     public function build(): array
     {
-        $validArguments = [];
-        $invalidArguments = [];
-
-        $argumentDefinitions = $this->command->getArgumentDefinitions();
-
-        foreach ($argumentDefinitions as $argumentDefinition) {
-            if ($argumentDefinition->isVariadic) {
-                $arguments = $this->argumentBag->findForVariadicArgument($argumentDefinition);
-
-                if ($arguments === []) {
-                    $invalidArguments[] = $argumentDefinition;
-                } else {
-                    $validArguments = [...$validArguments, ...$arguments];
-                }
-
-                continue;
-            }
-
-            $argument = $argumentDefinition->type === 'array'
-                ? $this->argumentBag->findArrayFor($argumentDefinition)
-                : $this->argumentBag->findFor($argumentDefinition);
-
-            if (! $argument instanceof ConsoleInputArgument) {
-                $invalidArguments[] = $argumentDefinition;
-
-                continue;
-            }
-
-            $validArguments[] = $argument;
-        }
+        [$validArguments, $invalidArguments] = (new ResolveConsoleInput())(
+            argumentBag: $this->argumentBag,
+            argumentDefinitions: $this->command->getArgumentDefinitions(),
+        );
 
         if ($invalidArguments !== []) {
-            throw new InvalidCommandException(
-                $this->command,
-                $invalidArguments,
-            );
+            throw new InvalidCommandException($this->command, $invalidArguments);
         }
 
         return array_map(

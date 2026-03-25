@@ -32,7 +32,8 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
     #[Test]
     public function class_is_adjusted(): void
     {
-        $this->console->call('install test --force');
+        $this->console
+            ->call('install test --force');
 
         $this->installer
             ->assertFileExists(

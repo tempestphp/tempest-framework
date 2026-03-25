@@ -9,12 +9,11 @@ use Tempest\Core\PublishesFiles;
 
 use function Tempest\src_path;
 
-final class TestInstaller implements Installer
+final class TestInstaller
 {
     use PublishesFiles;
 
-    private(set) string $name = 'test';
-
+    #[Installer('Test', alias: 'test')]
     public function install(): void
     {
         $this->publish(

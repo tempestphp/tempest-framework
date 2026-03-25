@@ -11,10 +11,8 @@ use Tempest\View\ViewConfig;
 use function Tempest\src_path;
 use function Tempest\Support\arr;
 
-final class ViewComponentsInstaller implements Installer
+final class ViewComponentsInstaller
 {
-    private(set) string $name = 'view-components';
-
     use HasConsole;
     use IsComponentInstaller;
 
@@ -22,6 +20,7 @@ final class ViewComponentsInstaller implements Installer
         private readonly ViewConfig $viewConfig,
     ) {}
 
+    #[Installer('View components', alias: 'view-components')]
     public function install(): void
     {
         $searchOptions = arr($this->viewConfig->viewComponents)

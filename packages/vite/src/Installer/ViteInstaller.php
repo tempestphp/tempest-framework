@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Installer;
 
-use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Core\Installer;
+use Tempest\Core\InstallerArgument;
 use Tempest\Core\PublishesFiles;
 use Tempest\Support\JavaScript\DependencyInstaller;
 use Tempest\Support\JavaScript\PackageManager;
@@ -16,33 +15,21 @@ use Tempest\Vite\ViteConfig;
 use function Tempest\root_path;
 use function Tempest\src_path;
 
-final class ViteInstaller implements Installer
+final class ViteInstaller
 {
     use PublishesFiles;
-
-    private(set) string $name = 'vite';
 
     public function __construct(
         private readonly DependencyInstaller $javascript,
         private readonly ViteConfig $viteConfig,
-        private readonly ConsoleArgumentBag $consoleArgumentBag,
     ) {}
 
-    private function shouldInstallTailwind(): bool
-    {
-        $argument = $this->consoleArgumentBag->get('tailwindcss');
-
-        if (! $argument instanceof ConsoleInputArgument || ! is_bool($argument->value)) {
-            return $this->console->confirm('Install Tailwind CSS as well?', default: true);
-        }
-
-        return (bool) $argument->value;
-    }
-
-    public function install(): void
-    {
-        $shouldInstallTailwind = $this->shouldInstallTailwind();
-        $templateDirectory = $shouldInstallTailwind
+    #[Installer('Vite', alias: 'vite')]
+    public function install(
+        #[InstallerArgument(prompt: 'Install Tailwind CSS as well?')]
+        bool $tailwindcss,
+    ): void {
+        $templateDirectory = $tailwindcss
             ? 'tailwindcss'
             : 'vanilla';
 
@@ -52,7 +39,7 @@ final class ViteInstaller implements Installer
             dependencies: [
                 'vite',
                 'vite-plugin-tempest',
-                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : []),
+                ...($tailwindcss ? ['tailwindcss', '@tailwindcss/vite'] : []),
             ],
             dev: true,
         );
@@ -60,7 +47,7 @@ final class ViteInstaller implements Installer
         // Publishes the Vite config
         $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
         $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.entrypoint.ts'));
-        $mainCss = $shouldInstallTailwind
+        $mainCss = $tailwindcss
             ? $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.entrypoint.css'))
             : null;
 
@@ -106,7 +93,7 @@ final class ViteInstaller implements Installer
         $packageManager = PackageManager::detect(root_path()) ?? PackageManager::NPM;
 
         $this->console->instructions([
-            $shouldInstallTailwind
+            $tailwindcss
                 ? '<strong>Vite and Tailwind CSS are now installed in your project</strong>!'
                 : '<strong>Vite is now installed in your project</strong>!',
             PHP_EOL,

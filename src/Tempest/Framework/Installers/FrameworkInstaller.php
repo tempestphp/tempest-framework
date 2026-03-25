@@ -9,12 +9,11 @@ use Tempest\Core\IsComponentInstaller;
 
 use function Tempest\root_path;
 
-final class FrameworkInstaller implements Installer
+final class FrameworkInstaller
 {
     use IsComponentInstaller;
 
-    private(set) string $name = 'framework';
-
+    #[Installer('Framework', alias: 'framework')]
     public function install(): void
     {
         $this->installMainNamespace();

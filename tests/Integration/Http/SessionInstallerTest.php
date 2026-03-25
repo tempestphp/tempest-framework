@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Http;
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Http\Session\Installer\SessionInstaller;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -33,13 +34,12 @@ final class SessionInstallerTest extends FrameworkIntegrationTestCase
     public function installs_database_session_config_and_migration(): void
     {
         $this->console
-            ->call('install sessions')
-            ->confirm()
+            ->call(sprintf('install %s', SessionInstaller::class))
             ->input(1)
             ->input(0)
+            ->confirm()
             ->input('App/Sessions/session.config.php')
             ->confirm()
-            ->deny()
             ->assertSuccess();
 
         $this->installer
@@ -53,8 +53,7 @@ final class SessionInstallerTest extends FrameworkIntegrationTestCase
     public function installs_file_session_config(): void
     {
         $this->console
-            ->call('install sessions')
-            ->confirm()
+            ->call(sprintf('install %s', SessionInstaller::class))
             ->input(0)
             ->input(0)
             ->input('App/Sessions/session.config.php')
@@ -69,8 +68,7 @@ final class SessionInstallerTest extends FrameworkIntegrationTestCase
     public function installs_redis_session_config(): void
     {
         $this->console
-            ->call('install sessions')
-            ->confirm()
+            ->call(sprintf('install %s', SessionInstaller::class))
             ->input(2)
             ->input('App/Sessions/session.config.php')
             ->assertSuccess();
@@ -91,8 +89,7 @@ final class SessionInstallerTest extends FrameworkIntegrationTestCase
     public function publishes_cleanup_command_when_requested(): void
     {
         $this->console
-            ->call('install sessions')
-            ->confirm()
+            ->call(sprintf('install %s', SessionInstaller::class))
             ->input(0)
             ->input(2)
             ->input('App/Sessions/session.config.php')
@@ -107,8 +104,7 @@ final class SessionInstallerTest extends FrameworkIntegrationTestCase
     public function writes_selected_cleanup_strategy_to_the_config(): void
     {
         $this->console
-            ->call('install sessions')
-            ->confirm()
+            ->call(sprintf('install %s', SessionInstaller::class))
             ->input(0)
             ->input(1)
             ->input('App/Sessions/session.config.php')

@@ -9,12 +9,11 @@ use Tempest\Core\IsComponentInstaller;
 
 use function Tempest\root_path;
 
-final class ConsoleInstaller implements Installer
+final class ConsoleInstaller
 {
     use IsComponentInstaller;
 
-    private(set) string $name = 'console';
-
+    #[Installer('Console', alias: 'console')]
     public function install(): void
     {
         $this->installMainNamespace();

@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Commands\InstallCommand;
 use Tempest\Support\Namespace\Psr4Namespace;
+use Tempest\Vite\Installer\ViteInstaller;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class ViteInstallerTest extends FrameworkIntegrationTestCase
@@ -34,11 +35,10 @@ final class ViteInstallerTest extends FrameworkIntegrationTestCase
     #[Test]
     public function intalls_vite(): void
     {
-        $this->console->call(InstallCommand::class, ['vite', '--force']);
+        $this->console->call(InstallCommand::class, [ViteInstaller::class, '--force']);
 
         $this->installer->assertFileExists('vite.config.ts');
         $this->installer->assertFileExists('app/main.entrypoint.ts');
-        $this->installer->assertFileExists('app/main.entrypoint.css');
 
         $this->installer->assertFileContains('package.json', '"vite"');
         $this->installer->assertFileContains('package.json', '"vite build"');
@@ -47,7 +47,7 @@ final class ViteInstallerTest extends FrameworkIntegrationTestCase
     #[Test]
     public function intalls_tailwindcss(): void
     {
-        $this->console->call(InstallCommand::class, ['vite', 'tailwindcss', '--force']);
+        $this->console->call(InstallCommand::class, [ViteInstaller::class, '--tailwindcss', '--force']);
 
         $this->installer->assertFileExists('app/main.entrypoint.ts');
 

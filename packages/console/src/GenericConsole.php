@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use BackedEnum;
 use Closure;
 use InvalidArgumentException;
 use Stringable;
@@ -224,7 +223,7 @@ final class GenericConsole implements Console
             $options = wrap($options);
         }
 
-        if (is_string($options) && is_a($options, BackedEnum::class, allow_string: true)) {
+        if (is_string($options) && is_a($options, UnitEnum::class, allow_string: true)) {
             $options = $options::cases();
         }
 
