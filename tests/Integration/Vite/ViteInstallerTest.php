@@ -2,10 +2,11 @@
 
 namespace Tests\Tempest\Integration\Vite;
 
-use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Commands\InstallCommand;
+use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Vite\Installer\ViteInstaller;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -20,14 +21,13 @@ final class ViteInstallerTest extends FrameworkIntegrationTestCase
             new Psr4Namespace('App\\', $this->internalStorage . '/install/app'),
         );
 
-        mkdir($this->internalStorage . '/install/node_modules');
-
         // force usage of npm because bun will mutate Tempest's root install otherwise
-        touch($this->internalStorage . '/install/package-lock.json');
+        Filesystem\create_directory($this->internalStorage . '/install/node_modules');
+        Filesystem\create_file($this->internalStorage . '/install/package-lock.json');
     }
 
-    #[After]
-    protected function after(): void
+    #[PostCondition]
+    protected function cleanup(): void
     {
         $this->installer->clean();
     }
