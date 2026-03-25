@@ -9,7 +9,6 @@ use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
-use Tempest\Support\Str;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsNotEmptyString;
@@ -26,15 +25,14 @@ final readonly class PromptForConsoleInput
         ConsoleArgumentDefinition $argumentDefinition,
     ): void {
         $isEnum = is_a($argumentDefinition->type, BackedEnum::class, allow_string: true);
-        $question = Str\to_sentence_case($argumentDefinition->name);
 
         $value = match ($argumentDefinition->type) {
             'bool' => $this->console->confirm(
-                question: $question,
+                question: $argumentDefinition->prompt ?? $argumentDefinition->name,
                 default: $argumentDefinition->default ?? false,
             ),
             default => $this->console->ask(
-                question: $question,
+                question: $argumentDefinition->prompt ?? $argumentDefinition->name,
                 options: match (true) {
                     $isEnum => $argumentDefinition->type::cases(),
                     default => null,

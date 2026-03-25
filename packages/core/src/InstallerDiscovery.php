@@ -8,7 +8,6 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Reflection\MethodReflector;
 
 final class InstallerDiscovery implements Discovery
 {

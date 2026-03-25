@@ -154,15 +154,16 @@ if (class_exists(ConsoleCommand::class)) {
 
             foreach ($installer->handler->getParameters() as $parameter) {
                 $installerArgument = $parameter->getAttribute(InstallerArgument::class);
+                $name = $installerArgument->name ?? $parameter->getName();
 
                 $argumentDefinitions[] = new ConsoleArgumentDefinition(
-                    name: $installerArgument->name ?? Str\to_sentence_case($parameter->getName()),
+                    name: $name,
                     type: $parameter->getType()->getName(),
                     default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
                     hasDefault: $parameter->isDefaultValueAvailable(),
                     position: $parameter->getPosition(),
                     isVariadic: $parameter->isVariadic(),
-                    help: $installerArgument?->prompt,
+                    prompt: $installerArgument->prompt ?? Str\to_sentence_case($name),
                 );
             }
 

@@ -12,6 +12,11 @@ use function Tempest\Support\str;
 
 final readonly class ConsoleArgumentDefinition
 {
+    /**
+     * @param null|string $description A short description explaining what this argument does.
+     * @param null|string $help Detailed information displayed when displayed help for the associated command.
+     * @param null|string $prompt A prompt displayed when prompting a user for this argument.
+     */
     public function __construct(
         public string $name,
         public string $type,
@@ -22,6 +27,7 @@ final readonly class ConsoleArgumentDefinition
         public ?string $description = null,
         public array $aliases = [],
         public ?string $help = null,
+        public ?string $prompt = null,
     ) {}
 
     public static function fromParameter(ParameterReflector $parameter): ConsoleArgumentDefinition
@@ -41,6 +47,7 @@ final readonly class ConsoleArgumentDefinition
             description: $attribute?->description,
             aliases: $attribute->aliases ?? [],
             help: $attribute?->help,
+            prompt: $attribute?->prompt,
         );
     }
 
