@@ -15,6 +15,7 @@ use Tempest\Mail\EmailAddress;
 use Tempest\Mail\EmailPriority;
 use Tempest\Mail\EmailToSymfonyEmailMapper;
 use Tempest\Support\Arr;
+use Throwable;
 
 use function Tempest\Mapper\map;
 use function Tempest\Support\arr;
@@ -453,6 +454,65 @@ final class MailTester
             })
             ->filter()
             ->toArray();
+    }
+
+    /**
+     * Simulates a transport failure for the next send call.
+     */
+    public function shouldFail(?Throwable $exception = null): self
+    {
+        $this->mailer->shouldFail(exception: $exception);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the given email class failed to send.
+     *
+     * @param class-string<Email> $email
+     */
+    public function assertFailed(string $email, ?Closure $callback = null): self
+    {
+        $this->assertClassStringIsEmail(email: $email);
+
+        $failedEmail = Arr\first($this->mailer->failed, filter: fn (Email $failed) => $failed instanceof $email);
+
+        Assert::assertTrue(
+            condition: (bool) $failedEmail,
+            message: sprintf('Email `%s` did not fail.', $email),
+        );
+
+        if ($callback instanceof Closure) {
+            try {
+                if ($callback($failedEmail) === false) {
+                    throw new ExpectationFailedException(message: 'The assertion callback returned `false`.');
+                }
+            } catch (ExpectationFailedException $previous) {
+                throw new ExpectationFailedException(
+                    message: sprintf('Email `%s` failed but did not match the assertion.', $email),
+                    previous: $previous,
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the given email class did not fail.
+     *
+     * @param class-string<Email> $email
+     */
+    public function assertNotFailed(string $email): self
+    {
+        $this->assertClassStringIsEmail(email: $email);
+
+        Assert::assertFalse(
+            condition: (bool) Arr\first($this->mailer->failed, filter: fn (Email $failed) => $failed instanceof $email),
+            message: sprintf('Email `%s` unexpectedly failed.', $email),
+        );
+
+        return $this;
     }
 
     private function assertClassStringIsEmail(string $email): void
