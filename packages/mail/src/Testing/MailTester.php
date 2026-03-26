@@ -470,21 +470,39 @@ final class MailTester
      * Asserts that the given email class failed to send.
      *
      * @param class-string<Email> $email
+     * @param (Closure(Email, Throwable): (bool|void))|null $callback
+     * @param class-string<Throwable>|string|null $exception
      */
-    public function assertFailed(string $email, ?Closure $callback = null): self
+    public function assertFailed(string $email, ?Closure $callback = null, ?string $exception = null): self
     {
         $this->assertClassStringIsEmail(email: $email);
 
-        $failedEmail = Arr\first($this->mailer->failed, filter: fn (Email $failed) => $failed instanceof $email);
+        $failed = Arr\first($this->mailer->failed, filter: fn (FailedEmail $failed) => $failed->email instanceof $email);
 
         Assert::assertTrue(
-            condition: (bool) $failedEmail,
+            condition: (bool) $failed,
             message: sprintf('Email `%s` did not fail.', $email),
         );
 
+        if ($exception !== null) {
+            if (is_a($exception, Throwable::class, allow_string: true)) {
+                Assert::assertInstanceOf(
+                    expected: $exception,
+                    actual: $failed->exception,
+                    message: sprintf('Email `%s` failed but did not throw `%s`.', $email, $exception),
+                );
+            } else {
+                Assert::assertSame(
+                    expected: $exception,
+                    actual: $failed->exception->getMessage(),
+                    message: sprintf('Email `%s` failed but threw `%s`.', $email, $failed->exception->getMessage()),
+                );
+            }
+        }
+
         if ($callback instanceof Closure) {
             try {
-                if ($callback($failedEmail) === false) {
+                if ($callback($failed->email, $failed->exception) === false) {
                     throw new ExpectationFailedException(message: 'The assertion callback returned `false`.');
                 }
             } catch (ExpectationFailedException $previous) {
@@ -508,7 +526,7 @@ final class MailTester
         $this->assertClassStringIsEmail(email: $email);
 
         Assert::assertFalse(
-            condition: (bool) Arr\first($this->mailer->failed, filter: fn (Email $failed) => $failed instanceof $email),
+            condition: (bool) Arr\first($this->mailer->failed, filter: fn (FailedEmail $failed) => $failed->email instanceof $email),
             message: sprintf('Email `%s` unexpectedly failed.', $email),
         );
 

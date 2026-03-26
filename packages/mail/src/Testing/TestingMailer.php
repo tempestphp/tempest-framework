@@ -26,27 +26,34 @@ final class TestingMailer implements Mailer
     private(set) array $sent = [];
 
     /**
-     * List of emails that failed to send.
+     * List of emails that would have failed to send.
      *
-     * @var array<Email>
+     * @var array<FailedEmail>
      */
     private(set) array $failed = [];
 
-    private ?Throwable $failException = null;
+    /**
+     * If set, the next send call will fail with this exception.
+     */
+    private(set) ?Throwable $exception = null;
 
     public function send(Email $email): void
     {
-        if ($this->failException !== null) {
-            $exception = $this->failException;
-            $this->failException = null;
-            $this->failed[] = $email;
+        if ($this->exception !== null) {
+            $failure = new FailedEmail(
+                email: $email,
+                exception: $this->exception,
+            );
+
+            $this->failed[] = $failure;
+            $this->exception = null;
 
             $this->eventBus?->dispatch(event: new EmailSendingFailed(
                 email: $email,
-                exception: $exception,
+                exception: $failure->exception,
             ));
 
-            throw $exception;
+            throw $failure->exception;
         }
 
         $this->sent[] = $email;
@@ -59,6 +66,6 @@ final class TestingMailer implements Mailer
      */
     public function shouldFail(?Throwable $exception = null): void
     {
-        $this->failException = $exception ?? new TransportException(message: 'Test transport failure');
+        $this->exception = $exception ?? new TransportException(message: 'Test transport failure');
     }
 }

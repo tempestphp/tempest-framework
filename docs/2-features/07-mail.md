@@ -337,7 +337,8 @@ public function test_welcome_mail()
 You can also simulate transport failures using `shouldFail()`:
 
 ```php
-public function test_email_failure()
+#[Test]
+public function email_failure(): void
 {
     $this->mailer->shouldFail();
 
