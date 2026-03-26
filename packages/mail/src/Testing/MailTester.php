@@ -469,8 +469,9 @@ final class MailTester
     /**
      * Asserts that the given email class failed to send.
      *
-     * @param class-string<Email> $email
-     * @param (Closure(Email, Throwable): (bool|void))|null $callback
+     * @template TEmail of Email
+     * @param class-string<TEmail> $email
+     * @param (Closure(TEmail, Throwable): (bool|void))|null $callback
      * @param class-string<Throwable>|string|null $exception
      */
     public function assertFailed(string $email, ?Closure $callback = null, ?string $exception = null): self
