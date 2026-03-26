@@ -27,7 +27,7 @@ final class ViteInstaller
     #[Installer('Vite', alias: 'vite')]
     public function install(
         #[InstallerArgument(prompt: 'Install Tailwind CSS as well?')]
-        bool $tailwindcss,
+        bool $tailwindcss = true,
     ): void {
         $templateDirectory = $tailwindcss
             ? 'tailwindcss'
