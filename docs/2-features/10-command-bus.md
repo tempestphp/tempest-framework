@@ -122,7 +122,7 @@ Commands that should not be processed more than once—such as payment processin
 ```php
 // app/ImportInvoicesCommand.php
 
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 #[Idempotent]
 final readonly class ImportInvoicesCommand
@@ -139,8 +139,7 @@ Alternatively, the attribute can be placed on the handler method instead:
 ```php
 // app/ImportInvoicesHandler.php
 
-use Tempest\CommandBus\CommandHandler;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\CommandBus\CommandHandler;use Tempest\Idempotency\Idempotent;
 
 final class ImportInvoicesHandler
 {
@@ -155,8 +154,7 @@ By default, the deduplication key is derived from the command's properties. Two 
 ```php
 // app/ProcessPaymentCommand.php
 
-use Tempest\Idempotency\Attributes\Idempotent;
-use Tempest\Idempotency\HasIdempotencyKey;
+use Tempest\Idempotency\HasIdempotencyKey;use Tempest\Idempotency\Idempotent;
 
 #[Idempotent]
 final readonly class ProcessPaymentCommand implements HasIdempotencyKey
