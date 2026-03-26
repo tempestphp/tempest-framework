@@ -4,6 +4,7 @@ namespace Tempest\Mail;
 
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\EventBus\EventBus;
+use Throwable;
 
 use function Tempest\Mapper\map;
 
@@ -23,8 +24,17 @@ final readonly class GenericMailer implements Mailer
             ->with(EmailToSymfonyEmailMapper::class)
             ->do();
 
-        $this->transport->send($symfonyMail);
+        try {
+            $this->transport->send($symfonyMail);
 
-        $this->eventBus->dispatch(new EmailWasSent($email));
+            $this->eventBus->dispatch(event: new EmailWasSent(email: $email));
+        } catch (Throwable $exception) {
+            $this->eventBus->dispatch(event: new EmailSendingFailed(
+                email: $email,
+                exception: $exception,
+            ));
+
+            throw $exception;
+        }
     }
 }
