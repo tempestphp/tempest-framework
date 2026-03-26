@@ -39,7 +39,7 @@ final class TestingMailer implements Mailer
 
     public function send(Email $email): void
     {
-        if ($this->exception !== null) {
+        if ($this->exception instanceof Throwable) {
             $failure = new FailedEmail(
                 email: $email,
                 exception: $this->exception,

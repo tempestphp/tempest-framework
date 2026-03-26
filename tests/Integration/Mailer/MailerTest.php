@@ -143,6 +143,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
 
         $this->eventBus->assertDispatched(event: EmailSendingFailed::class);
         $this->eventBus->assertNotDispatched(event: EmailWasSent::class);
+
         $this->mailer->assertFailed(
             email: GenericEmail::class,
             callback: function (GenericEmail $email, Throwable $exception): void {
