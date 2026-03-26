@@ -2,7 +2,10 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
+use RuntimeException;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tempest\Mail\Attachment;
+use Tempest\Mail\EmailSendingFailed;
 use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Exceptions\RecipientWasMissing;
 use Tempest\Mail\Exceptions\SenderWasMissing;
@@ -79,6 +82,58 @@ final class MailerTest extends FrameworkIntegrationTestCase
                 ),
             )
             ->assertAttached('attachment.txt');
+    }
+
+    public function test_email_sending_failed_throws_default_exception(): void
+    {
+        $this->mailer->shouldFail();
+
+        $this->expectException(exception: TransportException::class);
+        $this->expectExceptionMessage(message: 'Test transport failure');
+
+        $this->mailer->send(email: new GenericEmail(
+            subject: 'Hello',
+            to: 'jon@doe.co',
+            html: 'Hello Jon',
+            from: 'no-reply@tempestphp.com',
+        ));
+    }
+
+    public function test_email_sending_failed_throws_custom_exception(): void
+    {
+        $this->mailer->shouldFail(exception: new RuntimeException(message: 'SMTP connection refused'));
+
+        $this->expectException(exception: RuntimeException::class);
+        $this->expectExceptionMessage(message: 'SMTP connection refused');
+
+        $this->mailer->send(email: new GenericEmail(
+            subject: 'Hello',
+            to: 'jon@doe.co',
+            html: 'Hello Jon',
+            from: 'no-reply@tempestphp.com',
+        ));
+    }
+
+    public function test_email_sending_failed_event(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->mailer->shouldFail();
+
+        try {
+            $this->mailer->send(email: new GenericEmail(
+                subject: 'Hello',
+                to: 'jon@doe.co',
+                html: 'Hello Jon',
+                from: 'no-reply@tempestphp.com',
+            ));
+        } catch (TransportException $exception) {
+            $this->assertSame(expected: 'Test transport failure', actual: $exception->getMessage());
+        }
+
+        $this->eventBus->assertDispatched(event: EmailSendingFailed::class);
+        $this->eventBus->assertNotDispatched(event: EmailWasSent::class);
+        $this->mailer->assertFailed(email: GenericEmail::class);
     }
 
     public function test_send_attachment(): void

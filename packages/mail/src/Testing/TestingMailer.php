@@ -2,12 +2,12 @@
 
 namespace Tempest\Mail\Testing;
 
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tempest\EventBus\EventBus;
 use Tempest\Mail\Email;
 use Tempest\Mail\EmailSendingFailed;
 use Tempest\Mail\EmailWasSent;
 use Tempest\Mail\Mailer;
-use Symfony\Component\Mailer\Exception\TransportException;
 use Throwable;
 
 use function Tempest\Container\get;
