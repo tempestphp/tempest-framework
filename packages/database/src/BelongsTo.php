@@ -200,7 +200,7 @@ final class BelongsTo implements Relation
             return $qualifiedColumn;
         }
 
-        return str($qualifiedColumn)
+        return str(string: $qualifiedColumn)
             ->replaceFirst(
                 search: $originalTable . '.',
                 replace: $aliasedTable . '.',
