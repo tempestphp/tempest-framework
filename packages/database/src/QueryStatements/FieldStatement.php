@@ -49,7 +49,7 @@ final class FieldStatement implements QueryStatement
                         return $part;
                     }
 
-                    return sprintf('`%s`', $part);
+                    return $dialect->quoteIdentifier($part);
                 },
             )
             ->implode('.');
