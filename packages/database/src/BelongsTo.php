@@ -82,7 +82,7 @@ final class BelongsTo implements Relation
     {
         $relationModel = inspect($this->property->getType()->asClass());
         $ownerModel = inspect($this->property->getClass());
-        $tableAlias = $this->getTableAlias($relationModel->getTableName());
+        $tableAlias = $this->getTableAlias(tableName: $relationModel->getTableName());
 
         $relationJoin = $this->getRelationJoin(
             relationModel: $relationModel,

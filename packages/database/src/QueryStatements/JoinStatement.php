@@ -18,9 +18,13 @@ final readonly class JoinStatement implements QueryStatement
         $statement = $this->statement;
 
         if (! str($statement)->lower()->startsWith(['join', 'inner join', 'left join', 'right join', 'full join', 'full outer join', 'self join'])) {
-            return sprintf('INNER JOIN %s', $statement);
+            $statement = sprintf('INNER JOIN %s', $statement);
         }
 
-        return $statement;
+        return match ($dialect) {
+            DatabaseDialect::POSTGRESQL => str_replace('`', '"', $statement),
+            DatabaseDialect::SQLITE => str_replace('`', '', $statement),
+            default => $statement,
+        };
     }
 }
