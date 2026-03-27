@@ -128,6 +128,58 @@ final class QueryBuilder
     }
 
     /**
+     * Executes an aggregate query and returns the sum of the given column.
+     *
+     * **Example**
+     * ```php
+     * query(User::class)->sum('price');
+     * ```
+     */
+    public function sum(string $column): int|float
+    {
+        return $this->select()->onDatabase($this->onDatabase)->sum($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the average of the given column.
+     *
+     * **Example**
+     * ```php
+     * query(User::class)->avg('price');
+     * ```
+     */
+    public function avg(string $column): float
+    {
+        return $this->select()->onDatabase($this->onDatabase)->avg($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the maximum value of the given column.
+     *
+     * **Example**
+     * ```php
+     * query(User::class)->max('price');
+     * ```
+     */
+    public function max(string $column): mixed
+    {
+        return $this->select()->onDatabase($this->onDatabase)->max($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the minimum value of the given column.
+     *
+     * **Example**
+     * ```php
+     * query(User::class)->min('price');
+     * ```
+     */
+    public function min(string $column): mixed
+    {
+        return $this->select()->onDatabase($this->onDatabase)->min($column);
+    }
+
+    /**
      * Creates a new instance of this model without persisting it to the database.
      *
      * **Example**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\AggregateFunction;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\QueryStatements\FieldStatement;
@@ -18,7 +19,8 @@ use function Tempest\Database\query;
  */
 final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_sum_compiles_correct_sql(): void
+    #[Test]
+    public function sum_compiles_correct_sql(): void
     {
         $query = $this->buildAggregate(
             builder: query('books')->select(),
@@ -31,7 +33,8 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
-    public function test_avg_compiles_correct_sql(): void
+    #[Test]
+    public function avg_compiles_correct_sql(): void
     {
         $query = $this->buildAggregate(
             builder: query('books')->select(),
@@ -44,7 +47,8 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
-    public function test_max_compiles_correct_sql(): void
+    #[Test]
+    public function max_compiles_correct_sql(): void
     {
         $query = $this->buildAggregate(
             builder: query('books')->select(),
@@ -57,7 +61,8 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
-    public function test_min_compiles_correct_sql(): void
+    #[Test]
+    public function min_compiles_correct_sql(): void
     {
         $query = $this->buildAggregate(
             builder: query('books')->select(),
@@ -70,7 +75,8 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
-    public function test_sum_with_where_compiles_correct_sql(): void
+    #[Test]
+    public function sum_with_where_compiles_correct_sql(): void
     {
         $query = $this->buildAggregate(
             builder: query('books')->select()->where('author_id', 1),
@@ -83,7 +89,8 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
-    public function test_sum_from_model(): void
+    #[Test]
+    public function sum_from_model(): void
     {
         $query = $this->buildAggregate(
             builder: query(Author::class)->select(),

@@ -440,7 +440,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         $result = SelectQueryBuilder::fromQueryBuilder(
             $this,
             fields: new ImmutableArray([$field]),
-        )->build()->fetchFirst()[$key];
+        )->build()->fetchFirst()[$key] ?? null;
 
         if ($result === null) {
             return match ($function) {
