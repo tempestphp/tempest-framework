@@ -130,17 +130,13 @@ final class HasMany implements Relation
             : $tableAlias;
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
-            $ownerJoin = sprintf(
-                '%s.%s',
-                $tableReference,
-                $ownerJoin,
-            );
+            $ownerJoin = "{$tableReference}.{$ownerJoin}";
         }
 
         if ($ownerJoin) {
             $ownerModel = inspect($this->property->getIterableType()->asClass());
 
-            return $this->rewriteTablePrefix(
+            return $this->replaceTableReference(
                 qualifiedColumn: $ownerJoin,
                 originalTable: $ownerModel->getTableName(),
                 aliasedTable: $tableReference,
@@ -192,15 +188,11 @@ final class HasMany implements Relation
         $ownerTable = $this->getOwnerTableAlias(ownerTableName: $relationModel->getTableName());
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
-            $relationJoin = sprintf(
-                '%s.%s',
-                $ownerTable,
-                $relationJoin,
-            );
+            $relationJoin = "{$ownerTable}.{$relationJoin}";
         }
 
         if ($relationJoin) {
-            return $this->rewriteTablePrefix(
+            return $this->replaceTableReference(
                 qualifiedColumn: $relationJoin,
                 originalTable: $relationModel->getTableName(),
                 aliasedTable: $ownerTable,

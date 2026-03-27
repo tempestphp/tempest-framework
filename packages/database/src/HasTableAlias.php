@@ -50,7 +50,7 @@ trait HasTableAlias
             ->toString();
     }
 
-    private function rewriteTablePrefix(string $qualifiedColumn, string $originalTable, string $aliasedTable): string
+    private function replaceTableReference(string $qualifiedColumn, string $originalTable, string $aliasedTable): string
     {
         if ($aliasedTable === $originalTable) {
             return $qualifiedColumn;
@@ -58,8 +58,8 @@ trait HasTableAlias
 
         return str(string: $qualifiedColumn)
             ->replaceFirst(
-                search: $originalTable . '.',
-                replace: $aliasedTable . '.',
+                search: "{$originalTable}.",
+                replace: "{$aliasedTable}.",
             )
             ->toString();
     }

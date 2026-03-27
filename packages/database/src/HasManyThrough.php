@@ -225,15 +225,11 @@ final class HasManyThrough implements Relation
                 needle: '.',
             )
         ) {
-            return sprintf(
-                '%s.%s',
-                $ownerTable,
-                $relationJoin,
-            );
+            return "{$ownerTable}.{$relationJoin}";
         }
 
         if ($relationJoin) {
-            return $this->rewriteTablePrefix(
+            return $this->replaceTableReference(
                 qualifiedColumn: $relationJoin,
                 originalTable: $ownerModel->getTableName(),
                 aliasedTable: $ownerTable,

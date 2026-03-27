@@ -82,7 +82,7 @@ final class BelongsTo implements Relation
     {
         $relationModel = inspect($this->property->getType()->asClass());
         $ownerModel = inspect($this->property->getClass());
-        $tableAlias = $this->getTableAlias(tableName: $relationModel->getTableName());
+        $tableAlias = $this->getTableAlias($relationModel->getTableName());
 
         $relationJoin = $this->getRelationJoin(
             relationModel: $relationModel,
@@ -117,7 +117,6 @@ final class BelongsTo implements Relation
     private function getRelationJoin(ModelInspector $relationModel, string $tableAlias): string
     {
         $relationJoin = $this->relationJoin;
-        $tableName = $relationModel->getTableName();
         $tableReference = $this->isSelfReferencing()
             ? $this->property->getName()
             : $tableAlias;
@@ -127,9 +126,9 @@ final class BelongsTo implements Relation
         }
 
         if ($relationJoin) {
-            return $this->rewriteTablePrefix(
+            return $this->replaceTableReference(
                 qualifiedColumn: $relationJoin,
-                originalTable: $tableName,
+                originalTable: $relationModel->getTableName(),
                 aliasedTable: $tableAlias,
             );
         }
@@ -172,17 +171,16 @@ final class BelongsTo implements Relation
     private function getOwnerJoin(ModelInspector $ownerModel): string
     {
         $ownerJoin = $this->ownerJoin;
-        $ownerTableName = $ownerModel->getTableName();
-        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerTableName);
+        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerModel->getTableName());
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
             $ownerJoin = sprintf('%s.%s', $ownerTable, $ownerJoin);
         }
 
         if ($ownerJoin) {
-            return $this->rewriteTablePrefix(
+            return $this->replaceTableReference(
                 qualifiedColumn: $ownerJoin,
-                originalTable: $ownerTableName,
+                originalTable: $ownerModel->getTableName(),
                 aliasedTable: $ownerTable,
             );
         }
