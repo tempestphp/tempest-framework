@@ -45,11 +45,11 @@ final class FieldStatement implements QueryStatement
                         return $part;
                     }
 
-                    if ($dialect === DatabaseDialect::SQLITE) {
-                        return $part;
-                    }
-
-                    return $dialect->quoteIdentifier($part);
+                    return match ($dialect) {
+                        DatabaseDialect::SQLITE => $part,
+                        DatabaseDialect::POSTGRESQL => sprintf('"%s"', $part),
+                        default => sprintf('`%s`', $part),
+                    };
                 },
             )
             ->implode('.');

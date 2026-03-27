@@ -31,22 +31,22 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestUserMigration::class,
-            CreateSameTableTestRoleMigration::class,
+            CreateStUserMigration::class,
+            CreateStRoleMigration::class,
         );
 
-        $alice = query(model: SameTableTestUser::class)->create(name: 'Alice');
-        $bob = query(model: SameTableTestUser::class)->create(name: 'Bob');
-        query(model: SameTableTestRole::class)->create(code: 'admin', createdBy: $alice, updatedBy: $bob);
+        $alice = query(model: StUser::class)->create(name: 'Alice');
+        $bob = query(model: StUser::class)->create(name: 'Bob');
+        query(model: StRole::class)->create(code: 'admin', createdBy: $alice, updatedBy: $bob);
 
-        $role = query(model: SameTableTestRole::class)
+        $role = query(model: StRole::class)
             ->select()
             ->with('createdBy', 'updatedBy')
             ->first();
 
         $this->assertSame('admin', $role->code);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->createdBy);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->updatedBy);
+        $this->assertInstanceOf(StUser::class, $role->createdBy);
+        $this->assertInstanceOf(StUser::class, $role->updatedBy);
         $this->assertSame('Alice', $role->createdBy->name);
         $this->assertSame('Bob', $role->updatedBy->name);
     }
@@ -56,22 +56,22 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestUserMigration::class,
-            CreateSameTableTestFullSpecRoleMigration::class,
+            CreateStUserMigration::class,
+            CreateStFullSpecRoleMigration::class,
         );
 
-        $alice = query(model: SameTableTestUser::class)->create(name: 'Alice');
-        $bob = query(model: SameTableTestUser::class)->create(name: 'Bob');
-        query(model: SameTableTestFullSpecRole::class)->create(code: 'moderator', createdByUser: $alice, updatedByUser: $bob);
+        $alice = query(model: StUser::class)->create(name: 'Alice');
+        $bob = query(model: StUser::class)->create(name: 'Bob');
+        query(model: StFullSpecRole::class)->create(code: 'moderator', createdByUser: $alice, updatedByUser: $bob);
 
-        $role = query(model: SameTableTestFullSpecRole::class)
+        $role = query(model: StFullSpecRole::class)
             ->select()
             ->with('createdByUser', 'updatedByUser')
             ->first();
 
         $this->assertSame('moderator', $role->code);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->createdByUser);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->updatedByUser);
+        $this->assertInstanceOf(StUser::class, $role->createdByUser);
+        $this->assertInstanceOf(StUser::class, $role->updatedByUser);
         $this->assertSame('Alice', $role->createdByUser->name);
         $this->assertSame('Bob', $role->updatedByUser->name);
     }
@@ -81,21 +81,21 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestUserMigration::class,
-            CreateSameTableTestEagerRoleMigration::class,
+            CreateStUserMigration::class,
+            CreateStEagerRoleMigration::class,
         );
 
-        $alice = query(model: SameTableTestUser::class)->create(name: 'Alice');
-        $bob = query(model: SameTableTestUser::class)->create(name: 'Bob');
-        query(model: SameTableTestEagerRole::class)->create(code: 'player', createdBy: $alice, updatedBy: $bob);
+        $alice = query(model: StUser::class)->create(name: 'Alice');
+        $bob = query(model: StUser::class)->create(name: 'Bob');
+        query(model: StEagerRole::class)->create(code: 'player', createdBy: $alice, updatedBy: $bob);
 
-        $role = query(model: SameTableTestEagerRole::class)
+        $role = query(model: StEagerRole::class)
             ->select()
             ->first();
 
         $this->assertSame('player', $role->code);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->createdBy);
-        $this->assertInstanceOf(SameTableTestUser::class, $role->updatedBy);
+        $this->assertInstanceOf(StUser::class, $role->createdBy);
+        $this->assertInstanceOf(StUser::class, $role->updatedBy);
         $this->assertSame('Alice', $role->createdBy->name);
         $this->assertSame('Bob', $role->updatedBy->name);
     }
@@ -105,26 +105,26 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestUserMigration::class,
-            CreateSameTableTestEagerRoleMigration::class,
-            CreateSameTableTestTaskMigration::class,
+            CreateStUserMigration::class,
+            CreateStEagerRoleMigration::class,
+            CreateStTaskMigration::class,
         );
 
-        $alice = query(model: SameTableTestUser::class)->create(name: 'Alice');
-        $bob = query(model: SameTableTestUser::class)->create(name: 'Bob');
-        $role = query(model: SameTableTestEagerRole::class)->create(code: 'admin', createdBy: $alice, updatedBy: $bob);
-        query(model: SameTableTestTask::class)->create(title: 'Task 1', role: $role);
+        $alice = query(model: StUser::class)->create(name: 'Alice');
+        $bob = query(model: StUser::class)->create(name: 'Bob');
+        $role = query(model: StEagerRole::class)->create(code: 'admin', createdBy: $alice, updatedBy: $bob);
+        query(model: StTask::class)->create(title: 'Task 1', role: $role);
 
-        $task = query(model: SameTableTestTask::class)
+        $task = query(model: StTask::class)
             ->select()
             ->with('role', 'role.createdBy', 'role.updatedBy')
             ->first();
 
         $this->assertSame('Task 1', $task->title);
-        $this->assertInstanceOf(SameTableTestEagerRole::class, $task->role);
+        $this->assertInstanceOf(StEagerRole::class, $task->role);
         $this->assertSame('admin', $task->role->code);
-        $this->assertInstanceOf(SameTableTestUser::class, $task->role->createdBy);
-        $this->assertInstanceOf(SameTableTestUser::class, $task->role->updatedBy);
+        $this->assertInstanceOf(StUser::class, $task->role->createdBy);
+        $this->assertInstanceOf(StUser::class, $task->role->updatedBy);
         $this->assertSame('Alice', $task->role->createdBy->name);
         $this->assertSame('Bob', $task->role->updatedBy->name);
     }
@@ -136,16 +136,16 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestUserMigration::class,
-            CreateSameTableTestMessageMigration::class,
+            CreateStUserMigration::class,
+            CreateStMessageMigration::class,
         );
 
-        $alice = query(model: SameTableTestUser::class)->create(name: 'Alice');
-        $bob = query(model: SameTableTestUser::class)->create(name: 'Bob');
-        query(model: SameTableTestMessage::class)->create(body: 'Hello Bob', sender: $alice, receiver: $bob);
-        query(model: SameTableTestMessage::class)->create(body: 'Hi Alice', sender: $bob, receiver: $alice);
+        $alice = query(model: StUser::class)->create(name: 'Alice');
+        $bob = query(model: StUser::class)->create(name: 'Bob');
+        query(model: StMessage::class)->create(body: 'Hello Bob', sender: $alice, receiver: $bob);
+        query(model: StMessage::class)->create(body: 'Hi Alice', sender: $bob, receiver: $alice);
 
-        $alice = query(model: SameTableTestUser::class)
+        $alice = query(model: StUser::class)
             ->select()
             ->with('sentMessages', 'receivedMessages')
             ->where('name', 'Alice')
@@ -163,22 +163,22 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestAddressMigration::class,
-            CreateSameTableTestPersonMigration::class,
+            CreateStAddressMigration::class,
+            CreateStPersonMigration::class,
         );
 
-        $home = query(model: SameTableTestAddress::class)->create(street: '123 Home St');
-        $work = query(model: SameTableTestAddress::class)->create(street: '456 Work Ave');
-        query(model: SameTableTestPerson::class)->create(name: 'Alice', homeAddress: $home, workAddress: $work);
+        $home = query(model: StAddress::class)->create(street: '123 Home St');
+        $work = query(model: StAddress::class)->create(street: '456 Work Ave');
+        query(model: StPerson::class)->create(name: 'Alice', homeAddress: $home, workAddress: $work);
 
-        $person = query(model: SameTableTestPerson::class)
+        $person = query(model: StPerson::class)
             ->select()
             ->with('homeAddress', 'workAddress')
             ->first();
 
         $this->assertSame('Alice', $person->name);
-        $this->assertInstanceOf(SameTableTestAddress::class, $person->homeAddress);
-        $this->assertInstanceOf(SameTableTestAddress::class, $person->workAddress);
+        $this->assertInstanceOf(StAddress::class, $person->homeAddress);
+        $this->assertInstanceOf(StAddress::class, $person->workAddress);
         $this->assertSame('123 Home St', $person->homeAddress->street);
         $this->assertSame('456 Work Ave', $person->workAddress->street);
     }
@@ -188,26 +188,26 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestAddressMigration::class,
-            CreateSameTableTestPersonMigration::class,
-            CreateSameTableTestCompanyMigration::class,
+            CreateStAddressMigration::class,
+            CreateStPersonMigration::class,
+            CreateStCompanyMigration::class,
         );
 
-        $home = query(model: SameTableTestAddress::class)->create(street: '10 Home Rd');
-        $work = query(model: SameTableTestAddress::class)->create(street: '20 Office Blvd');
-        $person = query(model: SameTableTestPerson::class)->create(name: 'Bob', homeAddress: $home, workAddress: $work);
-        query(model: SameTableTestCompany::class)->create(name: 'Acme', ceo: $person);
+        $home = query(model: StAddress::class)->create(street: '10 Home Rd');
+        $work = query(model: StAddress::class)->create(street: '20 Office Blvd');
+        $person = query(model: StPerson::class)->create(name: 'Bob', homeAddress: $home, workAddress: $work);
+        query(model: StCompany::class)->create(name: 'Acme', ceo: $person);
 
-        $company = query(model: SameTableTestCompany::class)
+        $company = query(model: StCompany::class)
             ->select()
             ->with('ceo', 'ceo.homeAddress', 'ceo.workAddress')
             ->first();
 
         $this->assertSame('Acme', $company->name);
-        $this->assertInstanceOf(SameTableTestPerson::class, $company->ceo);
+        $this->assertInstanceOf(StPerson::class, $company->ceo);
         $this->assertSame('Bob', $company->ceo->name);
-        $this->assertInstanceOf(SameTableTestAddress::class, $company->ceo->homeAddress);
-        $this->assertInstanceOf(SameTableTestAddress::class, $company->ceo->workAddress);
+        $this->assertInstanceOf(StAddress::class, $company->ceo->homeAddress);
+        $this->assertInstanceOf(StAddress::class, $company->ceo->workAddress);
         $this->assertSame('10 Home Rd', $company->ceo->homeAddress->street);
         $this->assertSame('20 Office Blvd', $company->ceo->workAddress->street);
     }
@@ -219,22 +219,22 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
-            CreateSameTableTestEmployeeMigration::class,
-            CreateSameTableTestContactMigration::class,
+            CreateStEmployeeMigration::class,
+            CreateStContactMigration::class,
         );
 
-        $alice = query(model: SameTableTestEmployee::class)->create(name: 'Alice');
-        query(model: SameTableTestContact::class)->create(value: 'alice@work.com', workEmployee: $alice);
-        query(model: SameTableTestContact::class)->create(value: '555-1234', personalEmployee: $alice);
+        $alice = query(model: StEmployee::class)->create(name: 'Alice');
+        query(model: StContact::class)->create(value: 'alice@work.com', workEmployee: $alice);
+        query(model: StContact::class)->create(value: '555-1234', personalEmployee: $alice);
 
-        $employee = query(model: SameTableTestEmployee::class)
+        $employee = query(model: StEmployee::class)
             ->select()
             ->with('workContact', 'personalContact')
             ->first();
 
         $this->assertSame('Alice', $employee->name);
-        $this->assertInstanceOf(SameTableTestContact::class, $employee->workContact);
-        $this->assertInstanceOf(SameTableTestContact::class, $employee->personalContact);
+        $this->assertInstanceOf(StContact::class, $employee->workContact);
+        $this->assertInstanceOf(StContact::class, $employee->personalContact);
         $this->assertSame('alice@work.com', $employee->workContact->value);
         $this->assertSame('555-1234', $employee->personalContact->value);
     }
@@ -242,302 +242,302 @@ final class MultipleSameTableRelationsTest extends FrameworkIntegrationTestCase
 
 // Models
 
-#[Table('same_table_test_users')]
-final class SameTableTestUser
+#[Table('st_users')]
+final class StUser
 {
     use IsDatabaseModel;
 
-    /** @var \Tests\Tempest\Integration\Database\SameTableTestMessage[] */
+    /** @var \Tests\Tempest\Integration\Database\StMessage[] */
     #[HasMany(ownerJoin: 'sender_id')]
     public array $sentMessages = [];
 
-    /** @var \Tests\Tempest\Integration\Database\SameTableTestMessage[] */
+    /** @var \Tests\Tempest\Integration\Database\StMessage[] */
     #[HasMany(ownerJoin: 'receiver_id')]
     public array $receivedMessages = [];
 
     public string $name;
 }
 
-#[Table('same_table_test_messages')]
-final class SameTableTestMessage
+#[Table('st_messages')]
+final class StMessage
 {
     use IsDatabaseModel;
 
     public string $body;
 
     #[BelongsTo(ownerJoin: 'sender_id')]
-    public ?SameTableTestUser $sender = null;
+    public ?StUser $sender = null;
 
     #[BelongsTo(ownerJoin: 'receiver_id')]
-    public ?SameTableTestUser $receiver = null;
+    public ?StUser $receiver = null;
 }
 
-#[Table('same_table_test_addresses')]
-final class SameTableTestAddress
+#[Table('st_addresses')]
+final class StAddress
 {
     use IsDatabaseModel;
 
     public string $street;
 }
 
-#[Table('same_table_test_persons')]
-final class SameTableTestPerson
+#[Table('st_persons')]
+final class StPerson
 {
     use IsDatabaseModel;
 
     #[BelongsTo(ownerJoin: 'home_address_id')]
-    public ?SameTableTestAddress $homeAddress = null;
+    public ?StAddress $homeAddress = null;
 
     #[BelongsTo(ownerJoin: 'work_address_id')]
-    public ?SameTableTestAddress $workAddress = null;
+    public ?StAddress $workAddress = null;
 
     public string $name;
 }
 
-#[Table('same_table_test_companies')]
-final class SameTableTestCompany
+#[Table('st_companies')]
+final class StCompany
 {
     use IsDatabaseModel;
 
     #[BelongsTo(ownerJoin: 'ceo_id')]
-    public ?SameTableTestPerson $ceo = null;
+    public ?StPerson $ceo = null;
 
     public string $name;
 }
 
-#[Table('same_table_test_full_spec_roles')]
-final class SameTableTestFullSpecRole
+#[Table('st_full_spec_roles')]
+final class StFullSpecRole
 {
     use IsDatabaseModel;
 
     #[Eager]
-    #[BelongsTo(relationJoin: 'same_table_test_users.id', ownerJoin: 'same_table_test_full_spec_roles.created_by')]
-    public ?SameTableTestUser $createdByUser = null;
+    #[BelongsTo(relationJoin: 'st_users.id', ownerJoin: 'st_full_spec_roles.created_by')]
+    public ?StUser $createdByUser = null;
 
     #[Eager]
-    #[BelongsTo(relationJoin: 'same_table_test_users.id', ownerJoin: 'same_table_test_full_spec_roles.updated_by')]
-    public ?SameTableTestUser $updatedByUser = null;
+    #[BelongsTo(relationJoin: 'st_users.id', ownerJoin: 'st_full_spec_roles.updated_by')]
+    public ?StUser $updatedByUser = null;
 
     public string $code;
 }
 
-#[Table('same_table_test_roles')]
-final class SameTableTestRole
+#[Table('st_roles')]
+final class StRole
 {
     use IsDatabaseModel;
 
     #[BelongsTo(ownerJoin: 'created_by')]
-    public ?SameTableTestUser $createdBy = null;
+    public ?StUser $createdBy = null;
 
     #[BelongsTo(ownerJoin: 'updated_by')]
-    public ?SameTableTestUser $updatedBy = null;
+    public ?StUser $updatedBy = null;
 
     public string $code;
 }
 
-#[Table('same_table_test_eager_roles')]
-final class SameTableTestEagerRole
+#[Table('st_eager_roles')]
+final class StEagerRole
 {
     use IsDatabaseModel;
 
     #[Eager]
     #[BelongsTo(ownerJoin: 'created_by')]
-    public ?SameTableTestUser $createdBy = null;
+    public ?StUser $createdBy = null;
 
     #[Eager]
     #[BelongsTo(ownerJoin: 'updated_by')]
-    public ?SameTableTestUser $updatedBy = null;
+    public ?StUser $updatedBy = null;
 
-    /** @var \Tests\Tempest\Integration\Database\SameTableTestTask[] */
+    /** @var \Tests\Tempest\Integration\Database\StTask[] */
     #[HasMany(ownerJoin: 'role_id')]
     public array $tasks = [];
 
     public string $code;
 }
 
-#[Table('same_table_test_tasks')]
-final class SameTableTestTask
+#[Table('st_tasks')]
+final class StTask
 {
     use IsDatabaseModel;
 
     #[BelongsTo(ownerJoin: 'role_id')]
-    public ?SameTableTestEagerRole $role = null;
+    public ?StEagerRole $role = null;
 
     public string $title;
 }
 
-#[Table('same_table_test_employees')]
-final class SameTableTestEmployee
+#[Table('st_employees')]
+final class StEmployee
 {
     use IsDatabaseModel;
 
     #[HasOne(ownerJoin: 'employee_work_id')]
-    public ?SameTableTestContact $workContact = null;
+    public ?StContact $workContact = null;
 
     #[HasOne(ownerJoin: 'employee_personal_id')]
-    public ?SameTableTestContact $personalContact = null;
+    public ?StContact $personalContact = null;
 
     public string $name;
 }
 
-#[Table('same_table_test_contacts')]
-final class SameTableTestContact
+#[Table('st_contacts')]
+final class StContact
 {
     use IsDatabaseModel;
 
     public string $value;
 
     #[BelongsTo(ownerJoin: 'employee_work_id')]
-    public ?SameTableTestEmployee $workEmployee = null;
+    public ?StEmployee $workEmployee = null;
 
     #[BelongsTo(ownerJoin: 'employee_personal_id')]
-    public ?SameTableTestEmployee $personalEmployee = null;
+    public ?StEmployee $personalEmployee = null;
 }
 
 // Migrations
 
-final class CreateSameTableTestUserMigration implements MigratesUp
+final class CreateStUserMigration implements MigratesUp
 {
-    public string $name = '001_create_same_table_test_users';
+    public string $name = '001_create_st_users';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestUser::class)
+        return CreateTableStatement::forModel(modelClass: StUser::class)
             ->primary()
             ->text(name: 'name');
     }
 }
 
-final class CreateSameTableTestMessageMigration implements MigratesUp
+final class CreateStMessageMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_messages';
+    public string $name = '002_create_st_messages';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestMessage::class)
+        return CreateTableStatement::forModel(modelClass: StMessage::class)
             ->primary()
             ->text(name: 'body')
-            ->belongsTo(local: 'same_table_test_messages.sender_id', foreign: 'same_table_test_users.id')
-            ->belongsTo(local: 'same_table_test_messages.receiver_id', foreign: 'same_table_test_users.id');
+            ->belongsTo(local: 'st_messages.sender_id', foreign: 'st_users.id')
+            ->belongsTo(local: 'st_messages.receiver_id', foreign: 'st_users.id');
     }
 }
 
-final class CreateSameTableTestAddressMigration implements MigratesUp
+final class CreateStAddressMigration implements MigratesUp
 {
-    public string $name = '001_create_same_table_test_addresses';
+    public string $name = '001_create_st_addresses';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestAddress::class)
+        return CreateTableStatement::forModel(modelClass: StAddress::class)
             ->primary()
             ->text(name: 'street');
     }
 }
 
-final class CreateSameTableTestPersonMigration implements MigratesUp
+final class CreateStPersonMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_persons';
+    public string $name = '002_create_st_persons';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestPerson::class)
+        return CreateTableStatement::forModel(modelClass: StPerson::class)
             ->primary()
             ->text(name: 'name')
-            ->belongsTo(local: 'same_table_test_persons.home_address_id', foreign: 'same_table_test_addresses.id')
-            ->belongsTo(local: 'same_table_test_persons.work_address_id', foreign: 'same_table_test_addresses.id');
+            ->belongsTo(local: 'st_persons.home_address_id', foreign: 'st_addresses.id')
+            ->belongsTo(local: 'st_persons.work_address_id', foreign: 'st_addresses.id');
     }
 }
 
-final class CreateSameTableTestCompanyMigration implements MigratesUp
+final class CreateStCompanyMigration implements MigratesUp
 {
-    public string $name = '003_create_same_table_test_companies';
+    public string $name = '003_create_st_companies';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestCompany::class)
+        return CreateTableStatement::forModel(modelClass: StCompany::class)
             ->primary()
             ->text(name: 'name')
-            ->belongsTo(local: 'same_table_test_companies.ceo_id', foreign: 'same_table_test_persons.id');
+            ->belongsTo(local: 'st_companies.ceo_id', foreign: 'st_persons.id');
     }
 }
 
-final class CreateSameTableTestRoleMigration implements MigratesUp
+final class CreateStRoleMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_roles';
+    public string $name = '002_create_st_roles';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestRole::class)
+        return CreateTableStatement::forModel(modelClass: StRole::class)
             ->primary()
             ->text(name: 'code')
-            ->belongsTo(local: 'same_table_test_roles.created_by', foreign: 'same_table_test_users.id')
-            ->belongsTo(local: 'same_table_test_roles.updated_by', foreign: 'same_table_test_users.id');
+            ->belongsTo(local: 'st_roles.created_by', foreign: 'st_users.id')
+            ->belongsTo(local: 'st_roles.updated_by', foreign: 'st_users.id');
     }
 }
 
-final class CreateSameTableTestEagerRoleMigration implements MigratesUp
+final class CreateStEagerRoleMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_eager_roles';
+    public string $name = '002_create_st_eager_roles';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestEagerRole::class)
+        return CreateTableStatement::forModel(modelClass: StEagerRole::class)
             ->primary()
             ->text(name: 'code')
-            ->belongsTo(local: 'same_table_test_eager_roles.created_by', foreign: 'same_table_test_users.id')
-            ->belongsTo(local: 'same_table_test_eager_roles.updated_by', foreign: 'same_table_test_users.id');
+            ->belongsTo(local: 'st_eager_roles.created_by', foreign: 'st_users.id')
+            ->belongsTo(local: 'st_eager_roles.updated_by', foreign: 'st_users.id');
     }
 }
 
-final class CreateSameTableTestTaskMigration implements MigratesUp
+final class CreateStTaskMigration implements MigratesUp
 {
-    public string $name = '003_create_same_table_test_tasks';
+    public string $name = '003_create_st_tasks';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestTask::class)
+        return CreateTableStatement::forModel(modelClass: StTask::class)
             ->primary()
             ->text(name: 'title')
-            ->belongsTo(local: 'same_table_test_tasks.role_id', foreign: 'same_table_test_eager_roles.id');
+            ->belongsTo(local: 'st_tasks.role_id', foreign: 'st_eager_roles.id');
     }
 }
 
-final class CreateSameTableTestContactMigration implements MigratesUp
+final class CreateStContactMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_contacts';
+    public string $name = '002_create_st_contacts';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestContact::class)
+        return CreateTableStatement::forModel(modelClass: StContact::class)
             ->primary()
             ->text(name: 'value')
-            ->belongsTo(local: 'same_table_test_contacts.employee_work_id', foreign: 'same_table_test_employees.id', nullable: true)
-            ->belongsTo(local: 'same_table_test_contacts.employee_personal_id', foreign: 'same_table_test_employees.id', nullable: true);
+            ->belongsTo(local: 'st_contacts.employee_work_id', foreign: 'st_employees.id', nullable: true)
+            ->belongsTo(local: 'st_contacts.employee_personal_id', foreign: 'st_employees.id', nullable: true);
     }
 }
 
-final class CreateSameTableTestEmployeeMigration implements MigratesUp
+final class CreateStEmployeeMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_employees';
+    public string $name = '002_create_st_employees';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestEmployee::class)
+        return CreateTableStatement::forModel(modelClass: StEmployee::class)
             ->primary()
             ->text(name: 'name');
     }
 }
 
-final class CreateSameTableTestFullSpecRoleMigration implements MigratesUp
+final class CreateStFullSpecRoleMigration implements MigratesUp
 {
-    public string $name = '002_create_same_table_test_full_spec_roles';
+    public string $name = '002_create_st_full_spec_roles';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(modelClass: SameTableTestFullSpecRole::class)
+        return CreateTableStatement::forModel(modelClass: StFullSpecRole::class)
             ->primary()
             ->text(name: 'code')
-            ->belongsTo(local: 'same_table_test_full_spec_roles.created_by', foreign: 'same_table_test_users.id')
-            ->belongsTo(local: 'same_table_test_full_spec_roles.updated_by', foreign: 'same_table_test_users.id');
+            ->belongsTo(local: 'st_full_spec_roles.created_by', foreign: 'st_users.id')
+            ->belongsTo(local: 'st_full_spec_roles.updated_by', foreign: 'st_users.id');
     }
 }
