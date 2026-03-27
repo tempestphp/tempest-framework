@@ -102,7 +102,11 @@ final class HasOne implements Relation
             : $tableAlias;
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
-            $ownerJoin = "{$tableReference}.{$ownerJoin}";
+            $ownerJoin = sprintf(
+                '%s.%s',
+                $tableReference,
+                $ownerJoin,
+            );
         }
 
         if ($ownerJoin) {
@@ -158,7 +162,11 @@ final class HasOne implements Relation
         $ownerTable = $this->getOwnerTableAlias(ownerTableName: $relationModel->getTableName());
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
-            $relationJoin = "{$ownerTable}.{$relationJoin}";
+            $relationJoin = sprintf(
+                '%s.%s',
+                $ownerTable,
+                $relationJoin,
+            );
         }
 
         if ($relationJoin) {

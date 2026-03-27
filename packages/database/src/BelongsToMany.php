@@ -256,7 +256,11 @@ final class BelongsToMany implements Relation
                 needle: '.',
             )
         ) {
-            return "{$ownerTable}.{$relationJoin}";
+            return sprintf(
+                '%s.%s',
+                $ownerTable,
+                $relationJoin,
+            );
         }
 
         if ($relationJoin) {
