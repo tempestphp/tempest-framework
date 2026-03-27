@@ -155,11 +155,12 @@ final class HasOne implements Relation
     private function getRelationJoin(ModelInspector $relationModel): string
     {
         $relationJoin = $this->relationJoin;
+        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $relationModel->getTableName());
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
             $relationJoin = sprintf(
                 '%s.%s',
-                $relationModel->getTableName(),
+                $ownerTable,
                 $relationJoin,
             );
         }
@@ -176,7 +177,7 @@ final class HasOne implements Relation
 
         return sprintf(
             '%s.%s',
-            $relationModel->getTableName(),
+            $ownerTable,
             $primaryKey,
         );
     }

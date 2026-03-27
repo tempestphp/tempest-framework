@@ -105,7 +105,7 @@ final class BelongsTo implements Relation
             ? sprintf('%s AS %s', $tableName, $tableAlias)
             : $tableName;
 
-        // LEFT JOIN authors ON authors.id = books.author_id
+        // LEFT JOIN authors AS author ON author.id = books.author_id
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
             $tableRef,
@@ -117,6 +117,7 @@ final class BelongsTo implements Relation
     private function getRelationJoin(ModelInspector $relationModel, string $tableAlias): string
     {
         $relationJoin = $this->relationJoin;
+        $tableName = $relationModel->getTableName();
         $tableReference = $this->isSelfReferencing()
             ? $this->property->getName()
             : $tableAlias;
@@ -126,7 +127,11 @@ final class BelongsTo implements Relation
         }
 
         if ($relationJoin) {
-            return $relationJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $relationJoin,
+                originalTable: $tableName,
+                aliasedTable: $tableAlias,
+            );
         }
 
         $primaryKey = $relationModel->getPrimaryKey();
@@ -167,19 +172,38 @@ final class BelongsTo implements Relation
     private function getOwnerJoin(ModelInspector $ownerModel): string
     {
         $ownerJoin = $this->ownerJoin;
+        $ownerTableName = $ownerModel->getTableName();
+        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerTableName);
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
-            $ownerJoin = sprintf('%s.%s', $ownerModel->getTableName(), $ownerJoin);
+            $ownerJoin = sprintf('%s.%s', $ownerTable, $ownerJoin);
         }
 
         if ($ownerJoin) {
-            return $ownerJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $ownerJoin,
+                originalTable: $ownerTableName,
+                aliasedTable: $ownerTable,
+            );
         }
 
         return sprintf(
             '%s.%s',
-            $ownerModel->getTableName(),
+            $ownerTable,
             $this->getOwnerFieldName(),
         );
+    }
+
+    private function rewriteTablePrefix(string $qualifiedColumn, string $originalTable, string $aliasedTable): string
+    {
+        if ($aliasedTable === $originalTable) {
+            return $qualifiedColumn;
+        }
+
+        if (str_starts_with($qualifiedColumn, $originalTable . '.')) {
+            return $aliasedTable . substr($qualifiedColumn, strlen($originalTable));
+        }
+
+        return $qualifiedColumn;
     }
 }

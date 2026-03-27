@@ -173,6 +173,7 @@ final class HasOneThrough implements Relation
     private function resolveRelationJoin(ModelInspector $ownerModel): string
     {
         $relationJoin = $this->relationJoin;
+        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerModel->getTableName());
 
         if (
             $relationJoin
@@ -183,7 +184,7 @@ final class HasOneThrough implements Relation
         ) {
             return sprintf(
                 '%s.%s',
-                $ownerModel->getTableName(),
+                $ownerTable,
                 $relationJoin,
             );
         }
@@ -203,7 +204,7 @@ final class HasOneThrough implements Relation
 
         return sprintf(
             '%s.%s',
-            $ownerModel->getTableName(),
+            $ownerTable,
             $primaryKey,
         );
     }
