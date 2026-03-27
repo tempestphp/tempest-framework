@@ -101,7 +101,7 @@ final readonly class AutoloadDiscoveryLocations
             }
 
             $packagePath = normalize($composerPath, $package['install-path'] ?? '');
-            $requiresTempest = isset($package['require']['tempest/framework']) || isset($package['require']['tempest/core']);
+            $requiresTempest = isset($package['require']['tempest/discovery']) || isset($package['require']['tempest/framework']) || isset($package['require']['tempest/core']);
             $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
 
             if (! ($requiresTempest && $hasPsr4Namespaces)) {
