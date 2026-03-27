@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
+use Tempest\Database\AggregateFunction;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseContext;
@@ -394,6 +395,66 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         }
 
         return new Query($select, [...$this->bindings, ...$bindings])->onDatabase($this->onDatabase);
+    }
+
+    /**
+     * Executes an aggregate query and returns the sum of the given column.
+     */
+    public function sum(string $column): int|float
+    {
+        return $this->aggregate(AggregateFunction::SUM, $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the average of the given column.
+     */
+    public function avg(string $column): float
+    {
+        return (float) $this->aggregate(AggregateFunction::AVG, $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the maximum value of the given column.
+     */
+    public function max(string $column): mixed
+    {
+        return $this->aggregate(AggregateFunction::MAX, $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the minimum value of the given column.
+     */
+    public function min(string $column): mixed
+    {
+        return $this->aggregate(AggregateFunction::MIN, $column);
+    }
+
+    private function aggregate(AggregateFunction $function, string $column): mixed
+    {
+        $key = strtolower($function->value);
+
+        $field = new FieldStatement(
+            field: sprintf('%s(`%s`) AS `%s`', $function->value, $column, $key),
+        );
+
+        $result = SelectQueryBuilder::fromQueryBuilder(
+            $this,
+            fields: new ImmutableArray([$field]),
+        )->build()->fetchFirst()[$key];
+
+        if ($result === null) {
+            return match ($function) {
+                AggregateFunction::AVG => 0.0,
+                AggregateFunction::SUM => 0,
+                default => null,
+            };
+        }
+
+        return match ($function) {
+            AggregateFunction::AVG => (float) $result,
+            AggregateFunction::SUM => str_contains((string) $result, '.') ? (float) $result : (int) $result,
+            default => $result,
+        };
     }
 
     private function clone(): self
