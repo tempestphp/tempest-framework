@@ -9,6 +9,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -135,6 +136,24 @@ final class BelongsTo implements Relation
         }
 
         return sprintf('%s.%s', $tableReference, $primaryKey);
+    }
+
+    public function getExistsStatement(): WhereExistsStatement
+    {
+        $relatedModel = inspect(model: $this->property->getType()->asClass());
+        $parentModel = inspect(model: $this->property->getClass());
+
+        $relatedTable = $relatedModel->getTableName();
+        $parentTable = $parentModel->getTableName();
+        $relatedPK = $relatedModel->getPrimaryKey();
+
+        $fk = $this->getOwnerFieldName();
+
+        return new WhereExistsStatement(
+            relatedTable: $relatedTable,
+            relatedModelName: $relatedModel->getName(),
+            condition: "{$relatedTable}.{$relatedPK} = {$parentTable}.{$fk}",
+        );
     }
 
     private function isSelfReferencing(): bool

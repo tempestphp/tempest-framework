@@ -9,6 +9,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -326,6 +327,24 @@ final class HasManyThrough implements Relation
             '%s.%s',
             $intermediateModel->getTableName(),
             $primaryKey,
+        );
+    }
+
+    public function getExistsStatement(): WhereExistsStatement
+    {
+        $ownerModel = inspect(model: $this->property->getClass());
+        $intermediateModel = inspect(model: $this->through);
+
+        $intermediateTable = $intermediateModel->getTableName();
+        $ownerTable = $ownerModel->getTableName();
+        $ownerPK = $ownerModel->getPrimaryKey();
+
+        $fk = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord()->append(suffix: "_{$ownerPK}");
+
+        return new WhereExistsStatement(
+            relatedTable: $intermediateTable,
+            relatedModelName: inspect(model: $this->property->getIterableType()->asClass())->getName(),
+            condition: "{$intermediateTable}.{$fk} = {$ownerTable}.{$ownerPK}",
         );
     }
 }

@@ -9,6 +9,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -122,6 +123,24 @@ final class HasOne implements Relation
             '%s.%s',
             $tableReference,
             str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey,
+        );
+    }
+
+    public function getExistsStatement(): WhereExistsStatement
+    {
+        $relatedModel = inspect(model: $this->property->getType()->asClass());
+        $parentModel = inspect(model: $this->property->getClass());
+
+        $relatedTable = $relatedModel->getTableName();
+        $parentTable = $parentModel->getTableName();
+        $parentPK = $parentModel->getPrimaryKey();
+
+        $fk = $this->ownerJoin ?? str(string: $parentTable)->singularizeLastWord()->append(suffix: "_{$parentPK}");
+
+        return new WhereExistsStatement(
+            relatedTable: $relatedTable,
+            relatedModelName: $relatedModel->getName(),
+            condition: "{$relatedTable}.{$fk} = {$parentTable}.{$parentPK}",
         );
     }
 

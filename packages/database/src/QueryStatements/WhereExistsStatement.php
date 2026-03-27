@@ -31,9 +31,11 @@ final readonly class WhereExistsStatement implements QueryStatement
                 ->map(map: fn (
                     QueryStatement $where,
                 ) => $where->compile(dialect: $dialect))
-                ->filter(filter: fn (
-                    string $compiled,
-                ) => $compiled !== '')
+                ->filter(
+                    filter: fn (
+                        string $compiled,
+                    ) => $compiled !== '',
+                )
                 ->implode(glue: ' ')
                 ->toString();
 

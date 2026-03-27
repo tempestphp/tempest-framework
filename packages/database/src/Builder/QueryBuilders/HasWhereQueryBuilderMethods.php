@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\WhereOperator;
+use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Database\QueryStatements\WhereGroupStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 
@@ -12,8 +13,9 @@ use function Tempest\Support\str;
 trait HasWhereQueryBuilderMethods
 {
     use HasConvenientWhereMethods;
+    use HasWhereRelationMethods;
 
-    protected function appendWhere(WhereStatement|WhereGroupStatement $where): void
+    protected function appendWhere(WhereStatement|WhereGroupStatement|WhereExistsStatement $where): void
     {
         $this->wheres->offsetSet(null, $where);
     }

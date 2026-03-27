@@ -9,6 +9,7 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -362,6 +363,23 @@ final class BelongsToMany implements Relation
             '%s.%s',
             $tableAlias,
             $primaryKey,
+        );
+    }
+
+    public function getExistsStatement(): WhereExistsStatement
+    {
+        $ownerModel = inspect(model: $this->property->getClass());
+        $targetModel = inspect(model: $this->property->getIterableType()->asClass());
+        $pivotTable = $this->resolvePivotTable(ownerModel: $ownerModel, targetModel: $targetModel);
+
+        $ownerPK = $ownerModel->getPrimaryKey();
+        $ownerTable = $ownerModel->getTableName();
+        $fk = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord()->append(suffix: "_{$ownerPK}");
+
+        return new WhereExistsStatement(
+            relatedTable: $pivotTable,
+            relatedModelName: $targetModel->getName(),
+            condition: "{$pivotTable}.{$fk} = {$ownerTable}.{$ownerPK}",
         );
     }
 }
