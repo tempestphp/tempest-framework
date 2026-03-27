@@ -103,6 +103,60 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         $relation->getJoinStatement();
     }
 
+    public function test_multiple_belongs_to_same_table_generates_distinct_joins(): void
+    {
+        $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
+
+        $createdByRelation = $model->getRelation('createdBy')->setParent('');
+        $updatedByRelation = $model->getRelation('updatedBy')->setParent('');
+
+        $this->assertEquals(
+            'LEFT JOIN users AS createdBy ON createdBy.id = roles.created_by',
+            $createdByRelation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertEquals(
+            'LEFT JOIN users AS updatedBy ON updatedBy.id = roles.updated_by',
+            $updatedByRelation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_multiple_belongs_to_same_table_with_full_table_column_syntax(): void
+    {
+        $model = inspect(BelongsToTestRoleWithFullSpecRelationsModel::class);
+
+        $createdByRelation = $model->getRelation('created_by')->setParent('');
+        $updatedByRelation = $model->getRelation('updated_by')->setParent('');
+
+        $this->assertEquals(
+            'LEFT JOIN users AS created_by ON created_by.id = roles.created_by',
+            $createdByRelation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertEquals(
+            'LEFT JOIN users AS updated_by ON updated_by.id = roles.updated_by',
+            $updatedByRelation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_multiple_belongs_to_same_table_select_fields(): void
+    {
+        $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
+
+        $createdByFields = $model->getRelation('createdBy')->setParent('')->getSelectFields();
+        $updatedByFields = $model->getRelation('updatedBy')->setParent('')->getSelectFields();
+
+        $this->assertSame(
+            'createdBy.id AS `createdBy.id`',
+            $createdByFields[0]->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            'updatedBy.id AS `updatedBy.id`',
+            $updatedByFields[0]->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
     public function test_self_referencing_belongs_to(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
@@ -243,6 +297,42 @@ final class BelongsToTestRelationWithoutIdModel
 final class BelongsToTestOwnerWithoutIdModel
 {
     public BelongsToTestRelationWithoutIdModel $relation;
+
+    public string $name;
+}
+
+#[Table('users')]
+final class BelongsToTestUserModel
+{
+    public PrimaryKey $id;
+
+    public string $name;
+}
+
+#[Table('roles')]
+final class BelongsToTestRoleWithMultipleSameTableRelationsModel
+{
+    public PrimaryKey $id;
+
+    #[BelongsTo(ownerJoin: 'created_by')]
+    public BelongsToTestUserModel $createdBy;
+
+    #[BelongsTo(ownerJoin: 'updated_by')]
+    public BelongsToTestUserModel $updatedBy;
+
+    public string $name;
+}
+
+#[Table('roles')]
+final class BelongsToTestRoleWithFullSpecRelationsModel
+{
+    public PrimaryKey $id;
+
+    #[BelongsTo(relationJoin: 'users.id', ownerJoin: 'roles.created_by')]
+    public ?BelongsToTestUserModel $created_by = null;
+
+    #[BelongsTo(relationJoin: 'users.id', ownerJoin: 'roles.updated_by')]
+    public ?BelongsToTestUserModel $updated_by = null;
 
     public string $name;
 }

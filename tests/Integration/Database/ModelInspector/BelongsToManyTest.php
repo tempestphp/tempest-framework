@@ -67,7 +67,7 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
             ->setParent(name: 'parent');
 
         $this->assertSame(
-            expected: 'LEFT JOIN owner_target ON owner_target.owner_id = owner.id LEFT JOIN target AS parent_targets ON parent_targets.id = owner_target.target_id',
+            expected: 'LEFT JOIN owner_target ON owner_target.owner_id = parent.id LEFT JOIN target AS parent_targets ON parent_targets.id = owner_target.target_id',
             actual: $relation
                 ->getJoinStatement()
                 ->compile(dialect: DatabaseDialect::SQLITE),

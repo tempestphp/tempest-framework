@@ -200,10 +200,11 @@ final class BelongsTo implements Relation
             return $qualifiedColumn;
         }
 
-        if (str_starts_with($qualifiedColumn, $originalTable . '.')) {
-            return $aliasedTable . substr($qualifiedColumn, strlen($originalTable));
-        }
-
-        return $qualifiedColumn;
+        return str($qualifiedColumn)
+            ->replaceFirst(
+                search: $originalTable . '.',
+                replace: $aliasedTable . '.',
+            )
+            ->toString();
     }
 }
