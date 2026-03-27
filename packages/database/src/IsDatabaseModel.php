@@ -85,6 +85,41 @@ trait IsDatabaseModel
     }
 
     /**
+<<<<<<< ours
+<<<<<<< ours
+     * Executes an aggregate query and returns the sum of the given column.
+     */
+    public static function sum(string $column): int|float
+    {
+        return self::queryBuilder()->sum(column: $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the average of the given column.
+     */
+    public static function avg(string $column): float
+    {
+        return self::queryBuilder()->avg(column: $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the maximum value of the given column.
+     */
+    public static function max(string $column): mixed
+    {
+        return self::queryBuilder()->max(column: $column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the minimum value of the given column.
+     */
+    public static function min(string $column): mixed
+    {
+        return self::queryBuilder()->min(column: $column);
+    }
+
+    /**
+||||||| ancestor
      * Executes an aggregate query and returns the sum of the given column.
      */
     public static function sum(string $column): int|float
@@ -117,6 +152,43 @@ trait IsDatabaseModel
     }
 
     /**
+=======
+>>>>>>> theirs
+||||||| ancestor
+=======
+     * Executes an aggregate query and returns the sum of the given column.
+     */
+    public static function sum(string $column): int|float
+    {
+        return self::queryBuilder()->sum($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the average of the given column.
+     */
+    public static function avg(string $column): float
+    {
+        return self::queryBuilder()->avg($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the maximum value of the given column.
+     */
+    public static function max(string $column): mixed
+    {
+        return self::queryBuilder()->max($column);
+    }
+
+    /**
+     * Executes an aggregate query and returns the minimum value of the given column.
+     */
+    public static function min(string $column): mixed
+    {
+        return self::queryBuilder()->min($column);
+    }
+
+    /**
+>>>>>>> theirs
      * Creates a new instance of this model without persisting it to the database.
      */
     public static function new(mixed ...$params): self
