@@ -122,7 +122,7 @@ trait HasWhereRelationMethods
             ? (string) $parts[1]
             : null;
 
-        $existsInfo = $this->model
+        $existsStatement = $this->model
             ->getRelation(name: $relationName)
             ->getExistsStatement();
 
@@ -134,7 +134,7 @@ trait HasWhereRelationMethods
         $innerBindings = arr();
 
         if ($nestedPath !== null) {
-            $innerBuilder = new SelectQueryBuilder(model: $existsInfo->relatedModelName);
+            $innerBuilder = new SelectQueryBuilder(model: $existsStatement->relatedModelName);
             $innerBuilder->whereHas(
                 relation: $nestedPath,
                 callback: $callback,
@@ -143,7 +143,7 @@ trait HasWhereRelationMethods
             $innerWheres = $innerBuilder->wheres;
             $innerBindings = arr(input: $innerBuilder->bindings);
         } elseif ($callback instanceof Closure) {
-            $innerBuilder = new SelectQueryBuilder(model: $existsInfo->relatedModelName);
+            $innerBuilder = new SelectQueryBuilder(model: $existsStatement->relatedModelName);
             $callback($innerBuilder);
 
             $innerWheres = $innerBuilder->wheres;
@@ -151,9 +151,9 @@ trait HasWhereRelationMethods
         }
 
         $whereExists = new WhereExistsStatement(
-            relatedTable: $existsInfo->relatedTable,
-            relatedModelName: $existsInfo->relatedModelName,
-            condition: $existsInfo->condition,
+            relatedTable: $existsStatement->relatedTable,
+            relatedModelName: $existsStatement->relatedModelName,
+            condition: $existsStatement->condition,
             innerWheres: $innerWheres,
             negate: $negate,
             useCount: $useCount,

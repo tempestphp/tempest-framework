@@ -699,6 +699,64 @@ $books[0]->chapters[2]->delete();
 
 :::
 
+### Filtering by relations
+
+Use `whereHas` and `whereDoesntHave` to filter models based on whether related records exist:
+
+```php
+// Authors who have at least one book
+$authors = Author::select()
+    ->whereHas(relation: 'books')
+    ->all();
+
+// Authors who have no books
+$authors = Author::select()
+    ->whereDoesntHave(relation: 'books')
+    ->all();
+```
+
+Add a callback to constrain the related records:
+
+```php
+// Authors who have a published book
+$authors = Author::select()
+    ->whereHas(relation: 'books', callback: function (SelectQueryBuilder $query): void {
+        $query->whereField(field: 'published', value: true);
+    })
+    ->all();
+```
+
+Use `operator` and `count` for count-based filtering:
+
+```php
+// Authors with 3 or more books
+$authors = Author::select()
+    ->whereHas(relation: 'books', operator: WhereOperator::GREATER_THAN_OR_EQUAL, count: 3)
+    ->all();
+```
+
+Dot notation supports nested relations:
+
+```php
+// Authors who have books with chapters
+$authors = Author::select()
+    ->whereHas(relation: 'books.chapters')
+    ->all();
+```
+
+These methods work on all query builders:
+
+```php
+// Count authors with books
+$count = Author::count()->whereHas(relation: 'books')->execute();
+
+// Delete authors without books
+query(model: Author::class)->delete()->whereDoesntHave(relation: 'books')->execute();
+
+// Update authors who have books
+query(model: Author::class)->update(verified: true)->whereHas(relation: 'books')->execute();
+```
+
 ## Migrations
 
 When persisting objects to the database, a table is required to store the data. A migration is a file that instructs the framework how to manage the database schema.
