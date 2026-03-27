@@ -11,7 +11,11 @@ interface Relation extends PropertyAttribute
 {
     public string $name { get; }
 
+    public bool $withPropertyNameAlias { get; }
+
     public function setParent(string $name): self;
+
+    public function withPropertyNameAlias(): self;
 
     public function getSelectFields(): ImmutableArray;
 

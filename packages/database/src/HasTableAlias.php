@@ -8,6 +8,15 @@ use function Tempest\Support\str;
 
 trait HasTableAlias
 {
+    public bool $withPropertyNameAlias = false;
+
+    public function withPropertyNameAlias(): self
+    {
+        $this->withPropertyNameAlias = true;
+
+        return $this;
+    }
+
     private function getTableAlias(string $tableName): string
     {
         if ($this->parent === null) {
@@ -15,11 +24,9 @@ trait HasTableAlias
         }
 
         if ($this->parent === '') {
-            $alias = $this->property->getName();
-
-            return $alias === $tableName
-                ? $tableName
-                : str(string: $alias)->wrap('`')->toString();
+            return $this->withPropertyNameAlias
+                ? $this->property->getName()
+                : $tableName;
         }
 
         return str(string: $this->parent)
@@ -31,22 +38,6 @@ trait HasTableAlias
                 '_',
                 $this->property->getName(),
             )
-            ->wrap('`')
-            ->toString();
-    }
-
-    private function getOwnerTableAlias(string $ownerTableName): string
-    {
-        if ($this->parent === null || $this->parent === '') {
-            return $ownerTableName;
-        }
-
-        return str(string: $this->parent)
-            ->replace(
-                search: '.',
-                replace: '_',
-            )
-            ->wrap('`')
             ->toString();
     }
 

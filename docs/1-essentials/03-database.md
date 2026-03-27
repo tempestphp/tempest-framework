@@ -272,7 +272,7 @@ The `through` parameter specifies the intermediate model class. The target model
 
 ```sql
 LEFT JOIN profiles ON profiles.author_id = authors.id
-LEFT JOIN addresses AS address ON address.profile_id = profiles.id
+LEFT JOIN addresses ON addresses.profile_id = profiles.id
 ```
 
 When conventions don't match, optional parameters can override the join fields:

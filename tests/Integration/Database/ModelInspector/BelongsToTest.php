@@ -107,8 +107,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
     {
         $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
 
-        $createdByRelation = $model->getRelation('createdBy')->setParent('');
-        $updatedByRelation = $model->getRelation('updatedBy')->setParent('');
+        $createdByRelation = $model->getRelation('createdBy')->setParent('')->withPropertyNameAlias();
+        $updatedByRelation = $model->getRelation('updatedBy')->setParent('')->withPropertyNameAlias();
 
         $this->assertEquals(
             'LEFT JOIN users AS createdBy ON createdBy.id = roles.created_by',
@@ -125,8 +125,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
     {
         $model = inspect(BelongsToTestRoleWithFullSpecRelationsModel::class);
 
-        $createdByRelation = $model->getRelation('created_by')->setParent('');
-        $updatedByRelation = $model->getRelation('updated_by')->setParent('');
+        $createdByRelation = $model->getRelation('created_by')->setParent('')->withPropertyNameAlias();
+        $updatedByRelation = $model->getRelation('updated_by')->setParent('')->withPropertyNameAlias();
 
         $this->assertEquals(
             'LEFT JOIN users AS created_by ON created_by.id = roles.created_by',
@@ -143,8 +143,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
     {
         $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
 
-        $createdByFields = $model->getRelation('createdBy')->setParent('')->getSelectFields();
-        $updatedByFields = $model->getRelation('updatedBy')->setParent('')->getSelectFields();
+        $createdByFields = $model->getRelation('createdBy')->setParent('')->withPropertyNameAlias()->getSelectFields();
+        $updatedByFields = $model->getRelation('updatedBy')->setParent('')->withPropertyNameAlias()->getSelectFields();
 
         $this->assertSame(
             'createdBy.id AS `createdBy.id`',

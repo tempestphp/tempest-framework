@@ -105,7 +105,7 @@ final class BelongsTo implements Relation
             ? sprintf('%s AS %s', $tableName, $tableAlias)
             : $tableName;
 
-        // LEFT JOIN authors AS author ON author.id = books.author_id
+        // LEFT JOIN authors ON authors.id = books.author_id
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
             $tableRef,
@@ -171,7 +171,7 @@ final class BelongsTo implements Relation
     private function getOwnerJoin(ModelInspector $ownerModel): string
     {
         $ownerJoin = $this->ownerJoin;
-        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerModel->getTableName());
+        $ownerTable = $ownerModel->getTableName();
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
             $ownerJoin = sprintf('%s.%s', $ownerTable, $ownerJoin);

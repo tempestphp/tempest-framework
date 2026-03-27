@@ -216,7 +216,7 @@ final class HasManyThrough implements Relation
     private function resolveRelationJoin(ModelInspector $ownerModel): string
     {
         $relationJoin = $this->relationJoin;
-        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $ownerModel->getTableName());
+        $ownerTable = $ownerModel->getTableName();
 
         if (
             $relationJoin

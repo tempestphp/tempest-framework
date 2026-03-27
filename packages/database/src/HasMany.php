@@ -189,7 +189,7 @@ final class HasMany implements Relation
     private function getRelationJoin(ModelInspector $relationModel): string
     {
         $relationJoin = $this->relationJoin;
-        $ownerTable = $this->getOwnerTableAlias(ownerTableName: $relationModel->getTableName());
+        $ownerTable = $relationModel->getTableName();
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
             $relationJoin = sprintf(

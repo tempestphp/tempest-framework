@@ -458,7 +458,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id`, author.id AS `author.id`, author.name AS `author.name`, author.type AS `author.type`, author.publisher_id AS `author.publisher_id`, chapters.id AS `chapters.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, isbn.id AS `isbn.id`, isbn.value AS `isbn.value`, isbn.book_id AS `isbn.book_id` FROM `books` LEFT JOIN authors AS author ON author.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns AS isbn ON isbn.book_id = books.id',
+            'SELECT books.id AS `books.id`, books.title AS `books.title`, books.author_id AS `books.author_id`, authors.id AS `author.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, chapters.id AS `chapters.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, isbns.id AS `isbn.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id` FROM `books` LEFT JOIN authors ON authors.id = books.author_id LEFT JOIN chapters ON chapters.book_id = books.id LEFT JOIN isbns ON isbns.book_id = books.id',
             $query->compile(),
         );
     }
@@ -610,7 +610,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $page1 = query(Chapter::class)
             ->select()
             ->with('book')
-            ->whereRaw('book.title = ?', 'LOTR 1')
+            ->whereRaw('books.title = ?', 'LOTR 1')
             ->paginate(itemsPerPage: 5, currentPage: 1);
 
         $this->assertSame(3, $page1->totalItems);
@@ -734,7 +734,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            'SELECT tags.id AS `tags.id`, tags.label AS `tags.label`, topReviewer.id AS `topReviewer.id`, topReviewer.name AS `topReviewer.name`, topReviewer.book_review_id AS `topReviewer.book_review_id` FROM `tags` LEFT JOIN book_reviews ON book_reviews.tag_id = tags.id LEFT JOIN reviewers AS topReviewer ON topReviewer.book_review_id = book_reviews.id',
+            'SELECT tags.id AS `tags.id`, tags.label AS `tags.label`, reviewers.id AS `topReviewer.id`, reviewers.name AS `topReviewer.name`, reviewers.book_review_id AS `topReviewer.book_review_id` FROM `tags` LEFT JOIN book_reviews ON book_reviews.tag_id = tags.id LEFT JOIN reviewers ON reviewers.book_review_id = book_reviews.id',
             $query->compile(),
         );
     }
@@ -747,7 +747,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSameWithoutBackticks(
-            'SELECT users.id AS `users.id`, users.name AS `users.name`, users.role_id AS `users.role_id`, role.id AS `role.id`, role.name AS `role.name`, role_permissions.id AS `role.permissions.id`, role_permissions.label AS `role.permissions.label`, permissions.id AS `permissions.id`, permissions.label AS `permissions.label` FROM `users` LEFT JOIN roles AS role ON role.id = users.role_id LEFT JOIN permissions_roles ON permissions_roles.role_id = role.id LEFT JOIN permissions AS role_permissions ON role_permissions.id = permissions_roles.permission_id LEFT JOIN permissions_users ON permissions_users.user_id = users.id LEFT JOIN permissions ON permissions.id = permissions_users.permission_id',
+            'SELECT users.id AS `users.id`, users.name AS `users.name`, users.role_id AS `users.role_id`, roles.id AS `role.id`, roles.name AS `role.name`, role_permissions.id AS `role.permissions.id`, role_permissions.label AS `role.permissions.label`, permissions.id AS `permissions.id`, permissions.label AS `permissions.label` FROM `users` LEFT JOIN roles ON roles.id = users.role_id LEFT JOIN permissions_roles ON permissions_roles.role_id = roles.id LEFT JOIN permissions AS role_permissions ON role_permissions.id = permissions_roles.permission_id LEFT JOIN permissions_users ON permissions_users.user_id = users.id LEFT JOIN permissions ON permissions.id = permissions_users.permission_id',
             $query->compile(),
         );
     }
