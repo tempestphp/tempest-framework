@@ -911,6 +911,23 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<a><b>hi</b></a>', $html);
     }
 
+    public function test_nested_component_slot_forwarding(): void
+    {
+        $this->view->registerViewComponent('x-a', '<aside><x-slot name="left" /></aside><main><x-slot /></main>');
+        $this->view->registerViewComponent('x-b', <<<'HTML'
+        <x-a>
+            <x-slot name="left">left</x-slot>
+            <x-slot/>
+        </x-a>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <x-b>main</x-b>
+        HTML);
+
+        $this->assertSnippetsMatch('<aside>left</aside><main>main</main>', $html);
+    }
+
     public function test_nested_slots_with_escaping(): void
     {
         $this->view->registerViewComponent('x-a', '<a><x-slot /></a>');
@@ -1213,5 +1230,45 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSnippetsMatch('<div class="a"><div><div class="b">/</div>"></div></div>">', $html);
+    }
+
+    public function test_nested_slot_rendering(): void
+    {
+        $this->view->registerViewComponent('x-a', <<<'HTML'
+        <div>
+            <div class="left">
+                <x-slot name="left"/>
+            </div>
+
+            <div class="main">
+                <x-slot/>
+            </div>
+        </div>
+        HTML);
+
+        $this->view->registerViewComponent('x-b', <<<'HTML'
+        <x-a>
+            <x-slot name="left">
+                left
+            </x-slot>
+            
+            <x-slot/>
+        </x-a>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <x-b>
+            main
+        </x-b>
+        HTML);
+
+        $expected = <<<'HTML'
+        <div>
+            <div class="left">left</div>
+            <div class="main">main</div>
+        </div>
+        HTML;
+
+        $this->assertSnippetsMatch($expected, $html);
     }
 }

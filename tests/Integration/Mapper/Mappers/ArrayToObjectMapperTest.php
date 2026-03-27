@@ -18,6 +18,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithPrimitiveArrayProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ParentObjectWithGetterChild;
+use Tests\Tempest\Integration\Mapper\Fixtures\ParentObjectWithVirtualChild;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
 use function Tempest\Mapper\map;
@@ -165,6 +167,84 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $object->roles);
         $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
+    }
+
+    public function test_parent_child_with_virtual_property(): void
+    {
+        $parent = map(
+            [
+                'name' => 'a',
+                'child' => ['name' => 'b'],
+            ],
+        )
+            ->to(ParentObjectWithVirtualChild::class);
+
+        $this->assertSame('a', $parent->name);
+        $this->assertSame('b', $parent->child->name);
+        $this->assertSame('a', $parent->child->parent->name);
+        $this->assertSame('a', $parent->child->parentCollection[0]->name);
+        $this->assertSame('a', $parent->child->virtualParent->name);
+    }
+
+    public function test_parent_children_with_virtual_property(): void
+    {
+        $parent = map(
+            [
+                'name' => 'a',
+                'children' => [['name' => 'b'], ['name' => 'c']],
+            ],
+        )
+            ->to(ParentObjectWithVirtualChild::class);
+
+        $this->assertSame('a', $parent->name);
+
+        $this->assertSame('b', $parent->children[0]->name);
+        $this->assertSame('a', $parent->children[0]->parent->name);
+        $this->assertSame('a', $parent->children[0]->parentCollection[0]->name);
+        $this->assertSame('a', $parent->children[0]->virtualParent->name);
+
+        $this->assertSame('c', $parent->children[1]->name);
+        $this->assertSame('a', $parent->children[1]->parent->name);
+        $this->assertSame('a', $parent->children[1]->parentCollection[0]->name);
+        $this->assertSame('a', $parent->children[1]->virtualParent->name);
+    }
+
+    public function test_parent_child_with_getter_only_property(): void
+    {
+        $parent = map(
+            [
+                'name' => 'a',
+                'child' => ['name' => 'hello'],
+            ],
+        )
+            ->to(ParentObjectWithGetterChild::class);
+
+        $this->assertSame('a', $parent->name);
+        $this->assertSame('hello', $parent->child->name);
+        $this->assertSame('HELLO', $parent->child->upperName);
+        $this->assertSame('a', $parent->child->parent->name);
+        $this->assertSame('a', $parent->child->parentCollection[0]->name);
+    }
+
+    public function test_parent_children_with_getter_only_property(): void
+    {
+        $parent = map(
+            [
+                'name' => 'a',
+                'children' => [['name' => 'hello'], ['name' => 'world']],
+            ],
+        )
+            ->to(ParentObjectWithGetterChild::class);
+
+        $this->assertSame('a', $parent->name);
+
+        $this->assertSame('hello', $parent->children[0]->name);
+        $this->assertSame('HELLO', $parent->children[0]->upperName);
+        $this->assertSame('a', $parent->children[0]->parent->name);
+
+        $this->assertSame('world', $parent->children[1]->name);
+        $this->assertSame('WORLD', $parent->children[1]->upperName);
+        $this->assertSame('a', $parent->children[1]->parent->name);
     }
 
     public function test_map_primitive_array_properties(): void

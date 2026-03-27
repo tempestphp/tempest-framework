@@ -279,6 +279,47 @@ return new MailgunConfig(
 );
 ```
 
+## Events
+
+Tempest dispatches events during the email sending lifecycle, allowing you to hook into both successful and failed sends.
+
+### Email was sent
+
+The {b`\Tempest\Mail\EmailWasSent`} event is dispatched after an email has been successfully sent:
+
+```php
+use Tempest\EventBus\EventHandler;
+use Tempest\Mail\EmailWasSent;
+
+final class MailEventHandlers
+{
+    #[EventHandler]
+    public function onEmailSent(EmailWasSent $event): void
+    {
+        // $event->email contains the sent email
+    }
+}
+```
+
+### Email sending failed
+
+The {b`\Tempest\Mail\EmailSendingFailed`} event is dispatched when the transport fails to send an email. The original exception is still re-thrown after the event is dispatched:
+
+```php
+use Tempest\EventBus\EventHandler;
+use Tempest\Mail\EmailSendingFailed;
+
+final class MailEventHandlers
+{
+    #[EventHandler]
+    public function onEmailFailed(EmailSendingFailed $event): void
+    {
+        // $event->email contains the email that failed
+        // $event->exception contains the thrown exception
+    }
+}
+```
+
 ## Testing
 
 Any test class extending from {b`\Tempest\Framework\Testing\IntegrationTest`} will have the {b`\Tempest\Mail\Testing\MailTester`} available:
@@ -291,6 +332,30 @@ public function test_welcome_mail()
         ->assertSentTo($this->user->email)
         ->assertAttached('welcome.pdf');
 }
+```
+
+You can also simulate transport failures using `shouldFail()`:
+
+```php
+#[Test]
+public function email_failure(): void
+{
+    $this->mailer->shouldFail();
+
+    try {
+        $this->mailer->send(new WelcomeEmail($this->user));
+    } catch (TransportException $exception) {
+        // handle the exception
+    }
+
+    $this->mailer->assertFailed(WelcomeEmail::class);
+}
+```
+
+By default, `shouldFail()` throws a Symfony `TransportException`. You can pass a custom exception if needed:
+
+```php
+$this->mailer->shouldFail(exception: new RuntimeException(message: 'Connection refused'));
 ```
 
 Note that mails sent within tests using the {b`\Tempest\Mail\Testing\MailTester`} will never be actually sent. Read more about testing [here](/docs/essentials/testing).

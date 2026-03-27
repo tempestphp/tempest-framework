@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.7.0](https://github.com/tempestphp/tempest-framework/compare/v3.6.3..3.7.0)  —  2026-03-24
+## [3.8.0](https://github.com/tempestphp/tempest-framework/compare/v3.7.1..3.8.0)  —  2026-03-27
+
+### 🚀 Features
+
+- **mail**: add email failure event and testing support (#2077) ([c8c2009](https://github.com/tempestphp/tempest-framework/commit/c8c2009a32f23e82dbc002aebbeea828d0ebde04))
+
+### 🐛 Bug fixes
+
+- **view**: improve slot rendering (#2076) ([0c4e165](https://github.com/tempestphp/tempest-framework/commit/0c4e165c67734884b1f136c1d4c1b3b1ffe2c69a))
+
+
+## [3.7.1](https://github.com/tempestphp/tempest-framework/compare/v3.7.0..v3.7.1)  —  2026-03-26
+
+### 🐛 Bug fixes
+
+- **mapper**: setting virtual properties (#2072) ([600699b](https://github.com/tempestphp/tempest-framework/commit/600699b34d7338a3a68d371a8739c06c2d4758f6))
+
+
+## [3.7.0](https://github.com/tempestphp/tempest-framework/compare/v3.6.3..v3.7.0)  —  2026-03-24
 
 ### 🚀 Features
 

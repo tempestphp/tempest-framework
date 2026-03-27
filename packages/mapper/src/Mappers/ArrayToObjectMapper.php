@@ -150,6 +150,10 @@ final class ArrayToObjectMapper implements Mapper
     private function setChildParentRelation(object $parent, mixed $child, ClassReflector $childClass): void
     {
         foreach ($childClass->getPublicProperties() as $childProperty) {
+            if ($childProperty->isVirtual()) {
+                continue;
+            }
+
             if ($childProperty->getType()->equals($parent::class)) {
                 $valueToSet = $parent;
             } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
