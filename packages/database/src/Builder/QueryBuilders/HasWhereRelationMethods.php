@@ -27,13 +27,13 @@ trait HasWhereRelationMethods
     public function whereHas(
         string $relation,
         ?Closure $callback = null,
-        WhereOperator $operator = WhereOperator::GREATER_THAN_OR_EQUAL,
+        string|WhereOperator $operator = WhereOperator::GREATER_THAN_OR_EQUAL,
         int $count = 1,
     ): self {
         return $this->addHasCondition(
             relation: $relation,
             callback: $callback,
-            operator: $operator,
+            operator: WhereOperator::fromOperator(value: $operator),
             count: $count,
             connector: WhereConnector::AND,
             negate: false,
@@ -71,13 +71,13 @@ trait HasWhereRelationMethods
     public function orWhereHas(
         string $relation,
         ?Closure $callback = null,
-        WhereOperator $operator = WhereOperator::GREATER_THAN_OR_EQUAL,
+        string|WhereOperator $operator = WhereOperator::GREATER_THAN_OR_EQUAL,
         int $count = 1,
     ): self {
         return $this->addHasCondition(
             relation: $relation,
             callback: $callback,
-            operator: $operator,
+            operator: WhereOperator::fromOperator(value: $operator),
             count: $count,
             connector: WhereConnector::OR,
             negate: false,
