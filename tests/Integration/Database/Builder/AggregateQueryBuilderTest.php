@@ -103,6 +103,166 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $query->compile());
     }
 
+    #[Test]
+    public function sum_returns_correct_value(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+        Author::create(name: 'Author C');
+
+        $sum = query(Author::class)->sum('id');
+
+        $this->assertSame(6, $sum);
+    }
+
+    #[Test]
+    public function avg_returns_correct_value(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+        Author::create(name: 'Author C');
+
+        $avg = query(Author::class)->avg('id');
+
+        $this->assertSame(2.0, $avg);
+    }
+
+    #[Test]
+    public function max_returns_correct_value(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+        Author::create(name: 'Author C');
+
+        $max = query(Author::class)->max('id');
+
+        $this->assertSame(3, $max);
+    }
+
+    #[Test]
+    public function min_returns_correct_value(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+        Author::create(name: 'Author C');
+
+        $min = query(Author::class)->min('id');
+
+        $this->assertSame(1, $min);
+    }
+
+    #[Test]
+    public function sum_with_where_condition(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+        Author::create(name: 'Author C');
+
+        $sum = query(Author::class)->find(name: 'Author A')->sum('id');
+
+        $this->assertSame(1, $sum);
+    }
+
+    #[Test]
+    public function max_on_string_column(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Alpha');
+        Author::create(name: 'Zeta');
+        Author::create(name: 'Beta');
+
+        $max = query(Author::class)->max('name');
+
+        $this->assertSame('Zeta', $max);
+    }
+
+    #[Test]
+    public function min_on_string_column(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Alpha');
+        Author::create(name: 'Zeta');
+        Author::create(name: 'Beta');
+
+        $min = query(Author::class)->min('name');
+
+        $this->assertSame('Alpha', $min);
+    }
+
+    #[Test]
+    public function sum_static_shortcut_on_model(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+
+        $sum = Author::sum('id');
+
+        $this->assertSame(3, $sum);
+    }
+
+    #[Test]
+    public function avg_static_shortcut_on_model(): void
+    {
+        $this->database->migrate(
+            \Tempest\Database\Migrations\CreateMigrationsTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreatePublishersTable::class,
+            \Tests\Tempest\Fixtures\Migrations\CreateAuthorTable::class,
+        );
+
+        Author::create(name: 'Author A');
+        Author::create(name: 'Author B');
+
+        $avg = Author::avg('id');
+
+        $this->assertSame(1.5, $avg);
+    }
+
     private function buildAggregate(
         SelectQueryBuilder $builder,
         AggregateFunction $function,
