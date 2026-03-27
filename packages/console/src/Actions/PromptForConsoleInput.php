@@ -14,6 +14,7 @@ use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsNotEmptyString;
 use Tempest\Validation\Rules\IsNumeric;
 
+/** @internal */
 final readonly class PromptForConsoleInput
 {
     public function __construct(

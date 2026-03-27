@@ -8,6 +8,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
 
+/** @internal */
 final readonly class ResolveConsoleInput
 {
     /**
