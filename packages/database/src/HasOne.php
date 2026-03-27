@@ -110,7 +110,11 @@ final class HasOne implements Relation
         }
 
         if ($ownerJoin) {
-            return $ownerJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $ownerJoin,
+                originalTable: inspect($this->property->getType()->asClass())->getTableName(),
+                aliasedTable: $tableReference,
+            );
         }
 
         $primaryKey = $relationModel->getPrimaryKey();
@@ -166,7 +170,11 @@ final class HasOne implements Relation
         }
 
         if ($relationJoin) {
-            return $relationJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $relationJoin,
+                originalTable: $relationModel->getTableName(),
+                aliasedTable: $ownerTable,
+            );
         }
 
         $primaryKey = $relationModel->getPrimaryKey();

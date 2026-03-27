@@ -190,7 +190,11 @@ final class HasOneThrough implements Relation
         }
 
         if ($relationJoin) {
-            return $relationJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $relationJoin,
+                originalTable: $ownerModel->getTableName(),
+                aliasedTable: $ownerTable,
+            );
         }
 
         $primaryKey = $ownerModel->getPrimaryKey();

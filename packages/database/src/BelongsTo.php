@@ -193,18 +193,4 @@ final class BelongsTo implements Relation
             $this->getOwnerFieldName(),
         );
     }
-
-    private function rewriteTablePrefix(string $qualifiedColumn, string $originalTable, string $aliasedTable): string
-    {
-        if ($aliasedTable === $originalTable) {
-            return $qualifiedColumn;
-        }
-
-        return str(string: $qualifiedColumn)
-            ->replaceFirst(
-                search: $originalTable . '.',
-                replace: $aliasedTable . '.',
-            )
-            ->toString();
-    }
 }

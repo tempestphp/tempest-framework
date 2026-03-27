@@ -138,7 +138,13 @@ final class HasMany implements Relation
         }
 
         if ($ownerJoin) {
-            return $ownerJoin;
+            $ownerModel = inspect($this->property->getIterableType()->asClass());
+
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $ownerJoin,
+                originalTable: $ownerModel->getTableName(),
+                aliasedTable: $tableReference,
+            );
         }
 
         $primaryKey = $relationModel->getPrimaryKey();
@@ -194,7 +200,11 @@ final class HasMany implements Relation
         }
 
         if ($relationJoin) {
-            return $relationJoin;
+            return $this->rewriteTablePrefix(
+                qualifiedColumn: $relationJoin,
+                originalTable: $relationModel->getTableName(),
+                aliasedTable: $ownerTable,
+            );
         }
 
         $primaryKey = $relationModel->getPrimaryKey();
