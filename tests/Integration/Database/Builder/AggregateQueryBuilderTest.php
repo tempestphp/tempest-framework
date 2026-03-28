@@ -116,7 +116,7 @@ final class AggregateQueryBuilderTest extends FrameworkIntegrationTestCase
         Author::create(name: 'Author B');
         Author::create(name: 'Author C');
 
-        $this->assertSame(2.0, query(model: Author::class)->avg(column: 'id'));
+        $this->assertSame(2, query(model: Author::class)->avg(column: 'id'));
     }
 
     #[Test]

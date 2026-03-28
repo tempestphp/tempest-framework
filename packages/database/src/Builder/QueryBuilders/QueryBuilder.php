@@ -148,7 +148,7 @@ final class QueryBuilder
      * query(User::class)->avg('price');
      * ```
      */
-    public function avg(string $column): float
+    public function avg(string $column): int|float
     {
         return $this->select()->onDatabase(databaseTag: $this->onDatabase)->avg(column: $column);
     }

@@ -95,7 +95,7 @@ trait IsDatabaseModel
     /**
      * Executes an aggregate query and returns the average of the given column.
      */
-    public static function avg(string $column): float
+    public static function avg(string $column): int|float
     {
         return self::queryBuilder()->avg(column: $column);
     }
