@@ -410,9 +410,9 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     /**
      * Executes an aggregate query and returns the average of the given column.
      */
-    public function avg(string $column): int|float
+    public function avg(string $column): float
     {
-        return $this->aggregate(function: AggregateFunction::AVG, column: $column);
+        return (float) $this->aggregate(function: AggregateFunction::AVG, column: $column);
     }
 
     /**
@@ -449,15 +449,14 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
 
         if ($result === null) {
             return match ($function) {
-                AggregateFunction::AVG, AggregateFunction::SUM => 0,
+                AggregateFunction::AVG => 0.0,
+                AggregateFunction::SUM => 0,
                 default => null,
             };
         }
 
         return match ($function) {
-            AggregateFunction::AVG, AggregateFunction::SUM => filter_var(value: $result, filter: FILTER_VALIDATE_INT) !== false
-                ? (int) $result
-                : (float) $result,
+            AggregateFunction::SUM => filter_var(value: $result, filter: FILTER_VALIDATE_INT) !== false ? (int) $result : (float) $result,
             default => $result,
         };
     }
