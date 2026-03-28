@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
+use ArgumentCountError;
 use AssertionError;
 use Closure;
 use Pest\Exceptions\InvalidPestCommand;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Tempest\Discovery\Exceptions\DiscoveryClassCouldNotBeResolved;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
@@ -271,8 +273,15 @@ final class BootDiscovery
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
         } catch (NotFoundExceptionInterface) {
-            /** @var Discovery $discovery */
-            $discovery = new $discoveryClass();
+        }
+
+        if (! $discovery instanceof Discovery) {
+            try {
+                /** @var Discovery $discovery */
+                $discovery = new $discoveryClass();
+            } catch (ArgumentCountError) {
+                throw DiscoveryClassCouldNotBeResolved::forDiscoveryClass($discoveryClass);
+            }
         }
 
         $discovery->setItems(new DiscoveryItems());
