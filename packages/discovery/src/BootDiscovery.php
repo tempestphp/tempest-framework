@@ -28,16 +28,18 @@ final class BootDiscovery
     /**
      * @param class-string<Discovery>[]|null $discoveryClasses
      * @param DiscoveryLocation[]|null $discoveryLocations
+     *
+     * @return Discovery[]
      */
-    public function __invoke(
-        ?array $discoveryClasses = null,
-        ?array $discoveryLocations = null,
-    ): void {
+    public function __invoke(?array $discoveryClasses = null, ?array $discoveryLocations = null): array
+    {
         $discoveries = $this->build($discoveryClasses, $discoveryLocations);
 
         foreach ($discoveries as $discovery) {
             $this->applyDiscovery($discovery);
         }
+
+        return $discoveries;
     }
 
     /**
@@ -45,10 +47,8 @@ final class BootDiscovery
      * @param DiscoveryLocation[]|null $discoveryLocations
      * @return Discovery[]
      */
-    public function build(
-        ?array $discoveryClasses = null,
-        ?array $discoveryLocations = null,
-    ): array {
+    public function build(?array $discoveryClasses = null, ?array $discoveryLocations = null): array
+    {
         $discoveryLocations ??= $this->config->locations;
 
         if ($discoveryClasses === null) {
