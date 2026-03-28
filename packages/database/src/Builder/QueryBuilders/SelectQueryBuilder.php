@@ -456,7 +456,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
         }
 
         return match ($function) {
-            AggregateFunction::SUM => filter_var(value: $result, filter: FILTER_VALIDATE_INT) !== false ? (int) $result : (float) $result,
+            AggregateFunction::SUM => str(string: (string) $result)->contains(needle: '.') ? (float) $result : (int) $result,
             default => $result,
         };
     }
