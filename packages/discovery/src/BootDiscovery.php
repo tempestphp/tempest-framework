@@ -269,17 +269,19 @@ final class BootDiscovery
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
+        $discovery = null;
+
         try {
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
         } catch (NotFoundExceptionInterface) {
+            // @mago-expect lint:no-empty-catch-clause
         }
 
-        if (! $discovery instanceof Discovery) {
+        if ($discovery === null) {
             try {
-                /** @var Discovery $discovery */
                 $discovery = new $discoveryClass();
-            } catch (ArgumentCountError) {
+            } catch (ArgumentCountError) { // @phpstan-ignore catch.neverThrown
                 throw DiscoveryClassCouldNotBeResolved::forDiscoveryClass($discoveryClass);
             }
         }
