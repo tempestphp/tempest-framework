@@ -8,7 +8,7 @@ use AssertionError;
 use Closure;
 use Pest\Exceptions\InvalidPestCommand;
 use Psr\Container\ContainerInterface;
-use Tempest\Container\GenericContainer;
+use Psr\Container\NotFoundExceptionInterface;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Filesystem;
 use Throwable;
@@ -260,16 +260,17 @@ final class BootDiscovery
     /**
      * Create a discovery instance from a class name.
      * Optionally set the cached discovery items whenever caching is enabled.
+     *
      * @template T of Discovery
      * @param class-string<T> $discoveryClass
      * @return T
      */
     private function resolveDiscovery(string $discoveryClass): Discovery
     {
-        if ($this->container instanceof GenericContainer || $this->container->has($discoveryClass)) {
+        try {
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
-        } else {
+        } catch (NotFoundExceptionInterface) {
             /** @var Discovery $discovery */
             $discovery = new $discoveryClass();
         }
