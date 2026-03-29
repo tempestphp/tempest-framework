@@ -11,6 +11,7 @@ final readonly class CharStatement implements QueryStatement
 {
     public function __construct(
         private string $name,
+        private int $size,
         private bool $nullable = false,
         private ?string $default = null,
     ) {}
@@ -18,8 +19,9 @@ final readonly class CharStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '%s CHAR %s %s',
+            '%s CHAR(%s) %s %s',
             $dialect->quoteIdentifier($this->name),
+            $this->size,
             $this->default !== null ? "DEFAULT '{$this->default}'" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
