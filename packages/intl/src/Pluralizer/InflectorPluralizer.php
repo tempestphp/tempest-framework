@@ -9,6 +9,8 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use Stringable;
 
+use function Tempest\Support\str;
+
 final class InflectorPluralizer implements Pluralizer
 {
     private Inflector $inflector;
@@ -39,20 +41,66 @@ final class InflectorPluralizer implements Pluralizer
 
     public function singularizeLastWord(Stringable|string $value): string
     {
-        $string = (string) $value;
-        $parts = preg_split('/(.)(?=[A-Z])/u', $string, flags: PREG_SPLIT_DELIM_CAPTURE);
-        $lastWord = array_pop($parts);
+        $lastWord = $this->extractLastWord(value: (string) $value, prefix: $prefix, suffix: $suffix);
 
-        return implode('', $parts) . $this->singularize($lastWord);
+        if ($lastWord === null) {
+            return $suffix;
+        }
+
+        return $prefix . $this->singularize(value: $lastWord) . $suffix;
     }
 
     public function pluralizeLastWord(Stringable|string $value, int|array|Countable $count = 2): string
     {
-        $string = (string) $value;
-        $parts = preg_split('/(.)(?=[A-Z])/u', $string, flags: PREG_SPLIT_DELIM_CAPTURE);
-        $lastWord = array_pop($parts);
+        $lastWord = $this->extractLastWord(value: (string) $value, prefix: $prefix, suffix: $suffix);
 
-        return implode('', $parts) . $this->pluralize($lastWord, $count);
+        if ($lastWord === null) {
+            return $suffix;
+        }
+
+        return $prefix . $this->pluralize(value: $lastWord, count: $count) . $suffix;
+    }
+
+    private function extractLastWord(string $value, ?string &$prefix = null, ?string &$suffix = null): ?string
+    {
+        $parts = $this->splitWords(value: $value);
+
+        $last = end(array: $parts);
+        $suffix = $last !== false && str(string: $last)->trim(characters: '_')->isEmpty()
+            ? array_pop(array: $parts)
+            : '';
+
+        if (count(value: $parts) === 0) {
+            return null;
+        }
+
+        $lastWord = array_pop(array: $parts);
+        $prefix = implode(separator: '', array: $parts);
+
+        return $lastWord;
+    }
+
+    /**
+     * Splits a string into word segments and underscore delimiters.
+     *
+     * The regex splits on five boundary types:
+     *  - (_+)(?=[a-zA-Z0-9])       — underscore separators followed by a word character (snake_case, SCREAMING_SNAKE)
+     *  - (_+)$                     — trailing underscores at end of string
+     *  - (?<=[a-z0-9])(?=[A-Z])    — lowercase/digit to uppercase transition (camelCase, PascalCase)
+     *  - (?<=[A-Z])(?=[A-Z][a-z])  — end of uppercase run before a new word (HTMLElements → HTML + Elements)
+     *  - (?<=\s)(?=\S)             — whitespace to non-whitespace transition (Multiple Aircraft, small dogs)
+     *
+     * @return list<string>
+     */
+    private function splitWords(string $value): array
+    {
+        return (
+            preg_split(
+                pattern: '/(_+)(?=[a-zA-Z0-9])|(_+)$|(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=\s)(?=\S)/u',
+                subject: $value,
+                flags: PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY,
+            ) ?: []
+        );
     }
 
     private function matchCase(Stringable|string $value, Stringable|string $comparison): string
