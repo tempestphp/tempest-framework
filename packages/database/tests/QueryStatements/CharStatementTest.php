@@ -2,22 +2,14 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\Builder\FieldDefinition;
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\CharStatement;
-use Tempest\Database\QueryStatements\GroupByStatement;
-use Tempest\Database\QueryStatements\HavingStatement;
-use Tempest\Database\QueryStatements\JoinStatement;
-use Tempest\Database\QueryStatements\OrderByStatement;
-use Tempest\Database\QueryStatements\SelectStatement;
-use Tempest\Database\QueryStatements\WhereStatement;
-
-use function Tempest\Support\arr;
 
 final class CharStatementTest extends TestCase
 {
+    #[Test]
     public function test_char(): void
     {
         $statement = new CharStatement(
