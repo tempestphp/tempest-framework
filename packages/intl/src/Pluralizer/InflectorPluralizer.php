@@ -70,7 +70,7 @@ final class InflectorPluralizer implements Pluralizer
             ? array_pop(array: $parts)
             : '';
 
-        if (count(value: $parts) === 0) {
+        if ($parts === []) {
             return null;
         }
 

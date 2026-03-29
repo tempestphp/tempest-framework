@@ -196,7 +196,7 @@ final class ModelInspector
 
             $singularizedName = $name->singularizeLastWord();
 
-            if (! $singularizedName->equals($name)) {
+            if (! $singularizedName->equals($name) && $this->reflector->hasProperty($singularizedName)) {
                 return $this->getBelongsTo($singularizedName);
             }
 
@@ -264,7 +264,7 @@ final class ModelInspector
 
             $singularizedName = $name->singularizeLastWord();
 
-            if (! $singularizedName->equals($name)) {
+            if (! $singularizedName->equals($name) && $this->reflector->hasProperty($singularizedName)) {
                 return $this->getHasOne($singularizedName);
             }
 
@@ -343,7 +343,7 @@ final class ModelInspector
 
             $singularizedName = $name->singularizeLastWord();
 
-            if (! $singularizedName->equals($name)) {
+            if (! $singularizedName->equals($name) && $this->reflector->hasProperty($singularizedName)) {
                 return $this->getHasOneThrough($singularizedName);
             }
 
