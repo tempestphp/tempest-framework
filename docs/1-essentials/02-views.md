@@ -392,7 +392,7 @@ And you'll get
 
 ### Controlling fallthrough attributes with the Apply attribute
 
-You can also leverage the `ApplyAttribute` to completely control the behaviour, and add further fallthrough attributes, if you wish. When `:apply` is detected on a view component, Tempest will disable all automatic fallthrough attributes, for that instance of the view component. If you are familiar with JS frontend frameworks, this is not dissimilar to a one-way `v-bind` in Vue, or a spread props operator in other similar languages.
+You can also leverage the `ApplyAttribute` to completely control the behaviour, and add further fallthrough attributes, if you wish. When `:apply` is detected on a view component, Tempest will disable all automatic fallthrough attributes, for that instance of the view component. If you are familiar with JS frontend frameworks, this is not dissimilar to a one-way `v-bind` in Vue, or a spread props operator in other languages.
 
 By default, `$attributes` is an `ImmutableArray` and so we can manipulate it with the methods available on that class.
 
