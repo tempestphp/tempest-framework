@@ -76,7 +76,7 @@ final class Query
         }
 
         if ($dialect === DatabaseDialect::POSTGRESQL) {
-            $sql = str_replace('`', '', $sql);
+            $sql = str_replace('`', '"', $sql);
         }
 
         return new ImmutableString($sql);
