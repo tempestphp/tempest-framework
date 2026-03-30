@@ -17,6 +17,7 @@ final readonly class AttributeFactory
             $attributeName === ':else' => new ElseAttribute(),
             $attributeName === ':foreach' => new ForeachAttribute(),
             $attributeName === ':forelse' => new ForelseAttribute(),
+            $attributeName === ':apply' => new ApplyAttribute(),
             $attributeName === 'as' => new AsAttribute('as'),
             $attributeName === ':as' => new AsAttribute(':as'),
             str_starts_with($attributeName, '::') => new EscapedExpressionAttribute($attributeName),

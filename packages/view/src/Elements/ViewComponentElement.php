@@ -8,6 +8,7 @@ use Tempest\Core\Environment;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
+use Tempest\View\Attributes\ApplyAttribute;
 use Tempest\View\Element;
 use Tempest\View\Export\ViewObjectExporter;
 use Tempest\View\Parser\TempestViewCompiler;
@@ -35,6 +36,9 @@ final class ViewComponentElement implements Element, WithToken
     private ImmutableArray $viewComponentAttributes;
 
     private ?ImmutableArray $slots = null;
+
+    // Part of the implementation of the :apply attribute on ViewComponentElement
+    private ?string $applyExpression = null;
 
     public function __construct(
         public readonly Token $token,
@@ -68,6 +72,32 @@ final class ViewComponentElement implements Element, WithToken
         $this->scopedVariables[$name] = $name;
 
         return $this;
+    }
+
+    /**
+     * Called by ApplyAttribute when :apply="..." targets this element at the call site.
+     * Strips 'apply' from the attribute maps so it does not leak through as a component
+     * variable or appear in the exported $attributes array passed to the child.
+     */
+    public function setApplyExpression(string $expression): void
+    {
+        $this->applyExpression = $expression;
+
+        $filtered = [];
+        foreach ($this->viewComponentAttributes as $key => $value) {
+            if ($key !== 'apply') {
+                $filtered[$key] = $value;
+            }
+        }
+        $this->viewComponentAttributes = new ImmutableArray($filtered);
+
+        $filtered = [];
+        foreach ($this->expressionAttributes as $key => $value) {
+            if ($key !== 'apply') {
+                $filtered[$key] = $value;
+            }
+        }
+        $this->expressionAttributes = new ImmutableArray($filtered);
     }
 
     public function getViewComponent(): ViewComponent
@@ -156,34 +186,49 @@ final class ViewComponentElement implements Element, WithToken
 
     private function compileComponent(): ImmutableString
     {
+        // If the component template itself uses :apply= anywhere, the developer is controlling
+        // attribute spreading manually. If :apply was set at the call site, all attributes are
+        // forwarded explicitly via the merged $attributes array. Either way, skip auto-fallthrough.
+        $skipFallthrough = str_contains($this->viewComponent->contents, ':apply=')
+            || $this->applyExpression !== null;
+
         $tokens = TempestViewParser::ast($this->viewComponent->contents);
 
         $buffer = '';
 
-        /**
-         * @var int $i
-         * @var Token $token
-         */
-        foreach ($tokens as $i => $token) {
-            // Fallthrough attributes will be applied to the first element in the component.
-            $shouldApplyFallthrough = $i === 0 && $token->type === TokenType::OPEN_TAG_START && $token->tag !== 'x-slot';
+        // Tracks whether we have already applied fallthrough to the first valid target,
+        // replacing the old $i === 0 index check which broke whenever a PHP preamble,
+        // whitespace token, comment, or doctype preceded the first HTML element.
+        $fallthroughApplied = false;
+
+        foreach ($tokens as $token) {
+            // A valid fallthrough target is the first real HTML open or self-closing tag
+            // that is not x-slot. SELF_CLOSING_TAG covers bare no-attribute forms like <div/>.
+            // OPEN_TAG_START covers everything else, including <div class="foo" />.
+            $shouldApplyFallthrough = ! $fallthroughApplied
+                && ! $skipFallthrough
+                && in_array($token->type, [TokenType::OPEN_TAG_START, TokenType::SELF_CLOSING_TAG], true)
+                && $token->tag !== 'x-slot';
 
             if (! $shouldApplyFallthrough) {
-                // Anything else is is compiled like normal
-                $buffer .= $this->compileTokens(
-                    tokens: [$token],
-                );
-
+                $buffer .= $this->compileTokens(tokens: [$token]);
                 continue;
             }
+
+            $fallthroughApplied = true;
 
             $attributes = arr($token->htmlAttributes)
                 ->map(fn (string $value) => new MutableString($value));
 
-            // class, style, and id are fallthrough attributes
-            $attributes = $this->applyFallthroughAttribute($attributes, 'class');
-            $attributes = $this->applyFallthroughAttribute($attributes, 'style');
-            $attributes = $this->applyFallthroughAttribute($attributes, 'id');
+            foreach (['class', 'style', 'id'] as $name) {
+                // If the root element already declares this attribute — in plain form (class="...")
+                // or expression form (:class="...") — leave the developer's logic untouched.
+                if (array_key_exists($name, $token->htmlAttributes) || array_key_exists(':' . $name, $token->htmlAttributes)) {
+                    continue;
+                }
+
+                $attributes = $this->applyFallthroughAttribute($attributes, $name);
+            }
 
             $attributeString = $attributes
                 ->map(fn (MutableString $value, string $key) => sprintf('%s="%s"', $key, $value->trim()))
@@ -193,6 +238,14 @@ final class ViewComponentElement implements Element, WithToken
                     fn (ImmutableString $s) => $s->prepend(' '),
                 );
 
+            if ($token->type === TokenType::SELF_CLOSING_TAG) {
+                // Bare self-closing token with no separate attribute tokens (e.g. <div/>).
+                // Reconstruct as a self-closing tag with the merged attributes.
+                $buffer .= sprintf('<%s%s />', $token->tag, $attributeString);
+                continue;
+            }
+
+            // OPEN_TAG_START — identical to the original behaviour.
             $buffer .= sprintf('<%s%s>', $token->tag, $attributeString);
 
             $buffer .= $this->compileTokens(
@@ -376,7 +429,21 @@ final class ViewComponentElement implements Element, WithToken
                 : sprintf("'%s' => %s", $key, ViewObjectExporter::exportValue($value));
         }
 
-        return sprintf('new \%s([%s])', ImmutableArray::class, implode(', ', $entries));
+        $baseArray = sprintf('new \%s([%s])', ImmutableArray::class, implode(', ', $entries));
+
+        if ($this->applyExpression !== null) {
+            // Merge the apply expression over the base attribute array at runtime.
+            // Right-side wins on key collisions — the passed ImmutableArray or plain array
+            // overwrites any matching key already in the base. iterator_to_array handles both.
+            return sprintf(
+                'new \%1$s(array_replace(iterator_to_array(%2$s), is_array(%3$s) ? %3$s : iterator_to_array(%3$s)))',
+                ImmutableArray::class,
+                $baseArray,
+                $this->applyExpression,
+            );
+        }
+
+        return $baseArray;
     }
 
     public function getImports(): array
