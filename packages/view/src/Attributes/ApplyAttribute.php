@@ -76,11 +76,6 @@ final readonly class ApplyAttribute implements Attribute
                 continue;
             }
 
-            if (is_int($value) || is_float($value)) {
-                $parts[] = sprintf('%s="%s"', $attrName, $value);
-                continue;
-            }
-
             $resolved = ExpressionAttribute::resolveValue($value);
 
             if ($resolved !== '') {
