@@ -26,8 +26,8 @@ final readonly class DropConstraintStatement implements QueryStatement
 
         return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
-                'ALTER TABLE `%s` DROP CONSTRAINT %s',
-                $foreignTable,
+                'ALTER TABLE %s DROP CONSTRAINT %s',
+                $dialect->quoteIdentifier($foreignTable),
                 $constraintName,
             ),
             default => '',

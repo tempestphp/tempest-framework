@@ -27,8 +27,8 @@ final readonly class BooleanStatement implements QueryStatement
         }
 
         return sprintf(
-            '`%s` BOOLEAN %s %s',
-            $this->name,
+            '%s BOOLEAN %s %s',
+            $dialect->quoteIdentifier($this->name),
             $default !== null ? "DEFAULT {$default}" : '',
             $this->nullable ? '' : 'NOT NULL',
         );

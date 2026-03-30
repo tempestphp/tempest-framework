@@ -29,27 +29,18 @@ final class FieldStatement implements QueryStatement
             $aliasPrefix = $this->aliasPrefix ? "{$this->aliasPrefix}." : '';
 
             if ($this->alias === true) {
-                $alias = sprintf(
-                    '`%s%s`',
-                    $aliasPrefix,
-                    str_replace('`', '', $field),
-                );
+                $alias = $aliasPrefix . str_replace('`', '', $field);
             } elseif ($this->alias) {
-                $alias = sprintf(
-                    '`%s%s`',
-                    $aliasPrefix,
-                    $this->alias,
-                );
+                $alias = $aliasPrefix . $this->alias;
             }
         } else {
-            $alias = $parts[1];
+            $alias = trim($parts[1], '`" ');
         }
 
         $field = arr(explode('.', $field))
-            ->map(fn (string $part) => trim($part, '` '))
+            ->map(fn (string $part) => trim($part, '`" '))
             ->map(
                 function (string $part) use ($dialect) {
-                    // Function calls are never wrapped in backticks.
                     if (str_contains($part, '(')) {
                         return $part;
                     }
@@ -58,7 +49,7 @@ final class FieldStatement implements QueryStatement
                         return $part;
                     }
 
-                    return sprintf('`%s`', $part);
+                    return $dialect->quoteIdentifier($part);
                 },
             )
             ->implode('.');
@@ -67,10 +58,7 @@ final class FieldStatement implements QueryStatement
             return $field;
         }
 
-        return match ($dialect) {
-            DatabaseDialect::POSTGRESQL => sprintf('%s AS "%s"', $field, trim($alias, '`')),
-            default => sprintf('%s AS `%s`', $field, trim($alias, '`')),
-        };
+        return sprintf('%s AS %s', $field, $dialect->quoteIdentifier($alias));
     }
 
     public function withAliasPrefix(?string $prefix = null): self

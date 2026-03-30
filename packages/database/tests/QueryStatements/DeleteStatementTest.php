@@ -26,7 +26,9 @@ final class DeleteStatementTest extends TestCase
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
+        $expectedPostgres = 'DELETE FROM "foo" WHERE `bar` = "1"';
+
+        $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
     public function test_exception_when_no_condition_is_set(): void

@@ -33,7 +33,7 @@ final class CountStatement implements QueryStatement, HasWhereStatements
 
         $query = arr([
             sprintf('SELECT %s', $countField->compile($dialect)),
-            sprintf('FROM `%s`', $this->table->name),
+            sprintf('FROM %s', $dialect->quoteIdentifier($this->table->name)),
         ]);
 
         if ($this->joins->isNotEmpty()) {

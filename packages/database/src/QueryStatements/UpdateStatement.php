@@ -27,7 +27,7 @@ final class UpdateStatement implements QueryStatement, HasWhereStatements
         }
 
         $query = arr([
-            sprintf('UPDATE `%s`', $this->table->name),
+            sprintf('UPDATE %s', $dialect->quoteIdentifier($this->table->name)),
         ]);
 
         if ($this->values->isEmpty()) {
@@ -35,7 +35,7 @@ final class UpdateStatement implements QueryStatement, HasWhereStatements
         }
 
         $query[] = 'SET ' . $this->values
-            ->map(fn (mixed $_, mixed $key) => "`{$key}` = ?")
+            ->map(fn (mixed $_, mixed $key) => $dialect->quoteIdentifier($key) . ' = ?')
             ->implode(', ');
 
         if ($this->where->isNotEmpty()) {

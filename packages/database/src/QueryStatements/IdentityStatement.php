@@ -15,6 +15,6 @@ final readonly class IdentityStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf('`%s`', $this->name);
+        return $dialect->quoteIdentifier($this->name);
     }
 }

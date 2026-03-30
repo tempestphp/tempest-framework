@@ -18,8 +18,8 @@ final readonly class DateStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '`%s` DATE %s %s',
-            $this->name,
+            '%s DATE %s %s',
+            $dialect->quoteIdentifier($this->name),
             $this->default !== null ? "DEFAULT '{$this->default}'" : '',
             $this->nullable ? '' : 'NOT NULL',
         );

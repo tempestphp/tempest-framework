@@ -19,12 +19,15 @@ final readonly class IndexStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $columns = arr($this->columns)->implode('`, `')->wrap('`', '`');
+        $columns = arr($this->columns)
+            ->map($dialect->quoteIdentifier(...))
+            ->implode(', ');
 
-        $indexName = str($this->tableName . ' ' . $columns->replace(',', '')->snake())->snake()->toString();
+        $rawColumns = arr($this->columns)->implode('_');
+        $indexName = str($this->tableName . '_' . $rawColumns)->snake()->toString();
 
-        $on = sprintf('`%s` (%s)', $this->tableName, $columns);
+        $on = sprintf('%s (%s)', $dialect->quoteIdentifier($this->tableName), $columns);
 
-        return sprintf('CREATE INDEX `%s` ON %s', $indexName, $on);
+        return sprintf('CREATE INDEX %s ON %s', $dialect->quoteIdentifier($indexName), $on);
     }
 }

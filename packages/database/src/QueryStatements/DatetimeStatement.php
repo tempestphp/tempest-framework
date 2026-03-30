@@ -29,16 +29,18 @@ final readonly class DatetimeStatement implements QueryStatement
             default => null,
         };
 
+        $name = $dialect->quoteIdentifier($this->name);
+
         return match ($dialect) {
             DatabaseDialect::POSTGRESQL => sprintf(
-                '`%s` TIMESTAMP %s %s',
-                $this->name,
+                '%s TIMESTAMP %s %s',
+                $name,
                 $default !== null ? "DEFAULT {$default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
             default => sprintf(
-                '`%s` DATETIME %s %s',
-                $this->name,
+                '%s DATETIME %s %s',
+                $name,
                 $default !== null ? "DEFAULT {$default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),

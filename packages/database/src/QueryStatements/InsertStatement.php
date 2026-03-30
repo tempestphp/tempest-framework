@@ -55,7 +55,7 @@ final class InsertStatement implements QueryStatement
             $sql = sprintf(
                 'INSERT INTO %s (%s) VALUES %s',
                 $this->table,
-                $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
+                $columns->map($dialect->quoteIdentifier(...))->implode(', '),
                 $entryPlaceholders,
             );
         }

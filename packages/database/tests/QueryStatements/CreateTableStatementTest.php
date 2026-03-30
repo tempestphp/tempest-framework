@@ -46,8 +46,8 @@ final class CreateTableStatementTest extends TestCase
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `migrations` (
-                `id` SERIAL PRIMARY KEY, 
+            CREATE TABLE "migrations" (
+                "id" SERIAL PRIMARY KEY, 
                 `name` VARCHAR(255) NOT NULL
             );
             SQL,
@@ -109,11 +109,11 @@ final class CreateTableStatementTest extends TestCase
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` SERIAL PRIMARY KEY, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+            CREATE TABLE "books" (
+                "id" SERIAL PRIMARY KEY, 
+                "author_id" INTEGER  NOT NULL, 
+                CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                "name" VARCHAR(255) NOT NULL
             );
             SQL,
         ];
@@ -160,11 +160,11 @@ final class CreateTableStatementTest extends TestCase
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `books` (
-                `id` SERIAL PRIMARY KEY, 
-                `author_id` INTEGER  NOT NULL, 
-                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
-                `name` VARCHAR(255) NOT NULL
+            CREATE TABLE "books" (
+                "id" SERIAL PRIMARY KEY, 
+                "author_id" INTEGER  NOT NULL, 
+                CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                "name" VARCHAR(255) NOT NULL
             );
             SQL,
         ];
@@ -216,10 +216,10 @@ final class CreateTableStatementTest extends TestCase
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `uuid` UUID PRIMARY KEY, 
-                `name` TEXT NOT NULL, 
-                `email` TEXT NOT NULL
+            CREATE TABLE "users" (
+                "uuid" UUID PRIMARY KEY, 
+                "name" TEXT NOT NULL, 
+                "email" TEXT NOT NULL
             );
             SQL,
         ];
@@ -271,8 +271,8 @@ final class CreateTableStatementTest extends TestCase
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
             <<<SQL
-            CREATE TABLE `users` (
-                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            CREATE TABLE "users" (
+                "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
             );
             SQL,
         ];

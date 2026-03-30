@@ -35,23 +35,25 @@ final readonly class EnumStatement implements QueryStatement
             $defaultValue = null;
         }
 
+        $name = $dialect->quoteIdentifier($this->name);
+
         return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
-                '`%s` ENUM(%s) %s %s',
-                $this->name,
+                '%s ENUM(%s) %s %s',
+                $name,
                 $cases->implode(', '),
                 $defaultValue !== null ? "DEFAULT '{$defaultValue}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::SQLITE => sprintf(
-                '`%s` TEXT %s %s',
-                $this->name,
+                '%s TEXT %s %s',
+                $name,
                 $defaultValue !== null ? "DEFAULT '{$defaultValue}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::POSTGRESQL => sprintf(
-                '"%s" "%s" %s %s',
-                $this->name,
+                '%s "%s" %s %s',
+                $name,
                 str($this->enumClass)->replace('\\\\', '_'),
                 $defaultValue !== null ? "DEFAULT ('{$defaultValue}')" : '',
                 $this->nullable ? '' : 'NOT NULL',

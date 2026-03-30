@@ -47,12 +47,12 @@ final class FieldStatementTest extends TestCase
     public function test_postgres(): void
     {
         $this->assertSame(
-            '`table`.`field`',
+            '"table"."field"',
             new FieldStatement('`table`.`field`')->compile(DatabaseDialect::POSTGRESQL),
         );
 
         $this->assertSame(
-            '`table`.`field`',
+            '"table"."field"',
             new FieldStatement('table.field')->compile(DatabaseDialect::POSTGRESQL),
         );
     }

@@ -19,8 +19,8 @@ final readonly class VarcharStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '`%s` VARCHAR(%s) %s %s',
-            $this->name,
+            '%s VARCHAR(%s) %s %s',
+            $dialect->quoteIdentifier($this->name),
             $this->size,
             $this->default !== null ? "DEFAULT '{$this->default}'" : '',
             $this->nullable ? '' : 'NOT NULL',

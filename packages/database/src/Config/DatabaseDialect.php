@@ -21,6 +21,14 @@ enum DatabaseDialect: string
         };
     }
 
+    public function quoteIdentifier(string $identifier): string
+    {
+        return match ($this) {
+            self::MYSQL, self::SQLITE => sprintf('`%s`', $identifier),
+            self::POSTGRESQL => sprintf('"%s"', $identifier),
+        };
+    }
+
     public function isTableNotFoundError(QueryWasInvalid $queryWasInvalid): bool
     {
         $pdoException = $queryWasInvalid->pdoException;

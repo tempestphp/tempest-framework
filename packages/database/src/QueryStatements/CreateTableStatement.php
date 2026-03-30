@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Enums\DatabaseTextLength;
 use Tempest\Database\HasTrailingStatements;
@@ -400,7 +399,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     {
         return sprintf(
             'CREATE TABLE %s (%s);',
-            new TableDefinition($this->tableName),
+            $dialect->quoteIdentifier($this->tableName),
             arr($this->statements)
                 // Remove BelongsTo for sqlLite as it does not support those queries
                 ->filter(fn (QueryStatement $queryStatement) => ! ($dialect === DatabaseDialect::SQLITE && $queryStatement instanceof BelongsToStatement))

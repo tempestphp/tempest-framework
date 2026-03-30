@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Tempest\Database\Tests;
 
@@ -46,7 +46,7 @@ final class QueryCompileTest extends TestCase
         $container = new GenericContainer();
         $container->singleton(
             className: Database::class,
-            definition: $database
+            definition: $database,
         );
         GenericContainer::setInstance(instance: $container);
     }
@@ -69,7 +69,7 @@ final class QueryCompileTest extends TestCase
         $container = new GenericContainer();
         $container->singleton(
             className: Database::class,
-            definition: $database
+            definition: $database,
         );
         GenericContainer::setInstance(instance: $container);
     }
@@ -92,7 +92,7 @@ final class QueryCompileTest extends TestCase
         $container = new GenericContainer();
         $container->singleton(
             className: Database::class,
-            definition: $database
+            definition: $database,
         );
         GenericContainer::setInstance(instance: $container);
     }
@@ -145,7 +145,7 @@ final class QueryCompileTest extends TestCase
 
         $this->assertSame(
             'SELECT 1',
-            $query->compile()->toString()
+            $query->compile()->toString(),
         );
     }
 

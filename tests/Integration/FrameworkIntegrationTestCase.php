@@ -62,7 +62,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         $clean = fn (string $string): string => str($string)
             ->replace('`', '')
-            ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
+            ->replace('"', '')
             ->toString();
 
         $this->assertSame(

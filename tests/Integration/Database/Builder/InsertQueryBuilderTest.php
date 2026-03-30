@@ -192,7 +192,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
-            INSERT INTO authors (name) VALUES (?) RETURNING *
+            INSERT INTO "authors" ("name") VALUES (?) RETURNING *
             SQL,
             default => <<<'SQL'
             INSERT INTO `authors` (`name`) VALUES (?)

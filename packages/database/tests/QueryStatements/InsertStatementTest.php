@@ -26,7 +26,7 @@ final class InsertStatementTest extends TestCase
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
 
-        $expectedPostgres = 'INSERT INTO `foo` AS `bar` (`foo`, `bar`) VALUES (?, ?), (?, ?) RETURNING *';
+        $expectedPostgres = 'INSERT INTO `foo` AS `bar` ("foo", "bar") VALUES (?, ?), (?, ?) RETURNING *';
 
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }

@@ -26,8 +26,16 @@ final class AlterTableStatementTest extends TestCase
             ->index('foo')
             ->unique('bar');
 
-        $this->assertEqualsIgnoringCase('CREATE INDEX `table_foo` ON `table` (`foo`)', $alterStatement->trailingStatements[0]->compile($dialect));
-        $this->assertEqualsIgnoringCase('CREATE UNIQUE INDEX `table_bar` ON `table` (`bar`)', $alterStatement->trailingStatements[1]->compile($dialect));
+        $q = $dialect->quoteIdentifier(...);
+
+        $this->assertEqualsIgnoringCase(
+            'CREATE INDEX ' . $q('table_foo') . ' ON ' . $q('table') . ' (' . $q('foo') . ')',
+            $alterStatement->trailingStatements[0]->compile($dialect),
+        );
+        $this->assertEqualsIgnoringCase(
+            'CREATE UNIQUE INDEX ' . $q('table_bar') . ' ON ' . $q('table') . ' (' . $q('bar') . ')',
+            $alterStatement->trailingStatements[1]->compile($dialect),
+        );
     }
 
     #[TestWith([DatabaseDialect::MYSQL])]
@@ -35,7 +43,8 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_add_column(DatabaseDialect $dialect): void
     {
-        $expected = "ALTER TABLE `table` ADD `bar` VARCHAR(42) DEFAULT 'xx' ;";
+        $q = $dialect->quoteIdentifier(...);
+        $expected = 'ALTER TABLE ' . $q('table') . ' ADD ' . $q('bar') . " VARCHAR(42) DEFAULT 'xx' ;";
         $statement = new AlterTableStatement('table')
             ->add(new VarcharStatement('bar', 42, true, 'xx'))
             ->compile($dialect);
@@ -61,7 +70,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::POSTGRESQL])]
     public function test_alter_add_belongs_to_postgresql(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` ADD CONSTRAINT `fk_parent_table_foo` FOREIGN KEY(foo) REFERENCES parent(bar) ON DELETE RESTRICT ON UPDATE NO ACTION ;';
+        $expected = 'ALTER TABLE "table" ADD CONSTRAINT "fk_parent_table_foo" FOREIGN KEY(foo) REFERENCES parent(bar) ON DELETE RESTRICT ON UPDATE NO ACTION ;';
         $statement = new AlterTableStatement('table')
             ->add(new BelongsToStatement('table.foo', 'parent.bar'))
             ->compile($dialect);
@@ -86,7 +95,8 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_table_drop_column(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` DROP COLUMN `foo` ;';
+        $q = $dialect->quoteIdentifier(...);
+        $expected = 'ALTER TABLE ' . $q('table') . ' DROP COLUMN ' . $q('foo') . ' ;';
         $statement = new AlterTableStatement('table')
             ->dropColumn('foo')
             ->compile($dialect);
@@ -97,7 +107,7 @@ final class AlterTableStatementTest extends TestCase
     }
 
     #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` DROP CONSTRAINT `foo` ;'])]
-    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` DROP CONSTRAINT `foo` ;'])]
+    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE "table" DROP CONSTRAINT "foo" ;'])]
     public function test_alter_table_drop_constraint(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
@@ -121,7 +131,7 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::MYSQL, "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     #[TestWith([
         DatabaseDialect::POSTGRESQL,
-        "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;",
+        "ALTER TABLE \"table\" ADD \"foo\" VARCHAR(42) DEFAULT 'bar' NOT NULL ;",
     ])]
     #[TestWith([DatabaseDialect::SQLITE, "ALTER TABLE `table` ADD `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     public function test_alter_table_add_column(DatabaseDialect $dialect, string $expected): void
@@ -140,7 +150,8 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_table_rename_column(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` RENAME COLUMN `foo` TO `bar` ;';
+        $q = $dialect->quoteIdentifier(...);
+        $expected = 'ALTER TABLE ' . $q('table') . ' RENAME COLUMN ' . $q('foo') . ' TO ' . $q('bar') . ' ;';
         $statement = new AlterTableStatement('table')
             ->rename('foo', 'bar')
             ->compile($dialect);
@@ -151,7 +162,7 @@ final class AlterTableStatementTest extends TestCase
     }
 
     #[TestWith([DatabaseDialect::MYSQL, "ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
-    #[TestWith([DatabaseDialect::POSTGRESQL, "ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
+    #[TestWith([DatabaseDialect::POSTGRESQL, "ALTER TABLE \"table\" ALTER COLUMN \"foo\" VARCHAR(42) DEFAULT 'bar' NOT NULL ;"])]
     public function test_alter_table_modify_column(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')

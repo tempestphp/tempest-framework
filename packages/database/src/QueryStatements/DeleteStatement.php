@@ -25,7 +25,7 @@ final class DeleteStatement implements QueryStatement, HasWhereStatements
         }
 
         $query = arr([
-            sprintf('DELETE FROM `%s`', $this->table->name),
+            sprintf('DELETE FROM %s', $dialect->quoteIdentifier($this->table->name)),
         ]);
 
         if ($this->where->isNotEmpty()) {

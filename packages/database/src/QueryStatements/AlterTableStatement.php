@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\QueryStatement;
@@ -92,7 +91,7 @@ final class AlterTableStatement implements QueryStatement, HasTrailingStatements
         if ($this->statements !== []) {
             return sprintf(
                 'ALTER TABLE %s %s;',
-                new TableDefinition($this->tableName),
+                $dialect->quoteIdentifier($this->tableName),
                 arr($this->statements)
                     ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
                     ->filter(fn (ImmutableString $line) => $line->isNotEmpty())

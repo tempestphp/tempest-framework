@@ -29,7 +29,7 @@ final class UuidPrimaryKeyStatementTest extends TestCase
         $statement = new UuidPrimaryKeyStatement('uuid');
         $compiled = $statement->compile(DatabaseDialect::POSTGRESQL);
 
-        $this->assertSame('`uuid` UUID PRIMARY KEY', $compiled);
+        $this->assertSame('"uuid" UUID PRIMARY KEY', $compiled);
     }
 
     #[Test]

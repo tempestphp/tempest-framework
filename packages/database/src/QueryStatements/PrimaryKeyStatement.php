@@ -15,10 +15,12 @@ final readonly class PrimaryKeyStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $name = $dialect->quoteIdentifier($this->name);
+
         return match ($dialect) {
-            DatabaseDialect::MYSQL => sprintf('`%s` INTEGER PRIMARY KEY AUTO_INCREMENT', $this->name),
-            DatabaseDialect::POSTGRESQL => sprintf('`%s` SERIAL PRIMARY KEY', $this->name),
-            DatabaseDialect::SQLITE => sprintf('`%s` INTEGER PRIMARY KEY AUTOINCREMENT', $this->name),
+            DatabaseDialect::MYSQL => "{$name} INTEGER PRIMARY KEY AUTO_INCREMENT",
+            DatabaseDialect::POSTGRESQL => "{$name} SERIAL PRIMARY KEY",
+            DatabaseDialect::SQLITE => "{$name} INTEGER PRIMARY KEY AUTOINCREMENT",
         };
     }
 }

@@ -22,21 +22,23 @@ final readonly class JsonStatement implements QueryStatement
             throw new DefaultValueWasInvalid($this->name, $this->default);
         }
 
+        $name = $dialect->quoteIdentifier($this->name);
+
         return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
-                '`%s` JSON %s',
-                $this->name,
+                '%s JSON %s',
+                $name,
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::SQLITE => sprintf(
-                '`%s` TEXT %s %s',
-                $this->name,
+                '%s TEXT %s %s',
+                $name,
                 $this->default !== null ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::POSTGRESQL => sprintf(
-                '`%s` JSONB %s %s',
-                $this->name,
+                '%s JSONB %s %s',
+                $name,
                 $this->default !== null ? "DEFAULT ('{$this->default}')" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),

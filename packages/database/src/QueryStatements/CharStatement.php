@@ -18,8 +18,8 @@ final readonly class CharStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '`%s` CHAR %s %s',
-            $this->name,
+            '%s CHAR %s %s',
+            $dialect->quoteIdentifier($this->name),
             $this->default !== null ? "DEFAULT '{$this->default}'" : '',
             $this->nullable ? '' : 'NOT NULL',
         );

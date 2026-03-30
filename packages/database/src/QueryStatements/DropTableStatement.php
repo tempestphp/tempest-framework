@@ -36,8 +36,8 @@ final class DropTableStatement implements QueryStatement, HasLeadingStatements
     public function compile(DatabaseDialect $dialect): string
     {
         return match ($dialect) {
-            DatabaseDialect::POSTGRESQL => sprintf('DROP TABLE IF EXISTS `%s` CASCADE', $this->tableName),
-            default => sprintf('DROP TABLE IF EXISTS `%s`', $this->tableName),
+            DatabaseDialect::POSTGRESQL => sprintf('DROP TABLE IF EXISTS %s CASCADE', $dialect->quoteIdentifier($this->tableName)),
+            default => sprintf('DROP TABLE IF EXISTS %s', $dialect->quoteIdentifier($this->tableName)),
         };
     }
 }

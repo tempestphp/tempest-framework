@@ -19,17 +19,19 @@ final readonly class IntegerStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $name = $dialect->quoteIdentifier($this->name);
+
         return match ($dialect) {
             DatabaseDialect::SQLITE => sprintf(
-                '`%s` INTEGER %s %s %s',
-                $this->name,
+                '%s INTEGER %s %s %s',
+                $name,
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
             default => sprintf(
-                '`%s` %s %s %s %s',
-                $this->name,
+                '%s %s %s %s %s',
+                $name,
                 is_int($this->size) ? DatabaseIntegerSize::fromBytes($this->size)->toString() : $this->size->toString(),
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',

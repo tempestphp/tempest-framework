@@ -18,8 +18,8 @@ final readonly class FloatStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '`%s` FLOAT %s %s',
-            $this->name,
+            '%s FLOAT %s %s',
+            $dialect->quoteIdentifier($this->name),
             $this->default !== null ? "DEFAULT {$this->default}" : '',
             $this->nullable ? '' : 'NOT NULL',
         );

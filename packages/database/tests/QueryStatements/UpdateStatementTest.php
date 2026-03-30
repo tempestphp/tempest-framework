@@ -28,7 +28,9 @@ final class UpdateStatementTest extends TestCase
 
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
+        $expectedPostgres = 'UPDATE "foo" SET "bar" = ?, "baz" = ? WHERE `bar` = ?';
+
+        $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
     public function test_exception_when_no_values(): void
