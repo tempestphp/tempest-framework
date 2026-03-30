@@ -9,6 +9,8 @@ use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\ViewComponentElement;
 
+use function Tempest\Support\str;
+
 final readonly class ApplyAttribute implements Attribute
 {
     public function apply(Element $element): Element
@@ -35,13 +37,24 @@ final readonly class ApplyAttribute implements Attribute
     }
 
     /**
-     * Renders an ImmutableArray or plain array of attributes as an HTML attribute string.
+     * Stringifies an ImmutableArray or plain array of attributes into an HTML attribute string.
      *
-     * Boolean true emits a bare attribute name (e.g. `disabled`).
-     * Boolean false, null, and empty string are omitted entirely.
-     * All other values are rendered as name="value" pairs via ExpressionAttribute::render().
+     * Rules:
+     * - boolean true  → bare attribute name (e.g. `disabled`)
+     * - boolean false → omitted
+     * - null          → omitted
+     * - empty string  → omitted
+     * - int / float   → name="value" (cast to string — HTML attributes are always strings)
+     * - string        → name="value"
+     * - array         → name="space-joined values" (via ExpressionAttribute::resolveValue)
      *
-     * Returns a string with a leading space when not empty, or an empty string.
+     * Returns 'key="val" key2="val2"' with NO leading space. GenericElement's compile()
+     * inserts one space before the raw attribute block at compile time, so adding a leading
+     * space here would produce a double space in the rendered output.
+     *
+     * Note: when this returns '' (all attributes omitted), GenericElement's compile-time
+     * space still appears, producing e.g. `<button >`. This is pre-existing framework
+     * behaviour shared with ExpressionAttribute and cannot be fixed in this class alone.
      */
     public static function renderAll(ImmutableArray|array $attributes): string
     {
@@ -52,13 +65,29 @@ final readonly class ApplyAttribute implements Attribute
         $parts = [];
 
         foreach ($attributes as $name => $value) {
-            $rendered = ExpressionAttribute::render((string) $name, $value);
+            $attrName = str($name)->kebab()->toString();
 
-            if ($rendered !== '') {
-                $parts[] = $rendered;
+            if ($value === true) {
+                $parts[] = $attrName;
+                continue;
+            }
+
+            if ($value === false || $value === null || $value === '') {
+                continue;
+            }
+
+            if (is_int($value) || is_float($value)) {
+                $parts[] = sprintf('%s="%s"', $attrName, $value);
+                continue;
+            }
+
+            $resolved = ExpressionAttribute::resolveValue($value);
+
+            if ($resolved !== '') {
+                $parts[] = sprintf('%s="%s"', $attrName, $resolved);
             }
         }
 
-        return $parts === [] ? '' : ' ' . implode(' ', $parts);
+        return implode(' ', $parts);
     }
 }
