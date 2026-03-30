@@ -621,6 +621,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_fallthrough_attributes(): void
     {
+        // Root has no class/style/id — all three fall through from the call site.
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div></div>
         HTML);
@@ -636,6 +637,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_merged_fallthrough_attributes(): void
     {
+        // Root defines all three of class, style, and id. None of the parent values
+        // are applied — the component's own declarations are left untouched.
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div class="foo" style="font-weight: bold;" id="other"></div>
         HTML);
@@ -645,12 +648,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSnippetsMatch(<<<'HTML'
-        <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
+        <div class="foo" style="font-weight: bold;" id="other"></div>
         HTML, $html);
     }
 
     public function test_fallthrough_attributes_with_other_attributes(): void
     {
+        // Root defines all three of class, style, and id. None of the parent values
+        // are applied — the component's own declarations are left untouched.
+        // Use :apply inside the component template if you need to merge manually.
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div class="foo" style="font-weight: bold;" id="other"></div>
         HTML);
@@ -660,7 +666,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertSnippetsMatch(<<<'HTML'
-        <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
+        <div class="foo" style="font-weight: bold;" id="other"></div>
         HTML, $html);
     }
 
@@ -694,21 +700,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch(<<<'HTML'
         <div class="inner upper"></div>
-        HTML, $html);
-    }
-
-    public function test_merge_class_from_template_to_component(): void
-    {
-        $this->view->registerViewComponent('x-test', <<<'HTML'
-        <div class="bg-gray-200"></div>
-        HTML);
-
-        $html = $this->view->render(<<<'HTML'
-        <x-test class="bg-red-500"></x-test>
-        HTML);
-
-        $this->assertSnippetsMatch(<<<'HTML'
-        <div class="bg-gray-200 bg-red-500"></div>
         HTML, $html);
     }
 
