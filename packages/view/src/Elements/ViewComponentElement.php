@@ -189,8 +189,7 @@ final class ViewComponentElement implements Element, WithToken
         // If the component template itself uses :apply= anywhere, the developer is controlling
         // attribute spreading manually. If :apply was set at the call site, all attributes are
         // forwarded explicitly via the merged $attributes array. Either way, skip auto-fallthrough.
-        $skipFallthrough = str_contains($this->viewComponent->contents, ':apply=')
-            || $this->applyExpression !== null;
+        $skipFallthrough = str_contains($this->viewComponent->contents, ':apply=') || $this->applyExpression !== null;
 
         $tokens = TempestViewParser::ast($this->viewComponent->contents);
 
@@ -205,10 +204,8 @@ final class ViewComponentElement implements Element, WithToken
             // A valid fallthrough target is the first real HTML open or self-closing tag
             // that is not x-slot. SELF_CLOSING_TAG covers bare no-attribute forms like <div/>.
             // OPEN_TAG_START covers everything else, including <div class="foo" />.
-            $shouldApplyFallthrough = ! $fallthroughApplied
-                && ! $skipFallthrough
-                && in_array($token->type, [TokenType::OPEN_TAG_START, TokenType::SELF_CLOSING_TAG], true)
-                && $token->tag !== 'x-slot';
+            $shouldApplyFallthrough =
+                ! $fallthroughApplied && ! $skipFallthrough && in_array($token->type, [TokenType::OPEN_TAG_START, TokenType::SELF_CLOSING_TAG], true) && $token->tag !== 'x-slot';
 
             if (! $shouldApplyFallthrough) {
                 $buffer .= $this->compileTokens(tokens: [$token]);

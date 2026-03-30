@@ -219,7 +219,7 @@ final class FallthroughAttributesTest extends TestCase
         );
     }
 
-    // :apply 
+    // :apply
     //
     // :apply="$attributes" inside the component template opts out of auto-fallthrough
     // and spreads the full $attributes ImmutableArray onto the targeted element.
