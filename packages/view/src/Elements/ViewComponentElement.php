@@ -85,18 +85,24 @@ final class ViewComponentElement implements Element, WithToken
 
         $filtered = [];
         foreach ($this->viewComponentAttributes as $key => $value) {
-            if ($key !== 'apply') {
-                $filtered[$key] = $value;
+            if ($key === 'apply') {
+                continue;
             }
+
+            $filtered[$key] = $value;
         }
+
         $this->viewComponentAttributes = new ImmutableArray($filtered);
 
         $filtered = [];
         foreach ($this->expressionAttributes as $key => $value) {
-            if ($key !== 'apply') {
-                $filtered[$key] = $value;
+            if ($key === 'apply') {
+                continue;
             }
+
+            $filtered[$key] = $value;
         }
+
         $this->expressionAttributes = new ImmutableArray($filtered);
     }
 
@@ -186,12 +192,22 @@ final class ViewComponentElement implements Element, WithToken
 
     private function compileComponent(): ImmutableString
     {
-        // If the component template itself uses :apply= anywhere, the developer is controlling
+        $tokens = TempestViewParser::ast($this->viewComponent->contents);
+
+        $containsApply = static function (iterable $tokens) use (&$containsApply): bool {
+            foreach ($tokens as $token) {
+                if (array_key_exists(':apply', $token->htmlAttributes) || $containsApply($token->children)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        // If the component template itself uses :apply on any element, the developer is controlling
         // attribute spreading manually. If :apply was set at the call site, all attributes are
         // forwarded explicitly via the merged $attributes array. Either way, skip auto-fallthrough.
-        $skipFallthrough = str_contains($this->viewComponent->contents, ':apply=') || $this->applyExpression !== null;
-
-        $tokens = TempestViewParser::ast($this->viewComponent->contents);
+        $skipFallthrough = $this->applyExpression !== null || $containsApply($tokens);
 
         $buffer = '';
 
@@ -220,10 +236,12 @@ final class ViewComponentElement implements Element, WithToken
             foreach (['class', 'style', 'id'] as $name) {
                 // If the root element already declares this attribute — in plain form (class="...")
                 // or expression form (:class="...") — leave the developer's logic untouched.
-                if (array_key_exists($name, $token->htmlAttributes) || array_key_exists(':' . $name, $token->htmlAttributes)) {
+                if (array_key_exists($name, $token->htmlAttributes)) {
                     continue;
                 }
-
+                if (array_key_exists(':' . $name, $token->htmlAttributes)) {
+                    continue;
+                }
                 $attributes = $this->applyFallthroughAttribute($attributes, $name);
             }
 
