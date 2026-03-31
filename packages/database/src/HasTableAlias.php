@@ -25,7 +25,7 @@ trait HasTableAlias
 
         if ($this->parent === '') {
             return $this->withPropertyNameAlias
-                ? $this->property->getName()
+                ? str(string: $this->property->getName())->wrap('`')->toString()
                 : $tableName;
         }
 
@@ -38,6 +38,7 @@ trait HasTableAlias
                 '_',
                 $this->property->getName(),
             )
+            ->wrap('`')
             ->toString();
     }
 
