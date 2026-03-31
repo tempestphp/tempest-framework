@@ -325,6 +325,32 @@ trait ManipulatesArray
     }
 
     /**
+     * Returns a new instance of the array, with only key=>value pairs from the first array where the key matches the values
+     * from the second array; a wrapper around intersectKeys with an array_flip for convenience.
+     *
+     * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays
+     *
+     * @return static<TKey, TValue>
+     */
+    public function with(array|self ...$arrays): self
+    {
+        return $this->createOrModify(namespace\intersect_keys($this->value, array_flip(...$arrays)));
+    }
+
+    /**
+     * Returns a new instance of the array, without the key=>value pairs from the first array where the key matches the values
+     * from the second array; a wrapper around diffKeys with an array_flip for convenience.
+     *
+     * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays
+     *
+     * @return static<TKey, TValue>
+     */
+    public function without(array|self ...$arrays): self
+    {
+        return $this->createOrModify(namespace\diff_keys($this->value, array_flip(...$arrays)));
+    }
+
+    /**
      * Merges the array with the given arrays.
      *
      * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays The arrays to merge.
