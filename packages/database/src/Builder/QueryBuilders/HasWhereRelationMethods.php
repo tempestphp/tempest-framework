@@ -154,6 +154,7 @@ trait HasWhereRelationMethods
             relatedTable: $existsStatement->relatedTable,
             relatedModelName: $existsStatement->relatedModelName,
             condition: $existsStatement->condition,
+            joinStatement: $existsStatement->joinStatement,
             innerWheres: $innerWheres,
             negate: $negate,
             useCount: $useCount,

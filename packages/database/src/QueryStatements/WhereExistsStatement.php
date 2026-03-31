@@ -15,6 +15,7 @@ final readonly class WhereExistsStatement implements QueryStatement
         public string $relatedTable,
         public string $relatedModelName,
         public string $condition,
+        public ?JoinStatement $joinStatement = null,
         private ImmutableArray $innerWheres = new ImmutableArray(),
         private bool $negate = false,
         private bool $useCount = false,
@@ -44,14 +45,20 @@ final readonly class WhereExistsStatement implements QueryStatement
             }
         }
 
+        $fromClause = $this->relatedTable;
+
+        if ($this->joinStatement instanceof JoinStatement && $this->innerWheres->isNotEmpty()) {
+            $fromClause .= ' ' . $this->joinStatement->compile(dialect: $dialect);
+        }
+
         if ($this->useCount) {
-            return "(SELECT COUNT(*) FROM {$this->relatedTable} WHERE {$whereClause}) {$this->operator->value} {$this->count}";
+            return "(SELECT COUNT(*) FROM {$fromClause} WHERE {$whereClause}) {$this->operator->value} {$this->count}";
         }
 
         $keyword = $this->negate
             ? 'NOT EXISTS'
             : 'EXISTS';
 
-        return "{$keyword} (SELECT 1 FROM {$this->relatedTable} WHERE {$whereClause})";
+        return "{$keyword} (SELECT 1 FROM {$fromClause} WHERE {$whereClause})";
     }
 }

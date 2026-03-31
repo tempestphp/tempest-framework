@@ -376,10 +376,17 @@ final class BelongsToMany implements Relation
         $ownerTable = $ownerModel->getTableName();
         $fk = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord()->append(suffix: "_{$ownerPK}");
 
+        $targetTable = $targetModel->getTableName();
+        $targetPK = $targetModel->getPrimaryKey();
+        $targetFK = $this->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord()->append(suffix: "_{$targetPK}");
+
         return new WhereExistsStatement(
             relatedTable: $pivotTable,
             relatedModelName: $targetModel->getName(),
             condition: "{$pivotTable}.{$fk} = {$ownerTable}.{$ownerPK}",
+            joinStatement: new JoinStatement(
+                statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetPK} = {$pivotTable}.{$targetFK}",
+            ),
         );
     }
 }
