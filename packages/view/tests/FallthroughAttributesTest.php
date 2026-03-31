@@ -7,8 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Tempest\View\Renderers\TempestViewRenderer;
 use Tempest\View\ViewConfig;
 
-use function Tempest\View\view;
-
 final class FallthroughAttributesTest extends TestCase
 {
     private function strip(string $html): string
