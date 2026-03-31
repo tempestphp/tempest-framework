@@ -404,7 +404,7 @@ You cannot mix `ApplyAttribute` with automatic fallthrough attributes. Opting to
 
 To exclude specific attributes from falling through, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->diffKeys(array_flip(['id', 'style']))">
+<button :apply="$attributes->without(['id', 'style'])">
 	<x-slot />
 </button>
 ```
@@ -424,7 +424,7 @@ Will result in:
 
 To include only specific attributes, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->intersectKeys(array_flip(['class', 'width', 'height']))">
+<button :apply="$attributes->with(['class', 'width', 'height'])">
 	<x-slot />
 </button>
 ```
