@@ -257,6 +257,69 @@ final class WhereHasTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function where_has_on_belongs_to_many_with_callback(): void
+    {
+        $sql = Tag::select()
+            ->whereHas(
+                relation: 'books',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'title',
+                        value: 'LOTR 1',
+                    );
+                },
+            )
+            ->compile();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS tags.id, tags.label AS tags.label FROM tags WHERE EXISTS (SELECT 1 FROM books_tags INNER JOIN books ON books.id = books_tags.book_id WHERE books_tags.tag_id = tags.id AND books.title = ?)',
+            $sql,
+        );
+    }
+
+    #[Test]
+    public function where_has_on_belongs_to_many_with_callback_filters_correctly(): void
+    {
+        $this->seed();
+
+        $tags = Tag::select()
+            ->whereHas(
+                relation: 'books',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'title',
+                        value: 'LOTR 1',
+                    );
+                },
+            )
+            ->all();
+
+        $this->assertCount(1, $tags);
+        $this->assertSame('fantasy', $tags[0]->label);
+    }
+
+    #[Test]
+    public function where_doesnt_have_on_belongs_to_many_with_callback(): void
+    {
+        $this->seed();
+
+        $tags = Tag::select()
+            ->whereDoesntHave(
+                relation: 'books',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'title',
+                        value: 'LOTR 1',
+                    );
+                },
+            )
+            ->all();
+
+        $this->assertCount(1, $tags);
+        $this->assertSame('orphan', $tags[0]->label);
+    }
+
+    #[Test]
     public function where_has_on_has_many_through_relation(): void
     {
         $sql = Tag::select()
