@@ -346,6 +346,69 @@ final class WhereHasTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function where_has_on_has_many_through_with_callback(): void
+    {
+        $sql = Tag::select()
+            ->whereHas(
+                relation: 'reviewers',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'name',
+                        value: 'Alice',
+                    );
+                },
+            )
+            ->compile();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS tags.id, tags.label AS tags.label FROM tags WHERE EXISTS (SELECT 1 FROM book_reviews INNER JOIN reviewers ON reviewers.book_review_id = book_reviews.id WHERE book_reviews.tag_id = tags.id AND reviewers.name = ?)',
+            $sql,
+        );
+    }
+
+    #[Test]
+    public function where_has_on_has_many_through_with_callback_filters_correctly(): void
+    {
+        $this->seed();
+
+        $tags = Tag::select()
+            ->whereHas(
+                relation: 'reviewers',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'name',
+                        value: 'Alice',
+                    );
+                },
+            )
+            ->all();
+
+        $this->assertCount(1, $tags);
+        $this->assertSame('fantasy', $tags[0]->label);
+    }
+
+    #[Test]
+    public function where_has_on_has_one_through_with_callback(): void
+    {
+        $sql = Tag::select()
+            ->whereHas(
+                relation: 'topReviewer',
+                callback: function (SelectQueryBuilder $query): void {
+                    $query->whereField(
+                        field: 'name',
+                        value: 'Alice',
+                    );
+                },
+            )
+            ->compile();
+
+        $this->assertSameWithoutBackticks(
+            'SELECT tags.id AS tags.id, tags.label AS tags.label FROM tags WHERE EXISTS (SELECT 1 FROM book_reviews INNER JOIN reviewers ON reviewers.book_review_id = book_reviews.id WHERE book_reviews.tag_id = tags.id AND reviewers.name = ?)',
+            $sql,
+        );
+    }
+
+    #[Test]
     public function where_has_with_count_compiles_count_subquery(): void
     {
         $sql = Author::select()
