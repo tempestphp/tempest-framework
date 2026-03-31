@@ -71,8 +71,13 @@ final readonly class ApplyAttribute implements Attribute
                 $parts[] = $attrName;
                 continue;
             }
-
-            if ($value === false || $value === null || $value === '') {
+            if ($value === false) {
+                continue;
+            }
+            if ($value === null) {
+                continue;
+            }
+            if ($value === '') {
                 continue;
             }
 
