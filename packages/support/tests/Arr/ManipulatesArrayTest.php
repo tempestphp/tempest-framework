@@ -574,7 +574,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertSame($expected, $current);
     }
 
-    public function test_with(): void
+    public function test_only_keys(): void
     {
         $collection = arr([
             'first_name' => 'John',
@@ -582,7 +582,7 @@ final class ManipulatesArrayTest extends TestCase
             'age' => 42,
         ]);
         $current = $collection
-            ->with(['first_name', 'last_name'])
+            ->onlyKeys(['first_name', 'last_name'])
             ->toArray();
         $expected = [
             'first_name' => 'John',
@@ -592,7 +592,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertSame($expected, $current);
     }
 
-    public function test_without(): void
+    public function test_except_keys(): void
     {
         $collection = arr([
             'first_name' => 'John',
@@ -600,7 +600,7 @@ final class ManipulatesArrayTest extends TestCase
             'age' => 42,
         ]);
         $current = $collection
-            ->without(['age'])
+            ->exceptKeys(['age'])
             ->toArray();
         $expected = [
             'first_name' => 'John',
