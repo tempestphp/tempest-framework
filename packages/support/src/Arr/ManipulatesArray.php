@@ -332,7 +332,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function onlyKeys(array|self ...$arrays): self
+    public function withKeys(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\intersect_keys($this->value, array_flip(...$arrays)));
     }
@@ -345,7 +345,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function exceptKeys(array|self ...$arrays): self
+    public function withoutKeys(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\diff_keys($this->value, array_flip(...$arrays)));
     }
