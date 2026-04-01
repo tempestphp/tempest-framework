@@ -404,12 +404,12 @@ You cannot mix `ApplyAttribute` with automatic fallthrough attributes. Opting to
 
 To exclude specific attributes from falling through, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->without(['id', 'style'])">
+<button :apply="$attributes->withoutKeys(['id', 'style'])">
 	<x-slot />
 </button>
 ```
 :::info
-Why array_flip? In `$attributes` the keys are the attributes, in the array in the example above, the values are the attributes, you could also pass `['class' => 0, 'width' => 1, etc]` without a flip.
+The `withoutKeys` method returns all key=>value pairs, except for those specified. You can also use the `filter` method if you need to use a closure to filter.
 :::
 Now, when utilising it in your page:
 ```html index.view.php
@@ -424,12 +424,12 @@ Will result in:
 
 To include only specific attributes, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->with(['class', 'width', 'height'])">
+<button :apply="$attributes->withKeys(['class', 'width', 'height'])">
 	<x-slot />
 </button>
 ```
 :::info
-Why array_flip? In `$attributes` the keys are the attributes, in the array in the example above, the values are the attributes, you could also pass `['class' => 0, 'width' => 1, etc]` without a flip.
+The `withKeys` method returns only the specified key=>value pairs. You can also use the `filter` method if you need to use a closure to filter.
 :::
 Now, when utilising it in your page:
 ```html index.view.php
