@@ -129,7 +129,19 @@ trait ManipulatesArray
      */
     public function removeKeys(string|int|array $keys): self
     {
-        return $this->createOrModify(remove_keys($this->value, $keys));
+        return $this->createOrModify(namespace\remove_keys($this->value, $keys));
+    }
+
+    /**
+     * Removes all keys and their values from the array, except the ones provided by `$keys`.
+     *
+     * @param array-key|array<array-key> $keys The keys of the items to preserve.
+     *
+     * @return static<TKey, TValue>
+     */
+    public function removeKeysExcept(string|int|array $keys): self
+    {
+        return $this->createOrModify(namespace\remove_keys_except($this->value, $keys));
     }
 
     /**
@@ -322,32 +334,6 @@ trait ManipulatesArray
     public function intersectKeys(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\intersect_keys($this->value, ...$arrays));
-    }
-
-    /**
-     * Returns a new instance of the array, with only key=>value pairs from the first array where the key matches the values
-     * from the second array; a wrapper around intersectKeys with an array_flip for convenience.
-     *
-     * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays
-     *
-     * @return static<TKey, TValue>
-     */
-    public function withKeys(array|self ...$arrays): self
-    {
-        return $this->createOrModify(namespace\intersect_keys($this->value, array_flip(...$arrays)));
-    }
-
-    /**
-     * Returns a new instance of the array, without the key=>value pairs from the first array where the key matches the values
-     * from the second array; a wrapper around diffKeys with an array_flip for convenience.
-     *
-     * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays
-     *
-     * @return static<TKey, TValue>
-     */
-    public function withoutKeys(array|self ...$arrays): self
-    {
-        return $this->createOrModify(namespace\diff_keys($this->value, array_flip(...$arrays)));
     }
 
     /**

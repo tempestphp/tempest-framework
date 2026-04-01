@@ -139,11 +139,29 @@ function shuffle(iterable $array): array
  * @param array-key|array<array-key> $keys The keys of the items to remove.
  * @return array<TKey,TValue>
  */
-function remove_keys(iterable $array, string|int|array $keys): array
+function remove_keys(iterable $array, string|int|iterable $keys): array
 {
     $array = to_array($array);
 
     return namespace\forget_keys($array, $keys);
+}
+
+/**
+ * Removes all key/value pairs that don't match the provided ones. The array is not mutated.
+ *
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param array<TKey,TValue> $array
+ * @param array-key|array<array-key> $keys The keys of the items to preserve.
+ * @return array<TKey,TValue>
+ */
+function remove_keys_except(iterable $array, string|int|iterable $keys): array
+{
+    $array = to_array($array);
+    $keys = to_array($keys);
+
+    return namespace\forget_keys($array, array_diff(array_keys($array), $keys));
 }
 
 /**
