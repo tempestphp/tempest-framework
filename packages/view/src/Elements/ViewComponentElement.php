@@ -78,7 +78,7 @@ final class ViewComponentElement implements Element, WithToken
     /** @return ImmutableArray<array-key, Slot> */
     public function getSlots(): ImmutableArray
     {
-        if ($this->slots !== null) {
+        if ($this->slots instanceof ImmutableArray) {
             return $this->slots;
         }
 
@@ -212,7 +212,7 @@ final class ViewComponentElement implements Element, WithToken
     {
         $buffer = '';
 
-        $parentIsComponent = $parentToken !== null && $this->isViewComponentToken($parentToken);
+        $parentIsComponent = $parentToken instanceof Token && $this->isViewComponentToken($parentToken);
 
         foreach ($tokens as $token) {
             if ($token->tag === 'x-slot') {
