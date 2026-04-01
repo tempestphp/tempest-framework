@@ -20,7 +20,9 @@ final class CharStatementTest extends TestCase
         );
 
         $expectedMysql = '`foo` CHAR(36) DEFAULT \'019d38a9-5504-7a16-ab9d-520bbc289ecc\' NOT NULL';
+        $expectedPgsql = '"foo" CHAR(36) DEFAULT \'019d38a9-5504-7a16-ab9d-520bbc289ecc\' NOT NULL';
 
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
+        $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 }
