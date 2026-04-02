@@ -14,7 +14,7 @@ final readonly class PropertyDefinition
     /**
      * @param string $name The name of the property.
      * @param TypeNode $type The TypeScript type of the property.
-     * @param null|string $fqcn The PHP FQCN of the original type.
+     * @param bool $isNullable Whether the property is nullable.
      */
     public function __construct(
         public string $name,
