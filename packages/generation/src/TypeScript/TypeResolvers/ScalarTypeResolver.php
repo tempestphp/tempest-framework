@@ -6,7 +6,8 @@ namespace Tempest\Generation\TypeScript\TypeResolvers;
 
 use LogicException;
 use Tempest\Core\Priority;
-use Tempest\Generation\TypeScript\ResolvedType;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
@@ -26,10 +27,10 @@ final class ScalarTypeResolver implements TypeResolver
         return $type->isBuiltIn() && isset(self::SCALAR_TYPE_MAP[$type->getName()]);
     }
 
-    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
+    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeNode
     {
         $type = self::SCALAR_TYPE_MAP[$type->getName()] ?? throw new LogicException(sprintf('Unsupported scalar type "%s".', $type->getName()));
 
-        return new ResolvedType($type);
+        return new PrimitiveTypeNode($type);
     }
 }

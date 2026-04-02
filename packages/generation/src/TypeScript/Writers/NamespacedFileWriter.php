@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript\Writers;
 
 use Tempest\Generation\TypeScript\InterfaceDefinition;
-use Tempest\Generation\TypeScript\PropertyDefinition;
 use Tempest\Generation\TypeScript\TypeDefinition;
+use Tempest\Generation\TypeScript\TypeNodeRenderer;
 use Tempest\Generation\TypeScript\TypeScriptOutput;
 use Tempest\Generation\TypeScript\TypeScriptWriter;
 use Tempest\Support\Arr;
@@ -16,10 +16,14 @@ use Tempest\Support\Str;
 /**
  * Writes TypeScript definitions to a single .d.ts file using TypeScript namespaces.
  */
-final readonly class NamespacedFileWriter implements TypeScriptWriter
+final class NamespacedFileWriter implements TypeScriptWriter
 {
+    private TypeNodeRenderer $renderer {
+        get => $this->renderer ??= new TypeNodeRenderer();
+    }
+
     public function __construct(
-        private NamespacedTypeScriptGenerationConfig $config,
+        private readonly NamespacedTypeScriptGenerationConfig $config,
     ) {}
 
     public function write(TypeScriptOutput $output): void
@@ -76,19 +80,27 @@ final readonly class NamespacedFileWriter implements TypeScriptWriter
         $typeName = Str\after_last($definition->class, '\\');
 
         if ($definition instanceof TypeDefinition) {
-            return "  export type {$typeName} = {$definition->definition};";
+            return vsprintf('  export type %s = %s;', [
+                $typeName,
+                $this->renderer->render(
+                    $definition->type,
+                    fn (string $fqcn): string => $this->resolveSymbolForNamespace($fqcn, $definition->namespace),
+                ),
+            ]);
         }
 
         $lines = [];
         $lines[] = "  export interface {$typeName} {";
 
         foreach ($definition->properties as $property) {
-            $lines[] = sprintf(
-                '    %s%s: %s;',
+            $lines[] = vsprintf('    %s%s: %s;', [
                 $property->name,
                 $property->isNullable ? '?' : '',
-                $this->resolveTypeReference($property, $definition),
-            );
+                $this->renderer->render(
+                    type: $property->type,
+                    symbolRenderer: fn (string $fqcn): string => $this->resolveSymbolForNamespace($fqcn, $definition->namespace),
+                ),
+            ]);
         }
 
         $lines[] = '  }';
@@ -96,27 +108,12 @@ final readonly class NamespacedFileWriter implements TypeScriptWriter
         return (string) Arr\implode($lines, glue: "\n");
     }
 
-    private function resolveTypeReference(
-        PropertyDefinition $property,
-        InterfaceDefinition $sourceInterface,
-    ): string {
-        if ($property->fqcn === null) {
-            return $property->definition;
-        }
+    private function resolveSymbolForNamespace(string $fqcn, string $sourceNamespace): string
+    {
+        $targetNamespace = Str\before_last($fqcn, '\\');
+        $targetTypeName = Str\after_last($fqcn, '\\');
 
-        $targetNamespace = Str\before_last($property->fqcn, '\\');
-        $targetTypeName = Str\after_last($property->fqcn, '\\');
-        $arrayBrackets = Str\ends_with($property->definition, '[]') ? '[]' : '';
-
-        // Same namespace, use short name
-        if ($sourceInterface->namespace === $targetNamespace) {
-            return $targetTypeName . $arrayBrackets;
-        }
-
-        // Different namespace, relative path
-        $relativePath = $this->computeRelativeNamespacePath($sourceInterface->namespace, $targetNamespace);
-
-        return $relativePath . $targetTypeName . $arrayBrackets;
+        return $this->computeRelativeNamespacePath($sourceNamespace, $targetNamespace) . $targetTypeName;
     }
 
     private function computeRelativeNamespacePath(string $sourceNamespace, string $targetNamespace): string

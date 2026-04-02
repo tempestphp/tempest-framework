@@ -9,6 +9,11 @@ use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
+use Tempest\Generation\Tests\TypeScript\Fixtures\EnumMetadataTypeResolver;
+use Tempest\Generation\Tests\TypeScript\Fixtures\Metadata\RoleWithMetadata;
+use Tempest\Generation\Tests\TypeScript\Fixtures\MultilineEnum;
+use Tempest\Generation\Tests\TypeScript\Fixtures\QuotedEnum;
+use Tempest\Generation\Tests\TypeScript\Fixtures\UnionHolder;
 use Tempest\Generation\Tests\TypeScript\Fixtures\User;
 use Tempest\Generation\TypeScript\GenericTypeScriptGenerator;
 use Tempest\Generation\TypeScript\StructureResolvers\ClassStructureResolver;
@@ -56,7 +61,12 @@ final class TypeScriptGenerationTest extends TestCase
             ClassReferenceTypeResolver::class,
             MixedTypeResolver::class,
         ];
-        $config->sources = [User::class];
+        $config->sources = [
+            User::class,
+            QuotedEnum::class,
+            MultilineEnum::class,
+            UnionHolder::class,
+        ];
 
         $generator = new GenericTypeScriptGenerator(
             config: $config,
@@ -80,9 +90,47 @@ final class TypeScriptGenerationTest extends TestCase
         $this->assertStringContainsString('theme: Theme;', $content);
         $this->assertStringContainsString('sidebar_open: boolean;', $content);
         $this->assertStringContainsString("export type Theme = 'dark' | 'light';", $content);
+        $this->assertStringContainsString("export type QuotedEnum = 'O\\'Reilly';", $content);
+        $this->assertStringContainsString("export type MultilineEnum = 'first\\nsecond';", $content);
+        $this->assertStringContainsString('export interface UnionHolder {', $content);
+        $this->assertStringContainsString('value: Security.Role | Security.Permission;', $content);
         $this->assertStringContainsString('export namespace Tempest.Generation.Tests.TypeScript.Fixtures.Security {', $content);
         $this->assertStringContainsString('export interface Role {', $content);
         $this->assertStringContainsString('name: string;', $content);
         $this->assertStringContainsString('permissions: Permission[];', $content);
+    }
+
+    #[Test]
+    public function generates_enum_metadata_with_custom_resolver(): void
+    {
+        $path = $this->directory . '/types-metadata.d.ts';
+
+        $container = new GenericContainer();
+        $config = new NamespacedTypeScriptGenerationConfig(filename: $path);
+        $config->sources = [RoleWithMetadata::class];
+        $config->resolvers = [
+            EnumMetadataTypeResolver::class,
+            ScalarTypeResolver::class,
+            DateTimeTypeResolver::class,
+            EnumCaseTypeResolver::class,
+            EnumReferenceTypeResolver::class,
+            ClassReferenceTypeResolver::class,
+            MixedTypeResolver::class,
+        ];
+
+        $generator = new GenericTypeScriptGenerator(
+            config: $config,
+            classResolver: new ClassStructureResolver($config, $container),
+            enumResolver: new EnumStructureResolver($config, $container),
+        );
+
+        new NamespacedFileWriter($config)->write($generator->generate());
+
+        $content = Filesystem\read_file($path);
+
+        $this->assertStringContainsString(
+            "export type RoleWithMetadata = { value: 'admin'; description: 'An administrator'; } | { value: 'user'; description: 'A normal user'; } | { value: 'guest'; description: 'A guest'; };",
+            $content,
+        );
     }
 }

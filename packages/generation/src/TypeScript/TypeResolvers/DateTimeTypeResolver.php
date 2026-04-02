@@ -7,7 +7,8 @@ namespace Tempest\Generation\TypeScript\TypeResolvers;
 use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\Core\Priority;
 use Tempest\DateTime\DateTimeInterface;
-use Tempest\Generation\TypeScript\ResolvedType;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
@@ -20,8 +21,8 @@ final class DateTimeTypeResolver implements TypeResolver
         return $type->matches(DateTimeInterface::class) || $type->matches(NativeDateTimeInterface::class);
     }
 
-    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
+    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeNode
     {
-        return new ResolvedType('string');
+        return new PrimitiveTypeNode('string');
     }
 }

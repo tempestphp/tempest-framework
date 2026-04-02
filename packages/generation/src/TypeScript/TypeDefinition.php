@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript;
 
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Str;
 
@@ -25,7 +26,7 @@ final class TypeDefinition
     public function __construct(
         public string $class,
         public TypeReflector $originalType,
-        public string $definition,
+        public TypeNode $type,
         public bool $isNullable,
     ) {}
 }

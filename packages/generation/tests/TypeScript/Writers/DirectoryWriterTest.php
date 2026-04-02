@@ -11,6 +11,10 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Generation\TypeScript\InterfaceDefinition;
 use Tempest\Generation\TypeScript\PropertyDefinition;
 use Tempest\Generation\TypeScript\TypeDefinition;
+use Tempest\Generation\TypeScript\TypeNodes\LiteralTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\SymbolTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\UnionTypeNode;
 use Tempest\Generation\TypeScript\TypeScriptOutput;
 use Tempest\Generation\TypeScript\Writers\DirectoryTypeScriptGenerationConfig;
 use Tempest\Generation\TypeScript\Writers\DirectoryWriter;
@@ -48,19 +52,18 @@ final class DirectoryWriterTest extends TestCase
             properties: [
                 new PropertyDefinition(
                     name: 'id',
-                    definition: 'number',
+                    type: new PrimitiveTypeNode('number'),
                     isNullable: true,
                 ),
                 new PropertyDefinition(
                     name: 'name',
-                    definition: 'string',
+                    type: new PrimitiveTypeNode('string'),
                     isNullable: false,
                 ),
                 new PropertyDefinition(
                     name: 'role',
-                    definition: 'Role',
+                    type: new SymbolTypeNode('App\\Security\\Role'),
                     isNullable: false,
-                    fqcn: 'App\\Security\\Role',
                 ),
             ],
         );
@@ -68,7 +71,7 @@ final class DirectoryWriterTest extends TestCase
         $postType = new TypeDefinition(
             class: 'App\\Models\\Post',
             originalType: new TypeReflector('string'),
-            definition: 'string',
+            type: new PrimitiveTypeNode('string'),
             isNullable: false,
         );
 
@@ -78,7 +81,7 @@ final class DirectoryWriterTest extends TestCase
             properties: [
                 new PropertyDefinition(
                     name: 'name',
-                    definition: 'string',
+                    type: new PrimitiveTypeNode('string'),
                     isNullable: false,
                 ),
             ],
@@ -87,7 +90,10 @@ final class DirectoryWriterTest extends TestCase
         $themeEnum = new TypeDefinition(
             class: 'App\\Models\\Theme',
             originalType: new TypeReflector('string'),
-            definition: "'dark' | 'light'",
+            type: new UnionTypeNode([
+                new LiteralTypeNode('dark'),
+                new LiteralTypeNode('light'),
+            ]),
             isNullable: false,
         );
 

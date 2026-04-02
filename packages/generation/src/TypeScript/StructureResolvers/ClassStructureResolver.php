@@ -7,8 +7,12 @@ namespace Tempest\Generation\TypeScript\StructureResolvers;
 use Tempest\Container\Container;
 use Tempest\Generation\TypeScript\InterfaceDefinition;
 use Tempest\Generation\TypeScript\PropertyDefinition;
-use Tempest\Generation\TypeScript\ResolvedType;
 use Tempest\Generation\TypeScript\StructureResolver;
+use Tempest\Generation\TypeScript\TypeNodes\ArrayTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\IntersectionTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\UnionTypeNode;
 use Tempest\Generation\TypeScript\TypeScriptGenerationConfig;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\PropertyReflector;
@@ -48,19 +52,18 @@ final readonly class ClassStructureResolver implements StructureResolver
             $elementTypeReflector = $property->getIterableType();
 
             if ($elementTypeReflector instanceof TypeReflector) {
-                $result = $this->resolveType($elementTypeReflector, $generator);
+                $resolvedType = $this->resolveType($elementTypeReflector, $generator);
 
                 return new PropertyDefinition(
                     name: $property->getName(),
-                    definition: $result->type . '[]',
+                    type: new ArrayTypeNode($resolvedType),
                     isNullable: $property->isNullable(),
-                    fqcn: $result->fqcn,
                 );
             }
 
             return new PropertyDefinition(
                 name: $property->getName(),
-                definition: 'any[]',
+                type: new ArrayTypeNode(new PrimitiveTypeNode('any')),
                 isNullable: $property->isNullable(),
             );
         }
@@ -68,42 +71,37 @@ final readonly class ClassStructureResolver implements StructureResolver
         if ($type->isUnion() || $type->isIntersection()) {
             $parts = $type->split();
             $resolvedTypes = [];
-            $referencedClasses = [];
 
             foreach ($parts as $part) {
                 if ($part->getName() === 'null') {
                     continue;
                 }
 
-                $result = $this->resolveType($part, $generator);
-                $resolvedTypes[] = $result->type;
-
-                if ($result->fqcn !== null) {
-                    $referencedClasses[] = $result->fqcn;
-                }
+                $resolvedTypes[] = $this->resolveType($part, $generator);
             }
-
-            $symbol = $type->isIntersection() ? '&' : '|';
 
             return new PropertyDefinition(
                 name: $property->getName(),
-                definition: implode(" {$symbol} ", $resolvedTypes),
+                type: match (true) {
+                    $resolvedTypes === [] => new PrimitiveTypeNode('any'),
+                    count($resolvedTypes) === 1 => $resolvedTypes[0],
+                    $type->isIntersection() => new IntersectionTypeNode($resolvedTypes),
+                    default => new UnionTypeNode($resolvedTypes),
+                },
                 isNullable: $property->isNullable(),
-                fqcn: count($referencedClasses) === 1 ? $referencedClasses[0] : null,
             );
         }
 
-        $result = $this->resolveType($type, $generator);
+        $resolvedType = $this->resolveType($type, $generator);
 
         return new PropertyDefinition(
             name: $property->getName(),
-            definition: $result->type,
+            type: $resolvedType,
             isNullable: $property->isNullable(),
-            fqcn: $result->fqcn,
         );
     }
 
-    private function resolveType(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
+    private function resolveType(TypeReflector $type, TypeScriptGenerator $generator): TypeNode
     {
         foreach ($this->config->resolvers as $resolverClass) {
             $resolver = $this->container->get($resolverClass);
@@ -113,6 +111,6 @@ final readonly class ClassStructureResolver implements StructureResolver
             }
         }
 
-        return new ResolvedType('any');
+        return new PrimitiveTypeNode('any');
     }
 }

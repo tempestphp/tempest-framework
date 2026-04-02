@@ -11,6 +11,12 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Generation\TypeScript\InterfaceDefinition;
 use Tempest\Generation\TypeScript\PropertyDefinition;
 use Tempest\Generation\TypeScript\TypeDefinition;
+use Tempest\Generation\TypeScript\TypeNodes\IntersectionTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\LiteralTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\RawTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\SymbolTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\UnionTypeNode;
 use Tempest\Generation\TypeScript\TypeScriptOutput;
 use Tempest\Generation\TypeScript\Writers\NamespacedFileWriter;
 use Tempest\Generation\TypeScript\Writers\NamespacedTypeScriptGenerationConfig;
@@ -48,17 +54,17 @@ final class NamespacedFileWriterTest extends TestCase
             properties: [
                 new PropertyDefinition(
                     name: 'id',
-                    definition: 'number',
+                    type: new PrimitiveTypeNode('number'),
                     isNullable: false,
                 ),
                 new PropertyDefinition(
                     name: 'username',
-                    definition: 'string',
+                    type: new PrimitiveTypeNode('string'),
                     isNullable: false,
                 ),
                 new PropertyDefinition(
                     name: 'email',
-                    definition: 'string',
+                    type: new PrimitiveTypeNode('string'),
                     isNullable: true,
                 ),
             ],
@@ -67,28 +73,35 @@ final class NamespacedFileWriterTest extends TestCase
         $arrayType = new TypeDefinition(
             class: 'App\\Models\\Tags',
             originalType: new TypeReflector('array'),
-            definition: 'Array<string>',
+            type: new RawTypeNode('Array<string>'),
             isNullable: false,
         );
 
         $unionType = new TypeDefinition(
             class: 'App\\Models\\Role',
             originalType: new TypeReflector('string'),
-            definition: "'admin' | 'user' | 'guest'",
+            type: new UnionTypeNode([
+                new LiteralTypeNode('admin'),
+                new LiteralTypeNode('user'),
+                new LiteralTypeNode('guest'),
+            ]),
             isNullable: false,
         );
 
         $intersectionType = new TypeDefinition(
             class: 'App\\Models\\AdminUser',
             originalType: new TypeReflector('object'),
-            definition: 'User & { permissions: Array<string> }',
+            type: new IntersectionTypeNode([
+                new SymbolTypeNode('App\\Models\\User'),
+                new RawTypeNode('{ permissions: Array<string> }'),
+            ]),
             isNullable: false,
         );
 
-        $controller = new TypeDefinition(
-            class: 'App\\Controllers\\HomeController',
+        $customBoolean = new TypeDefinition(
+            class: 'App\\Scalars\\CustomBoolean',
             originalType: new TypeReflector('bool'),
-            definition: 'boolean',
+            type: new PrimitiveTypeNode('boolean'),
             isNullable: false,
         );
 
@@ -100,7 +113,7 @@ final class NamespacedFileWriterTest extends TestCase
                     $unionType,
                     $intersectionType,
                 ],
-                'App\\Controllers' => [$controller],
+                'App\\Scalars' => [$customBoolean],
             ],
         );
 
@@ -108,7 +121,7 @@ final class NamespacedFileWriterTest extends TestCase
         $content = Filesystem\read_file($outputPath);
 
         $this->assertStringContainsString('export namespace App.Models {', $content);
-        $this->assertStringContainsString('export namespace App.Controllers {', $content);
+        $this->assertStringContainsString('export namespace App.Scalars {', $content);
         $this->assertStringContainsString('export interface User {', $content);
         $this->assertStringContainsString('id: number;', $content);
         $this->assertStringContainsString('username: string;', $content);
@@ -116,6 +129,6 @@ final class NamespacedFileWriterTest extends TestCase
         $this->assertStringContainsString('export type Tags = Array<string>;', $content);
         $this->assertStringContainsString("export type Role = 'admin' | 'user' | 'guest';", $content);
         $this->assertStringContainsString('export type AdminUser = User & { permissions: Array<string> };', $content);
-        $this->assertStringContainsString('export type HomeController = boolean;', $content);
+        $this->assertStringContainsString('export type CustomBoolean = boolean;', $content);
     }
 }

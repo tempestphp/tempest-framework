@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript;
 
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Reflection\TypeReflector;
 
 /**
@@ -17,7 +18,7 @@ interface TypeResolver
     public function canResolve(TypeReflector $type): bool;
 
     /**
-     * Resolves a PHP type into a TypeScript type string. May include a referenced class for cross-namespace resolution.
+     * Resolves a PHP type into a semantic TypeScript type node.
      */
-    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType;
+    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeNode;
 }

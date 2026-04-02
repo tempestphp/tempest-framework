@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript;
 
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
+
 /**
  * Represents a property in a TypeScript interface.
  */
@@ -11,13 +13,12 @@ final readonly class PropertyDefinition
 {
     /**
      * @param string $name The name of the property.
-     * @param string $definition The TypeScript definition of the property.
+     * @param TypeNode $type The TypeScript type of the property.
      * @param null|string $fqcn The PHP FQCN of the original type.
      */
     public function __construct(
         public string $name,
-        public string $definition,
+        public TypeNode $type,
         public bool $isNullable,
-        public ?string $fqcn = null,
     ) {}
 }

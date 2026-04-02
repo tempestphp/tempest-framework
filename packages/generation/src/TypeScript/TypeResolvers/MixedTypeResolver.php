@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript\TypeResolvers;
 
 use Tempest\Core\Priority;
-use Tempest\Generation\TypeScript\ResolvedType;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
+use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
@@ -21,8 +22,8 @@ final class MixedTypeResolver implements TypeResolver
         return true;
     }
 
-    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
+    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeNode
     {
-        return new ResolvedType('any');
+        return new PrimitiveTypeNode('any');
     }
 }

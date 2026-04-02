@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript\Writers;
 
 use Tempest\Generation\TypeScript\InterfaceDefinition;
-use Tempest\Generation\TypeScript\PropertyDefinition;
 use Tempest\Generation\TypeScript\TypeDefinition;
+use Tempest\Generation\TypeScript\TypeNodeRenderer;
 use Tempest\Generation\TypeScript\TypeScriptOutput;
 use Tempest\Generation\TypeScript\TypeScriptWriter;
 use Tempest\Support\Arr;
@@ -16,10 +16,14 @@ use Tempest\Support\Str;
 /**
  * Writes TypeScript definitions to separate .ts files organized by namespace in a directory structure.
  */
-final readonly class DirectoryWriter implements TypeScriptWriter
+final class DirectoryWriter implements TypeScriptWriter
 {
+    private TypeNodeRenderer $renderer {
+        get => $this->renderer ??= new TypeNodeRenderer();
+    }
+
     public function __construct(
-        private DirectoryTypeScriptGenerationConfig $config,
+        private readonly DirectoryTypeScriptGenerationConfig $config,
     ) {}
 
     public function write(TypeScriptOutput $output): void
@@ -39,7 +43,7 @@ final readonly class DirectoryWriter implements TypeScriptWriter
         foreach ($fileGroups as $filename => $namespaces) {
             Filesystem\write_file(
                 filename: $filename,
-                content: $this->generateFileContent($namespaces, $output),
+                content: $this->generateFileContent($namespaces),
             );
         }
     }
@@ -47,7 +51,7 @@ final readonly class DirectoryWriter implements TypeScriptWriter
     /**
      * @param array<string, array<TypeDefinition|InterfaceDefinition>> $namespaces
      */
-    private function generateFileContent(array $namespaces, TypeScriptOutput $output): string
+    private function generateFileContent(array $namespaces): string
     {
         $lines = [];
         $lines[] = '/*';
@@ -57,7 +61,7 @@ final readonly class DirectoryWriter implements TypeScriptWriter
         $lines[] = '*/';
         $lines[] = '';
 
-        $imports = $this->collectImports($namespaces, $output);
+        $imports = $this->collectImports($namespaces);
 
         if ($imports !== []) {
             foreach ($imports as $import) {
@@ -67,9 +71,9 @@ final readonly class DirectoryWriter implements TypeScriptWriter
             $lines[] = '';
         }
 
-        foreach ($namespaces as $namespace => $definitions) {
+        foreach ($namespaces as $definitions) {
             foreach ($definitions as $definition) {
-                $lines[] = $this->generateDefinition($definition, $namespace);
+                $lines[] = $this->generateDefinition($definition);
                 $lines[] = '';
             }
         }
@@ -81,29 +85,25 @@ final readonly class DirectoryWriter implements TypeScriptWriter
      * @param array<string,array<TypeDefinition|InterfaceDefinition>> $namespaces
      * @return array<string>
      */
-    private function collectImports(array $namespaces, TypeScriptOutput $output): array
+    private function collectImports(array $namespaces): array
     {
         $imports = [];
         $currentNamespaces = array_keys($namespaces);
 
         foreach ($namespaces as $namespace => $definitions) {
             foreach ($definitions as $definition) {
-                if (! $definition instanceof InterfaceDefinition) {
-                    continue;
-                }
+                $references = $definition instanceof TypeDefinition
+                    ? $definition->type->references
+                    : $this->collectInterfaceReferences($definition);
 
-                foreach ($definition->properties as $property) {
-                    if ($property->fqcn === null) {
-                        continue;
-                    }
-
-                    $targetNamespace = Str\before_last($property->fqcn, '\\');
+                foreach ($references as $fqcn) {
+                    $targetNamespace = Str\before_last($fqcn, '\\');
 
                     if (in_array($targetNamespace, $currentNamespaces, strict: true)) {
                         continue;
                     }
 
-                    $typeName = Str\after_last($property->fqcn, '\\');
+                    $typeName = Str\after_last($fqcn, '\\');
                     $importPath = $this->computeImportPath($namespace, $targetNamespace);
                     $importKey = "{$importPath}::{$typeName}";
 
@@ -115,41 +115,51 @@ final readonly class DirectoryWriter implements TypeScriptWriter
         return array_values($imports);
     }
 
-    private function generateDefinition(TypeDefinition|InterfaceDefinition $definition, string $currentNamespace): string
+    /**
+     * @return string[]
+     */
+    private function collectInterfaceReferences(InterfaceDefinition $definition): array
+    {
+        $references = [];
+
+        foreach ($definition->properties as $property) {
+            $references = [...$references, ...$property->type->references];
+        }
+
+        return array_values(array_unique($references));
+    }
+
+    private function generateDefinition(TypeDefinition|InterfaceDefinition $definition): string
     {
         $typeName = Str\after_last($definition->class, '\\');
 
         if ($definition instanceof TypeDefinition) {
-            return "export type {$typeName} = {$definition->definition};";
+            return vsprintf('export type %s = %s;', [
+                $typeName,
+                $this->renderer->render(
+                    type: $definition->type,
+                    symbolRenderer: static fn (string $fqcn): string => Str\after_last($fqcn, '\\'),
+                ),
+            ]);
         }
 
         $lines = [];
         $lines[] = "export interface {$typeName} {";
 
         foreach ($definition->properties as $property) {
-            $lines[] = sprintf(
-                '  %s%s: %s;',
+            $lines[] = vsprintf('  %s%s: %s;', [
                 $property->name,
                 $property->isNullable ? '?' : '',
-                $this->resolveTypeReference($property),
-            );
+                $this->renderer->render(
+                    type: $property->type,
+                    symbolRenderer: static fn (string $fqcn): string => Str\after_last($fqcn, '\\'),
+                ),
+            ]);
         }
 
         $lines[] = '}';
 
         return (string) Arr\implode($lines, glue: "\n");
-    }
-
-    private function resolveTypeReference(PropertyDefinition $property): string
-    {
-        if ($property->fqcn === null) {
-            return $property->definition;
-        }
-
-        $targetTypeName = Str\after_last($property->fqcn, '\\');
-        $arrayBrackets = Str\ends_with($property->definition, '[]') ? '[]' : '';
-
-        return $targetTypeName . $arrayBrackets;
     }
 
     private function namespaceToFilePath(string $namespace): string

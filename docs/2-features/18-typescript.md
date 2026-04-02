@@ -29,30 +29,32 @@ This command scans your marked classes, generates the corresponding TypeScript d
 
 Tempest provides several built-in type resolvers for common types: strings, numbers, dates, enums and class references.
 
-You can add your own resolver by providing implementations of {b`Tempest\Generation\TypeScript\TypeResolvers\TypeResolver`}. This interface requires a `canResolve()` method to determine if the resolver can handle a given type, and a `resolve()` method to perform the actual resolution.
+You can add your own resolver by implementing {b`Tempest\Generation\TypeScript\TypeResolver`}. This interface requires a `canResolve()` method to determine if the resolver can handle a given type, and a `resolve()` method that returns a type node.
 
-The following is the actual implementation of the built-in resolver that handles scalar types:
+The following is the actual implementation of the built-in resolver that handles enum cases:
 
-```php ScalarTypeResolver.php
+```php EnumCaseTypeResolver.php
 #[Priority(Priority::LOW)]
-final class ScalarTypeResolver implements TypeResolver
+final class EnumCaseTypeResolver implements TypeResolver
 {
     public function canResolve(TypeReflector $type): bool
     {
-        return $type->isBuiltIn()
-            && in_array($type->getName(), ['string', 'int', 'float', 'bool'], strict: true);
+        return $type->isEnumCase();
     }
 
-    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): ResolvedType
+    public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeNode
     {
-        return new ResolvedType(match ($type->getName()) {
-            'string' => 'string',
-            'int', 'float' => 'number',
-            'bool' => 'boolean',
-        });
+        $case = $type->asEnumCase()->getValue();
+        $value = $case instanceof BackedEnum
+            ? $case->value
+            : $case->name;
+
+        return new LiteralTypeNode($value);
     }
 }
 ```
+
+Resolvers may return any supported semantic node depending on your use case, such as {b`Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\LiteralTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\SymbolTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\ArrayTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\UnionTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\IntersectionTypeNode`}, {b`Tempest\Generation\TypeScript\TypeNodes\ObjectTypeNode`} or {b`Tempest\Generation\TypeScript\TypeNodes\RawTypeNode`}.
 
 :::info
 Type resolvers are automatically [discovered](../1-essentials/05-discovery.md) and do not need to be registered manually.

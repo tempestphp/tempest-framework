@@ -47,7 +47,9 @@ final class GenerateTypesCommandTest extends TestCase
         $path = $this->directory . '/types.d.ts';
 
         $container = new GenericContainer();
+
         $config = new NamespacedTypeScriptGenerationConfig(filename: $path);
+        $config->sources = [User::class];
         $config->resolvers = [
             EnumCaseTypeResolver::class,
             ScalarTypeResolver::class,
@@ -56,7 +58,6 @@ final class GenerateTypesCommandTest extends TestCase
             ClassReferenceTypeResolver::class,
             MixedTypeResolver::class,
         ];
-        $config->sources = [User::class];
 
         $generator = new GenericTypeScriptGenerator(
             config: $config,
@@ -65,6 +66,7 @@ final class GenerateTypesCommandTest extends TestCase
         );
 
         new NamespacedFileWriter($config)->write($generator->generate());
+
         $content = Filesystem\read_file($path);
 
         $this->assertStringContainsString('export namespace Tempest.Generation.Tests.TypeScript.Fixtures {', $content);

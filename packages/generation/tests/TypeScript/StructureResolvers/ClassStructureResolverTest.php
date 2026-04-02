@@ -12,6 +12,7 @@ use Tempest\Generation\TypeScript\GenericTypeScriptGenerator;
 use Tempest\Generation\TypeScript\InterfaceDefinition;
 use Tempest\Generation\TypeScript\StructureResolvers\ClassStructureResolver;
 use Tempest\Generation\TypeScript\StructureResolvers\EnumStructureResolver;
+use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
 use Tempest\Generation\TypeScript\TypeResolvers\ClassReferenceTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\DateTimeTypeResolver;
 use Tempest\Generation\TypeScript\TypeResolvers\EnumReferenceTypeResolver;
@@ -67,11 +68,13 @@ final class ClassStructureResolverTest extends TestCase
         $result = $this->resolver->resolve($type, $this->generator);
 
         $this->assertSame('name', $result->properties[0]->name);
-        $this->assertSame('string', $result->properties[0]->definition);
+        $this->assertInstanceOf(PrimitiveTypeNode::class, $result->properties[0]->type);
+        $this->assertSame('string', $result->properties[0]->type->name);
         $this->assertFalse($result->properties[0]->isNullable);
 
         $this->assertSame('value', $result->properties[1]->name);
-        $this->assertSame('number', $result->properties[1]->definition);
+        $this->assertInstanceOf(PrimitiveTypeNode::class, $result->properties[1]->type);
+        $this->assertSame('number', $result->properties[1]->type->name);
         $this->assertFalse($result->properties[1]->isNullable);
     }
 }
