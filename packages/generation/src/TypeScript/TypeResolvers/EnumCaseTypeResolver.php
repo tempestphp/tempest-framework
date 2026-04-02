@@ -26,6 +26,6 @@ final class EnumCaseTypeResolver implements TypeResolver
             ? $case->value
             : $case->name;
 
-        return new ResolvedType(is_string($value) ? "'{$value}'" : $value);
+        return new ResolvedType(sprintf("'%s'", addcslashes((string) $value, "\\'\n\r\t\v\f")));
     }
 }
