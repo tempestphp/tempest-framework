@@ -25,4 +25,31 @@ final class CharStatementTest extends TestCase
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
         $this->assertSame($expectedPgsql, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
+
+    #[Test]
+    public function test_determine_char_size(): void
+    {
+        $fixedSizeStatement = new CharStatement(
+            name: 'foo',
+            size: 10,
+        );
+        $expectedMysql = '`foo` CHAR(10) NOT NULL';
+        $this->assertSame($expectedMysql, $fixedSizeStatement->compile(DatabaseDialect::MYSQL));
+
+        $defaultSizeStatement = new CharStatement(
+            name: 'foo',
+            size: 1,
+            default: 'foo_bar',
+        );
+        $expectedMysql = '`foo` CHAR(7) DEFAULT \'foo_bar\' NOT NULL';
+        $this->assertSame($expectedMysql, $defaultSizeStatement->compile(DatabaseDialect::MYSQL));
+
+        $fixedAndDefaultSizeStatement = new CharStatement(
+            name: 'foo',
+            size: 10,
+            default: 'foo_bar',
+        );
+        $expectedMysql = '`foo` CHAR(10) DEFAULT \'foo_bar\' NOT NULL';
+        $this->assertSame($expectedMysql, $fixedAndDefaultSizeStatement->compile(DatabaseDialect::MYSQL));
+    }
 }

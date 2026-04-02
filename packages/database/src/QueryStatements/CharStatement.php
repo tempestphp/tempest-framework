@@ -19,11 +19,11 @@ final readonly class CharStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '%s CHAR(%s) %s %s',
+            '%s CHAR(%s)%s%s',
             $dialect->quoteIdentifier($this->name),
-            $this->size,
-            $this->default !== null ? "DEFAULT '{$this->default}'" : '',
-            $this->nullable ? '' : 'NOT NULL',
+            $this->size === 1 && $this->default !== null ? mb_strlen($this->default) : $this->size,
+            $this->default !== null ? " DEFAULT '{$this->default}'" : '',
+            $this->nullable ? '' : ' NOT NULL',
         );
     }
 }
