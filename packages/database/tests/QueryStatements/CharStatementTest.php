@@ -54,7 +54,7 @@ final class CharStatementTest extends TestCase
     }
 
     #[Test]
-    public function test_mismatch_char_size_and_default_value_length(): void
+    public function test_char_size_less_than_default_value_length(): void
     {
         $this->expectException(DefaultValueWasInvalid::class);
 
@@ -64,5 +64,16 @@ final class CharStatementTest extends TestCase
             default: 'foo_bar',
         );
         $statement->compile(DatabaseDialect::MYSQL);
+    }
+
+    public function test_char_size_greater_than_default_value_length(): void
+    {
+        $statement = new CharStatement(
+            name: 'foo',
+            size: 10,
+            default: 'foo_bar',
+        );
+        $expectedMysql = '`foo` CHAR(10) DEFAULT \'foo_bar\' NOT NULL';
+        $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
     }
 }

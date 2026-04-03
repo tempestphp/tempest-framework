@@ -19,7 +19,7 @@ final readonly class CharStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        if ($this->size !== null && $this->default !== null && $this->size !== mb_strlen($this->default)) {
+        if ($this->size !== null && $this->default !== null && $this->size < mb_strlen($this->default)) {
             throw new DefaultValueWasInvalid($this->name, $this->default);
         }
 
