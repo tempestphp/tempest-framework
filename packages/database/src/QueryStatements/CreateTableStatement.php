@@ -249,12 +249,13 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /**
      * Adds a `DATE` column to the table.
      */
-    public function date(string $name, bool $nullable = false, ?string $default = null): self
+    public function date(string $name, bool $nullable = false, ?string $default = null, bool $current = false): self
     {
         $this->statements[] = new DateStatement(
             name: $name,
             nullable: $nullable,
             default: $default,
+            current: $current,
         );
 
         return $this;

@@ -29,6 +29,14 @@ enum DatabaseDialect: string
         };
     }
 
+    public function encloseExpressionDefault(string $expression): string
+    {
+        return match ($this) {
+            self::MYSQL => sprintf('(%s)', $expression),
+            default => sprintf('%s', $expression),
+        };
+    }
+
     public function isTableNotFoundError(QueryWasInvalid $queryWasInvalid): bool
     {
         $pdoException = $queryWasInvalid->pdoException;
