@@ -186,7 +186,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /**
      * Adds a `CHAR` column to the table.
      */
-    public function char(string $name, bool $nullable = false, ?string $default = null, int $size = 1): self
+    public function char(string $name, bool $nullable = false, ?string $default = null, ?int $size = null): self
     {
         $this->statements[] = new CharStatement(
             name: $name,

@@ -5,6 +5,7 @@ namespace Tempest\Database\Tests\QueryStatements;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Exceptions\DefaultValueWasInvalid;
 use Tempest\Database\QueryStatements\CharStatement;
 
 final class CharStatementTest extends TestCase
@@ -38,7 +39,6 @@ final class CharStatementTest extends TestCase
 
         $defaultSizeStatement = new CharStatement(
             name: 'foo',
-            size: 1,
             default: 'foo_bar',
         );
         $expectedMysql = '`foo` CHAR(7) DEFAULT \'foo_bar\' NOT NULL';
@@ -46,10 +46,23 @@ final class CharStatementTest extends TestCase
 
         $fixedAndDefaultSizeStatement = new CharStatement(
             name: 'foo',
-            size: 10,
+            size: 7,
             default: 'foo_bar',
         );
-        $expectedMysql = '`foo` CHAR(10) DEFAULT \'foo_bar\' NOT NULL';
+        $expectedMysql = '`foo` CHAR(7) DEFAULT \'foo_bar\' NOT NULL';
         $this->assertSame($expectedMysql, $fixedAndDefaultSizeStatement->compile(DatabaseDialect::MYSQL));
+    }
+
+    #[Test]
+    public function test_mismatch_char_size_and_default_value_length(): void
+    {
+        $this->expectException(DefaultValueWasInvalid::class);
+
+        $statement = new CharStatement(
+            name: 'foo',
+            size: 1,
+            default: 'foo_bar',
+        );
+        $statement->compile(DatabaseDialect::MYSQL);
     }
 }
