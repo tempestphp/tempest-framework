@@ -701,6 +701,119 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $tag->query('books')->count()->execute());
     }
 
+    public function test_query_has_many_through_update(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        $reviewA = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewB = BookReview::create(content: 'Meh', tag: $tagB);
+
+        Reviewer::create(name: 'Alice', bookReview: $reviewA);
+        Reviewer::create(name: 'Bob', bookReview: $reviewB);
+
+        $tagA->query('reviewers')->update(name: 'Updated')->execute();
+
+        $reviewersA = $tagA->query('reviewers')->select()->all();
+        $reviewersB = $tagB->query('reviewers')->select()->all();
+
+        $this->assertSame('Updated', $reviewersA[0]->name);
+        $this->assertSame('Bob', $reviewersB[0]->name);
+    }
+
+    public function test_query_has_many_through_delete(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        $reviewA = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewB = BookReview::create(content: 'Meh', tag: $tagB);
+
+        Reviewer::create(name: 'Alice', bookReview: $reviewA);
+        Reviewer::create(name: 'Bob', bookReview: $reviewB);
+
+        $tagA->query('reviewers')->delete()->execute();
+
+        $this->assertSame(0, $tagA->query('reviewers')->count()->execute());
+        $this->assertSame(1, $tagB->query('reviewers')->count()->execute());
+    }
+
+    public function test_query_belongs_to_many_delete(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book1 = Book::create(title: 'Book 1', author: $author);
+        $book2 = Book::create(title: 'Book 2', author: $author);
+        $book3 = Book::create(title: 'Book 3', author: $author);
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book3->id->value, 'tag_id' => $tagB->id->value])->execute();
+
+        $tagA->query('books')->delete()->execute();
+
+        $this->assertSame(0, $tagA->query('books')->count()->execute());
+        $this->assertSame(1, $tagB->query('books')->count()->execute());
+    }
+
+    public function test_query_belongs_to_many_update(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book1 = Book::create(title: 'Old 1', author: $author);
+        $book2 = Book::create(title: 'Old 2', author: $author);
+        $book3 = Book::create(title: 'Keep', author: $author);
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book3->id->value, 'tag_id' => $tagB->id->value])->execute();
+
+        $tagA->query('books')->update(title: 'Updated')->execute();
+
+        $booksA = $tagA->query('books')->select()->all();
+        $booksB = $tagB->query('books')->select()->all();
+
+        $this->assertSame('Updated', $booksA[0]->title);
+        $this->assertSame('Updated', $booksA[1]->title);
+        $this->assertSame('Keep', $booksB[0]->title);
+    }
+
     public function test_has_many_through_relation(): void
     {
         $this->database->migrate(
