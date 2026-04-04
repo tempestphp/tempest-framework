@@ -309,6 +309,85 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $author->books);
     }
 
+    public function test_query_has_many_returns_scoped_results(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $authorA = Author::create(
+            name: 'Author A',
+            type: AuthorType::A,
+        );
+
+        $authorB = Author::create(
+            name: 'Author B',
+            type: AuthorType::B,
+        );
+
+        Book::create(title: 'Book 1', author: $authorA);
+        Book::create(title: 'Book 2', author: $authorA);
+        Book::create(title: 'Book 3', author: $authorA);
+        Book::create(title: 'Other Book', author: $authorB);
+
+        $books = $authorA->query('books')->all();
+
+        $this->assertCount(3, $books);
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+    }
+
+    public function test_query_has_many_supports_where(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::create(
+            name: 'Author A',
+            type: AuthorType::A,
+        );
+
+        Book::create(title: 'Alpha', author: $author);
+        Book::create(title: 'Beta', author: $author);
+        Book::create(title: 'Gamma', author: $author);
+
+        $books = $author->query('books')
+            ->whereField('title', 'Beta')
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('Beta', $books[0]->title);
+    }
+
+    public function test_query_has_many_supports_limit(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::create(
+            name: 'Author A',
+            type: AuthorType::A,
+        );
+
+        Book::create(title: 'Book 1', author: $author);
+        Book::create(title: 'Book 2', author: $author);
+        Book::create(title: 'Book 3', author: $author);
+
+        $books = $author->query('books')->limit(2)->all();
+
+        $this->assertCount(2, $books);
+    }
+
     public function test_has_many_through_relation(): void
     {
         $this->database->migrate(
