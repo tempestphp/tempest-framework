@@ -239,9 +239,11 @@ final class ViewComponentElement implements Element, WithToken
                 if (array_key_exists($name, $token->htmlAttributes)) {
                     continue;
                 }
+
                 if (array_key_exists(':' . $name, $token->htmlAttributes)) {
                     continue;
                 }
+
                 $attributes = $this->applyFallthroughAttribute($attributes, $name);
             }
 
