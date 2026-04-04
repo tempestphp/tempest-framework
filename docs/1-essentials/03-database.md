@@ -759,7 +759,7 @@ query(model: Author::class)->update(verified: true)->whereHas(relation: 'books')
 
 ### Querying relation properties
 
-While the global `query(Model::class)` function creates a query builder for any model, calling `query()` on a model _instance_ returns a query builder scoped to a specific relation. The returned `QueryBuilder` is pre-filtered to only include records belonging to that model instance:
+While the global `query(Model::class)` function creates a query builder for any model, models using the `IsDatabaseModel` trait also have a `query()` method that returns a query builder scoped to a specific relation. The returned `QueryBuilder` is pre-filtered to only include records belonging to that model:
 
 ```php
 // Select with constraints
