@@ -57,7 +57,7 @@ final class QueryBuilder
         return new SelectQueryBuilder(
             model: $this->model,
             fields: $columns !== [] ? arr($columns)->unique() : null,
-        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
+        )->onDatabase(databaseTag: $this->onDatabase)->applyScopes(scopes: $this->scopes);
     }
 
     /**
@@ -104,7 +104,7 @@ final class QueryBuilder
             model: $this->model,
             values: $values,
             serializerFactory: get(SerializerFactory::class),
-        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
+        )->onDatabase(databaseTag: $this->onDatabase)->applyScopes(scopes: $this->scopes);
     }
 
     /**
@@ -122,7 +122,7 @@ final class QueryBuilder
      */
     public function delete(): DeleteQueryBuilder
     {
-        return new DeleteQueryBuilder($this->model)->onDatabase($this->onDatabase)->applyScopes($this->scopes);
+        return new DeleteQueryBuilder(model: $this->model)->onDatabase(databaseTag: $this->onDatabase)->applyScopes(scopes: $this->scopes);
     }
 
     /**
@@ -140,7 +140,7 @@ final class QueryBuilder
         return new CountQueryBuilder(
             model: $this->model,
             column: $column,
-        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
+        )->onDatabase(databaseTag: $this->onDatabase)->applyScopes(scopes: $this->scopes);
     }
 
     /**
