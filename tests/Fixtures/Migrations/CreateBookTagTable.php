@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures\Migrations;
 
 use Tempest\Database\MigratesDown;
 use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatements\OnDelete;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
@@ -18,8 +19,8 @@ final class CreateBookTagTable implements MigratesUp, MigratesDown
     {
         return new CreateTableStatement(tableName: 'books_tags')
             ->primary()
-            ->belongsTo(local: 'books_tags.book_id', foreign: 'books.id')
-            ->belongsTo(local: 'books_tags.tag_id', foreign: 'tags.id');
+            ->belongsTo(local: 'books_tags.book_id', foreign: 'books.id', onDelete: OnDelete::CASCADE)
+            ->belongsTo(local: 'books_tags.tag_id', foreign: 'tags.id', onDelete: OnDelete::CASCADE);
     }
 
     public function down(): QueryStatement
