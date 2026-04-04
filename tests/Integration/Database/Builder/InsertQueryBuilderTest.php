@@ -16,6 +16,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\BookTransfer;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -247,6 +248,45 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSameWithoutBackticks($expected, $query->compile());
         $this->assertSame(['php'], $query->bindings);
+    }
+
+    public function test_insert_with_two_relations_to_same_model(): void
+    {
+        $transfer = BookTransfer::new(
+            sender: Author::new(id: new PrimaryKey(1), name: 'Alice'),
+            recipient: Author::new(id: new PrimaryKey(2), name: 'Bob'),
+            reason: 'Collaboration',
+        );
+
+        $query = query(BookTransfer::class)
+            ->insert($transfer)
+            ->build();
+
+        $expected = $this->buildExpectedInsert('INSERT INTO `book_transfers` (`sender_id`, `recipient_id`, `reason`) VALUES (?, ?, ?)');
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(1, $query->bindings[0]);
+        $this->assertSame(2, $query->bindings[1]);
+        $this->assertSame('Collaboration', $query->bindings[2]);
+    }
+
+    public function test_insert_with_two_relations_to_same_model_one_null(): void
+    {
+        $transfer = BookTransfer::new(
+            sender: Author::new(id: new PrimaryKey(1), name: 'Alice'),
+            reason: 'Solo',
+        );
+
+        $query = query(BookTransfer::class)
+            ->insert($transfer)
+            ->build();
+
+        $expected = $this->buildExpectedInsert('INSERT INTO `book_transfers` (`sender_id`, `recipient_id`, `reason`) VALUES (?, ?, ?)');
+
+        $this->assertSameWithoutBackticks($expected, $query->compile());
+        $this->assertSame(1, $query->bindings[0]);
+        $this->assertNull($query->bindings[1]);
+        $this->assertSame('Solo', $query->bindings[2]);
     }
 
     public function test_insert_skips_has_one_through_property(): void
