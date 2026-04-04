@@ -16,7 +16,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
-use function Tempest\Database\query;
 use function Tempest\Support\str;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]

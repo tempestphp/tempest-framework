@@ -776,13 +776,21 @@ $author->query('books')->update(title: 'Updated')->execute();
 $author->query('books')->delete()->execute();
 ```
 
-The `query()` method works with `HasMany`, `HasManyThrough`, and `BelongsToMany` relations — any relation that returns a collection. Calling it on a singular relation like `BelongsTo` or `HasOne` will throw an exception.
+The `query()` method works with all relation types:
 
 ```php
-// HasManyThrough
-$tag->query('reviewers')->select()->all();
+// HasMany / HasOne — simple FK on related table
+$author->query('books')->select()->all();
+$book->query('isbn')->select()->first();
 
-// BelongsToMany
+// BelongsTo — subquery through owner's FK
+$book->query('author')->select()->first();
+
+// HasManyThrough / HasOneThrough — subquery through intermediate table
+$tag->query('reviewers')->select()->all();
+$tag->query('topReviewer')->select()->first();
+
+// BelongsToMany — subquery through pivot table
 $tag->query('books')->select()->all();
 ```
 

@@ -6,10 +6,10 @@ namespace Tests\Tempest\Fixtures\Migrations;
 
 use Tempest\Database\MigratesDown;
 use Tempest\Database\MigratesUp;
-use Tempest\Database\QueryStatements\OnDelete;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\OnDelete;
 
 final class CreateBookTagTable implements MigratesUp, MigratesDown
 {

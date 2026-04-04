@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
-use BadMethodCallException;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
