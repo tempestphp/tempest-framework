@@ -266,29 +266,57 @@ trait IsDatabaseModel
     }
 
     /**
-     * Returns a query builder scoped to a HasMany relation on this model.
+     * Returns a query builder scoped to a collection relation on this model.
      */
     public function query(string $relation): SelectQueryBuilder
     {
-        $model = inspect($this);
-        $hasMany = $model->getHasMany($relation);
+        $model = inspect(model: $this);
+        $primaryKeyValue = $model->getPrimaryKeyProperty()->getValue(object: $this);
 
-        if (! $hasMany instanceof HasMany) {
-            throw new InvalidArgumentException(
-                sprintf('Property "%s" is not a HasMany relation on %s.', $relation, $model->getName()),
-            );
+        $hasMany = $model->getHasMany(name: $relation);
+
+        if ($hasMany instanceof HasMany) {
+            $relatedClassName = $hasMany->property->getIterableType()->getName();
+            $parentTable = $model->getTableName();
+            $parentPK = $model->getPrimaryKey();
+            $fk = $hasMany->ownerJoin ?? str(string: $parentTable)->singularizeLastWord() . '_' . $parentPK;
+
+            return query(model: $relatedClassName)
+                ->onDatabase(databaseTag: $this->onDatabase)
+                ->select()
+                ->whereField(field: $fk, value: $primaryKeyValue);
         }
 
-        $relatedClassName = $hasMany->property->getIterableType()->getName();
-        $parentTable = $model->getTableName();
-        $parentPK = $model->getPrimaryKey();
-        $fk = $hasMany->ownerJoin ?? str($parentTable)->singularizeLastWord() . '_' . $parentPK;
-        $primaryKeyValue = $model->getPrimaryKeyProperty()->getValue($this);
+        $hasManyThrough = $model->getHasManyThrough(name: $relation);
 
-        return query($relatedClassName)
-            ->onDatabase($this->onDatabase)
-            ->select()
-            ->whereField($fk, $primaryKeyValue);
+        if ($hasManyThrough instanceof HasManyThrough) {
+            $relatedClassName = $hasManyThrough->property->getIterableType()->getName();
+            $intermediateModel = inspect(model: $hasManyThrough->through);
+            $intermediateTable = $intermediateModel->getTableName();
+            $ownerTable = $model->getTableName();
+            $ownerPK = $model->getPrimaryKey();
+            $intermediatePK = $intermediateModel->getPrimaryKey();
+
+            $ownerFK = $hasManyThrough->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+            $targetFK = $hasManyThrough->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord() . '_' . $intermediatePK;
+
+            return query(model: $relatedClassName)
+                ->onDatabase(databaseTag: $this->onDatabase)
+                ->select()
+                ->join(sprintf(
+                    'INNER JOIN %s ON %s.%s = %s.%s',
+                    $intermediateTable,
+                    inspect(model: $relatedClassName)->getTableName(),
+                    $targetFK,
+                    $intermediateTable,
+                    $intermediatePK,
+                ))
+                ->whereRaw(sprintf('%s.%s = ?', $intermediateTable, $ownerFK), $primaryKeyValue);
+        }
+
+        throw new InvalidArgumentException(
+            message: sprintf('Property "%s" is not a collection relation on %s.', $relation, $model->getName()),
+        );
     }
 
     /**
