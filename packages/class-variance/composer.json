@@ -1,0 +1,24 @@
+{
+    "name": "tempest/class-variance",
+    "description": "The PHP framework that gets out of your way.",
+    "require": {
+        "php": "^8.5",
+        "tempest/core": "3.x-dev",
+        "tempest/support": "3.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\ClassVariance\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\ClassVariance\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}

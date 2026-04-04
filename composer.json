@@ -97,6 +97,7 @@
     "replace": {
         "tempest/auth": "self.version",
         "tempest/cache": "self.version",
+        "tempest/class-variance": "self.version",
         "tempest/clock": "self.version",
         "tempest/command-bus": "self.version",
         "tempest/console": "self.version",
@@ -138,6 +139,7 @@
         "psr-4": {
             "Tempest\\Auth\\": "packages/auth/src",
             "Tempest\\Cache\\": "packages/cache/src",
+            "Tempest\\ClassVariance\\": "packages/class-variance/src",
             "Tempest\\Clock\\": "packages/clock/src",
             "Tempest\\CommandBus\\": "packages/command-bus/src",
             "Tempest\\Console\\": "packages/console/src",
@@ -171,6 +173,7 @@
             "Tempest\\Vite\\": "packages/vite/src"
         },
         "files": [
+            "packages/class-variance/src/functions.php",
             "packages/clock/src/functions.php",
             "packages/command-bus/src/functions.php",
             "packages/container/src/functions.php",
