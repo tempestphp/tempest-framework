@@ -584,6 +584,123 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, $books);
     }
 
+    public function test_query_has_many_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $authorA = Author::create(name: 'Author A', type: AuthorType::A);
+        $authorB = Author::create(name: 'Author B', type: AuthorType::B);
+
+        Book::create(title: 'Book 1', author: $authorA);
+        Book::create(title: 'Book 2', author: $authorA);
+        Book::create(title: 'Book 3', author: $authorA);
+        Book::create(title: 'Other', author: $authorB);
+
+        $count = $authorA->query('books')->count()->execute();
+
+        $this->assertSame(3, $count);
+    }
+
+    public function test_query_has_many_update(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $authorA = Author::create(name: 'Author A', type: AuthorType::A);
+        $authorB = Author::create(name: 'Author B', type: AuthorType::B);
+
+        Book::create(title: 'Old Title 1', author: $authorA);
+        Book::create(title: 'Old Title 2', author: $authorA);
+        Book::create(title: 'Keep This', author: $authorB);
+
+        $authorA->query('books')->update(title: 'Updated')->execute();
+
+        $booksA = $authorA->query('books')->select()->all();
+        $booksB = $authorB->query('books')->select()->all();
+
+        $this->assertSame('Updated', $booksA[0]->title);
+        $this->assertSame('Updated', $booksA[1]->title);
+        $this->assertSame('Keep This', $booksB[0]->title);
+    }
+
+    public function test_query_has_many_delete(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $authorA = Author::create(name: 'Author A', type: AuthorType::A);
+        $authorB = Author::create(name: 'Author B', type: AuthorType::B);
+
+        Book::create(title: 'Book 1', author: $authorA);
+        Book::create(title: 'Book 2', author: $authorA);
+        Book::create(title: 'Keep This', author: $authorB);
+
+        $authorA->query('books')->delete()->execute();
+
+        $this->assertSame(0, $authorA->query('books')->count()->execute());
+        $this->assertSame(1, $authorB->query('books')->count()->execute());
+    }
+
+    public function test_query_has_many_through_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        $reviewA1 = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewA2 = BookReview::create(content: 'Good', tag: $tagA);
+        $reviewB1 = BookReview::create(content: 'Meh', tag: $tagB);
+
+        Reviewer::create(name: 'Alice', bookReview: $reviewA1);
+        Reviewer::create(name: 'Bob', bookReview: $reviewA2);
+        Reviewer::create(name: 'Charlie', bookReview: $reviewB1);
+
+        $this->assertSame(2, $tagA->query('reviewers')->count()->execute());
+        $this->assertSame(1, $tagB->query('reviewers')->count()->execute());
+    }
+
+    public function test_query_belongs_to_many_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book1 = Book::create(title: 'Book 1', author: $author);
+        $book2 = Book::create(title: 'Book 2', author: $author);
+
+        $tag = Tag::create(label: 'fantasy');
+
+        query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tag->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tag->id->value])->execute();
+
+        $this->assertSame(2, $tag->query('books')->count()->execute());
+    }
+
     public function test_has_many_through_relation(): void
     {
         $this->database->migrate(
