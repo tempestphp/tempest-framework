@@ -7,6 +7,7 @@ namespace Tempest\ClassVariance;
 use Tempest\ClassVariance\Config\ClassVarianceConfig;
 use Tempest\ClassVariance\Config\GenericClassVarianceConfig;
 use Tempest\ClassVariance\Config\TailwindClassVarianceConfig;
+use Tempest\Container\GenericContainer;
 
 /**
  * Create a class variance authority with generic (non-Tailwind) merging.
@@ -29,7 +30,10 @@ function cv(
     array $defaultVariants = [],
     ?ClassVarianceConfig $config = null,
 ): ClassVariance {
-    $config ??= new GenericClassVarianceConfig();
+    $container = GenericContainer::instance();
+    $config ??= $container?->has(GenericClassVarianceConfig::class)
+        ? $container->get(GenericClassVarianceConfig::class)
+        : new GenericClassVarianceConfig();
 
     return new GenericClassVariance($base, $config->merger, $variants, $compoundVariants, $defaultVariants);
 }
@@ -55,7 +59,10 @@ function tv(
     array $defaultVariants = [],
     ?ClassVarianceConfig $config = null,
 ): ClassVariance {
-    $config ??= new TailwindClassVarianceConfig();
+    $container = GenericContainer::instance();
+    $config ??= $container?->has(TailwindClassVarianceConfig::class)
+        ? $container->get(TailwindClassVarianceConfig::class)
+        : new TailwindClassVarianceConfig();
 
     return new GenericClassVariance($base, $config->merger, $variants, $compoundVariants, $defaultVariants);
 }
