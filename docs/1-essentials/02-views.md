@@ -577,6 +577,53 @@ For instance, the snippet below implements a tab component that accepts any numb
 </x-tabs>
 ```
 
+### Define slot ownership in nested view components
+
+Let us assume you have an `x-container` view component, which is a `<div>` with formatting to act as a flex container for responsive sizing. You use this component repeatedly across your project, and it's effectively a macro to open and close the `<div>`; it doesn't have any slots or do anything special itself otherwise, with only a default `<x-slot/>` to render whatever it is given.
+```html x-container.view.php
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><x-slot/></div>
+```
+Now, assume we have an `x-header` in which we wish to use the `x-container`. Our `x-header` wishes to place slots `left` and `right` inside it; `x-header` owns these slots and wishes to expose these slots at the callsite in case they need custom content. Using the `define` keyword tells Tempest to treat these slots as *owned* by `x-header` instead of as a *slot to fill* inside `x-container`.
+```html x-header.view.php
+<header>
+    <x-slot name="top" />
+    <x-container>
+        <x-slot define="left"> <!-- define this slot as a slot of x-header, compiled and passed into x-container's default slot -->
+            <x-header-left />
+        </x-slot>
+        <div>
+            I am in the center
+        </div> 
+        <x-slot define="right">  <!-- define this slot as a slot of x-header, compiled and passed into x-container's default slot -->
+            <x-header-right />
+        </x-slot>
+    </x-container>
+    <x-slot name="bottom" />
+</header>
+```
+At the callsite, you still use the `name` attribute to define which slot you're placing content into:
+```html callsite.view.php
+<x-header>
+    <x-slot name="left">Some content I want to insert</x-slot>
+</x-header>
+```
+You can also push content into a child's named slot this way:
+```html x-outer.view.php
+<div class="outer">
+    <x-inner>
+        <x-slot name="left">
+            <x-slot define="left">default-left-content</x-slot>
+        </x-slot>
+    </x-inner>
+</div>
+```
+At the callsite:
+```html outercallsite.view.php
+<x-outer>
+    <x-slot name="left">My override</x-slot>
+</x-outer>
+```
+
 ### Dynamic view components
 
 On some occasions, you might want to dynamically render view components, for example, render a view component whose name is determined at runtime. You can use the `{html}<x-component :is="">` element to do so:
