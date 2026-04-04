@@ -18,9 +18,15 @@ final class ObjectWithSerializerProperties
 
     public int $intProp = 1;
 
+    public ?int $nullableIntProp = null;
+
     public float $floatProp = 0.1;
 
+    public ?float $nullableFloatProp = null;
+
     public bool $boolProp = true;
+
+    public ?bool $nullableBoolProp = null;
 
     public array $arrayProp = ['a'];
 

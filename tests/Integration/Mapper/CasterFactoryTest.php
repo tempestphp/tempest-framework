@@ -24,8 +24,11 @@ final class CasterFactoryTest extends FrameworkIntegrationTestCase
         $class = reflect(ObjectWithSerializerProperties::class);
 
         $this->assertInstanceOf(IntegerCaster::class, $factory->forProperty($class->getProperty('intProp')));
+        $this->assertInstanceOf(IntegerCaster::class, $factory->forProperty($class->getProperty('nullableIntProp')));
         $this->assertInstanceOf(FloatCaster::class, $factory->forProperty($class->getProperty('floatProp')));
+        $this->assertInstanceOf(FloatCaster::class, $factory->forProperty($class->getProperty('nullableFloatProp')));
         $this->assertInstanceOf(BooleanCaster::class, $factory->forProperty($class->getProperty('boolProp')));
+        $this->assertInstanceOf(BooleanCaster::class, $factory->forProperty($class->getProperty('nullableBoolProp')));
         $this->assertInstanceOf(NativeDateTimeCaster::class, $factory->forProperty($class->getProperty('nativeDateTimeImmutableProp')));
         $this->assertInstanceOf(NativeDateTimeCaster::class, $factory->forProperty($class->getProperty('nativeDateTimeProp')));
         $this->assertInstanceOf(NativeDateTimeCaster::class, $factory->forProperty($class->getProperty('nativeDateTimeInterfaceProp')));

@@ -41,6 +41,8 @@ final class FloatCasterTest extends FrameworkIntegrationTestCase
     #[TestWith([null])]
     #[TestWith([''])]
     #[TestWith(['null'])]
+    #[TestWith(['NULL'])]
+    #[TestWith(['Null'])]
     public function nullable_cast_returns_null_for_empty_input(mixed $input): void
     {
         $caster = new FloatCaster(nullable: true);
