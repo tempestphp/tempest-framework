@@ -74,6 +74,8 @@ final readonly class GroupClassMerger implements ClassMerger
      *
      * Example: 'dark:hover:bg-red-500' → ['dark:hover', 'bg-red-500']
      * Example: 'p-[color:red]'         → ['', 'p-[color:red]']
+     *
+     * @return array{0: string, 1: string}
      */
     private function extractModifiers(string $class): array
     {

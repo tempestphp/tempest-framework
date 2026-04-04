@@ -9,17 +9,24 @@ use InvalidArgumentException;
 /**
  * Core variant resolution engine, shared by all ClassVariance implementations.
  *
- * The class using this trait must declare the following public readonly properties:
+ * The class using this trait must declare the following public readable properties:
  *   - array|string $base
  *   - ClassMerger  $merger
  *   - array        $variants
  *   - array        $compoundVariants
  *   - array        $defaultVariants
  *
+ * @property-read array|string $base
+ * @property-read ClassMerger $merger
+ * @property-read array $variants
+ * @property-read array $compoundVariants
+ * @property-read array $defaultVariants
+ *
  * @internal
  */
 trait ResolvesVariants
 {
+    /** @param array<string, string|bool> $props */
     public function __invoke(array $props = [], string $slot = ''): string
     {
         $props = $this->applyDefaultVariants($props);
@@ -33,10 +40,16 @@ trait ResolvesVariants
         return $this->merger->merge(...$classes->toArray());
     }
 
-    /** @param array<string, string|bool> $props */
+    /**
+     * @param array<string, string|bool> $props
+     * @return array<string, string|bool>
+     */
     private function applyDefaultVariants(array $props): array
     {
-        foreach ($this->defaultVariants as $key => $value) {
+        /** @var array<string, string|bool> $defaults */
+        $defaults = $this->defaultVariants;
+
+        foreach ($defaults as $key => $value) {
             $props[$key] ??= $value;
         }
 
@@ -76,6 +89,7 @@ trait ResolvesVariants
      */
     private function resolvePassthrough(array $props, string $slot): ClassNames
     {
+        /** @var string|array<array-key, mixed>|bool $value */
         $value = $props['class'] ?? $props['className'] ?? '';
 
         if (is_bool($value) || $value === '') {
@@ -98,8 +112,12 @@ trait ResolvesVariants
     {
         $classes = ClassNames::empty();
 
+        /** @var array<string, array<string, string|array<string, mixed>>> $variants */
+        $variants = $this->variants;
+
         foreach ($props as $key => $value) {
-            $entry = $this->variants[$key][$value] ?? null;
+            $lookupKey = is_bool($value) ? ($value ? 'true' : 'false') : $value;
+            $entry = $variants[$key][$lookupKey] ?? null;
 
             if ($entry === null) {
                 continue;
@@ -118,11 +136,15 @@ trait ResolvesVariants
     {
         $classes = ClassNames::empty();
 
-        foreach ($this->compoundVariants as $compound) {
+        /** @var array<int, array<string, mixed>> $compoundVariants */
+        $compoundVariants = $this->compoundVariants;
+
+        foreach ($compoundVariants as $compound) {
             if (! $this->compoundMatches($props, $compound)) {
                 continue;
             }
 
+            /** @var string|array<string, mixed>|bool $classValue */
             $classValue = $compound['class'] ?? $compound['className'] ?? '';
             $classes = $classes->concat(ClassNames::of($classValue, $slot));
         }
@@ -137,10 +159,12 @@ trait ResolvesVariants
     private function compoundMatches(array $props, array $compound): bool
     {
         foreach ($compound as $key => $value) {
-            if ($key === 'class' || $key === 'className') {
+            if ($key === 'class') {
                 continue;
             }
-
+            if ($key === 'className') {
+                continue;
+            }
             if (is_array($value)) {
                 if (! isset($props[$key]) || ! in_array($props[$key], $value, strict: true)) {
                     return false;

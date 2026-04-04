@@ -49,7 +49,7 @@ final readonly class SeparatorClassMerger implements ClassMerger
     private function resolveGroup(string $class): string
     {
         // Explicit group map takes priority over separator heuristic.
-        if ($this->classGroups !== null) {
+        if ($this->classGroups instanceof Classmap) {
             $group = $this->classGroups->findGroup($class);
 
             if ($group !== null) {

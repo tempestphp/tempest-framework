@@ -29,7 +29,7 @@ final readonly class ClassNames
      * Passing $slot = '' is the passthrough context (e.g. extra $props['class'])
      * and always emits the classes regardless of slot.
      *
-     * @param string|array<array-key, mixed>|bool $input
+     * @param string|list<string|array<string, mixed>|bool>|array<string, string|array<string, mixed>|bool>|bool $input
      */
     public static function of(string|array|bool $input, string $slot = ''): self
     {

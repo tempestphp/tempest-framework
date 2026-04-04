@@ -60,10 +60,6 @@ final readonly class Classmap
                     continue;
                 }
 
-                if (! is_array($matcher)) {
-                    continue;
-                }
-
                 if (array_is_list($matcher)) {
                     // ['prefix'] — wildcard: matches prefix itself or prefix-{anything}
                     $prefix = $matcher[0];
@@ -73,7 +69,8 @@ final readonly class Classmap
                     }
                 } else {
                     // ['prefix' => ['suffix1', 'suffix2']] — constrained suffix list
-                    $prefix = array_key_first($matcher);
+                    $prefix = (string) array_key_first($matcher);
+                    /** @var list<string> $suffixes */
                     $suffixes = $matcher[$prefix];
 
                     foreach ($suffixes as $suffix) {
@@ -102,7 +99,9 @@ final readonly class Classmap
         $groups = $this->classGroups;
 
         foreach ($additions->classGroups as $groupId => $matchers) {
-            $groups[$groupId] = array_merge($groups[$groupId] ?? [], $matchers);
+            /** @var list<string|array<string, list<string>>|array{0: string}> $merged */
+            $merged = array_merge($groups[$groupId] ?? [], $matchers);
+            $groups[$groupId] = $merged;
         }
 
         $conflicts = $this->conflictingClassGroups;
@@ -123,9 +122,11 @@ final readonly class Classmap
      */
     public function override(self $replacements): self
     {
-        return new self(
-            array_replace($this->classGroups, $replacements->classGroups),
-            array_replace($this->conflictingClassGroups, $replacements->conflictingClassGroups),
-        );
+        /** @var array<string, list<string|array<string, list<string>>|array{0: string}>> $newGroups */
+        $newGroups = array_replace($this->classGroups, $replacements->classGroups);
+        /** @var array<string, list<string>> $newConflicts */
+        $newConflicts = array_replace($this->conflictingClassGroups, $replacements->conflictingClassGroups);
+
+        return new self($newGroups, $newConflicts);
     }
 }

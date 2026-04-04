@@ -32,12 +32,14 @@ final class TailwindClassVarianceConfig implements ClassVarianceConfig
         get {
             $groups = TailwindClassmap::default();
 
-            if ($this->extend !== null) {
-                $groups = $groups->extend($this->extend);
+            $extend = $this->extend;
+            if ($extend instanceof Classmap) {
+                $groups = $groups->extend($extend);
             }
 
-            if ($this->override !== null) {
-                $groups = $groups->override($this->override);
+            $override = $this->override;
+            if ($override instanceof Classmap) {
+                $groups = $groups->override($override);
             }
 
             return new GroupClassMerger($groups, $this->prefix, $this->separator);
