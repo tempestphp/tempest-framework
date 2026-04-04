@@ -534,7 +534,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertContainsOnlyInstancesOf(TestPost::class, $posts);
     }
 
-    public function test_query_throws_for_non_collection_relation(): void
+    public function test_query_belongs_to_select(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -543,11 +543,28 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        $book = Book::create(title: 'Test');
+        $author = Author::create(name: 'Target Author', type: AuthorType::A);
+        $book = Book::create(title: 'Test', author: $author);
 
-        $this->expectException(BadMethodCallException::class);
+        $result = $book->query('author')->select()->first();
 
-        $book->query('author');
+        $this->assertInstanceOf(Author::class, $result);
+        $this->assertSame('Target Author', $result->name);
+    }
+
+    public function test_query_belongs_to_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book = Book::create(title: 'Test', author: $author);
+
+        $this->assertSame(1, $book->query('author')->count()->execute());
     }
 
     public function test_query_throws_for_nonexistent_property(): void
