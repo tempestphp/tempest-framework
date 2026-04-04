@@ -7,7 +7,7 @@ namespace Tempest\Database;
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
-use Tempest\Database\Builder\QueryBuilders\WhereRawScope;
+use Tempest\Database\Builder\QueryBuilders\WhereFieldScope;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -190,14 +190,9 @@ final class HasMany implements Relation
         $parentPK = $parentModel->getPrimaryKey();
         $fk = $this->ownerJoin ?? str(string: $parentTable)->singularizeLastWord() . '_' . $parentPK;
 
-        $relatedTable = inspect(model: $relatedClassName)->getTableName();
-
         return query(model: $relatedClassName)
             ->onDatabase(databaseTag: $onDatabase)
-            ->scope(new WhereRawScope(
-                statement: sprintf('%s.%s = ?', $relatedTable, $fk),
-                binding: $primaryKey,
-            ));
+            ->scope(new WhereFieldScope(field: $fk, value: $primaryKey));
     }
 
     private function isSelfReferencing(): bool
