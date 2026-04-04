@@ -757,6 +757,35 @@ query(model: Author::class)->delete()->whereDoesntHave(relation: 'books')->execu
 query(model: Author::class)->update(verified: true)->whereHas(relation: 'books')->execute();
 ```
 
+### Querying relation properties
+
+Use `query()` on a model instance to get a query builder scoped to a collection relation. This is similar to Laravel's `$author->books()` pattern:
+
+```php
+// Select with constraints
+$books = $author->query('books')->select()->whereField(field: 'title', value: 'Timeline Taxi')->all();
+$books = $author->query('books')->select()->limit(limit: 5)->all();
+
+// Count related records
+$count = $author->query('books')->count()->execute();
+
+// Update scoped to relation
+$author->query('books')->update(title: 'Updated')->execute();
+
+// Delete scoped to relation
+$author->query('books')->delete()->execute();
+```
+
+The `query()` method works with `HasMany`, `HasManyThrough`, and `BelongsToMany` relations — any relation that returns a collection. Calling it on a singular relation like `BelongsTo` or `HasOne` will throw an exception.
+
+```php
+// HasManyThrough
+$tag->query('reviewers')->select()->all();
+
+// BelongsToMany
+$tag->query('books')->select()->all();
+```
+
 ## Migrations
 
 When persisting objects to the database, a table is required to store the data. A migration is a file that instructs the framework how to manage the database schema.
