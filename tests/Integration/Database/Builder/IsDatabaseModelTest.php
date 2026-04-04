@@ -45,10 +45,16 @@ use Tests\Tempest\Fixtures\Models\AWithValue;
 use Tests\Tempest\Fixtures\Models\AWithVirtual;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
+use Tests\Tempest\Fixtures\Migrations\CreateBookReviewTable;
+use Tests\Tempest\Fixtures\Migrations\CreateReviewerTable;
+use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\BookReview;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Reviewer;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -333,7 +339,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Book 3', author: $authorA);
         Book::create(title: 'Other Book', author: $authorB);
 
-        $books = $authorA->query('books')->all();
+        $books = $authorA->query(relation: 'books')->all();
 
         $this->assertCount(3, $books);
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
@@ -357,8 +363,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Beta', author: $author);
         Book::create(title: 'Gamma', author: $author);
 
-        $books = $author->query('books')
-            ->whereField('title', 'Beta')
+        $books = $author->query(relation: 'books')
+            ->whereField(field: 'title', value: 'Beta')
             ->all();
 
         $this->assertCount(1, $books);
@@ -383,9 +389,60 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Book 2', author: $author);
         Book::create(title: 'Book 3', author: $author);
 
-        $books = $author->query('books')->limit(2)->all();
+        $books = $author->query(relation: 'books')->limit(limit: 2)->all();
 
         $this->assertCount(2, $books);
+    }
+
+    public function test_query_has_many_through_returns_scoped_results(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        $reviewA1 = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewA2 = BookReview::create(content: 'Good', tag: $tagA);
+        $reviewB1 = BookReview::create(content: 'Meh', tag: $tagB);
+
+        Reviewer::create(name: 'Alice', bookReview: $reviewA1);
+        Reviewer::create(name: 'Bob', bookReview: $reviewA2);
+        Reviewer::create(name: 'Charlie', bookReview: $reviewB1);
+
+        $reviewers = $tagA->query(relation: 'reviewers')->all();
+
+        $this->assertCount(2, $reviewers);
+        $this->assertContainsOnlyInstancesOf(Reviewer::class, $reviewers);
+    }
+
+    public function test_query_has_many_through_supports_where(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tag = Tag::create(label: 'fantasy');
+
+        $review1 = BookReview::create(content: 'Great', tag: $tag);
+        $review2 = BookReview::create(content: 'Good', tag: $tag);
+
+        Reviewer::create(name: 'Alice', bookReview: $review1);
+        Reviewer::create(name: 'Bob', bookReview: $review2);
+
+        $reviewers = $tag->query(relation: 'reviewers')
+            ->whereField(field: 'name', value: 'Alice')
+            ->all();
+
+        $this->assertCount(1, $reviewers);
+        $this->assertSame('Alice', $reviewers[0]->name);
     }
 
     public function test_has_many_through_relation(): void
