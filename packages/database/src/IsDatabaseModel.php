@@ -271,7 +271,16 @@ trait IsDatabaseModel
     public function query(string $relation): SelectQueryBuilder
     {
         $model = inspect(model: $this);
-        $primaryKeyValue = $model->getPrimaryKeyProperty()->getValue(object: $this);
+
+        $primaryKeyProperty = $model->getPrimaryKeyProperty();
+
+        if ($primaryKeyProperty === null || ! $primaryKeyProperty->isInitialized(object: $this)) {
+            throw new InvalidArgumentException(
+                message: sprintf('Cannot query relations on %s without a primary key value.', $model->getName()),
+            );
+        }
+
+        $primaryKeyValue = $primaryKeyProperty->getValue(object: $this);
 
         $hasMany = $model->getHasMany(name: $relation);
 
@@ -312,6 +321,34 @@ trait IsDatabaseModel
                     $intermediatePK,
                 ))
                 ->whereRaw(sprintf('%s.%s = ?', $intermediateTable, $ownerFK), $primaryKeyValue);
+        }
+
+        $belongsToMany = $model->getBelongsToMany(name: $relation);
+
+        if ($belongsToMany instanceof BelongsToMany) {
+            $relatedClassName = $belongsToMany->property->getIterableType()->getName();
+            $targetModel = inspect(model: $relatedClassName);
+            $ownerTable = $model->getTableName();
+            $ownerPK = $model->getPrimaryKey();
+            $targetTable = $targetModel->getTableName();
+            $targetPK = $targetModel->getPrimaryKey();
+
+            $pivotTable = $belongsToMany->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
+            $ownerFK = $belongsToMany->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+            $targetFK = $belongsToMany->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
+
+            return query(model: $relatedClassName)
+                ->onDatabase(databaseTag: $this->onDatabase)
+                ->select()
+                ->join(sprintf(
+                    'INNER JOIN %s ON %s.%s = %s.%s',
+                    $pivotTable,
+                    $pivotTable,
+                    $targetFK,
+                    $targetTable,
+                    $targetPK,
+                ))
+                ->whereRaw(sprintf('%s.%s = ?', $pivotTable, $ownerFK), $primaryKeyValue);
         }
 
         throw new InvalidArgumentException(
