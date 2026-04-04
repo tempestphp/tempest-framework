@@ -759,7 +759,7 @@ query(model: Author::class)->update(verified: true)->whereHas(relation: 'books')
 
 ### Querying relation properties
 
-Use `query()` on a model instance to get a query builder scoped to a collection relation. This is similar to Laravel's `$author->books()` pattern:
+While the global `query(Model::class)` function creates a query builder for any model, calling `query()` on a model _instance_ returns a query builder scoped to a specific relation. The returned `QueryBuilder` is pre-filtered to only include records belonging to that model instance:
 
 ```php
 // Select with constraints
