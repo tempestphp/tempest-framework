@@ -567,6 +567,86 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $book->query('author')->count()->execute());
     }
 
+    public function test_query_has_one_select(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateIsbnTable::class,
+        );
+
+        $book = Book::create(title: 'Test Book');
+        Isbn::new(value: '978-123', book: $book)->save();
+
+        $result = $book->query('isbn')->select()->first();
+
+        $this->assertInstanceOf(Isbn::class, $result);
+        $this->assertSame('978-123', $result->value);
+    }
+
+    public function test_query_has_one_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateIsbnTable::class,
+        );
+
+        $book = Book::create(title: 'Test Book');
+        Isbn::new(value: '978-123', book: $book)->save();
+
+        $this->assertSame(1, $book->query('isbn')->count()->execute());
+    }
+
+    public function test_query_has_one_update(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateIsbnTable::class,
+        );
+
+        $bookA = Book::create(title: 'Book A');
+        $bookB = Book::create(title: 'Book B');
+        Isbn::new(value: 'old-isbn', book: $bookA)->save();
+        Isbn::new(value: 'keep-isbn', book: $bookB)->save();
+
+        $bookA->query('isbn')->update(value: 'new-isbn')->execute();
+
+        $isbnA = $bookA->query('isbn')->select()->first();
+        $isbnB = $bookB->query('isbn')->select()->first();
+
+        $this->assertSame('new-isbn', $isbnA->value);
+        $this->assertSame('keep-isbn', $isbnB->value);
+    }
+
+    public function test_query_has_one_delete(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateIsbnTable::class,
+        );
+
+        $bookA = Book::create(title: 'Book A');
+        $bookB = Book::create(title: 'Book B');
+        Isbn::new(value: 'isbn-a', book: $bookA)->save();
+        Isbn::new(value: 'isbn-b', book: $bookB)->save();
+
+        $bookA->query('isbn')->delete()->execute();
+
+        $this->assertSame(0, $bookA->query('isbn')->count()->execute());
+        $this->assertSame(1, $bookB->query('isbn')->count()->execute());
+    }
+
     public function test_query_throws_for_nonexistent_property(): void
     {
         $this->database->migrate(
