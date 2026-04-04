@@ -647,6 +647,88 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $bookB->query('isbn')->count()->execute());
     }
 
+    public function test_query_has_one_through_select(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tag = Tag::create(label: 'fantasy');
+        $review = BookReview::create(content: 'Great', tag: $tag);
+        Reviewer::create(name: 'Alice', bookReview: $review);
+
+        $result = $tag->query('topReviewer')->select()->first();
+
+        $this->assertInstanceOf(Reviewer::class, $result);
+        $this->assertSame('Alice', $result->name);
+    }
+
+    public function test_query_has_one_through_count(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tag = Tag::create(label: 'fantasy');
+        $review = BookReview::create(content: 'Great', tag: $tag);
+        Reviewer::create(name: 'Alice', bookReview: $review);
+
+        $this->assertSame(1, $tag->query('topReviewer')->count()->execute());
+    }
+
+    public function test_query_has_one_through_update(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+        $reviewA = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewB = BookReview::create(content: 'Meh', tag: $tagB);
+        Reviewer::create(name: 'Alice', bookReview: $reviewA);
+        Reviewer::create(name: 'Bob', bookReview: $reviewB);
+
+        $tagA->query('topReviewer')->update(name: 'Updated')->execute();
+
+        $resultA = $tagA->query('topReviewer')->select()->first();
+        $resultB = $tagB->query('topReviewer')->select()->first();
+
+        $this->assertSame('Updated', $resultA->name);
+        $this->assertSame('Bob', $resultB->name);
+    }
+
+    public function test_query_has_one_through_delete(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTagTable::class,
+            CreateBookReviewTable::class,
+            CreateReviewerTable::class,
+        );
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+        $reviewA = BookReview::create(content: 'Great', tag: $tagA);
+        $reviewB = BookReview::create(content: 'Meh', tag: $tagB);
+        Reviewer::create(name: 'Alice', bookReview: $reviewA);
+        Reviewer::create(name: 'Bob', bookReview: $reviewB);
+
+        $tagA->query('topReviewer')->delete()->execute();
+
+        $this->assertSame(0, $tagA->query('topReviewer')->count()->execute());
+        $this->assertSame(1, $tagB->query('topReviewer')->count()->execute());
+    }
+
     public function test_query_throws_for_nonexistent_property(): void
     {
         $this->database->migrate(
