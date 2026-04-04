@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Attribute;
-use BadMethodCallException;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\WhereFieldScope;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -16,6 +16,7 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
+use function Tempest\Database\query;
 use function Tempest\Support\str;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
@@ -195,6 +196,14 @@ final class HasOne implements Relation
 
     public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
     {
-        throw new BadMethodCallException(message: 'Cannot query a HasOne relation.');
+        $relatedClassName = $this->property->getType()->getName();
+        $parentModel = inspect(model: $this->property->getClass());
+        $parentTable = $parentModel->getTableName();
+        $parentPK = $parentModel->getPrimaryKey();
+        $fk = $this->ownerJoin ?? str(string: $parentTable)->singularizeLastWord() . '_' . $parentPK;
+
+        return query(model: $relatedClassName)
+            ->onDatabase(databaseTag: $onDatabase)
+            ->scope(scope: new WhereFieldScope(field: $fk, value: $primaryKey));
     }
 }
