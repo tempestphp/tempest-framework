@@ -8,13 +8,13 @@ use Attribute;
 use BadMethodCallException;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
-use UnitEnum;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use UnitEnum;
 
 use function Tempest\Support\str;
 

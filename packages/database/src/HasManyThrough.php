@@ -16,7 +16,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
-use function Tempest\Database\query;
 use function Tempest\Support\str;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
@@ -381,7 +380,7 @@ final class HasManyThrough implements Relation
 
         return query(model: $relatedClassName)
             ->onDatabase(databaseTag: $onDatabase)
-            ->scope(new WhereRawScope(
+            ->scope(scope: new WhereRawScope(
                 statement: sprintf(
                     '%s IN (SELECT %s FROM %s WHERE %s = ?)',
                     $relatedTable . '.' . $targetFK,

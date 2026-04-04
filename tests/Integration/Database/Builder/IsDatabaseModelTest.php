@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use BadMethodCallException;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
-use BadMethodCallException;
 use InvalidArgumentException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
@@ -36,10 +36,14 @@ use Tempest\Mapper\Serializer;
 use Tempest\Validation\Rules\IsBetween;
 use Tempest\Validation\SkipValidation;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookReviewTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
+use Tests\Tempest\Fixtures\Migrations\CreateReviewerTable;
+use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Models\AWithLazy;
@@ -47,10 +51,6 @@ use Tests\Tempest\Fixtures\Models\AWithValue;
 use Tests\Tempest\Fixtures\Models\AWithVirtual;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
-use Tests\Tempest\Fixtures\Migrations\CreateBookReviewTable;
-use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
-use Tests\Tempest\Fixtures\Migrations\CreateReviewerTable;
-use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -366,7 +366,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Beta', author: $author);
         Book::create(title: 'Gamma', author: $author);
 
-        $books = $author->query('books')->select()
+        $books = $author
+            ->query('books')
+            ->select()
             ->whereField(field: 'title', value: 'Beta')
             ->all();
 
@@ -440,7 +442,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Reviewer::create(name: 'Alice', bookReview: $review1);
         Reviewer::create(name: 'Bob', bookReview: $review2);
 
-        $reviewers = $tag->query('reviewers')->select()
+        $reviewers = $tag
+            ->query('reviewers')
+            ->select()
             ->whereField(field: 'name', value: 'Alice')
             ->all();
 
@@ -497,7 +501,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tag->id->value])->execute();
         query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tag->id->value])->execute();
 
-        $books = $tag->query('books')->select()
+        $books = $tag
+            ->query('books')
+            ->select()
             ->whereField(field: 'title', value: 'Alpha')
             ->all();
 

@@ -16,7 +16,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
-use function Tempest\Database\query;
 use function Tempest\Support\str;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
@@ -192,7 +191,7 @@ final class HasMany implements Relation
 
         return query(model: $relatedClassName)
             ->onDatabase(databaseTag: $onDatabase)
-            ->scope(new WhereFieldScope(field: $fk, value: $primaryKey));
+            ->scope(scope: new WhereFieldScope(field: $fk, value: $primaryKey));
     }
 
     private function isSelfReferencing(): bool

@@ -16,7 +16,6 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 
-use function Tempest\Database\query;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -415,7 +414,7 @@ final class BelongsToMany implements Relation
 
         return query(model: $relatedClassName)
             ->onDatabase(databaseTag: $onDatabase)
-            ->scope(new WhereRawScope(
+            ->scope(scope: new WhereRawScope(
                 statement: sprintf(
                     '%s.%s IN (SELECT %s FROM %s WHERE %s = ?)',
                     $targetTable,

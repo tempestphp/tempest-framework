@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use InvalidArgumentException;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
@@ -13,7 +14,6 @@ use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Router\IsBindingValue;
 use Tempest\Validation\SkipValidation;
-use InvalidArgumentException;
 use UnitEnum;
 
 use function Tempest\Support\arr;
