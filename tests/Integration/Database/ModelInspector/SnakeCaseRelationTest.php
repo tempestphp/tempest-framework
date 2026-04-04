@@ -24,7 +24,7 @@ final class SnakeCaseRelationTest extends FrameworkIntegrationTestCase
             actual: $relation,
         );
         $this->assertSame(
-            expected: 'LEFT JOIN author ON author.id = book.author_id',
+            expected: 'LEFT JOIN author ON author.id = book.main_author_id',
             actual: $relation
                 ->getJoinStatement()
                 ->compile(dialect: DatabaseDialect::SQLITE),

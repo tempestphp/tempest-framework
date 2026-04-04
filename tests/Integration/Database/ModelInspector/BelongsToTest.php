@@ -35,7 +35,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(BelongsTo::class, $relation);
 
         $this->assertEquals(
-            'LEFT JOIN relation ON relation.overwritten_id = owner.relation_id',
+            'LEFT JOIN relation ON relation.overwritten_id = owner.relation_join_field_id',
             $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
@@ -48,7 +48,7 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(BelongsTo::class, $relation);
 
         $this->assertEquals(
-            'LEFT JOIN relation ON overwritten.overwritten_id = owner.relation_id',
+            'LEFT JOIN relation ON overwritten.overwritten_id = owner.relation_join_field_and_table_id',
             $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }

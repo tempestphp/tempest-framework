@@ -57,7 +57,7 @@ final class BelongsTo implements Relation
             throw ModelDidNotHavePrimaryColumn::neededForRelation($relationModel->getName(), 'BelongsTo');
         }
 
-        return str($relationModel->getTableName())->singularizeLastWord() . '_' . $primaryKey;
+        return str($this->property->getName())->snake() . '_' . $primaryKey;
     }
 
     public function getSelectFields(): ImmutableArray

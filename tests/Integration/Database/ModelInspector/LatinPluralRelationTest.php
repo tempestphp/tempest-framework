@@ -27,7 +27,7 @@ final class LatinPluralRelationTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            expected: 'LEFT JOIN metadata ON metadata.id = products.metadata_id',
+            expected: 'LEFT JOIN metadata ON metadata.id = products.product_metadata_id',
             actual: $relation
                 ->getJoinStatement()
                 ->compile(dialect: DatabaseDialect::SQLITE),
@@ -65,7 +65,7 @@ final class LatinPluralRelationTest extends FrameworkIntegrationTestCase
         $fields = $model->getSelectFields()->toArray();
 
         $this->assertContains(
-            needle: 'metadata_id',
+            needle: 'product_metadata_id',
             haystack: $fields,
         );
         $this->assertNotContains(
