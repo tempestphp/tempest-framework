@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
@@ -46,6 +47,7 @@ use Tests\Tempest\Fixtures\Models\AWithVirtual;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Migrations\CreateBookReviewTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTagTable;
 use Tests\Tempest\Fixtures\Migrations\CreateReviewerTable;
 use Tests\Tempest\Fixtures\Migrations\CreateTagTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -443,6 +445,142 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $reviewers);
         $this->assertSame('Alice', $reviewers[0]->name);
+    }
+
+    public function test_query_belongs_to_many_returns_scoped_results(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book1 = Book::create(title: 'Book 1', author: $author);
+        $book2 = Book::create(title: 'Book 2', author: $author);
+        $book3 = Book::create(title: 'Book 3', author: $author);
+
+        $tagA = Tag::create(label: 'fantasy');
+        $tagB = Tag::create(label: 'sci-fi');
+
+        query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tagA->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book3->id->value, 'tag_id' => $tagB->id->value])->execute();
+
+        $books = $tagA->query(relation: 'books')->all();
+
+        $this->assertCount(2, $books);
+        $this->assertContainsOnlyInstancesOf(Book::class, $books);
+    }
+
+    public function test_query_belongs_to_many_supports_where(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateTagTable::class,
+            CreateBookTagTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $book1 = Book::create(title: 'Alpha', author: $author);
+        $book2 = Book::create(title: 'Beta', author: $author);
+
+        $tag = Tag::create(label: 'fantasy');
+
+        query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tag->id->value])->execute();
+        query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tag->id->value])->execute();
+
+        $books = $tag->query(relation: 'books')
+            ->whereField(field: 'title', value: 'Alpha')
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('Alpha', $books[0]->title);
+    }
+
+    public function test_query_has_many_with_explicit_attribute(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreateTestUserMigration::class,
+            CreateTestPostMigration::class,
+        );
+
+        $user = TestUser::create(name: 'Alice');
+
+        query(model: 'test_posts')
+            ->insert(['title' => 'Post 1', 'body' => 'Body 1', 'test_user_id' => $user->id->value])
+            ->execute();
+        query(model: 'test_posts')
+            ->insert(['title' => 'Post 2', 'body' => 'Body 2', 'test_user_id' => $user->id->value])
+            ->execute();
+
+        $posts = $user->query(relation: 'posts')->all();
+
+        $this->assertCount(2, $posts);
+        $this->assertContainsOnlyInstancesOf(TestPost::class, $posts);
+    }
+
+    public function test_query_throws_for_non_collection_relation(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $book = Book::create(title: 'Test');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $book->query(relation: 'author');
+    }
+
+    public function test_query_throws_for_nonexistent_property(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $author->query(relation: 'nonexistent');
+    }
+
+    public function test_query_throws_for_unsaved_model(): void
+    {
+        $author = new Author(name: 'Unsaved');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $author->query(relation: 'books');
+    }
+
+    public function test_query_has_many_returns_empty_for_no_results(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+
+        $books = $author->query(relation: 'books')->all();
+
+        $this->assertCount(0, $books);
     }
 
     public function test_has_many_through_relation(): void
