@@ -282,13 +282,13 @@ trait IsDatabaseModel
 
         $primaryKeyValue = $primaryKeyProperty->getValue(object: $this);
 
-        $hasMany = $model->getHasMany(name: $relation);
+        $relationObj = $model->getRelation(name: $relation);
+        $ownerTable = $model->getTableName();
+        $ownerPK = $model->getPrimaryKey();
 
-        if ($hasMany instanceof HasMany) {
-            $relatedClassName = $hasMany->property->getIterableType()->getName();
-            $parentTable = $model->getTableName();
-            $parentPK = $model->getPrimaryKey();
-            $fk = $hasMany->ownerJoin ?? str(string: $parentTable)->singularizeLastWord() . '_' . $parentPK;
+        if ($relationObj instanceof HasMany) {
+            $relatedClassName = $relationObj->property->getIterableType()->getName();
+            $fk = $relationObj->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
 
             return query(model: $relatedClassName)
                 ->onDatabase(databaseTag: $this->onDatabase)
@@ -296,18 +296,14 @@ trait IsDatabaseModel
                 ->whereField(field: $fk, value: $primaryKeyValue);
         }
 
-        $hasManyThrough = $model->getHasManyThrough(name: $relation);
-
-        if ($hasManyThrough instanceof HasManyThrough) {
-            $relatedClassName = $hasManyThrough->property->getIterableType()->getName();
-            $intermediateModel = inspect(model: $hasManyThrough->through);
+        if ($relationObj instanceof HasManyThrough) {
+            $relatedClassName = $relationObj->property->getIterableType()->getName();
+            $intermediateModel = inspect(model: $relationObj->through);
             $intermediateTable = $intermediateModel->getTableName();
-            $ownerTable = $model->getTableName();
-            $ownerPK = $model->getPrimaryKey();
             $intermediatePK = $intermediateModel->getPrimaryKey();
 
-            $ownerFK = $hasManyThrough->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
-            $targetFK = $hasManyThrough->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord() . '_' . $intermediatePK;
+            $ownerFK = $relationObj->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+            $targetFK = $relationObj->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord() . '_' . $intermediatePK;
 
             return query(model: $relatedClassName)
                 ->onDatabase(databaseTag: $this->onDatabase)
@@ -323,19 +319,15 @@ trait IsDatabaseModel
                 ->whereRaw(sprintf('%s.%s = ?', $intermediateTable, $ownerFK), $primaryKeyValue);
         }
 
-        $belongsToMany = $model->getBelongsToMany(name: $relation);
-
-        if ($belongsToMany instanceof BelongsToMany) {
-            $relatedClassName = $belongsToMany->property->getIterableType()->getName();
+        if ($relationObj instanceof BelongsToMany) {
+            $relatedClassName = $relationObj->property->getIterableType()->getName();
             $targetModel = inspect(model: $relatedClassName);
-            $ownerTable = $model->getTableName();
-            $ownerPK = $model->getPrimaryKey();
             $targetTable = $targetModel->getTableName();
             $targetPK = $targetModel->getPrimaryKey();
 
-            $pivotTable = $belongsToMany->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
-            $ownerFK = $belongsToMany->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
-            $targetFK = $belongsToMany->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
+            $pivotTable = $relationObj->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
+            $ownerFK = $relationObj->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+            $targetFK = $relationObj->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
 
             return query(model: $relatedClassName)
                 ->onDatabase(databaseTag: $this->onDatabase)
