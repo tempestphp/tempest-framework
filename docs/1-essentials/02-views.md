@@ -404,12 +404,12 @@ You cannot mix `ApplyAttribute` with automatic fallthrough attributes. Opting to
 
 To exclude specific attributes from falling through, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->withoutKeys(['id', 'style'])">
+<button :apply="$attributes->removeKeys(['id', 'style'])">
 	<x-slot />
 </button>
 ```
 :::info
-The `withoutKeys` method returns all key=>value pairs, except for those specified. You can also use the `filter` method if you need to use a closure to filter.
+The `removeKeys` method returns all key=>value pairs, except for those specified. You can also use the `filter` method if you need to use a closure to filter.
 :::
 Now, when utilising it in your page:
 ```html index.view.php
@@ -424,12 +424,12 @@ Will result in:
 
 To include only specific attributes, configure your `button` view component like this:
 ```html x-button.view.php
-<button :apply="$attributes->withKeys(['class', 'width', 'height'])">
+<button :apply="$attributes->removeKeysExcept(['class', 'width', 'height'])">
 	<x-slot />
 </button>
 ```
 :::info
-The `withKeys` method returns only the specified key=>value pairs. You can also use the `filter` method if you need to use a closure to filter.
+The `removeKeysExcept` method returns only the specified key=>value pairs. You can also use the `filter` method if you need to use a closure to filter.
 :::
 Now, when utilising it in your page:
 ```html index.view.php
