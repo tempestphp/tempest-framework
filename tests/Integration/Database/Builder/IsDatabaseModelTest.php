@@ -10,6 +10,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
@@ -54,6 +55,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\BookReview;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Reviewer;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Tag;
@@ -726,6 +728,117 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(0, $tagA->query('topReviewer')->count()->execute());
         $this->assertSame(1, $tagB->query('topReviewer')->count()->execute());
+    }
+
+    public function test_query_has_many_with_where_has(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $bookWithChapters = Book::create(title: 'With Chapters', author: $author);
+        Book::create(title: 'No Chapters', author: $author);
+
+        Chapter::new(title: 'Chapter 1', contents: 'Content', book: $bookWithChapters)->save();
+
+        $books = $author
+            ->query('books')
+            ->select()
+            ->whereHas(relation: 'chapters')
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('With Chapters', $books[0]->title);
+    }
+
+    public function test_query_has_many_with_where_doesnt_have_and_where_field(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $bookA = Book::create(title: 'Alpha', author: $author);
+        Book::create(title: 'Beta', author: $author);
+        Book::create(title: 'Gamma', author: $author);
+
+        Chapter::new(title: 'Ch 1', contents: 'Content', book: $bookA)->save();
+
+        $books = $author
+            ->query('books')
+            ->select()
+            ->whereDoesntHave(relation: 'chapters')
+            ->whereField(field: 'title', value: 'Beta')
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('Beta', $books[0]->title);
+    }
+
+    public function test_query_has_many_with_where_has_callback(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $bookA = Book::create(title: 'Book A', author: $author);
+        $bookB = Book::create(title: 'Book B', author: $author);
+
+        Chapter::new(title: 'Intro', contents: 'Content', book: $bookA)->save();
+        Chapter::new(title: 'Advanced Topics', contents: 'Content', book: $bookB)->save();
+
+        $books = $author
+            ->query('books')
+            ->select()
+            ->whereHas(relation: 'chapters', callback: function (SelectQueryBuilder $q): void {
+                $q->whereField(field: 'title', value: 'Advanced Topics');
+            })
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('Book B', $books[0]->title);
+    }
+
+    public function test_query_has_many_with_where_doesnt_have_callback(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+        );
+
+        $author = Author::create(name: 'Author', type: AuthorType::A);
+        $bookA = Book::create(title: 'Book A', author: $author);
+        Book::create(title: 'Book B', author: $author);
+
+        Chapter::new(title: 'Draft', contents: 'WIP', book: $bookA)->save();
+
+        $books = $author
+            ->query('books')
+            ->select()
+            ->whereDoesntHave(relation: 'chapters', callback: function (SelectQueryBuilder $q): void {
+                $q->whereField(field: 'title', value: 'Draft');
+            })
+            ->all();
+
+        $this->assertCount(1, $books);
+        $this->assertSame('Book B', $books[0]->title);
     }
 
     public function test_query_throws_for_nonexistent_property(): void
