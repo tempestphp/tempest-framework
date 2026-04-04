@@ -26,7 +26,7 @@ use InvalidArgumentException;
  */
 trait ResolvesVariants
 {
-    /** @param array<string, string|bool> $props */
+    /** @param array<string, string|bool|array<string, string|bool>> $props */
     public function __invoke(array $props = [], string $slot = ''): string
     {
         $props = $this->applyDefaultVariants($props);
@@ -41,8 +41,8 @@ trait ResolvesVariants
     }
 
     /**
-     * @param array<string, string|bool> $props
-     * @return array<string, string|bool>
+     * @param array<string, string|bool|array<string, string|bool>> $props
+     * @return array<string, string|bool|array<string, string|bool>>
      */
     private function applyDefaultVariants(array $props): array
     {
@@ -66,9 +66,7 @@ trait ResolvesVariants
         if (is_array($this->base) && ! array_is_list($this->base)) {
             if (count($this->base) === 1) {
                 return (string) array_key_first($this->base);
-            }
-
-            if (count($this->base) > 1) {
+            } else {
                 throw new InvalidArgumentException(
                     'Multiple slots defined but no slot specified. Available slots: ' . implode(', ', array_keys($this->base)),
                 );
@@ -106,7 +104,7 @@ trait ResolvesVariants
     }
 
     /**
-     * @param array<string, string|bool> $props
+     * @param array<string, string|bool|array<string, string|bool>> $props
      */
     private function resolveVariants(array $props, string $slot): ClassNames
     {
@@ -116,7 +114,15 @@ trait ResolvesVariants
         $variants = $this->variants;
 
         foreach ($props as $key => $value) {
-            $lookupKey = is_bool($value) ? ($value ? 'true' : 'false') : $value;
+            if (is_array($value)) {
+                continue;
+            }
+
+            $lookupKey = match (true) {
+                $value === true => 'true',
+                $value === false => 'false',
+                default => $value,
+            };
             $entry = $variants[$key][$lookupKey] ?? null;
 
             if ($entry === null) {
@@ -130,7 +136,7 @@ trait ResolvesVariants
     }
 
     /**
-     * @param array<string, string|bool> $props
+     * @param array<string, string|bool|array<string, string|bool>> $props
      */
     private function resolveCompoundVariants(array $props, string $slot): ClassNames
     {
@@ -153,7 +159,7 @@ trait ResolvesVariants
     }
 
     /**
-     * @param array<string, string|bool> $props
+     * @param array<string, string|bool|array<string, string|bool>> $props
      * @param array<string, mixed> $compound
      */
     private function compoundMatches(array $props, array $compound): bool

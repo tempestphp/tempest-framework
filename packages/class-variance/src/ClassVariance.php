@@ -14,7 +14,7 @@ interface ClassVariance
     /**
      * Resolve the class string for the given props and slot.
      *
-     * @param array<string, string|bool> $props Active variant prop values.
+     * @param array<string, string|bool|array<string, string|bool>> $props Active variant prop values.
      * @param string $slot Named slot to resolve (e.g. 'base', 'label'). When omitted
      *   and the base defines a single slot, that slot is inferred automatically.
      */

@@ -16,10 +16,10 @@ use Tempest\Container\GenericContainer;
  * Pass a ClassGroupMap via GenericClassVarianceConfig to declare explicit
  * conflict groups for classes that share no common prefix.
  *
- * @param array<string, array<string, string|array<string, mixed>>>|string $base
+ * @param array<string, string|list<string>|array<string, string|list<string>>>|list<string>|string $base
  *   Base classes. A plain string or indexed array implicitly targets the 'base'
  *   slot. An associative array is a slot-keyed map.
- * @param array<string, array<string, string|array<string, mixed>>> $variants
+ * @param array<string, array<string, string|list<string>|array<string, string|list<string>>>> $variants
  * @param array<int, array<string, mixed>> $compoundVariants
  * @param array<string, string|bool> $defaultVariants
  */
@@ -45,10 +45,10 @@ function cv(
  * Pass a TailwindClassVarianceConfig to extend/override groups for custom
  * plugins or a non-standard Tailwind prefix / separator.
  *
- * @param array<string, array<string, string|array<string, mixed>>>|string $base
+ * @param array<string, string|list<string>|array<string, string|list<string>>>|list<string>|string $base
  *   Base classes. A plain string or indexed array implicitly targets the 'base'
  *   slot. An associative array is a slot-keyed map.
- * @param array<string, array<string, string|array<string, mixed>>> $variants
+ * @param array<string, array<string, string|list<string>|array<string, string|list<string>>>> $variants
  * @param array<int, array<string, mixed>> $compoundVariants
  * @param array<string, string|bool> $defaultVariants
  */

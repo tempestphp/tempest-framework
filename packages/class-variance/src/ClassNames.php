@@ -54,9 +54,11 @@ final readonly class ClassNames
 
             $items = [];
             foreach ($input as $entry) {
-                if (is_string($entry)) {
-                    array_push($items, ...self::tokenise($entry));
+                if (! is_string($entry)) {
+                    continue;
                 }
+
+                array_push($items, ...self::tokenise($entry));
             }
 
             return new self($items);
