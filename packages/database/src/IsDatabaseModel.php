@@ -268,7 +268,7 @@ trait IsDatabaseModel
     /**
      * Returns a query builder scoped to a collection relation on this model.
      */
-    public function query(string $relation): SelectQueryBuilder
+    public function query(string $relation): QueryBuilder
     {
         $model = inspect(model: $this);
 
@@ -278,79 +278,18 @@ trait IsDatabaseModel
             );
         }
 
-        $primaryKeyValue = $model->getPrimaryKeyValue();
-        $ownerTable = $model->getTableName();
-        $ownerPK = $model->getPrimaryKey();
         $resolved = $model->getRelation(name: $relation);
 
-        return match (true) {
-            $resolved instanceof HasMany => $this->buildHasManyQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
-            $resolved instanceof HasManyThrough => $this->buildHasManyThroughQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
-            $resolved instanceof BelongsToMany => $this->buildBelongsToManyQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
-            default => throw new InvalidArgumentException(
-                message: sprintf('Property "%s" is not a collection relation on %s.', $relation, $model->getName()),
-            ),
-        };
-    }
+        if ($resolved === null) {
+            throw new InvalidArgumentException(
+                message: sprintf('Property "%s" is not a relation on %s.', $relation, $model->getName()),
+            );
+        }
 
-    private function buildHasManyQuery(HasMany $relation, string $ownerTable, string $ownerPK, PrimaryKey $primaryKeyValue): SelectQueryBuilder
-    {
-        $relatedClassName = $relation->property->getIterableType()->getName();
-        $fk = $relation->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
-
-        return query(model: $relatedClassName)
-            ->onDatabase(databaseTag: $this->onDatabase)
-            ->select()
-            ->whereField(field: $fk, value: $primaryKeyValue);
-    }
-
-    private function buildHasManyThroughQuery(HasManyThrough $relation, string $ownerTable, string $ownerPK, PrimaryKey $primaryKeyValue): SelectQueryBuilder
-    {
-        $relatedClassName = $relation->property->getIterableType()->getName();
-        $intermediateModel = inspect(model: $relation->through);
-        $intermediateTable = $intermediateModel->getTableName();
-        $intermediatePK = $intermediateModel->getPrimaryKey();
-
-        $ownerFK = $relation->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
-        $targetFK = $relation->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord() . '_' . $intermediatePK;
-
-        return query(model: $relatedClassName)
-            ->onDatabase(databaseTag: $this->onDatabase)
-            ->select()
-            ->join(sprintf(
-                'INNER JOIN %s ON %s.%s = %s.%s',
-                $intermediateTable,
-                inspect(model: $relatedClassName)->getTableName(),
-                $targetFK,
-                $intermediateTable,
-                $intermediatePK,
-            ))
-            ->whereRaw(sprintf('%s.%s = ?', $intermediateTable, $ownerFK), $primaryKeyValue);
-    }
-
-    private function buildBelongsToManyQuery(BelongsToMany $relation, string $ownerTable, string $ownerPK, PrimaryKey $primaryKeyValue): SelectQueryBuilder
-    {
-        $relatedClassName = $relation->property->getIterableType()->getName();
-        $targetModel = inspect(model: $relatedClassName);
-        $targetTable = $targetModel->getTableName();
-        $targetPK = $targetModel->getPrimaryKey();
-
-        $pivotTable = $relation->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
-        $ownerFK = $relation->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
-        $targetFK = $relation->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
-
-        return query(model: $relatedClassName)
-            ->onDatabase(databaseTag: $this->onDatabase)
-            ->select()
-            ->join(sprintf(
-                'INNER JOIN %s ON %s.%s = %s.%s',
-                $pivotTable,
-                $pivotTable,
-                $targetFK,
-                $targetTable,
-                $targetPK,
-            ))
-            ->whereRaw(sprintf('%s.%s = ?', $pivotTable, $ownerFK), $primaryKeyValue);
+        return $resolved->query(
+            primaryKey: $model->getPrimaryKeyValue(),
+            onDatabase: $this->onDatabase,
+        );
     }
 
     /**

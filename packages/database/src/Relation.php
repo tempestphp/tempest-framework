@@ -2,10 +2,12 @@
 
 namespace Tempest\Database;
 
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyAttribute;
 use Tempest\Support\Arr\ImmutableArray;
+use UnitEnum;
 
 interface Relation extends PropertyAttribute
 {
@@ -22,4 +24,6 @@ interface Relation extends PropertyAttribute
     public function getJoinStatement(): JoinStatement;
 
     public function getExistsStatement(): WhereExistsStatement;
+
+    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder;
 }

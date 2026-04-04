@@ -6,13 +6,17 @@ namespace Tempest\Database;
 
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\WhereRawScope;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use UnitEnum;
 
+use function Tempest\Database\query;
 use function Tempest\Support\str;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
@@ -359,5 +363,33 @@ final class HasManyThrough implements Relation
                 statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetFK} = {$intermediateTable}.{$intermediatePK}",
             ),
         );
+    }
+
+    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    {
+        $relatedClassName = $this->property->getIterableType()->getName();
+        $ownerModel = inspect(model: $this->property->getClass());
+        $intermediateModel = inspect(model: $this->through);
+        $intermediateTable = $intermediateModel->getTableName();
+        $ownerTable = $ownerModel->getTableName();
+        $ownerPK = $ownerModel->getPrimaryKey();
+        $intermediatePK = $intermediateModel->getPrimaryKey();
+        $relatedTable = inspect(model: $relatedClassName)->getTableName();
+
+        $ownerFK = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+        $targetFK = $this->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord() . '_' . $intermediatePK;
+
+        return query(model: $relatedClassName)
+            ->onDatabase(databaseTag: $onDatabase)
+            ->scope(new WhereRawScope(
+                statement: sprintf(
+                    '%s IN (SELECT %s FROM %s WHERE %s = ?)',
+                    $relatedTable . '.' . $targetFK,
+                    $intermediatePK,
+                    $intermediateTable,
+                    $ownerFK,
+                ),
+                binding: $primaryKey,
+            ));
     }
 }

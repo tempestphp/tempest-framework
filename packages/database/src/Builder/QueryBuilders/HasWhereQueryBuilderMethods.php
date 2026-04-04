@@ -15,6 +15,18 @@ trait HasWhereQueryBuilderMethods
     use HasConvenientWhereMethods;
     use HasWhereRelationMethods;
 
+    /**
+     * @param QueryScope[] $scopes
+     */
+    public function applyScopes(array $scopes): self
+    {
+        foreach ($scopes as $scope) {
+            $scope->apply(builder: $this);
+        }
+
+        return $this;
+    }
+
     protected function appendWhere(WhereStatement|WhereGroupStatement|WhereExistsStatement $where): void
     {
         $this->wheres->offsetSet(null, $where);

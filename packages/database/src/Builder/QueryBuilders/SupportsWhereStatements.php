@@ -32,4 +32,11 @@ interface SupportsWhereStatements
      * @return self<TModel>
      */
     public function orWhere(string $field, mixed $value, WhereOperator $operator = WhereOperator::EQUALS): self;
+
+    /**
+     * Adds a raw WHERE condition to the query.
+     *
+     * @return self<TModel>
+     */
+    public function whereRaw(string $statement, mixed ...$bindings): self;
 }

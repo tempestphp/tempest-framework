@@ -19,10 +19,26 @@ final class QueryBuilder
 {
     use OnDatabase;
 
+    /** @var QueryScope[] */
+    private array $scopes = [];
+
     /** @param class-string<TModel>|TModel|string $model */
     public function __construct(
         private readonly string|object $model,
     ) {}
+
+    /**
+     * Adds a scope that will be applied to any query builder created from this instance.
+     *
+     * @return self<TModel>
+     */
+    public function scope(QueryScope $scope): self
+    {
+        $this->scopes[] = $scope;
+
+        return $this;
+    }
+
 
     /**
      * Creates a `SELECT` query builder for retrieving records from the database.
@@ -41,7 +57,7 @@ final class QueryBuilder
         return new SelectQueryBuilder(
             model: $this->model,
             fields: $columns !== [] ? arr($columns)->unique() : null,
-        )->onDatabase($this->onDatabase);
+        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
     }
 
     /**
@@ -88,7 +104,7 @@ final class QueryBuilder
             model: $this->model,
             values: $values,
             serializerFactory: get(SerializerFactory::class),
-        )->onDatabase($this->onDatabase);
+        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
     }
 
     /**
@@ -106,7 +122,7 @@ final class QueryBuilder
      */
     public function delete(): DeleteQueryBuilder
     {
-        return new DeleteQueryBuilder($this->model)->onDatabase($this->onDatabase);
+        return new DeleteQueryBuilder($this->model)->onDatabase($this->onDatabase)->applyScopes($this->scopes);
     }
 
     /**
@@ -124,7 +140,7 @@ final class QueryBuilder
         return new CountQueryBuilder(
             model: $this->model,
             column: $column,
-        )->onDatabase($this->onDatabase);
+        )->onDatabase($this->onDatabase)->applyScopes($this->scopes);
     }
 
     /**

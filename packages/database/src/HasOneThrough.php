@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Attribute;
+use BadMethodCallException;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use UnitEnum;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -316,5 +319,10 @@ final class HasOneThrough implements Relation
                 statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetFK} = {$intermediateTable}.{$intermediatePK}",
             ),
         );
+    }
+
+    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    {
+        throw new BadMethodCallException(message: 'Cannot query a HasOneThrough relation.');
     }
 }

@@ -6,13 +6,17 @@ namespace Tempest\Database;
 
 use Attribute;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\WhereRawScope;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\WhereExistsStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use UnitEnum;
 
+use function Tempest\Database\query;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -393,5 +397,34 @@ final class BelongsToMany implements Relation
                 statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetPK} = {$pivotTable}.{$targetFK}",
             ),
         );
+    }
+
+    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    {
+        $ownerModel = inspect(model: $this->property->getClass());
+        $targetModel = inspect(model: $this->property->getIterableType()->asClass());
+        $relatedClassName = $this->property->getIterableType()->getName();
+        $ownerTable = $ownerModel->getTableName();
+        $ownerPK = $ownerModel->getPrimaryKey();
+        $targetTable = $targetModel->getTableName();
+        $targetPK = $targetModel->getPrimaryKey();
+
+        $pivotTable = $this->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
+        $ownerFK = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
+        $targetFK = $this->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
+
+        return query(model: $relatedClassName)
+            ->onDatabase(databaseTag: $onDatabase)
+            ->scope(new WhereRawScope(
+                statement: sprintf(
+                    '%s.%s IN (SELECT %s FROM %s WHERE %s = ?)',
+                    $targetTable,
+                    $targetPK,
+                    $targetFK,
+                    $pivotTable,
+                    $ownerFK,
+                ),
+                binding: $primaryKey,
+            ));
     }
 }

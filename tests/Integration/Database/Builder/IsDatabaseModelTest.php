@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use BadMethodCallException;
 use InvalidArgumentException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
@@ -341,7 +342,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Book 3', author: $authorA);
         Book::create(title: 'Other Book', author: $authorB);
 
-        $books = $authorA->query( 'books')->all();
+        $books = $authorA->query('books')->select()->all();
 
         $this->assertCount(3, $books);
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
@@ -365,7 +366,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Beta', author: $author);
         Book::create(title: 'Gamma', author: $author);
 
-        $books = $author->query( 'books')
+        $books = $author->query('books')->select()
             ->whereField(field: 'title', value: 'Beta')
             ->all();
 
@@ -391,7 +392,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Book::create(title: 'Book 2', author: $author);
         Book::create(title: 'Book 3', author: $author);
 
-        $books = $author->query( 'books')->limit(limit: 2)->all();
+        $books = $author->query('books')->select()->limit(limit: 2)->all();
 
         $this->assertCount(2, $books);
     }
@@ -416,7 +417,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Reviewer::create(name: 'Bob', bookReview: $reviewA2);
         Reviewer::create(name: 'Charlie', bookReview: $reviewB1);
 
-        $reviewers = $tagA->query( 'reviewers')->all();
+        $reviewers = $tagA->query('reviewers')->select()->all();
 
         $this->assertCount(2, $reviewers);
         $this->assertContainsOnlyInstancesOf(Reviewer::class, $reviewers);
@@ -439,7 +440,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         Reviewer::create(name: 'Alice', bookReview: $review1);
         Reviewer::create(name: 'Bob', bookReview: $review2);
 
-        $reviewers = $tag->query( 'reviewers')
+        $reviewers = $tag->query('reviewers')->select()
             ->whereField(field: 'name', value: 'Alice')
             ->all();
 
@@ -470,7 +471,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tagA->id->value])->execute();
         query(model: 'books_tags')->insert(['book_id' => $book3->id->value, 'tag_id' => $tagB->id->value])->execute();
 
-        $books = $tagA->query( 'books')->all();
+        $books = $tagA->query('books')->select()->all();
 
         $this->assertCount(2, $books);
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
@@ -496,7 +497,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         query(model: 'books_tags')->insert(['book_id' => $book1->id->value, 'tag_id' => $tag->id->value])->execute();
         query(model: 'books_tags')->insert(['book_id' => $book2->id->value, 'tag_id' => $tag->id->value])->execute();
 
-        $books = $tag->query( 'books')
+        $books = $tag->query('books')->select()
             ->whereField(field: 'title', value: 'Alpha')
             ->all();
 
@@ -521,7 +522,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ->insert(['title' => 'Post 2', 'body' => 'Body 2', 'test_user_id' => $user->id->value])
             ->execute();
 
-        $posts = $user->query( 'posts')->all();
+        $posts = $user->query('posts')->select()->all();
 
         $this->assertCount(2, $posts);
         $this->assertContainsOnlyInstancesOf(TestPost::class, $posts);
@@ -538,9 +539,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $book = Book::create(title: 'Test');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(BadMethodCallException::class);
 
-        $book->query( 'author');
+        $book->query('author');
     }
 
     public function test_query_throws_for_nonexistent_property(): void
@@ -555,7 +556,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        $author->query( 'nonexistent');
+        $author->query('nonexistent');
     }
 
     public function test_query_throws_for_unsaved_model(): void
@@ -564,7 +565,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        $author->query( 'books');
+        $author->query('books');
     }
 
     public function test_query_has_many_returns_empty_for_no_results(): void
@@ -578,7 +579,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $author = Author::create(name: 'Author', type: AuthorType::A);
 
-        $books = $author->query( 'books')->all();
+        $books = $author->query('books')->select()->all();
 
         $this->assertCount(0, $books);
     }
