@@ -281,9 +281,10 @@ trait IsDatabaseModel
         $primaryKeyValue = $model->getPrimaryKeyValue();
         $ownerTable = $model->getTableName();
         $ownerPK = $model->getPrimaryKey();
+        $resolved = $model->getRelation(name: $relation);
 
         return match (true) {
-            ($resolved = $model->getRelation(name: $relation)) instanceof HasMany => $this->buildHasManyQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
+            $resolved instanceof HasMany => $this->buildHasManyQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
             $resolved instanceof HasManyThrough => $this->buildHasManyThroughQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
             $resolved instanceof BelongsToMany => $this->buildBelongsToManyQuery($resolved, $ownerTable, $ownerPK, $primaryKeyValue),
             default => throw new InvalidArgumentException(
