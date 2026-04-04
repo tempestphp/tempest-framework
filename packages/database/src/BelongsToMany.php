@@ -408,7 +408,7 @@ final class BelongsToMany implements Relation
         $targetTable = $targetModel->getTableName();
         $targetPK = $targetModel->getPrimaryKey();
 
-        $pivotTable = $this->pivot ?? arr([$ownerTable, $targetTable])->sort()->implode('_')->toString();
+        $pivotTable = $this->resolvePivotTable(ownerModel: $ownerModel, targetModel: $targetModel);
         $ownerFK = $this->ownerJoin ?? str(string: $ownerTable)->singularizeLastWord() . '_' . $ownerPK;
         $targetFK = $this->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord() . '_' . $targetPK;
 
