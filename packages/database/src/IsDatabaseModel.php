@@ -13,6 +13,7 @@ use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Router\IsBindingValue;
 use Tempest\Validation\SkipValidation;
+use InvalidArgumentException;
 use UnitEnum;
 
 use function Tempest\Support\arr;
@@ -262,6 +263,32 @@ trait IsDatabaseModel
         }
 
         return $this;
+    }
+
+    /**
+     * Returns a query builder scoped to a HasMany relation on this model.
+     */
+    public function query(string $relation): SelectQueryBuilder
+    {
+        $model = inspect($this);
+        $hasMany = $model->getHasMany($relation);
+
+        if (! $hasMany instanceof HasMany) {
+            throw new InvalidArgumentException(
+                sprintf('Property "%s" is not a HasMany relation on %s.', $relation, $model->getName()),
+            );
+        }
+
+        $relatedClassName = $hasMany->property->getIterableType()->getName();
+        $parentTable = $model->getTableName();
+        $parentPK = $model->getPrimaryKey();
+        $fk = $hasMany->ownerJoin ?? str($parentTable)->singularizeLastWord() . '_' . $parentPK;
+        $primaryKeyValue = $model->getPrimaryKeyProperty()->getValue($this);
+
+        return query($relatedClassName)
+            ->onDatabase($this->onDatabase)
+            ->select()
+            ->whereField($fk, $primaryKeyValue);
     }
 
     /**
