@@ -272,15 +272,13 @@ trait IsDatabaseModel
     {
         $model = inspect(model: $this);
 
-        $primaryKeyProperty = $model->getPrimaryKeyProperty();
-
-        if ($primaryKeyProperty === null || ! $primaryKeyProperty->isInitialized(object: $this)) {
+        if (! $model->hasPrimaryKey() || ! $model->getPrimaryKeyProperty()->isInitialized(object: $this)) {
             throw new InvalidArgumentException(
                 message: sprintf('Cannot query relations on %s without a primary key value.', $model->getName()),
             );
         }
 
-        $primaryKeyValue = $primaryKeyProperty->getValue(object: $this);
+        $primaryKeyValue = $model->getPrimaryKeyValue();
 
         $relationObj = $model->getRelation(name: $relation);
         $ownerTable = $model->getTableName();
