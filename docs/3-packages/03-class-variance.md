@@ -4,14 +4,12 @@ description: "The Class Variance package can be used standalone or with Tempest 
 ---
 ## Introduction
 
-Class variance — a PHP package for building component class strings with variants, compound variants, slot support, and conflict-aware merging. Heavily inspired by [CVA](https://cva.style) and [Tailwind-Variants](https://www.tailwind-variants.org/), but with the ability to extend and support other frameworks also.
+Class variance — a PHP package for building component CSS class strings with variants, compound variants, slot support, and conflict-aware merging. Heavily inspired by [CVA](https://cva.style) and [Tailwind-Variants](https://www.tailwind-variants.org/), but with the ability to extend and support other frameworks also.
 
 Two flavours:
 
 - **`cv()`** — separator-based merging, framework-agnostic CSS, somewhat limited by default but can be extended to support other frameworks.
 - **`tv()`** — builds on `cv()` with Tailwind-aware merging, aiming to provide the same outcomes as [tailwind-merge](https://github.com/dcastil/tailwind-merge).
-
----
 
 ## Installation
 
