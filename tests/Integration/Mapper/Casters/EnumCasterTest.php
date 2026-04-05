@@ -27,6 +27,7 @@ final class EnumCasterTest extends FrameworkIntegrationTestCase
     #[TestWith([''])]
     #[TestWith(['null'])]
     #[TestWith(['NULL'])]
+    #[TestWith(['   '])]
     public function nullable_cast_returns_null_for_empty_input(mixed $input): void
     {
         $caster = new EnumCaster(enum: BackedEnumToSerialize::class, nullable: true);

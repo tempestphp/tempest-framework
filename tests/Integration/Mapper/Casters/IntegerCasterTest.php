@@ -30,6 +30,7 @@ final class IntegerCasterTest extends FrameworkIntegrationTestCase
     #[TestWith([42, 42])]
     #[TestWith(['0', 0])]
     #[TestWith([0, 0])]
+    #[TestWith(['  42  ', 42])]
     public function nullable_cast_with_values(mixed $input, int $expected): void
     {
         $caster = new IntegerCaster(nullable: true);
@@ -43,6 +44,7 @@ final class IntegerCasterTest extends FrameworkIntegrationTestCase
     #[TestWith(['null'])]
     #[TestWith(['NULL'])]
     #[TestWith(['Null'])]
+    #[TestWith(['   '])]
     public function nullable_cast_returns_null_for_empty_input(mixed $input): void
     {
         $caster = new IntegerCaster(nullable: true);

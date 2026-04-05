@@ -44,6 +44,10 @@ final readonly class EnumCaster implements Caster, DynamicCaster, ConfigurableCa
 
     public function cast(mixed $input): ?object
     {
+        if (is_string($input)) {
+            $input = trim($input);
+        }
+
         if ($this->nullable && ($input === null || $input === '' || is_string($input) && mb_strtolower($input) === 'null')) {
             return null;
         }

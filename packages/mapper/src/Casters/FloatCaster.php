@@ -36,7 +36,7 @@ final readonly class FloatCaster implements Caster, DynamicCaster, ConfigurableC
     public function cast(mixed $input): ?float
     {
         if (is_string($input)) {
-            $input = mb_strtolower($input);
+            $input = mb_strtolower(trim($input));
         }
 
         if ($this->nullable && ($input === null || $input === '' || $input === 'null')) {

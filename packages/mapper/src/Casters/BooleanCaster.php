@@ -36,7 +36,7 @@ final readonly class BooleanCaster implements Caster, DynamicCaster, Configurabl
     public function cast(mixed $input): ?bool
     {
         if (is_string($input)) {
-            $input = mb_strtolower($input);
+            $input = mb_strtolower(trim($input));
         }
 
         if ($this->nullable && ($input === null || $input === '' || $input === 'null')) {

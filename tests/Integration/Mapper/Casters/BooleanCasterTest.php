@@ -44,6 +44,7 @@ final class BooleanCasterTest extends FrameworkIntegrationTestCase
     #[TestWith([null])]
     #[TestWith([''])]
     #[TestWith(['null'])]
+    #[TestWith(['   '])]
     public function nullable_cast_returns_null_for_empty_input(mixed $input): void
     {
         $this->assertNull(new BooleanCaster(nullable: true)->cast($input));

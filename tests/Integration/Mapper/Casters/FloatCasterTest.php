@@ -30,6 +30,7 @@ final class FloatCasterTest extends FrameworkIntegrationTestCase
     #[TestWith([3.14, 3.14])]
     #[TestWith(['0', 0.0])]
     #[TestWith([0, 0.0])]
+    #[TestWith(['  3.14  ', 3.14])]
     public function nullable_cast_with_values(mixed $input, float $expected): void
     {
         $caster = new FloatCaster(nullable: true);
@@ -43,6 +44,7 @@ final class FloatCasterTest extends FrameworkIntegrationTestCase
     #[TestWith(['null'])]
     #[TestWith(['NULL'])]
     #[TestWith(['Null'])]
+    #[TestWith(['   '])]
     public function nullable_cast_returns_null_for_empty_input(mixed $input): void
     {
         $caster = new FloatCaster(nullable: true);
