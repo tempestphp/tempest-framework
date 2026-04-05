@@ -870,6 +870,43 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
+    public function test_dynamic_view_component_with_object_attribute_forwarded_as_data(): void
+    {
+        $this->view->registerViewComponent('x-field', '<label>{{ $field->label }}</label>');
+
+        $field = new class {
+            public string $label = 'Email';
+        };
+
+        $html = $this->view->render(<<<'HTML'
+        <x-component :is="'x-field'" :field="$field" />
+        HTML, field: $field);
+
+        $this->assertSame('<label>Email</label>', $html);
+    }
+
+    public function test_dynamic_view_component_with_boolean_true_renders_bare_attribute(): void
+    {
+        $this->view->registerViewComponent('x-test', '<span>{{ isset($disabled) ? "yes" : "no" }}</span>');
+
+        $html = $this->view->render(<<<'HTML'
+        <x-component :is="'x-test'" :disabled="true" />
+        HTML);
+
+        $this->assertSame('<span>yes</span>', $html);
+    }
+
+    public function test_dynamic_view_component_with_boolean_false_omits_attribute(): void
+    {
+        $this->view->registerViewComponent('x-test', '<span>{{ isset($disabled) ? "yes" : "no" }}</span>');
+
+        $html = $this->view->render(<<<'HTML'
+        <x-component :is="'x-test'" :disabled="false" />
+        HTML);
+
+        $this->assertSame('<span>no</span>', $html);
+    }
+
     public function test_dynamic_view_component_with_slot(): void
     {
         $this->view->registerViewComponent('x-test', '<div><x-slot/></div>');
