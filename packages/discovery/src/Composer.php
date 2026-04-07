@@ -11,8 +11,6 @@ use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Support\Path;
 use Tempest\Support\Str;
 
-use function Tempest\Support\arr;
-
 final class Composer
 {
     /** @var array<Psr4Namespace> */
