@@ -149,7 +149,7 @@
         "symfony/polyfill-intl-grapheme": "*",
         "symfony/polyfill-intl-idn":  "*",
         "symfony/polyfill-intl-icu": "*",
-        "symfony/polyfill-intl-messag":  "*",
+        "symfony/polyfill-intl-messageformatter":  "*",
         "symfony/polyfill-intl-normalizer": "*",
         "symfony/polyfill-mbstring":  "*",
         "symfony/polyfill-util": "*",
