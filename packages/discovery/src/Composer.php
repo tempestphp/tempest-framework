@@ -36,15 +36,10 @@ final class Composer
     {
         $this->composerPath = Path\normalize($this->root, 'composer.json');
         $this->composer = $this->loadComposerFile($this->composerPath);
-        $this->namespaces = arr($this->composer)
-            ->get('autoload.psr-4', default: arr())
-            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
-            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
-            ->values()
-            ->toArray();
+        $this->namespaces = $this->resolvePsr4Namespaces('autoload.psr-4');
 
         foreach ($this->namespaces as $namespace) {
-            if (! Str\starts_with(Str\ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
+            if (! Str\starts_with(Str\ensure_ends_with($namespace->path, '/'), needles: ['app/', 'src/', 'source/', 'lib/'])) {
                 continue;
             }
 
@@ -57,20 +52,12 @@ final class Composer
             $this->mainNamespace = $this->namespaces[0];
         }
 
-        $this->namespaces = arr([
-            $this->mainNamespace,
-            ...$this->namespaces,
-        ])
+        $this->namespaces = new Arr\ImmutableArray([$this->mainNamespace, ...$this->namespaces])
             ->filter()
-            ->unique(fn (Psr4Namespace $ns) => $ns->namespace)
+            ->unique(fn (Psr4Namespace $ns) => "{$ns->namespace}:{$ns->path}")
             ->toArray();
 
-        $this->devNamespaces = arr($this->composer)
-            ->get('autoload-dev.psr-4', default: arr())
-            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
-            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
-            ->values()
-            ->toArray();
+        $this->devNamespaces = $this->resolvePsr4Namespaces('autoload-dev.psr-4');
 
         return $this;
     }
@@ -130,5 +117,16 @@ final class Composer
         }
 
         return Filesystem\read_json($path);
+    }
+
+    /** @return array<Psr4Namespace> */
+    private function resolvePsr4Namespaces(string $path): array
+    {
+        return new Arr\ImmutableArray($this->composer)
+            ->get($path, default: new Arr\ImmutableArray())
+            ->flatMap(fn (string|iterable $paths, string $namespace) => Arr\map(Arr\wrap($paths), fn (string $path) => new Psr4Namespace($namespace, $path)))
+            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->values()
+            ->toArray();
     }
 }
