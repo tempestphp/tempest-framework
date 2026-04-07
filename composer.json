@@ -126,9 +126,7 @@
         "tempest/upgrade": "self.version",
         "tempest/validation": "self.version",
         "tempest/view": "self.version",
-        "tempest/vite": "self.version"
-    },
-    "provide": {
+        "tempest/vite": "self.version",
         "paragonie/sodium_compat": "*",
         "paragonie/random_compat": "*",
         "symfony/polyfill-apcu": "*",
