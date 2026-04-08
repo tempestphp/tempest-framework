@@ -36,7 +36,7 @@ final readonly class AutoloadDiscoveryLocations
         ];
     }
 
-    /** @return array{core: DiscoveryLocation[], vendor: DiscoveryLocation[], optIn: DiscoveryLocation[]} */
+    /** @return DiscoveryLocation[] */
     private function discoverInstalledPackages(string $composerPath, array $packages): array
     {
         $core = [];
