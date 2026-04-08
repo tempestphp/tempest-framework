@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use Tempest\Support\Filesystem;
-
-use function Tempest\Support\Path\normalize;
+use Tempest\Support\Path;
 
 final readonly class AutoloadDiscoveryLocations
 {
@@ -27,42 +26,47 @@ final readonly class AutoloadDiscoveryLocations
     /** @return \Tempest\Discovery\DiscoveryLocation[] */
     public function __invoke(): array
     {
+        $composerPath = Path\normalize($this->rootPath, 'vendor/composer');
+        $installed = $this->loadJsonFile(Path\normalize($composerPath, 'installed.json'));
+        $packages = $installed['packages'] ?? [];
+
         return [
-            ...$this->discoverCorePackages(),
-            ...$this->discoverVendorPackages(),
+            ...$this->discoverInstalledPackages($composerPath, $packages),
             ...$this->discoverAppNamespaces(),
         ];
     }
 
-    /**
-     * @return DiscoveryLocation[]
-     */
-    private function discoverCorePackages(): array
+    /** @return array{core: DiscoveryLocation[], vendor: DiscoveryLocation[], optIn: DiscoveryLocation[]} */
+    private function discoverInstalledPackages(string $composerPath, array $packages): array
     {
-        $composerPath = normalize($this->rootPath, 'vendor/composer');
-        $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
-        $packages = $installed['packages'] ?? [];
-
-        $discoveredLocations = [];
+        $core = [];
+        $vendor = [];
+        $optIn = [];
 
         foreach ($packages as $package) {
-            $packageName = $package['name'] ?? '';
-            $isTempest = str_starts_with($packageName, 'tempest');
-
-            if (! $isTempest) {
+            if (! isset($package['autoload']['psr-4'])) {
                 continue;
             }
 
-            $packagePath = normalize($composerPath, $package['install-path'] ?? '');
+            $packagePath = Path\normalize($composerPath, $package['install-path'] ?? '');
 
-            foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
-                $namespacePath = normalize($packagePath, $namespacePath);
+            if (str_starts_with($package['name'] ?? '', needle: 'tempest/')) {
+                $core = [...$core, ...$this->discoverPackageLocations($packagePath, $package['autoload']['psr-4'])];
+                continue;
+            }
 
-                $discoveredLocations[] = new DiscoveryLocation($namespace, $namespacePath);
+            if (array_find($package['require'] ?? [], static fn ($_, string $package) => str_starts_with($package, needle: 'tempest/'))) {
+                $vendor = [...$vendor, ...$this->discoverPackageLocations($packagePath, $package['autoload']['psr-4'])];
+                continue;
+            }
+
+            if ($package['extra']['tempest']['can-discover'] ?? false) {
+                $optIn = [...$optIn, ...$this->discoverPackageLocations($packagePath, $package['autoload']['psr-4'])];
+                continue;
             }
         }
 
-        return $discoveredLocations;
+        return [...$core, ...$vendor, ...$optIn];
     }
 
     /**
@@ -73,7 +77,7 @@ final readonly class AutoloadDiscoveryLocations
         $discoveredLocations = [];
 
         foreach ($this->composer->namespaces as $namespace) {
-            $path = normalize($this->rootPath, $namespace->path);
+            $path = Path\normalize($this->rootPath, $namespace->path);
 
             $discoveredLocations[] = new DiscoveryLocation($namespace->namespace, $path);
         }
@@ -81,35 +85,26 @@ final readonly class AutoloadDiscoveryLocations
         return $discoveredLocations;
     }
 
-    /**
-     * @return DiscoveryLocation[]
-     */
-    private function discoverVendorPackages(): array
+    /** @return DiscoveryLocation[] */
+    private function discoverPackageLocations(string $packagePath, array $psr4Namespaces): array
     {
-        $composerPath = normalize($this->rootPath, 'vendor/composer');
-        $installed = $this->loadJsonFile(normalize($composerPath, 'installed.json'));
-        $packages = $installed['packages'] ?? [];
-
         $discoveredLocations = [];
 
-        foreach ($packages as $package) {
-            $packageName = $package['name'] ?? '';
-            $isTempest = str_starts_with($packageName, 'tempest');
+        foreach ($psr4Namespaces as $namespace => $namespacePath) {
+            if (is_array($namespacePath)) {
+                foreach ($namespacePath as $path) {
+                    if (! is_string($path)) {
+                        continue;
+                    }
 
-            if ($isTempest) {
+                    $discoveredLocations[] = new DiscoveryLocation($namespace, Path\normalize($packagePath, $path));
+                }
+
                 continue;
             }
 
-            $packagePath = normalize($composerPath, $package['install-path'] ?? '');
-            $requiresTempest = isset($package['require']['tempest/discovery']) || isset($package['require']['tempest/framework']) || isset($package['require']['tempest/core']);
-            $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
-
-            if (! ($requiresTempest && $hasPsr4Namespaces)) {
-                continue;
-            }
-
-            foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
-                $path = normalize($packagePath, $namespacePath);
+            if (is_string($namespacePath)) {
+                $path = Path\normalize($packagePath, $namespacePath);
 
                 $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
             }
