@@ -61,7 +61,7 @@ final readonly class AutoloadDiscoveryLocations
             }
 
             if ($package['extra']['tempest']['can-discover'] ?? false) {
-                $optIn = [...$optIn, ...$this->discoverPackageLocations($packagePath, $package['autoload']['psr-4'])];
+                $optIn = [...$optIn, ...$this->discoverPackageLocations($packagePath, $package['autoload']['psr-4'], $package['extra']['tempest']['ignore'] ?? [])];
                 continue;
             }
         }
@@ -86,7 +86,7 @@ final readonly class AutoloadDiscoveryLocations
     }
 
     /** @return DiscoveryLocation[] */
-    private function discoverPackageLocations(string $packagePath, array $psr4Namespaces): array
+    private function discoverPackageLocations(string $packagePath, array $psr4Namespaces, array $ignore = []): array
     {
         $discoveredLocations = [];
 
@@ -97,16 +97,14 @@ final readonly class AutoloadDiscoveryLocations
                         continue;
                     }
 
-                    $discoveredLocations[] = new DiscoveryLocation($namespace, Path\normalize($packagePath, $path));
+                    $discoveredLocations[] = new DiscoveryLocation($namespace, Path\normalize($packagePath, $path), $ignore);
                 }
 
                 continue;
             }
 
             if (is_string($namespacePath)) {
-                $path = Path\normalize($packagePath, $namespacePath);
-
-                $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
+                $discoveredLocations[] = new DiscoveryLocation($namespace, Path\normalize($packagePath, $namespacePath), $ignore);
             }
         }
 

@@ -150,6 +150,10 @@ final class BootDiscovery
             return;
         }
 
+        if ($location->isIgnored($input)) {
+            return;
+        }
+
         if (is_file($input)) {
             $this->discoverPath($input, $location, $discoveries);
             return;

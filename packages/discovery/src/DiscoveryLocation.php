@@ -18,6 +18,7 @@ final class DiscoveryLocation
     public function __construct(
         public readonly string $namespace,
         string $path,
+        private(set) array $ignore = [],
     ) {
         $this->path = Filesystem\normalize_path(rtrim($path, '\\/'));
     }
@@ -35,6 +36,11 @@ final class DiscoveryLocation
     public function isVendor(): bool
     {
         return str_contains($this->path, '/vendor/') || str_contains($this->path, '\\vendor\\') || $this->isTempest();
+    }
+
+    public function isIgnored(string $path): bool
+    {
+        return array_any($this->ignore, fn (string $ignore) => str_starts_with($path, $ignore));
     }
 
     public function toClassName(string $path): string
