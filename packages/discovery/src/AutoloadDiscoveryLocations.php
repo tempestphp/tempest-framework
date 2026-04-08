@@ -89,6 +89,7 @@ final readonly class AutoloadDiscoveryLocations
     private function discoverPackageLocations(string $packagePath, array $psr4Namespaces, array $ignore = []): array
     {
         $discoveredLocations = [];
+        $ignore = array_map(static fn (string $path) => Filesystem\normalize_path(Path\normalize($packagePath, $path)), $ignore);
 
         foreach ($psr4Namespaces as $namespace => $namespacePath) {
             if (is_array($namespacePath)) {
