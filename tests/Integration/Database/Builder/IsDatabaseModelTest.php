@@ -7,11 +7,12 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
-use InvalidArgumentException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\DeleteStatementWasInvalid;
+use Tempest\Database\Exceptions\PrimaryKeyWasNotInitialized;
+use Tempest\Database\Exceptions\PropertyWasNotARelation;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Database\HasMany;
@@ -851,7 +852,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $author = Author::create(name: 'Author', type: AuthorType::A);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(PropertyWasNotARelation::class);
 
         $author->query('nonexistent');
     }
@@ -860,7 +861,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $author = new Author(name: 'Unsaved');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(PrimaryKeyWasNotInitialized::class);
 
         $author->query('books');
     }

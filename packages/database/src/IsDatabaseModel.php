@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use InvalidArgumentException;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
+use Tempest\Database\Exceptions\PrimaryKeyWasNotInitialized;
+use Tempest\Database\Exceptions\PropertyWasNotARelation;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
 use Tempest\Reflection\PropertyReflector;
@@ -273,17 +274,13 @@ trait IsDatabaseModel
         $model = inspect(model: $this);
 
         if (! $model->hasPrimaryKey() || ! $model->getPrimaryKeyProperty()->isInitialized(object: $this)) {
-            throw new InvalidArgumentException(
-                message: sprintf('Cannot query relations on %s without a primary key value.', $model->getName()),
-            );
+            throw new PrimaryKeyWasNotInitialized(model: $model->getName());
         }
 
         $resolved = $model->getRelation(name: $relation);
 
         if ($resolved === null) {
-            throw new InvalidArgumentException(
-                message: sprintf('Property "%s" is not a relation on %s.', $relation, $model->getName()),
-            );
+            throw new PropertyWasNotARelation(property: $relation, model: $model->getName());
         }
 
         return $resolved->query(
