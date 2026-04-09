@@ -2,9 +2,11 @@
 
 namespace Tempest\Upgrade\Tests\Tempest34;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
+#[RunTestsInSeparateProcesses]
 final class Tempest34RectorTest extends TestCase
 {
     private RectorTester $rector {
