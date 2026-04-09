@@ -5,9 +5,25 @@ description: "Tempest comes with a handful of tools to help third-party package 
 
 ## Overview
 
-Creating a package for Tempest is as simple as adding `tempest/core` as a dependency. When this happens, [discovery](../1-essentials/05-discovery.md) will find the package thanks to composer metadata and register discoverable classes.
+Creating a package for Tempest consists of creating a typical PHP package, except it should depend on the relevant Tempest dependency. When you install a dependency that depends on any `tempest/*` package, [discovery](../1-essentials/05-discovery.md) will find it through Composer metadata and register discoverable classes.
 
 Unlike Symfony or Laravel, Tempest doesn't have a dedicated "service provider" concept. Instead, you're encouraged to rely on [discovery](../1-essentials/05-discovery.md) and [initializers](../1-essentials/05-container#dependency-initializers).
+
+## Optional Tempest support
+
+If your package is a normal package but has optional support for Tempest, you can opt-in for discovery by providing metadata in `composer.json`:
+
+```json composer.json
+{
+	"extra": {
+		"tempest": {
+			"can-discover": true
+		}
+	}
+}
+```
+
+The `extra.tempest.can-discover` property marks your package as discoverable even without a Tempest dependency.
 
 ## Preventing discovery
 
@@ -22,6 +38,20 @@ use Tempest\Discovery\SkipDiscovery;
 final readonly class UserMigration implements Migration
 {
     // …
+}
+```
+
+Alternatively, you may use composer metadata to completely exclude any path from discovery. This is mostly useful when the package has optional dependencies, since discovery use Reflection and will throw errors when encountering unknown classes or interfaces.
+
+```json composer.json
+{
+	"extra": {
+		"tempest": {
+			"ignore": [
+				"src/OptionalDependency.php"
+			]
+		}
+	}
 }
 ```
 

@@ -35,7 +35,7 @@ You may read more about building commands in the [dedicated documentation](../1-
 Tempest will automatically discover all console commands from multiple sources:
 
 1. **Core Tempest packages** — Built-in commands from Tempest itself
-2. **Vendor packages** — Third-party packages that require `tempest/framework` or `tempest/core`
+2. **Vendor packages** — Packages that require any `tempest/*` package,or opt in via `extra.tempest.can-discover`
 3. **App namespaces** — All namespaces configured as PSR-4 autoload paths in your `composer.json`
 
 ```json
