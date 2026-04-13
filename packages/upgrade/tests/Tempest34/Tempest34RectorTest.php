@@ -75,6 +75,22 @@ final class Tempest34RectorTest extends TestCase
             ->assertNotContains('Tempest\Core\DiscoveryCache');
     }
 
+    public function test_priority_namespace_change(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/PriorityNamespaceChange.input.php')
+            ->assertContains('use Tempest\Support\Priority;')
+            ->assertNotContains('use Tempest\Core\Priority;');
+    }
+
+    public function test_fully_qualified_priority(): void
+    {
+        $this->rector
+            ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedPriority.input.php')
+            ->assertContains('Tempest\Support\Priority')
+            ->assertNotContains('Tempest\Core\Priority');
+    }
+
     public function test_kernel_discovery_locations_refactored(): void
     {
         $this->rector

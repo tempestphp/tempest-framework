@@ -5,6 +5,7 @@ use Rector\Configuration\Option;
 use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Tempest\Upgrade\Tempest34\UpdateDiscoveryImportsRector;
 use Tempest\Upgrade\Tempest34\UpdateKernelDiscoveryPropertiesRector;
+use Tempest\Upgrade\Tempest34\UpdatePriorityImportsRector;
 
 return static function (RectorConfig $config): void {
     SimpleParameterProvider::setParameter(Option::AUTO_IMPORT_NAMES, value: true);
@@ -12,4 +13,5 @@ return static function (RectorConfig $config): void {
 
     $config->rule(UpdateDiscoveryImportsRector::class);
     $config->rule(UpdateKernelDiscoveryPropertiesRector::class);
+    $config->rule(UpdatePriorityImportsRector::class);
 };
