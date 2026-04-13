@@ -12,7 +12,7 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\GlobalFlags;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::FRAMEWORK)]
 final readonly class HelpMiddleware implements ConsoleMiddleware

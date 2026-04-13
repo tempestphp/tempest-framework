@@ -11,7 +11,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Container;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
@@ -25,6 +24,7 @@ use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Router\ResponseSender;
 use Tempest\Router\RouteConfig;
 use Tempest\Support\Json;
+use Tempest\Support\Priority;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Throwable;
 

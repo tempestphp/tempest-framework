@@ -4,9 +4,9 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Core\Middleware;
-use Tempest\Core\Priority;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::LOWEST)]
 final readonly class HandleRouteSpecificMiddleware implements HttpMiddleware

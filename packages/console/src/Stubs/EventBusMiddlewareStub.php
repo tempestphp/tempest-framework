@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Stubs;
 
-use Tempest\Core\Priority;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\EventBus\EventBusMiddleware;
 use Tempest\EventBus\EventBusMiddlewareCallable;
+use Tempest\Support\Priority;
 
 #[SkipDiscovery]
 #[Priority(Priority::NORMAL)]

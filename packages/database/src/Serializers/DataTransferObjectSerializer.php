@@ -4,7 +4,6 @@ namespace Tempest\Database\Serializers;
 
 use BackedEnum;
 use JsonSerializable;
-use Tempest\Core\Priority;
 use Tempest\Database\DatabaseContext;
 use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\DynamicSerializer;
@@ -17,6 +16,7 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
+use Tempest\Support\Priority;
 use UnitEnum;
 
 #[Priority(Priority::HIGHEST)]

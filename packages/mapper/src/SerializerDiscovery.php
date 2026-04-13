@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use Tempest\Core\Priority;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Mapper\Attributes\Context;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Priority;
 
 final class SerializerDiscovery implements Discovery
 {

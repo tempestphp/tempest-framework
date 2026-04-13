@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript\TypeResolvers;
 
-use Tempest\Core\Priority;
 use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
 use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 /**
  * Fallback resolver for unhandled types.

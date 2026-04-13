@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Core;
+namespace Tempest\Support;
 
 use Attribute;
 

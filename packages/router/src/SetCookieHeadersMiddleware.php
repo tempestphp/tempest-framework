@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Core\Priority;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Support\Priority;
 
 /**
  * Adds the `Set-Cookie` headers to the response based on the cookie manager.

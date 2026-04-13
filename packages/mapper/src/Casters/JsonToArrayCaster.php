@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Json;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::NORMAL)]
 final class JsonToArrayCaster implements Caster, DynamicCaster

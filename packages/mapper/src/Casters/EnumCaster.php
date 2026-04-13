@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Casters;
 
 use BackedEnum;
-use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use UnitEnum;
 
 #[Priority(Priority::HIGHEST)]

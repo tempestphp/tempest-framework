@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Serializers;
 
 use DateTimeInterface as NativeDateTimeInterface;
-use Tempest\Core\Priority;
 use Tempest\Database\DatabaseContext;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
@@ -16,6 +15,7 @@ use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGH)]
 #[Context(DatabaseContext::class)]

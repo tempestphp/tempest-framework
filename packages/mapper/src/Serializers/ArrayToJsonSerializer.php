@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
-use Tempest\Core\Priority;
 use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
@@ -12,6 +11,7 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr\ArrayInterface;
 use Tempest\Support\Json;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::NORMAL)]
 final class ArrayToJsonSerializer implements Serializer, DynamicSerializer

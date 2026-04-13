@@ -13,8 +13,8 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\Priority;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Priority;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Casters;
 
-use Tempest\Core\Priority;
 use Tempest\Database\PrimaryKey;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGHEST)]
 final readonly class PrimaryKeyCaster implements Caster, DynamicCaster

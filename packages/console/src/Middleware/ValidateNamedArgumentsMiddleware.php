@@ -10,7 +10,7 @@ use Tempest\Console\GlobalFlags;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 use function Tempest\Support\arr;
 

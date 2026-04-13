@@ -4,7 +4,6 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Core\Priority;
 use Tempest\Mapper;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\CasterFactory;
@@ -14,6 +13,7 @@ use Tempest\Mapper\Serializer;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Serializers;
 
 use BackedEnum;
-use Tempest\Core\Priority;
 use Tempest\Database\RawSqlDatabaseContext;
 use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\DynamicSerializer;
@@ -13,6 +12,7 @@ use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use UnitEnum;
 
 #[Priority(Priority::NORMAL)]

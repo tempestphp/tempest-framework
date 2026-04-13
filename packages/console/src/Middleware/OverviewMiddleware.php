@@ -13,8 +13,8 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\AppConfig;
-use Tempest\Core\Priority;
 use Tempest\Discovery\DiscoveryCache;
+use Tempest\Support\Priority;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;

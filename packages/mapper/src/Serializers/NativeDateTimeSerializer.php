@@ -8,7 +8,6 @@ use DateTime as NativeDateTime;
 use DateTimeImmutable as NativeDateTimeImmutable;
 use DateTimeInterface;
 use DateTimeInterface as NativeDateTimeInterface;
-use Tempest\Core\Priority;
 use Tempest\Mapper\ConfigurableSerializer;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\DynamicSerializer;
@@ -16,6 +15,7 @@ use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
-use Tempest\Core\Priority;
 use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::NORMAL)]
 final class BooleanSerializer implements Serializer, DynamicSerializer

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Generation\TypeScript\TypeResolvers;
 
 use DateTimeInterface as NativeDateTimeInterface;
-use Tempest\Core\Priority;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Generation\TypeScript\TypeNodes\PrimitiveTypeNode;
 use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
 use Tempest\Generation\TypeScript\TypeResolver;
 use Tempest\Generation\TypeScript\TypeScriptGenerator;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGH)]
 final class DateTimeTypeResolver implements TypeResolver

@@ -8,13 +8,13 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
-use Tempest\Core\Priority;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\ConfigurableCaster;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 
 #[Priority(Priority::HIGHEST)]

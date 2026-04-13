@@ -8,7 +8,6 @@ use Tempest\Cache\Cache;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandBusMiddleware;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;
-use Tempest\Core\Priority;
 use Tempest\DateTime\Duration;
 use Tempest\Idempotency\Attributes\Idempotent;
 use Tempest\Idempotency\Config\IdempotencyConfig;
@@ -24,6 +23,7 @@ use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 use Tempest\Idempotency\Support\ProcessingOwner;
 use Tempest\Idempotency\Support\ProcessingOwnerLiveness;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Priority;
 use Throwable;
 
 #[Priority(Priority::FRAMEWORK - 1)]

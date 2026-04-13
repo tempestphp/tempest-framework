@@ -12,7 +12,7 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::FRAMEWORK - 7)]
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware

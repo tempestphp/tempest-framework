@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::FRAMEWORK - 9)]
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware

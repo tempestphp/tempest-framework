@@ -3,11 +3,11 @@
 namespace Tempest\Http\Session;
 
 use Tempest\Core\DeferredTasks;
-use Tempest\Core\Priority;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Priority;
 
 /**
  * This middleware is responsible for creating the session and saving it on response.

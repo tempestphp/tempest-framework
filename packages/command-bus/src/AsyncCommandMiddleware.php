@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Tempest\Core\Priority;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Priority;
 use Tempest\Support\Random;
 
 #[Priority(Priority::FRAMEWORK)]

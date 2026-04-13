@@ -6,12 +6,12 @@ namespace Tempest\Mapper\Serializers;
 
 use JsonSerializable;
 use Serializable;
-use Tempest\Core\Priority;
 use Tempest\Mapper\DynamicSerializer;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::LOW)]
 final class SerializableSerializer implements Serializer, DynamicSerializer

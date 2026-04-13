@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use Tempest\Core\Priority;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\FormatPattern;
@@ -14,6 +13,7 @@ use Tempest\Mapper\Context;
 use Tempest\Mapper\DynamicCaster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Priority;
 use Tempest\Validation\Rules\HasDateTimeFormat;
 use Throwable;
 

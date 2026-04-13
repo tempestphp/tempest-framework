@@ -138,7 +138,7 @@ final readonly class EventLoggerMiddleware implements EventBusMiddleware
 All event bus middleware classes get sorted based on their priority. By default, each middleware gets the "normal" priority, but you can override it using the `#[Priority]` attribute:
 
 ```php
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGH)]
 final readonly class EventLoggerMiddleware implements EventBusMiddleware

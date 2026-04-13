@@ -6,6 +6,7 @@ use ArrayIterator;
 use Generator;
 use IteratorAggregate;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Priority;
 use Traversable;
 
 use function Tempest\Support\arr;

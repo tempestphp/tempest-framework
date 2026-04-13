@@ -6,8 +6,8 @@ namespace Tempest\Console\Stubs;
 
 use Tempest\CommandBus\CommandBusMiddleware;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;
-use Tempest\Core\Priority;
 use Tempest\Discovery\SkipDiscovery;
+use Tempest\Support\Priority;
 
 #[SkipDiscovery]
 #[Priority(Priority::NORMAL)]

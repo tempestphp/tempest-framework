@@ -196,7 +196,7 @@ final class NotFoundExceptionRenderer implements ExceptionRenderer
 ```
 
 :::info
-Exception renderers are automatically [discovered](../4-internals/02-discovery.md) and checked in {b`#[Tempest\Core\Priority]`} order.
+Exception renderers are automatically [discovered](../4-internals/02-discovery.md) and checked in {b`#[Tempest\Support\Priority]`} order.
 :::
 
 ## Testing

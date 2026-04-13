@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Core\Priority;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ExceptionRenderer;
+use Tempest\Support\Priority;
 
 final class ExceptionRendererDiscovery implements Discovery
 {

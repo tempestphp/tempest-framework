@@ -9,8 +9,8 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\Priority;
 use Tempest\Discovery\SkipDiscovery;
+use Tempest\Support\Priority;
 
 #[SkipDiscovery]
 #[Priority(Priority::NORMAL)]

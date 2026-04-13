@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Core\Priority;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Forbidden;
+use Tempest\Support\Priority;
 
 /**
  * Protects against cross-site requests using `Sec-Fetch-*` headers. This is a modern equivalent of session token-based cross-site forgery protection.

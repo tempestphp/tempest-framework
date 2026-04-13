@@ -2,7 +2,6 @@
 
 namespace Tempest\Database\Casters;
 
-use Tempest\Core\Priority;
 use Tempest\Database\DatabaseContext;
 use Tempest\Mapper\Attributes\Context;
 use Tempest\Mapper\Caster;
@@ -15,6 +14,7 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
 use Tempest\Support\Json;
+use Tempest\Support\Priority;
 
 use function Tempest\Mapper\map;
 

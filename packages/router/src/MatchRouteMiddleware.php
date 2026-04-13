@@ -3,7 +3,6 @@
 namespace Tempest\Router;
 
 use Tempest\Container\Container;
-use Tempest\Core\Priority;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToObjectMapper;
 use Tempest\Http\Method;
@@ -11,6 +10,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Routing\Matching\RouteMatcher;
+use Tempest\Support\Priority;
 
 use function Tempest\Mapper\map;
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Stubs;
 
-use Tempest\Core\Priority;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Priority;
 
 #[SkipDiscovery]
 #[Priority(Priority::NORMAL)]

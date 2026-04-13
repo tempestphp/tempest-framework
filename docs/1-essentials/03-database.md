@@ -1144,7 +1144,7 @@ Dynamic database connections should be registered within the application's entry
 ```php
 use Tempest\Container\Container;
 use Tempest\Router\HttpMiddleware;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGHEST)]
 final class ConnectTenantMiddleware implements HttpMiddleware

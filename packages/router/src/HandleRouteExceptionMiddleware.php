@@ -2,12 +2,12 @@
 
 namespace Tempest\Router;
 
-use Tempest\Core\Priority;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Exceptions\RouteBindingFailed;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::FRAMEWORK - 10)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware

@@ -498,7 +498,7 @@ use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Discovery\SkipDiscovery;
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[SkipDiscovery]
 #[Priority(Priority::LOW)]
@@ -518,17 +518,17 @@ final readonly class ValidateWebhook implements HttpMiddleware
 
 ### Middleware priority
 
-All middleware classes are sorted based on their priority. By default, each middleware has the "normal" priority, which can be overridden using the {b`#[Tempest\Core\Priority]`} attribute:
+All middleware classes are sorted based on their priority. By default, each middleware has the "normal" priority, which can be overridden using the {b`#[Tempest\Support\Priority]`} attribute:
 
 ```php
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGH)]
 final readonly class ValidateWebhook implements HttpMiddleware
 { /* … */ }
 ```
 
-Priority is defined using an integer. However, for consistency reasons, it is recommended to use of the built-in {b`Tempest\Core\Priority`} constants.
+Priority is defined using an integer. However, for consistency reasons, it is recommended to use of the built-in {b`Tempest\Support\Priority`} constants.
 
 ### Middleware discovery
 

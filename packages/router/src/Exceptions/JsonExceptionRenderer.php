@@ -4,7 +4,6 @@ namespace Tempest\Router\Exceptions;
 
 use Tempest\Auth\Exceptions\AccessWasDenied;
 use Tempest\Core\Environment;
-use Tempest\Core\Priority;
 use Tempest\Http\ContentType;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
@@ -13,6 +12,7 @@ use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Status;
 use Tempest\Support\Arr;
+use Tempest\Support\Priority;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\FailingRule;
 use Tempest\Validation\Validator;

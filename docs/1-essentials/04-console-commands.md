@@ -282,7 +282,7 @@ After adding or removing commands, regenerate the metadata:
 ### Available commands
 
 | Command                | Description                                                              |
-|------------------------|--------------------------------------------------------------------------|
+| ---------------------- | ------------------------------------------------------------------------ |
 | `completion:install`   | Install the completion script and generate metadata.                     |
 | `completion:generate`  | Regenerate the completion metadata JSON.                                 |
 | `completion:show`      | Output the completion script to stdout (useful for custom installation). |
@@ -325,17 +325,17 @@ Middleware classes will be autowired by the container, so you can use the constr
 
 #### Middleware priority
 
-All console middleware classes get sorted based on their priority. By default, each middleware gets the normal priority, but you can override it using the {b`#[Tempest\Core\Priority]`} attribute:
+All console middleware classes get sorted based on their priority. By default, each middleware gets the normal priority, but you can override it using the {b`#[Tempest\Support\Priority]`} attribute:
 
 ```php app/InspireMiddleware.php
-use Tempest\Core\Priority;
+use Tempest\Support\Priority;
 
 #[Priority(Priority::HIGH)]
 final readonly class InspireMiddleware implements ConsoleMiddleware
 { /* … */ }
 ```
 
-Note that priority is defined using an integer. However, the {b`Tempest\Core\Priority`} class provides a few constants with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
+Note that priority is defined using an integer. However, the {b`Tempest\Support\Priority`} class provides a few constants with predefined priorities: `Priority::FRAMEWORK`, `Priority::HIGHEST`, `Priority::HIGH`, `Priority::NORMAL`, `Priority::LOW`, `Priority::LOWEST`.
 
 #### Middleware discovery
 
