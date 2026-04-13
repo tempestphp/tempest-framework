@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript;
 
+use Psr\Container\ContainerInterface;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
-use Tempest\Container\Container;
 
 final readonly class GenerateTypesCommand
 {
@@ -15,7 +15,7 @@ final readonly class GenerateTypesCommand
     public function __construct(
         private TypeScriptGenerationConfig $config,
         private TypeScriptGenerator $generator,
-        private Container $container,
+        private ContainerInterface $container,
     ) {}
 
     #[ConsoleCommand(
