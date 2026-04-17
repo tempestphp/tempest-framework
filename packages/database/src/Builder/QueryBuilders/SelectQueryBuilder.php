@@ -229,7 +229,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
             return $this->orderByRaw($field);
         }
 
-        $this->select->orderBy[] = new OrderByStatement("`{$field}` {$direction->value}");
+        $this->select->orderBy[] = new OrderByStatement(field: $field, direction: $direction);
 
         return $this;
     }
@@ -241,7 +241,7 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
      */
     public function orderByRaw(string $statement): self
     {
-        $this->select->orderBy[] = new OrderByStatement($statement);
+        $this->select->orderBy[] = new RawStatement($statement);
 
         return $this;
     }

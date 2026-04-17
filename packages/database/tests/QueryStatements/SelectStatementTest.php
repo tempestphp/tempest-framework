@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Direction;
 use Tempest\Database\QueryStatements\GroupByStatement;
 use Tempest\Database\QueryStatements\HavingStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -26,7 +27,7 @@ final class SelectStatementTest extends TestCase
             fields: arr(['`a`', 'b', 'c', new FieldDefinition($tableDefinition, 'd', 'd_alias')]),
             join: arr(new JoinStatement('INNER JOIN foo ON bar.id = foo.id')),
             where: arr(new WhereStatement('`foo` = "bar"')),
-            orderBy: arr(new OrderByStatement('`foo` DESC')),
+            orderBy: arr(new OrderByStatement(field: 'foo', direction: Direction::DESC)),
             groupBy: arr(new GroupByStatement('`foo`')),
             having: arr(new HavingStatement('`foo` = "bar"')),
             limit: 10,

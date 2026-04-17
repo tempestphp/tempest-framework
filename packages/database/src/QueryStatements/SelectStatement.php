@@ -96,7 +96,7 @@ final class SelectStatement implements QueryStatement, HasWhereStatements
 
         if ($this->orderBy->isNotEmpty()) {
             $query[] = 'ORDER BY ' . $this->orderBy
-                ->map(fn (OrderByStatement $orderBy) => $orderBy->compile($dialect))
+                ->map(fn (OrderByStatement|RawStatement $orderBy) => $orderBy->compile($dialect))
                 ->implode(', ');
         }
 
