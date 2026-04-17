@@ -111,7 +111,7 @@ final class WhereHasInWhereGroupTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function or_where_has_in_where_group_returns_matching_books(): void
+    public function or_where_has_in_where_group_returns_books_matching_either_relation(): void
     {
         $this->seed();
 
@@ -124,9 +124,10 @@ final class WhereHasInWhereGroupTest extends FrameworkIntegrationTestCase
             ->orderBy(field: 'id')
             ->all();
 
-        $this->assertCount(2, $books);
+        $this->assertCount(3, $books);
         $this->assertSame('LOTR 1', $books[0]->title);
-        $this->assertSame('Timeline Taxi', $books[1]->title);
+        $this->assertSame('LOTR 2', $books[1]->title);
+        $this->assertSame('Timeline Taxi', $books[2]->title);
     }
 
     private function seed(): void
@@ -144,11 +145,12 @@ final class WhereHasInWhereGroupTest extends FrameworkIntegrationTestCase
         $tolkien = Author::create(name: 'Tolkien');
 
         $lotr1 = Book::create(title: 'LOTR 1', author: $tolkien);
-        Book::create(title: 'LOTR 2', author: $tolkien);
+        $lotr2 = Book::create(title: 'LOTR 2', author: $tolkien);
         Book::create(title: 'LOTR 3', author: $tolkien);
         $timelineTaxi = Book::create(title: 'Timeline Taxi', author: $brent);
 
         Chapter::create(title: 'Chapter 1', book: $lotr1);
+        Chapter::create(title: 'Chapter 1', book: $lotr2);
 
         Isbn::create(value: 'isbn-lotr-1', book: $lotr1);
         Isbn::create(value: 'isbn-tt', book: $timelineTaxi);
