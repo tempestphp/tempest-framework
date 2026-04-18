@@ -70,7 +70,7 @@ jobs:
         uses: supercharge/redis-github-action@1.8.1
 
       - name: Install PHPUnit
-        run: composer global require phpunit/phpunit:12.5.8
+        run: composer global require phpunit/phpunit:12.5.22
 
       - name: Setup problem matchers
         run: |
