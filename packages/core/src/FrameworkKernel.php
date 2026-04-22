@@ -9,6 +9,7 @@ use ErrorException;
 use RuntimeException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Exceptions\ExceptionProcessor;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
@@ -273,16 +274,31 @@ final class FrameworkKernel implements Kernel
 
         ini_set('display_errors', 'Off'); // @mago-expect lint:no-ini-set
         set_exception_handler($handler->handle(...));
-        set_error_handler(function (int $code, string $message, string $filename, int $line) use ($handler): bool {
-            $handler->handle(new ErrorException(
-                message: $message,
-                code: $code,
-                filename: $filename,
-                line: $line,
-            ));
+        set_error_handler(
+            callback: function (int $code, string $message, string $filename, int $line): bool {
+                // if error_reporting is 0, the error was silenced with @
+                if ((error_reporting() & $code) === 0) {
+                    return false;
+                }
 
-            return true;
-        });
+                $exception = new ErrorException(
+                    message: $message,
+                    code: 0,
+                    severity: $code,
+                    filename: $filename,
+                    line: $line,
+                );
+
+                // warnings/notices/deprecations get reported but don't throw
+                if (($code & (E_WARNING | E_USER_WARNING | E_NOTICE | E_USER_NOTICE | E_DEPRECATED | E_USER_DEPRECATED)) !== 0) {
+                    $this->container->get(ExceptionProcessor::class)->process($exception);
+                    return true;
+                }
+
+                throw $exception;
+            },
+            error_levels: E_ALL,
+        );
 
         return $this;
     }
