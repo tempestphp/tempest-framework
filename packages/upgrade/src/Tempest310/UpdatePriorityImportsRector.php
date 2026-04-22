@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tempest34;
+namespace Tempest\Upgrade\Tempest310;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
