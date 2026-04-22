@@ -204,6 +204,7 @@ return new GenericOAuthConfig(
     urlAccessToken: 'https://provider.com/oauth/token',
     urlResourceOwnerDetails: 'https://provider.com/api/user',
     scopes: ['read:user'],
+    scopeSeparator: ' ', // Optional: If omitted the default `,` will be used. OIDC uses a space as separator.
 );
 ```
 

@@ -58,6 +58,11 @@ final class GenericOAuthConfig implements OAuthConfig
          * Identifier for this OAuth configuration.
          */
         public null|string|UnitEnum $tag = null,
+
+        /**
+         * Separator for the scopes, defaults to `,` if omitted.
+         */
+        public ?string $scopeSeparator = null,
     ) {}
 
     public function createProvider(): AbstractProvider
@@ -68,6 +73,7 @@ final class GenericOAuthConfig implements OAuthConfig
             'urlAuthorize' => $this->urlAuthorize,
             'urlAccessToken' => $this->urlAccessToken,
             'urlResourceOwnerDetails' => $this->urlResourceOwnerDetails,
+            'scopeSeparator' => $this->scopeSeparator,
         ]);
     }
 

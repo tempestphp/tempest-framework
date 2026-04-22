@@ -232,6 +232,43 @@ final class OAuthTest extends TestCase
         $this->assertSame('https://example.com/himmel.jpg', $user->avatar);
         $this->assertSame('generic', $user->provider);
     }
+
+    #[Test]
+    public function generic_config_creates_provider_correctly(): void
+    {
+        $config = new GenericOAuthConfig(
+            clientId: 'client-123',
+            clientSecret: 'secret-456', // @mago-expect lint:no-literal-password
+            redirectTo: 'https://example.com/callback',
+            urlAuthorize: 'https://provider.com/authorize',
+            urlAccessToken: 'https://provider.com/token', // @mago-expect lint:no-literal-password
+            urlResourceOwnerDetails: 'https://provider.com/user',
+        );
+
+        $provider = $config->createProvider();
+
+        $url = $provider->getAuthorizationUrl(['scope' => ['scope1', 'scope2']]);
+        $this->assertStringContainsString('https://provider.com/authorize?', $url);
+        $this->assertStringContainsString('scope=scope1%2Cscope2', $url);
+        $this->assertStringContainsString('client_id=client-123', $url);
+
+        $config = new GenericOAuthConfig(
+            clientId: 'client-123',
+            clientSecret: 'secret-456', // @mago-expect lint:no-literal-password
+            redirectTo: 'https://example.com/callback',
+            urlAuthorize: 'https://provider.com/authorize',
+            urlAccessToken: 'https://provider.com/token', // @mago-expect lint:no-literal-password
+            urlResourceOwnerDetails: 'https://provider.com/user',
+            scopeSeparator: ' ',
+        );
+
+        $provider = $config->createProvider();
+
+        $url = $provider->getAuthorizationUrl(['scope' => ['scope1', 'scope2']]);
+        $this->assertStringContainsString('https://provider.com/authorize?', $url);
+        $this->assertStringContainsString('scope=scope1%20scope2', $url);
+        $this->assertStringContainsString('client_id=client-123', $url);
+    }
 }
 
 final class ResourceOwner implements ResourceOwnerInterface
