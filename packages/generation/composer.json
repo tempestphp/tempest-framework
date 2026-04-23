@@ -11,6 +11,11 @@
         "tempest/support": "3.x-dev",
         "psr/container": "^2.0"
     },
+    "require-dev": {
+        "spatie/phpunit-snapshot-assertions": "^5.1.8",
+        "phpunit/phpunit": "^12.5.22",
+        "tempest/container": "3.x-dev"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Generation\\": "src"
@@ -20,9 +25,5 @@
         "psr-4": {
             "Tempest\\Generation\\Tests\\": "tests"
         }
-    },
-    "require-dev": {
-        "spatie/phpunit-snapshot-assertions": "^5.1.8",
-        "phpunit/phpunit": "^12.5.22"
     }
 }
