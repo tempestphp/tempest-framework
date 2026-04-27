@@ -2,7 +2,7 @@
 
 ## Reporting a Security Issue
 
-If you think you have found a Security Issue within one or more of the TempestPHP repositories, don't use the Issues and don't publish a PR with proof of concept. In the first instance, report issues to **security (at) tempestphp (dot) com**, with as much information as you can provide, ideally including steps-to-recreate. Emails sent to this address are forwarded to the core maintainers.
+If you think you have found a Security Issue within one or more of the TempestPHP repositories, don't use the Issues and don't publish a PR with proof of concept. In the first instance, report issues using [GitHub's security advisory reporting mechanism](https://github.com/tempestphp/tempest-framework/security/advisories/new), with as much information as you can provide, ideally including steps-to-recreate. Security reports submitted on this page are forwarded to the core maintainers, only.
 
 The core maintainers will determine whether this is classified as a Security Issue, and address it accordingly, or whether it is classified as a regular bug, and may ask you to raise a GitHub Issue instead, at this time.
 
