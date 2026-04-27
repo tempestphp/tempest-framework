@@ -33,7 +33,7 @@ enum DatabaseDialect: string
     {
         return match ($this) {
             self::MYSQL => sprintf('(%s)', $expression),
-            default => sprintf('%s', $expression),
+            default => $expression,
         };
     }
 

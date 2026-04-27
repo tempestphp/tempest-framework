@@ -279,7 +279,7 @@ trait IsDatabaseModel
 
         $resolved = $model->getRelation(name: $relation);
 
-        if ($resolved === null) {
+        if (! $resolved instanceof Relation) {
             throw new PropertyWasNotARelation(property: $relation, model: $model->getName());
         }
 

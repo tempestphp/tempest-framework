@@ -11,6 +11,7 @@ use Rector\Rector\AbstractRector;
 final class UpdatePriorityImportsRector extends AbstractRector
 {
     private const string OLD_CLASS = 'Tempest\Core\Priority';
+
     private const string NEW_CLASS = 'Tempest\Support\Priority';
 
     public function getNodeTypes(): array
