@@ -9,9 +9,9 @@ use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
+use Tempest\Framework\Testing\TestingDatabaseInitializer;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Path;
-
 use function Tempest\Support\str;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest

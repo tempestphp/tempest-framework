@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration;
+namespace Tempest\Framework\Testing;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
@@ -13,12 +13,14 @@ use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Str;
 use UnitEnum;
 
+#[SkipDiscovery]
 final class TestingDatabaseInitializer implements DynamicInitializer
 {
     /** @var Connection[] */

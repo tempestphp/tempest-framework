@@ -27,6 +27,7 @@ use Tempest\Framework\Testing\View\ViewTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Database\DatabaseInitializer;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
 use Tempest\Process\Testing\ProcessTester;
@@ -204,6 +205,14 @@ abstract class IntegrationTest extends TestCase
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton(GenericRequest::class, fn () => $request);
+
+        return $this;
+    }
+
+    protected function useTestingDatabase(): self
+    {
+        $this->container->removeInitializer(DatabaseInitializer::class);
+        $this->container->addInitializer(TestingDatabaseInitializer::class);
 
         return $this;
     }
