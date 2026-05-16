@@ -49,11 +49,15 @@ final readonly class Validator
 
             $value = $property->getValue($object);
 
-            $failingRules[$property->getName()] = $this->validateValueForProperty($property, $value);
+            $failingRulesForProperty = $this->validateValueForProperty($property, $value);
+
+            if ($failingRulesForProperty !== []) {
+                $failingRules[$property->getName()] = $failingRulesForProperty;
+            }
         }
 
         if ($failingRules !== []) {
-            throw $this->createValidationFailureException($failingRules, $object);
+            throw $this->createValidationFailureException($failingRules, $object, $object::class);
         }
     }
 
@@ -153,9 +157,11 @@ final readonly class Validator
 
         $key = $property->getAttribute(TranslationKey::class)?->key;
 
+        $field = $property->getName();
+
         return Arr\map(
             array: $this->validateValue($value, $rules),
-            map: fn (FailingRule $rule) => $rule->withKey($key),
+            map: fn (FailingRule $rule) => $rule->withField($field)->withKey($key),
         );
     }
 
