@@ -60,7 +60,7 @@ final class ValidatorTest extends TestCase
 
     public function test_validate_value_for_property_sets_field_and_value(): void
     {
-        $property = (new ClassReflector(ValidateObjectA::class))->getProperty('title');
+        $property = new ClassReflector(ValidateObjectA::class)->getProperty('title');
 
         $failingRules = $this->validator->validateValueForProperty($property, 123);
 
