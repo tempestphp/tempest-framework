@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionClass;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
@@ -16,10 +17,10 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class CookieHandlingTest extends FrameworkIntegrationTestCase
 {
-    public function test_encrypted_cookies_are_kept_when_default(): void
+    #[Test]
+    public function encrypted_cookies_are_kept_when_default(): void
     {
         try {
-            /** @var \Tempest\Cryptography\Encryption\Encrypter $encrypter */
             $encrypter = $this->container->get(Encrypter::class);
             $_COOKIE['Cookie_name'] = $encrypter->encrypt('myCookieValue')->serialize();
 
@@ -46,7 +47,8 @@ final class CookieHandlingTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_unencrypted_cookies_are_discarded_when_default(): void
+    #[Test]
+    public function unencrypted_cookies_are_discarded_when_default(): void
     {
         try {
             $_COOKIE['Cookie_name'] = 'myCookieValue';
@@ -62,7 +64,8 @@ final class CookieHandlingTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_unencrypted_cookies_are_kept_when_discard_false(): void
+    #[Test]
+    public function unencrypted_cookies_are_kept_when_discard_false(): void
     {
         $this->container->config(new CookieConfig(discardUnencryptedCookies: false));
 
@@ -92,7 +95,8 @@ final class CookieHandlingTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_unencrypted_cookies_are_discarded_when_discard_true(): void
+    #[Test]
+    public function unencrypted_cookies_are_discarded_when_discard_true(): void
     {
         $this->container->config(new CookieConfig(discardUnencryptedCookies: true));
 
@@ -110,7 +114,8 @@ final class CookieHandlingTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_whitelisted_plaintext_cookies_are_kept(): void
+    #[Test]
+    public function whitelisted_plaintext_cookies_are_kept(): void
     {
         $this->container->config(new CookieConfig(
             discardUnencryptedCookies: true,
@@ -143,7 +148,8 @@ final class CookieHandlingTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_whitelisted_plaintext_cookies_are_send_in_plain(): void
+    #[Test]
+    public function whitelisted_plaintext_cookies_are_send_in_plain(): void
     {
         $this->container->config(new CookieConfig(
             plaintextCookies: ['Cookie_name'],
