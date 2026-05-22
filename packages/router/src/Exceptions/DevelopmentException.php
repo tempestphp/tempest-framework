@@ -10,7 +10,6 @@ use Tempest\Debug\Stacktrace\Stacktrace;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
-use Tempest\Http\Status;
 use Tempest\Support\Filesystem;
 use Tempest\View\Exceptions\ViewCompilationFailed;
 use Tempest\View\GenericView;
@@ -27,7 +26,7 @@ final class DevelopmentException implements Response
 
     public function __construct(Throwable $throwable, Response $response, Request $request)
     {
-        $this->status = Status::INTERNAL_SERVER_ERROR;
+        $this->status = $response->status;
 
         if (! Filesystem\exists(__DIR__ . '/local/dist/main.js')) {
             $this->body = 'The development exception interface is not built.';
