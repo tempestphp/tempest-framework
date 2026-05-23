@@ -53,6 +53,7 @@ final class FrameworkKernelExceptionHandlerTest extends TestCase
 
         $this->container->singleton(ExceptionHandler::class, new TestingExceptionHandler());
         $this->container->singleton(ExceptionProcessor::class, $processor = new TestingExceptionProcessor());
+
         $this->kernel->registerExceptionHandler();
 
         try {
@@ -60,7 +61,7 @@ final class FrameworkKernelExceptionHandlerTest extends TestCase
             trigger_error('report deprecation', E_USER_DEPRECATED);
             trigger_error('report notice', E_USER_NOTICE);
         } catch (Throwable $throwable) {
-            $this->fail(sprintf('Expected no exception to be thrown, but got %s: %s', get_class($throwable), $throwable->getMessage()));
+            $this->fail(sprintf('Expected no exception to be thrown, but got %s: %s', $throwable::class, $throwable->getMessage()));
         }
 
         $this->assertCount(3, $processor->processed);
@@ -91,6 +92,7 @@ final class FrameworkKernelExceptionHandlerTest extends TestCase
 
         $this->container->singleton(ExceptionHandler::class, new TestingExceptionHandler());
         $this->container->singleton(ExceptionProcessor::class, $processor = new TestingExceptionProcessor());
+
         $this->kernel->registerExceptionHandler();
 
         @trigger_error('suppressed warning', E_USER_WARNING);
@@ -109,6 +111,7 @@ final class FrameworkKernelExceptionHandlerTest extends TestCase
 
         $this->container->singleton(ExceptionHandler::class, $handler);
         $this->container->singleton(ExceptionProcessor::class, new TestingExceptionProcessor());
+
         $this->kernel->registerExceptionHandler();
 
         $kernelExceptionHandler = set_exception_handler(static function (Throwable $throwable): void {});

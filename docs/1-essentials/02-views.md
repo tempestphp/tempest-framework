@@ -577,6 +577,64 @@ For instance, the snippet below implements a tab component that accepts any numb
 </x-tabs>
 ```
 
+### Define slot ownership in nested view components
+
+You can use `<x-slot name="mySlot" />` interchangeably to both *define* a slot with optional default content, or to provide content to *populate* the slot. Tempest will consider the hierarchy of the components from the AST to automatically detect your intent, however in more complex, especially nested, view components this can result in unexpected behaviour.
+
+To override this behaviour and manually control in which view component your slots are considered to be *defined*, you can use `<x-slot define="mySlot" />` syntax instead. This causes the slot to be registered against the view component in which the keyword 'define' is used, instead of where the `slot` itself appears in the AST.
+
+#### Extendable view component example using `define`
+
+Let us assume you have an `x-container` view component, which is a `<div>` with formatting to act as a flex container for responsive sizing. You use this component repeatedly across your project, and it's effectively a macro to open and close the `<div>`; it doesn't have any slots or do anything special itself otherwise, with only a default `<x-slot/>` to render whatever it is given.
+```html x-container.view.php
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><x-slot/></div>
+```
+Now, assume we have an `x-header` in which we wish to use the `x-container`. Our `x-header` wishes to place slots `left` and `right` inside it; `x-header` owns these slots and wishes to expose these slots at the callsite in case they need custom content. Using the `define` keyword tells Tempest to treat these slots as *defined* by `x-header` instead of as a *slot to fill* inside `x-container`. Using `name` here instead of `define` would mean that Tempest falls back to the AST, and treats them as if they are slots of `<x-container>`.
+```html x-header.view.php
+<header>
+    <x-slot name="top" />
+    <x-container>
+        <x-slot define="left"> <!-- define this slot as a slot of x-header, compiled and passed into x-container's default slot -->
+            <x-header-left />
+        </x-slot>
+        <div>
+            I am in the center
+        </div> 
+        <x-slot define="right">  <!-- define this slot as a slot of x-header, compiled and passed into x-container's default slot -->
+            <x-header-right />
+        </x-slot>
+    </x-container>
+    <x-slot name="bottom" />
+</header>
+```
+At the callsite, you still use the `name` attribute to define which slot you're placing content into:
+```html callsite.view.php
+<x-header>
+    <x-slot name="left">Some content I want to insert</x-slot>
+</x-header>
+```
+This example would replace the default content `<x-header-left />` instead with the literal string `Some content I want to insert` - or whatever you provide.
+
+#### Populating a child's name slot using `define`
+
+You can also push content into a child's named slot, not just the default slot, by creating a `define`d slot as follows:
+```html x-outer.view.php
+<div class="outer">
+    <x-inner>
+        <x-slot name="left">
+            <x-slot define="left">default-left-content</x-slot>
+        </x-slot>
+    </x-inner>
+</div>
+```
+Again, the `define` keyword registers a `left` slot against the view component `<x-outer>` irrespective of it's position in the AST, and means that at the callsite:
+```html outercallsite.view.php
+<x-outer>
+    <x-slot name="left">My override</x-slot>
+</x-outer>
+```
+And so, this places the literal string `My override` into `<x-innner>`'s `left` slot.
+
 ### Dynamic view components
 
 On some occasions, you might want to dynamically render view components, for example, render a view component whose name is determined at runtime. You can use the `{html}<x-component :is="">` element to do so:

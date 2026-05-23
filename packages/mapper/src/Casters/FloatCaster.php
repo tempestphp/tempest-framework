@@ -39,7 +39,7 @@ final readonly class FloatCaster implements Caster, DynamicCaster, ConfigurableC
             $input = mb_strtolower(trim($input));
         }
 
-        if ($this->nullable && ($input === null || $input === '' || $input === 'null')) {
+        if ($this->nullable && in_array($input, [null, '', 'null'], true)) {
             return null;
         }
 

@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.10.0](https://github.com/tempestphp/tempest-framework/compare/v3.9.0..3.10.0)  —  2026-04-23
+## [3.11.0](https://github.com/tempestphp/tempest-framework/compare/v3.10.0..3.11.0)  —  2026-05-22
+
+### 🚀 Features
+
+- **view**: add x-slot define attribute to declare slot ownership in nested components (#2104) ([5e26593](https://github.com/tempestphp/tempest-framework/commit/5e265932fba4f9b6777fe010ba6bfdad703e8260))
+
+### 🐛 Bug fixes
+
+- **database**: move `TestingDatabaseInitializer` to `Tempest\Framework\Testing` (#2129) ([25495f2](https://github.com/tempestphp/tempest-framework/commit/25495f29ffa0048cd6241c4725f685f42b22943e))
+
+
+## [3.10.0](https://github.com/tempestphp/tempest-framework/compare/v3.9.0..v3.10.0)  —  2026-04-23
 
 ### 🚨 Breaking changes
 

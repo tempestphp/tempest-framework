@@ -19,12 +19,12 @@ use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\ShouldMigrate;
+use Tempest\Framework\Testing\TestingDatabaseInitializer;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\TestingDatabaseInitializer;
 
 use function Tempest\Database\query;
 

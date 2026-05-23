@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript\StructureResolvers;
 
+use Psr\Container\ContainerInterface;
 use ReflectionEnumBackedCase;
 use ReflectionEnumUnitCase;
 use RuntimeException;
-use Tempest\Container\Container;
 use Tempest\Generation\TypeScript\StructureResolver;
 use Tempest\Generation\TypeScript\TypeDefinition;
 use Tempest\Generation\TypeScript\TypeNodes\TypeNode;
@@ -23,7 +23,7 @@ final readonly class EnumStructureResolver implements StructureResolver
 {
     public function __construct(
         private TypeScriptGenerationConfig $config,
-        private Container $container,
+        private ContainerInterface $container,
     ) {}
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): TypeDefinition

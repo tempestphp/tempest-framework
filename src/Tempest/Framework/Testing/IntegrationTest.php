@@ -18,6 +18,7 @@ use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Exceptions\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
@@ -204,6 +205,14 @@ abstract class IntegrationTest extends TestCase
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton(GenericRequest::class, fn () => $request);
+
+        return $this;
+    }
+
+    protected function useTestingDatabase(): self
+    {
+        $this->container->removeInitializer(DatabaseInitializer::class);
+        $this->container->addInitializer(TestingDatabaseInitializer::class);
 
         return $this;
     }

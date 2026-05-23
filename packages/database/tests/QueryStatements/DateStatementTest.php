@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
@@ -17,7 +18,7 @@ final class DateStatementTest extends TestCase
             default: '2026-01-01',
         );
 
-        $expectedMysql = '`foo` DATE DEFAULT \'2026-01-01\' NOT NULL';
+        $expectedMysql = "`foo` DATE DEFAULT '2026-01-01' NOT NULL";
         $expectedPgsql = '"foo" DATE DEFAULT \'2026-01-01\' NOT NULL';
 
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
@@ -43,7 +44,7 @@ final class DateStatementTest extends TestCase
     #[Test]
     public function test_date_with_default_and_current(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $statement = new DateStatement(
             name: 'foo',
