@@ -73,7 +73,7 @@
         "mikey179/vfsstream": "^2.0@dev",
         "nesbot/carbon": "^3.8",
         "nyholm/psr7": "^1.8",
-        "patrickbussmann/oauth2-apple": "^0.3",
+        "patrickbussmann/oauth2-apple": "^0.4",
         "php-di/php-di": "^7.0",
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "^1.4",
