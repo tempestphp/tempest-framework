@@ -1142,6 +1142,15 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertCount(3, $randoms);
     }
 
+    public function test_random_without_preserving_keys_shuffles_selected_values(): void
+    {
+        $randoms = arr(range(1, 1_000))->random(100)->toArray();
+        $ordered = $randoms;
+        sort($ordered);
+
+        $this->assertNotEquals($randoms, $ordered);
+    }
+
     public function test_random_with_preserve_keys(): void
     {
         $collection = arr([

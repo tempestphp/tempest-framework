@@ -285,7 +285,7 @@ function random(iterable $array, int $number = 1, bool $preserveKey = false): mi
     }
 
     if ($preserveKey === false) {
-        shuffle($randomValues);
+        $randomValues = shuffle($randomValues);
     }
 
     return count($randomValues) > 1
