@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\AuthenticatableResolver;
 use Tempest\Auth\Authentication\SessionAuthenticator;
+use Tempest\Container\Resettable;
 use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
@@ -81,6 +82,30 @@ final class SessionAuthenticatorTest extends TestCase
         $current = $authenticator->current();
         $this->assertInstanceOf(MemoizedAuthenticatable::class, $current);
         $this->assertSame(2, $current->id);
+        $this->assertSame(2, $resolver->resolveCalls);
+    }
+
+    #[Test]
+    public function reset_clears_the_cached_current_authenticatable(): void
+    {
+        $authenticatable = new MemoizedAuthenticatable(id: 1);
+        $resolver = new CountingAuthenticatableResolver($authenticatable);
+        $session = $this->createSession();
+        $session->set(SessionAuthenticator::AUTHENTICATABLE_KEY, 1);
+        $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
+
+        $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
+            session: $session,
+            authenticatableResolver: $resolver,
+        );
+
+        $this->assertInstanceOf(Resettable::class, $authenticator);
+        $this->assertSame($authenticatable, $authenticator->current());
+
+        $authenticator->reset();
+
+        $this->assertSame($authenticatable, $authenticator->current());
         $this->assertSame(2, $resolver->resolveCalls);
     }
 
