@@ -126,7 +126,7 @@ Add tables like you're used to with other Markdown parsers.
 ```
 | Package                | Memory   | Time to parse |
 |------------------------|----------|---------------|
-| tempest/markdown       | 6.826mb  | 13.273ms      |
+| tempest/markdown       | 6.664mb  | 10.906ms      |
 | league/commonmark      | 21.114mb | 56.993ms      |
 | michelf/php-markdown   | 7.343mb  | 23.215ms      |
 | erusev/parsedown-extra | 8.485mb  | 15.163ms      |
@@ -145,8 +145,8 @@ Add tables like you're used to with other Markdown parsers.
     <tbody>
     <tr>
         <td>tempest/markdown</td>
-        <td>6.826mb</td>
-        <td>13.273ms</td>
+        <td>6.664mb</td>
+        <td>10.906ms</td>
     </tr>
 
     <!-- … -->
@@ -312,7 +312,7 @@ Benchmarks are included in this repo and can be run with `composer bench` after 
 
 | Package                | Memory   | Time to parse |
 |------------------------|----------|---------------|
-| tempest/markdown       | 6.826mb  | 13.273ms      |
+| tempest/markdown       | 6.664mb  | 10.906ms      |
 | league/commonmark      | 21.114mb | 56.993ms      |
 | michelf/php-markdown   | 7.343mb  | 23.215ms      |
 | erusev/parsedown-extra | 8.485mb  | 15.163ms      |
