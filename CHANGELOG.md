@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.11.2](https://github.com/tempestphp/tempest-framework/compare/v3.11.1..3.11.2)  —  2026-05-28
+## [3.11.3](https://github.com/tempestphp/tempest-framework/compare/v3.11.2..3.11.3)  —  2026-06-03
+
+### 🐛 Bug fixes
+
+- **router**: prevent exception ui build from watching (#2142) ([9ffaf1b](https://github.com/tempestphp/tempest-framework/commit/9ffaf1bc5b64a41ab9c47d69cded99db4c180f89))
+- **router**: skip sessions for stateless routes (#2143) ([efe6c32](https://github.com/tempestphp/tempest-framework/commit/efe6c32d9be29d32b7c03ff219847c5907780fef))
+- **support**: shuffle random array values (#2145) ([da49c20](https://github.com/tempestphp/tempest-framework/commit/da49c20a4522600459387819f84a925ab7841260))
+
+
+## [3.11.2](https://github.com/tempestphp/tempest-framework/compare/v3.11.1..v3.11.2)  —  2026-05-28
 
 ### 🐛 Bug fixes
 
@@ -234,7 +243,7 @@ All notable changes to this project will be documented in this file.
 - **view**: [**breaking**] improved view component rendering (#1980) ([b830a16](https://github.com/tempestphp/tempest-framework/commit/b830a1601c5d8d3ecd2502e3b49be2e8f6078500))
 
 
-## [3.0.2](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.0.2)  —  2026-02-16
+## [3.1.0](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.1.0)  —  2026-02-16
 
 ### 🚨 Breaking changes
 
@@ -1169,7 +1178,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
 
 ### 🚨 Breaking changes
 

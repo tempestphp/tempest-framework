@@ -7,9 +7,13 @@ namespace Tests\Tempest\Integration\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
+use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\ContentType;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\RouteConfig;
@@ -260,6 +264,20 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertDoesNotHaveCookie('tempest_session_id');
     }
 
+    public function test_stateless_decorator_does_not_manage_session(): void
+    {
+        $sessionManager = new RouteTestingSessionManager($this->container->get(Clock::class));
+
+        $this->container->singleton(SessionManager::class, fn () => $sessionManager);
+
+        $this->http
+            ->get('/stateless')
+            ->assertOk();
+
+        $this->assertSame(0, $sessionManager->createdSessions);
+        $this->assertSame(0, $sessionManager->savedSessions);
+    }
+
     public function test_prefix_decorator(): void
     {
         $this->http
@@ -326,4 +344,42 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk()
             ->assertSee('Post 789 in category tech');
     }
+}
+
+final class RouteTestingSessionManager implements SessionManager
+{
+    public int $createdSessions = 0;
+
+    public int $savedSessions = 0;
+
+    public function __construct(
+        private readonly Clock $clock,
+    ) {}
+
+    public function getOrCreate(SessionId $id): Session
+    {
+        $this->createdSessions++;
+
+        $now = $this->clock->now();
+
+        return new Session(
+            id: $id,
+            createdAt: $now,
+            lastActiveAt: $now,
+        );
+    }
+
+    public function save(Session $session): void
+    {
+        $this->savedSessions++;
+    }
+
+    public function delete(Session $session): void {}
+
+    public function isValid(Session $session): bool
+    {
+        return true;
+    }
+
+    public function deleteExpiredSessions(): void {}
 }
