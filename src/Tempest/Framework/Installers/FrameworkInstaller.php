@@ -45,5 +45,9 @@ final class FrameworkInstaller
         );
 
         $this->updateComposer();
+
+        $this->console->call('discovery:generate');
+
+        $this->console->call('key:generate');
     }
 }

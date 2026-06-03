@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.5",
         "doctrine/inflector": "^2.0",
-        "symfony/yaml": "^7.3",
+        "symfony/yaml": "^7.3|^8.0",
         "tempest/core": "3.x-dev",
         "tempest/container": "3.x-dev",
         "tempest/support": "3.x-dev",
