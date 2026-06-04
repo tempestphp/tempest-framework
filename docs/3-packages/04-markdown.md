@@ -20,7 +20,7 @@ $markdown = new Markdown();
 
 $parsed = $markdown->parse(file_get_contents('README.md'));
 
-echo $parsed->frontMatter['title'];
+echo $parsed->frontmatter['title'];
 echo $parsed->html;
 ```
 
