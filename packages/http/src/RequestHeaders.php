@@ -53,7 +53,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
 
     public function has(string $name): bool
     {
-        return (bool) $this->get($name);
+        return $this->offsetExists($name);
     }
 
     public function getHeader(string $name): Header
