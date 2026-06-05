@@ -34,6 +34,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectD;
 use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
+use Tempest\Container\Tests\Fixtures\CountingDynamicInitializer;
 use Tempest\Container\Tests\Fixtures\DecoratedClass;
 use Tempest\Container\Tests\Fixtures\DecoratedInterface;
 use Tempest\Container\Tests\Fixtures\DecoratorClass;
@@ -155,6 +156,19 @@ final class ContainerTest extends TestCase
         $return = $container->invoke(reflect($classToCall)->getMethod('method'), input: new ContainerObjectE('other'));
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
+    }
+
+    public function test_dynamic_initializer_instances_are_reused(): void
+    {
+        CountingDynamicInitializer::reset();
+
+        $container = new GenericContainer();
+        $container->addInitializer(CountingDynamicInitializer::class);
+
+        $container->get(ContainerObjectA::class);
+        $container->get(ContainerObjectA::class);
+
+        $this->assertSame(1, CountingDynamicInitializer::$instances);
     }
 
     public function test_arrays_are_automatically_created(): void
