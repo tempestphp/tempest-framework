@@ -31,6 +31,10 @@ Compiling and cleaning up static pages is done using the `{txt}static:generate` 
 {:hl-comment:./tempest:} static:clean
 ```
 
+:::warning
+If you're using Tempest's vite integration, make sure to run `bun/npm run build` before generating static pages.
+:::
+
 ## Data providers
 
 Since most pages require some form of dynamic data, static pages can be assigned a data provider, which will generate multiple pages for one controller action.
