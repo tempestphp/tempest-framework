@@ -135,16 +135,15 @@ final class MigrationManager
             return;
         }
 
+        $migrationsByName = $this->getMigrationsByName();
+
         foreach ($existingMigrations as $existingMigration) {
             /**
              * We need to find and delete migration DB records that no longer have a corresponding migration file.
              * This can happen if a migration file was deleted or renamed.
              * If we don't do it, `:validate` will continue failing due to the missing migration file.
              */
-            $databaseMigration = array_find(
-                iterator_to_array($this->migrations),
-                static fn (MigratesUp|MigratesDown $migration) => $migration->name === $existingMigration->name,
-            );
+            $databaseMigration = $migrationsByName[$existingMigration->name] ?? null;
 
             if ($databaseMigration === null) {
                 $existingMigration->delete();
@@ -166,11 +165,10 @@ final class MigrationManager
             return;
         }
 
+        $migrationsByName = $this->getMigrationsByName();
+
         foreach ($existingMigrations as $existingMigration) {
-            $databaseMigration = array_find(
-                iterator_to_array($this->migrations),
-                static fn (MigratesUp|MigratesDown $migration) => $migration->name === $existingMigration->name,
-            );
+            $databaseMigration = $migrationsByName[$existingMigration->name] ?? null;
 
             if ($databaseMigration === null) {
                 event(new MigrationValidationFailed($existingMigration->name, new MigrationFileWasMissing()));
@@ -299,6 +297,18 @@ final class MigrationManager
             },
             new ShowTablesStatement()->fetch($this->dialect),
         );
+    }
+
+    /** @return array<string, MigratesUp|MigratesDown> */
+    private function getMigrationsByName(): array
+    {
+        $migrations = [];
+
+        foreach ($this->migrations as $migration) {
+            $migrations[$migration->name] = $migration;
+        }
+
+        return $migrations;
     }
 
     private function getMigrationHash(MigratesUp|MigratesDown $migration): string
