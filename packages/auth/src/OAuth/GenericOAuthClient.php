@@ -120,7 +120,7 @@ final class GenericOAuthClient implements OAuthClient
 
         $this->session->remove($this->sessionKey);
 
-        if ($expectedState !== $actualState) {
+        if ($expectedState === null || $expectedState === '' || $expectedState !== $actualState) {
             throw new OAuthStateWasInvalid();
         }
 

@@ -130,7 +130,7 @@ final class TestingOAuthClient implements OAuthClient
 
         $this->state = null;
 
-        if ($expectedState !== $actualState) {
+        if ($expectedState === null || $expectedState === '' || $expectedState !== $actualState) {
             throw new OAuthStateWasInvalid();
         }
 
