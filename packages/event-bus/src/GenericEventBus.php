@@ -61,15 +61,14 @@ final readonly class GenericEventBus implements EventBus
     private function getCallable(array $eventHandlers): EventBusMiddlewareCallable
     {
         $callable = new EventBusMiddlewareCallable(function (string|object $event) use ($eventHandlers): void {
+            $eventStopsPropagation = is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class);
+
             foreach ($eventHandlers as $eventHandler) {
                 $callable = $eventHandler->normalizeCallable($this->container);
 
                 $callable($event);
 
-                if (
-                    is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class)
-                    || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)
-                ) {
+                if ($eventStopsPropagation || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)) {
                     break;
                 }
             }
