@@ -267,10 +267,9 @@ final class MigrationManager
 
         try {
             $this->database->execute(
-                new Query(
-                    'DELETE FROM Migration WHERE name = :name',
-                    ['name' => $migration->name],
-                ),
+                query(Migration::class)
+                    ->delete()
+                    ->whereRaw('name = ?', $migration->name),
             );
         } catch (QueryWasInvalid) { // @mago-expect lint:no-empty-catch-clause
             /**
