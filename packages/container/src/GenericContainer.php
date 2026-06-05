@@ -450,9 +450,7 @@ final class GenericContainer implements Container
         // we have something to handle this class.
         foreach ($this->dynamicInitializers as $initializerClass) {
             if (! isset($this->resolvedDynamicInitializers[$initializerClass])) {
-                /** @var DynamicInitializer $initializer */
-                $initializer = $this->resolve($initializerClass);
-                $this->resolvedDynamicInitializers[$initializerClass] = $initializer;
+                $this->resolvedDynamicInitializers[$initializerClass] = $this->resolve($initializerClass);
             }
 
             $initializer = $this->resolvedDynamicInitializers[$initializerClass];
