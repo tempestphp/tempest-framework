@@ -18,7 +18,7 @@ final class ConsoleInstaller
     {
         $this->installMainNamespace();
 
-        $this->publish(
+        $tempest = $this->publish(
             source: __DIR__ . '/tempest',
             destination: root_path('tempest'),
             callback: function (string $_, string $destination): void {
@@ -30,5 +30,13 @@ final class ConsoleInstaller
         );
 
         $this->updateComposer();
+
+        if (! $tempest) {
+            return;
+        }
+
+        if ($this->console->confirm('Do you want to install completions?', default: false)) {
+            $this->console->call('completion:install');
+        }
     }
 }
