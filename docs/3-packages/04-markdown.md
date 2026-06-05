@@ -197,7 +197,7 @@ Prepend `*` to a link's URI to open the link in a new tab:
 
 ## Adding custom features
 
-`tempest/markdown` is meant to be extended. Adding custom parser rules is done in two steps: first you provide a `LexerRule`, this is a class that determines when your custom parsing logic should be triggered. Next you'll use a `Token` to render your selected Markdown code in any way you'd like.
+`tempest/markdown` is meant to be extended. Adding custom parser rules is done in two steps: first you provide a `Rule`, this is a class that determines when your custom parsing logic should be triggered. Next you'll use a `Token` to render your selected Markdown code in any way you'd like.
 
 Let's work with an example. Say you want to add support for including custom HTML snippets. It could look something like this: 
 
@@ -207,32 +207,32 @@ Hello world
 {{ snippets/call-to-action.html }}
 ```
 
-The first step to adding this new feature is detecting when we run into our custom `{{ }}` syntax. This is done with a `LexerRule`. Let's call our implementation `SnippetRule`:
+The first step to adding this new feature is detecting when we run into our custom `{{ }}` syntax. This is done with a `Rule`. Let's call our implementation `SnippetRule`:
 
 ```php
-use Tempest\Markdown\Lexer;
+use Tempest\Markdown\Parser;
 use Tempest\Markdown\Rule;
 use Tempest\Markdown\Token;
 
 final readonly class SnippetRule implements Rule
 {
-    public function shouldLex(Lexer $lexer): bool
+    public function shouldLex(Parser $parser): bool
     {
         // Our rule takes effect as soon as we run into `{{`
         
-        return $lexer->comesNext('{{', length: 2);
+        return $parser->comesNext('{{', length: 2);
     }
 
-    public function lex(Lexer $lexer): ?Token
+    public function lex(Parser $parser): ?Token
     {
         // We'll consume all { characters
-        $lexer->consumeWhile('{');
+        $parser->consumeWhile('{');
 
         // Then we'll consume and store the snippet path itself until we encounter the closing } characters
-        $snippet = $lexer->consumeUntil('}');
+        $snippet = $parser->consumeUntil('}');
 
         // Then we'll consume the closing } characters
-        $lexer->consumeWhile('}');
+        $parser->consumeWhile('}');
         
         // Finally, we return a token with the snippet
         return new SnippetToken(trim($snippet));
@@ -241,7 +241,7 @@ final readonly class SnippetRule implements Rule
 ```
 
 :::info
-For performance reasons, it's best to explcitly add the `{:hl-property:length:}` parameter to the `{:hl-property:comesNext:}` call. It's not required, but it will make parsing faster. If possible, also try not to rely on regex within your lexer rules, as it may become a performance bottleneck.
+For performance reasons, it's best to explcitly add the `{:hl-property:length:}` parameter to the `{:hl-property:comesNext:}` call. It's not required, but it will make parsing faster. If possible, also try not to rely on regex within your parser rules, as it may become a performance bottleneck.
 :::
 
 So that's our rule implementation: we consumed our custom `{{ path }}` syntax, and created a token with that path. Let's take a look at the token implementation next.
@@ -302,7 +302,7 @@ $markdown = new Markdown()->withRules(
 );
 ```
 
-This way you have full control over how the parser works. For more inspiration, you can look at the [rules that come built-in with the package](https://github.com/tempestphp/markdown/tree/main/src/LexerRules).
+This way you have full control over how the parser works. For more inspiration, you can look at the [rules that come built-in with the package](https://github.com/tempestphp/markdown/tree/main/src/Rules).
 
 ## Performance
 
