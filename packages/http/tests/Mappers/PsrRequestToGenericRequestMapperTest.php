@@ -20,6 +20,7 @@ use Tempest\Cryptography\Signing\GenericSigner;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
 use Tempest\Cryptography\Timelock;
+use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
@@ -40,6 +41,7 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
                 new AppConfig(baseUri: 'https://test.com'),
                 new GenericClock(),
             ),
+            new CookieConfig(),
         );
 
         $reflection = new ReflectionClass($this->mapper);
