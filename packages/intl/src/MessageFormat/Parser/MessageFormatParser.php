@@ -34,7 +34,8 @@ use Tempest\Intl\MessageFormat\Parser\Node\Variable;
 
 final class MessageFormatParser
 {
-    private string $input;
+    /** @var list<string> */
+    private array $chars;
 
     private int $pos = 0;
 
@@ -54,8 +55,8 @@ final class MessageFormatParser
 
     public function __construct(string $input)
     {
-        $this->input = str_replace("\r\n", "\n", $input);
-        $this->len = mb_strlen($this->input, 'UTF-8');
+        $this->chars = mb_str_split(str_replace("\r\n", "\n", $input), 1, 'UTF-8');
+        $this->len = count($this->chars);
     }
 
     /**
@@ -610,10 +611,7 @@ final class MessageFormatParser
             return '';
         }
 
-        $char = mb_substr($this->input, $this->pos, 1, 'UTF-8');
-        $this->pos++;
-
-        return $char;
+        return $this->chars[$this->pos++];
     }
 
     private function peek(int $length = 1): string
@@ -622,7 +620,14 @@ final class MessageFormatParser
             return '';
         }
 
-        return mb_substr($this->input, $this->pos, $length, 'UTF-8');
+        $peek = '';
+        $end = min($this->pos + $length, $this->len);
+
+        for ($offset = $this->pos; $offset < $end; $offset++) {
+            $peek .= $this->chars[$offset];
+        }
+
+        return $peek;
     }
 
     private function isEof(): bool

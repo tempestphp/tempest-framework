@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\HasErrorMessage;
+use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEmail;
 use Tempest\Validation\Rules\IsEnum;
@@ -37,9 +38,35 @@ final class ValidatorTest extends TestCase
 
     public function test_validate(): void
     {
-        $this->expectException(ValidationFailed::class);
+        try {
+            $this->validator->validateObject(new ObjectToBeValidated(name: 'a'));
+            $this->fail('Expected ValidationFailed to be thrown.');
+        } catch (ValidationFailed $e) {
+            $this->assertArrayHasKey('name', $e->failingRules);
+            $this->assertCount(1, $e->failingRules['name']);
+            $this->assertInstanceOf(HasLength::class, $e->failingRules['name'][0]->rule);
+            $this->assertSame('name', $e->failingRules['name'][0]->field);
+            $this->assertSame('a', $e->failingRules['name'][0]->value);
+            $this->assertSame(ObjectToBeValidated::class, $e->targetClass);
+        }
+    }
 
-        $this->validator->validateObject(new ObjectToBeValidated(name: 'a'));
+    public function test_validate_passes_with_valid_object(): void
+    {
+        $this->validator->validateObject(new ObjectToBeValidated(name: 'ab'));
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_validate_value_for_property_sets_field_and_value(): void
+    {
+        $property = new ClassReflector(ValidateObjectA::class)->getProperty('title');
+
+        $failingRules = $this->validator->validateValueForProperty($property, 123);
+
+        $this->assertCount(1, $failingRules);
+        $this->assertSame('title', $failingRules[0]->field);
+        $this->assertSame(123, $failingRules[0]->value);
     }
 
     public function test_validate_value(): void

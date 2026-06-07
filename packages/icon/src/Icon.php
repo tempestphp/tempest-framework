@@ -34,16 +34,20 @@ final class Icon
             return null;
         }
 
+        $fetched = false;
         $svg = $this->iconCache->resolve(
             key: "icon-{$collection}-{$iconName}",
-            callback: fn () => $this->fetchSvg($collection, $iconName),
+            callback: function () use ($collection, $iconName, &$fetched) {
+                $fetched = true;
+
+                return $this->fetchSvg($collection, $iconName);
+            },
             expiresAt: $this->iconConfig->expiresAfter,
         );
 
-        /** @var bool $failed */
-        $failed = $this->iconCache->get("icon-failure-{$collection}-{$iconName}");
-
-        if ($failed) {
+        // fetchSvg() returns null only on failure, and resolve() will have cached
+        // that null — drop it so a retry can happen once the failure marker expires.
+        if ($fetched && $svg === null) {
             $this->iconCache->delete("icon-{$collection}-{$iconName}");
         }
 

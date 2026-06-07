@@ -15,7 +15,7 @@
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-instagram": "^3.0",
         "league/oauth2-linkedin": "^5.1",
-        "patrickbussmann/oauth2-apple": "^0.3",
+        "patrickbussmann/oauth2-apple": "^0.4",
         "stevenmaguire/oauth2-microsoft": "^2.2",
         "thenetworg/oauth2-azure": "^2.2",
         "riskio/oauth2-auth0": "^2.4",

@@ -76,6 +76,30 @@ final class Book
 }
 ```
 
+## Validating an existing object instance
+
+When you already have an instantiated object, you may use the `validateObject()` method. Unlike `validateValuesForClass()`, this method takes an object instance and reads the actual values of its public properties directly.
+
+```php
+$config = $this->configRepository->find($id);
+
+$this->validator->validateObject($config);
+```
+
+This is particularly useful where an object carries validation rules as part of its invariants, and you want to enforce them after the object has been hydrated from a source.
+
+### Behavior differences from `validateValuesForClass()`
+
+There are a few important differences to be aware of:
+
+**It throws instead of returning.** When validation fails, `validateObject()` throws a {`\Tempest\Validation\Exceptions\ValidationFailed`} exception rather than returning a list of failures.
+
+**Uninitialized properties are skipped.** If a public property has not been initialized on the object, it is silently skipped.
+
+**`#[SkipValidation]` is not respected.** Unlike `validateValuesForClass()`, this method does not check for the {b`#[Tempest\Validation\SkipValidation]`} attribute: all initialized public properties are validated.
+
+**Nested objects are not recursed into.** If a property holds another object, that nested object's properties are not validated.
+
 ## Validating against specific rules
 
 If you don't have a model or data transfer object to validate data against, you may alternatively use the `validateValues()` and provide an array of rules.

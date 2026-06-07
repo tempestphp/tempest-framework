@@ -21,14 +21,7 @@ final class GenericCatalog implements Catalog
 
     public function get(Locale $locale, string $key): ?string
     {
-        return Arr\get_by_key(
-            array: $this->catalog,
-            key: "{$locale->value}.{$key}",
-            default: Arr\get_by_key(
-                array: $this->catalog,
-                key: "{$locale->getLanguage()}.{$key}",
-            ),
-        );
+        return Arr\get_by_key($this->catalog, "{$locale->value}.{$key}") ?? Arr\get_by_key($this->catalog, "{$locale->getLanguage()}.{$key}");
     }
 
     public function add(Locale $locale, string $key, string $message): self

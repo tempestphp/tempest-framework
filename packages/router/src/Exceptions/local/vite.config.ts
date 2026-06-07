@@ -42,11 +42,11 @@ export default defineConfig({
 		viteSingleFile(),
 	],
 	build: {
-		watch: {
-			exclude: 'dist/**', // prevent infinite loops while using --watch
-		},
 		rollupOptions: {
 			input: ['./src/entrypoint/main.ts'],
+			watch: {
+				exclude: 'dist/**', // prevent infinite loops while using --watch
+			},
 			output: {
 				inlineDynamicImports: true,
 				assetFileNames: '[name][extname]',

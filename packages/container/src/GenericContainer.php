@@ -28,6 +28,9 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
+    /** @var array<class-string<DynamicInitializer>, DynamicInitializer> */
+    private array $resolvedDynamicInitializers = [];
+
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
         private(set) ArrayIterator $definitions = new ArrayIterator(),
@@ -81,6 +84,7 @@ final class GenericContainer implements Container
     public function setDynamicInitializers(array $dynamicInitializers): self
     {
         $this->dynamicInitializers = new ArrayIterator($dynamicInitializers);
+        $this->resolvedDynamicInitializers = [];
 
         return $this;
     }
@@ -330,6 +334,7 @@ final class GenericContainer implements Container
             );
 
             unset($this->dynamicInitializers[$index]);
+            unset($this->resolvedDynamicInitializers[$initializerClass->getName()]);
 
             return $this;
         }
@@ -444,8 +449,11 @@ final class GenericContainer implements Container
         // Loop through the registered initializers to see if
         // we have something to handle this class.
         foreach ($this->dynamicInitializers as $initializerClass) {
-            /** @var DynamicInitializer $initializer */
-            $initializer = $this->resolve($initializerClass);
+            if (! isset($this->resolvedDynamicInitializers[$initializerClass])) {
+                $this->resolvedDynamicInitializers[$initializerClass] = $this->resolve($initializerClass);
+            }
+
+            $initializer = $this->resolvedDynamicInitializers[$initializerClass];
 
             if (! $initializer->canInitialize(class: $target, tag: $tag)) {
                 continue;
@@ -719,6 +727,7 @@ final class GenericContainer implements Container
     public function reset(): self
     {
         $this->resolvedSingletons = new ArrayIterator();
+        $this->resolvedDynamicInitializers = [];
 
         foreach ($this->resettables as $resettableClass) {
             /** @var Resettable $resettable */

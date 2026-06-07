@@ -352,6 +352,12 @@ final class ViewComponentElement implements Element, WithToken
 
     private function resolveSlotName(Token $slotToken): string
     {
+        $define = $slotToken->getAttribute('define');
+
+        if ($define !== null && $define !== '') {
+            return $define;
+        }
+
         $name = $slotToken->getAttribute('name');
 
         if ($name !== null && $name !== '') {

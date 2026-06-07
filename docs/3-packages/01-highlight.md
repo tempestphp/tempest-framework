@@ -7,7 +7,7 @@ description: "Tempest's highlighter is a package for server-side, high-performan
 
 Require `tempest/highlight` with composer:
 
-```
+```console
 composer require tempest/highlight
 ```
 

@@ -4,6 +4,7 @@ namespace Tempest\Router;
 
 use Attribute;
 use Tempest\Http\Session\ManageSessionMiddleware;
+use Tempest\Http\Session\TrackPreviousUrlMiddleware;
 
 /**
  * Mark a route handler as stateless, causing all cookie and session-related middleware to be skipped.
@@ -17,6 +18,7 @@ final class Stateless implements RouteDecorator
             ...$route->without,
             PreventCrossSiteRequestsMiddleware::class,
             ManageSessionMiddleware::class,
+            TrackPreviousUrlMiddleware::class,
             SetCookieHeadersMiddleware::class,
         ];
 

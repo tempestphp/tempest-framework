@@ -20,7 +20,7 @@ final class CharStatementTest extends TestCase
             default: '019d38a9-5504-7a16-ab9d-520bbc289ecc',
         );
 
-        $expectedMysql = '`foo` CHAR(36) DEFAULT \'019d38a9-5504-7a16-ab9d-520bbc289ecc\' NOT NULL';
+        $expectedMysql = "`foo` CHAR(36) DEFAULT '019d38a9-5504-7a16-ab9d-520bbc289ecc' NOT NULL";
         $expectedPgsql = '"foo" CHAR(36) DEFAULT \'019d38a9-5504-7a16-ab9d-520bbc289ecc\' NOT NULL';
 
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
@@ -41,7 +41,7 @@ final class CharStatementTest extends TestCase
             name: 'foo',
             default: 'foo_bar',
         );
-        $expectedMysql = '`foo` CHAR(7) DEFAULT \'foo_bar\' NOT NULL';
+        $expectedMysql = "`foo` CHAR(7) DEFAULT 'foo_bar' NOT NULL";
         $this->assertSame($expectedMysql, $defaultSizeStatement->compile(DatabaseDialect::MYSQL));
 
         $fixedAndDefaultSizeStatement = new CharStatement(
@@ -49,7 +49,7 @@ final class CharStatementTest extends TestCase
             size: 7,
             default: 'foo_bar',
         );
-        $expectedMysql = '`foo` CHAR(7) DEFAULT \'foo_bar\' NOT NULL';
+        $expectedMysql = "`foo` CHAR(7) DEFAULT 'foo_bar' NOT NULL";
         $this->assertSame($expectedMysql, $fixedAndDefaultSizeStatement->compile(DatabaseDialect::MYSQL));
     }
 
@@ -73,7 +73,7 @@ final class CharStatementTest extends TestCase
             size: 10,
             default: 'foo_bar',
         );
-        $expectedMysql = '`foo` CHAR(10) DEFAULT \'foo_bar\' NOT NULL';
+        $expectedMysql = "`foo` CHAR(10) DEFAULT 'foo_bar' NOT NULL";
         $this->assertSame($expectedMysql, $statement->compile(DatabaseDialect::MYSQL));
     }
 }
