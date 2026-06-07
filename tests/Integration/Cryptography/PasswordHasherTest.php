@@ -12,7 +12,10 @@ final class PasswordHasherTest extends FrameworkIntegrationTestCase
     public function test_default_algorithm(): void
     {
         $hasher = $this->container->get(PasswordHasher::class);
-        $this->assertSame(HashingAlgorithm::ARGON2ID, $hasher->algorithm);
+        $expected = in_array(HashingAlgorithm::ARGON2ID->value, password_algos(), true)
+            ? HashingAlgorithm::ARGON2ID
+            : HashingAlgorithm::BCRYPT;
+        $this->assertSame($expected, $hasher->algorithm);
     }
 
     public function test_hash_verify(): void

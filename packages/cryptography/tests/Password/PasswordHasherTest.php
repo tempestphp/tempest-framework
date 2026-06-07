@@ -20,6 +20,15 @@ final class PasswordHasherTest extends TestCase
         $this->assertSame(HashingAlgorithm::BCRYPT, $hasher->algorithm);
     }
 
+    public function test_algorithm_values_match_password_constants(): void
+    {
+        $this->assertSame(PASSWORD_BCRYPT, HashingAlgorithm::BCRYPT->value);
+
+        if (defined('PASSWORD_ARGON2ID')) {
+            $this->assertSame(PASSWORD_ARGON2ID, HashingAlgorithm::ARGON2ID->value);
+        }
+    }
+
     public function test_config_options(): void
     {
         $this->assertSame(
