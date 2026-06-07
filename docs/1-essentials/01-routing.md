@@ -880,6 +880,7 @@ final readonly class ErrorResponseProcessor implements ResponseProcessor
 ### Configuration
 
 By default, Tempest encrypts all cookies it sets, and discards any incoming cookie it cannot decrypt.
+
 This behaviour can be configured by creating a `cookie.config.php` file [anywhere](../1-essentials/06-configuration.md#configuration-files).
 
 ```php app/cookie.config.php
@@ -892,7 +893,7 @@ return new CookieConfig(
 
 **`discardUnencryptedCookies`** — When `true` (default), any incoming cookie that Tempest cannot decrypt will be discarded and the browser instructed to delete it. Set to `false` to silently ignore unencrypted cookies instead, leaving them intact in the browser. Note that either way, unencrypted cookies will not be accessible in the request object unless whitelisted via `plaintextCookies`.
 
-**`plaintextCookies`** — A list of cookie names that Tempest will not attempt to encrypt or decrypt. Whitelisted cookies are preserved in the browser, accessible in the request object, and sent to the browser in plaintext. Useful for cookies set by third-party services such as reverse proxies or CDNs, or cookies that must be readable by JavaScript (e.g. UI preferences like dark mode).
+**`plaintextCookies`** — A list of cookie names that Tempest will not attempt to encrypt or decrypt. Whitelisted cookies are preserved in the browser, accessible in the request object, and sent to the browser in plaintext. Useful for cookies set by third-party services such as reverse proxies or CDNs, or cookies that must be readable using JavaScript (e.g. UI preferences like dark mode).
 
 ## Session management
 

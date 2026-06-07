@@ -69,13 +69,11 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
                 array: $_COOKIE,
                 map: function (string $rawValue, string $key) {
                     try {
-                        $value = \in_array($key, $this->cookieConfig->plaintextCookies, true)
-                            ? $rawValue
-                            : $this->encrypter->decrypt($rawValue);
-
                         return new Cookie(
                             key: $key,
-                            value: $value,
+                            value: in_array($key, $this->cookieConfig->plaintextCookies, strict: true)
+                                ? $rawValue
+                                : $this->encrypter->decrypt($rawValue),
                         );
                     } catch (Throwable) {
                         if ($this->cookieConfig->discardUnencryptedCookies) {

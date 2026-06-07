@@ -30,7 +30,7 @@ final readonly class SetCookieHeadersMiddleware implements HttpMiddleware
         foreach ($this->cookies->all() as $cookie) {
             $cookieValue = match (true) {
                 $cookie->value === '' => '',
-                \in_array($cookie->key, $this->cookieConfig->plaintextCookies, true) => $cookie->value,
+                in_array($cookie->key, $this->cookieConfig->plaintextCookies, strict: true) => $cookie->value,
                 default => $this->encrypter->encrypt($cookie->value)->serialize(),
             };
 
