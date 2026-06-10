@@ -918,6 +918,8 @@ Database seeders populate the database with data. These classes can fill the dat
 use Tempest\Database\DatabaseSeeder;
 use UnitEnum;
 
+use function Tempest\Database\query;
+
 final class BookSeeder implements DatabaseSeeder
 {
     public function run(null|string|UnitEnum $database): void
