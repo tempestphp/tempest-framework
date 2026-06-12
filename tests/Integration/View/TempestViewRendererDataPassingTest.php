@@ -270,7 +270,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     #[TestWith(['false'])]
     #[TestWith(['null'])]
-    #[TestWith(['0'])]
     #[TestWith(['$show'])]
     public function test_falsy_bool_attribute(mixed $value): void
     {
@@ -280,6 +279,17 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div ></div>
+        HTML, $html);
+    }
+
+    public function test_numeric_zero_attribute_is_rendered(): void
+    {
+        $html = $this->view->render(<<<'HTML'
+        <div :data-start-percent="$start" :data-width-percent="$width"></div>
+        HTML, start: 0.0, width: 10);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-start-percent="0" data-width-percent="10"></div>
         HTML, $html);
     }
 
