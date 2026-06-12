@@ -270,7 +270,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     #[TestWith(['false'])]
     #[TestWith(['null'])]
-    #[TestWith(['0'])]
     #[TestWith(['$show'])]
     public function test_falsy_bool_attribute(mixed $value): void
     {
@@ -304,6 +303,31 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSnippetsMatch(<<<'HTML'
         <div data-c></div>
+        HTML, $html);
+    }
+
+    public function test_numeric_zero_attribute_value(): void
+    {
+        $html = $this->view->render(<<<'HTML'
+        <article :data-start-percent="$start" :data-width-percent="$width"></article>
+        HTML, start: 0.0, width: 10);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <article data-start-percent="0" data-width-percent="10"></article>
+        HTML, $html);
+    }
+
+    #[TestWith([0])]
+    #[TestWith([0.0])]
+    #[TestWith(['0'])]
+    public function test_expression_attribute_with_zero_value(mixed $value): void
+    {
+        $html = $this->view->render(<<<'HTML'
+        <div :data-value="$value"></div>
+        HTML, value: $value);
+
+        $this->assertSnippetsMatch(<<<HTML
+        <div data-value="{$value}"></div>
         HTML, $html);
     }
 
