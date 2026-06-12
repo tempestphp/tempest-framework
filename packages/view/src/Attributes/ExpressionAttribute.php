@@ -66,7 +66,7 @@ final readonly class ExpressionAttribute implements Attribute
             return str($name)->kebab()->toString();
         }
 
-        if (! $value) {
+        if ($value === false || $value === null || $value === '') {
             return '';
         }
 
