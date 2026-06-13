@@ -66,14 +66,20 @@ final readonly class ExpressionAttribute implements Attribute
             return str($name)->kebab()->toString();
         }
 
-        if (! $value) {
+        if ($value === false || $value === null) {
+            return '';
+        }
+
+        $resolvedValue = self::resolveValue($value);
+
+        if ($resolvedValue === '') {
             return '';
         }
 
         return sprintf(
             '%s="%s"',
             str($name)->kebab(),
-            ExpressionAttribute::resolveValue($value),
+            $resolvedValue,
         );
     }
 

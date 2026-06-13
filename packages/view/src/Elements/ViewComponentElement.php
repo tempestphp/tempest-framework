@@ -60,7 +60,7 @@ final class ViewComponentElement implements Element, WithToken
         $this->expressionAttributes = arr($attributes)
             ->filter(fn (string $_, string $key) => str_starts_with($key, ':'))
             ->filter(fn (string $_, string $key) => ! in_array($key, [':if', ':else', ':elseif', ':foreach', ':forelse'], strict: true))
-            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value ?: 'true');
+            ->mapWithKeys(fn (string $value, string $key) => yield str($key)->camel()->ltrim(':')->toString() => $value === '' ? 'true' : $value);
 
         $this->scopedVariables = arr();
     }
@@ -448,7 +448,7 @@ final class ViewComponentElement implements Element, WithToken
             $isExpression = isset($this->expressionAttributes[$camelKey]);
 
             $entries[] = $isExpression
-                ? sprintf("'%s' => %s", $key, $value ?: 'true')
+                ? sprintf("'%s' => %s", $key, $value === '' ? 'true' : $value)
                 : sprintf("'%s' => %s", $key, ViewObjectExporter::exportValue($value));
         }
 
