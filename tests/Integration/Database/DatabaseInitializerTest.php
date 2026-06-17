@@ -35,7 +35,9 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(GenericDatabase::class, $backup);
 
         $this->assertNotSame($main->connection, $backup->connection);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('multi-main.sqlite'), $main->connection->config->path);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('multi-backup.sqlite'), $backup->connection->config->path);
 
         $this->assertSame($main->connection, $this->container->get(Connection::class, 'main'));
@@ -77,7 +79,9 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(GenericDatabase::class, $second);
 
         $this->assertNotSame($first->connection, $second->connection);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('non-persistent-main.sqlite'), $first->connection->config->path);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('non-persistent-main.sqlite'), $second->connection->config->path);
         $this->assertSame($second->connection, $this->container->get(Connection::class, 'main'));
     }
@@ -100,7 +104,9 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(GenericDatabase::class, $second);
 
         $this->assertNotSame($first->connection, $second->connection);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('first-main.sqlite'), $first->connection->config->path);
+        // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('second-main.sqlite'), $second->connection->config->path);
         $this->assertSame($second->connection, $this->container->get(Connection::class, 'main'));
     }
