@@ -10,7 +10,6 @@ use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\AuthenticatableResolver;
 use Tempest\Auth\Authentication\SessionAuthenticator;
 use Tempest\Auth\Authentication\SessionAuthenticatorReset;
-use Tempest\Container\Resettable;
 use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
