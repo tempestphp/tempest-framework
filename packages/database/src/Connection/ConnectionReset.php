@@ -1,11 +1,11 @@
 <?php
 
-namespace Tempest\Http\Session;
+namespace Tempest\Database\Connection;
 
 use Tempest\Container\Container;
 use Tempest\Container\Resettable;
 
-final readonly class SessionReset implements Resettable
+final readonly class ConnectionReset implements Resettable
 {
     public function __construct(
         private Container $container,
@@ -13,6 +13,6 @@ final readonly class SessionReset implements Resettable
 
     public function reset(): void
     {
-        $this->container->unregister(Session::class);
+        $this->container->unregister(Connection::class);
     }
 }

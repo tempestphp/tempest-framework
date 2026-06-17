@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
