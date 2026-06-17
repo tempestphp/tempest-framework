@@ -21,4 +21,6 @@ interface Connection
     public function close(): void;
 
     public function connect(): void;
+
+    // TODO: add ping and reconnect methods in 4.0
 }
