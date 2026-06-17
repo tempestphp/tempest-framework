@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Authentication;
 
-use Tempest\Container\Resettable;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionManager;
 
-final class SessionAuthenticator implements Authenticator, Resettable
+final class SessionAuthenticator implements Authenticator
 {
     public const string AUTHENTICATABLE_KEY = '#authenticatable:id';
 
@@ -77,12 +76,7 @@ final class SessionAuthenticator implements Authenticator, Resettable
         return $this->current;
     }
 
-    public function reset(): void
-    {
-        $this->clearCurrent();
-    }
-
-    private function clearCurrent(): void
+    public function clearCurrent(): void
     {
         $this->currentId = null;
         $this->currentClass = null;
