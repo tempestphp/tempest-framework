@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -137,5 +138,17 @@ final class SessionTest extends FrameworkIntegrationTestCase
         $this->session->clear();
 
         $this->assertEmpty($this->session->all());
+    }
+
+    #[Test]
+    public function test_session_is_reset(): void
+    {
+        $originalSession = $this->container->get(Session::class);
+
+        $this->container->reset();
+
+        $newSession = $this->container->get(Session::class);
+
+        $this->assertNotSame($originalSession, $newSession);
     }
 }
