@@ -3,8 +3,11 @@
 namespace Tests\Tempest\Integration\Database;
 
 use PHPUnit\Framework\Attributes\Test;
+use ReflectionMethod;
+use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Connection\Connection;
+use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\GenericDatabase;
@@ -109,6 +112,58 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
         // @phpstan-ignore-next-line
         $this->assertSame($this->databasePath('second-main.sqlite'), $second->connection->config->path);
         $this->assertSame($second->connection, $this->container->get(Connection::class, 'main'));
+    }
+
+    #[Test]
+    public function test_it_does_not_reuse_a_persistent_connection_when_only_the_password_differs(): void
+    {
+        $initializer = new DatabaseInitializer();
+        $method = new ReflectionMethod($initializer, 'getConnectionKey');
+
+        $first = new MysqlConfig(
+            host: 'localhost',
+            username: 'tempest',
+            password: 'first-password', // @mago-expect lint:no-literal-password
+            database: 'tempest',
+            persistent: true,
+            tag: 'main',
+        );
+
+        $second = new MysqlConfig(
+            host: 'localhost',
+            username: 'tempest',
+            password: 'second-password', // @mago-expect lint:no-literal-password
+            database: 'tempest',
+            persistent: true,
+            tag: 'main',
+        );
+
+        $this->assertNotSame(
+            $method->invoke($initializer, $first),
+            $method->invoke($initializer, $second),
+        );
+    }
+
+    #[Test]
+    public function test_it_reconnects_a_stale_persistent_connection_when_reusing_it(): void
+    {
+        $this->configureSqliteDatabase('main', 'stale-persistent-main.sqlite');
+
+        $first = $this->container->get(Database::class, 'main');
+
+        $this->assertInstanceOf(GenericDatabase::class, $first);
+        $this->assertInstanceOf(PDOConnection::class, $first->connection);
+
+        $first->connection->close();
+
+        $this->container->unregister(Database::class, tagged: true);
+        $this->container->unregister(Connection::class, tagged: true);
+
+        $second = $this->container->get(Database::class, 'main');
+
+        $this->assertInstanceOf(GenericDatabase::class, $second);
+        $this->assertSame($first->connection, $second->connection);
+        $this->assertTrue($second->connection->ping());
     }
 
     private function configureSqliteDatabase(string $tag, string $filename, bool $persistent = true): void

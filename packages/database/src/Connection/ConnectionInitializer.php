@@ -16,17 +16,17 @@ final class ConnectionInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): Connection
     {
-        $databaseConfig = $container->get(DatabaseConfig::class);
+        $config = $container->get(DatabaseConfig::class);
 
-        $connection = self::$connection;
+        $connection = $config->usePersistentConnection
+            ? self::$connection
+            : null;
 
-        if (! $connection instanceof Connection) {
-            $connection = new PDOConnection($databaseConfig);
+        if (!$connection instanceof Connection) {
+            $connection = new PDOConnection($config);
             $connection->connect();
             self::$connection = $connection;
-        }
-
-        if ($connection instanceof PDOConnection && $connection->ping() === false) {
+        } elseif ($connection instanceof PDOConnection && $connection->ping() === false) {
             $connection->reconnect();
         }
 

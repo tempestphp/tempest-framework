@@ -13,6 +13,6 @@ final readonly class DatabaseReset implements Resettable
 
     public function reset(): void
     {
-        $this->container->unregister(Database::class);
+        $this->container->unregister(Database::class, tagged: true);
     }
 }

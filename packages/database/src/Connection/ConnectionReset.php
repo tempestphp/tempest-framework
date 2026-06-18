@@ -13,6 +13,6 @@ final readonly class ConnectionReset implements Resettable
 
     public function reset(): void
     {
-        $this->container->unregister(Connection::class);
+        $this->container->unregister(Connection::class, tagged: true);
     }
 }
