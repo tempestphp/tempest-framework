@@ -26,7 +26,7 @@ final class ConnectionInitializer implements Initializer
             $connection = new PDOConnection($config);
             $connection->connect();
             self::$connection = $connection;
-        } elseif ($connection instanceof PDOConnection && $connection->ping() === false) {
+        } elseif ($connection->ping() === false) {
             $connection->reconnect();
         }
 

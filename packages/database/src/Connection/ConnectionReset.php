@@ -16,10 +16,11 @@ final readonly class ConnectionReset implements Resettable
     public function reset(): void
     {
         if ($this->container instanceof GenericContainer) {
+            /** @var Connection[] $connections */
             $connections = $this->container->getSingletons(Connection::class);
 
             foreach ($connections as $connection) {
-                if ($connection instanceof PDOConnection && $connection->inTransaction()) {
+                if ($connection->inTransaction()) {
                     throw new CouldNotResetConnection("There's still an active transaction, make sure to close it before ending the request");
                 }
             }

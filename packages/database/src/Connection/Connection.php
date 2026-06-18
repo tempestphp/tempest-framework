@@ -10,6 +10,8 @@ interface Connection
 {
     public function beginTransaction(): bool;
 
+    public function inTransaction(): bool;
+
     public function commit(): bool;
 
     public function rollback(): bool;
@@ -22,6 +24,7 @@ interface Connection
 
     public function connect(): void;
 
-    // TODO: add ping and reconnect methods in 4.0
-    // TODO: add inTransaction method in 4.0
+    public function reconnect(): void;
+
+    public function ping(): bool;
 }

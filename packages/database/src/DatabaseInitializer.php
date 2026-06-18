@@ -40,7 +40,7 @@ final class DatabaseInitializer implements DynamicInitializer
             $connection = new PDOConnection($config);
             $connection->connect();
             self::$connections[$connectionKey] = $connection;
-        } elseif ($connection instanceof PDOConnection && $connection->ping() === false) {
+        } elseif ($connection->ping() === false) {
             $connection->reconnect();
         }
 
