@@ -23,4 +23,5 @@ interface Connection
     public function connect(): void;
 
     // TODO: add ping and reconnect methods in 4.0
+    // TODO: add inTransaction method in 4.0
 }
