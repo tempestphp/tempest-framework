@@ -12,7 +12,7 @@ use Tempest\Core\Tempest;
 use Tempest\Http\RequestFactory;
 
 #[Singleton]
-final readonly class HttpApplication implements Application
+final readonly class WorkerModeApplication implements Application
 {
     public function __construct(
         private Container $container,
@@ -21,10 +21,10 @@ final readonly class HttpApplication implements Application
     /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(string $root, array $discoveryLocations = []): self
     {
-        return Tempest::boot($root, $discoveryLocations)->get(HttpApplication::class);
+        return Tempest::boot($root, $discoveryLocations)->get(WorkerModeApplication::class);
     }
 
-    public function run(): never
+    public function run(): void
     {
         $router = $this->container->get(Router::class);
         $psrRequest = $this->container->get(RequestFactory::class)->make();
@@ -36,6 +36,6 @@ final readonly class HttpApplication implements Application
 
         $this->container->get(Kernel::class)->shutdown();
 
-        exit();
+        $this->container->reset();
     }
 }

@@ -58,6 +58,8 @@ final readonly class ConsoleApplication implements Application
             throw new ExitCodeWasInvalid($exitCode);
         }
 
-        $this->container->get(Kernel::class)->shutdown($exitCode);
+        $this->container->get(Kernel::class)->shutdown();
+
+        exit($exitCode);
     }
 }
