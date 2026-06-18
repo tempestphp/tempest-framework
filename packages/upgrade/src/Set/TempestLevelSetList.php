@@ -15,4 +15,6 @@ final class TempestLevelSetList
     public const string UP_TO_TEMPEST_34 = __DIR__ . '/../../config/sets/level/up-to-tempest-34.php';
 
     public const string UP_TO_TEMPEST_310 = __DIR__ . '/../../config/sets/level/up-to-tempest-310.php';
+
+    public const string UP_TO_TEMPEST_312 = __DIR__ . '/../../config/sets/level/up-to-tempest-312.php';
 }
