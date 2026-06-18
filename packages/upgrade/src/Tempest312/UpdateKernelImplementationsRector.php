@@ -44,7 +44,7 @@ final class UpdateKernelImplementationsRector extends AbstractRector
             $hasChanged = true;
         }
 
-        if (!$node->getMethod('reset') instanceof ClassMethod) {
+        if (! $node->getMethod('reset') instanceof ClassMethod) {
             $node->stmts[] = new ClassMethod('reset', [
                 'flags' => Modifiers::PUBLIC,
                 'returnType' => new Identifier('void'),
