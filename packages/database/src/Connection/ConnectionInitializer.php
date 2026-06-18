@@ -22,7 +22,7 @@ final class ConnectionInitializer implements Initializer
             ? self::$connection
             : null;
 
-        if (!$connection instanceof Connection) {
+        if (! $connection instanceof Connection) {
             $connection = new PDOConnection($config);
             $connection->connect();
             self::$connection = $connection;
