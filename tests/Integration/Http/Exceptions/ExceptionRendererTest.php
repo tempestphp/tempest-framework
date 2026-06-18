@@ -60,6 +60,8 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
             {
                 throw new Exception('Shutdown.');
             }
+
+            public function reset(): void {}
         });
 
         $this->container->singleton(ResponseSender::class, fn () => new class($this) implements ResponseSender {

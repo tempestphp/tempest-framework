@@ -111,6 +111,10 @@ final class EventBusTester
                 return true;
             }
 
+            if (! is_string($event)) {
+                return false;
+            }
+
             return class_exists($event) && $dispatched instanceof $event;
         });
     }

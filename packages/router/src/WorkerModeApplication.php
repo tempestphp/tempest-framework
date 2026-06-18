@@ -34,8 +34,8 @@ final readonly class WorkerModeApplication implements Application
             response: $router->dispatch($psrRequest),
         );
 
-        $this->container->get(Kernel::class)->shutdown();
-
-        $this->container->reset();
+        $kernel = $this->container->get(Kernel::class);
+        $kernel->shutdown();
+        $kernel->reset();
     }
 }

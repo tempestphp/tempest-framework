@@ -62,6 +62,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
                 {
                     throw new Exception('Shutdown.');
                 }
+
+                public function reset(): void {}
             },
         );
 

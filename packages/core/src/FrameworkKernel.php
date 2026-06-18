@@ -98,9 +98,19 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
+    public function reset(): void
+    {
+        $this
+            ->event(KernelEvent::RESETTING)
+            ->resetContainer()
+            ->event(KernelEvent::RESET);
+    }
+
     public function shutdown(): void
     {
-        $this->finishDeferredTasks()
+        $this
+            ->event(KernelEvent::SHUTTING_DOWN)
+            ->finishDeferredTasks()
             ->event(KernelEvent::SHUTDOWN);
     }
 
@@ -230,6 +240,13 @@ final class FrameworkKernel implements Kernel
     public function finishDeferredTasks(): self
     {
         $this->container->invoke(FinishDeferredTasks::class);
+
+        return $this;
+    }
+
+    public function resetContainer(): self
+    {
+        $this->container->reset();
 
         return $this;
     }
