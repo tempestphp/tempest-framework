@@ -42,6 +42,7 @@ final class ConnectionInitializer implements Initializer
             $config->username,
             $config->options,
             $config->password,
+            $config->tag,
         ]));
     }
 }

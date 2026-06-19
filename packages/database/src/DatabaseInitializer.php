@@ -65,6 +65,7 @@ final class DatabaseInitializer implements DynamicInitializer
             $config->username,
             $config->options,
             $config->password,
+            $config->tag,
         ]));
     }
 }
