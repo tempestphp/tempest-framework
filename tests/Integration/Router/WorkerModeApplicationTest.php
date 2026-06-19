@@ -12,7 +12,6 @@ final class WorkerModeApplicationTest extends FrameworkIntegrationTestCase
     #[Test]
     public function test_shutdown_and_reset_are_called(): void
     {
-        $this->http->get('/');
         $this->eventBus->preventEventHandling();
 
         $application = new WorkerModeApplication($this->container);
