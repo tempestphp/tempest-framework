@@ -56,7 +56,7 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
                 return Kernel::boot($root, $discoveryLocations, $container, $internalStorage); // @phpstan-ignore-line
             }
 
-            public function shutdown(): never
+            public function shutdown(int|string $status = ''): never
             {
                 throw new Exception('Shutdown.');
             }
