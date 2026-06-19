@@ -158,7 +158,6 @@ abstract class IntegrationTest extends TestCase
             root: $this->root,
             discoveryLocations: $discoveryLocations,
             internalStorage: $this->internalStorage,
-            longRunning: true,
         );
 
         /** @var GenericContainer $container */
