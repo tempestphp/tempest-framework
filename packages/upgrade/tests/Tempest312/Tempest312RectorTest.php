@@ -28,7 +28,6 @@ final class Tempest312RectorTest extends TestCase
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/KernelImplementation.input.php')
             ->assertContains('public function shutdown(): void')
-            ->assertContains('public function reset(): void')
             ->assertContains('return;')
             ->assertNotContains('return $this;')
             ->assertNotContains('public function shutdown(): self');
@@ -38,7 +37,6 @@ final class Tempest312RectorTest extends TestCase
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/AliasedImplementations.input.php')
-            ->assertContains('public function reset(): void')
             ->assertContains('public function inTransaction(): bool')
             ->assertContains('public function ping(): bool')
             ->assertContains('public function reconnect(): void');

@@ -35,9 +35,10 @@ final class FrameworkKernel implements Kernel
     public function __construct(
         public string $root,
         /** @var DiscoveryLocation[] */
-        private array $discoveryLocations = [],
+        private readonly array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
+        private readonly bool $longRunning = false,
     ) {
         $this->container = $container ?? $this->createContainer();
 
@@ -51,6 +52,7 @@ final class FrameworkKernel implements Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
+        bool $longRunning = false,
     ): self {
         if (! defined('TEMPEST_START')) {
             define('TEMPEST_START', value: hrtime(as_number: true));
@@ -61,6 +63,7 @@ final class FrameworkKernel implements Kernel
             discoveryLocations: $discoveryLocations,
             container: $container,
             internalStorage: $internalStorage,
+            longRunning: $longRunning,
         )
             ->registerKernel()
             ->validateRoot()
@@ -98,20 +101,19 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function reset(): void
-    {
-        $this
-            ->event(KernelEvent::RESETTING)
-            ->resetContainer()
-            ->event(KernelEvent::RESET);
-    }
-
     public function shutdown(): void
     {
-        $this
-            ->event(KernelEvent::SHUTTING_DOWN)
-            ->finishDeferredTasks()
-            ->event(KernelEvent::SHUTDOWN);
+        $this->event(KernelEvent::SHUTTING_DOWN)
+            ->finishDeferredTasks();
+
+        if ($this->longRunning) {
+            $this
+                ->event(KernelEvent::RESETTING)
+                ->resetContainer()
+                ->event(KernelEvent::RESET);
+        }
+
+        $this->event(KernelEvent::SHUTDOWN);
     }
 
     public function loadComposer(): self

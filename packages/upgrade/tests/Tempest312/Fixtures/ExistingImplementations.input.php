@@ -32,11 +32,6 @@ final class ExistingKernel implements Kernel
     {
         $this->wasShutDown = true;
     }
-
-    public function reset(): void
-    {
-        $this->wasReset = true;
-    }
 }
 
 final class ExistingConnection implements Connection

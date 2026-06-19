@@ -24,6 +24,4 @@ interface Kernel
     ): self;
 
     public function shutdown(): void;
-
-    public function reset(): void;
 }

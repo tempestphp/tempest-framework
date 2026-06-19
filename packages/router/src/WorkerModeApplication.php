@@ -21,7 +21,11 @@ final readonly class WorkerModeApplication implements Application
     /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(string $root, array $discoveryLocations = []): self
     {
-        return Tempest::boot($root, $discoveryLocations)->get(WorkerModeApplication::class);
+        return Tempest::boot(
+            root: $root,
+            discoveryLocations: $discoveryLocations,
+            longRunning: true,
+        )->get(WorkerModeApplication::class);
     }
 
     public function run(): void
@@ -35,7 +39,7 @@ final readonly class WorkerModeApplication implements Application
         );
 
         $kernel = $this->container->get(Kernel::class);
+
         $kernel->shutdown();
-        $kernel->reset();
     }
 }

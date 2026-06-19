@@ -25,7 +25,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
         private RouteConfig $routeConfig,
     ) {}
 
-    public function handle(Throwable $throwable): never
+    public function handle(Throwable $throwable): void
     {
         $request = $this->container->get(Request::class);
 
@@ -34,8 +34,6 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
             $this->responseSender->send($this->renderResponse($request, $throwable));
         } finally {
             $this->kernel->shutdown();
-
-            exit();
         }
     }
 

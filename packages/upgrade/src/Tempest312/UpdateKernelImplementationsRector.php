@@ -2,7 +2,6 @@
 
 namespace Tempest\Upgrade\Tempest312;
 
-use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Identifier;
@@ -42,16 +41,6 @@ final class UpdateKernelImplementationsRector extends AbstractRector
         if ($shutdown instanceof ClassMethod && ! $this->isVoidReturnType($shutdown)) {
             $shutdown->returnType = new Identifier('void');
             $this->removeReturnValues($shutdown);
-            $hasChanged = true;
-        }
-
-        if (! $node->getMethod('reset') instanceof ClassMethod) {
-            $node->stmts[] = new ClassMethod('reset', [
-                'flags' => Modifiers::PUBLIC,
-                'returnType' => new Identifier('void'),
-                'stmts' => [],
-            ]);
-
             $hasChanged = true;
         }
 

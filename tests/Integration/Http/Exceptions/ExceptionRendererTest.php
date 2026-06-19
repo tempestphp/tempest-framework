@@ -56,12 +56,10 @@ final class ExceptionRendererTest extends FrameworkIntegrationTestCase
                 return Kernel::boot($root, $discoveryLocations, $container, $internalStorage); // @phpstan-ignore-line
             }
 
-            public function shutdown(int|string $status = ''): never
+            public function shutdown(): never
             {
                 throw new Exception('Shutdown.');
             }
-
-            public function reset(): void {}
         });
 
         $this->container->singleton(ResponseSender::class, fn () => new class($this) implements ResponseSender {
