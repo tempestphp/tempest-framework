@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Connection;
 
+use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\CouldNotResetConnection;
@@ -32,6 +33,24 @@ final class ConnectionResetTest extends FrameworkIntegrationTestCase
 
         $connection->beginTransaction();
         $connection->commit();
+
+        $this->container->reset();
+
+        $newConnection = $this->container->get(Connection::class);
+        $this->assertNotSame($connection, $newConnection);
+    }
+
+    #[Test]
+    public function test_reset_with_uninstantiated_singletons(): void
+    {
+        $this->container->singleton(
+            Connection::class,
+            fn () => throw new Exception('Should not happen'),
+            tag: 'other',
+        );
+
+        /** @var Connection $connection */
+        $connection = $this->container->get(Connection::class);
 
         $this->container->reset();
 

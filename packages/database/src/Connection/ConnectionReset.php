@@ -15,11 +15,15 @@ final readonly class ConnectionReset implements Resettable
 
     public function reset(): void
     {
+        // Manually looping over the connection singletons so that we can check whether they still have an active transaction
         if ($this->container instanceof GenericContainer) {
-            /** @var Connection[] $connections */
             $connections = $this->container->getSingletons(Connection::class);
 
             foreach ($connections as $connection) {
+                if (! $connection instanceof Connection) {
+                    continue;
+                }
+
                 if ($connection->inTransaction()) {
                     throw new CouldNotResetConnection("There's still an active transaction, make sure to close it before ending the request");
                 }
