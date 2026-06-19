@@ -23,5 +23,5 @@ interface Kernel
         ?string $internalStorage = null,
     ): self;
 
-    public function shutdown(): void;
+    public function shutdown(int|string $status = ''): void;
 }

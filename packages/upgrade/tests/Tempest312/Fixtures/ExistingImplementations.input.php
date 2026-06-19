@@ -28,7 +28,7 @@ final class ExistingKernel implements Kernel
         return new self();
     }
 
-    public function shutdown(): void
+    public function shutdown(int|string $status = ''): void
     {
         $this->wasShutDown = true;
     }

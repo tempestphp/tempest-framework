@@ -22,7 +22,7 @@ final class CustomKernel implements Kernel
         return new self();
     }
 
-    public function shutdown(): self
+    public function shutdown(int|string $status = ''): self
     {
         return $this;
     }

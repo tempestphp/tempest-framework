@@ -24,7 +24,7 @@ final class AliasedKernel implements TempestKernel
         return new self();
     }
 
-    public function shutdown(): self
+    public function shutdown(int|string $status = ''): void
     {
         return $this;
     }

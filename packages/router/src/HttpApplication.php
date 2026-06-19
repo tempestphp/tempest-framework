@@ -35,7 +35,5 @@ final readonly class HttpApplication implements Application
         );
 
         $this->container->get(Kernel::class)->shutdown();
-
-        exit();
     }
 }

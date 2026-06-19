@@ -27,7 +27,7 @@ final class Tempest312RectorTest extends TestCase
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/KernelImplementation.input.php')
-            ->assertContains('public function shutdown(): void')
+            ->assertContains('public function shutdown(int|string $status = \'\'): void')
             ->assertContains('return;')
             ->assertNotContains('return $this;')
             ->assertNotContains('public function shutdown(): self');

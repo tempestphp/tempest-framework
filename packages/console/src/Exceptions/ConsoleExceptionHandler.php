@@ -31,7 +31,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         private ExceptionProcessor $exceptionProcessor,
     ) {}
 
-    public function handle(Throwable $throwable): never
+    public function handle(Throwable $throwable): void
     {
         try {
             $this->exceptionProcessor->process($throwable);
@@ -70,9 +70,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ? $throwable->getExitCode()
                 : ExitCode::ERROR;
 
-            $this->kernel->shutdown();
-
-            exit($exitCode->value);
+            $this->kernel->shutdown($exitCode->value);
         }
     }
 

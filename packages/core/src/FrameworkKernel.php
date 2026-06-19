@@ -101,7 +101,7 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function shutdown(): void
+    public function shutdown(int|string $status = ''): void
     {
         $this->event(KernelEvent::SHUTTING_DOWN)
             ->finishDeferredTasks();
@@ -114,6 +114,10 @@ final class FrameworkKernel implements Kernel
         }
 
         $this->event(KernelEvent::SHUTDOWN);
+
+        if (! $this->longRunning) {
+            exit($status);
+        }
     }
 
     public function loadComposer(): self
