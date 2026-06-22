@@ -209,7 +209,8 @@ final class BootDiscovery
                 } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
                 }
-            // @phpstan-ignore-next-line
+
+                // @phpstan-ignore-next-line
             } catch (AssertionError|InvalidPestCommand|TestAlreadyExist) {
                 // Workaround for Pest test files autoloading.
                 // @mago-expect lint:no-empty-catch-clause
