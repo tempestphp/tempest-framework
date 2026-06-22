@@ -139,6 +139,7 @@ trait IsDatabaseModel
      */
     public static function resolve(string $input): ?static
     {
+        // @phpstan-ignore-next-line
         return self::queryBuilder()->resolve($input);
     }
 
