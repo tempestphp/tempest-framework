@@ -137,7 +137,7 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID. Use through {@see \Tempest\Router\Bindable}.
      */
-    public static function resolve(string $input): ?self
+    public static function resolve(string $input): ?static
     {
         return self::queryBuilder()->resolve($input);
     }
