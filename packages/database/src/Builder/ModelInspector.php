@@ -582,7 +582,7 @@ final class ModelInspector
             }
         }
 
-        return $selectFields;
+        return $selectFields->unique();
     }
 
     public function resolveRelations(string $relationString, string $parent = '', array $visitedPaths = []): array
