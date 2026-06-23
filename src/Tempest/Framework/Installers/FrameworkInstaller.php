@@ -50,8 +50,10 @@ final class FrameworkInstaller
             callback: function (string $_, string $destination): void {
                 $claude = root_path('CLAUDE.md');
 
-                // @phpstan-ignore-next-line
-                exec("ln -s {$destination} {$claude}");
+                if (PHP_OS_FAMILY !== 'Windows') {
+                    // @phpstan-ignore-next-line
+                    exec("ln -s {$destination} {$claude}");
+                }
             },
         );
 
