@@ -33,7 +33,7 @@ final class ModelFactory
     /**
      * Set up values that should be used for specific fields when creating a model instance
      *
-     * @var mixed ...$fields If another instance of a ModelFactory is passed, it will be used to create the value for that property.
+     * @param mixed ...$fields If another instance of a ModelFactory is passed, it will be used to create the value for that property.
      *
      * @return self<TModelClass>
      */
