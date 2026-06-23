@@ -123,6 +123,21 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function test_save_to_the_database_with_nested_relation(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        factory(Book::class)->with(author: factory(Author::class)->with(name: 'Brent'))->save();
+
+        $this->database->assertTableHasRow('authors', name: 'Brent');
+    }
+
+    #[Test]
     public function test_items_save_to_the_database(): void
     {
         $this->database->migrate(
