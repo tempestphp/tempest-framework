@@ -11,7 +11,11 @@ final readonly class ModelFactoryCollection
         private int|array $items,
     ) {}
 
-    /** @return TModelClass[] */
+    /**
+     * Make instances of the model class.
+     *
+     * @return TModelClass[]
+     */
     public function make(): array
     {
         $items = [];
@@ -29,7 +33,11 @@ final readonly class ModelFactoryCollection
         return $items;
     }
 
-    /** @return TModelClass[] */
+    /**
+     *  Make instances of the model class and save them to the database.
+     *
+     * @return TModelClass[]
+     */
     public function save(): array
     {
         $items = $this->make();
