@@ -44,6 +44,16 @@ final class FrameworkInstaller
             },
         );
 
+        $this->publish(
+            source: __DIR__ . '/AGENTS.md',
+            destination: root_path('AGENTS.md'),
+            callback: function (string $_, string $destination): void {
+                $claude = root_path('CLAUDE.md');
+
+                exec("ln -s {$destination} {$claude}");
+            },
+        );
+
         $this->updateComposer();
 
         $this->console->call('discovery:generate');

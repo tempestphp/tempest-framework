@@ -56,6 +56,14 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
                 path: '.env',
                 content: file_get_contents(__DIR__ . '/../../../.env.example'),
             )
+            ->assertFileExists(
+                path: 'AGENTS.md',
+                content: file_get_contents(__DIR__ . '/../../../src/Tempest/Framework/Installers/AGENTS.md'),
+            )
+            ->assertFileExists(
+                path: 'CLAUDE.md',
+                content: file_get_contents(__DIR__ . '/../../../src/Tempest/Framework/Installers/AGENTS.md'),
+            )
             ->assertCommandExecuted('composer up');
 
         if (PHP_OS_FAMILY !== 'Windows') {
