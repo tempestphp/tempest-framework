@@ -203,7 +203,8 @@
             "packages/support/src/Uri/functions.php",
             "packages/support/src/functions.php",
             "packages/view/src/functions.php",
-            "packages/vite/src/functions.php"
+            "packages/vite/src/functions.php",
+            "src/Tempest/Framework/Testing/functions.php"
         ]
     },
     "autoload-dev": {
