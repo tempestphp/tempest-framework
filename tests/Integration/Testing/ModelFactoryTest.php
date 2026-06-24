@@ -160,7 +160,6 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     {
         $isbn = factory(Isbn::class)->make();
 
-        // @phpstan-ignore-next-line
         $this->assertInstanceOf(Book::class, $isbn->book);
     }
 
@@ -169,7 +168,6 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     {
         $author = factory(AuthorWithEnum::class)->make();
 
-        // @phpstan-ignore-next-line
         $this->assertInstanceOf(AuthorType::class, $author->type);
     }
 }
