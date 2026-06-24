@@ -19,7 +19,7 @@ use Tempest\Support\Str\ImmutableString;
  * to_fqcn('app/Auth/User'); // App\Auth\User
  * ```
  */
-function to_fqcn(Stringable|string $path, null|Stringable|string $root = null): string
+function to_fqcn(Stringable|string $path, Stringable|string|null $root = null): string
 {
     $namespace = prepare_namespace($path, $root)
         ->stripEnd('\\')
@@ -50,7 +50,7 @@ function to_fqcn(Stringable|string $path, null|Stringable|string $root = null): 
  * to_namespace('app/Auth/User'); // App\Auth\User
  * ```
  */
-function to_namespace(Stringable|string $path, null|Stringable|string $root = null): string
+function to_namespace(Stringable|string $path, Stringable|string|null $root = null): string
 {
     return prepare_namespace($path, $root)
         ->stripEnd('\\')
@@ -73,7 +73,7 @@ function to_namespace(Stringable|string $path, null|Stringable|string $root = nu
  * to_psr4_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User'); // App\Auth\User
  * ```
  */
-function to_psr4_namespace(Psr4Namespace|array $namespaces, Stringable|string $path, null|Stringable|string $root = null): string
+function to_psr4_namespace(Psr4Namespace|array $namespaces, Stringable|string $path, Stringable|string|null $root = null): string
 {
     $relativePath = prepare_namespace($path, $root)
         ->stripEnd('\\')
@@ -113,7 +113,7 @@ function to_base_class_name(string $path): string
  * This function is used internally by other namespace-related functions. It is not meant for userland usage.
  * @internal
  */
-function prepare_namespace(Stringable|string $path, null|Stringable|string $root = null): ImmutableString
+function prepare_namespace(Stringable|string $path, Stringable|string|null $root = null): ImmutableString
 {
     $normalized = new ImmutableString($path)
         ->stripStart($root ?? '')

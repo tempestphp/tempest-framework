@@ -13,13 +13,13 @@ use UnitEnum;
 #[SkipDiscovery]
 final class RestrictedStorageInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Storage::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Storage
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Storage
     {
         return new RestrictedStorage($tag);
     }

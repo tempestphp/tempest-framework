@@ -9,5 +9,5 @@ interface ProvidesDefaultSender
     /**
      * The default address from which emails will be sent.
      */
-    public null|string|EmailAddress $defaultSender { get; }
+    public string|EmailAddress|null $defaultSender { get; }
 }

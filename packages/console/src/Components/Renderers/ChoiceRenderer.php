@@ -19,7 +19,7 @@ final class ChoiceRenderer
     public function __construct(
         private bool $multiple = true,
         private int $maximumOptions = 10,
-        private null|Stringable|UnitEnum|string $default = null,
+        private Stringable|UnitEnum|string|null $default = null,
     ) {}
 
     public function render(

@@ -37,7 +37,7 @@ interface Redis
     /**
      * Sets the given key/value pair, with an optional expiration.
      */
-    public function set(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): void;
+    public function set(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): void;
 
     /**
      * Gets the value for the given key.

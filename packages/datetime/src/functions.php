@@ -80,7 +80,7 @@ function format_rfc3339(Timestamp $timestamp, ?SecondsStyle $secondsStyle = null
 function create_intl_date_formatter(
     ?DateStyle $dateStyle = null,
     ?TimeStyle $timeStyle = null,
-    null|FormatPattern|string $pattern = null,
+    FormatPattern|string|null $pattern = null,
     ?Timezone $timezone = null,
     ?Locale $locale = null,
 ): IntlDateFormatter {
@@ -188,7 +188,7 @@ function intl_parse(
     string $rawString,
     ?DateStyle $dateStyle = null,
     ?TimeStyle $timeStyle = null,
-    null|FormatPattern|string $pattern = null,
+    FormatPattern|string|null $pattern = null,
     ?Timezone $timezone = null,
     ?Locale $locale = null,
 ): int {

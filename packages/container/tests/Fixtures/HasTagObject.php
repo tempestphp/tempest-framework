@@ -9,6 +9,6 @@ final class HasTagObject implements HasTag
 {
     public function __construct(
         public string $name,
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 }

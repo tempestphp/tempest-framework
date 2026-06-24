@@ -19,7 +19,7 @@ final readonly class StorageTester
     /**
      * Forces the usage of a testing storage. When setting `$persist` to `true`, the disk is not erased.
      */
-    public function fake(null|string|UnitEnum $tag = null, bool $persist = false): TestingStorage
+    public function fake(string|UnitEnum|null $tag = null, bool $persist = false): TestingStorage
     {
         $storage = new TestingStorage(
             path: Str\to_kebab_case(Str\parse($tag, default: 'default')),

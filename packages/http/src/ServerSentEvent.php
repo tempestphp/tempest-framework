@@ -16,7 +16,7 @@ interface ServerSentEvent
     /**
      * Defines the event stream's reconnection time in case of a reconnection attempt.
      */
-    public null|Duration|int $retryAfter { get; }
+    public Duration|int|null $retryAfter { get; }
 
     /**
      * The name of the event, which may be listened to by `EventSource#addEventListener`.

@@ -233,7 +233,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
             yield new class implements ServerSentEvent {
                 public ?int $id = 1;
 
-                public null|Duration|int $retryAfter = null;
+                public Duration|int|null $retryAfter = null;
 
                 public ?string $event = 'custom';
 

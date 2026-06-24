@@ -16,7 +16,7 @@ final readonly class AccessDecision
     /**
      * Determines if access is granted or denied based on the provided decision.
      */
-    public static function from(null|self|bool $decision): self
+    public static function from(self|bool|null $decision): self
     {
         if ($decision instanceof self) {
             return $decision;

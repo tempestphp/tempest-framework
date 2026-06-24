@@ -50,7 +50,7 @@ final class GoogleCloudStorageConfig implements StorageConfig
         /**
          * Identifier for this storage configuration.
          */
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

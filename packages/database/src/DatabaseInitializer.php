@@ -18,13 +18,13 @@ use UnitEnum;
 
 final readonly class DatabaseInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Database::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Database
     {
         $container->singleton(
             className: Connection::class,

@@ -20,10 +20,10 @@ final class GenericCache implements Cache
         private(set) CacheItemPoolInterface $adapter,
         public bool $enabled = true,
         private ?DeferredTasks $deferredTasks = null,
-        public null|UnitEnum|string $tag = null,
+        public UnitEnum|string|null $tag = null,
     ) {}
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock
+    public function lock(Stringable|string $key, Duration|DateTimeInterface|null $duration = null, Stringable|string|null $owner = null): Lock
     {
         if ($duration instanceof DateTimeInterface) {
             $duration = $duration->since(DateTime::now());
@@ -46,7 +46,7 @@ final class GenericCache implements Cache
         return $this->adapter->getItem((string) $key)->isHit();
     }
 
-    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): CacheItemInterface
     {
         $item = $this->adapter
             ->getItem((string) $key)
@@ -67,7 +67,7 @@ final class GenericCache implements Cache
         return $item;
     }
 
-    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
+    public function putMany(iterable $values, Duration|DateTimeInterface|null $expiration = null): array
     {
         $items = [];
 
@@ -144,7 +144,7 @@ final class GenericCache implements Cache
         );
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, Duration|DateTimeInterface|null $expiration = null, ?Duration $stale = null): mixed
     {
         if (! $this->enabled) {
             return $callback();

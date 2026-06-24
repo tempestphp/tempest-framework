@@ -116,7 +116,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         return $symfonyEmail;
     }
 
-    private function convertAddresses(null|string|array|EmailAddress $addresses): array
+    private function convertAddresses(string|array|EmailAddress|null $addresses): array
     {
         return arr($addresses)
             ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {

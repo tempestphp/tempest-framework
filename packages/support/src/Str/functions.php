@@ -698,7 +698,7 @@ function chunk(Stringable|string $string, int $length): array
 /**
  * Strips HTML and PHP tags from the string.
  */
-function strip_tags(Stringable|string $string, null|string|array $allowed = null): string
+function strip_tags(Stringable|string $string, string|array|null $allowed = null): string
 {
     $string = (string) $string;
 

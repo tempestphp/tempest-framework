@@ -22,7 +22,7 @@ interface Database
     /**
      * The tag associated with this database, if any.
      */
-    public null|string|UnitEnum $tag { get; }
+    public string|UnitEnum|null $tag { get; }
 
     /**
      * Executes the given query.

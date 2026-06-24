@@ -20,7 +20,7 @@ final readonly class CacheTester
     /**
      * Forces the usage of a testing cache.
      */
-    public function fake(null|string|UnitEnum $tag = null): TestingCache
+    public function fake(string|UnitEnum|null $tag = null): TestingCache
     {
         $cache = new TestingCache(
             tag: Str\to_kebab_case(Str\parse($tag, default: 'default')),

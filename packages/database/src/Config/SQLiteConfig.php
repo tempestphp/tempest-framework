@@ -66,6 +66,6 @@ final class SQLiteConfig implements DatabaseConfig
         public bool $persistent = false,
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 }

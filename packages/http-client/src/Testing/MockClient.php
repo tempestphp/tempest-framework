@@ -71,7 +71,7 @@ final class MockClient implements ClientInterface
      * @param null|string|array<mixed,mixed> $body
      * @param array<string,string> $headers
      */
-    public static function response(null|string|array $body = null, int $code = 200, array $headers = []): ResponseInterface
+    public static function response(string|array|null $body = null, int $code = 200, array $headers = []): ResponseInterface
     {
         $client = new self();
         $response = $client->responseFactory->createResponse($code);

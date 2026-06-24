@@ -27,7 +27,7 @@ final class RecordingCache implements Cache
         $this->cache = new GenericCache(new ArrayAdapter());
     }
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock
+    public function lock(Stringable|string $key, Duration|DateTimeInterface|null $duration = null, Stringable|string|null $owner = null): Lock
     {
         $this->lastLockDuration = $duration instanceof Duration ? $duration : null;
 
@@ -39,12 +39,12 @@ final class RecordingCache implements Cache
         return $this->cache->has($key);
     }
 
-    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): CacheItemInterface
     {
         return $this->cache->put($key, $value, $expiration);
     }
 
-    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
+    public function putMany(iterable $values, Duration|DateTimeInterface|null $expiration = null): array
     {
         return $this->cache->putMany($values, $expiration);
     }
@@ -69,7 +69,7 @@ final class RecordingCache implements Cache
         return $this->cache->getMany($key);
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, Duration|DateTimeInterface|null $expiration = null, ?Duration $stale = null): mixed
     {
         return $this->cache->resolve($key, $callback, $expiration, $stale);
     }

@@ -10,7 +10,7 @@ use function Tempest\Database\query;
 
 final class TestDatabaseSeeder implements DatabaseSeeder
 {
-    public function run(null|string|UnitEnum $database): void
+    public function run(string|UnitEnum|null $database): void
     {
         query(Book::class)
             ->insert(

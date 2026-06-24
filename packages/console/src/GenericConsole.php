@@ -207,14 +207,14 @@ final class GenericConsole implements Console
 
     public function ask(
         string $question,
-        null|iterable|string $options = null,
+        iterable|string|null $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|UnitEnum|array {
+    ): int|string|Stringable|UnitEnum|array|null {
         if ($this->isForced && $default) {
             return $default;
         }
@@ -293,12 +293,12 @@ final class GenericConsole implements Console
         return $this->component(new ProgressBarComponent($data, $handler));
     }
 
-    public function task(string $label, null|Process|Closure $handler = null): bool
+    public function task(string $label, Process|Closure|null $handler = null): bool
     {
         return $this->component(new TaskComponent($label, $handler));
     }
 
-    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
+    public function search(string $label, Closure $search, bool $multiple = false, string|array|null $default = null): mixed
     {
         return $this->component(new SearchComponent($label, $search, $multiple, $default));
     }

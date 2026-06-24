@@ -97,7 +97,7 @@ final readonly class PhpRedisClient implements Redis
         return $result;
     }
 
-    public function set(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): void
+    public function set(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): void
     {
         if ($expiration instanceof DateTimeInterface) {
             $expiration = $expiration->since(DateTime::now());

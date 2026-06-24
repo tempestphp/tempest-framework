@@ -635,7 +635,7 @@ interface DateTimeInterface extends TemporalInterface
      * @see Locale::default()
      */
     #[Override]
-    public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
+    public function format(FormatPattern|string|null $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
 
     /**
      * Provides a string representation of this {@see TemporalInterface} instance, formatted according to specified styles for date and time,

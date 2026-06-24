@@ -6,7 +6,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 trait HasMoreIntegerAssertions
 {
-    private function assertEqualsToMoreOrLess(int|float $expected, int|float $actual, int|float $margin, null|int|float $windowsMargin = null): void
+    private function assertEqualsToMoreOrLess(int|float $expected, int|float $actual, int|float $margin, int|float|null $windowsMargin = null): void
     {
         if ($windowsMargin && PHP_OS_FAMILY === 'Windows') {
             $margin = $windowsMargin;

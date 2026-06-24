@@ -193,14 +193,14 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
 
     private function sendTestEmail(
         ?string $subject = null,
-        null|string|array|EmailAddress $to = null,
-        null|string|array|EmailAddress $from = null,
-        null|string|array|EmailAddress $cc = null,
-        null|string|array|EmailAddress $bcc = null,
-        null|string|array|EmailAddress $replyTo = null,
+        string|array|EmailAddress|null $to = null,
+        string|array|EmailAddress|null $from = null,
+        string|array|EmailAddress|null $cc = null,
+        string|array|EmailAddress|null $bcc = null,
+        string|array|EmailAddress|null $replyTo = null,
         array $headers = [],
         EmailPriority $priority = EmailPriority::NORMAL,
-        null|string|View $html = null,
+        string|View|null $html = null,
         ?string $text = null,
         array $attachments = [],
     ): MailTester {

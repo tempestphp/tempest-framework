@@ -67,7 +67,7 @@ final readonly class Validator
      * @param array<string,list<FailingRule>> $failingRules
      * @param class-string|null $targetClass
      */
-    public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
+    public function createValidationFailureException(array $failingRules, object|string|null $subject = null, ?string $targetClass = null): ValidationFailed
     {
         return new ValidationFailed(
             failingRules: $failingRules,

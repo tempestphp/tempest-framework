@@ -398,7 +398,7 @@ final class BelongsToMany implements Relation
         );
     }
 
-    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    public function query(PrimaryKey $primaryKey, string|UnitEnum|null $onDatabase = null): QueryBuilder
     {
         $ownerModel = inspect(model: $this->property->getClass());
         $targetModel = inspect(model: $this->property->getIterableType()->asClass());

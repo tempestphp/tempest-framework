@@ -19,7 +19,7 @@ final readonly class EnumStatement implements QueryStatement
         /** @var class-string<UnitEnum|BackedEnum> */
         private string $enumClass,
         private bool $nullable = false,
-        private null|UnitEnum|BackedEnum $default = null,
+        private UnitEnum|BackedEnum|null $default = null,
     ) {}
 
     public function compile(DatabaseDialect $dialect): string

@@ -24,7 +24,7 @@ final class ServerSentMessage implements ServerSentEvent
         JsonSerializable|Stringable|string|iterable $data,
         private(set) string $event = 'message',
         private(set) ?int $id = null,
-        private(set) null|Duration|int $retryAfter = null,
+        private(set) Duration|int|null $retryAfter = null,
     ) {
         $this->data = Json\encode($data);
     }

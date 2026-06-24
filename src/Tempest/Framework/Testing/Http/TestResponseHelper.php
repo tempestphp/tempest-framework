@@ -209,7 +209,7 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertHasCookie(string $key, null|string|Closure $value = null): self
+    public function assertHasCookie(string $key, string|Closure|null $value = null): self
     {
         /** @var array<string,Cookie> */
         $cookies = Arr\map_with_keys(
@@ -242,7 +242,7 @@ final class TestResponseHelper
         return $this;
     }
 
-    public function assertDoesNotHaveCookie(string $key, null|string|Closure $value = null): self
+    public function assertDoesNotHaveCookie(string $key, string|Closure|null $value = null): self
     {
         /** @var array<string,Cookie> */
         $cookies = Arr\map_with_keys(

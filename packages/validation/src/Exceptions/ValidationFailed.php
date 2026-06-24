@@ -18,7 +18,7 @@ final class ValidationFailed extends Exception
      */
     public function __construct(
         private(set) array $failingRules,
-        private(set) null|object|string $subject = null,
+        private(set) object|string|null $subject = null,
         private(set) array $errorMessages = [],
         private(set) ?string $targetClass = null,
     ) {

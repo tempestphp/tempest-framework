@@ -16,6 +16,6 @@ final class NullLogConfig implements LogConfig
      */
     public function __construct(
         private(set) ?string $prefix = null,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

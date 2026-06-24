@@ -32,7 +32,7 @@ interface Lock
     /**
      * Checks if the lock is currently held.
      */
-    public function locked(null|Stringable|string $by = null): bool;
+    public function locked(Stringable|string|null $by = null): bool;
 
     /**
      * Executes the given callback while holding the lock.
@@ -44,7 +44,7 @@ interface Lock
      *
      * @return TReturn The result of the callback.
      */
-    public function execute(Closure $callback, null|DateTimeInterface|Duration $wait = null): mixed;
+    public function execute(Closure $callback, DateTimeInterface|Duration|null $wait = null): mixed;
 
     /**
      * Releases the lock.

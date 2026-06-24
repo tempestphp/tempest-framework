@@ -542,7 +542,7 @@ trait ManipulatesString
      * str('<p>Lorem <strong>ipsum</strong></p>')->stripTags(allowed: 'strong'); // Lorem <strong>ipsum</strong>
      * ```
      */
-    public function stripTags(null|string|array $allowed = null): self
+    public function stripTags(string|array|null $allowed = null): self
     {
         return $this->createOrModify(strip_tags($this->value, $allowed));
     }

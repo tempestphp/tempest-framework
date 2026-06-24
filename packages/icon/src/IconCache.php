@@ -50,7 +50,7 @@ final class IconCache
         $this->pool->clear();
     }
 
-    public function put(string $key, mixed $value, null|Duration|DateTimeInterface $expiresAt = null): CacheItemInterface
+    public function put(string $key, mixed $value, Duration|DateTimeInterface|null $expiresAt = null): CacheItemInterface
     {
         $item = $this->pool
             ->getItem($key)
@@ -71,7 +71,7 @@ final class IconCache
         return $item;
     }
 
-    public function resolve(string $key, Closure $callback, null|Duration|DateTimeInterface $expiresAt = null): mixed
+    public function resolve(string $key, Closure $callback, Duration|DateTimeInterface|null $expiresAt = null): mixed
     {
         if (! $this->enabled) {
             return $callback();

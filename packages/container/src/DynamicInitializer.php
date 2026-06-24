@@ -9,7 +9,7 @@ use UnitEnum;
 
 interface DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool;
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool;
 
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object;
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): object;
 }

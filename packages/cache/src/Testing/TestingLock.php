@@ -34,12 +34,12 @@ final class TestingLock implements Lock
         return $this->lock->acquire();
     }
 
-    public function locked(null|Stringable|string $by = null): bool
+    public function locked(Stringable|string|null $by = null): bool
     {
         return $this->lock->locked($by);
     }
 
-    public function execute(Closure $callback, null|DateTimeInterface|Duration $wait = null): mixed
+    public function execute(Closure $callback, DateTimeInterface|Duration|null $wait = null): mixed
     {
         return $this->lock->execute($callback, $wait);
     }
@@ -52,7 +52,7 @@ final class TestingLock implements Lock
     /**
      * Asserts that the specified lock is being held.
      */
-    public function assertLocked(null|Stringable|string $by = null, null|DateTimeInterface|Duration $for = null): self
+    public function assertLocked(Stringable|string|null $by = null, DateTimeInterface|Duration|null $for = null): self
     {
         Assert::assertTrue(
             condition: $this->locked($by),
@@ -83,7 +83,7 @@ final class TestingLock implements Lock
     /**
      * Asserts that the specified lock is not being held.
      */
-    public function assertNotLocked(null|Stringable|string $by = null): self
+    public function assertNotLocked(Stringable|string|null $by = null): self
     {
         Assert::assertFalse(
             condition: $this->locked($by),

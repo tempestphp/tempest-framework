@@ -48,7 +48,7 @@ final class FacebookOAuthConfig implements OAuthConfig
         /**
          * Identifier for this OAuth configuration.
          */
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 
     public function createProvider(): AbstractProvider
