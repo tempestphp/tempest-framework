@@ -27,6 +27,7 @@ parameters:
     excludePaths:
         analyse:
             - packages/upgrade/tests/*/Fixtures/*.php
+            - packages/auth/src/Installer/basic-user
     reportUnmatchedIgnoredErrors: true
 
     disallowedFunctionCalls:

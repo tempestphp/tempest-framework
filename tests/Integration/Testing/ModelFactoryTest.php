@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Testing;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\DateTime\DateTime;
@@ -178,7 +179,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
         $withDateTime = factory(WithDateTime::class)->make();
 
         $this->assertInstanceOf(DateTime::class, $withDateTime->tempestDate);
-        $this->assertInstanceOf(\DateTimeImmutable::class, $withDateTime->phpDate);
+        $this->assertInstanceOf(DateTimeImmutable::class, $withDateTime->phpDate);
     }
 }
 
@@ -190,5 +191,6 @@ class AuthorWithEnum
 class WithDateTime
 {
     public DateTime $tempestDate;
-    public \DateTimeImmutable $phpDate;
+
+    public DateTimeImmutable $phpDate;
 }
