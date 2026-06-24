@@ -8,7 +8,9 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Framework\Testing\factory;
@@ -152,4 +154,27 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
         $this->database->assertTableHasRow('books', id: $a->id, title: $a->title);
         $this->database->assertTableHasRow('books', id: $b->id, title: $b->title);
     }
+
+    #[Test]
+    public function test_make_with_nested_object(): void
+    {
+        $isbn = factory(Isbn::class)->make();
+
+        // @phpstan-ignore-next-line
+        $this->assertInstanceOf(Book::class, $isbn->book);
+    }
+
+    #[Test]
+    public function test_make_with_enum(): void
+    {
+        $author = factory(AuthorWithEnum::class)->make();
+
+        // @phpstan-ignore-next-line
+        $this->assertInstanceOf(AuthorType::class, $author->type);
+    }
+}
+
+class AuthorWithEnum
+{
+    public AuthorType $type;
 }

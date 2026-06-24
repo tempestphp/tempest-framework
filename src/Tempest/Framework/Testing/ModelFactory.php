@@ -2,6 +2,7 @@
 
 namespace Tempest\Framework\Testing;
 
+use Tempest\Database\PrimaryKey;
 use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\Mapper\map;
@@ -75,13 +76,13 @@ final class ModelFactory
                 continue;
             }
 
-            if ($property->isNullable()) {
+            $value = $this->generateValue($property);
+
+            if ($value === null && $property->isNullable()) {
                 $property->setValue($model, null);
 
                 continue;
             }
-
-            $value = $this->generateValue($property);
 
             if ($value === null) {
                 continue;
@@ -109,7 +110,23 @@ final class ModelFactory
 
     private function generateValue(PropertyReflector $property): mixed
     {
-        return match ($property->getType()->getName()) {
+        $type = $property->getType();
+
+        if ($type->matches(PrimaryKey::class)) {
+            return null;
+        }
+
+        if ($type->isEnum()) {
+            $cases = arr($type->getName()::cases());
+
+            return $cases->random();
+        }
+
+        if ($type->isClass()) {
+            return new self($type->getName())->make();
+        }
+
+        return match ($type->getName()) {
             'string' => arr(['Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet'])->random(),
             'int' => random_int(1, 100),
             'float' => random_int(100, 1000) / 10,
