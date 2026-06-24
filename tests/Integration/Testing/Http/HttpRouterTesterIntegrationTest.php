@@ -220,6 +220,16 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
         $this->assertSame('ok', $response->request->raw);
         $this->assertSame([], $response->request->body);
     }
+
+    #[Test]
+    public function test_throw_exceptions(): void
+    {
+        $this->expectException(Exception::class);
+
+        $this->http
+            ->throwExceptions()
+            ->get('/fail');
+    }
 }
 
 final class TestController

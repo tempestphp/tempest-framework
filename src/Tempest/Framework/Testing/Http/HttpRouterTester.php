@@ -37,9 +37,21 @@ final class HttpRouterTester
 
     private(set) bool $includeSecFetchHeaders = true;
 
+    private(set) bool $throwExceptions = false;
+
     public function __construct(
         private Container $container,
     ) {}
+
+    /**
+     * Configure whether exceptions should be thrown or not
+     */
+    public function throwExceptions(bool $throwExceptions = true): self
+    {
+        $this->throwExceptions = $throwExceptions;
+
+        return $this;
+    }
 
     /**
      * Registers a route for testing purposes.
@@ -221,15 +233,19 @@ final class HttpRouterTester
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
-        try {
+        if ($this->throwExceptions) {
             $response = $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do());
-        } catch (Throwable $throwable) {
-            return new TestResponseHelper(
-                response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable),
-                request: $request,
-                container: $this->container,
-                throwable: $throwable,
-            );
+        } else {
+            try {
+                $response = $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do());
+            } catch (Throwable $throwable) {
+                return new TestResponseHelper(
+                    response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable),
+                    request: $request,
+                    container: $this->container,
+                    throwable: $throwable,
+                );
+            }
         }
 
         return new TestResponseHelper(
