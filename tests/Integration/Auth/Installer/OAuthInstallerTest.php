@@ -41,16 +41,8 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
         string $expectedControllerPath,
     ): void {
         $this->console
-            ->call('install auth --oauth')
-            ->confirm()
-            ->deny()
-            ->deny()
+            ->call('install auth --oauth --force')
             ->input($provider->value)
-            ->confirm()
-            ->confirm()
-            ->confirm()
-            ->confirm()
-            ->confirm()
             ->assertSee('The selected OAuth provider is installed in your project')
             ->assertSuccess();
 
