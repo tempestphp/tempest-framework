@@ -94,6 +94,45 @@ final class ValidatorTest extends TestCase
         $this->assertSame('I expected b', $rule->getErrorMessage());
     }
 
+    public function test_get_error_message_uses_custom_error_message_from_failing_rule(): void
+    {
+        $failingRules = $this->validator->validateValue('a', fn (mixed $_) => 'I expected b');
+
+        $this->assertSame('I expected b', $this->validator->getErrorMessage($failingRules[0]));
+    }
+
+    public function test_get_error_message_does_not_require_translator_for_custom_error_message(): void
+    {
+        $validator = new Validator();
+        $failingRules = $validator->validateValue('a', fn (mixed $_) => 'I expected b');
+
+        $this->assertSame('I expected b', $validator->getErrorMessage($failingRules[0]));
+    }
+
+    public function test_validation_failed_can_be_created_from_messages(): void
+    {
+        $validationFailed = ValidationFailed::withMessages([
+            'credential' => 'Passkey not valid',
+            'email' => [
+                'Email is already taken',
+                'Email domain is not allowed',
+            ],
+        ]);
+
+        $this->assertSame(
+            [
+                'credential' => ['Passkey not valid'],
+                'email' => ['Email is already taken', 'Email domain is not allowed'],
+            ],
+            $validationFailed->errorMessages,
+        );
+        $this->assertCount(1, $validationFailed->failingRules['credential']);
+        $this->assertCount(2, $validationFailed->failingRules['email']);
+        $this->assertSame('Passkey not valid', $this->validator->getErrorMessage($validationFailed->failingRules['credential'][0]));
+        $this->assertSame('Email is already taken', $this->validator->getErrorMessage($validationFailed->failingRules['email'][0]));
+        $this->assertSame('Email domain is not allowed', $this->validator->getErrorMessage($validationFailed->failingRules['email'][1]));
+    }
+
     public function test_closure_passes_with_null_response(): void
     {
         $validator = $this->validator;

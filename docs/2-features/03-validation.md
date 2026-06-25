@@ -138,6 +138,29 @@ $this->validator->validateValue('jon@doe.co', function (mixed $value) {
 });
 ```
 
+## Throwing validation failures manually
+
+You may throw a {`Tempest\Validation\Exceptions\ValidationFailed`} exception with custom messages when validation depends on application logic instead of a validation rule.
+
+```php app/PasskeyController.php
+use Tempest\Validation\Exceptions\ValidationFailed;
+
+throw ValidationFailed::withMessages([
+    'credential' => 'Passkey not valid',
+]);
+```
+
+Multiple messages may be passed for the same field.
+
+```php
+throw ValidationFailed::withMessages([
+    'email' => [
+        'Email is already taken',
+        'Email domain is not allowed',
+    ],
+]);
+```
+
 ## Accessing error messages
 
 When validation fails, a list of fields and their respective failing rules is returned. You may call the `getErrorMessage` method on the validator to get a [localized](./11-localization.md) validation message.

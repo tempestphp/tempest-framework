@@ -6,6 +6,7 @@ namespace Tempest\Validation\Exceptions;
 
 use Exception;
 use Tempest\Validation\FailingRule;
+use Tempest\Validation\Internal\MessageRule;
 
 final class ValidationFailed extends Exception
 {
@@ -26,5 +27,32 @@ final class ValidationFailed extends Exception
             is_null($subject) => 'Validation failed.',
             default => sprintf('Validation failed for %s.', is_object($subject) ? $subject::class : $subject),
         });
+    }
+
+    /**
+     * @param array<string,string|list<string>> $messages
+     */
+    public static function withMessages(array $messages, object|string|null $subject = null, ?string $targetClass = null): self
+    {
+        $failingRules = [];
+        $errorMessages = [];
+
+        foreach ($messages as $field => $messagesForField) {
+            $errorMessages[$field] = is_string($messagesForField) ? [$messagesForField] : $messagesForField;
+
+            foreach ($errorMessages[$field] as $message) {
+                $failingRules[$field][] = new FailingRule(
+                    rule: new MessageRule($message),
+                    field: $field,
+                );
+            }
+        }
+
+        return new self(
+            failingRules: $failingRules,
+            subject: $subject,
+            errorMessages: $errorMessages,
+            targetClass: $targetClass,
+        );
     }
 }

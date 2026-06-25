@@ -222,20 +222,22 @@ final readonly class Validator
      */
     public function getErrorMessage(Rule|FailingRule $rule, ?string $field = null): string
     {
-        if (is_null($this->translator)) {
-            throw new TranslatorWasRequired();
+        $failingRule = $rule instanceof FailingRule ? $rule : null;
+
+        if ($failingRule instanceof FailingRule) {
+            $field ??= $failingRule->field;
+            $rule = $failingRule->rule;
         }
 
         if ($rule instanceof HasErrorMessage) {
             return $rule->getErrorMessage();
         }
 
-        $ruleTranslationKey = $this->getTranslationKey($rule);
-
-        if ($rule instanceof FailingRule) {
-            $field ??= $rule->field;
-            $rule = $rule->rule;
+        if (is_null($this->translator)) {
+            throw new TranslatorWasRequired();
         }
+
+        $ruleTranslationKey = $this->getTranslationKey($failingRule ?? $rule);
 
         $variables = [
             'field' => $this->getFieldName($ruleTranslationKey, $field),
