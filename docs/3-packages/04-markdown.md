@@ -195,6 +195,20 @@ Prepend `*` to a link's URI to open the link in a new tab:
 <a href="https://stitcher.io" target="_blank" rel="noopener noreferrer">Click me</a>
 ```
 
+### Raw snippets
+
+Wrap anything in `@@` to prevent it from being rendered at all:
+
+```md
+@@
+## Hello
+@@
+```
+
+```html
+## Hello
+```
+
 ## Adding custom features
 
 `tempest/markdown` is meant to be extended. Adding custom parser rules is done in two steps: first you provide a `Rule`, this is a class that determines when your custom parsing logic should be triggered. Next you'll use a `Token` to render your selected Markdown code in any way you'd like.
