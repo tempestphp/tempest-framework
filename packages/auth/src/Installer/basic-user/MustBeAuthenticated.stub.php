@@ -7,11 +7,11 @@ use Tempest\Router\Route;
 use Tempest\Router\RouteDecorator;
 
 #[Attribute]
-final readonly class Auth implements RouteDecorator
+final readonly class MustBeAuthenticated implements RouteDecorator
 {
     public function decorate(Route $route): Route
     {
-        $route->middleware[] = AuthMiddleware::class;
+        $route->middleware[] = MustBeAuthenticatedMiddleware::class;
 
         return $route;
     }

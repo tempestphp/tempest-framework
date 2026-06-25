@@ -25,8 +25,8 @@ final class AuthenticationInstaller
     {
         $migration = $this->publish(__DIR__ . '/basic-user/CreateUsersTableMigration.stub.php', src_path('Authentication/CreateUsersTable.php'));
         $this->publish(__DIR__ . '/basic-user/UserModel.stub.php', src_path('Authentication/User.php'));
-        $this->publish(__DIR__ . '/basic-user/AuthMiddleware.stub.php', src_path('Authentication/AuthMiddleware.php'));
-        $this->publish(__DIR__ . '/basic-user/Auth.stub.php', src_path('Authentication/Auth.php'));
+        $this->publish(__DIR__ . '/basic-user/MustBeAuthenticatedMiddleware.stub.php', src_path('Authentication/MustBeAuthenticatedMiddleware.php'));
+        $this->publish(__DIR__ . '/basic-user/MustBeAuthenticated.stub.php', src_path('Authentication/MustBeAuthenticated.php'));
         $this->publishImports();
 
         if ($migration && $this->shouldMigrate($migrate)) {

@@ -37,8 +37,8 @@ final class AuthenticationInstallerTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
 
         $this->installer
-            ->assertFileExists('App/Authentication/AuthMiddleware.php')
-            ->assertFileExists('App/Authentication/Auth.php');
+            ->assertFileExists('App/Authentication/MustBeAuthenticatedMiddleware.php')
+            ->assertFileExists('App/Authentication/MustBeAuthenticated.php');
     }
 
     #[Test]
