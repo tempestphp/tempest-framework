@@ -7,7 +7,9 @@ namespace Tempest\Validation\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
+use Tempest\Validation\FailingRule;
 use Tempest\Validation\HasErrorMessage;
+use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEmail;
@@ -291,5 +293,48 @@ final class ValidatorTest extends TestCase
         );
 
         $this->assertCount(0, $failingRules);
+    }
+
+    public function test_validator_returns_correct_error_message_when_rule_has_error_message(): void
+    {
+        $ruleMessage = $this->validator->getErrorMessage(new IsForTestingHasErrorMessage());
+
+        $this->assertSame('This is a test error message.', $ruleMessage);
+
+        $failingRuleMessage = $this->validator->getErrorMessage(new FailingRule(rule: new IsForTestingHasErrorMessage()));
+
+        $this->assertSame('This is a test error message.', $failingRuleMessage);
+    }
+
+    public function test_validator_returns_correct_error_message(): void
+    {
+        $ruleMessage = $this->validator->getErrorMessage(new IsForTestingMessage());
+
+        $this->assertSame('validation_error.is_for_testing_message', $ruleMessage);
+
+        $failingRuleMessage = $this->validator->getErrorMessage(new FailingRule(rule: new IsForTestingMessage()));
+
+        $this->assertSame('validation_error.is_for_testing_message', $failingRuleMessage);
+    }
+}
+
+final readonly class IsForTestingMessage implements Rule
+{
+    public function isValid(mixed $value): bool
+    {
+        return false;
+    }
+}
+
+final readonly class IsForTestingHasErrorMessage implements Rule, HasErrorMessage
+{
+    public function isValid(mixed $value): bool
+    {
+        return false;
+    }
+
+    public function getErrorMessage(): string
+    {
+        return 'This is a test error message.';
     }
 }
