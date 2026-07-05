@@ -124,9 +124,11 @@ final class Session
         $this->expiredKeys = [];
 
         foreach ($this->data as $key => $value) {
-            if ($value instanceof FlashValue) {
-                $this->expiredKeys[$key] = $key;
+            if (! $value instanceof FlashValue) {
+                continue;
             }
+
+            $this->expiredKeys[$key] = $key;
         }
     }
 
