@@ -24,10 +24,14 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
+        // Flash values are aged at the start of the request, before the response
+        // body is rendered, so a value flashed on the previous request stays
+        // readable this request and is expired on the next one.
+        $this->session->cleanup();
+
         try {
             return $next($request);
         } finally {
-            $this->session->cleanup();
             $this->sessionManager->save($this->session);
 
             match ($this->config->cleanupStrategy) {

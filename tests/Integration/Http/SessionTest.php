@@ -74,7 +74,25 @@ final class SessionTest extends FrameworkIntegrationTestCase
         $this->session->flash('message', 'success');
         $this->assertEquals('success', $this->session->get('message'));
 
+        // Start of the next request: the value is still available (e.g. to render).
         $this->session->cleanup();
+        $this->assertEquals('success', $this->session->get('message'));
+
+        // Start of the request after that: it has expired.
+        $this->session->cleanup();
+        $this->assertNull($this->session->get('message'));
+    }
+
+    #[Test]
+    public function flash_value_expires_even_when_never_read(): void
+    {
+        $this->session->flash('message', 'success');
+
+        // Aging is independent of reads: two request boundaries expire the value
+        // without it ever being retrieved.
+        $this->session->cleanup();
+        $this->session->cleanup();
+
         $this->assertNull($this->session->get('message'));
     }
 
