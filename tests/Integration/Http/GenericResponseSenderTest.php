@@ -19,6 +19,7 @@ use Tempest\Http\ServerSentEvent;
 use Tempest\Http\ServerSentMessage;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
+use Tempest\Support\Json\Exception\JsonCouldNotBeEncoded;
 use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -115,6 +116,21 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $output = ob_get_clean();
 
         $this->assertSame('{"key":"value"}', $output);
+    }
+
+    public function test_sending_invalid_json_throws_exception(): void
+    {
+        ob_start();
+        $response = new GenericResponse(
+            status: Status::CREATED,
+            body: ['key' => "\xB1\x31"],
+        );
+
+        $responseSender = $this->container->get(GenericResponseSender::class);
+
+        $this->assertException(JsonCouldNotBeEncoded::class, fn () => $responseSender->send($response));
+
+        ob_get_clean();
     }
 
     public function test_sending_of_json_serializable_to_json(): void
