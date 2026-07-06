@@ -162,7 +162,7 @@ Beyond selecting models, any query builder can be used with model objects:
 use App\Models\Book;
 use Tempest\Database\PrimaryKey;
 
-;use function Tempest\Database\query;
+use function Tempest\Database\query;
 
 final class BookRepository
 {
