@@ -1,16 +1,16 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest312;
+namespace Tempest\Upgrade\Tests\Tempest314;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
 #[RunTestsInSeparateProcesses]
-final class Tempest312RectorTest extends TestCase
+final class Tempest314RectorTest extends TestCase
 {
     private RectorTester $rector {
-        get => new RectorTester(__DIR__ . '/tempest312_rector.php');
+        get => new RectorTester(__DIR__ . '/tempest314_rector.php');
     }
 
     public function test_connection_implementation_methods_are_added(): void

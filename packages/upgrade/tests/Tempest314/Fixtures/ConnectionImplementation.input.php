@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest312\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest314\Fixtures;
 
 use PDOStatement;
 use Tempest\Database\Connection\Connection;

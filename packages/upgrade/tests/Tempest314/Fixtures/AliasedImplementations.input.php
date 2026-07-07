@@ -1,23 +1,19 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest312\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest314\Fixtures;
 
 use PDOStatement;
 use Tempest\Container\Container;
-use Tempest\Core\Kernel;
-use Tempest\Database\Connection\Connection;
+use Tempest\Core\Kernel as TempestKernel;
+use Tempest\Database\Connection\Connection as TempestConnection;
 
-final class ExistingKernel implements Kernel
+final class AliasedKernel implements TempestKernel
 {
     public string $root;
 
     public string $internalStorage;
 
     public Container $container;
-
-    public bool $wasReset = false;
-
-    public bool $wasShutDown = false;
 
     public static function boot(
         string $root,
@@ -30,35 +26,30 @@ final class ExistingKernel implements Kernel
 
     public function shutdown(int|string $status = ''): void
     {
-        $this->wasShutDown = true;
+        return $this;
     }
 }
 
-final class ExistingConnection implements Connection
+final class AliasedConnection implements TempestConnection
 {
     public function beginTransaction(): bool
     {
-        return true;
-    }
-
-    public function inTransaction(): bool
-    {
-        return true;
+        return false;
     }
 
     public function commit(): bool
     {
-        return true;
+        return false;
     }
 
     public function rollback(): bool
     {
-        return true;
+        return false;
     }
 
     public function lastInsertId(): false|string
     {
-        return 'existing-id';
+        return false;
     }
 
     public function prepare(string $sql): PDOStatement
@@ -68,30 +59,9 @@ final class ExistingConnection implements Connection
 
     public function close(): void
     {
-        $this->disconnect();
     }
 
     public function connect(): void
-    {
-        $this->bootConnection();
-    }
-
-    public function reconnect(): void
-    {
-        $this->close();
-        $this->connect();
-    }
-
-    public function ping(): bool
-    {
-        return true;
-    }
-
-    private function disconnect(): void
-    {
-    }
-
-    private function bootConnection(): void
     {
     }
 }

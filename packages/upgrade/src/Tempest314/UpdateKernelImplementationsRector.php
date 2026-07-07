@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tempest312;
+namespace Tempest\Upgrade\Tempest314;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
