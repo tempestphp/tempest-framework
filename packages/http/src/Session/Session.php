@@ -68,7 +68,7 @@ final class Session
         $value = $this->data[Str\parse($key)] ?? $default;
 
         if ($value instanceof FlashValue) {
-            $value = $value->value;
+            return $value->value;
         }
 
         return $value;
