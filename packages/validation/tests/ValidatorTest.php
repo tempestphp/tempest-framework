@@ -133,6 +133,29 @@ final class ValidatorTest extends TestCase
         $this->assertSame('Email domain is not allowed', $this->validator->getErrorMessage($validationFailed->failingRules['email'][1]));
     }
 
+    public function test_validation_failed_message_includes_error_messages(): void
+    {
+        $validationFailed = ValidationFailed::withMessages([
+            'credential' => 'Passkey not valid',
+            'email' => [
+                'Email is already taken',
+                'Email domain is not allowed',
+            ],
+        ]);
+
+        $this->assertSame(
+            'Validation failed. {"credential":["Passkey not valid"],"email":["Email is already taken","Email domain is not allowed"]}',
+            $validationFailed->getMessage(),
+        );
+    }
+
+    public function test_validation_failed_message_omits_error_messages_when_empty(): void
+    {
+        $validationFailed = new ValidationFailed(failingRules: []);
+
+        $this->assertSame('Validation failed.', $validationFailed->getMessage());
+    }
+
     public function test_closure_passes_with_null_response(): void
     {
         $validator = $this->validator;

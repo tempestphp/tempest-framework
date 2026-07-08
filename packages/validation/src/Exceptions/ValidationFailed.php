@@ -8,6 +8,8 @@ use Exception;
 use Tempest\Validation\FailingRule;
 use Tempest\Validation\Internal\MessageRule;
 
+use function Tempest\Support\Json\encode;
+
 final class ValidationFailed extends Exception
 {
     /**
@@ -23,10 +25,16 @@ final class ValidationFailed extends Exception
         private(set) array $errorMessages = [],
         private(set) ?string $targetClass = null,
     ) {
-        parent::__construct(match (true) {
+        $message = match (true) {
             is_null($subject) => 'Validation failed.',
             default => sprintf('Validation failed for %s.', is_object($subject) ? $subject::class : $subject),
-        });
+        };
+
+        if ($errorMessages !== []) {
+            $message .= ' ' . encode($errorMessages);
+        }
+
+        parent::__construct($message);
     }
 
     /**
