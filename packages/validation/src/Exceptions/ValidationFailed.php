@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
+use Tempest\Core\ProvidesContext;
 use Tempest\Validation\FailingRule;
 use Tempest\Validation\Internal\MessageRule;
 
-use function Tempest\Support\Json\encode;
-
-final class ValidationFailed extends Exception
+final class ValidationFailed extends Exception implements ProvidesContext
 {
     /**
      * @template TKey of array-key
@@ -30,11 +29,18 @@ final class ValidationFailed extends Exception
             default => sprintf('Validation failed for %s.', is_object($subject) ? $subject::class : $subject),
         };
 
-        if ($errorMessages !== []) {
-            $message .= ' ' . encode($errorMessages);
+        foreach ($errorMessages as $field => $messages) {
+            $message .= PHP_EOL . sprintf('- %s: %s', $field, implode('; ', $messages));
         }
 
         parent::__construct($message);
+    }
+
+    public function context(): iterable
+    {
+        return array_filter([
+            'errors' => $this->errorMessages,
+        ]);
     }
 
     /**

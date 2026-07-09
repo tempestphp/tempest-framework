@@ -144,7 +144,11 @@ final class ValidatorTest extends TestCase
         ]);
 
         $this->assertSame(
-            'Validation failed. {"credential":["Passkey not valid"],"email":["Email is already taken","Email domain is not allowed"]}',
+            implode(PHP_EOL, [
+                'Validation failed.',
+                '- credential: Passkey not valid',
+                '- email: Email is already taken; Email domain is not allowed',
+            ]),
             $validationFailed->getMessage(),
         );
     }
@@ -154,6 +158,16 @@ final class ValidatorTest extends TestCase
         $validationFailed = new ValidationFailed(failingRules: []);
 
         $this->assertSame('Validation failed.', $validationFailed->getMessage());
+    }
+
+    public function test_validation_failed_provides_error_messages_as_context(): void
+    {
+        $validationFailed = ValidationFailed::withMessages([
+            'email' => 'Email is already taken',
+        ]);
+
+        $this->assertSame(['errors' => ['email' => ['Email is already taken']]], $validationFailed->context());
+        $this->assertSame([], new ValidationFailed(failingRules: [])->context());
     }
 
     public function test_closure_passes_with_null_response(): void
