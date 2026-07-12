@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\TypeScript\StructureResolvers;
 
-use Tempest\Container\Container;
+use Psr\Container\ContainerInterface;
 use Tempest\Generation\TypeScript\InterfaceDefinition;
 use Tempest\Generation\TypeScript\PropertyDefinition;
 use Tempest\Generation\TypeScript\StructureResolver;
@@ -25,7 +25,7 @@ final readonly class ClassStructureResolver implements StructureResolver
 {
     public function __construct(
         private TypeScriptGenerationConfig $config,
-        private Container $container,
+        private ContainerInterface $container,
     ) {}
 
     public function resolve(TypeReflector $type, TypeScriptGenerator $generator): InterfaceDefinition

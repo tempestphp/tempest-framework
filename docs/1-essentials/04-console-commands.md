@@ -246,7 +246,13 @@ Completion relies on two things: a **completion script** sourced by your shell, 
 
 ### Installing completions
 
-Run the install command and follow the prompts:
+The framework and console installers will ask whether you want to install completions:
+
+```console
+<dim>./</dim>tempest install
+```
+
+You may also run the completion command directly:
 
 ```console
 <dim>./</dim>tempest completion:install

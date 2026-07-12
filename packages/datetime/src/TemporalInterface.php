@@ -346,7 +346,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      * @see Timezone::default()
      * @see Locale::default()
      */
-    public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
+    public function format(FormatPattern|string|null $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string;
 
     /**
      * Formats this {@see TemporalInterface} instance to a string based on the RFC 3339 format, with additional

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Container;
 use Tempest\Core\DeferredTasks;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -46,5 +47,17 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
 
         $this->assertTrue($executed);
         $this->assertEmpty($this->container->get(DeferredTasks::class)->getTasks());
+    }
+
+    #[Test]
+    public function test_tasks_are_reset(): void
+    {
+        $first = $this->container->get(DeferredTasks::class);
+
+        $this->container->reset();
+
+        $second = $this->container->get(DeferredTasks::class);
+
+        $this->assertNotSame($first, $second);
     }
 }

@@ -18,7 +18,7 @@ final class TranslatorInitializer implements Initializer
             config: $container->get(IntlConfig::class),
             catalog: $container->get(Catalog::class),
             formatter: $container->get(MessageFormatter::class),
-            eventBus: $container->get(EventBus::class),
+            eventBus: interface_exists(EventBus::class) ? $container->get(EventBus::class) : null,
         );
     }
 }

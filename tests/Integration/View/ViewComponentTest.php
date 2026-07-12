@@ -1299,4 +1299,139 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch($expected, $html);
     }
+
+    public function test_define_slot_renders_default_content_into_child_component(): void
+    {
+        // <x-slot define="left"> in x-header's template is OWNED by x-header.
+        // x-container has no "left" slot — it only has a default slot.
+        // When the caller provides nothing for "left", the default content inside
+        // the define tag is compiled and flows into x-container's default slot.
+        $this->view->registerViewComponent('x-container', '<div class="container"><x-slot /></div>');
+        $this->view->registerViewComponent('x-header-left', '<span>default-left</span>');
+        $this->view->registerViewComponent('x-header', <<<'HTML'
+        <header>
+            <x-container>
+                <x-slot define="left">
+                    <x-header-left />
+                </x-slot>
+                <div>center</div>
+            </x-container>
+        </header>
+        HTML);
+
+        $html = $this->view->render('<x-header></x-header>');
+
+        $this->assertSnippetsMatch(
+            '<header><div class="container"><span>default-left</span><div>center</div></div></header>',
+            $html,
+        );
+    }
+
+    public function test_define_slot_is_overridden_by_caller_using_name(): void
+    {
+        // When the caller fills the "left" slot using <x-slot name="left">, the compiled
+        // caller content replaces the default and flows into x-container's default slot.
+        // x-container remains unaware that "left" ever existed.
+        $this->view->registerViewComponent('x-container', '<div class="container"><x-slot /></div>');
+        $this->view->registerViewComponent('x-header-left', '<span>default-left</span>');
+        $this->view->registerViewComponent('x-header', <<<'HTML'
+        <header>
+            <x-container>
+                <x-slot define="left">
+                    <x-header-left />
+                </x-slot>
+                <div>center</div>
+            </x-container>
+        </header>
+        HTML);
+
+        $html = $this->view->render(<<<'HTML'
+        <x-header>
+            <x-slot name="left"><span>custom-left</span></x-slot>
+        </x-header>
+        HTML);
+
+        $this->assertSnippetsMatch(
+            '<header><div class="container"><span>custom-left</span><div>center</div></div></header>',
+            $html,
+        );
+    }
+
+    public function test_multiple_define_slots_alongside_static_content_in_child_component(): void
+    {
+        // The full x-header scenario: two define slots flanking static content,
+        // all flowing as one contiguous default slot into x-container.
+        $this->view->registerViewComponent('x-container', '<div class="container"><x-slot /></div>');
+        $this->view->registerViewComponent('x-header-left', '<span>default-left</span>');
+        $this->view->registerViewComponent('x-header-right', '<span>default-right</span>');
+        $this->view->registerViewComponent('x-header', <<<'HTML'
+        <header>
+            <x-container>
+                <x-slot define="left"><x-header-left /></x-slot>
+                <div>center</div>
+                <x-slot define="right"><x-header-right /></x-slot>
+            </x-container>
+        </header>
+        HTML);
+
+        // No caller overrides — all three pieces use defaults.
+        $html = $this->view->render('<x-header></x-header>');
+
+        $this->assertSnippetsMatch(
+            '<header><div class="container"><span>default-left</span><div>center</div><span>default-right</span></div></header>',
+            $html,
+        );
+
+        // Caller overrides only "right"; "left" stays default.
+        $html = $this->view->render(<<<'HTML'
+        <x-header>
+            <x-slot name="right"><span>custom-right</span></x-slot>
+        </x-header>
+        HTML);
+
+        $this->assertSnippetsMatch(
+            '<header><div class="container"><span>default-left</span><div>center</div><span>custom-right</span></div></header>',
+            $html,
+        );
+    }
+
+    public function test_define_slot_inside_child_named_slot_filler(): void
+    {
+        // <x-slot define="left"> nested inside <x-slot name="left"> (a named slot filler
+        // for x-inner) evaluates x-outer's own "left" slot and places the result into
+        // x-inner's "left" slot. The parent of the define token is the x-slot filler tag,
+        // which is not a view component, so $parentIsComponent is false and compileSlotToken()
+        // is called correctly.
+        $this->view->registerViewComponent('x-inner', '<div class="inner"><x-slot name="left" /></div>');
+        $this->view->registerViewComponent('x-header-left', '<span>default-left</span>');
+        $this->view->registerViewComponent('x-outer', <<<'HTML'
+        <div class="outer">
+            <x-inner>
+                <x-slot name="left">
+                    <x-slot define="left"><x-header-left /></x-slot>
+                </x-slot>
+            </x-inner>
+        </div>
+        HTML);
+
+        // No caller override — default content flows through into x-inner's named slot.
+        $html = $this->view->render('<x-outer></x-outer>');
+
+        $this->assertSnippetsMatch(
+            '<div class="outer"><div class="inner"><span>default-left</span></div></div>',
+            $html,
+        );
+
+        // Caller overrides "left" — custom content flows through into x-inner's named slot.
+        $html = $this->view->render(<<<'HTML'
+        <x-outer>
+            <x-slot name="left"><span>custom-left</span></x-slot>
+        </x-outer>
+        HTML);
+
+        $this->assertSnippetsMatch(
+            '<div class="outer"><div class="inner"><span>custom-left</span></div></div>',
+            $html,
+        );
+    }
 }

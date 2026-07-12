@@ -19,12 +19,12 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
     public function __construct(
         public string $label,
         iterable $options,
-        public null|int|UnitEnum|string $default = null,
+        public int|UnitEnum|string|null $default = null,
     ) {
         $this->options = new OptionCollection($options);
     }
 
-    public function render(Console $console): null|int|UnitEnum|string
+    public function render(Console $console): int|UnitEnum|string|null
     {
         if (! $console->supportsPrompting()) {
             return $this->default;

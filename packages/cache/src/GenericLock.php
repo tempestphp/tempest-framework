@@ -17,7 +17,7 @@ final class GenericLock implements Lock
         private(set) ?Duration $duration = null,
     ) {}
 
-    public function locked(null|Stringable|string $by = null): bool
+    public function locked(Stringable|string|null $by = null): bool
     {
         if ($by === null) {
             return $this->cache->has($this->key);
@@ -45,7 +45,7 @@ final class GenericLock implements Lock
         return $this->cache->get($this->key) === $this->owner;
     }
 
-    public function execute(Closure $callback, null|DateTimeInterface|Duration $wait = null): mixed
+    public function execute(Closure $callback, DateTimeInterface|Duration|null $wait = null): mixed
     {
         $wait ??= Datetime::now();
         $waitUntil = $wait instanceof Duration

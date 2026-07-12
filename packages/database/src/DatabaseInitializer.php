@@ -16,30 +16,39 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use UnitEnum;
 
-final readonly class DatabaseInitializer implements DynamicInitializer
+final class DatabaseInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    /** @var Connection[] */
+    private static array $connections = [];
+
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Database::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Database
     {
+        $config = $container->get(DatabaseConfig::class, $tag);
+        $connectionKey = $this->getConnectionKey($config);
+
+        $connection = $config->usePersistentConnection
+            ? self::$connections[$connectionKey] ?? null
+            : null;
+
+        if (! $connection) {
+            $connection = new PDOConnection($config);
+            $connection->connect();
+            self::$connections[$connectionKey] = $connection;
+        } elseif ($connection->ping() === false) {
+            $connection->reconnect();
+        }
+
         $container->singleton(
             className: Connection::class,
-            definition: function () use ($tag, $container) {
-                $config = $container->get(DatabaseConfig::class, $tag);
-
-                $connection = new PDOConnection($config);
-                $connection->connect();
-
-                return $connection;
-            },
+            definition: $connection,
             tag: $tag,
         );
-
-        $connection = $container->get(Connection::class, $tag);
 
         return new GenericDatabase(
             connection: $connection,
@@ -47,5 +56,16 @@ final readonly class DatabaseInitializer implements DynamicInitializer
             serializerFactory: $container->get(SerializerFactory::class),
             eventBus: $container->get(EventBus::class),
         );
+    }
+
+    private function getConnectionKey(DatabaseConfig $config): string
+    {
+        return hash('xxh128', serialize([
+            $config->dsn,
+            $config->username,
+            $config->options,
+            $config->password,
+            $config->tag,
+        ]));
     }
 }

@@ -45,14 +45,14 @@ trait HasConsole
      */
     public function ask(
         string $question,
-        null|iterable|string $options = null,
+        iterable|string|null $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|UnitEnum|array {
+    ): int|string|Stringable|UnitEnum|array|null {
         return $this->console->ask(
             question: $question,
             options: $options,
@@ -99,7 +99,7 @@ trait HasConsole
     /**
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
+    public function search(string $label, Closure $search, bool $multiple = false, string|array|null $default = null): mixed
     {
         return $this->console->search(
             label: $label,
@@ -151,7 +151,7 @@ trait HasConsole
         return $this;
     }
 
-    public function task(string $label, null|Process|Closure $handler): bool
+    public function task(string $label, Process|Closure|null $handler): bool
     {
         return $this->console->task($label, $handler);
     }

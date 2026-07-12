@@ -472,7 +472,7 @@ final class MultiActionPolicy
 final class MultiAuthenticatablePolicy
 {
     #[Policy]
-    public function view(?Document $_resource, null|User|ServiceAccount $subject): bool
+    public function view(?Document $_resource, User|ServiceAccount|null $subject): bool
     {
         return $subject instanceof Authenticatable;
     }

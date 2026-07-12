@@ -39,7 +39,7 @@ final readonly class IntegerCaster implements Caster, DynamicCaster, Configurabl
             $input = mb_strtolower(trim($input));
         }
 
-        if ($this->nullable && ($input === null || $input === '' || $input === 'null')) {
+        if ($this->nullable && in_array($input, [null, '', 'null'], true)) {
             return null;
         }
 

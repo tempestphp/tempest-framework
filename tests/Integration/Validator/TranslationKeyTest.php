@@ -27,7 +27,7 @@ final class TranslationKeyTest extends FrameworkIntegrationTestCase
             $this->assertArrayHasKey('title', $validationFailed->failingRules);
             $this->assertSame('book_title', $validationFailed->failingRules['title'][0]->key);
             $this->assertSame('foo', $validationFailed->failingRules['title'][0]->value);
-            $this->assertNull($validationFailed->failingRules['title'][0]->field);
+            $this->assertSame('title', $validationFailed->failingRules['title'][0]->field);
             $this->assertSame('The length of the title of the book is invalid.', $validator->getErrorMessage($validationFailed->failingRules['title'][0]));
         }
     }

@@ -6,5 +6,5 @@ use UnitEnum;
 
 interface HasTag
 {
-    public null|string|UnitEnum $tag { get; }
+    public string|UnitEnum|null $tag { get; }
 }

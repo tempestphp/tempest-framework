@@ -44,6 +44,6 @@ final class SlackLogConfig implements LogConfig
         private(set) LogLevel $minimumLogLevel = LogLevel::DEBUG,
         private(set) array $channels = [],
         private(set) ?string $prefix = null,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

@@ -223,6 +223,24 @@ final class RequestAuthenticator implements Authenticator
 }
 ```
 
+### HTTP middleware and route decorator
+
+Once you've installed `auth` in your app, you'll also have a basic `MustBeAuthenticatedMiddleware` and `MustBeAuthenticated` route decorator available. You can use these in your controller actions to mark them as requiring authentication. Since these files are installed in your project code, you're free to change them to accommodate your own authentication needs.
+
+```php
+use App\Authentication\MustBeAuthenticated;
+use App\Authentication\MustBeAuthenticatedMiddleware;
+
+final readonly class BookController
+{
+    #[MustBeAuthenticated, {:hl-type:Get:}('/books')]
+    public function index(): Response { /* … */ }
+    
+    #[Get('/books/list', middleware: [MustBeAuthenticatedMiddleware::class])]
+    public function list(): Response { /* … */ }
+} 
+```
+
 ## Access control
 
 In most applications, it is necessary to restrict access to certain resources depending on many factors. For instance, you may want to allow only the author of a post to edit it, or allow only administrators to delete other users.

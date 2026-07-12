@@ -288,7 +288,7 @@ final class MathsTest extends TestCase
     }
 
     #[DataProvider('provide_mean_cases')]
-    public function test_mean(null|int|float $expected, array $numbers): void
+    public function test_mean(int|float|null $expected, array $numbers): void
     {
         $this->assertSame($expected, Math\mean($numbers));
     }

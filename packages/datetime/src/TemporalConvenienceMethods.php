@@ -461,7 +461,7 @@ trait TemporalConvenienceMethods
      *
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      */
-    public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
+    public function format(FormatPattern|string|null $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
     {
         $timestamp = $this->getTimestamp();
 

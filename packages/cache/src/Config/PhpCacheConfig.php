@@ -27,7 +27,7 @@ final class PhpCacheConfig implements CacheConfig
         /*
          * Identifies the {@see \Tempest\Cache\Cache} instance in the container, in case you need more than one configuration.
          */
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 
     public function createAdapter(Container $container): PhpFilesAdapter

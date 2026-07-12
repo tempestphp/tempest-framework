@@ -19,6 +19,9 @@ final class EventBusConfig
 
         /** @var Middleware<\Tempest\EventBus\EventBusMiddleware> */
         public Middleware $middleware = new Middleware(),
+
+        /** @var array<string,array<\Tempest\EventBus\CallableEventHandler>> */
+        public array $closureHandlers = [],
     ) {}
 
     public function addClosureHandler(Closure $handler, string|UnitEnum|null $event = null): self
@@ -38,7 +41,7 @@ final class EventBusConfig
 
         $handlerKey = spl_object_hash($handler);
 
-        $this->handlers[$event][$handlerKey] = new CallableEventHandler(
+        $this->closureHandlers[$event][$handlerKey] = new CallableEventHandler(
             event: $event,
             handler: $handler,
         );

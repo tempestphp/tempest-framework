@@ -652,10 +652,10 @@ final class UpdateQueryBuilder implements BuildsQuery, SupportsWhereStatements
         $operator = WhereOperator::fromOperator($operator);
 
         if (
-            $this->model->hasPrimaryKey() && $field === $this->model->getPrimaryKey() && $this->hasRelationUpdates() && (
-                $operator === WhereOperator::EQUALS
-                && (is_string($value) || is_int($value) || $value instanceof PrimaryKey)
-            )
+            $this->model->hasPrimaryKey()
+            && $field === $this->model->getPrimaryKey()
+            && $this->hasRelationUpdates()
+            && ($operator === WhereOperator::EQUALS && (is_string($value) || is_int($value) || $value instanceof PrimaryKey))
         ) {
             $this->primaryKeyForRelations = new PrimaryKey($value);
         }

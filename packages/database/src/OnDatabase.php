@@ -6,9 +6,9 @@ use UnitEnum;
 
 trait OnDatabase
 {
-    private(set) null|string|UnitEnum $onDatabase = null;
+    private(set) string|UnitEnum|null $onDatabase = null;
 
-    public function onDatabase(null|string|UnitEnum $databaseTag): self
+    public function onDatabase(string|UnitEnum|null $databaseTag): self
     {
         $clone = clone $this;
 

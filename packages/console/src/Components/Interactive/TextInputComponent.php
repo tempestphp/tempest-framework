@@ -30,7 +30,7 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
 
     public function __construct(
         public string $label,
-        public null|int|string $default = null,
+        public int|string|null $default = null,
         public ?string $placeholder = null,
         public ?string $hint = null,
         bool $multiline = false,

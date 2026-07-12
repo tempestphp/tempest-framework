@@ -193,6 +193,25 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
+    public function test_zero_expression_attribute_literal_on_view_component(): void
+    {
+        $this->view->registerViewComponent(
+            'x-link',
+            <<<'HTML'
+            <a :href="$href" :data-start-percent="$attributes->get('data-start-percent')"><x-slot/></a>
+            HTML,
+        );
+
+        $this->assertSame(
+            '<a href="0" data-start-percent="0">a</a>',
+            $this->view->render(
+                <<<'HTML'
+                <x-link :href="0" :data-start-percent="0">a</x-link>
+                HTML,
+            ),
+        );
+    }
+
     public function test_normal_attribute_on_view_component(): void
     {
         // <x-button href="http://…" />      💯 always pass as variable, never set directly as attribute
@@ -270,7 +289,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     #[TestWith(['false'])]
     #[TestWith(['null'])]
-    #[TestWith(['0'])]
+    #[TestWith(["''"])]
     #[TestWith(['$show'])]
     public function test_falsy_bool_attribute(mixed $value): void
     {
@@ -280,6 +299,20 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div ></div>
+        HTML, $html);
+    }
+
+    #[TestWith([0])]
+    #[TestWith([0.0])]
+    #[TestWith(['0'])]
+    public function test_zero_expression_attribute_value_is_rendered(mixed $value): void
+    {
+        $html = $this->view->render(<<<'HTML'
+        <div :data-start-percent="$value"></div>
+        HTML, value: $value);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-start-percent="0"></div>
         HTML, $html);
     }
 

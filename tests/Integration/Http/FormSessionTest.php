@@ -166,10 +166,12 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
         // First access - errors exist
         $this->assertTrue($this->formSession->hasErrors());
 
-        // Simulate cleanup after request
+        // Start of the next request: still available to display.
         $this->session->cleanup();
+        $this->assertTrue($this->formSession->hasErrors());
 
-        // Second access - errors cleared
+        // Start of the request after that: cleared.
+        $this->session->cleanup();
         $this->assertFalse($this->formSession->hasErrors());
     }
 
@@ -183,10 +185,12 @@ final class FormSessionTest extends FrameworkIntegrationTestCase
         // First access - values exist
         $this->assertEquals('John Doe', $this->formSession->getOriginalValueFor('name'));
 
-        // Simulate cleanup after request
+        // Start of the next request: still available to display.
         $this->session->cleanup();
+        $this->assertEquals('John Doe', $this->formSession->getOriginalValueFor('name'));
 
-        // Second access - values cleared
+        // Start of the request after that: cleared.
+        $this->session->cleanup();
         $this->assertEquals('', $this->formSession->getOriginalValueFor('name'));
     }
 }

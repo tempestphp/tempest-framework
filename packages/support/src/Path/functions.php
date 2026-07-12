@@ -13,7 +13,7 @@ use function Tempest\Support\Str\starts_with;
 /**
  * Determines whether the given path is a relative path. The path is not checked against the filesystem.
  */
-function is_relative_path(null|Stringable|string ...$parts): bool
+function is_relative_path(Stringable|string|null ...$parts): bool
 {
     return ! namespace\is_absolute_path(...$parts);
 }
@@ -22,7 +22,7 @@ function is_relative_path(null|Stringable|string ...$parts): bool
  * Converts the given absolute path to a path relative to `$from`.
  * If the given path is not an absolute path, it is assumed to already by relative to `$from` and will be returned as-is.
  */
-function to_relative_path(null|Stringable|string $from, Stringable|string ...$parts): string
+function to_relative_path(Stringable|string|null $from, Stringable|string ...$parts): string
 {
     $path = namespace\normalize(...$parts);
     $from = $from === null ? '' : (string) $from;
@@ -51,7 +51,7 @@ function to_relative_path(null|Stringable|string $from, Stringable|string ...$pa
 /**
  * Determines whether the given path is an absolute path. The path is not checked against the filesystem.
  */
-function is_absolute_path(null|Stringable|string ...$parts): bool
+function is_absolute_path(Stringable|string|null ...$parts): bool
 {
     $path = namespace\normalize(...$parts);
 
@@ -69,7 +69,7 @@ function is_absolute_path(null|Stringable|string ...$parts): bool
 /**
  * Converts the given path to an absolute path.
  */
-function to_absolute_path(Stringable|string $cwd, null|Stringable|string ...$parts): string
+function to_absolute_path(Stringable|string $cwd, Stringable|string|null ...$parts): string
 {
     $cwd = namespace\normalize($cwd);
     $path = namespace\normalize(...$parts);
@@ -111,14 +111,14 @@ function to_absolute_path(Stringable|string $cwd, null|Stringable|string ...$par
 /**
  * Normalizes the given path to use forward-slashes.
  */
-function normalize(null|Stringable|string ...$paths): string
+function normalize(Stringable|string|null ...$paths): string
 {
     if ($paths === []) {
         return '';
     }
 
     $paths = array_map(
-        fn (null|Stringable|string $path) => $path === null ? '' : (string) $path,
+        fn (Stringable|string|null $path) => $path === null ? '' : (string) $path,
         $paths,
     );
 

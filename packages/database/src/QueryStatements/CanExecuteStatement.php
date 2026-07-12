@@ -11,7 +11,7 @@ use UnitEnum;
 
 trait CanExecuteStatement
 {
-    public function execute(DatabaseDialect $dialect, null|string|UnitEnum $onDatabase): ?PrimaryKey
+    public function execute(DatabaseDialect $dialect, string|UnitEnum|null $onDatabase): ?PrimaryKey
     {
         $sql = $this->compile($dialect);
 

@@ -285,7 +285,7 @@ function random(iterable $array, int $number = 1, bool $preserveKey = false): mi
     }
 
     if ($preserveKey === false) {
-        shuffle($randomValues);
+        $randomValues = shuffle($randomValues);
     }
 
     return count($randomValues) > 1
@@ -454,7 +454,7 @@ function flip(iterable $array): array
  *
  * @return array<TKey, TValue>|list<TValue>
  */
-function unique(iterable $array, null|Closure|string $key = null, bool $shouldBeStrict = false): array
+function unique(iterable $array, Closure|string|null $key = null, bool $shouldBeStrict = false): array
 {
     $array = to_array($array);
 

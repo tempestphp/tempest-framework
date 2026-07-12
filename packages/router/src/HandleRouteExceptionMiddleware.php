@@ -9,7 +9,7 @@ use Tempest\Http\Responses\NotFound;
 use Tempest\Router\Exceptions\RouteBindingFailed;
 use Tempest\Support\Priority;
 
-#[Priority(Priority::FRAMEWORK - 10)]
+#[Priority(Priority::FRAMEWORK - 30)]
 final readonly class HandleRouteExceptionMiddleware implements HttpMiddleware
 {
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response

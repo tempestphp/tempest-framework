@@ -59,14 +59,14 @@ interface Console
      */
     public function ask(
         string $question,
-        null|iterable|string $options = null,
+        iterable|string|null $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|Stringable|UnitEnum|array;
+    ): int|string|Stringable|UnitEnum|array|null;
 
     /**
      * Asks the user a question and returns the answer.
@@ -88,12 +88,12 @@ interface Console
      *
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed;
+    public function search(string $label, Closure $search, bool $multiple = false, string|array|null $default = null): mixed;
 
     /**
      * Displays the progress of a task.
      */
-    public function task(string $label, null|Process|Closure $handler): bool;
+    public function task(string $label, Process|Closure|null $handler): bool;
 
     /**
      * Displays a header.

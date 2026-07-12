@@ -10,6 +10,8 @@ interface Connection
 {
     public function beginTransaction(): bool;
 
+    public function inTransaction(): bool;
+
     public function commit(): bool;
 
     public function rollback(): bool;
@@ -21,4 +23,8 @@ interface Connection
     public function close(): void;
 
     public function connect(): void;
+
+    public function reconnect(): void;
+
+    public function ping(): bool;
 }

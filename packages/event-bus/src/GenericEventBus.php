@@ -41,7 +41,10 @@ final readonly class GenericEventBus implements EventBus
             $eventName = $event::class . '::' . $eventName;
         }
 
-        $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
+        $handlers = [
+            ...($this->eventBusConfig->handlers[$eventName] ?? []),
+            ...($this->eventBusConfig->closureHandlers[$eventName] ?? []),
+        ];
 
         if (is_object($event)) {
             $interfaces = class_implements($event);
@@ -50,6 +53,7 @@ final readonly class GenericEventBus implements EventBus
                 $handlers = [
                     ...$handlers,
                     ...($this->eventBusConfig->handlers[$interface] ?? []),
+                    ...($this->eventBusConfig->closureHandlers[$interface] ?? []),
                 ];
             }
         }
@@ -61,15 +65,14 @@ final readonly class GenericEventBus implements EventBus
     private function getCallable(array $eventHandlers): EventBusMiddlewareCallable
     {
         $callable = new EventBusMiddlewareCallable(function (string|object $event) use ($eventHandlers): void {
+            $eventStopsPropagation = is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class);
+
             foreach ($eventHandlers as $eventHandler) {
                 $callable = $eventHandler->normalizeCallable($this->container);
 
                 $callable($event);
 
-                if (
-                    is_object($event) && reflect($event)->hasAttribute(StopsPropagation::class)
-                    || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)
-                ) {
+                if ($eventStopsPropagation || ($eventHandler->handler->handler ?? null)?->hasAttribute(StopsPropagation::class)) {
                     break;
                 }
             }

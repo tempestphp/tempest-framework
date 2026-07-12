@@ -25,5 +25,5 @@ interface Relation extends PropertyAttribute
 
     public function getExistsStatement(): WhereExistsStatement;
 
-    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder;
+    public function query(PrimaryKey $primaryKey, string|UnitEnum|null $onDatabase = null): QueryBuilder;
 }

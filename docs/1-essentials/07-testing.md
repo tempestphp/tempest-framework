@@ -73,6 +73,65 @@ return new SQLiteConfig(
 );
 ```
 
+## Model factories
+
+When you need a quick way to generate objects, you can use the `factory()` function to generate dummy data.
+
+```php
+use function Tempest\Framework\Testing\factory;
+
+$book = factory(Book::class)->make();
+```
+
+You can also use the `save()` method to directly save a model to the database:
+
+```php
+$book = factory(Book::class)->save();
+```
+
+Factories can be configured with additional data:
+
+```php
+$book = factory(Book::class)->with(title: 'Timeline Taxi')->make();
+```
+
+Fields with missing data will be randomly generated.
+
+You can also create multiple instances of objects at once:
+
+```php
+$book = factory(Book::class)->times(3)->make();
+```
+
+Which can also be saved directly to the database:
+
+```php
+$book = factory(Book::class)->times(3)->save();
+```
+
+You can specify a sequence of data to be used as well:
+
+```php
+$book = factory(Book::class)->times([
+    ['title' => 'Timeline Taxi'],
+    ['title' => 'Red Rising'],
+])->make();
+```
+
+Finally, you can pass in pre-configured factories as field values:
+
+```php
+$authorFactory = factory(Author::class)->with(name: 'Brent');
+
+$book = factory(Book::class)
+    ->with(author: $authorFactory)
+    ->make();
+```
+
+:::info
+Model factories are immutable, so you can create multiple variations of base factories using multiple `with()` calls.
+:::
+
 ## Spoofing the environment
 
 By default, Tempest provides a `phpunit.xml` that sets the `ENVIRONMENT` variable to `testing`. This is needed so that Tempest can adapt its boot process and load the proper configuration files for the testing environment.

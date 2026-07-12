@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration;
+namespace Tempest\Framework\Testing;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
@@ -13,24 +13,26 @@ use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Database;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\EventBus\EventBus;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Str;
 use UnitEnum;
 
+#[SkipDiscovery]
 final class TestingDatabaseInitializer implements DynamicInitializer
 {
     /** @var Connection[] */
     private static array $connections = [];
 
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Database::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Database
     {
         $tag = Str\parse($tag);
 

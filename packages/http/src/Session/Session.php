@@ -65,12 +65,10 @@ final class Session
      */
     public function get(string|UnitEnum $key, mixed $default = null): mixed
     {
-        $key = Str\parse($key);
-        $value = $this->data[$key] ?? $default;
+        $value = $this->data[Str\parse($key)] ?? $default;
 
         if ($value instanceof FlashValue) {
-            $this->expiredKeys[$key] = $key;
-            $value = $value->value;
+            return $value->value;
         }
 
         return $value;
@@ -110,12 +108,27 @@ final class Session
     }
 
     /**
-     * Cleans up expired session values.
+     * Expires flash values by one request. Values flashed on the previous request
+     * are removed; values flashed since are marked to expire on the next request.
+     *
+     * This runs once, at the start of the request, so that flash values remain
+     * readable while the request is handled - including while the response body
+     * (e.g. a view) is being rendered - regardless of whether they are read.
      */
     public function cleanup(): void
     {
         foreach ($this->expiredKeys as $key) {
             $this->remove($key);
+        }
+
+        $this->expiredKeys = [];
+
+        foreach ($this->data as $key => $value) {
+            if (! $value instanceof FlashValue) {
+                continue;
+            }
+
+            $this->expiredKeys[$key] = $key;
         }
     }
 

@@ -42,7 +42,7 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self
+                public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
                 {
                     $this->container->singleton($className, $definition, $tag);
 
@@ -56,12 +56,12 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): mixed
+                public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): mixed
                 {
                     return $this->container->get($className, $tag, ...$params);
                 }
 
-                public function has(string $className, null|string|UnitEnum $tag = null): bool
+                public function has(string $className, string|UnitEnum|null $tag = null): bool
                 {
                     return $this->container->has($className, $tag);
                 }

@@ -16,7 +16,7 @@ final readonly class KeyValueRenderer
 
     public const int MIN_WIDTH = 3;
 
-    public function render(Stringable|string $key, null|Stringable|string $value = null, bool $useAvailableWidth = false): string
+    public function render(Stringable|string $key, Stringable|string|null $value = null, bool $useAvailableWidth = false): string
     {
         $key = $this->cleanText($key)->append(' ');
         $value = $this->cleanText($value)->when(
@@ -48,7 +48,7 @@ final readonly class KeyValueRenderer
         return (int) $width - 5;
     }
 
-    private function cleanText(null|Stringable|string $text): ImmutableString
+    private function cleanText(Stringable|string|null $text): ImmutableString
     {
         $text = new ImmutableString($text)->trim();
 

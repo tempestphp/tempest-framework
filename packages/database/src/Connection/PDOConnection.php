@@ -69,6 +69,15 @@ final class PDOConnection implements Connection
         return $statement;
     }
 
+    public function inTransaction(): bool
+    {
+        if (! $this->pdo instanceof PDO) {
+            return false;
+        }
+
+        return $this->pdo->inTransaction();
+    }
+
     public function ping(): bool
     {
         try {

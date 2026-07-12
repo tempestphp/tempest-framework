@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
 use Tempest\Validation\HasErrorMessage;
+use Tempest\Validation\Rules\HasLength;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEmail;
 use Tempest\Validation\Rules\IsEnum;
@@ -37,9 +38,35 @@ final class ValidatorTest extends TestCase
 
     public function test_validate(): void
     {
-        $this->expectException(ValidationFailed::class);
+        try {
+            $this->validator->validateObject(new ObjectToBeValidated(name: 'a'));
+            $this->fail('Expected ValidationFailed to be thrown.');
+        } catch (ValidationFailed $e) {
+            $this->assertArrayHasKey('name', $e->failingRules);
+            $this->assertCount(1, $e->failingRules['name']);
+            $this->assertInstanceOf(HasLength::class, $e->failingRules['name'][0]->rule);
+            $this->assertSame('name', $e->failingRules['name'][0]->field);
+            $this->assertSame('a', $e->failingRules['name'][0]->value);
+            $this->assertSame(ObjectToBeValidated::class, $e->targetClass);
+        }
+    }
 
-        $this->validator->validateObject(new ObjectToBeValidated(name: 'a'));
+    public function test_validate_passes_with_valid_object(): void
+    {
+        $this->validator->validateObject(new ObjectToBeValidated(name: 'ab'));
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_validate_value_for_property_sets_field_and_value(): void
+    {
+        $property = new ClassReflector(ValidateObjectA::class)->getProperty('title');
+
+        $failingRules = $this->validator->validateValueForProperty($property, 123);
+
+        $this->assertCount(1, $failingRules);
+        $this->assertSame('title', $failingRules[0]->field);
+        $this->assertSame(123, $failingRules[0]->value);
     }
 
     public function test_validate_value(): void
@@ -65,6 +92,45 @@ final class ValidatorTest extends TestCase
         $this->assertCount(1, $failingRules);
         $this->assertInstanceOf(HasErrorMessage::class, $rule);
         $this->assertSame('I expected b', $rule->getErrorMessage());
+    }
+
+    public function test_get_error_message_uses_custom_error_message_from_failing_rule(): void
+    {
+        $failingRules = $this->validator->validateValue('a', fn (mixed $_) => 'I expected b');
+
+        $this->assertSame('I expected b', $this->validator->getErrorMessage($failingRules[0]));
+    }
+
+    public function test_get_error_message_does_not_require_translator_for_custom_error_message(): void
+    {
+        $validator = new Validator();
+        $failingRules = $validator->validateValue('a', fn (mixed $_) => 'I expected b');
+
+        $this->assertSame('I expected b', $validator->getErrorMessage($failingRules[0]));
+    }
+
+    public function test_validation_failed_can_be_created_from_messages(): void
+    {
+        $validationFailed = ValidationFailed::withMessages([
+            'credential' => 'Passkey not valid',
+            'email' => [
+                'Email is already taken',
+                'Email domain is not allowed',
+            ],
+        ]);
+
+        $this->assertSame(
+            [
+                'credential' => ['Passkey not valid'],
+                'email' => ['Email is already taken', 'Email domain is not allowed'],
+            ],
+            $validationFailed->errorMessages,
+        );
+        $this->assertCount(1, $validationFailed->failingRules['credential']);
+        $this->assertCount(2, $validationFailed->failingRules['email']);
+        $this->assertSame('Passkey not valid', $this->validator->getErrorMessage($validationFailed->failingRules['credential'][0]));
+        $this->assertSame('Email is already taken', $this->validator->getErrorMessage($validationFailed->failingRules['email'][0]));
+        $this->assertSame('Email domain is not allowed', $this->validator->getErrorMessage($validationFailed->failingRules['email'][1]));
     }
 
     public function test_closure_passes_with_null_response(): void

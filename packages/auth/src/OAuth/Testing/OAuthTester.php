@@ -21,7 +21,7 @@ final readonly class OAuthTester
     /**
      * Forces the usage of a testing OAuth client for the given provider.
      */
-    public function fake(OAuthUser $user, null|string|UnitEnum $tag = null): TestingOAuthClient
+    public function fake(OAuthUser $user, string|UnitEnum|null $tag = null): TestingOAuthClient
     {
         $config = $this->container->get(OAuthConfig::class, $tag);
         $uri = $this->container->get(UriGenerator::class);

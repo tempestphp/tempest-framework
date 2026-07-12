@@ -327,6 +327,34 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
 
         $this->assertNull($client->getState());
     }
+
+    #[Test]
+    public function missing_state_is_rejected(): void
+    {
+        $this->database->reset(migrate: false);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUsersTable::class);
+
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $this->expectException(OAuthStateWasInvalid::class);
+
+        $client->authenticate(
+            request: new GenericRequest(
+                method: Method::GET,
+                uri: Uri\set_query('/oauth/callback', code: 'auth-code'),
+            ),
+            map: static fn (OAuthUser $user): User => query(User::class)->updateOrCreate(
+                ['github_id' => $user->id],
+                ['email' => $user->email ?? '', 'full_name' => $user->name ?? '', 'username' => $user->nickname ?? ''],
+            ),
+        );
+    }
 }
 
 final class User implements Authenticatable

@@ -24,12 +24,12 @@ interface Cache
      * @param null|Duration|DateTimeInterface $duration The duration for the lock, or an expiration date from which the duration will be calculated. If not specified, the lock will not expire.
      * @param null|Stringable|string $owner The owner of the lock, which will be used to identify the process releasing it. If not specified, a random string will be used.
      */
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock;
+    public function lock(Stringable|string $key, Duration|DateTimeInterface|null $duration = null, Stringable|string|null $owner = null): Lock;
 
     /**
      * Sets the specified key to the specified value in the cache. Optionally, specify an expiration.
      */
-    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface;
+    public function put(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): CacheItemInterface;
 
     /**
      * Sets the specified keys to the specified values in the cache. Optionally, specify an expiration.
@@ -40,7 +40,7 @@ interface Cache
      * @param iterable<TKey,TValue> $values
      * @return array<string,CacheItemInterface>
      */
-    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array;
+    public function putMany(iterable $values, Duration|DateTimeInterface|null $expiration = null): array;
 
     /**
      * Gets the value associated with the specified key from the cache. If the key does not exist, null is returned.
@@ -77,7 +77,7 @@ interface Cache
      *
      * @param null|Duration $stale Allow the value to be stale for the specified amount of time in addition to the time-to-live specified by `$expiration`. When a value is stale, it will still be returned as-is, but it will be refreshed in the background.
      */
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed;
+    public function resolve(Stringable|string $key, Closure $callback, Duration|DateTimeInterface|null $expiration = null, ?Duration $stale = null): mixed;
 
     /**
      * Removes the specified key from the cache.

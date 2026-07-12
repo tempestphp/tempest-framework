@@ -9,6 +9,7 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 use Tempest\Cryptography\Encryption\Encrypter;
+use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
@@ -30,7 +31,7 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
     }
 
     private PsrRequestToGenericRequestMapper $mapper {
-        get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies);
+        get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies, new CookieConfig());
     }
 
     public function test_generic_request_is_used_when_interface_is_passed(): void

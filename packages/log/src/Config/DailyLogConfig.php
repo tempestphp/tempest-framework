@@ -43,6 +43,6 @@ final class DailyLogConfig implements LogConfig
         private(set) bool $lockFilesDuringWrites = false,
         private(set) ?int $filePermission = null,
         private(set) ?string $prefix = null,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

@@ -195,7 +195,7 @@ final class BelongsTo implements Relation
         );
     }
 
-    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    public function query(PrimaryKey $primaryKey, string|UnitEnum|null $onDatabase = null): QueryBuilder
     {
         $relatedClassName = $this->property->getType()->getName();
         $relatedModel = inspect(model: $this->property->getType()->asClass());

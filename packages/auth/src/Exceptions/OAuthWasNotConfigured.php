@@ -10,7 +10,7 @@ use UnitEnum;
 
 final class OAuthWasNotConfigured extends Exception implements AuthenticationException
 {
-    public static function configurationWasMissing(null|string|UnitEnum $tag): self
+    public static function configurationWasMissing(string|UnitEnum|null $tag): self
     {
         $tag = Str\parse($tag, default: null);
 

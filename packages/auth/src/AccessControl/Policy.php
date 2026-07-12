@@ -18,6 +18,6 @@ final class Policy
      */
     public function __construct(
         public ?string $resource = null,
-        public null|UnitEnum|string|iterable $action = null,
+        public UnitEnum|string|iterable|null $action = null,
     ) {}
 }

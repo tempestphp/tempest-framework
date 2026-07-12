@@ -178,7 +178,7 @@ final class OptionCollection implements Iterator, Countable
         return $this->filteredOptions[$this->activeOption] ?? null;
     }
 
-    public function setActive(null|Stringable|UnitEnum|string $value): void
+    public function setActive(Stringable|UnitEnum|string|null $value): void
     {
         $value = match (true) {
             $value instanceof Stringable => $value->__toString(),

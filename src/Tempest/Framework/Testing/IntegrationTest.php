@@ -7,6 +7,8 @@ namespace Tempest\Framework\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\OAuth\Testing\OAuthTester;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
@@ -18,6 +20,7 @@ use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Exceptions\ExceptionTester;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Testing\DatabaseTester;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Discovery\DiscoveryLocation;
@@ -208,6 +211,14 @@ abstract class IntegrationTest extends TestCase
         return $this;
     }
 
+    protected function useTestingDatabase(): self
+    {
+        $this->container->removeInitializer(DatabaseInitializer::class);
+        $this->container->addInitializer(TestingDatabaseInitializer::class);
+
+        return $this;
+    }
+
     protected function clock(DateTimeInterface|string $now = 'now'): MockClock
     {
         $clock = new MockClock($now);
@@ -254,5 +265,10 @@ abstract class IntegrationTest extends TestCase
         }
 
         Assert::fail($message ?? "Expected exception {$expectedExceptionClass} was not thrown");
+    }
+
+    protected function login(Authenticatable $user): void
+    {
+        $this->container->get(Authenticator::class)->authenticate($user);
     }
 }

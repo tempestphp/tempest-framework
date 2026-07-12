@@ -55,7 +55,7 @@ final class Token
         $other->parent = $this;
     }
 
-    public function getAttribute(string $name): null|string|bool
+    public function getAttribute(string $name): string|bool|null
     {
         return $this->htmlAttributes[$name] ?? null;
     }

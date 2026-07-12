@@ -15,12 +15,12 @@ use UnitEnum;
  */
 final readonly class CurrentAuthenticatableInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->implements(Authenticatable::class) || $class->is(Authenticatable::class);
     }
 
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): object
     {
         $authenticatable = $container->get(Authenticator::class)->current();
 

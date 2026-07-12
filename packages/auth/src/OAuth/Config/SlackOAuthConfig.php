@@ -42,7 +42,7 @@ final class SlackOAuthConfig implements OAuthConfig
         /**
          * Identifier for this OAuth configuration.
          */
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 
     public function createProvider(): AbstractProvider

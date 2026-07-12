@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 
 interface Kernel
 {
-    public const string VERSION = '3.10.0';
+    public const string VERSION = '3.14.1';
 
     public string $root { get; }
 
@@ -23,5 +23,5 @@ interface Kernel
         ?string $internalStorage = null,
     ): self;
 
-    public function shutdown(int|string $status = ''): never;
+    public function shutdown(int|string $status = ''): void;
 }

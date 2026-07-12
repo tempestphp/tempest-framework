@@ -32,7 +32,9 @@ Discovery comes with performance considerations. In production, it is always cac
 
 To ensure that the discovery cache is up-to-date, add the `discovery:generate` command before any other Tempest command in your deployment pipeline.
 
-```console ">_ ./tempest discovery:generate --no-interaction"
+```console
+./tempest discovery:generate --no-interaction
+
 Clearing discovery cache <dim>.....................................</dim> <strong>2025-12-30 15:51:46</strong>
 Clearing discovery cache <dim>.....................................</dim> <strong>DONE</strong>
 Generating discovery cache using the `full` strategy <dim>.........</dim> <strong>2025-12-30 15:51:46</strong>

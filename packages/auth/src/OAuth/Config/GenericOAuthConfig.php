@@ -57,7 +57,7 @@ final class GenericOAuthConfig implements OAuthConfig
         /**
          * Identifier for this OAuth configuration.
          */
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
 
         /**
          * Separator for the scopes, defaults to `,` if omitted.

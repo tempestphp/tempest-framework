@@ -18,13 +18,13 @@ use UnitEnum;
 
 final class OAuthClientInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(OAuthClient::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): OAuthClient
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): OAuthClient
     {
         if (! $container->has(OAuthConfig::class, $tag)) {
             throw OAuthWasNotConfigured::configurationWasMissing($tag);

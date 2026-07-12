@@ -15,7 +15,7 @@ use function Tempest\internal_storage_path;
 
 final readonly class BladeInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         if (! class_exists(Blade::class)) {
             return false;
@@ -25,7 +25,7 @@ final readonly class BladeInitializer implements DynamicInitializer
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): object
     {
         $bladeConfig = $container->get(BladeConfig::class);
 

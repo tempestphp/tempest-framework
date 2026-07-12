@@ -37,7 +37,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     public function __construct(
         public string $label,
         iterable $options,
-        public null|int|UnitEnum|string $default = null,
+        public int|UnitEnum|string|null $default = null,
     ) {
         $this->bufferEnabled = false;
         $this->options = new OptionCollection($options);
@@ -137,7 +137,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string|Stringable|UnitEnum
+    public function enter(): int|string|Stringable|UnitEnum|null
     {
         return $this->options->getRawActiveOption($this->default);
     }

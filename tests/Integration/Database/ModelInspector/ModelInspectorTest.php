@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Database\ModelInspector;
 
 use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\PrimaryKey;
 use Tempest\Database\Serializers\DataTransferObjectSerializer;
 use Tempest\Database\Virtual;
 use Tempest\Mapper\CastWith;
@@ -33,6 +34,35 @@ final class ModelInspectorTest extends IntegrationTestCase
     {
         $this->assertFalse(inspect(ModelInspectorTestModelWithSerializedDtoProperty::class)->isRelation('dto'));
     }
+
+    public function test_select_doesnt_contain_duplicate_fields(): void
+    {
+        $model = inspect(HasRelatedModelWithId::class);
+
+        $selectedFields = $model->getSelectFields();
+
+        $this->assertEqualsCanonicalizing(
+            expected: ['name', 'relation_id'],
+            actual: $selectedFields->toArray(),
+        );
+    }
+}
+
+final class RelationWithId
+{
+    public PrimaryKey $id;
+
+    public string $name;
+}
+
+final class HasRelatedModelWithId
+{
+    public RelationWithId $relation;
+
+    public function __construct(
+        public string $name,
+        public int $relation_id,
+    ) {}
 }
 
 final class ModelInspectorTestDtoForModelWithVirtual

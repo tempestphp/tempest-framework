@@ -181,7 +181,7 @@ final class HasMany implements Relation
         );
     }
 
-    public function query(PrimaryKey $primaryKey, null|string|UnitEnum $onDatabase = null): QueryBuilder
+    public function query(PrimaryKey $primaryKey, string|UnitEnum|null $onDatabase = null): QueryBuilder
     {
         $relatedClassName = $this->property->getIterableType()->getName();
         $parentModel = inspect(model: $this->property->getClass());

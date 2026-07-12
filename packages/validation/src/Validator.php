@@ -49,11 +49,15 @@ final readonly class Validator
 
             $value = $property->getValue($object);
 
-            $failingRules[$property->getName()] = $this->validateValueForProperty($property, $value);
+            $failingRulesForProperty = $this->validateValueForProperty($property, $value);
+
+            if ($failingRulesForProperty !== []) {
+                $failingRules[$property->getName()] = $failingRulesForProperty;
+            }
         }
 
         if ($failingRules !== []) {
-            throw $this->createValidationFailureException($failingRules, $object);
+            throw $this->createValidationFailureException($failingRules, $object, $object::class);
         }
     }
 
@@ -63,7 +67,7 @@ final readonly class Validator
      * @param array<string,list<FailingRule>> $failingRules
      * @param class-string|null $targetClass
      */
-    public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
+    public function createValidationFailureException(array $failingRules, object|string|null $subject = null, ?string $targetClass = null): ValidationFailed
     {
         return new ValidationFailed(
             failingRules: $failingRules,
@@ -153,9 +157,11 @@ final readonly class Validator
 
         $key = $property->getAttribute(TranslationKey::class)?->key;
 
+        $field = $property->getName();
+
         return Arr\map(
             array: $this->validateValue($value, $rules),
-            map: fn (FailingRule $rule) => $rule->withKey($key),
+            map: fn (FailingRule $rule) => $rule->withField($field)->withKey($key),
         );
     }
 
@@ -216,20 +222,22 @@ final readonly class Validator
      */
     public function getErrorMessage(Rule|FailingRule $rule, ?string $field = null): string
     {
-        if (is_null($this->translator)) {
-            throw new TranslatorWasRequired();
+        $failingRule = $rule instanceof FailingRule ? $rule : null;
+
+        if ($failingRule instanceof FailingRule) {
+            $field ??= $failingRule->field;
+            $rule = $failingRule->rule;
         }
 
         if ($rule instanceof HasErrorMessage) {
             return $rule->getErrorMessage();
         }
 
-        $ruleTranslationKey = $this->getTranslationKey($rule);
-
-        if ($rule instanceof FailingRule) {
-            $field ??= $rule->field;
-            $rule = $rule->rule;
+        if (is_null($this->translator)) {
+            throw new TranslatorWasRequired();
         }
+
+        $ruleTranslationKey = $this->getTranslationKey($failingRule ?? $rule);
 
         $variables = [
             'field' => $this->getFieldName($ruleTranslationKey, $field),

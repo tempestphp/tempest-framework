@@ -927,7 +927,7 @@ trait DateTimeConvenienceMethods
      * @see Locale::default()
      */
     #[Override]
-    public function format(null|FormatPattern|string $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
+    public function format(FormatPattern|string|null $pattern = null, ?Timezone $timezone = null, ?Locale $locale = null): string
     {
         $timestamp = $this->getTimestamp();
 

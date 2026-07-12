@@ -121,6 +121,21 @@ final class HtmlExceptionRendererTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function development_exception_preserves_http_request_failed_status(): void
+    {
+        $this->container->singleton(Environment::class, Environment::LOCAL);
+        $this->container->singleton(GenericRequest::class, new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+        ));
+
+        $response = $this->renderer->render(new HttpRequestFailed(Status::NOT_ACCEPTABLE));
+
+        $this->assertInstanceOf(DevelopmentException::class, $response);
+        $this->assertSame(Status::NOT_ACCEPTABLE, $response->status);
+    }
+
+    #[Test]
     public function does_not_render_development_exception_for_not_found_in_local(): void
     {
         $this->container->singleton(Environment::class, Environment::LOCAL);

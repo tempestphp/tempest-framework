@@ -19,7 +19,7 @@ final class QueryExecuted
         public string $sql,
         public array $bindings,
         public float $durationMs,
-        public null|string|UnitEnum $connectionName,
+        public string|UnitEnum|null $connectionName,
         public bool $failed,
     ) {}
 

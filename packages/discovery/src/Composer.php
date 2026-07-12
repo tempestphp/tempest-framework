@@ -6,6 +6,7 @@ namespace Tempest\Discovery;
 
 use Tempest\Process\ProcessExecutor;
 use Tempest\Support\Arr;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Support\Path;
@@ -50,7 +51,7 @@ final class Composer
             $this->mainNamespace = $this->namespaces[0];
         }
 
-        $this->namespaces = new Arr\ImmutableArray([$this->mainNamespace, ...$this->namespaces])
+        $this->namespaces = new ImmutableArray([$this->mainNamespace, ...$this->namespaces])
             ->filter()
             ->unique(fn (Psr4Namespace $ns) => "{$ns->namespace}:{$ns->path}")
             ->toArray();
@@ -120,8 +121,8 @@ final class Composer
     /** @return array<Psr4Namespace> */
     private function resolvePsr4Namespaces(string $path): array
     {
-        return new Arr\ImmutableArray($this->composer)
-            ->get($path, default: new Arr\ImmutableArray())
+        return new ImmutableArray($this->composer)
+            ->get($path, default: new ImmutableArray())
             ->flatMap(fn (string|iterable $paths, string $namespace) => Arr\map(Arr\wrap($paths), fn (string $path) => new Psr4Namespace($namespace, $path)))
             ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()

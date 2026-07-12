@@ -326,7 +326,7 @@ Even though we release on a non-fixed schedule, we do assign deadlines to the `n
 
 ### Colors
 
-<span class="swatch" style="--color: #1b1429">#1b1429</span>
-<span class="swatch" style="--color: #29abe2">#29abe2</span>
-<span class="swatch" style="--color: #00e7ff">#00e7ff</span>
-<span class="swatch" style="--color: #0071bc">#0071bc</span>
+- <span class="swatch" style="--color: #1b1429">#1b1429</span>
+- <span class="swatch" style="--color: #29abe2">#29abe2</span>
+- <span class="swatch" style="--color: #00e7ff">#00e7ff</span>
+- <span class="swatch" style="--color: #0071bc">#0071bc</span>

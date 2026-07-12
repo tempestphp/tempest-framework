@@ -15,7 +15,12 @@ final class FakeEventBus implements EventBus
 
     /** @var array<string,array<CallableEventHandler>> */
     public array $handlers {
-        get => $this->eventBusConfig->handlers;
+        get {
+            return [
+                ...$this->eventBusConfig->handlers,
+                ...$this->eventBusConfig->closureHandlers,
+            ];
+        }
     }
 
     public function __construct(

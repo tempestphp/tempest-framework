@@ -33,7 +33,7 @@ final class FrameworkInstaller
             destination: root_path('public/index.php'),
         );
 
-        $this->publish(
+        $tempest = $this->publish(
             source: __DIR__ . '/tempest',
             destination: root_path('tempest'),
             callback: function (string $_, string $destination): void {
@@ -44,6 +44,31 @@ final class FrameworkInstaller
             },
         );
 
+        $this->publish(
+            source: __DIR__ . '/AGENTS.md',
+            destination: root_path('AGENTS.md'),
+            callback: function (string $_, string $destination): void {
+                $claude = root_path('CLAUDE.md');
+
+                if (PHP_OS_FAMILY !== 'Windows') {
+                    // @phpstan-ignore-next-line
+                    exec("ln -s {$destination} {$claude}");
+                }
+            },
+        );
+
         $this->updateComposer();
+
+        $this->console->call('discovery:generate');
+
+        $this->console->call('key:generate');
+
+        if (! $tempest) {
+            return;
+        }
+
+        if ($this->console->confirm('Do you want to install completions?', default: false)) {
+            $this->console->call('completion:install');
+        }
     }
 }

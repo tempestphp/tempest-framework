@@ -20,14 +20,14 @@ final class StaticSearchComponent implements StaticConsoleComponent
         public readonly string $label,
         public readonly Closure $search,
         public readonly bool $multiple = false,
-        public null|array|string $default = null,
+        public array|string|null $default = null,
     ) {
         if ($this->multiple) {
             $this->default = wrap($this->default);
         }
     }
 
-    public function render(Console $console): null|array|string
+    public function render(Console $console): array|string|null
     {
         if (! $console->supportsPrompting()) {
             return $this->default;
