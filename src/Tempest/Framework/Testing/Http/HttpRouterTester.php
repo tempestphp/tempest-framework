@@ -14,6 +14,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Http\Response;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Router\Route;
@@ -224,18 +225,26 @@ final class HttpRouterTester
         try {
             $response = $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do());
         } catch (Throwable $throwable) {
-            return new TestResponseHelper(
+            return $this->createTestResponseHelper(
                 response: $this->container->get(HttpExceptionHandler::class)->renderResponse($request, $throwable),
                 request: $request,
-                container: $this->container,
                 throwable: $throwable,
             );
         }
 
-        return new TestResponseHelper(
+        return $this->createTestResponseHelper(
             response: $response,
             request: $request,
-            container: $this->container,
+        );
+    }
+
+    protected function createTestResponseHelper(Response $response, Request $request, ?Throwable $throwable = null): TestResponseHelper
+    {
+        return $this->container->get(
+            TestResponseHelper::class,
+            response: $response,
+            request: $request,
+            throwable: $throwable,
         );
     }
 

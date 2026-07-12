@@ -26,7 +26,7 @@ use Throwable;
 
 use function Tempest\Support\arr;
 
-final class TestResponseHelper
+class TestResponseHelper
 {
     /**
      * @param Response $response The original response from the controller.
