@@ -254,7 +254,7 @@ final class HttpRouterTester
         );
     }
 
-    protected function createTestResponseHelper(Response $response, Request $request, ?Throwable $throwable = null): TestResponseHelper
+    private function createTestResponseHelper(Response $response, Request $request, ?Throwable $throwable = null): TestResponseHelper
     {
         return $this->container->get(
             TestResponseHelper::class,
