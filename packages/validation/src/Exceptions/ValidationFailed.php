@@ -30,7 +30,7 @@ final class ValidationFailed extends Exception implements ProvidesContext
         };
 
         foreach ($errorMessages as $field => $messages) {
-            $message .= PHP_EOL . sprintf('- %s: %s', $field, implode('; ', $messages));
+            $message .= sprintf('%s- %s: %s', PHP_EOL, $field, implode('; ', $messages));
         }
 
         parent::__construct($message);
