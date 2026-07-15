@@ -31,6 +31,7 @@ final class RouteConfig
         public Middleware $middleware = new Middleware(
             HandleRouteExceptionMiddleware::class,
             MatchRouteMiddleware::class,
+            ValidateQueryRequestMiddleware::class,
             ResolveRouteRequestMiddleware::class,
             SetCookieHeadersMiddleware::class,
             HandleRouteSpecificMiddleware::class,

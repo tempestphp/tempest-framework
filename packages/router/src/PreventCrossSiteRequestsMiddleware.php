@@ -27,6 +27,7 @@ final readonly class PreventCrossSiteRequestsMiddleware implements HttpMiddlewar
     private const array SAFE_METHODS = [
         Method::GET,
         Method::HEAD,
+        Method::QUERY,
         Method::OPTIONS,
         Method::TRACE,
     ];

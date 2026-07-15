@@ -31,6 +31,17 @@ final class PreventCrossSiteRequestsMiddlewareTest extends FrameworkIntegrationT
         $this->http->get('/test')->assertOk();
         $this->http->head('/test')->assertOk();
         $this->http->options('/test')->assertOk();
+        $this->http
+            ->query(
+                '/test',
+                body: ['filter' => 'active'],
+                headers: [
+                    'content-type' => 'application/json',
+                    'sec-fetch-site' => SecFetchSite::CROSS_SITE,
+                    'sec-fetch-mode' => SecFetchMode::CORS,
+                ],
+            )
+            ->assertOk();
     }
 
     #[Test]

@@ -154,6 +154,17 @@ final class HttpRouterTester
         ));
     }
 
+    public function query(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(new GenericRequest(
+            method: Method::QUERY,
+            uri: Uri\merge_query($uri, ...$query),
+            body: is_string($body) ? [] : $body,
+            headers: $this->createHeaders($headers),
+            raw: is_string($body) ? $body : null,
+        ));
+    }
+
     public function post(string $uri, array|string $body = [], array $query = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(new GenericRequest(

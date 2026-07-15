@@ -7,8 +7,11 @@ namespace Tests\Tempest\Integration\Testing\Http;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Http\ContentType;
+use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Status;
 use Tempest\Router\Post;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
@@ -145,6 +148,53 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function query_requests(): void
+    {
+        $response = $this->http
+            ->query(
+                '/test',
+                body: ['filter' => 'active'],
+                headers: [
+                    'Content-Type' => ContentType::JSON,
+                ],
+            )
+            ->assertOk();
+
+        $this->assertSame(Method::QUERY, $response->request->method);
+        $this->assertSame(['filter' => 'active'], $response->request->body);
+    }
+
+    #[Test]
+    public function query_requests_require_a_content_type(): void
+    {
+        $this->http
+            ->query('/test')
+            ->assertStatus(Status::BAD_REQUEST);
+    }
+
+    #[Test]
+    public function query_requests_reject_invalid_json(): void
+    {
+        $this->http
+            ->query('/test', body: 'invalid json', headers: [
+                'Content-Type' => ContentType::JSON,
+            ])
+            ->assertStatus(Status::BAD_REQUEST);
+    }
+
+    #[Test]
+    public function query_requests_failure(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+
+        $this->http
+            ->query('/this-route-does-not-exist', headers: [
+                'Content-Type' => ContentType::JSON,
+            ])
+            ->assertOk();
+    }
+
+    #[Test]
     public function trace_requests(): void
     {
         $this->http
@@ -193,7 +243,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function query(): void
+    public function query_parameters(): void
     {
         $this->assertSame($this->http->get('/test?foo=baz', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->get('/test?jon=doe', query: ['foo' => 'bar'])->request->uri, '/test?jon=doe&foo=bar');
@@ -204,6 +254,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
         $this->assertSame($this->http->put('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->delete('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->patch('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
+        $this->assertSame($this->http->query('/test', query: ['foo' => 'bar'], headers: ['Content-Type' => ContentType::JSON])->request->uri, '/test?foo=bar');
         $this->assertSame($this->http->head('/test', query: ['foo' => 'bar'])->request->uri, '/test?foo=bar');
     }
 
