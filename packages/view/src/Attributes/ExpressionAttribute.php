@@ -70,7 +70,11 @@ final readonly class ExpressionAttribute implements Attribute
             return '';
         }
 
-        $resolvedValue = self::resolveValue($value);
+        $resolvedValue = htmlspecialchars(
+            string: self::resolveValue($value),
+            flags: ENT_QUOTES | ENT_SUBSTITUTE,
+            encoding: 'UTF-8',
+        );
 
         if ($resolvedValue === '') {
             return '';
