@@ -15,6 +15,8 @@ interface HttpClient
 
     public function head(string $uri, array $headers = []): Response;
 
+    public function query(string $uri, array $headers = [], ?string $body = null): Response;
+
     public function trace(string $uri, array $headers = []): Response;
 
     public function post(string $uri, array $headers = [], ?string $body = null): Response;

@@ -74,6 +74,21 @@ final class GenericHttpClientTest extends TestCase
             ->assertBodyIs('{"test":"value"}');
     }
 
+    public function test_query_proxies_to_http_client(): void
+    {
+        $this->client->query(
+            uri: '/test-query',
+            headers: ['Content-Type' => 'application/json'],
+            body: '{"filter":"active"}',
+        );
+
+        $this->mock
+            ->assertMethod('QUERY')
+            ->assertUri('/test-query')
+            ->assertHeaderEquals('Content-Type', 'application/json')
+            ->assertBodyIs('{"filter":"active"}');
+    }
+
     public function test_trace_proxies_to_http_client(): void
     {
         $this->client->trace('/test-trace');

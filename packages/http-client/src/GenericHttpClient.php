@@ -39,6 +39,16 @@ final class GenericHttpClient implements HttpClient
         );
     }
 
+    public function query(string $uri, array $headers = [], ?string $body = null): Response
+    {
+        return $this->send(
+            method: Method::QUERY,
+            uri: $uri,
+            headers: $headers,
+            body: $body,
+        );
+    }
+
     public function post(string $uri, array $headers = [], ?string $body = null): Response
     {
         return $this->send(
