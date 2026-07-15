@@ -67,14 +67,14 @@ final class PreventCrossSiteRequestsMiddlewareTest extends FrameworkIntegrationT
     }
 
     #[Test]
-    public function post_with_cross_site_navigation_is_allowed(): void
+    public function post_with_cross_site_navigation_is_blocked(): void
     {
         $this->http
             ->post('/test', headers: [
                 'sec-fetch-site' => SecFetchSite::CROSS_SITE,
                 'sec-fetch-mode' => SecFetchMode::NAVIGATE,
             ])
-            ->assertOk();
+            ->assertForbidden();
     }
 
     #[Test]
