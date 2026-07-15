@@ -108,6 +108,7 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
             ['HEAD'],
             ['OPTIONS'],
             ['TRACE'],
+            ['QUERY'],
             ['CONNECT'],
         ];
     }
