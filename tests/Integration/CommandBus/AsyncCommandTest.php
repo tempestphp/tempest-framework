@@ -10,6 +10,7 @@ use Tempest\CommandBus\CommandRepository;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
+use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandWithAsyncHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\CommandBus\command;
@@ -32,6 +33,31 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         MyAsyncCommandHandler::$isHandled = false;
 
         command(new MyAsyncCommand('Brent'));
+
+        $pendingCommands = arr($repository->getPendingCommands());
+
+        $this->assertCount(1, $pendingCommands);
+        $command = $pendingCommands->first();
+        $this->assertSame('Brent', $command->name);
+        $this->assertFalse(MyAsyncCommandHandler::$isHandled);
+
+        $this->console->call('command:handle ' . $pendingCommands->keys()->first());
+
+        $this->assertTrue(MyAsyncCommandHandler::$isHandled);
+    }
+
+    public function test_commands_with_async_handlers_are_stored_and_handled_afterwards(): void
+    {
+        $repository = new MemoryRepository();
+
+        $this->container->singleton(
+            CommandRepository::class,
+            fn () => $repository,
+        );
+
+        MyAsyncCommandHandler::$isHandled = false;
+
+        command(new MyCommandWithAsyncHandler('Brent'));
 
         $pendingCommands = arr($repository->getPendingCommands());
 

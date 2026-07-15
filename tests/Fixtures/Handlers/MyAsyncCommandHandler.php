@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Handlers;
 
 use Exception;
+use Tempest\CommandBus\Async;
 use Tempest\CommandBus\CommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
+use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandWithAsyncHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyFailingAsyncCommand;
 
 final class MyAsyncCommandHandler
@@ -15,6 +17,13 @@ final class MyAsyncCommandHandler
 
     #[CommandHandler]
     public function onMyAsyncCommand(MyAsyncCommand $command): void
+    {
+        self::$isHandled = true;
+    }
+
+    #[Async]
+    #[CommandHandler]
+    public function onMyCommandWithAsyncHandler(MyCommandWithAsyncHandler $command): void
     {
         self::$isHandled = true;
     }
