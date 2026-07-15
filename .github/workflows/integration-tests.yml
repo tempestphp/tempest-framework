@@ -118,4 +118,4 @@ jobs:
         run: php ./tempest discovery:status
 
       - name: Execute tests
-        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=1G vendor/bin/phpunit
+        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=2G vendor/bin/phpunit
