@@ -59,6 +59,10 @@ final class TempestViewLexer
 
     private function seek(int $length = 1, int $offset = 0): ?string
     {
+        if ($length === 1) {
+            return $this->html[$this->position + $offset] ?? null;
+        }
+
         $seek = substr($this->html, $this->position + $offset, $length);
 
         if ($seek === '') {
@@ -68,11 +72,12 @@ final class TempestViewLexer
         return $seek;
     }
 
-    private function seekIgnoringWhitespace(int $length = 1): ?string
+    private function seekIgnoringWhitespace(): ?string
     {
-        $offset = strspn($this->html, self::WHITESPACE, $this->position);
-
-        return $this->seek(length: $length, offset: $offset);
+        return $this->seek(
+            // Whitespace offset
+            offset: strspn($this->html, self::WHITESPACE, $this->position),
+        );
     }
 
     private function consume(int $length = 1): string
@@ -139,8 +144,15 @@ final class TempestViewLexer
         } else {
             $tokens[] = $this->makeToken($tag, TokenType::OPEN_TAG_START, $tagLine);
 
-            while ($this->seek() !== null && $this->seekIgnoringWhitespace() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
-                if ($this->seekIgnoringWhitespace(2) === '<?') {
+            while ($this->current !== null) {
+                $whitespaceOffset = strspn($this->html, self::WHITESPACE, $this->position);
+                $next = $this->seek(offset: $whitespaceOffset);
+
+                if ($next === '>' || $next === '/') {
+                    break;
+                }
+
+                if ($next === '<' && $this->seek(length: 2, offset: $whitespaceOffset) === '<?') {
                     $tokens[] = $this->lexPhp();
                     continue;
                 }
@@ -179,7 +191,12 @@ final class TempestViewLexer
                 }
             }
 
-            if ($this->seekIgnoringWhitespace() === '>') {
+            $next = $this->seek(
+                // Whitespace offset
+                offset: strspn($this->html, self::WHITESPACE, $this->position),
+            );
+
+            if ($next === '>') {
                 $openTagEndLine = $this->line;
 
                 $tokens[] = $this->makeToken(
@@ -187,7 +204,7 @@ final class TempestViewLexer
                     type: TokenType::OPEN_TAG_END,
                     line: $openTagEndLine,
                 );
-            } elseif ($this->seekIgnoringWhitespace() === '/') {
+            } elseif ($next === '/') {
                 $selfClosingTagEndLine = $this->line;
 
                 $tokens[] = $this->makeToken(
