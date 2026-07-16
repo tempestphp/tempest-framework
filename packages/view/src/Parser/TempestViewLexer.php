@@ -24,17 +24,17 @@ final class TempestViewLexer
         $tokens = [];
 
         while ($this->current !== null) {
-            if ($this->comesNext('<?xml')) {
+            if ($this->comesNext('<?xml', 5)) {
                 $tokens[] = $this->lexXml();
-            } elseif ($this->comesNext('<?')) {
+            } elseif ($this->comesNext('<?', 2)) {
                 $tokens[] = $this->lexPhp();
-            } elseif ($this->comesNext('<!--')) {
+            } elseif ($this->comesNext('<!--', 4)) {
                 $tokens[] = $this->lexComment();
-            } elseif ($this->comesNext('<!doctype') || $this->comesNext('<!DOCTYPE')) {
+            } elseif ($this->comesNext('<!doctype', 9) || $this->comesNext('<!DOCTYPE', 9)) {
                 $tokens[] = $this->lexDocType();
-            } elseif ($this->comesNext('<![CDATA')) {
+            } elseif ($this->comesNext('<![CDATA', 8)) {
                 $tokens = [...$tokens, ...$this->lexCharacterData()];
-            } elseif ($this->comesNext('<')) {
+            } elseif ($this->comesNext('<', 1)) {
                 $tokens = [...$tokens, ...$this->lexTag()];
             } elseif (str_contains(self::WHITESPACE, $this->current)) {
                 $tokens[] = $this->lexWhitespace();
@@ -46,9 +46,15 @@ final class TempestViewLexer
         return new TokenCollection($tokens);
     }
 
-    private function comesNext(string $search): bool
+    private function comesNext(string $search, ?int $length = null): bool
     {
-        return $this->seek(strlen($search)) === $search;
+        $length ??= strlen($search);
+
+        if ($length === 1) {
+            return ($this->html[$this->position] ?? null) === $search;
+        }
+
+        return substr_compare($this->html, $search, $this->position, $length) === 0;
     }
 
     private function seek(int $length = 1, int $offset = 0): ?string
@@ -71,9 +77,18 @@ final class TempestViewLexer
 
     private function consume(int $length = 1): string
     {
+        if ($length === 0) {
+            return '';
+        }
+
+        if ($length === 1) {
+            $char = $this->html[$this->position++] ?? null;
+            $this->current = $this->html[$this->position] ?? null;
+            return $char ?? '';
+        }
+
         $buffer = substr($this->html, $this->position, $length);
         $this->position += $length;
-        $this->line += substr_count($buffer, "\n");
         $this->current = $this->html[$this->position] ?? null;
 
         return $buffer;
@@ -135,7 +150,7 @@ final class TempestViewLexer
 
                 $attributeName .= $this->consumeUntil(self::WHITESPACE . '=/>');
 
-                $hasValue = $this->seek() === '=';
+                $hasValue = $this->comesNext('=', 1);
 
                 if ($hasValue) {
                     $attributeName .= $this->consume();
@@ -148,7 +163,7 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $quote = $this->seek() === "'"
+                    $quote = $this->comesNext("'", 1)
                         ? "'"
                         : '"';
 
@@ -191,7 +206,7 @@ final class TempestViewLexer
         $line = $this->line;
         $buffer = '';
 
-        while ($this->seek(2) !== '?>' && $this->current !== null) {
+        while (! $this->comesNext('?>', 2) && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
@@ -205,7 +220,7 @@ final class TempestViewLexer
         $line = $this->line;
         $buffer = '';
 
-        while ($this->seek(2) !== '?>' && $this->current !== null) {
+        while (! $this->comesNext('?>', 2) && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
@@ -227,7 +242,7 @@ final class TempestViewLexer
         $line = $this->line;
         $buffer = '';
 
-        while ($this->seek(3) !== '-->' && $this->current !== null) {
+        while (! $this->comesNext('-->', 3) && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
@@ -264,7 +279,7 @@ final class TempestViewLexer
 
         $contentLine = $this->line;
 
-        while ($this->seek(3) !== ']]>' && $this->current !== null) {
+        while (! $this->comesNext(']]>', 3) && $this->current !== null) {
             $buffer .= $this->consume();
         }
 
