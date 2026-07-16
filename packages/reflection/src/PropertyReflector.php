@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
+use ReflectionMethod;
 use Error;
 use PropertyHookType;
 use ReflectionProperty as PHPReflectionProperty;
@@ -130,7 +131,7 @@ final readonly class PropertyReflector implements Reflector, Stringable
     {
         $hook = $this->reflectionProperty->getHook(PropertyHookType::Get);
 
-        if (! $hook) {
+        if (!$hook instanceof ReflectionMethod) {
             return null;
         }
 
@@ -141,7 +142,7 @@ final readonly class PropertyReflector implements Reflector, Stringable
     {
         $hook = $this->reflectionProperty->getHook(PropertyHookType::Set);
 
-        if (! $hook) {
+        if (!$hook instanceof ReflectionMethod) {
             return null;
         }
 

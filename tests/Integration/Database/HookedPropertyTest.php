@@ -99,7 +99,7 @@ class HookedModel implements MigratesUp
 
             return $this->hooked;
         }
-        set (string $hooked) {
+        set(string $hooked) {
             $this->hooked = $hooked;
         }
     }
@@ -118,7 +118,9 @@ class HookedModel implements MigratesUp
 #[SerializeAs('key')]
 class Key
 {
-    public function __construct(public string $value) {}
+    public function __construct(
+        public string $value,
+    ) {}
 }
 
 #[Table('hooked_model_with_key')]
@@ -132,7 +134,7 @@ class HookedModelWithKey implements MigratesUp
 
             return $this->key;
         }
-        set (string|Key $value) {
+        set(string|Key $value) {
             if (! $value instanceof Key) {
                 $value = new Key($value);
             }
