@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Arr\MutableArray;
 use Tempest\Validation\Rules\IsArrayList;
 
 /**
@@ -12,13 +15,23 @@ use Tempest\Validation\Rules\IsArrayList;
  */
 final class IsArrayListTest extends TestCase
 {
-    public function test_array_list(): void
+    #[DataProvider('provide_array_list_cases')]
+    public function test_array_list(array $value, bool $expected): void
     {
         $rule = new IsArrayList();
 
-        $this->assertFalse($rule->isValid(['foo' => 'bar']));
-        $this->assertTrue($rule->isValid([]));
-        $this->assertTrue($rule->isValid(['a', 'b', 'c']));
-        $this->assertFalse($rule->isValid([0 => 'a', 1 => 'b', 3 => 'c']));
+        $this->assertEquals($expected, $rule->isValid($value));
+        $this->assertEquals($expected, $rule->isValid(new ImmutableArray($value)));
+        $this->assertEquals($expected, $rule->isValid(new MutableArray($value)));
+    }
+
+    public static function provide_array_list_cases(): iterable
+    {
+        return [
+            'Should return false for associate array' => [['foo' => 'bar'], false],
+            'Should return true for empty array' => [[], true],
+            'Should return true for true array list' => [['a', 'b', 'c'], true],
+            'Should return false for list with skipped indexed key' => [[0 => 'a', 1 => 'b', 3 => 'c'], false],
+        ];
     }
 }
