@@ -99,6 +99,7 @@ final class TempestViewLexer
 
         $buffer = substr($this->html, $this->position, $length);
         $this->position += $length;
+        $this->line += substr_count($buffer, "\n");
         $this->current = $this->html[$this->position] ?? null;
 
         return $buffer;

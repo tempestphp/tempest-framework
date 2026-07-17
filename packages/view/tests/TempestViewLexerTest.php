@@ -409,6 +409,15 @@ final class TempestViewLexerTest extends TestCase
         $this->assertSame(3, $tokens[7]->line);
     }
 
+    public function test_source_mapping_line_count_with_indentation(): void
+    {
+        $tokens = iterator_to_array(
+            new TempestViewLexer("<div>\n  <span></span>\n</div>")->lex(),
+        );
+
+        $this->assertSame(2, $tokens[3]->line);
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);
