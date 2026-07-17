@@ -15,7 +15,7 @@ final class NullMailerConfig implements MailerConfig, ProvidesDefaultSender
     public string $transport = NullTransport::class;
 
     public function __construct(
-        public null|string|EmailAddress $defaultSender = null,
+        public string|EmailAddress|null $defaultSender = null,
     ) {}
 
     public function createTransport(): TransportInterface

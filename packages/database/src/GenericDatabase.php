@@ -32,7 +32,7 @@ final class GenericDatabase implements Database
         get => $this->connection->config->dialect;
     }
 
-    public null|string|UnitEnum $tag {
+    public string|UnitEnum|null $tag {
         get => $this->connection->config->tag;
     }
 

@@ -12,12 +12,12 @@
 		"test": "vitest"
 	},
 	"devDependencies": {
-		"@types/bun": "latest",
+		"@types/bun": "1.3.14",
 		"bumpp": "^10.2.3",
-		"dprint": "^0.50.2",
-		"typescript": "^5.9.3",
+		"dprint": "^0.54.0",
+		"typescript": "^6.0.3",
 		"unbuild": "^3.6.1",
 		"vite-plugin-tempest": "workspace:*",
-		"vitest": "^4.1.0"
+		"vitest": "^4.1.9"
 	}
 }

@@ -22,6 +22,6 @@ final class MultipleChannelsLogConfig implements LogConfig
     public function __construct(
         private(set) array $channels,
         private(set) ?string $prefix,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

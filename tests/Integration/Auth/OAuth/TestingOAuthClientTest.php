@@ -2,10 +2,13 @@
 
 namespace Tests\Tempest\Integration\Auth\OAuth;
 
+use League\OAuth2\Client\Token\AccessToken;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Exceptions\OAuthStateWasInvalid;
+use Tempest\Auth\Exceptions\OAuthTokenCouldNotBeRetrieved;
 use Tempest\Auth\OAuth\Config\GitHubOAuthConfig;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -354,6 +357,122 @@ final class TestingOAuthClientTest extends FrameworkIntegrationTestCase
                 ['email' => $user->email ?? '', 'full_name' => $user->name ?? '', 'username' => $user->nickname ?? ''],
             ),
         );
+    }
+
+    #[Test]
+    public function map_callback_receives_the_access_token(): void
+    {
+        $this->database->reset(migrate: false);
+        $this->database->migrate(CreateMigrationsTable::class, CreateUsersTable::class);
+
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $client->createRedirect();
+
+        $receivedToken = null;
+
+        $client->authenticate(
+            request: new GenericRequest(
+                method: Method::GET,
+                uri: Uri\set_query('/oauth/callback', code: 'auth-code', state: $client->getState()),
+            ),
+            map: static function (OAuthUser $user, AccessToken $token) use (&$receivedToken): User {
+                $receivedToken = $token;
+
+                return query(User::class)->updateOrCreate(
+                    [
+                        'github_id' => $user->id,
+                    ],
+                    [
+                        'email' => $user->email ?? '',
+                        'full_name' => $user->name ?? '',
+                        'username' => $user->nickname ?? '',
+                    ],
+                );
+            },
+        );
+
+        $this->assertInstanceOf(AccessToken::class, $receivedToken);
+        $this->assertSame('tok-auth-code', $receivedToken->getToken());
+    }
+
+    #[Test]
+    public function can_refresh_access_token(): void
+    {
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $token = $client->refreshAccessToken('my-refresh-token');
+
+        $this->assertEquals('tok-refreshed-my-refresh-token', $token->getToken());
+        $this->assertEquals('refresh-my-refresh-token', $token->getRefreshToken());
+        $this->assertNotNull($token->getExpires());
+
+        $client->assertAccessTokenRefreshed('my-refresh-token');
+    }
+
+    #[Test]
+    public function refreshed_token_is_recorded(): void
+    {
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $client->refreshAccessToken('my-refresh-token');
+
+        $client->assertAccessTokenRefreshed();
+        $client->assertAccessTokenRefreshed('my-refresh-token');
+
+        $this->expectException(AssertionFailedError::class);
+
+        $client->assertAccessTokenRefreshed('some-other-token');
+    }
+
+    #[Test]
+    public function refreshing_without_refresh_token_throws(): void
+    {
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $this->expectException(OAuthTokenCouldNotBeRetrieved::class);
+
+        $client->refreshAccessToken('');
+    }
+
+    #[Test]
+    public function assert_access_token_refreshed_fails_when_nothing_refreshed(): void
+    {
+        $this->container->config(new GitHubOAuthConfig(
+            clientId: 'foo',
+            clientSecret: 'bar', // @mago-expect lint:no-literal-password
+            redirectTo: '/oauth/github',
+        ));
+
+        $client = $this->oauth->fake($this->user);
+
+        $this->expectException(AssertionFailedError::class);
+
+        $client->assertAccessTokenRefreshed();
     }
 }
 

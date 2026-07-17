@@ -43,6 +43,6 @@ final class SysLogConfig implements LogConfig
         private(set) int $flags = LOG_PID,
         private(set) array $channels = [],
         private(set) ?string $prefix = null,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

@@ -36,6 +36,11 @@ interface OAuthClient
     public function requestAccessToken(string $code): AccessToken;
 
     /**
+     * Exchanges a refresh token for a new access token.
+     */
+    public function refreshAccessToken(string $refreshToken): AccessToken;
+
+    /**
      * Gets user information from an OAuth provider using an access token.
      */
     public function fetchUser(AccessToken $token): OAuthUser;
@@ -43,7 +48,7 @@ interface OAuthClient
     /**
      * Authenticates a user based on the given OAuth callback request.
      *
-     * @param Closure(OAuthUser): T $map A callback that should return an authenticatable model from the given OAuthUser. Typically, the callback is also responsible for saving the user to the database.
+     * @param Closure(OAuthUser, AccessToken): T $map A callback that should return an authenticatable model from the given OAuthUser. Typically, the callback is also responsible for saving the user to the database.
      */
     public function authenticate(Request $request, Closure $map): Authenticatable;
 }

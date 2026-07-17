@@ -92,7 +92,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['/foo/bar', ['/foo/bar', '/baz'], '/foo/bar/baz'])]
     #[TestWith(['/foo/bar', ['/foo/bar', '/foo/bar'], '/foo/bar/foo/bar'])]
     #[TestWith(['/other/root', '/foo/bar', '/other/root/foo/bar'])]
-    public function test_to_absolute_path(string $cwd, null|array|string $path, string $expected): void
+    public function test_to_absolute_path(string $cwd, array|string|null $path, string $expected): void
     {
         $this->assertSame($expected, to_absolute_path($cwd, ...wrap($path)));
     }

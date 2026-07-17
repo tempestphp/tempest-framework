@@ -20,7 +20,7 @@ final class CountingDynamicInitializer implements DynamicInitializer
         self::$instances = 0;
     }
 
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         if (! $this->counted) {
             $this->counted = true;
@@ -30,7 +30,7 @@ final class CountingDynamicInitializer implements DynamicInitializer
         return false;
     }
 
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): object
     {
         throw new \LogicException('CountingDynamicInitializer should not initialize objects.');
     }

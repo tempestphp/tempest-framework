@@ -40,7 +40,7 @@ final class TokenCollection implements IteratorAggregate, ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
-        return isset($this->tokens[$offset]);
+        return array_key_exists($offset, $this->tokens);
     }
 
     public function offsetGet(mixed $offset): mixed

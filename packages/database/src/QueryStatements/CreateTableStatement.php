@@ -334,7 +334,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     /**
      * Adds an enum column to the table. Uses the `ENUM` type for MySQL, falls back to `TEXT` for SQLite, and uses a custom enum type for PostgreSQL.
      */
-    public function enum(string $name, string $enumClass, bool $nullable = false, null|UnitEnum|BackedEnum $default = null): self
+    public function enum(string $name, string $enumClass, bool $nullable = false, UnitEnum|BackedEnum|null $default = null): self
     {
         $this->statements[] = new EnumStatement(
             name: $name,

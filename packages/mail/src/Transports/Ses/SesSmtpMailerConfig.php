@@ -45,7 +45,7 @@ final class SesSmtpMailerConfig implements MailerConfig
         /**
          * Address from which emails are sent by default.
          */
-        public null|string|EmailAddress $from = null,
+        public string|EmailAddress|null $from = null,
 
         /**
          * Whether to use Amazon SES's API or SMTP server.

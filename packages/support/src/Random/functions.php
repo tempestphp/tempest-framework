@@ -85,7 +85,7 @@ function uuid(): string
 /**
  * Generates a 128-bit universally unique lexicographically sortable identifier.
  */
-function ulid(null|DateTimeInterface|NativeDateTimeInterface $time = null): string
+function ulid(DateTimeInterface|NativeDateTimeInterface|null $time = null): string
 {
     return Ulid::generate($time ? DateTime::parse($time)->toNativeDateTime() : null);
 }

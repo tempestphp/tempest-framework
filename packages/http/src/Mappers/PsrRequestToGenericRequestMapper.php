@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Psr\Http\Message\UploadedFileInterface;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\Cookie;
+use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -25,6 +26,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
     public function __construct(
         private Encrypter $encrypter,
         private CookieManager $cookies,
+        private CookieConfig $cookieConfig,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -65,14 +67,18 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'files' => $uploads,
             'cookies' => Arr\filter(Arr\map(
                 array: $_COOKIE,
-                map: function (string $value, string $key) {
+                map: function (string $rawValue, string $key) {
                     try {
                         return new Cookie(
                             key: $key,
-                            value: $this->encrypter->decrypt($value),
+                            value: in_array($key, $this->cookieConfig->plaintextCookies, strict: true)
+                                ? $rawValue
+                                : $this->encrypter->decrypt($rawValue),
                         );
                     } catch (Throwable) {
-                        $this->cookies->remove($key);
+                        if ($this->cookieConfig->discardUnencryptedCookies) {
+                            $this->cookies->remove($key);
+                        }
 
                         return null;
                     }

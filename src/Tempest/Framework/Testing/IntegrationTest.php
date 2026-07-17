@@ -7,6 +7,8 @@ namespace Tempest\Framework\Testing;
 use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\OAuth\Testing\OAuthTester;
 use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
@@ -263,5 +265,10 @@ abstract class IntegrationTest extends TestCase
         }
 
         Assert::fail($message ?? "Expected exception {$expectedExceptionClass} was not thrown");
+    }
+
+    protected function login(Authenticatable $user): void
+    {
+        $this->container->get(Authenticator::class)->authenticate($user);
     }
 }

@@ -24,7 +24,7 @@ final readonly class HttpApplication implements Application
         return Tempest::boot($root, $discoveryLocations)->get(HttpApplication::class);
     }
 
-    public function run(): never
+    public function run(): void
     {
         $router = $this->container->get(Router::class);
         $psrRequest = $this->container->get(RequestFactory::class)->make();

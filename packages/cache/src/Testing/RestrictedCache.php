@@ -17,7 +17,7 @@ final class RestrictedCache implements Cache
     public bool $enabled;
 
     public function __construct(
-        private null|string|UnitEnum $tag = null,
+        private string|UnitEnum|null $tag = null,
     ) {}
 
     private function resolveTag(): ?string
@@ -25,7 +25,7 @@ final class RestrictedCache implements Cache
         return $this->tag instanceof UnitEnum ? $this->tag->name : $this->tag;
     }
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): Lock
+    public function lock(Stringable|string $key, Duration|DateTimeInterface|null $duration = null, Stringable|string|null $owner = null): Lock
     {
         throw new CacheUsageWasForbidden($this->resolveTag());
     }
@@ -35,12 +35,12 @@ final class RestrictedCache implements Cache
         throw new CacheUsageWasForbidden($this->resolveTag());
     }
 
-    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): CacheItemInterface
     {
         throw new CacheUsageWasForbidden($this->resolveTag());
     }
 
-    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
+    public function putMany(iterable $values, Duration|DateTimeInterface|null $expiration = null): array
     {
         throw new CacheUsageWasForbidden($this->resolveTag());
     }
@@ -65,7 +65,7 @@ final class RestrictedCache implements Cache
         throw new CacheUsageWasForbidden($this->resolveTag());
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, Duration|DateTimeInterface|null $expiration = null, ?Duration $stale = null): mixed
     {
         throw new CacheUsageWasForbidden($this->resolveTag());
     }

@@ -1,6 +1,6 @@
 import ui from '@nuxt/ui/vue-plugin'
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import renderer from '../renderer.vue'
 import { initializeExceptionStore } from '../store'
 import './style.css'
@@ -8,7 +8,7 @@ import './style.css'
 const app = createApp(renderer)
 const router = createRouter({
 	routes: [],
-	history: createWebHistory(),
+	history: createMemoryHistory(),
 })
 
 const element = document.getElementById('tempest-hydration')

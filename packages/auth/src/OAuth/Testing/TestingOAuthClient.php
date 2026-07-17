@@ -10,6 +10,7 @@ use PHPUnit\Framework\Assert;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\Authenticator;
 use Tempest\Auth\Exceptions\OAuthStateWasInvalid;
+use Tempest\Auth\Exceptions\OAuthTokenCouldNotBeRetrieved;
 use Tempest\Auth\OAuth\OAuthClient;
 use Tempest\Auth\OAuth\OAuthConfig;
 use Tempest\Auth\OAuth\OAuthUser;
@@ -49,6 +50,9 @@ final class TestingOAuthClient implements OAuthClient
 
     /** @var array{access_token: string, token_type: 'Bearer', expires_in: int, code: string}[] */
     private array $accessTokens = [];
+
+    /** @var array{refresh_token: string, token: AccessToken}[] */
+    private array $refreshedTokens = [];
 
     /** @var array{token: AccessToken, code: string, user: OAuthUser}[] */
     private array $users = [];
@@ -107,6 +111,27 @@ final class TestingOAuthClient implements OAuthClient
         return $token;
     }
 
+    public function refreshAccessToken(string $refreshToken): AccessToken
+    {
+        if ($refreshToken === '') {
+            throw OAuthTokenCouldNotBeRetrieved::missingRefreshToken();
+        }
+
+        $token = new AccessToken([
+            'access_token' => 'tok-refreshed-' . $refreshToken,
+            'token_type' => 'Bearer',
+            'expires_in' => 3600,
+            'refresh_token' => 'refresh-' . $refreshToken,
+        ]);
+
+        $this->refreshedTokens[] = [
+            'refresh_token' => $refreshToken,
+            'token' => $token,
+        ];
+
+        return $token;
+    }
+
     public function fetchUser(AccessToken $token): OAuthUser
     {
         $this->users[] = [
@@ -134,9 +159,12 @@ final class TestingOAuthClient implements OAuthClient
             throw new OAuthStateWasInvalid();
         }
 
-        $user = $this->fetchUser($this->requestAccessToken($request->get('code')));
+        $token = $this->requestAccessToken(
+            code: $request->get('code'),
+        );
+        $user = $this->fetchUser($token);
 
-        $authenticatable = $map($user);
+        $authenticatable = $map($user, $token);
 
         $this->authenticator->authenticate($authenticatable);
 
@@ -233,6 +261,22 @@ final class TestingOAuthClient implements OAuthClient
             Assert::assertNotEmpty(
                 actual: array_filter($this->accessTokens, fn (array $token) => $token['code'] === $code),
                 message: sprintf('No access token was retrieved for code "%s".', $code),
+            );
+        }
+    }
+
+    /**
+     * Asserts that an access token was refreshed with the specified refresh token.
+     */
+    public function assertAccessTokenRefreshed(?string $refreshToken = null): void
+    {
+        Assert::assertNotEmpty($this->refreshedTokens, 'No tokens were refreshed.');
+
+        if ($refreshToken !== null) {
+            // @mago-expect lint:no-insecure-comparison
+            Assert::assertNotEmpty(
+                actual: array_filter($this->refreshedTokens, fn (array $token) => $token['refresh_token'] === $refreshToken),
+                message: sprintf('No access token was refreshed for refresh token "%s".', $refreshToken),
             );
         }
     }

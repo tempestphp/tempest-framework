@@ -102,7 +102,7 @@ $json = map($user)->toJson();
 ```
 
 :::info
-The {b`#[Hidden]`} attribute also excludes properties from database SELECT queries. See the [database documentation](../1-essentials/03-database.md#hidden-properties) for more information.
+The {b`#[Tempest\Mapper\Hidden]`} attribute also excludes properties from database SELECT queries. See the [database documentation](../1-essentials/03-database.md#hidden-properties) for more information.
 :::
 
 ### Overriding field names

@@ -76,6 +76,22 @@ final class Book
 }
 ```
 
+Use {b`#[Tempest\Validation\SkipIfMissing]`} when a property should only be validated when its value is present. Missing properties remain uninitialized when mapping, which is useful for partial updates.
+
+```php
+use Tempest\Validation\Rules\IsNotEmptyString;
+use Tempest\Validation\SkipIfMissing;
+
+final class UpdateBook
+{
+    #[SkipIfMissing, IsNotEmptyString]
+    public string $title;
+
+    #[SkipIfMissing]
+    public ?DateTime $publishedAt;
+}
+```
+
 ## Validating an existing object instance
 
 When you already have an instantiated object, you may use the `validateObject()` method. Unlike `validateValuesForClass()`, this method takes an object instance and reads the actual values of its public properties directly.
@@ -136,6 +152,29 @@ Alternatively, you may provide a closure for validation. The closure should retu
 $this->validator->validateValue('jon@doe.co', function (mixed $value) {
     return str_contains($value, '@');
 });
+```
+
+## Throwing validation failures manually
+
+You may throw a {`Tempest\Validation\Exceptions\ValidationFailed`} exception with custom messages when validation depends on application logic instead of a validation rule.
+
+```php app/PasskeyController.php
+use Tempest\Validation\Exceptions\ValidationFailed;
+
+throw ValidationFailed::withMessages([
+    'credential' => 'Passkey not valid',
+]);
+```
+
+Multiple messages may be passed for the same field.
+
+```php
+throw ValidationFailed::withMessages([
+    'email' => [
+        'Email is already taken',
+        'Email domain is not allowed',
+    ],
+]);
 ```
 
 ## Accessing error messages

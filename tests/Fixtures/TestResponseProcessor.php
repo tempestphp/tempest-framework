@@ -10,7 +10,7 @@ use Tempest\Router\ResponseProcessor;
 final readonly class TestResponseProcessor implements ResponseProcessor
 {
     public function __construct(
-        private readonly Request $request,
+        private Request $request,
     ) {}
 
     public function process(Response $response): Response

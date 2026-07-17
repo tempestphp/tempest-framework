@@ -14,7 +14,8 @@
     },
     "suggest": {
         "tempest/datetime": "In order to use the `datetime` function",
-        "tempest/icon": "In order to use the `icon` function"
+        "tempest/icon": "In order to use the `icon` function",
+        "tempest/event-bus": "Enables dispatching translation miss and translation failure events."
     },
     "autoload": {
         "files": [

@@ -26,7 +26,7 @@ interface BuildsQuery
     /**
      * The database tag for targeting a specific database connection.
      */
-    public null|string|UnitEnum $onDatabase { get; }
+    public string|UnitEnum|null $onDatabase { get; }
 
     /**
      * Creates a {@see Query} instance with the specified optional bindings.

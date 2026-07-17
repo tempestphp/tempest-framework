@@ -10,7 +10,7 @@ use function Tempest\Support\arr;
 
 final class FieldStatement implements QueryStatement
 {
-    private null|bool|string $alias = null;
+    private bool|string|null $alias = null;
 
     private ?string $aliasPrefix = null;
 

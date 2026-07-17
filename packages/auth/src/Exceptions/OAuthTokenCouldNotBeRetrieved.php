@@ -16,4 +16,11 @@ final class OAuthTokenCouldNotBeRetrieved extends Exception implements Authentic
             previous: $previous,
         );
     }
+
+    public static function missingRefreshToken(): self
+    {
+        return new self(
+            message: 'No refresh token was provided.',
+        );
+    }
 }

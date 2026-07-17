@@ -67,6 +67,14 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
+    public function test_null_values_are_accessible_by_offset(): void
+    {
+        $collection = new ImmutableArray(['key' => null]);
+
+        $this->assertTrue(isset($collection['key']));
+        $this->assertNull($collection['key']);
+    }
+
     public function test_remove_with_basic_keys(): void
     {
         $collection = new ImmutableArray([1, 2, 3]);

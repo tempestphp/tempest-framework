@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Auth\Authentication\Authenticatable;
 use Tempest\Auth\Authentication\AuthenticatableResolver;
 use Tempest\Auth\Authentication\SessionAuthenticator;
-use Tempest\Container\Resettable;
+use Tempest\Auth\Authentication\SessionAuthenticatorReset;
 use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
@@ -100,10 +100,9 @@ final class SessionAuthenticatorTest extends TestCase
             authenticatableResolver: $resolver,
         );
 
-        $this->assertInstanceOf(Resettable::class, $authenticator);
         $this->assertSame($authenticatable, $authenticator->current());
 
-        $authenticator->reset();
+        new SessionAuthenticatorReset($authenticator)->reset();
 
         $this->assertSame($authenticatable, $authenticator->current());
         $this->assertSame(2, $resolver->resolveCalls);

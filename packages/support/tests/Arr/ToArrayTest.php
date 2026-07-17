@@ -57,7 +57,7 @@ final class ToArrayTest extends TestCase
 
             public function offsetExists($offset): bool
             {
-                return isset($this->data[$offset]);
+                return array_key_exists($offset, $this->data);
             }
 
             public function offsetGet($offset): mixed
@@ -97,7 +97,7 @@ final class ToArrayTest extends TestCase
 
             public function offsetExists($offset): bool
             {
-                return isset($this->data[$offset]);
+                return array_key_exists($offset, $this->data);
             }
 
             public function offsetGet($offset): mixed

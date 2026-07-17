@@ -162,7 +162,7 @@ Beyond selecting models, any query builder can be used with model objects:
 use App\Models\Book;
 use Tempest\Database\PrimaryKey;
 
-;use function Tempest\Database\query;
+use function Tempest\Database\query;
 
 final class BookRepository
 {
@@ -917,6 +917,8 @@ Database seeders populate the database with data. These classes can fill the dat
 ```php
 use Tempest\Database\DatabaseSeeder;
 use UnitEnum;
+
+use function Tempest\Database\query;
 
 final class BookSeeder implements DatabaseSeeder
 {

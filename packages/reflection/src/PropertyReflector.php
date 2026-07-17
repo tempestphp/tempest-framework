@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Reflection;
 
 use Error;
+use PropertyHookType;
+use ReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
 use Stringable;
 
@@ -118,6 +120,33 @@ final readonly class PropertyReflector implements Reflector, Stringable
     public function isVirtual(): bool
     {
         return $this->reflectionProperty->isVirtual();
+    }
+
+    public function isHooked(): bool
+    {
+        return $this->getGetHook() || $this->getSetHook();
+    }
+
+    public function getGetHook(): ?MethodReflector
+    {
+        $hook = $this->reflectionProperty->getHook(PropertyHookType::Get);
+
+        if (! $hook instanceof ReflectionMethod) {
+            return null;
+        }
+
+        return new MethodReflector($hook);
+    }
+
+    public function getSetHook(): ?MethodReflector
+    {
+        $hook = $this->reflectionProperty->getHook(PropertyHookType::Set);
+
+        if (! $hook instanceof ReflectionMethod) {
+            return null;
+        }
+
+        return new MethodReflector($hook);
     }
 
     public function unset(object $object): void

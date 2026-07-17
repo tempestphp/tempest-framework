@@ -13,7 +13,7 @@ final readonly class TwigConfig
      */
     public function __construct(
         public array $viewPaths = [],
-        public null|false|string $cachePath = null,
+        public false|string|null $cachePath = null,
         public bool $debug = false,
         public string $charset = 'utf-8',
         public bool $strictVariables = false,

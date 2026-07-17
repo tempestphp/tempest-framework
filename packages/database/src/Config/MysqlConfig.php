@@ -97,6 +97,6 @@ final class MysqlConfig implements DatabaseConfig
         public ?string $clientKey = null,
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
-        public null|string|UnitEnum $tag = null,
+        public string|UnitEnum|null $tag = null,
     ) {}
 }

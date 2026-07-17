@@ -42,7 +42,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         public string $label,
         public Closure $search,
         public bool $multiple = false,
-        public null|array|string $default = null,
+        public array|string|null $default = null,
     ) {
         $this->bufferEnabled = ! $this->multiple;
         $this->buffer = new TextBuffer();

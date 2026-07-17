@@ -16,7 +16,7 @@ interface Container extends ContainerInterface
 
     public function unregister(string $className, bool $tagged = false): self;
 
-    public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self;
+    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self;
 
     public function config(object $config): self;
 
@@ -25,9 +25,9 @@ interface Container extends ContainerInterface
      * @param class-string<TClassName> $className
      * @return TClassName
      */
-    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): mixed;
+    public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): mixed;
 
-    public function has(string $className, null|string|UnitEnum $tag = null): bool;
+    public function has(string $className, string|UnitEnum|null $tag = null): bool;
 
     public function invoke(ClassReflector|MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 

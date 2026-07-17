@@ -446,11 +446,9 @@ final readonly class TempestViewCompiler
     private function canExtendLineMapRange(array $range, array $lineMapping): bool
     {
         return (
-            $lineMapping['compiledLine']
-            === ($range['compiledEndLine'] + 1)
+            $lineMapping['compiledLine'] === ($range['compiledEndLine'] + 1)
             && $lineMapping['sourcePath'] === $range['sourcePath']
-            && $lineMapping['sourceLine']
-            === ($range['sourceEndLine'] + 1)
+            && $lineMapping['sourceLine'] === ($range['sourceEndLine'] + 1)
         );
     }
 

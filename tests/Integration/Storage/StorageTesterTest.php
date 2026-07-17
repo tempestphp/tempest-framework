@@ -207,7 +207,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->container->config(new class implements StorageConfig {
             public string $adapter = 'UnknownClass';
 
-            public null|string|UnitEnum $tag = null;
+            public string|UnitEnum|null $tag = null;
 
             public bool $readonly = false;
 

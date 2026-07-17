@@ -41,7 +41,10 @@ final readonly class GenericEventBus implements EventBus
             $eventName = $event::class . '::' . $eventName;
         }
 
-        $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
+        $handlers = [
+            ...($this->eventBusConfig->handlers[$eventName] ?? []),
+            ...($this->eventBusConfig->closureHandlers[$eventName] ?? []),
+        ];
 
         if (is_object($event)) {
             $interfaces = class_implements($event);
@@ -50,6 +53,7 @@ final readonly class GenericEventBus implements EventBus
                 $handlers = [
                     ...$handlers,
                     ...($this->eventBusConfig->handlers[$interface] ?? []),
+                    ...($this->eventBusConfig->closureHandlers[$interface] ?? []),
                 ];
             }
         }

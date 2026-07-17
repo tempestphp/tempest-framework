@@ -8,6 +8,7 @@ enum Method: string
 {
     case GET = 'GET';
     case HEAD = 'HEAD';
+    case QUERY = 'QUERY';
     case POST = 'POST';
     case PUT = 'PUT';
     case DELETE = 'DELETE';

@@ -14,7 +14,7 @@ final class Created implements Response
 {
     use IsResponse;
 
-    public function __construct(string|array|null|View|JsonSerializable $body = null)
+    public function __construct(string|array|View|JsonSerializable|null $body = null)
     {
         $this->status = Status::CREATED;
         $this->body = $body;

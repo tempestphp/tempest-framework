@@ -67,7 +67,7 @@ final readonly class Validator
      * @param array<string,list<FailingRule>> $failingRules
      * @param class-string|null $targetClass
      */
-    public function createValidationFailureException(array $failingRules, null|object|string $subject = null, ?string $targetClass = null): ValidationFailed
+    public function createValidationFailureException(array $failingRules, object|string|null $subject = null, ?string $targetClass = null): ValidationFailed
     {
         return new ValidationFailed(
             failingRules: $failingRules,
@@ -98,7 +98,7 @@ final readonly class Validator
 
             $key = $prefix . $property->getName();
 
-            if (! $values->hasKey($key) && $property->hasDefaultValue()) {
+            if (! $values->hasKey($key) && ($property->hasDefaultValue() || $property->hasAttribute(SkipIfMissing::class))) {
                 continue;
             }
 
@@ -222,20 +222,22 @@ final readonly class Validator
      */
     public function getErrorMessage(Rule|FailingRule $rule, ?string $field = null): string
     {
-        if (is_null($this->translator)) {
-            throw new TranslatorWasRequired();
+        $failingRule = $rule instanceof FailingRule ? $rule : null;
+
+        if ($failingRule instanceof FailingRule) {
+            $field ??= $failingRule->field;
+            $rule = $failingRule->rule;
         }
 
         if ($rule instanceof HasErrorMessage) {
             return $rule->getErrorMessage();
         }
 
-        $ruleTranslationKey = $this->getTranslationKey($rule);
-
-        if ($rule instanceof FailingRule) {
-            $field ??= $rule->field;
-            $rule = $rule->rule;
+        if (is_null($this->translator)) {
+            throw new TranslatorWasRequired();
         }
+
+        $ruleTranslationKey = $this->getTranslationKey($failingRule ?? $rule);
 
         $variables = [
             'field' => $this->getFieldName($ruleTranslationKey, $field),

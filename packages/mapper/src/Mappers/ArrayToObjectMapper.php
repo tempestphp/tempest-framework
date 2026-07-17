@@ -49,6 +49,7 @@ final class ArrayToObjectMapper implements Mapper
         $isStrictClass = $targetClass->hasAttribute(Strict::class);
 
         $missingValues = [];
+        /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
 
         foreach ($targetClass->getPublicProperties() as $property) {
@@ -58,7 +59,11 @@ final class ArrayToObjectMapper implements Mapper
 
             $propertyName = $this->resolvePropertyName($property, $from);
 
-            if (! array_key_exists($propertyName, $from)) {
+            $isMissing = ! array_key_exists($propertyName, $from);
+
+            if ($isMissing && ($getHook = $property->getGetHook())) {
+                $from[$propertyName] = $getHook->invokeArgs($targetObject);
+            } elseif ($isMissing) {
                 $this->handleMissingProperty(
                     property: $property,
                     propertyName: $propertyName,
@@ -70,10 +75,14 @@ final class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $property->setValue(
-                object: $targetObject,
-                value: $this->resolveValue($property, $from[$propertyName]),
-            );
+            if (($setHook = $property->getSetHook()) && $setHook->getParameter(0)?->getType()->accepts($from[$propertyName])) {
+                $setHook->invokeArgs($targetObject, [$from[$propertyName]]);
+            } else {
+                $property->setValue(
+                    object: $targetObject,
+                    value: $this->resolveValue($property, $from[$propertyName]),
+                );
+            }
         }
 
         if ($missingValues !== []) {
@@ -88,6 +97,10 @@ final class ArrayToObjectMapper implements Mapper
             }
 
             if ($property->isReadonly()) {
+                continue;
+            }
+
+            if ($property->isHooked()) {
                 continue;
             }
 

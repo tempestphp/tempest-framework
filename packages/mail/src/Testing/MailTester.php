@@ -236,7 +236,7 @@ final class MailTester
     /**
      * Asserts that the email has the given priority.
      */
-    public function assertPriority(null|int|EmailPriority $priority): self
+    public function assertPriority(int|EmailPriority|null $priority): self
     {
         if ($priority instanceof EmailPriority) {
             $priority = $priority->value;
@@ -412,7 +412,7 @@ final class MailTester
         return $this;
     }
 
-    private function assertAddressListContains(null|string|array|EmailAddress $haystack, string|array $needles, string $message): self
+    private function assertAddressListContains(string|array|EmailAddress|null $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
         $haystack = $this->convertAddresses($haystack);
@@ -428,7 +428,7 @@ final class MailTester
         return $this;
     }
 
-    private function assertAddressListDoesNotContain(null|string|array|EmailAddress $haystack, string|array $needles, string $message): self
+    private function assertAddressListDoesNotContain(string|array|EmailAddress|null $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
         $haystack = $this->convertAddresses($haystack);
@@ -444,7 +444,7 @@ final class MailTester
         return $this;
     }
 
-    private function convertAddresses(null|string|array|EmailAddress $addresses): array
+    private function convertAddresses(string|array|EmailAddress|null $addresses): array
     {
         return arr($addresses)
             ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {

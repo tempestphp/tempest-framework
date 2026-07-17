@@ -90,6 +90,8 @@ final readonly class DiscordOAuthController
 
 Of course, this example assumes that the database and an [authenticatable model](../2-features/04-authentication.md#authentication) are configured.
 
+The `map` callback may also accept the access token as its second argument, which is useful for [persisting tokens](#refreshing-an-access-token).
+
 ### Working with the OAuth user
 
 When an OAuth flow is completed and you call `fetchUser`, you will receive an {b`Tempest\Auth\OAuth\OAuthUser`} object containing the user's information from the OAuth provider:
@@ -107,6 +109,33 @@ $user->raw;        // Raw user data from the OAuth provider
 ```
 
 As seen in the example above, you can use this information to create or update a user in your database, or to authenticate them directly.
+
+### Refreshing an access token
+
+Access tokens are short-lived. If the provider issued a refresh token, you can exchange it for a new access token using the `refreshAccessToken` method:
+
+```php
+$token = $this->oauth->refreshAccessToken($refreshToken);
+
+$token->getToken();         // The new access token
+$token->getRefreshToken();  // A new refresh token, if the provider rotates them
+$token->getExpires();       // The new expiration timestamp
+```
+
+Note that Tempest does not store access or refresh tokens, so persisting them is your application's responsibility. To do so, you may use the second parameter of the `map` callback, which receives the {b`League\OAuth2\Client\Token\AccessToken`} obtained during authentication:
+
+```php
+$user = $this->oauth->authenticate(
+    request: $request,
+    map: fn (OAuthUser $user, AccessToken $token): User => query(User::class)->updateOrCreate([
+        'github_id' => $user->id,
+    ], [
+        'github_id' => $user->id,
+        'github_access_token' => $token->getToken(),
+        'github_refresh_token' => $token->getRefreshToken(),
+    ]),
+);
+```
 
 ## Configuring a provider
 

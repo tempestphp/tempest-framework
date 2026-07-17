@@ -10,7 +10,7 @@ use Tempest\Container\Container;
 final class CallableEventHandler
 {
     public function __construct(
-        public null|string|object $event,
+        public string|object|null $event,
         public EventHandler|Closure $handler,
     ) {}
 

@@ -283,7 +283,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function unique(null|Closure|string $key = null, bool $shouldBeStrict = false): self
+    public function unique(Closure|string|null $key = null, bool $shouldBeStrict = false): self
     {
         return $this->createOrModify(namespace\unique($this->value, $key, $shouldBeStrict));
     }

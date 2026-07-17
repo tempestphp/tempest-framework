@@ -30,6 +30,18 @@ final class AuthenticationInstallerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function test_route_decorator_and_middleware_get_published(): void
+    {
+        $this->console
+            ->call('install auth --force --migrate')
+            ->assertSuccess();
+
+        $this->installer
+            ->assertFileExists('App/Authentication/MustBeAuthenticatedMiddleware.php')
+            ->assertFileExists('App/Authentication/MustBeAuthenticated.php');
+    }
+
+    #[Test]
     public function install_oauth_provider_with_migrations(): void
     {
         $this->console

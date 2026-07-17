@@ -101,6 +101,32 @@ final class GenericOAuthClient implements OAuthClient
         }
     }
 
+    public function refreshAccessToken(string $refreshToken): AccessToken
+    {
+        if ($refreshToken === '') {
+            throw OAuthTokenCouldNotBeRetrieved::missingRefreshToken();
+        }
+
+        try {
+            $token = $this->provider->getAccessToken('refresh_token', [
+                'refresh_token' => $refreshToken,
+            ]);
+
+            if ($token instanceof AccessToken) {
+                return $token;
+            }
+
+            return new AccessToken([
+                ...$token->getValues(),
+                'access_token' => $token->getToken(),
+                'refresh_token' => $token->getRefreshToken(),
+                'expires' => $token->getExpires(),
+            ]);
+        } catch (IdentityProviderException $exception) {
+            throw OAuthTokenCouldNotBeRetrieved::fromProviderException($exception);
+        }
+    }
+
     public function fetchUser(AccessToken $token): OAuthUser
     {
         try {
@@ -124,13 +150,12 @@ final class GenericOAuthClient implements OAuthClient
             throw new OAuthStateWasInvalid();
         }
 
-        $user = $this->fetchUser(
-            token: $this->requestAccessToken(
-                code: $request->get('code'),
-            ),
+        $token = $this->requestAccessToken(
+            code: $request->get('code'),
         );
+        $user = $this->fetchUser(token: $token);
 
-        $authenticable = $map($user);
+        $authenticable = $map($user, $token);
 
         $this->authenticator->authenticate($authenticable);
 

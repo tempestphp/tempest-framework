@@ -40,6 +40,6 @@ final class SimpleLogConfig implements LogConfig
         private(set) bool $useLocking = false,
         private(set) ?int $filePermission = null,
         private(set) ?string $prefix = null,
-        private(set) null|UnitEnum|string $tag = null,
+        private(set) UnitEnum|string|null $tag = null,
     ) {}
 }

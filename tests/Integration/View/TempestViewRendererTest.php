@@ -1000,4 +1000,17 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 <em>Test</em></p>'),
         );
     }
+
+    public function test_expressions_attributes_are_escaped(): void
+    {
+        $html = $this->view->render(view(
+            '<a :href="$v">click</a>',
+            v: 'x" onmouseover="alert(document.cookie)',
+        ));
+
+        $this->assertSnippetsMatch(
+            '<a href="x&quot; onmouseover=&quot;alert(document.cookie)">click</a>',
+            $html,
+        );
+    }
 }

@@ -8,6 +8,7 @@ use ArgumentCountError;
 use AssertionError;
 use Closure;
 use Pest\Exceptions\InvalidPestCommand;
+use Pest\Exceptions\TestAlreadyExist;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Tempest\Discovery\Exceptions\DiscoveryClassCouldNotBeResolved;
@@ -208,7 +209,9 @@ final class BootDiscovery
                 } elseif (class_exists($className)) {
                     $input = new ClassReflector($className);
                 }
-            } catch (AssertionError|InvalidPestCommand) { // @phpstan-ignore class.notFound
+
+                // @phpstan-ignore-next-line
+            } catch (AssertionError|InvalidPestCommand|TestAlreadyExist) {
                 // Workaround for Pest test files autoloading.
                 // @mago-expect lint:no-empty-catch-clause
             }

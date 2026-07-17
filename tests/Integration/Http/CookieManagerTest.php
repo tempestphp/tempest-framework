@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
@@ -85,5 +86,17 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
             ->get('/')
             ->assertOk()
             ->assertHeaderMatches('set-cookie', 'key=%s; Expires=Sun, 01-Jan-2023 00:00:01 GMT; Max-Age=1; Domain=test.com; Path=/test; Secure; HttpOnly; SameSite=Strict');
+    }
+
+    #[Test]
+    public function test_cookie_manager_is_reset(): void
+    {
+        $originalCookieManager = $this->container->get(CookieManager::class);
+
+        $this->container->reset();
+
+        $newCookieManager = $this->container->get(CookieManager::class);
+
+        $this->assertNotSame($originalCookieManager, $newCookieManager);
     }
 }

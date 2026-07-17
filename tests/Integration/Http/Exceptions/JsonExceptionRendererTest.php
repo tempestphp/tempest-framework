@@ -78,6 +78,19 @@ final class JsonExceptionRendererTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function validation_failed_with_messages(): void
+    {
+        $response = $this->renderer->render(ValidationFailed::withMessages([
+            'credential' => 'Passkey not valid',
+        ]));
+
+        $this->assertInstanceOf(Json::class, $response);
+        $this->assertSame(Status::UNPROCESSABLE_CONTENT, $response->status);
+        $this->assertSame('Passkey not valid', $response->body['message']);
+        $this->assertSame(['credential' => ['Passkey not valid']], $response->body['errors']);
+    }
+
+    #[Test]
     public function access_denied_with_custom_message(): void
     {
         $response = $this->renderer->render(new AccessWasDenied(

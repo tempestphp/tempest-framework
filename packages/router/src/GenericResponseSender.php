@@ -104,7 +104,7 @@ final readonly class GenericResponseSender implements ResponseSender
         if ($response instanceof File || $response instanceof Download) {
             readfile($body);
         } elseif (is_array($body) || $body instanceof JsonSerializable) {
-            echo json_encode($body);
+            echo Json\encode($body);
         } elseif ($body instanceof View) {
             $this->renderView($response);
         } else {

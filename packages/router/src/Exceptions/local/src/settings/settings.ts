@@ -1,7 +1,7 @@
-import { useLocalStorage } from '@vueuse/core'
+import { useOverlay, useToast } from '@nuxt/ui/composables'
+import { useStorage } from '@vueuse/core'
 import { type } from 'arktype'
 import Dialog from './dialog.vue'
-import { useOverlay, useToast } from '@nuxt/ui/composables';
 
 const overlay = useOverlay()
 
@@ -15,7 +15,15 @@ export const schema = type({
 export type Editor = typeof schema.infer['editor']
 export type Settings = typeof schema.inferIn
 
-export const settings = useLocalStorage<Settings>('tempest:exceptions:settings', {})
+const tryGetLocalStorage = () => {
+	try {
+		return window.localStorage
+	} catch {
+		return
+	}
+}
+
+export const settings = useStorage<Settings>('tempest:exceptions:settings', {}, tryGetLocalStorage())
 
 export async function openFileInEditor(file: string, line?: number) {
 	if (!settings.value.editor) {

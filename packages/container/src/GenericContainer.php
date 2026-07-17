@@ -168,12 +168,12 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function has(string $className, null|string|UnitEnum $tag = null): bool
+    public function has(string $className, string|UnitEnum|null $tag = null): bool
     {
         return isset($this->definitions[$className]) || isset($this->singletonDefinitions[$this->resolveTaggedName($className, $tag)]);
     }
 
-    public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self
+    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
     {
         if ($definition instanceof HasTag) {
             $tag = $definition->tag;
@@ -205,7 +205,7 @@ final class GenericContainer implements Container
      * @throws CircularDependencyEncountered
      * @throws TaggedDependencyCouldNotBeResolved
      */
-    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
+    public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         $this->resolveChain();
 
@@ -354,7 +354,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
+    private function resolve(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         $instance = $this->resolveDependency($className, $tag, ...$params);
 
@@ -365,7 +365,7 @@ final class GenericContainer implements Container
         return $instance;
     }
 
-    private function resolveDependency(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
+    private function resolveDependency(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         $class = new ClassReflector($className);
 
@@ -434,7 +434,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function initializerForClass(ClassReflector $target, null|string|UnitEnum $tag = null): null|Initializer|DynamicInitializer
+    private function initializerForClass(ClassReflector $target, string|UnitEnum|null $tag = null): Initializer|DynamicInitializer|null
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
@@ -536,7 +536,7 @@ final class GenericContainer implements Container
         return $dependencies;
     }
 
-    private function autowireDependency(ParameterReflector $parameter, null|string|UnitEnum $tag, mixed $providedValue = null): mixed
+    private function autowireDependency(ParameterReflector $parameter, string|UnitEnum|null $tag, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
 
@@ -576,7 +576,7 @@ final class GenericContainer implements Container
         throw $lastThrowable ?? new DependencyCouldNotBeAutowired($this->chain, new Dependency($parameter));
     }
 
-    private function autowireObjectDependency(TypeReflector $type, null|string|UnitEnum $tag, mixed $providedValue, bool $lazy): mixed
+    private function autowireObjectDependency(TypeReflector $type, string|UnitEnum|null $tag, mixed $providedValue, bool $lazy): mixed
     {
         // If the provided value is of the right type,
         // don't waste time autowiring, return it!
@@ -671,7 +671,7 @@ final class GenericContainer implements Container
         $this->chain = $this->chain?->clone();
     }
 
-    private function resolveTaggedName(string $className, null|string|UnitEnum $tag): string
+    private function resolveTaggedName(string $className, string|UnitEnum|null $tag): string
     {
         if ($tag instanceof UnitEnum) {
             $tag = $tag->name;
@@ -682,7 +682,7 @@ final class GenericContainer implements Container
             : $className;
     }
 
-    private function resolveDecorator(string $className, mixed $instance, null|string|UnitEnum $tag = null, mixed ...$params): object
+    private function resolveDecorator(string $className, mixed $instance, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
             $decoratorClassReflector = new ClassReflector($decoratorClass);

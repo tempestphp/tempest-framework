@@ -35,9 +35,10 @@ final class FrameworkKernel implements Kernel
     public function __construct(
         public string $root,
         /** @var DiscoveryLocation[] */
-        private array $discoveryLocations = [],
+        private readonly array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
+        private readonly bool $longRunning = false,
     ) {
         $this->container = $container ?? $this->createContainer();
 
@@ -51,6 +52,7 @@ final class FrameworkKernel implements Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
         ?string $internalStorage = null,
+        bool $longRunning = false,
     ): self {
         if (! defined('TEMPEST_START')) {
             define('TEMPEST_START', value: hrtime(as_number: true));
@@ -61,6 +63,7 @@ final class FrameworkKernel implements Kernel
             discoveryLocations: $discoveryLocations,
             container: $container,
             internalStorage: $internalStorage,
+            longRunning: $longRunning,
         )
             ->registerKernel()
             ->validateRoot()
@@ -98,12 +101,23 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function shutdown(int|string $status = ''): never
+    public function shutdown(int|string $status = ''): void
     {
-        $this->finishDeferredTasks()
-            ->event(KernelEvent::SHUTDOWN);
+        $this->event(KernelEvent::SHUTTING_DOWN)
+            ->finishDeferredTasks();
 
-        exit($status);
+        if ($this->longRunning) {
+            $this
+                ->event(KernelEvent::RESETTING)
+                ->resetContainer()
+                ->event(KernelEvent::RESET);
+        }
+
+        $this->event(KernelEvent::SHUTDOWN);
+
+        if (! $this->longRunning) {
+            exit($status);
+        }
     }
 
     public function loadComposer(): self
@@ -232,6 +246,13 @@ final class FrameworkKernel implements Kernel
     public function finishDeferredTasks(): self
     {
         $this->container->invoke(FinishDeferredTasks::class);
+
+        return $this;
+    }
+
+    public function resetContainer(): self
+    {
+        $this->container->reset();
 
         return $this;
     }

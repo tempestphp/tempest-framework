@@ -30,6 +30,7 @@ final class GenericRequestTest extends TestCase
         $this->assertSame($upperCaseValue, $request->headers['uppercase']);
         $this->assertSame($upperCaseValue, $request->headers['UPPerCasE']);
         $this->assertSame($lowerCaseValue, $request->headers['lowercase']);
+        $this->assertNull($request->headers['missing']);
 
         $this->assertSame($upperCaseValue, $request->headers->get('UpperCase'));
         $this->assertEquals(

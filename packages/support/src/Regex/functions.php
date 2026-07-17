@@ -101,7 +101,7 @@ function get_all_matches(
 function get_match(
     Stringable|string $subject,
     Stringable|string $pattern,
-    null|array|Stringable|int|string $match = null,
+    array|Stringable|int|string|null $match = null,
     mixed $default = null,
     int $flags = 0,
     int $offset = 0,

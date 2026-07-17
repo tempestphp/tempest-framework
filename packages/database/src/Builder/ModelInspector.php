@@ -152,7 +152,7 @@ final class ModelInspector
                     continue;
                 }
 
-                if (! $property->isInitialized($this->instance)) {
+                if ($property->getGetHook() === null && ! $property->isInitialized($this->instance)) {
                     continue;
                 }
 
@@ -582,7 +582,7 @@ final class ModelInspector
             }
         }
 
-        return $selectFields;
+        return $selectFields->unique();
     }
 
     public function resolveRelations(string $relationString, string $parent = '', array $visitedPaths = []): array

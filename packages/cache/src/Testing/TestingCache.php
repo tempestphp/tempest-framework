@@ -39,7 +39,7 @@ final class TestingCache implements Cache
         $this->cache = new GenericCache($this->adapter);
     }
 
-    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $duration = null, null|Stringable|string $owner = null): TestingLock
+    public function lock(Stringable|string $key, Duration|DateTimeInterface|null $duration = null, Stringable|string|null $owner = null): TestingLock
     {
         if ($duration instanceof DateTimeInterface) {
             $duration = $duration->since(DateTime::now());
@@ -58,12 +58,12 @@ final class TestingCache implements Cache
         return $this->cache->has($key);
     }
 
-    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, Duration|DateTimeInterface|null $expiration = null): CacheItemInterface
     {
         return $this->cache->put($key, $value, $expiration);
     }
 
-    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
+    public function putMany(iterable $values, Duration|DateTimeInterface|null $expiration = null): array
     {
         return $this->cache->putMany($values, $expiration);
     }
@@ -88,7 +88,7 @@ final class TestingCache implements Cache
         return $this->cache->getMany($key);
     }
 
-    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null, ?Duration $stale = null): mixed
+    public function resolve(Stringable|string $key, Closure $callback, Duration|DateTimeInterface|null $expiration = null, ?Duration $stale = null): mixed
     {
         return $this->cache->resolve($key, $callback, $expiration, $stale);
     }
@@ -196,7 +196,7 @@ final class TestingCache implements Cache
     /**
      * Asserts that the specified lock is being held.
      */
-    public function assertLocked(string|Stringable $key, null|Stringable|string $by = null, null|DateTimeInterface|Duration $for = null): self
+    public function assertLocked(string|Stringable $key, Stringable|string|null $by = null, DateTimeInterface|Duration|null $for = null): self
     {
         $this->lock($key)->assertLocked($by, $for);
 
@@ -206,7 +206,7 @@ final class TestingCache implements Cache
     /**
      * Asserts that the specified lock is not being held.
      */
-    public function assertNotLocked(string|Stringable $key, null|Stringable|string $by = null): self
+    public function assertNotLocked(string|Stringable $key, Stringable|string|null $by = null): self
     {
         $this->lock($key)->assertNotLocked($by);
 

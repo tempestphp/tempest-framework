@@ -38,6 +38,15 @@ final class TempestViewParserTest extends TestCase
         HTML, $parsed->compile());
     }
 
+    public function test_token_collection_treats_null_as_an_existing_offset(): void
+    {
+        $tokens = new TokenCollection();
+        $tokens['nullable'] = null;
+
+        $this->assertTrue(isset($tokens['nullable']));
+        $this->assertNull($tokens['nullable']);
+    }
+
     public function test_parse_self_closing_tag_with_attributes(): void
     {
         $tokens = new TokenCollection([

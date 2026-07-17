@@ -26,14 +26,14 @@ trait IsDatabaseModel
     public PrimaryKey $id;
 
     #[SkipValidation, Virtual]
-    private null|string|UnitEnum $onDatabase = null;
+    private string|UnitEnum|null $onDatabase = null;
 
     /**
      * Returns a query builder targeting the specified database connection.
      *
      * @return QueryBuilder<self>
      */
-    public static function on(null|string|UnitEnum $databaseTag): QueryBuilder
+    public static function on(string|UnitEnum|null $databaseTag): QueryBuilder
     {
         return self::queryBuilder()->onDatabase(databaseTag: $databaseTag);
     }
@@ -41,7 +41,7 @@ trait IsDatabaseModel
     /**
      * Targets a specific database connection for this model instance.
      */
-    public function onDatabase(null|string|UnitEnum $databaseTag): self
+    public function onDatabase(string|UnitEnum|null $databaseTag): self
     {
         $clone = clone $this;
 
@@ -137,8 +137,9 @@ trait IsDatabaseModel
     /**
      * Finds a model instance by its ID. Use through {@see \Tempest\Router\Bindable}.
      */
-    public static function resolve(string $input): ?self
+    public static function resolve(string $input): ?static
     {
+        // @phpstan-ignore-next-line
         return self::queryBuilder()->resolve($input);
     }
 

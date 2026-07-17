@@ -18,6 +18,7 @@ use Tempest\Router\Options;
 use Tempest\Router\Patch;
 use Tempest\Router\Post;
 use Tempest\Router\Put;
+use Tempest\Router\Query;
 use Tempest\Router\Trace;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewModel;
@@ -52,6 +53,7 @@ final readonly class TestController
     #[Options(uri: '/test')]
     #[Patch(uri: '/test')]
     #[Post(uri: '/test')]
+    #[Query(uri: '/test')]
     #[Put(uri: '/test')]
     #[Trace(uri: '/test')]
     public function __invoke(): Response

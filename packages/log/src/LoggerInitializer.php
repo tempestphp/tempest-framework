@@ -15,13 +15,13 @@ use UnitEnum;
 
 final readonly class LoggerInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Logger::class) || $class->getType()->matches(LoggerInterface::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): LoggerInterface|Logger
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): LoggerInterface|Logger
     {
         return new GenericLogger(
             logConfig: $container->get(LogConfig::class, $tag),

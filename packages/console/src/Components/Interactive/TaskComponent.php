@@ -50,7 +50,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
 
     public function __construct(
         readonly string $label,
-        private null|Process|Closure $handler = null,
+        private Process|Closure|null $handler = null,
     ) {
         $this->startedAt = hrtime(as_number: true);
         $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
@@ -166,7 +166,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         }
     }
 
-    private function resolveHandler(null|Process|Closure $handler): ?Closure
+    private function resolveHandler(Process|Closure|null $handler): ?Closure
     {
         if ($handler === null) {
             return null;

@@ -13,13 +13,13 @@ use UnitEnum;
 #[SkipDiscovery]
 final class RestrictedCacheInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
+    public function canInitialize(ClassReflector $class, string|UnitEnum|null $tag): bool
     {
         return $class->getType()->matches(Cache::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Cache
+    public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Cache
     {
         return new RestrictedCache($tag);
     }

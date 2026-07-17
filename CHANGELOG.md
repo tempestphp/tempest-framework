@@ -2,7 +2,145 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.11.6](https://github.com/tempestphp/tempest-framework/compare/v3.11.5..3.11.6)  —  2026-06-06
+## [3.16.0](https://github.com/tempestphp/tempest-framework/compare/v3.15.0..3.16.0)  —  2026-07-17
+
+### 🚀 Features
+
+- **auth**: support refreshing OAuth access tokens (#2204) ([5d3fd62](https://github.com/tempestphp/tempest-framework/commit/5d3fd6289aa9d70598720c9650b5f6c859aa9361))
+- **validation**: support skipping missing properties (#2220) ([4402d14](https://github.com/tempestphp/tempest-framework/commit/4402d14255b4ec1b4115c7f2b6e5e879493dd6c1))
+
+### 🐛 Bug fixes
+
+- **database**: improved hooked property support (#2221) ([84e426e](https://github.com/tempestphp/tempest-framework/commit/84e426e13fc55e0f8e1c1b30994261548357c8cf))
+- preserve null array-access values (#2219) ([f796eee](https://github.com/tempestphp/tempest-framework/commit/f796eee38ef458a3cf25a60be5adbf316d0dc5f0))
+
+
+## [3.15.0](https://github.com/tempestphp/tempest-framework/compare/v3.14.3..v3.15.0)  —  2026-07-16
+
+### 🚀 Features
+
+- **database**: persist hooked properties (#2215) ([f8b489b](https://github.com/tempestphp/tempest-framework/commit/f8b489b6c76e79928e2e916d0ab0e76a4470075d))
+- **http**: support QUERY method (#2212) ([d62342d](https://github.com/tempestphp/tempest-framework/commit/d62342d39c40c670042036ecbb0a2ab9fb75397e))
+
+
+## [3.14.3](https://github.com/tempestphp/tempest-framework/compare/v3.14.2..v3.14.3)  —  2026-07-15
+
+### 🚨 Breaking changes
+
+- **router**: [**breaking**] block all cross-site unsafe requests when using `PreventCrossSiteRequestsMiddleware` (#2210) ([64a5186](https://github.com/tempestphp/tempest-framework/commit/64a5186a4b49ebef8c881aa4a2ab222435f5b89f))
+
+
+## [3.14.2](https://github.com/tempestphp/tempest-framework/compare/v3.14.1..v3.14.2)  —  2026-07-15
+
+### 🚀 Features
+
+- **command-bus**: support async command handlers (#2208) ([a76b3d9](https://github.com/tempestphp/tempest-framework/commit/a76b3d9fb427de7a454dd70e08fb14ef9d5dac53))
+- **validation**: include error messages in ValidationFailed exception message (#2203) ([a919dec](https://github.com/tempestphp/tempest-framework/commit/a919dec4b485a217888badd16ee5b5b307a1cf53))
+
+### 🐛 Bug fixes
+
+- **view**: escape resolved expression attribute values (#2209) ([28218fb](https://github.com/tempestphp/tempest-framework/commit/28218fb63759bc2a359b3180b16bf8750a1775a8))
+
+
+## [3.14.1](https://github.com/tempestphp/tempest-framework/compare/v3.14.0..v3.14.1)  —  2026-07-08
+
+### 🐛 Bug fixes
+
+- **router**: make exception page render in sandboxed/insecure environments (#2200) ([183ee19](https://github.com/tempestphp/tempest-framework/commit/183ee1994d6616c2dcd0f8dbd4890d21da26c9ff))
+
+
+## [3.14.0](https://github.com/tempestphp/tempest-framework/compare/v3.13.2..v3.14.0)  —  2026-07-07
+
+### 🚨 Breaking changes
+
+- **core**: [**breaking**] worker mode support (#2172) ([9b76313](https://github.com/tempestphp/tempest-framework/commit/9b7631315a67f90c2874f420bd34f740f7ca3c35))
+
+
+## [3.13.2](https://github.com/tempestphp/tempest-framework/compare/v3.13.1..v3.13.2)  —  2026-07-07
+
+### 🚀 Features
+
+- **validation**: allow validation failures with messages (#2196) ([8838c1e](https://github.com/tempestphp/tempest-framework/commit/8838c1ecb7bf585b2e176d1163cf643c22999b82))
+
+### 🐛 Bug fixes
+
+- **router**: use `Json\encode` for encoding when sending json responses (#2199) ([97a7811](https://github.com/tempestphp/tempest-framework/commit/97a78116e23d5cb8a23a2dfb66f018c9bfb74e42))
+- **session**: age flash values at the start of the request (#2198) ([9e4a7eb](https://github.com/tempestphp/tempest-framework/commit/9e4a7eb7e0e1effc474ede6172d9291c2d75a1e7))
+
+
+## [3.13.1](https://github.com/tempestphp/tempest-framework/compare/v3.13.0..v3.13.1)  —  2026-06-29
+
+### 🐛 Bug fixes
+
+- **intl**: support using the translator without an event bus (#2193) ([442967e](https://github.com/tempestphp/tempest-framework/commit/442967e8c216cb001c8d7cd9c2a1d2cda28b9a8b))
+
+
+## [3.13.0](https://github.com/tempestphp/tempest-framework/compare/v3.12.3..v3.13.0)  —  2026-06-25
+
+### 🚀 Features
+
+- **auth**: add middleware and route decorator to auth installer (#2187) ([527f0ae](https://github.com/tempestphp/tempest-framework/commit/527f0ae16f94fcbea0ff5b3301ab50ae6f49228c))
+
+
+## [3.12.3](https://github.com/tempestphp/tempest-framework/compare/v3.12.2..v3.12.3)  —  2026-06-24
+
+### 🚀 Features
+
+- **testing**: factory datetime support (#2186) ([4d03d86](https://github.com/tempestphp/tempest-framework/commit/4d03d8613da7cf199944b388876087b7559ada86))
+
+
+## [3.12.2](https://github.com/tempestphp/tempest-framework/compare/v3.12.1..v3.12.2)  —  2026-06-24
+
+### 🚀 Features
+
+- **testing**: improved factory support (#2185) ([d03ad6f](https://github.com/tempestphp/tempest-framework/commit/d03ad6fa6fdec4f6225aceb5879cbe54d3fd3d1e))
+
+
+## [3.12.1](https://github.com/tempestphp/tempest-framework/compare/v3.12.0..v3.12.1)  —  2026-06-24
+
+### 🐛 Bug fixes
+
+- **testing**: allow to throw exceptions (#2184) ([69baa88](https://github.com/tempestphp/tempest-framework/commit/69baa887cab6d75e7084420464db0a6396ffcb09))
+
+
+## [3.12.0](https://github.com/tempestphp/tempest-framework/compare/v3.11.9..v3.12.0)  —  2026-06-23
+
+### 🚀 Features
+
+- **testing**: add model factories (#2182) ([4a412ce](https://github.com/tempestphp/tempest-framework/commit/4a412ce7f2a2e402f69f0b6a31f75beecce6d3ca))
+
+### 🐛 Bug fixes
+
+- **database**: model inspector `getSelectFields` returns duplicates (#2183) ([ab45889](https://github.com/tempestphp/tempest-framework/commit/ab458895a86904b891da0ab17363a5ca44c6f26f))
+
+
+## [3.11.9](https://github.com/tempestphp/tempest-framework/compare/v3.11.8..v3.11.9)  —  2026-06-23
+
+### 🚀 Features
+
+- **framework**: add optional AGENTS.md installer (#2181) ([37766a0](https://github.com/tempestphp/tempest-framework/commit/37766a079fcb64c8e09b4844063cb1aa10805036))
+
+
+## [3.11.8](https://github.com/tempestphp/tempest-framework/compare/v3.11.7..v3.11.8)  —  2026-06-22
+
+### 🐛 Bug fixes
+
+- **database**: use correct return type for IsDatabaseModel::resolve (#2178) ([b01cd64](https://github.com/tempestphp/tempest-framework/commit/b01cd64d22b65a622a16bf504c4429b38e65f583))
+- **discovery**: ignore duplicate pest tests during discovery (#2177) ([86e87b4](https://github.com/tempestphp/tempest-framework/commit/86e87b4f2989eae6c713bdaecd5ba415495c70c0))
+
+
+## [3.11.7](https://github.com/tempestphp/tempest-framework/compare/v3.11.6..v3.11.7)  —  2026-06-16
+
+### 🚀 Features
+
+- **http**: add cookie config options to control unencrypted cookie discarding (#2132) ([89e9456](https://github.com/tempestphp/tempest-framework/commit/89e9456fb73ee49d75ef62343a023c8e73dc3b1e))
+
+### 🐛 Bug fixes
+
+- **view**: preserve zero attribute bindings (#2171) ([03b504c](https://github.com/tempestphp/tempest-framework/commit/03b504c730dca4e79b8ef359f8cd460ab0eb0cdc))
+
+
+## [3.11.6](https://github.com/tempestphp/tempest-framework/compare/v3.11.5..v3.11.6)  —  2026-06-06
 
 ### 🚀 Features
 
@@ -280,7 +418,7 @@ All notable changes to this project will be documented in this file.
 - **view**: [**breaking**] improved view component rendering (#1980) ([b830a16](https://github.com/tempestphp/tempest-framework/commit/b830a1601c5d8d3ecd2502e3b49be2e8f6078500))
 
 
-## [3.1.0](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.1.0)  —  2026-02-16
+## [3.0.2](https://github.com/tempestphp/tempest-framework/compare/v3.0.1..v3.0.2)  —  2026-02-16
 
 ### 🚨 Breaking changes
 
@@ -1215,7 +1353,7 @@ All notable changes to this project will be documented in this file.
 - rector (#680) ([7fdff1d](https://github.com/tempestphp/tempest-framework/commit/7fdff1d7be48ab91fb35e1a07434ae54ef47781c))
 
 
-## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-30
+## [1.0.0-alpha.3](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.2..v1.0.0-alpha.3)  —  2024-10-31
 
 ### 🚨 Breaking changes
 

@@ -54,8 +54,23 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
+      - name: Restore PHPStan result cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/phpstan
+          key: "phpstan-result-cache-${{ github.run_id }}"
+          restore-keys: |
+            phpstan-result-cache-
+
       - name: Run PHPStan
         run: vendor/bin/phpstan --error-format=github
+
+      - name: Save PHPStan result cache
+        uses: actions/cache/save@v4
+        if: ${{ !cancelled() }}
+        with:
+          path: .cache/phpstan
+          key: "phpstan-result-cache-${{ github.run_id }}"
 
 #  rector:
 #    name: "Run static analysis: Rector"

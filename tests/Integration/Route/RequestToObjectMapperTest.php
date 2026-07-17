@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\UploadedFile;
+use ReflectionProperty;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToObjectMapper;
@@ -16,6 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\EnumForRequest;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithEnum;
+use Tests\Tempest\Integration\Route\Fixtures\RequestWithOptionalProperties;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
 
 use function Tempest\Mapper\map;
@@ -142,5 +144,35 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         } catch (ValidationFailed $validationFailed) {
             $this->assertInstanceOf(IsNotNull::class, $validationFailed->failingRules['enumParam'][0]->rule);
         }
+    }
+
+    public function test_missing_optional_properties_are_not_initialized(): void
+    {
+        $request = map(new GenericRequest(
+            method: Method::PATCH,
+            uri: '/',
+            body: ['expiryDate' => null],
+        ))->with(
+            RequestToObjectMapper::class,
+        )->to(RequestWithOptionalProperties::class);
+
+        $this->assertFalse(new ReflectionProperty($request, 'title')->isInitialized($request));
+        $this->assertTrue(new ReflectionProperty($request, 'expiryDate')->isInitialized($request));
+        $this->assertNull($request->expiryDate);
+    }
+
+    public function test_present_optional_properties_are_validated(): void
+    {
+        $this->assertException(
+            expectedExceptionClass: ValidationFailed::class,
+            handler: fn () => map(new GenericRequest(
+                method: Method::PATCH,
+                uri: '/',
+                body: ['title' => ''],
+            ))->with(
+                RequestToObjectMapper::class,
+            )->to(RequestWithOptionalProperties::class),
+            assertException: fn (ValidationFailed $exception) => $this->assertArrayHasKey('title', $exception->failingRules),
+        );
     }
 }
