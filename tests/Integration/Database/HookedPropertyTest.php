@@ -66,6 +66,15 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function test_hooked_property_with_dto_via_trait(): void
+    {
+        $this->database->migrate(CreateMigrationsTable::class, HookedModelWithTrait::class);
+
+        $model = HookedModelWithTrait::create();
+        $this->assertSame('default', $model->key->value);
+    }
+
+    #[Test]
     public function test_hooked_property_with_dto_and_provided_value(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithKey::class);
@@ -212,5 +221,40 @@ class HookedModelWithKey implements MigratesUp
         return new CreateTableStatement('hooked_model_with_key')
             ->primary()
             ->dto('key');
+    }
+}
+
+#[Table('hooked_model_with_trait')]
+class HookedModelWithTrait implements MigratesUp
+{
+    use IsDatabaseModel;
+    use HasKey;
+
+    #[Virtual]
+    public string $name = 'hooked_model_with_trait';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('hooked_model_with_trait')
+            ->primary()
+            ->dto('key');
+    }
+}
+
+trait HasKey
+{
+    public Key $key {
+        get {
+            $this->key ??= new Key('default');
+
+            return $this->key;
+        }
+        set(string|Key $value) {
+            if (! $value instanceof Key) {
+                $value = new Key($value);
+            }
+
+            $this->key = $value;
+        }
     }
 }
