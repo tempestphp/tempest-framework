@@ -224,23 +224,6 @@ class HookedModelWithKey implements MigratesUp
     }
 }
 
-#[Table('hooked_model_with_trait')]
-class HookedModelWithTrait implements MigratesUp
-{
-    use IsDatabaseModel;
-    use HasKey;
-
-    #[Virtual]
-    public string $name = 'hooked_model_with_trait';
-
-    public function up(): QueryStatement
-    {
-        return new CreateTableStatement('hooked_model_with_trait')
-            ->primary()
-            ->dto('key');
-    }
-}
-
 trait HasKey
 {
     public Key $key {
@@ -256,5 +239,22 @@ trait HasKey
 
             $this->key = $value;
         }
+    }
+}
+
+#[Table('hooked_model_with_trait')]
+class HookedModelWithTrait implements MigratesUp
+{
+    use IsDatabaseModel;
+    use HasKey;
+
+    #[Virtual]
+    public string $name = 'hooked_model_with_trait';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('hooked_model_with_trait')
+            ->primary()
+            ->dto('key');
     }
 }
