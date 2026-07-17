@@ -152,7 +152,7 @@ final class ModelInspector
                     continue;
                 }
 
-                if (! $property->isInitialized($this->instance)) {
+                if ($property->getGetHook() === null && ! $property->isInitialized($this->instance)) {
                     continue;
                 }
 

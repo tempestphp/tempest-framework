@@ -13,6 +13,9 @@ use Tempest\Database\Virtual;
 use Tempest\Mapper\SerializeAs;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Database\inspect;
+use function Tempest\Database\query;
+
 final class HookedPropertyTest extends FrameworkIntegrationTestCase
 {
     #[Test]
@@ -59,7 +62,6 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithKey::class);
 
         $model = HookedModelWithKey::create();
-
         $this->assertSame('default', $model->key->value);
     }
 
@@ -85,6 +87,65 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame('other', $model->key->value);
+    }
+
+    #[Test]
+    public function test_with_inspect(): void
+    {
+        $values = inspect(new HookedModel())->getPropertyValues();
+
+        $this->assertSame(['hooked' => 'default'], $values);
+    }
+
+    #[Test]
+    public function test_with_create_query_builder(): void
+    {
+        $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
+
+        $model = query(HookedModel::class)->create(
+            hooked: 'other',
+        );
+
+        $this->assertSame('other', $model->hooked);
+
+        $this->database->assertTableHasRow(
+            'hooked_model',
+            hooked: 'other',
+        );
+    }
+
+    #[Test]
+    public function test_default_with_create_query_builder(): void
+    {
+        $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
+
+        $model = query(HookedModel::class)->create();
+
+        $this->assertSame('default', $model->hooked);
+
+        $this->database->assertTableHasRow(
+            'hooked_model',
+            hooked: 'default',
+        );
+    }
+
+    #[Test]
+    public function test_with_update_query_builder(): void
+    {
+        $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
+
+        $model = query(HookedModel::class)->create();
+
+        $model->update(
+            hooked: 'other',
+        );
+
+        $this->assertSame('other', $model->hooked);
+
+        $this->database->assertTableHasRow(
+            'hooked_model',
+            hooked: 'other',
+        );
     }
 }
 

@@ -62,9 +62,7 @@ final class ToArrayTest extends TestCase
 
             public function offsetGet($offset): mixed
             {
-                return array_key_exists($offset, $this->data)
-                    ? $this->data[$offset]
-                    : null;
+                return $this->data[$offset] ?? null;
             }
 
             public function offsetSet($offset, $value): void
@@ -104,9 +102,7 @@ final class ToArrayTest extends TestCase
 
             public function offsetGet($offset): mixed
             {
-                return array_key_exists($offset, $this->data)
-                    ? $this->data[$offset]
-                    : null;
+                return $this->data[$offset] ?? null;
             }
 
             public function offsetSet($offset, $value): void
