@@ -76,6 +76,22 @@ final class Book
 }
 ```
 
+Use {b`#[Tempest\Validation\SkipIfMissing]`} when a property should only be validated when its value is present. Missing properties remain uninitialized when mapping, which is useful for partial updates.
+
+```php
+use Tempest\Validation\Rules\IsNotEmptyString;
+use Tempest\Validation\SkipIfMissing;
+
+final class UpdateBook
+{
+    #[SkipIfMissing, IsNotEmptyString]
+    public string $title;
+
+    #[SkipIfMissing]
+    public ?DateTime $publishedAt;
+}
+```
+
 ## Validating an existing object instance
 
 When you already have an instantiated object, you may use the `validateObject()` method. Unlike `validateValuesForClass()`, this method takes an object instance and reads the actual values of its public properties directly.
