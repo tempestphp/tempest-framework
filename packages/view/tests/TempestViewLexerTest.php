@@ -393,6 +393,22 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_source_mapping_line_count(): void
+    {
+        $tokens = iterator_to_array(
+            new TempestViewLexer("<div>\n<span></span>\n</div>")->lex(),
+        );
+
+        $this->assertSame(1, $tokens[0]->line);
+        $this->assertSame(1, $tokens[1]->line);
+        $this->assertSame(1, $tokens[2]->line);
+        $this->assertSame(2, $tokens[3]->line);
+        $this->assertSame(2, $tokens[4]->line);
+        $this->assertSame(2, $tokens[5]->line);
+        $this->assertSame(2, $tokens[6]->line);
+        $this->assertSame(3, $tokens[7]->line);
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);

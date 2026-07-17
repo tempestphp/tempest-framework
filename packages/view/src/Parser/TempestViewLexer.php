@@ -88,6 +88,11 @@ final class TempestViewLexer
 
         if ($length === 1) {
             $char = $this->html[$this->position++] ?? null;
+
+            if ($char === "\n") {
+                $this->line++;
+            }
+
             $this->current = $this->html[$this->position] ?? null;
             return $char ?? '';
         }
