@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\Core;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\src_path;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 use function Tempest\Support\str;

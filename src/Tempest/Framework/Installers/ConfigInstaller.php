@@ -8,14 +8,14 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\PublishesFiles;
 use Tempest\Support\Str\ImmutableString;
 
-use function Tempest\root_path;
 use function Tempest\src_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class ConfigInstaller
 {
-    use HasConsole, PublishesFiles;
+    use HasConsole;
+    use PublishesFiles;
 
     public function __construct(
         private readonly LoadConfig $loadConfig,
@@ -39,7 +39,6 @@ final class ConfigInstaller
             options: $searchOptions->keys(),
             multiple: true,
         );
-
 
         foreach ($selected as $selectedItem) {
             $newPath = $searchOptions[$selectedItem] ?? null;
