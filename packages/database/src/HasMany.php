@@ -105,23 +105,18 @@ final class HasMany implements Relation
         if ($this->isSelfReferencing()) {
             return new JoinStatement(sprintf(
                 'LEFT JOIN %s AS %s ON %s = %s',
-                $ownerModel->getTableName(),
-                $this->property->getName(),
-                $ownerJoin,
-                $relationJoin,
+                $this->quoteIdentifier($ownerModel->getTableName()),
+                $this->quoteIdentifier($this->property->getName()),
+                $this->quoteIdentifier($ownerJoin),
+                $this->quoteIdentifier($relationJoin),
             ));
         }
 
-        $tableName = $ownerModel->getTableName();
-        $tableRef = $tableAlias !== $tableName
-            ? sprintf('%s AS %s', $tableName, $tableAlias)
-            : $tableName;
-
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $tableRef,
-            $ownerJoin,
-            $relationJoin,
+            $this->quoteTableReference($ownerModel->getTableName(), $tableAlias),
+            $this->quoteIdentifier($ownerJoin),
+            $this->quoteIdentifier($relationJoin),
         ));
     }
 
@@ -171,13 +166,16 @@ final class HasMany implements Relation
         $relatedTable = $relatedModel->getTableName();
         $parentTable = $parentModel->getTableName();
         $parentPK = $parentModel->getPrimaryKey();
-
-        $fk = $this->ownerJoin ?? str(string: $parentTable)->singularizeLastWord()->append(suffix: "_{$parentPK}");
+        $fk = (string) ($this->ownerJoin ?? str(string: $parentTable)->singularizeLastWord()->append(suffix: "_{$parentPK}"));
 
         return new WhereExistsStatement(
-            relatedTable: $relatedTable,
+            relatedTable: $this->quoteIdentifier($relatedTable),
             relatedModelName: $relatedModel->getName(),
-            condition: "{$relatedTable}.{$fk} = {$parentTable}.{$parentPK}",
+            condition: sprintf(
+                '%s = %s',
+                $this->qualifyIdentifier($fk, $relatedTable),
+                $this->qualifyIdentifier((string) $parentPK, $parentTable),
+            ),
         );
     }
 

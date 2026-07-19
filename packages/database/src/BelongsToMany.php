@@ -165,12 +165,12 @@ final class BelongsToMany implements Relation
     ): string {
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $pivotTable,
-            $this->resolveOwnerJoin(
+            $this->quoteIdentifier($pivotTable),
+            $this->quoteIdentifier($this->resolveOwnerJoin(
                 ownerModel: $ownerModel,
                 pivotTable: $pivotTable,
-            ),
-            $this->resolveRelationJoin(ownerModel: $ownerModel),
+            )),
+            $this->quoteIdentifier($this->resolveRelationJoin(ownerModel: $ownerModel)),
         );
     }
 
@@ -182,22 +182,17 @@ final class BelongsToMany implements Relation
         string $pivotTable,
         string $tableAlias,
     ): string {
-        $tableName = $targetModel->getTableName();
-        $tableRef = $tableAlias !== $tableName
-            ? sprintf('%s AS %s', $tableName, $tableAlias)
-            : $tableName;
-
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $tableRef,
-            $this->resolveRelatedRelationJoin(
+            $this->quoteTableReference($targetModel->getTableName(), $tableAlias),
+            $this->quoteIdentifier($this->resolveRelatedRelationJoin(
                 targetModel: $targetModel,
                 tableAlias: $tableAlias,
-            ),
-            $this->resolveRelatedOwnerJoin(
+            )),
+            $this->quoteIdentifier($this->resolveRelatedOwnerJoin(
                 targetModel: $targetModel,
                 pivotTable: $pivotTable,
-            ),
+            )),
         );
     }
 
@@ -389,11 +384,20 @@ final class BelongsToMany implements Relation
         $targetFK = $this->relatedOwnerJoin ?? str(string: $targetTable)->singularizeLastWord()->append(suffix: "_{$targetPK}");
 
         return new WhereExistsStatement(
-            relatedTable: $pivotTable,
+            relatedTable: $this->quoteIdentifier($pivotTable),
             relatedModelName: $targetModel->getName(),
-            condition: "{$pivotTable}.{$fk} = {$ownerTable}.{$ownerPK}",
+            condition: sprintf(
+                '%s = %s',
+                $this->qualifyIdentifier((string) $fk, $pivotTable),
+                $this->qualifyIdentifier((string) $ownerPK, $ownerTable),
+            ),
             joinStatement: new JoinStatement(
-                statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetPK} = {$pivotTable}.{$targetFK}",
+                statement: sprintf(
+                    'INNER JOIN %s ON %s = %s',
+                    $this->quoteIdentifier($targetTable),
+                    $this->qualifyIdentifier((string) $targetPK, $targetTable),
+                    $this->qualifyIdentifier((string) $targetFK, $pivotTable),
+                ),
             ),
         );
     }
@@ -416,12 +420,11 @@ final class BelongsToMany implements Relation
             ->onDatabase(databaseTag: $onDatabase)
             ->scope(scope: new WhereRawScope(
                 statement: sprintf(
-                    '%s.%s IN (SELECT %s FROM %s WHERE %s = ?)',
-                    $targetTable,
-                    $targetPK,
-                    $targetFK,
-                    $pivotTable,
-                    $ownerFK,
+                    '%s IN (SELECT %s FROM %s WHERE %s = ?)',
+                    $this->qualifyIdentifier((string) $targetPK, $targetTable),
+                    $this->quoteIdentifier((string) $targetFK),
+                    $this->quoteIdentifier($pivotTable),
+                    $this->quoteIdentifier((string) $ownerFK),
                 ),
                 binding: $primaryKey,
             ));

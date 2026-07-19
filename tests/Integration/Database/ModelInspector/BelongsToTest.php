@@ -2,18 +2,65 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Config\PostgresConfig;
+use Tempest\Database\Connection\PDOConnection;
+use Tempest\Database\Database;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
+use Tempest\Database\GenericDatabase;
 use Tempest\Database\HasMany;
 use Tempest\Database\PrimaryKey;
 use Tempest\Database\Table;
+use Tempest\Database\Transactions\GenericTransactionManager;
+use Tempest\EventBus\EventBus;
+use Tempest\Mapper\SerializerFactory;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\inspect;
 
 final class BelongsToTest extends FrameworkIntegrationTestCase
 {
+    #[Test]
+    public function relation_queries_quote_camel_case_identifiers_for_postgresql(): void
+    {
+        $connection = new PDOConnection(new PostgresConfig());
+        $this->container->singleton(
+            Database::class,
+            new GenericDatabase(
+                connection: $connection,
+                transactionManager: new GenericTransactionManager($connection),
+                serializerFactory: $this->container->get(SerializerFactory::class),
+                eventBus: $this->container->get(EventBus::class),
+            ),
+        );
+
+        $items = inspect(PostgresRelationStash::class)->getRelation('items');
+        $stash = inspect(PostgresRelationStashItem::class)->getRelation('stash');
+
+        $this->assertSame(
+            'LEFT JOIN "stash_items" ON "stash_items"."stashId" = "stashes"."id"',
+            $items->getJoinStatement()->compile(DatabaseDialect::POSTGRESQL),
+        );
+        $this->assertSame(
+            'EXISTS (SELECT 1 FROM "stash_items" WHERE "stash_items"."stashId" = "stashes"."id")',
+            $items->getExistsStatement()->compile(DatabaseDialect::POSTGRESQL),
+        );
+        $this->assertSame(
+            'LEFT JOIN "stashes" ON "stashes"."id" = "stash_items"."stashId"',
+            $stash->getJoinStatement()->compile(DatabaseDialect::POSTGRESQL),
+        );
+        $this->assertSame(
+            'EXISTS (SELECT 1 FROM "stashes" WHERE "stashes"."id" = "stash_items"."stashId")',
+            $stash->getExistsStatement()->compile(DatabaseDialect::POSTGRESQL),
+        );
+        $this->assertSame(
+            'SELECT "stashes"."id" AS "stashes.id" FROM "stashes" WHERE "stashes"."id" = (SELECT "stashId" FROM "stash_items" WHERE "stash_items"."id" = ?)',
+            $stash->query(new PrimaryKey(1))->select()->compile()->toString(),
+        );
+    }
+
     public function test_belongs_to(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
@@ -234,6 +281,27 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
             $selectFields[1]->compile(DatabaseDialect::SQLITE),
         );
     }
+}
+
+#[Table('stashes')]
+final class PostgresRelationStash
+{
+    public PrimaryKey $id;
+
+    /** @var \Tests\Tempest\Integration\Database\ModelInspector\PostgresRelationStashItem[] */
+    #[HasMany(ownerJoin: 'stashId')]
+    public array $items = [];
+}
+
+#[Table('stash_items')]
+final class PostgresRelationStashItem
+{
+    public PrimaryKey $id;
+
+    #[BelongsTo(ownerJoin: 'stashId')]
+    public PostgresRelationStash $stash;
+
+    public string $stashId;
 }
 
 #[Table('relation')]

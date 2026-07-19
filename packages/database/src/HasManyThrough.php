@@ -145,12 +145,12 @@ final class HasManyThrough implements Relation
     ): string {
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $intermediateModel->getTableName(),
-            $this->resolveOwnerJoin(
+            $this->quoteIdentifier($intermediateModel->getTableName()),
+            $this->quoteIdentifier($this->resolveOwnerJoin(
                 intermediateModel: $intermediateModel,
                 ownerModel: $ownerModel,
-            ),
-            $this->resolveRelationJoin(ownerModel: $ownerModel),
+            )),
+            $this->quoteIdentifier($this->resolveRelationJoin(ownerModel: $ownerModel)),
         );
     }
 
@@ -159,20 +159,16 @@ final class HasManyThrough implements Relation
         ModelInspector $targetModel,
     ): string {
         $tableAlias = $this->getTableAlias(tableName: $targetModel->getTableName());
-        $tableName = $targetModel->getTableName();
-        $tableRef = $tableAlias !== $tableName
-            ? sprintf('%s AS %s', $tableName, $tableAlias)
-            : $tableName;
 
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $tableRef,
-            $this->resolveThroughOwnerJoin(
+            $this->quoteTableReference($targetModel->getTableName(), $tableAlias),
+            $this->quoteIdentifier($this->resolveThroughOwnerJoin(
                 targetModel: $targetModel,
                 intermediateModel: $intermediateModel,
                 tableAlias: $tableAlias,
-            ),
-            $this->resolveThroughRelationJoin(intermediateModel: $intermediateModel),
+            )),
+            $this->quoteIdentifier($this->resolveThroughRelationJoin(intermediateModel: $intermediateModel)),
         );
     }
 
@@ -355,11 +351,20 @@ final class HasManyThrough implements Relation
         $targetFK = $this->throughOwnerJoin ?? str(string: $intermediateTable)->singularizeLastWord()->append(suffix: "_{$intermediatePK}");
 
         return new WhereExistsStatement(
-            relatedTable: $intermediateTable,
+            relatedTable: $this->quoteIdentifier($intermediateTable),
             relatedModelName: $targetModel->getName(),
-            condition: "{$intermediateTable}.{$fk} = {$ownerTable}.{$ownerPK}",
+            condition: sprintf(
+                '%s = %s',
+                $this->qualifyIdentifier((string) $fk, $intermediateTable),
+                $this->qualifyIdentifier((string) $ownerPK, $ownerTable),
+            ),
             joinStatement: new JoinStatement(
-                statement: "INNER JOIN {$targetTable} ON {$targetTable}.{$targetFK} = {$intermediateTable}.{$intermediatePK}",
+                statement: sprintf(
+                    'INNER JOIN %s ON %s = %s',
+                    $this->quoteIdentifier($targetTable),
+                    $this->qualifyIdentifier((string) $targetFK, $targetTable),
+                    $this->qualifyIdentifier((string) $intermediatePK, $intermediateTable),
+                ),
             ),
         );
     }
@@ -383,10 +388,10 @@ final class HasManyThrough implements Relation
             ->scope(scope: new WhereRawScope(
                 statement: sprintf(
                     '%s IN (SELECT %s FROM %s WHERE %s = ?)',
-                    $relatedTable . '.' . $targetFK,
-                    $intermediatePK,
-                    $intermediateTable,
-                    $ownerFK,
+                    $this->qualifyIdentifier((string) $targetFK, $relatedTable),
+                    $this->quoteIdentifier((string) $intermediatePK),
+                    $this->quoteIdentifier($intermediateTable),
+                    $this->quoteIdentifier((string) $ownerFK),
                 ),
                 binding: $primaryKey,
             ));

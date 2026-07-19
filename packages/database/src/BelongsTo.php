@@ -96,24 +96,18 @@ final class BelongsTo implements Relation
         if ($this->isSelfReferencing()) {
             return new JoinStatement(sprintf(
                 'LEFT JOIN %s AS %s ON %s = %s',
-                $relationModel->getTableName(),
-                $this->property->getName(),
-                $relationJoin,
-                $ownerJoin,
+                $this->quoteIdentifier($relationModel->getTableName()),
+                $this->quoteIdentifier($this->property->getName()),
+                $this->quoteIdentifier($relationJoin),
+                $this->quoteIdentifier($ownerJoin),
             ));
         }
 
-        $tableName = $relationModel->getTableName();
-        $tableRef = $tableAlias !== $tableName
-            ? sprintf('%s AS %s', $tableName, $tableAlias)
-            : $tableName;
-
-        // LEFT JOIN authors ON authors.id = books.author_id
         return new JoinStatement(sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $tableRef,
-            $relationJoin,
-            $ownerJoin,
+            $this->quoteTableReference($relationModel->getTableName(), $tableAlias),
+            $this->quoteIdentifier($relationJoin),
+            $this->quoteIdentifier($ownerJoin),
         ));
     }
 
@@ -153,13 +147,16 @@ final class BelongsTo implements Relation
         $relatedTable = $relatedModel->getTableName();
         $parentTable = $parentModel->getTableName();
         $relatedPK = $relatedModel->getPrimaryKey();
-
         $fk = $this->getOwnerFieldName();
 
         return new WhereExistsStatement(
-            relatedTable: $relatedTable,
+            relatedTable: $this->quoteIdentifier($relatedTable),
             relatedModelName: $relatedModel->getName(),
-            condition: "{$relatedTable}.{$relatedPK} = {$parentTable}.{$fk}",
+            condition: sprintf(
+                '%s = %s',
+                $this->qualifyIdentifier((string) $relatedPK, $relatedTable),
+                $this->qualifyIdentifier($fk, $parentTable),
+            ),
         );
     }
 
@@ -210,13 +207,11 @@ final class BelongsTo implements Relation
             ->onDatabase(databaseTag: $onDatabase)
             ->scope(scope: new WhereRawScope(
                 statement: sprintf(
-                    '%s.%s = (SELECT %s FROM %s WHERE %s.%s = ?)',
-                    $relatedTable,
-                    $relatedPK,
-                    $fk,
-                    $ownerTable,
-                    $ownerTable,
-                    $ownerPK,
+                    '%s = (SELECT %s FROM %s WHERE %s = ?)',
+                    $this->qualifyIdentifier((string) $relatedPK, $relatedTable),
+                    $this->quoteIdentifier($fk),
+                    $this->quoteIdentifier($ownerTable),
+                    $this->qualifyIdentifier((string) $ownerPK, $ownerTable),
                 ),
                 binding: $primaryKey,
             ));

@@ -52,13 +52,18 @@ final readonly class WhereExistsStatement implements QueryStatement
         }
 
         if ($this->useCount) {
-            return "(SELECT COUNT(*) FROM {$fromClause} WHERE {$whereClause}) {$this->operator->value} {$this->count}";
+            $statement = "(SELECT COUNT(*) FROM {$fromClause} WHERE {$whereClause}) {$this->operator->value} {$this->count}";
+        } else {
+            $keyword = $this->negate
+                ? 'NOT EXISTS'
+                : 'EXISTS';
+            $statement = "{$keyword} (SELECT 1 FROM {$fromClause} WHERE {$whereClause})";
         }
 
-        $keyword = $this->negate
-            ? 'NOT EXISTS'
-            : 'EXISTS';
-
-        return "{$keyword} (SELECT 1 FROM {$fromClause} WHERE {$whereClause})";
+        return match ($dialect) {
+            DatabaseDialect::POSTGRESQL => str_replace('`', '"', $statement),
+            DatabaseDialect::SQLITE => str_replace('`', '', $statement),
+            default => $statement,
+        };
     }
 }
