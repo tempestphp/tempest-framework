@@ -10,6 +10,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Router\Get;
 use Tempest\Router\Post;
+use Tempest\Router\WithRelations;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 
@@ -22,6 +23,12 @@ final readonly class BookController
     public function show(Book $book): Response
     {
         return new Ok($book->title);
+    }
+
+    #[Get('/books-with-relations/{book}')]
+    public function showWithRelations(#[WithRelations('author', 'chapters')] Book $book): Response
+    {
+        return new Ok(sprintf('%s:%d', $book->author->name, count($book->chapters)));
     }
 
     #[Post('/books')]

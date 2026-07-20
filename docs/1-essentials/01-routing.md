@@ -163,6 +163,27 @@ final class AircraftController
 }
 ```
 
+Database models may preload relations as part of the route binding query using the {b`#[Tempest\Router\WithRelations]`} parameter attribute:
+
+```php app/AircraftController.php
+use Tempest\Router\Get;
+use Tempest\Router\WithRelations;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Ok;
+use App\Aircraft;
+
+final class AircraftController
+{
+    #[Get('/aircraft/{aircraft}')]
+    public function show(
+        #[WithRelations('manufacturer', 'airline')]
+        Aircraft $aircraft,
+    ): Response {
+        return new Ok($aircraft->manufacturer->name);
+    }
+}
+```
+
 Route binding can be enabled for any class that implements the {b`Tempest\Router\Bindable`} interface, which requires a static `resolve()` method responsible for returning the correct instance.
 
 ```php

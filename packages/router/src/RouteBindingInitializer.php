@@ -37,7 +37,14 @@ final class RouteBindingInitializer implements DynamicInitializer
             throw new RouteBindingFailed();
         }
 
-        $object = $class->callStatic('resolve', $matchedRoute->params[$parameter->getName()]);
+        $withRelations = $parameter->getAttribute(WithRelations::class);
+
+        $input = $matchedRoute->params[$parameter->getName()];
+
+        $object = match ($withRelations) {
+            null => $class->callStatic('resolve', $input),
+            default => $class->callStatic('resolve', $input, relations: $withRelations->relations),
+        };
 
         if ($object === null) {
             throw new RouteBindingFailed();

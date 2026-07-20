@@ -23,11 +23,14 @@ use Tempest\Router\SecFetchMode;
 use Tempest\Router\SecFetchSite;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
+use Tests\Tempest\Fixtures\Events\QueryLogger;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\HeadController;
 use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
@@ -112,6 +115,34 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(Status::OK, $response->status);
         $this->assertSame('Test', $response->body);
+    }
+
+    #[Test]
+    public function route_binding_with_relations(): void
+    {
+        $this->database->migrate(
+            CreateMigrationsTable::class,
+            CreatePublishersTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+        );
+
+        $book = Book::create(
+            title: 'Test',
+            author: new Author(name: 'Brent'),
+        );
+
+        Chapter::create(title: 'Chapter', book: $book);
+
+        QueryLogger::reset();
+
+        $this->http
+            ->get('/books-with-relations/1')
+            ->assertOk()
+            ->assertSee('Brent:1');
+
+        $this->assertCount(1, QueryLogger::$queries);
     }
 
     #[Test]
