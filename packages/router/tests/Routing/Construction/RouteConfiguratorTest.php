@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Construction;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
@@ -25,12 +26,14 @@ final class RouteConfiguratorTest extends TestCase
         $this->subject = new RouteConfigurator();
     }
 
-    public function test_empty(): void
+    #[Test]
+    public function empty(): void
     {
         $this->assertEquals(new RouteConfig(), $this->subject->toRouteConfig());
     }
 
-    public function test_adding_static_routes(): void
+    #[Test]
+    public function adding_static_routes(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 
@@ -80,7 +83,8 @@ final class RouteConfiguratorTest extends TestCase
         $this->assertEquals([], $config->matchingRegexes);
     }
 
-    public function test_adding_dynamic_routes(): void
+    #[Test]
+    public function adding_dynamic_routes(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 

@@ -16,7 +16,8 @@ final class TextBufferTest extends TestCase
 {
     #[TestWith(['Hello', 5])]
     #[TestWith(['', 0])]
-    public function test_construct(string $text, int $cursor): void
+    #[Test]
+    public function construct(string $text, int $cursor): void
     {
         $buffer = new TextBuffer($text);
 
@@ -29,7 +30,8 @@ final class TextBufferTest extends TestCase
     #[TestWith(['', null, ''])]
     #[TestWith(['hi', null, ''])]
     #[TestWith(['hi', 'hi', 'hi'])]
-    public function test_set_text(string $initialText, ?string $nextText = null, ?string $expectedText = null): void
+    #[Test]
+    public function set_text(string $initialText, ?string $nextText = null, ?string $expectedText = null): void
     {
         $buffer = new TextBuffer($initialText);
         $buffer->setText($nextText);
@@ -41,7 +43,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([5, 11, 'Scott ', 'Leon Kennedy', 'Leon Scott Kennedy'])]
     #[TestWith([6, 7, '.', 'Leon S', 'Leon S.'])]
     #[TestWith([0, 1, '0', '123', '0123'])]
-    public function test_input(int $initialCursor, int $expectedCursor, string $input, string $initialText, string $expectedText): void
+    #[Test]
+    public function input(int $initialCursor, int $expectedCursor, string $input, string $initialText, string $expectedText): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -61,7 +64,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([12, 11, 'Hey! Listen!', 'Hey! Listen'])]
     #[TestWith([14, 11, 'My name is Joe', 'My name is '])]
     #[TestWith([7, 5, '$foo = ', '$foo '])]
-    public function test_delete_previous_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
+    #[Test]
+    public function delete_previous_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -83,7 +87,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 3, 'foo-bar-baz', 'foobar-baz'])]
     #[TestWith([4, 4, 'foo-bar-baz', 'foo--baz'])]
     #[TestWith([3, 3, 'foo--baz', 'foobaz'])]
-    public function test_delete_next_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
+    #[Test]
+    public function delete_next_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -100,7 +105,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 3, 'abc', 'abc'])]
     #[TestWith([0, 0, '', ''])]
     #[TestWith([0, 0, '-', ''])]
-    public function test_delete_next_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
+    #[Test]
+    public function delete_next_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -117,7 +123,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 2, 'abc', 'ab'])]
     #[TestWith([0, 0, '', ''])]
     #[TestWith([1, 0, '-', ''])]
-    public function test_delete_previous_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
+    #[Test]
+    public function delete_previous_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -129,7 +136,7 @@ final class TextBufferTest extends TestCase
     }
 
     #[Test]
-    public function test_move_cursor_to_start(): void
+    public function move_cursor_to_start(): void
     {
         $buffer = new TextBuffer('Hello, world!');
         $buffer->moveCursorX(14);
@@ -147,7 +154,7 @@ final class TextBufferTest extends TestCase
     }
 
     #[Test]
-    public function test_move_cursor_to_end(): void
+    public function move_cursor_to_end(): void
     {
         $buffer = new TextBuffer('Hello, world!');
         $buffer->setCursorIndex(0);
@@ -165,7 +172,7 @@ final class TextBufferTest extends TestCase
     }
 
     #[Test]
-    public function test_move_cursor_to_start_of_line(): void
+    public function move_cursor_to_start_of_line(): void
     {
         $buffer = new TextBuffer('Hello, world!');
         $buffer->setCursorIndex(14);
@@ -182,7 +189,7 @@ final class TextBufferTest extends TestCase
     #[TestWith([40, 15])]
     #[TestWith([41, 41])]
     #[TestWith([48, 41])]
-    public function test_move_cursor_to_start_of_line_multiline(int $initial, int $expected): void
+    public function move_cursor_to_start_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
         This is a line
@@ -196,7 +203,7 @@ final class TextBufferTest extends TestCase
     }
 
     #[Test]
-    public function test_move_cursor_to_end_of_line(): void
+    public function move_cursor_to_end_of_line(): void
     {
         $buffer = new TextBuffer('Hello, world!');
         $buffer->setCursorIndex(0);
@@ -214,7 +221,7 @@ final class TextBufferTest extends TestCase
     #[TestWith([41, 48])]
     #[TestWith([45, 48])]
     #[TestWith([48, 48])]
-    public function test_move_cursor_to_end_of_line_multiline(int $initial, int $expected): void
+    public function move_cursor_to_end_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
         This is a line
@@ -235,7 +242,7 @@ final class TextBufferTest extends TestCase
     #[TestWith([0, 1, 1])]
     #[TestWith([0, 13, 13])]
     #[TestWith([4, -4, 0])]
-    public function test_move_cursor_x(int $initialCursor, int $offsetX, int $expectedPosition): void
+    public function move_cursor_x(int $initialCursor, int $offsetX, int $expectedPosition): void
     {
         $buffer = new TextBuffer('Hello, world!');
 
@@ -276,7 +283,8 @@ final class TextBufferTest extends TestCase
     #[TestWith(["different\nline\nlength", 10, [0, 1]])]
     #[TestWith(["different\nline\nlength", 11, [1, 1]])]
     #[TestWith(["different\nline\nlength", 21, [6, 2]])]
-    public function test_relative_cursor_index(string $initialText, int $cursor, array $expectedPoint): void
+    #[Test]
+    public function relative_cursor_index(string $initialText, int $cursor, array $expectedPoint): void
     {
         $buffer = new TextBuffer($initialText);
 
@@ -292,7 +300,8 @@ final class TextBufferTest extends TestCase
     #[TestWith(["different\nline\nlength", 5, 9, [4, 1]])]
     #[TestWith(["different\nline\nlength", 5, 13, [3, 2]])]
     #[TestWith(["different\nline\nlength", 5, 21, [1, 4]])]
-    public function test_relative_cursor_index_with_wrapping(string $initialText, int $maxLineWidth, int $cursor, array $expectedPoint): void
+    #[Test]
+    public function relative_cursor_index_with_wrapping(string $initialText, int $maxLineWidth, int $cursor, array $expectedPoint): void
     {
         $buffer = new TextBuffer($initialText);
 

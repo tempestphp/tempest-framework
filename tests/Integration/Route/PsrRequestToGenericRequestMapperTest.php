@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
@@ -34,7 +35,8 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies, new CookieConfig());
     }
 
-    public function test_generic_request_is_used_when_interface_is_passed(): void
+    #[Test]
+    public function generic_request_is_used_when_interface_is_passed(): void
     {
         $request = $this->mapper->map(
             from: $this->http->makePsrRequest('/'),
@@ -44,7 +46,8 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         $this->assertInstanceOf(GenericRequest::class, $request);
     }
 
-    public function test_raw(): void
+    #[Test]
+    public function raw(): void
     {
         $stream = new Stream(fopen('php://memory', 'r+'));
         $stream->write(json_encode(['foo' => 'bar']));
@@ -66,7 +69,8 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         $this->assertEquals('cookie-value', $request->getCookie('test')?->value);
     }
 
-    public function test_files(): void
+    #[Test]
+    public function files(): void
     {
         $currentPath = __DIR__ . '/Fixtures/upload-current.txt';
 
@@ -102,7 +106,8 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         $this->assertSame('application/octet-stream', $upload->getClientMediaType());
     }
 
-    public function test_body_field_in_body(): void
+    #[Test]
+    public function body_field_in_body(): void
     {
         $request = $this->mapper->map(
             from: $this->http->makePsrRequest(
@@ -117,7 +122,8 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         $this->assertSame(['body' => 'text'], $request->body);
     }
 
-    public function test_unencrypted_cookies_are_discarded(): void
+    #[Test]
+    public function unencrypted_cookies_are_discarded(): void
     {
         $request = $this->mapper->map(
             from: $this->http->makePsrRequest(

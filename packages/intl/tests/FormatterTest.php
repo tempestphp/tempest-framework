@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
@@ -21,7 +22,8 @@ final class FormatterTest extends TestCase
 {
     #[TestWith(['Click {#a href=|https://tempestphp.com|}here{/a}.', 'Click <a href="https://tempestphp.com">here</a>.'])]
     #[TestWith(['This is {#strong}bold{/strong}.', 'This is <strong>bold</strong>.'])]
-    public function test_html_tag_markup(string $input, string $expected): void
+    #[Test]
+    public function html_tag_markup(string $input, string $expected): void
     {
         $formatter = new MessageFormatter(
             markupFormatters: [new HtmlTagFormatter()],
@@ -31,7 +33,8 @@ final class FormatterTest extends TestCase
     }
 
     #[TestWith(['Hello{#br/}World', 'Hello<br />World'])]
-    public function test_void_html_tag_markup(string $input, string $expected): void
+    #[Test]
+    public function void_html_tag_markup(string $input, string $expected): void
     {
         $formatter = new MessageFormatter(
             markupFormatters: [new VoidHtmlTagFormatter()],
@@ -40,7 +43,8 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $formatter->format($input));
     }
 
-    public function test_placeholder_variable(): void
+    #[Test]
+    public function placeholder_variable(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -50,7 +54,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('Hello, Jon!', $value);
     }
 
-    public function test_format_datetime_function_and_parameters(): void
+    #[Test]
+    public function format_datetime_function_and_parameters(): void
     {
         if (! class_exists(DateTime::class)) {
             $this->markTestSkipped('`tempest/datetime` is needed for this test.');
@@ -65,7 +70,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('Today is 2024/01/01.', $value);
     }
 
-    public function test_format_number_function(): void
+    #[Test]
+    public function format_number_function(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -79,7 +85,8 @@ final class FormatterTest extends TestCase
     #[TestWith([0, 'pas d‘avion'])]
     #[TestWith([1, 'un avion'])]
     #[TestWith([5, '5 avions'])]
-    public function test_match_number(int $count, string $expected): void
+    #[Test]
+    public function match_number(int $count, string $expected): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -94,7 +101,8 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $value);
     }
 
-    public function test_default_input(): void
+    #[Test]
+    public function default_input(): void
     {
         $formatter = new MessageFormatter([]);
 
@@ -113,7 +121,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('field is here', $value);
     }
 
-    public function test_unquoted_text(): void
+    #[Test]
+    public function unquoted_text(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -123,7 +132,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('Hello, world!', $value);
     }
 
-    public function test_quoted_text(): void
+    #[Test]
+    public function quoted_text(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -133,7 +143,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('My name is John Doe.', $value);
     }
 
-    public function test_number_matcher(): void
+    #[Test]
+    public function number_matcher(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
         $value = $formatter->format(<<<'TXT'
@@ -146,7 +157,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('You have 1 notification.', $value);
     }
 
-    public function test_number_matcher_exact(): void
+    #[Test]
+    public function number_matcher_exact(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
         $value = $formatter->format(<<<'TXT'
@@ -159,7 +171,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('You have 1 notifications.', $value);
     }
 
-    public function test_local_declaration(): void
+    #[Test]
+    public function local_declaration(): void
     {
         $formatter = new MessageFormatter([new StringFunction()]);
         $value = $formatter->format(<<<'TXT'
@@ -173,7 +186,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('No match', $value);
     }
 
-    public function test_local_declarations_unquoted_literals(): void
+    #[Test]
+    public function local_declarations_unquoted_literals(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -186,7 +200,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('42 number42 _number', $value);
     }
 
-    public function test_local_declarations_quoted_literals(): void
+    #[Test]
+    public function local_declarations_quoted_literals(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -199,7 +214,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('@literal white space {{curly braces}} and \, a backslash', $value);
     }
 
-    public function test_whitespace(): void
+    #[Test]
+    public function whitespace(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -210,7 +226,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('   This is the 5 pattern   ', $value);
     }
 
-    public function test_escape(): void
+    #[Test]
+    public function escape(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -220,7 +237,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('Backslash: \, left curly brace {, right curly brace }', $value);
     }
 
-    public function test_matchers_escape(): void
+    #[Test]
+    public function matchers_escape(): void
     {
         $formatter = new MessageFormatter();
         $value = $formatter->format(<<<'TXT'
@@ -234,7 +252,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('You entered a pipe character.', $value);
     }
 
-    public function test_matchers_number_exact_match(): void
+    #[Test]
+    public function matchers_number_exact_match(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -253,7 +272,8 @@ final class FormatterTest extends TestCase
     #[TestWith([2, '2 dny'])]
     #[TestWith([1.5, '1.5 dne'])]
     #[TestWith([5, '5 dní'])]
-    public function test_matchers_czech(int|float $days, string $expected): void
+    #[Test]
+    public function matchers_czech(int|float $days, string $expected): void
     {
         locale_set_default(Locale::CZECH->value);
 
@@ -271,7 +291,8 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $value);
     }
 
-    public function test_string_function(): void
+    #[Test]
+    public function string_function(): void
     {
         $formatter = new MessageFormatter([
             new StringFunction(),
@@ -293,7 +314,8 @@ final class FormatterTest extends TestCase
     #[TestWith([1, '1'])]
     #[TestWith([1.1, '1.1'])]
     #[TestWith([['name' => 'Jon'], 'Jon'])]
-    public function test_string_formatting(mixed $input, string $expected): void
+    #[Test]
+    public function string_formatting(mixed $input, string $expected): void
     {
         $formatter = new MessageFormatter([new StringFunction()]);
 
@@ -311,7 +333,8 @@ final class FormatterTest extends TestCase
     #[TestWith(['my value', 'My value', 'sentence'])]
     #[TestWith(['my value', 'myValue', 'camel'])]
     #[TestWith(['my value', 'My Value', 'title'])]
-    public function test_string_formatting_options(mixed $input, string $expected, string $style): void
+    #[Test]
+    public function string_formatting_options(mixed $input, string $expected, string $style): void
     {
         $formatter = new MessageFormatter([new StringFunction()]);
 
@@ -322,7 +345,8 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $value);
     }
 
-    public function test_number_currency(): void
+    #[Test]
+    public function number_currency(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -333,7 +357,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('You have $42.00.', $value);
     }
 
-    public function test_shadowing(): void
+    #[Test]
+    public function shadowing(): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -348,7 +373,8 @@ final class FormatterTest extends TestCase
     #[TestWith([0, 'No items.'])]
     #[TestWith([1, '1 item.'])]
     #[TestWith([5, '5 items.'])]
-    public function test_pluralization(int $count, string $expected): void
+    #[Test]
+    public function pluralization(int $count, string $expected): void
     {
         $formatter = new MessageFormatter([$this->createNumberFunction()]);
 
@@ -363,7 +389,8 @@ final class FormatterTest extends TestCase
         $this->assertSame($expected, $value);
     }
 
-    public function test_multiple_selectors(): void
+    #[Test]
+    public function multiple_selectors(): void
     {
         $formatter = new MessageFormatter([
             $this->createNumberFunction(),
@@ -391,7 +418,8 @@ final class FormatterTest extends TestCase
         $this->assertSame('Alice invites Bob and one other person to her party.', $value);
     }
 
-    public function test_custom_function(): void
+    #[Test]
+    public function custom_function(): void
     {
         $formatter = new MessageFormatter([
             new class implements FormattingFunction {

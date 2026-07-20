@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Container\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
@@ -10,7 +11,8 @@ use UnitEnum;
 
 final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_command(): void
+    #[Test]
+    public function command(): void
     {
         $this->console
             ->call(ContainerShowCommand::class)
@@ -19,7 +21,8 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
             ->assertSuccess();
     }
 
-    public function test_with_another_container(): void
+    #[Test]
+    public function with_another_container(): void
     {
         $this->container->singleton(
             Container::class,

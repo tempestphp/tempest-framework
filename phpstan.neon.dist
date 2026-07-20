@@ -8,6 +8,10 @@ services:
         tags:
             - phpat.test
     -
+        class: Tests\Tempest\PHPStan\Rules\TestMethodNameRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Tempest\PHPStan\LazyReadWritePropertiesExtension
         tags:
             - phpstan.properties.readWriteExtension
@@ -27,6 +31,7 @@ parameters:
     excludePaths:
         analyse:
             - packages/upgrade/tests/*/Fixtures/*.php
+            - tests/PHPStan/Rules/data/*.php
             - packages/auth/src/Installer/basic-user
     reportUnmatchedIgnoredErrors: true
 

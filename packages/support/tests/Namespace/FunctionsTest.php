@@ -44,7 +44,8 @@ final class FunctionsTest extends TestCase
     #[TestWith(['src/Tempest/Auth/src/SomeNewClass.php', 'Tempest\\Auth'])]
     #[TestWith(['src/Tempest/Auth/src/SomeDirectory', 'Tempest\\Auth\\SomeDirectory'])]
     #[TestWith(['/foo/bar/src/Tempest/Auth/src/SomeDirectory', 'Tempest\\Auth\\SomeDirectory', '/foo/bar'])]
-    public function test_to_composer_namespace_without_leading_slashed(string $path, string $expected, ?string $root = null): void
+    #[Test]
+    public function to_composer_namespace_without_leading_slashed(string $path, string $expected, ?string $root = null): void
     {
         $namespace = new Psr4Namespace('Tempest\\Auth\\', 'src/Tempest/Auth/src');
 

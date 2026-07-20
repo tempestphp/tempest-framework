@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionMethod;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Actions\RenderConsoleCommand;
@@ -44,7 +45,8 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_render(): void
+    #[Test]
+    public function render(): void
     {
         $handler = new MethodReflector(new ReflectionMethod(new MyConsole(), 'handle'));
 
@@ -60,7 +62,8 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_render_arguments(): void
+    #[Test]
+    public function render_arguments(): void
     {
         $handler = new MethodReflector(new ReflectionMethod(new MyConsole(), 'handle'));
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsLowercase;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsLowercase;
  */
 final class IsLowercaseTest extends TestCase
 {
-    public function test_lowercase(): void
+    #[Test]
+    public function lowercase(): void
     {
         $rule = new IsLowercase();
 

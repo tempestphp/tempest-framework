@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class RedirectTest extends FrameworkIntegrationTestCase
 {
-    public function test_redirect(): void
+    #[Test]
+    public function redirect(): void
     {
         $response = new Redirect('/to');
 
@@ -21,7 +23,8 @@ final class RedirectTest extends FrameworkIntegrationTestCase
         $this->assertSame('/to', $response->getHeader('Location')->values[0]);
     }
 
-    public function test_permanent(): void
+    #[Test]
+    public function permanent(): void
     {
         $response = new Redirect('/to')->permanent();
 

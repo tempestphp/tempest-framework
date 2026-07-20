@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsBoolean;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsBoolean;
  */
 final class IsBooleanTest extends TestCase
 {
-    public function test_boolean(): void
+    #[Test]
+    public function boolean(): void
     {
         $rule = new IsBoolean();
 

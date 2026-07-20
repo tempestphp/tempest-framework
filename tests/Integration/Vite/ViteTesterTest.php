@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Vite;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Vite\Exceptions\DevelopmentServerWasNotRunning;
 use Tempest\Vite\Exceptions\ManifestWasNotFound;
 use Tempest\Vite\TagsResolver\NullTagsResolver;
@@ -17,7 +18,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViteTesterTest extends FrameworkIntegrationTestCase
 {
-    public function test_does_not_throw_if_tag_resolution_is_disabled(): void
+    #[Test]
+    public function does_not_throw_if_tag_resolution_is_disabled(): void
     {
         $this->vite->preventTagResolution();
 
@@ -26,7 +28,8 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->assertEmpty($tags);
     }
 
-    public function test_throws_if_dev_server_not_running_with_tags_resolution(): void
+    #[Test]
+    public function throws_if_dev_server_not_running_with_tags_resolution(): void
     {
         $this->expectException(DevelopmentServerWasNotRunning::class);
 
@@ -36,7 +39,8 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->container->get(Vite::class)->getTags();
     }
 
-    public function test_throws_if_manifest_not_found_with_tags_resolution(): void
+    #[Test]
+    public function throws_if_manifest_not_found_with_tags_resolution(): void
     {
         $this->expectException(ManifestWasNotFound::class);
 
@@ -46,7 +50,8 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->container->get(Vite::class)->getTags();
     }
 
-    public function test_call_creates_specified_files(): void
+    #[Test]
+    public function call_creates_specified_files(): void
     {
         /** @var string|null */
         $path = null;
@@ -68,7 +73,8 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->assertFalse(is_file($path));
     }
 
-    public function test_call_requires_root(): void
+    #[Test]
+    public function call_requires_root(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -78,7 +84,8 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_retains_tags_resolver(): void
+    #[Test]
+    public function retains_tags_resolver(): void
     {
         $this->container->register(TagsResolver::class, fn () => new NullTagsResolver());
 

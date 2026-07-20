@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\EventBus;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Fixtures\Events\ItHappened;
 use Tests\Tempest\Fixtures\Events\ItHappenedHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -15,7 +16,8 @@ use function Tempest\EventBus\event;
  */
 final class EventIntegrationTest extends FrameworkIntegrationTestCase
 {
-    public function test_event(): void
+    #[Test]
+    public function event(): void
     {
         ItHappenedHandler::$itHappened = false;
 

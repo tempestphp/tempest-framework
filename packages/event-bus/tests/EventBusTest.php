@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Container\GenericContainer;
@@ -31,7 +32,8 @@ use function Tempest\EventBus\listen;
  */
 final class EventBusTest extends TestCase
 {
-    public function test_class_based_handlers(): void
+    #[Test]
+    public function class_based_handlers(): void
     {
         $container = new GenericContainer();
 
@@ -60,7 +62,8 @@ final class EventBusTest extends TestCase
         $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
-    public function test_middleware_is_only_triggered_once_per_event_dispatch(): void
+    #[Test]
+    public function middleware_is_only_triggered_once_per_event_dispatch(): void
     {
         $container = new GenericContainer();
 
@@ -88,7 +91,8 @@ final class EventBusTest extends TestCase
         $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
-    public function test_closure_based_handlers(): void
+    #[Test]
+    public function closure_based_handlers(): void
     {
         $container = new GenericContainer();
         $container->singleton(MyService::class, fn () => new MyService('bar'));
@@ -118,7 +122,8 @@ final class EventBusTest extends TestCase
         $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
-    public function test_closure_based_handlers_using_listen_method(): void
+    #[Test]
+    public function closure_based_handlers_using_listen_method(): void
     {
         $container = new GenericContainer();
         $config = new EventBusConfig();
@@ -134,7 +139,8 @@ final class EventBusTest extends TestCase
         $this->assertTrue($hasHappened);
     }
 
-    public function test_closure_based_handlers_using_listen_method_and_first_parameter(): void
+    #[Test]
+    public function closure_based_handlers_using_listen_method_and_first_parameter(): void
     {
         $container = new GenericContainer();
         $config = new EventBusConfig();
@@ -150,7 +156,8 @@ final class EventBusTest extends TestCase
         $this->assertTrue($hasHappened);
     }
 
-    public function test_closure_based_handlers_using_function(): void
+    #[Test]
+    public function closure_based_handlers_using_function(): void
     {
         GenericContainer::setInstance($container = new GenericContainer());
 
@@ -168,7 +175,8 @@ final class EventBusTest extends TestCase
         $this->assertTrue($hasHappened);
     }
 
-    public function test_interface_handlers(): void
+    #[Test]
+    public function interface_handlers(): void
     {
         $container = new GenericContainer();
 
@@ -192,7 +200,8 @@ final class EventBusTest extends TestCase
         $this->assertTrue(EventInterfaceHandler::$itHappened);
     }
 
-    public function test_closure_based_handlers_using_listen_method_and_enums(): void
+    #[Test]
+    public function closure_based_handlers_using_listen_method_and_enums(): void
     {
         $container = new GenericContainer();
         $config = new EventBusConfig();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Installer;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -31,7 +32,8 @@ final class ConsoleInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_console_installer(): void
+    #[Test]
+    public function console_installer(): void
     {
         $this->console->call('install console -f');
 

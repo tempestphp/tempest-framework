@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Status;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Views\ViewModel;
@@ -17,7 +18,8 @@ use function Tempest\View\view;
  */
 final class ViewTest extends FrameworkIntegrationTestCase
 {
-    public function test_render(): void
+    #[Test]
+    public function render(): void
     {
         $view = view(__DIR__ . '/../../Fixtures/Views/overview.view.php')->data(name: 'Brent');
 
@@ -34,7 +36,8 @@ final class ViewTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_render_with_view_model(): void
+    #[Test]
+    public function render_with_view_model(): void
     {
         $view = new ViewModel('Brent');
 
@@ -47,7 +50,8 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function test_custom_view_with_response_data(): void
+    #[Test]
+    public function custom_view_with_response_data(): void
     {
         $this->http
             ->get(uri([TestController::class, 'viewWithResponseData']))

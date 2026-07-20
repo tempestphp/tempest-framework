@@ -8,6 +8,7 @@ use ArrayIterator;
 use DateTimeImmutable;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Reflection\Tests\Fixtures\A;
@@ -24,7 +25,8 @@ use Tempest\Support\Str\ImmutableString;
 final class ReflectionTypeTest extends TestCase
 {
     #[DataProvider('data')]
-    public function test_accepts(string $type, mixed $input, bool $expected): void
+    #[Test]
+    public function accepts(string $type, mixed $input, bool $expected): void
     {
         $this->assertSame(
             expected: $expected,
@@ -45,7 +47,8 @@ final class ReflectionTypeTest extends TestCase
         yield ['?string', null, true];
     }
 
-    public function test_as_class(): void
+    #[Test]
+    public function as_class(): void
     {
         $this->assertSame(
             expected: A::class,
@@ -58,7 +61,8 @@ final class ReflectionTypeTest extends TestCase
         );
     }
 
-    public function test_is_scalar(): void
+    #[Test]
+    public function is_scalar(): void
     {
         $this->assertTrue(new TypeReflector('bool')->isScalar());
         $this->assertTrue(new TypeReflector('string')->isScalar());
@@ -69,20 +73,23 @@ final class ReflectionTypeTest extends TestCase
         $this->assertFalse(new TypeReflector(A::class)->isScalar());
     }
 
-    public function test_is_enum(): void
+    #[Test]
+    public function is_enum(): void
     {
         $this->assertTrue(new TypeReflector(TestEnum::class)->isEnum());
         $this->assertFalse(new TypeReflector(A::class)->isEnum());
     }
 
-    public function test_is_iterable(): void
+    #[Test]
+    public function is_iterable(): void
     {
         $this->assertTrue(new TypeReflector(ArrayIterator::class)->isIterable());
         $this->assertTrue(new TypeReflector('array')->isIterable());
         $this->assertFalse(new TypeReflector('string')->isIterable());
     }
 
-    public function test_is_stringable(): void
+    #[Test]
+    public function is_stringable(): void
     {
         $this->assertTrue(new TypeReflector('string')->isStringable());
         $this->assertTrue(new TypeReflector(Stringable::class)->isStringable());
@@ -90,7 +97,8 @@ final class ReflectionTypeTest extends TestCase
         $this->assertFalse(new TypeReflector('array')->isStringable());
     }
 
-    public function test_is_relation(): void
+    #[Test]
+    public function is_relation(): void
     {
         $this->assertTrue(new TypeReflector(A::class)->isRelation());
         $this->assertFalse(new TypeReflector(TestEnum::class)->isRelation());
@@ -101,7 +109,8 @@ final class ReflectionTypeTest extends TestCase
         $this->assertFalse(new TypeReflector(DateTimeImmutable::class)->isRelation());
     }
 
-    public function test_is_union(): void
+    #[Test]
+    public function is_union(): void
     {
         $this->assertTrue(new TypeReflector('string|int')->isUnion());
         $this->assertTrue(new TypeReflector(A::class . '|' . B::class)->isUnion());
@@ -111,7 +120,8 @@ final class ReflectionTypeTest extends TestCase
         $this->assertFalse(new TypeReflector('string&Stringable')->isUnion());
     }
 
-    public function test_is_intersection(): void
+    #[Test]
+    public function is_intersection(): void
     {
         $this->assertTrue(new TypeReflector('string&Stringable')->isIntersection());
         $this->assertTrue(new TypeReflector(A::class . '&' . B::class)->isIntersection());

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\HttpClient\Tests;
 
 use GuzzleHttp\Psr7\HttpFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -24,7 +25,8 @@ final class GenericHttpClientTest extends TestCase
 
     private HttpFactory $factory;
 
-    public function test_send_request_proxies_to_http_client(): void
+    #[Test]
+    public function send_request_proxies_to_http_client(): void
     {
         $request = new GenericRequest(method: Method::PUT, uri: '/testing-put', body: []);
 
@@ -35,7 +37,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertUri('/testing-put');
     }
 
-    public function test_get_proxies_to_http_client(): void
+    #[Test]
+    public function get_proxies_to_http_client(): void
     {
         $this->client->get('/test-get');
 
@@ -44,7 +47,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertUri('/test-get');
     }
 
-    public function test_get_with_headers_proxies_to_http_client_with_headers(): void
+    #[Test]
+    public function get_with_headers_proxies_to_http_client_with_headers(): void
     {
         $this->client->get('/test-get-with-headers', [
             'X-Tempest' => 'We love Tempest!',
@@ -55,7 +59,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertHeaderEquals('X-Tempest', 'We love Tempest!');
     }
 
-    public function test_head_proxies_to_http_client(): void
+    #[Test]
+    public function head_proxies_to_http_client(): void
     {
         $this->client->head('/test-head');
 
@@ -64,7 +69,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertUri('/test-head');
     }
 
-    public function test_post_proxies_to_http_client(): void
+    #[Test]
+    public function post_proxies_to_http_client(): void
     {
         $this->client->post(uri: '/test-post', body: '{"test":"value"}');
 
@@ -74,7 +80,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertBodyIs('{"test":"value"}');
     }
 
-    public function test_query_proxies_to_http_client(): void
+    #[Test]
+    public function query_proxies_to_http_client(): void
     {
         $this->client->query(
             uri: '/test-query',
@@ -89,7 +96,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertBodyIs('{"filter":"active"}');
     }
 
-    public function test_trace_proxies_to_http_client(): void
+    #[Test]
+    public function trace_proxies_to_http_client(): void
     {
         $this->client->trace('/test-trace');
 
@@ -98,7 +106,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertUri('/test-trace');
     }
 
-    public function test_put_proxies_to_http_client(): void
+    #[Test]
+    public function put_proxies_to_http_client(): void
     {
         $this->client->put(uri: '/test-put', body: '{"test":"test-value"}');
 
@@ -108,7 +117,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertBodyIs('{"test":"test-value"}');
     }
 
-    public function test_patch_proxies_to_http_client(): void
+    #[Test]
+    public function patch_proxies_to_http_client(): void
     {
         $this->client->patch(uri: '/test-patch', body: '{"firstName":"Dwight"}');
 
@@ -118,7 +128,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertBodyIs('{"firstName":"Dwight"}');
     }
 
-    public function test_delete_proxies_to_http_client(): void
+    #[Test]
+    public function delete_proxies_to_http_client(): void
     {
         $this->client->delete(uri: '/test-delete');
 
@@ -127,7 +138,8 @@ final class GenericHttpClientTest extends TestCase
             ->assertUri('/test-delete');
     }
 
-    public function test_options_proxies_to_http_client(): void
+    #[Test]
+    public function options_proxies_to_http_client(): void
     {
         $this->client->options('/test-options');
 

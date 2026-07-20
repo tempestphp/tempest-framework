@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Highlight\LogLanguage;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Highlight\LogLanguage\LogLanguage;
 use Tempest\Console\Highlight\TempestTerminalTheme;
@@ -14,7 +15,8 @@ use Tempest\Highlight\Highlighter;
  */
 final class LogLanguageTest extends TestCase
 {
-    public function test_language(): void
+    #[Test]
+    public function language(): void
     {
         $highlighter = new Highlighter(new TempestTerminalTheme());
 

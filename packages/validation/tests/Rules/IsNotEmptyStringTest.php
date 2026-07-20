@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsNotEmptyString;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsNotEmptyString;
  */
 final class IsNotEmptyStringTest extends TestCase
 {
-    public function test_not_empty(): void
+    #[Test]
+    public function not_empty(): void
     {
         $rule = new IsNotEmptyString();
 

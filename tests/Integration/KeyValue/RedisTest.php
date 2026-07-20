@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\KeyValue;
 
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\Redis;
 use Tempest\KeyValue\Redis\RedisCommandExecuted;
@@ -43,7 +44,8 @@ final class RedisTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_command_is_dispatched(): void
+    #[Test]
+    public function command_is_dispatched(): void
     {
         $this->assertSame('response', $this->redis->command('PING', 'response'));
 

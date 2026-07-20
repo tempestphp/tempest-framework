@@ -16,6 +16,7 @@
     </testsuite>
     <testsuite name="Unit">
       <directory suffix="Test.php">packages/**/tests</directory>
+      <directory suffix="Test.php">tests/PHPStan</directory>
     </testsuite>
   </testsuites>
   <coverage />

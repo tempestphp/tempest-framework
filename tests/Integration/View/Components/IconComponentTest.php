@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\DateTime\Duration;
@@ -29,7 +30,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $iconCache->clear();
     }
 
-    public function test_it_renders_an_icon(): void
+    #[Test]
+    public function it_renders_an_icon(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -49,7 +51,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_downloads_the_icon_from_a_custom_api(): void
+    #[Test]
+    public function it_downloads_the_icon_from_a_custom_api(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -74,7 +77,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_fallback_without_name(): void
+    #[Test]
+    public function fallback_without_name(): void
     {
         $this->assertSame(
             '',
@@ -82,7 +86,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_caches_icons_on_the_first_render(): void
+    #[Test]
+    public function it_caches_icons_on_the_first_render(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -108,7 +113,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_renders_an_icon_from_cache(): void
+    #[Test]
+    public function it_renders_an_icon_from_cache(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -131,7 +137,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_renders_a_debug_comment_in_local_env_when_icon_does_not_exist(): void
+    #[Test]
+    public function it_renders_a_debug_comment_in_local_env_when_icon_does_not_exist(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -149,7 +156,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_renders_an_empty_string__in_non_local_env_when_icon_does_not_exist(): void
+    #[Test]
+    public function it_renders_an_empty_string__in_non_local_env_when_icon_does_not_exist(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -167,7 +175,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_forwards_the_class_attribute(): void
+    #[Test]
+    public function it_forwards_the_class_attribute(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -189,7 +198,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_forwards_the_style_attribute(): void
+    #[Test]
+    public function it_forwards_the_style_attribute(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -211,7 +221,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_handles_width_and_height_together_props(): void
+    #[Test]
+    public function it_handles_width_and_height_together_props(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -233,7 +244,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_fallback_dimensions_when_none_defined_in_any_supported_method(): void
+    #[Test]
+    public function fallback_dimensions_when_none_defined_in_any_supported_method(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -255,7 +267,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_dynamic_data(): void
+    #[Test]
+    public function with_dynamic_data(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
         $mockHttpClient
@@ -280,7 +293,8 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_icon_renders_inside_named_slot_in_a_layout(): void
+    #[Test]
+    public function icon_renders_inside_named_slot_in_a_layout(): void
     {
         $this->view->registerViewComponent('x-test-layout', '<x-index><div><x-slot name="icon" /></div><x-slot /></x-index>');
 

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime\Tests\Exception;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\Exception\InvalidArgumentException;
 
 final class InvalidArgumentExceptionTest extends TestCase
 {
-    public function test_for_year(): void
+    #[Test]
+    public function for_year(): void
     {
         $exception = InvalidArgumentException::forYear(-1);
 
@@ -23,7 +25,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_month(): void
+    #[Test]
+    public function for_month(): void
     {
         $exception = InvalidArgumentException::forMonth(13);
 
@@ -37,7 +40,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_day(): void
+    #[Test]
+    public function for_day(): void
     {
         $exception = InvalidArgumentException::forDay(32, 1, 2021);
 
@@ -51,7 +55,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_hours(): void
+    #[Test]
+    public function for_hours(): void
     {
         $exception = InvalidArgumentException::forHours(24);
 
@@ -62,7 +67,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_minutes(): void
+    #[Test]
+    public function for_minutes(): void
     {
         $exception = InvalidArgumentException::forMinutes(60);
 
@@ -73,7 +79,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_seconds(): void
+    #[Test]
+    public function for_seconds(): void
     {
         $exception = InvalidArgumentException::forSeconds(61);
 
@@ -87,7 +94,8 @@ final class InvalidArgumentExceptionTest extends TestCase
         throw $exception;
     }
 
-    public function test_for_nanoseconds(): void
+    #[Test]
+    public function for_nanoseconds(): void
     {
         $exception = InvalidArgumentException::forNanoseconds(1_000_000_000);
 

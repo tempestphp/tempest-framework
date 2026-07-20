@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Tests\Rules\Fixtures\SomeBackedEnum;
@@ -15,7 +16,8 @@ use UnexpectedValueException;
  */
 final class IsEnumTest extends TestCase
 {
-    public function test_validating_enums(): void
+    #[Test]
+    public function validating_enums(): void
     {
         $rule = new IsEnum(SomeEnum::class);
 
@@ -25,7 +27,8 @@ final class IsEnumTest extends TestCase
         $this->assertTrue($rule->isValid('VALUE_2'));
     }
 
-    public function test_validating_backed_enums(): void
+    #[Test]
+    public function validating_backed_enums(): void
     {
         $rule = new IsEnum(SomeBackedEnum::class);
 
@@ -35,28 +38,32 @@ final class IsEnumTest extends TestCase
         $this->assertTrue($rule->isValid('two'));
     }
 
-    public function test_enum_has_to_exist(): void
+    #[Test]
+    public function enum_has_to_exist(): void
     {
         $this->expectExceptionObject(new UnexpectedValueException(sprintf('The enum parameter must be a valid enum. Was given [%s].', 'Bob')));
 
         new IsEnum('Bob');
     }
 
-    public function test_validating_only_enums(): void
+    #[Test]
+    public function validating_only_enums(): void
     {
         $rule = new IsEnum(SomeEnum::class);
         $this->assertTrue($rule->only(SomeEnum::VALUE_1)->isValid('VALUE_1'));
         $this->assertFalse($rule->only(SomeEnum::VALUE_2)->isValid('VALUE_1'));
     }
 
-    public function test_validating_except_enums(): void
+    #[Test]
+    public function validating_except_enums(): void
     {
         $rule = new IsEnum(SomeEnum::class);
         $this->assertTrue($rule->except(SomeEnum::VALUE_2)->isValid('VALUE_1'));
         $this->assertFalse($rule->except(SomeEnum::VALUE_1)->isValid('VALUE_1'));
     }
 
-    public function test_validating_only_backed_enums(): void
+    #[Test]
+    public function validating_only_backed_enums(): void
     {
         $rule = new IsEnum(SomeBackedEnum::class);
         $this->assertTrue($rule->only(SomeBackedEnum::Test, SomeBackedEnum::Test2)->isValid('one'));
@@ -64,14 +71,16 @@ final class IsEnumTest extends TestCase
         $this->assertFalse($rule->only(SomeBackedEnum::Test2)->isValid('one'));
     }
 
-    public function test_validating_except_backed_enums(): void
+    #[Test]
+    public function validating_except_backed_enums(): void
     {
         $rule = new IsEnum(SomeBackedEnum::class);
         $this->assertTrue($rule->except(SomeBackedEnum::Test2)->isValid('one'));
         $this->assertFalse($rule->except(SomeBackedEnum::Test)->isValid('one'));
     }
 
-    public function test_validating_with_or_null(): void
+    #[Test]
+    public function validating_with_or_null(): void
     {
         $rule = new IsEnum(enum: SomeEnum::class, orNull: true);
 
@@ -80,7 +89,8 @@ final class IsEnumTest extends TestCase
         $this->assertTrue(condition: $rule->isValid(value: 'VALUE_1'));
     }
 
-    public function test_failing_to_validate_with_or_null(): void
+    #[Test]
+    public function failing_to_validate_with_or_null(): void
     {
         $rule = new IsEnum(enum: SomeEnum::class, orNull: false);
 

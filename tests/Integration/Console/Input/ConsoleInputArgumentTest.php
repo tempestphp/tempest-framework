@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Input;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Input\ConsoleInputArgument;
 
@@ -12,7 +13,8 @@ use Tempest\Console\Input\ConsoleInputArgument;
  */
 final class ConsoleInputArgumentTest extends TestCase
 {
-    public function test_parse_named_arguments(): void
+    #[Test]
+    public function parse_named_arguments(): void
     {
         $input = ConsoleInputArgument::fromString('--flag=abc');
         $this->assertSame('abc', $input->value);

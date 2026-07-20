@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -25,7 +26,8 @@ use function Tempest\Database\query;
 
 final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_insert_on_plain_table(): void
+    #[Test]
+    public function insert_on_plain_table(): void
     {
         $query = query('chapters')
             ->insert(title: 'Chapter 01', index: 1)
@@ -44,7 +46,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_insert_with_batch(): void
+    #[Test]
+    public function insert_with_batch(): void
     {
         $arrayOfStuff = [
             ['chapter' => 'Chapter 01', 'index' => 1],
@@ -69,7 +72,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_insert_on_model_table(): void
+    #[Test]
+    public function insert_on_model_table(): void
     {
         $author = new Author(name: 'brent', type: AuthorType::A);
         $query = query(Author::class)
@@ -85,7 +89,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);
     }
 
-    public function test_insert_on_model_table_with_new_relation(): void
+    #[Test]
+    public function insert_on_model_table_with_new_relation(): void
     {
         $book = Book::new(
             title: 'Timeline Taxi',
@@ -110,7 +115,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Brent', $authorQuery->bindings[0]);
     }
 
-    public function test_insert_on_model_table_with_existing_relation(): void
+    #[Test]
+    public function insert_on_model_table_with_existing_relation(): void
     {
         $book = Book::new(
             title: 'Timeline Taxi',
@@ -131,7 +137,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(10, $bookQuery->bindings[1]);
     }
 
-    public function test_then_method(): void
+    #[Test]
+    public function then_method(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -156,7 +163,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Chapter 03', $book->chapters[2]->title);
     }
 
-    public function test_insert_with_non_object_model(): void
+    #[Test]
+    public function insert_with_non_object_model(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -181,7 +189,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         return $query;
     }
 
-    public function test_insert_mapping(): void
+    #[Test]
+    public function insert_mapping(): void
     {
         $author = Author::new(name: 'test');
 
@@ -204,7 +213,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['test'], $query->bindings);
     }
 
-    public function test_insert_with_belongs_to_many_creates_pivot_rows(): void
+    #[Test]
+    public function insert_with_belongs_to_many_creates_pivot_rows(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -236,7 +246,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $pivotCount);
     }
 
-    public function test_insert_skips_has_many_through_property(): void
+    #[Test]
+    public function insert_skips_has_many_through_property(): void
     {
         $tag = Tag::new(label: 'php');
 
@@ -250,7 +261,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['php'], $query->bindings);
     }
 
-    public function test_insert_with_two_relations_to_same_model(): void
+    #[Test]
+    public function insert_with_two_relations_to_same_model(): void
     {
         $transfer = BookTransfer::new(
             sender: Author::new(id: new PrimaryKey(1), name: 'Alice'),
@@ -270,7 +282,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Collaboration', $query->bindings[2]);
     }
 
-    public function test_insert_with_two_relations_to_same_model_one_null(): void
+    #[Test]
+    public function insert_with_two_relations_to_same_model_one_null(): void
     {
         $transfer = BookTransfer::new(
             sender: Author::new(id: new PrimaryKey(1), name: 'Alice'),
@@ -289,7 +302,8 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Solo', $query->bindings[2]);
     }
 
-    public function test_insert_skips_has_one_through_property(): void
+    #[Test]
+    public function insert_skips_has_one_through_property(): void
     {
         $tag = Tag::new(label: 'php');
 

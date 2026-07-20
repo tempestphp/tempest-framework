@@ -7,6 +7,7 @@ namespace Tempest\Intl\Tests;
 use Generator;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Locale;
 
@@ -33,7 +34,8 @@ final class LocaleTest extends TestCase
         }
     }
 
-    public function test_default(): void
+    #[Test]
+    public function default(): void
     {
         foreach (Locale::cases() as $locale) {
             locale_set_default($locale->value);
@@ -42,7 +44,8 @@ final class LocaleTest extends TestCase
         }
     }
 
-    public function test_default_ignores_charset(): void
+    #[Test]
+    public function default_ignores_charset(): void
     {
         locale_set_default('sr_RS.UTF-8');
         $this->assertSame(Locale::SERBIAN_SERBIA, Locale::default());
@@ -58,7 +61,8 @@ final class LocaleTest extends TestCase
         $this->assertSame(Locale::SERBIAN_LATIN_SERBIA, Locale::default());
     }
 
-    public function test_default_ignores_variant(): void
+    #[Test]
+    public function default_ignores_variant(): void
     {
         locale_set_default('sr_RS@ekavsk');
         $this->assertSame(Locale::SERBIAN_SERBIA, Locale::default());
@@ -74,7 +78,8 @@ final class LocaleTest extends TestCase
         $this->assertSame(Locale::SERBIAN_LATIN_SERBIA, Locale::default());
     }
 
-    public function test_default_ignores_extension(): void
+    #[Test]
+    public function default_ignores_extension(): void
     {
         locale_set_default('sr_RS-u-currency-EUR');
         $this->assertSame(Locale::SERBIAN_SERBIA, Locale::default());
@@ -90,7 +95,8 @@ final class LocaleTest extends TestCase
         $this->assertSame(Locale::SERBIAN_LATIN_SERBIA, Locale::default());
     }
 
-    public function test_default_ignores_casing(): void
+    #[Test]
+    public function default_ignores_casing(): void
     {
         locale_set_default('ar_TN');
         $this->assertSame(Locale::ARABIC_TUNISIA, Locale::default());
@@ -120,14 +126,16 @@ final class LocaleTest extends TestCase
         $this->assertSame(Locale::ARABIC_TUNISIA, Locale::default());
     }
 
-    public function test_fallback_to_just_language(): void
+    #[Test]
+    public function fallback_to_just_language(): void
     {
         locale_set_default('zh_CN');
 
         $this->assertSame(Locale::CHINESE, Locale::default());
     }
 
-    public function test_default_fallbacks_to_english(): void
+    #[Test]
+    public function default_fallbacks_to_english(): void
     {
         locale_set_default('xx_XX');
 
@@ -147,7 +155,8 @@ final class LocaleTest extends TestCase
     }
 
     #[DataProvider('getAllLocales')]
-    public function test_it_returns_the_language_and_human_readable_name(Locale $locale): void
+    #[Test]
+    public function it_returns_the_language_and_human_readable_name(Locale $locale): void
     {
         $display_language = $locale->getDisplayLanguage(Locale::ENGLISH);
         $language = $locale->getLanguage();
@@ -186,7 +195,8 @@ final class LocaleTest extends TestCase
     }
 
     #[DataProvider('getLocalesWithScript')]
-    public function test_it_returns_the_script(Locale $locale): void
+    #[Test]
+    public function it_returns_the_script(Locale $locale): void
     {
         $this->assertTrue($locale->hasScript());
         $this->assertNotEmpty($locale->getScript());
@@ -209,7 +219,8 @@ final class LocaleTest extends TestCase
     }
 
     #[DataProvider('getLocalesWithoutScript')]
-    public function test_it_does_not_returns_the_script(Locale $locale): void
+    #[Test]
+    public function it_does_not_returns_the_script(Locale $locale): void
     {
         $this->assertFalse($locale->hasScript());
         $this->assertNull($locale->getScript());
@@ -232,7 +243,8 @@ final class LocaleTest extends TestCase
     }
 
     #[DataProvider('getLocalesWithRegion')]
-    public function test_it_returns_the_region(Locale $locale): void
+    #[Test]
+    public function it_returns_the_region(Locale $locale): void
     {
         $this->assertTrue($locale->hasRegion());
         $this->assertNotEmpty($locale->getRegion());
@@ -256,14 +268,16 @@ final class LocaleTest extends TestCase
     }
 
     #[DataProvider('getLocalesWithoutRegion')]
-    public function test_it_does_not_returns_the_region(Locale $locale): void
+    #[Test]
+    public function it_does_not_returns_the_region(Locale $locale): void
     {
         $this->assertFalse($locale->hasRegion());
         $this->assertNull($locale->getRegion());
         $this->assertNull($locale->getDisplayRegion());
     }
 
-    public function test_current_locale(): void
+    #[Test]
+    public function current_locale(): void
     {
         foreach (Locale::cases() as $locale) {
             locale_set_default($locale->value);

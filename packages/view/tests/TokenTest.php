@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\Token;
@@ -16,7 +17,8 @@ final class TokenTest extends TestCase
     #[TestWith(['div', '<div foo="bar">', TokenType::OPEN_TAG_START])]
     #[TestWith(['div', '</div>', TokenType::CLOSING_TAG])]
     #[TestWith([null, '<?=', TokenType::PHP])]
-    public function test_tag(?string $expectedTag, string $html, TokenType $type): void
+    #[Test]
+    public function tag(?string $expectedTag, string $html, TokenType $type): void
     {
         $this->assertSame($expectedTag, new Token($html, $type)->tag);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\HttpClient;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class HttpClientInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_container_can_initialize_http_client(): void
+    #[Test]
+    public function container_can_initialize_http_client(): void
     {
         $httpClient = $this->container->get(HttpClient::class);
 

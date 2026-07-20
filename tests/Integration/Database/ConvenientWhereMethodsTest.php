@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
@@ -56,7 +57,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_in_with_array(): void
+    #[Test]
+    public function where_in_with_array(): void
     {
         $users = query(User::class)
             ->select()
@@ -71,7 +73,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Charlie', $names);
     }
 
-    public function test_where_in_with_enum_class(): void
+    #[Test]
+    public function where_in_with_enum_class(): void
     {
         $users = query(User::class)
             ->select()
@@ -81,7 +84,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertCount(7, $users);
     }
 
-    public function test_where_in_with_enum_values(): void
+    #[Test]
+    public function where_in_with_enum_values(): void
     {
         $users = query(User::class)
             ->select()
@@ -93,7 +97,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_not_in(): void
+    #[Test]
+    public function where_not_in(): void
     {
         $users = query(User::class)
             ->select()
@@ -105,7 +110,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_between(): void
+    #[Test]
+    public function where_between(): void
     {
         $users = query(User::class)
             ->select()
@@ -118,7 +124,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_not_between(): void
+    #[Test]
+    public function where_not_between(): void
     {
         $users = query(User::class)
             ->select()
@@ -130,7 +137,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_null(): void
+    #[Test]
+    public function where_null(): void
     {
         $users = query(User::class)
             ->select()
@@ -142,7 +150,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertNull($users[0]->email);
     }
 
-    public function test_where_not_null(): void
+    #[Test]
+    public function where_not_null(): void
     {
         $users = query(User::class)
             ->select()
@@ -154,7 +163,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_not(): void
+    #[Test]
+    public function where_not(): void
     {
         $users = query(User::class)
             ->select()
@@ -166,7 +176,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_like(): void
+    #[Test]
+    public function where_like(): void
     {
         $users = query(User::class)
             ->select()
@@ -178,7 +189,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_not_like(): void
+    #[Test]
+    public function where_not_like(): void
     {
         $users = query(User::class)
             ->select()
@@ -191,7 +203,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_or_where_in(): void
+    #[Test]
+    public function or_where_in(): void
     {
         $users = query(User::class)
             ->select()
@@ -207,7 +220,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Grace', $names);
     }
 
-    public function test_or_where_not_in(): void
+    #[Test]
+    public function or_where_not_in(): void
     {
         $users = query(User::class)
             ->select()
@@ -223,7 +237,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Frank', $names);
     }
 
-    public function test_or_where_between(): void
+    #[Test]
+    public function or_where_between(): void
     {
         $users = query(User::class)
             ->select()
@@ -239,7 +254,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Eve', $names);
     }
 
-    public function test_or_where_not_between(): void
+    #[Test]
+    public function or_where_not_between(): void
     {
         $users = query(User::class)
             ->select()
@@ -255,7 +271,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Eve', $names);
     }
 
-    public function test_or_where_null(): void
+    #[Test]
+    public function or_where_null(): void
     {
         $users = query(User::class)
             ->select()
@@ -271,7 +288,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Frank', $names);
     }
 
-    public function test_or_where_not_null(): void
+    #[Test]
+    public function or_where_not_null(): void
     {
         $users = query(User::class)
             ->select()
@@ -284,7 +302,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_or_where_not(): void
+    #[Test]
+    public function or_where_not(): void
     {
         $users = query(User::class)
             ->select()
@@ -301,7 +320,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Frank', $names);
     }
 
-    public function test_or_where_like(): void
+    #[Test]
+    public function or_where_like(): void
     {
         $users = query(User::class)
             ->select()
@@ -316,7 +336,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Alice', $names);
     }
 
-    public function test_or_where_not_like(): void
+    #[Test]
+    public function or_where_not_like(): void
     {
         $users = query(User::class)
             ->select()
@@ -328,7 +349,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Frank', $users[0]->name);
     }
 
-    public function test_complex_where_combination(): void
+    #[Test]
+    public function complex_where_combination(): void
     {
         $users = query(User::class)
             ->select()
@@ -345,7 +367,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_chaining_or_conditions(): void
+    #[Test]
+    public function chaining_or_conditions(): void
     {
         $users = query(User::class)
             ->select()
@@ -362,7 +385,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Grace', $names);
     }
 
-    public function test_where_in_throws_exception_for_invalid_value(): void
+    #[Test]
+    public function where_in_throws_exception_for_invalid_value(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('IN operator requires an array of values');
@@ -373,7 +397,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
             ->all();
     }
 
-    public function test_where_between_throws_exception_for_invalid_array(): void
+    #[Test]
+    public function where_between_throws_exception_for_invalid_array(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('BETWEEN operator requires an array with exactly 2 values');
@@ -384,7 +409,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
             ->all();
     }
 
-    public function test_where_between_throws_exception_for_too_many_values(): void
+    #[Test]
+    public function where_between_throws_exception_for_too_many_values(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('BETWEEN operator requires an array with exactly 2 values');

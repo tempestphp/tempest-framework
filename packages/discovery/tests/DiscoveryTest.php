@@ -3,6 +3,7 @@
 namespace Tempest\Discovery\Tests;
 
 use DI\Container;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Discovery\BootDiscovery;
@@ -22,7 +23,8 @@ final class DiscoveryTest extends TestCase
         MyDiscoveryClass::$discoveredItem = null;
     }
 
-    public function test_standalone_discovery(): void
+    #[Test]
+    public function standalone_discovery(): void
     {
         $container = new GenericContainer();
 
@@ -40,7 +42,8 @@ final class DiscoveryTest extends TestCase
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
     }
 
-    public function test_skip_discovery_with_closure(): void
+    #[Test]
+    public function skip_discovery_with_closure(): void
     {
         $container = new GenericContainer();
 
@@ -72,7 +75,8 @@ final class DiscoveryTest extends TestCase
         $this->assertTrue(DiscoveryForItemWithClosureSkip::$discovered);
     }
 
-    public function test_discovery_with_other_container(): void
+    #[Test]
+    public function discovery_with_other_container(): void
     {
         $container = new Container();
 
@@ -90,7 +94,8 @@ final class DiscoveryTest extends TestCase
         $this->assertSame('check', MyDiscoveryClass::$discoveredItem->name);
     }
 
-    public function test_non_autowired_container_with_fallback(): void
+    #[Test]
+    public function non_autowired_container_with_fallback(): void
     {
         $container = new ContainerWithoutAutowiring();
 

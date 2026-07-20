@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsIPv6;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsIPv6;
  */
 final class IsIPv6Test extends TestCase
 {
-    public function test_ipv6_address(): void
+    #[Test]
+    public function ipv6_address(): void
     {
         $rule = new IsIPv6();
 
@@ -24,7 +26,8 @@ final class IsIPv6Test extends TestCase
         $this->assertFalse($rule->isValid('172.16.0.1'));
     }
 
-    public function test_ip_address_without_private_range(): void
+    #[Test]
+    public function ip_address_without_private_range(): void
     {
         $rule = new IsIPv6(allowPrivateRange: false);
         $this->assertFalse($rule->isValid('fd36:ecf4:e32b:5e21:aaaa:aaaa:aaaa:aaaa'));
@@ -35,7 +38,8 @@ final class IsIPv6Test extends TestCase
         $this->assertTrue($rule->isValid('2a03:b0c0:3:d0::11f5:3001'));
     }
 
-    public function test_ip_address_without_reserved_range(): void
+    #[Test]
+    public function ip_address_without_reserved_range(): void
     {
         $rule = new IsIPv6(allowReservedRange: false);
         $this->assertFalse($rule->isValid('::1'));

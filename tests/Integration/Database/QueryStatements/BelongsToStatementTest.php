@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
@@ -16,7 +17,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class BelongsToStatementTest extends FrameworkIntegrationTestCase
 {
-    public function test_belongs_to_vs_foreign_key(): void
+    #[Test]
+    public function belongs_to_vs_foreign_key(): void
     {
         $customersMigration = new class() implements MigratesUp {
             private(set) string $name = '0001_create_customers';
@@ -59,7 +61,8 @@ final class BelongsToStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_foreign_key_allows_different_column_names(): void
+    #[Test]
+    public function foreign_key_allows_different_column_names(): void
     {
         $categoriesMigration = new class() implements MigratesUp {
             private(set) string $name = '0001_create_categories';

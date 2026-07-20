@@ -29,14 +29,16 @@ final class DateTimeTest extends TestCase
 {
     use DateTimeTestTrait;
 
-    public function test_now(): void
+    #[Test]
+    public function now(): void
     {
         $timestamp = DateTime::now()->getTimestamp();
 
         $this->assertEqualsWithDelta(time(), $timestamp->getSeconds(), 1);
     }
 
-    public function test_today_at(): void
+    #[Test]
+    public function today_at(): void
     {
         $now = DateTime::now();
         $today = DateTime::todayAt(14, 0o0, 0o0);
@@ -49,7 +51,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $today->getNanoseconds());
     }
 
-    public function test_today_at_defaults(): void
+    #[Test]
+    public function today_at_defaults(): void
     {
         $now = DateTime::now();
         $today = DateTime::todayAt(14, 0);
@@ -63,7 +66,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(Timezone::default(), $today->getTimezone());
     }
 
-    public function test_from_parts(): void
+    #[Test]
+    public function from_parts(): void
     {
         $datetime = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 4, 14, 0, 0, 1);
 
@@ -80,7 +84,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame([2024, 2, 4, 14, 0, 0, 1], $datetime->getParts());
     }
 
-    public function test_from_parts_with_defaults(): void
+    #[Test]
+    public function from_parts_with_defaults(): void
     {
         $datetime = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 4);
 
@@ -96,7 +101,8 @@ final class DateTimeTest extends TestCase
     }
 
     #[DataProvider('provide_invalid_component_parts')]
-    public function test_from_parts_with_invalid_component(
+    #[Test]
+    public function from_parts_with_invalid_component(
         string $expectedMessage,
         int $year,
         int $month,
@@ -178,7 +184,8 @@ final class DateTimeTest extends TestCase
         ];
     }
 
-    public function test_from_string(): void
+    #[Test]
+    public function from_string(): void
     {
         $timezone = Timezone::EUROPE_BRUSSELS;
         $datetime = DateTime::fromParts($timezone, 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
@@ -191,7 +198,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($string, $parsed->toString());
     }
 
-    public function test_to_string(): void
+    #[Test]
+    public function to_string(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -210,7 +218,8 @@ final class DateTimeTest extends TestCase
         );
     }
 
-    public function test_format(): void
+    #[Test]
+    public function format(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -226,7 +235,8 @@ final class DateTimeTest extends TestCase
         );
     }
 
-    public function test_parse(): void
+    #[Test]
+    public function parse(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -237,7 +247,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($datetime->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_icu(): void
+    #[Test]
+    public function parse_icu(): void
     {
         $parsed = DateTime::fromPattern('2025-01-01 10:00', pattern: 'yyyy-MM-dd HH:mm');
 
@@ -245,7 +256,8 @@ final class DateTimeTest extends TestCase
         $this->assertEquals(1_735_725_600, $parsed->getTimestamp()->getSeconds());
     }
 
-    public function test_parse_timestamp(): void
+    #[Test]
+    public function parse_timestamp(): void
     {
         $expected = DateTime::fromTimestamp(1_747_670_452_940);
         $parsed = DateTime::parse(1_747_670_452_940);
@@ -254,7 +266,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_from_native(): void
+    #[Test]
+    public function parse_from_native(): void
     {
         $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0);
         $parsed = DateTime::parse(new DateTimeImmutable('2024-01-01 10:00:00'));
@@ -263,7 +276,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_from_native_with_timezone(): void
+    #[Test]
+    public function parse_from_native_with_timezone(): void
     {
         $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0)
             ->convertToTimezone(Timezone::AMERICA_NEW_YORK);
@@ -274,7 +288,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_from_timestamp(): void
+    #[Test]
+    public function parse_from_timestamp(): void
     {
         $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0);
         $parsed = DateTime::fromTimestamp(new DateTimeImmutable('2024-01-01 10:00:00')->getTimestamp());
@@ -283,7 +298,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_from_timestamp_with_timezone(): void
+    #[Test]
+    public function parse_from_timestamp_with_timezone(): void
     {
         $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0)
             ->convertToTimezone(Timezone::AMERICA_NEW_YORK);
@@ -294,7 +310,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_parse_with_timezone(): void
+    #[Test]
+    public function parse_with_timezone(): void
     {
         $datetime = DateTime::fromParts(Timezone::AMERICA_NEW_YORK, 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -305,7 +322,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($datetime->getTimezone(), $parsed->getTimezone());
     }
 
-    public function test_with_date(): void
+    #[Test]
+    public function with_date(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
         $new = $datetime->withDate(2025, Month::MARCH, 5);
@@ -319,7 +337,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getNanoseconds());
     }
 
-    public function test_with_methods(): void
+    #[Test]
+    public function with_methods(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -345,14 +364,16 @@ final class DateTimeTest extends TestCase
         $this->assertSame(100, $new->getNanoseconds());
     }
 
-    public function test_get_era(): void
+    #[Test]
+    public function get_era(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
         $this->assertSame('AD', $datetime->getEra()->value);
     }
 
-    public function test_get_century(): void
+    #[Test]
+    public function get_century(): void
     {
         $this->assertSame(20, DateTime::fromParts(Timezone::default(), 1999, Month::FEBRUARY, 4, 14)->getCentury());
         $this->assertSame(21, DateTime::fromParts(Timezone::default(), 2000, Month::FEBRUARY, 4, 14)->getCentury());
@@ -366,7 +387,8 @@ final class DateTimeTest extends TestCase
     #[TestWith([13, 1, Meridiem::POST_MERIDIEM])]
     #[TestWith([14, 2, Meridiem::POST_MERIDIEM])]
     #[TestWith([23, 11, Meridiem::POST_MERIDIEM])]
-    public function test_get_twelve_hours(int $hour, int $expectedTwelveHour, Meridiem $expectedMeridiem): void
+    #[Test]
+    public function get_twelve_hours(int $hour, int $expectedTwelveHour, Meridiem $expectedMeridiem): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, $hour, 0, 0, 0);
         [$hours, $meridiem] = $datetime->getTwelveHours();
@@ -375,7 +397,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame($expectedMeridiem, $meridiem);
     }
 
-    public function test_get_iso_week(): void
+    #[Test]
+    public function get_iso_week(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -399,7 +422,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(1, $week);
     }
 
-    public function test_plus_methods(): void
+    #[Test]
+    public function plus_methods(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -427,7 +451,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(1, $datetime->plusNanosecond()->getNanoseconds());
     }
 
-    public function test_plus_months_edge_cases(): void
+    #[Test]
+    public function plus_months_edge_cases(): void
     {
         $jan_31th = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 31, 14, 0, 0, 0);
         $febr_29th = $jan_31th->plusMonths(1);
@@ -448,7 +473,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame([14, 0, 0, 0], $april_30th_next_year->getTime());
     }
 
-    public function test_plus_month_overflows(): void
+    #[Test]
+    public function plus_month_overflows(): void
     {
         $jan_31th_2024 = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 31, 14, 0, 0, 0);
         $previous_month = 1;
@@ -465,7 +491,8 @@ final class DateTimeTest extends TestCase
         }
     }
 
-    public function test_minus_methods(): void
+    #[Test]
+    public function minus_methods(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -493,7 +520,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(999_999_999, $datetime->minusNanosecond()->getNanoseconds());
     }
 
-    public function test_minus_months_edge_cases(): void
+    #[Test]
+    public function minus_months_edge_cases(): void
     {
         $febr_29th = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 14, 0, 0, 0);
         $jan_29th = $febr_29th->minusMonths(1);
@@ -527,7 +555,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame([14, 0, 0, 0], $april_30th_previous_year->getTime());
     }
 
-    public function test_minus_month_overflows(): void
+    #[Test]
+    public function minus_month_overflows(): void
     {
         $jan_31th_2024 = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 31, 14, 0, 0, 0);
         $previous_month = 1;
@@ -544,7 +573,8 @@ final class DateTimeTest extends TestCase
         }
     }
 
-    public function test_is_leap_year(): void
+    #[Test]
+    public function is_leap_year(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -555,14 +585,16 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($datetime->isLeapYear());
     }
 
-    public function test_to_rfc3999(): void
+    #[Test]
+    public function to_rfc3999(): void
     {
         $datetime = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
         $this->assertSame('2024-02-04T14:00:00+00:00', $datetime->toRfc3339());
     }
 
-    public function test_equal_including_timezone(): void
+    #[Test]
+    public function equal_including_timezone(): void
     {
         $datetime1 = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
         $datetime2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
@@ -589,7 +621,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($datetime1->equalsIncludingTimezone($datetime2));
     }
 
-    public function test_json_serialize(): void
+    #[Test]
+    public function json_serialize(): void
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
@@ -599,7 +632,8 @@ final class DateTimeTest extends TestCase
         );
     }
 
-    public function test_with_time(): void
+    #[Test]
+    public function with_time(): void
     {
         $date = DateTime::todayAt(14, 0);
         $new = $date->withTime(15, 0);
@@ -610,7 +644,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getNanoseconds());
     }
 
-    public function test_start_of_day(): void
+    #[Test]
+    public function start_of_day(): void
     {
         $date = DateTime::todayAt(14, 0);
         $new = $date->startOfDay();
@@ -621,7 +656,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getNanoseconds());
     }
 
-    public function test_end_of_day(): void
+    #[Test]
+    public function end_of_day(): void
     {
         $date = DateTime::todayAt(14, 0);
         $new = $date->endOfDay();
@@ -632,7 +668,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(999_999_999, $new->getNanoseconds());
     }
 
-    public function test_start_of_week(): void
+    #[Test]
+    public function start_of_week(): void
     {
         $date = DateTime::parse('2025-05-21 12:00');
         $new = $date->startOfWeek();
@@ -642,7 +679,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getHours());
     }
 
-    public function test_end_of_week(): void
+    #[Test]
+    public function end_of_week(): void
     {
         $sunday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
         $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 0, 0, 0);
@@ -651,7 +689,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($monday->isEndOfWeek());
     }
 
-    public function test_end_of_month_edge_cases(): void
+    #[Test]
+    public function end_of_month_edge_cases(): void
     {
         $date = DateTime::parse('2025-02-21 12:00');
         $this->assertSame(2, $date->endOfMonth()->getMonth());
@@ -671,7 +710,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(59, $date->endOfMonth()->getSeconds());
     }
 
-    public function test_timezone_info(): void
+    #[Test]
+    public function timezone_info(): void
     {
         $timeZone = Timezone::EUROPE_BRUSSELS;
         $date = DateTime::fromParts($timeZone, 2024, 0o1, 0o1);
@@ -680,7 +720,8 @@ final class DateTimeTest extends TestCase
         $this->assertEquals($timeZone->getOffset($date), $date->getTimezoneOffset());
     }
 
-    public function test_convert_time_zone(): void
+    #[Test]
+    public function convert_time_zone(): void
     {
         $date = DateTime::fromParts(Timezone::EUROPE_BRUSSELS, 2024, 0o1, 0o1, 1);
         $converted = $date->convertToTimezone($london = Timezone::EUROPE_LONDON);
@@ -693,7 +734,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $converted->getHours());
     }
 
-    public function test_is_same_year(): void
+    #[Test]
+    public function is_same_year(): void
     {
         $date1 = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 12, 0, 0, 0);
         $date2 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 23, 59, 59, 999_999_999);
@@ -704,7 +746,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($date1->isSameYear($date1));
     }
 
-    public function test_is_same_month(): void
+    #[Test]
+    public function is_same_month(): void
     {
         $date1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 1, 12, 0, 0, 0);
         $date2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 23, 59, 59, 999_999_999);
@@ -717,7 +760,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($date1->isSameMonth($date1));
     }
 
-    public function test_is_same_week(): void
+    #[Test]
+    public function is_same_week(): void
     {
         $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
         $wednesday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 7, 12, 0, 0, 0);
@@ -730,7 +774,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($monday->isSameWeek($monday));
     }
 
-    public function test_is_same_day(): void
+    #[Test]
+    public function is_same_day(): void
     {
         $morning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 8, 30, 0, 0);
         $evening = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 20, 45, 30, 123_456_789);
@@ -741,7 +786,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($morning->isSameDay($morning));
     }
 
-    public function test_is_same_hour(): void
+    #[Test]
+    public function is_same_hour(): void
     {
         $time1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 15, 30, 0);
         $time2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 45, 59, 999_999_999);
@@ -754,7 +800,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($time1->isSameHour($time1));
     }
 
-    public function test_is_same_minute(): void
+    #[Test]
+    public function is_same_minute(): void
     {
         $time1 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 30, 15, 0);
         $time2 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 14, 30, 45, 999_999_999);
@@ -767,7 +814,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($time1->isSameMinute($time1));
     }
 
-    public function test_is_next_day(): void
+    #[Test]
+    public function is_next_day(): void
     {
         $today = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
         $tomorrow = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 15, 30, 45, 123_456_789);
@@ -779,7 +827,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($today->isNextDay($tomorrow));
     }
 
-    public function test_is_previous_day(): void
+    #[Test]
+    public function is_previous_day(): void
     {
         $today = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
         $yesterday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 8, 15, 30, 987_654_321);
@@ -791,7 +840,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($today->isPreviousDay($yesterday));
     }
 
-    public function test_is_weekend(): void
+    #[Test]
+    public function is_weekend(): void
     {
         $friday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 9, 12, 0, 0, 0);
         $saturday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 10, 12, 0, 0, 0);
@@ -804,7 +854,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($monday->isWeekend());
     }
 
-    public function test_is_weekday(): void
+    #[Test]
+    public function is_weekday(): void
     {
         $friday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 9, 12, 0, 0, 0);
         $saturday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 10, 12, 0, 0, 0);
@@ -817,7 +868,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($monday->isWeekday());
     }
 
-    public function test_is_first_day_of_month(): void
+    #[Test]
+    public function is_first_day_of_month(): void
     {
         $firstDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 1, 12, 0, 0, 0);
         $secondDay = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 2, 12, 0, 0, 0);
@@ -828,7 +880,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($lastDay->isFirstDayOfMonth());
     }
 
-    public function test_is_last_day_of_month(): void
+    #[Test]
+    public function is_last_day_of_month(): void
     {
         $february28 = DateTime::fromParts(Timezone::default(), 2023, Month::FEBRUARY, 28, 12, 0, 0, 0);
         $february29 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 12, 0, 0, 0);
@@ -843,7 +896,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($may31->isLastDayOfMonth());
     }
 
-    public function test_is_first_day_of_year(): void
+    #[Test]
+    public function is_first_day_of_year(): void
     {
         $newYearsDay = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 0, 0, 0, 0);
         $newYearsDayDifferentTime = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 23, 59, 59, 999_999_999);
@@ -856,7 +910,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($december31->isFirstDayOfYear());
     }
 
-    public function test_is_last_day_of_year(): void
+    #[Test]
+    public function is_last_day_of_year(): void
     {
         $december31 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 0, 0, 0, 0);
         $december31DifferentTime = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 31, 23, 59, 59, 999_999_999);
@@ -869,7 +924,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($january1->isLastDayOfYear());
     }
 
-    public function test_time_of_day_methods(): void
+    #[Test]
+    public function time_of_day_methods(): void
     {
         $earlyMorning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 3, 30, 0, 0);
         $morning = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 9, 30, 0, 0);
@@ -915,7 +971,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($midnight->isNoon());
     }
 
-    public function test_time_edge_cases(): void
+    #[Test]
+    public function time_edge_cases(): void
     {
         $boundary5_59 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 5, 59, 59, 999_999_999);
         $boundary6_00 = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 6, 0, 0, 0);
@@ -939,7 +996,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($boundary22_00->isNight());
     }
 
-    public function test_is_start_and_end_of_week(): void
+    #[Test]
+    public function is_start_and_end_of_week(): void
     {
         $monday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 5, 12, 0, 0, 0);
         $tuesday = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 6, 12, 0, 0, 0);
@@ -957,7 +1015,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($sunday->isEndOfWeek());
     }
 
-    public function test_leap_year_edge_cases_for_last_day_of_month(): void
+    #[Test]
+    public function leap_year_edge_cases_for_last_day_of_month(): void
     {
         $feb28_leap = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 28, 12, 0, 0, 0);
         $feb29_leap = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 29, 12, 0, 0, 0);
@@ -968,7 +1027,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($feb28_nonleap->isLastDayOfMonth());
     }
 
-    public function test_cross_year_same_week(): void
+    #[Test]
+    public function cross_year_same_week(): void
     {
         $dec30_2024 = DateTime::fromParts(Timezone::default(), 2024, Month::DECEMBER, 30, 12, 0, 0, 0);
         $jan5_2025 = DateTime::fromParts(Timezone::default(), 2025, Month::JANUARY, 5, 12, 0, 0, 0);
@@ -978,7 +1038,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($dec30_2024->isSameWeek($jan6_2025));
     }
 
-    public function test_current_relative_date_methods(): void
+    #[Test]
+    public function current_relative_date_methods(): void
     {
         $now = DateTime::now();
         $today = DateTime::todayAt($now->getHours(), $now->getMinutes(), $now->getSeconds());
@@ -998,7 +1059,8 @@ final class DateTimeTest extends TestCase
         $this->assertFalse($tomorrow->isYesterday());
     }
 
-    public function test_current_week_month_year_methods(): void
+    #[Test]
+    public function current_week_month_year_methods(): void
     {
         $now = DateTime::now();
 
@@ -1024,7 +1086,8 @@ final class DateTimeTest extends TestCase
         $this->assertTrue($previousYear->isPreviousYear());
     }
 
-    public function test_timezone_considerations_for_same_methods(): void
+    #[Test]
+    public function timezone_considerations_for_same_methods(): void
     {
         $utc = DateTime::fromParts(Timezone::UTC, 2024, Month::FEBRUARY, 5, 23, 30, 0, 0);
         $brussels = DateTime::fromParts(Timezone::EUROPE_BRUSSELS, 2024, Month::FEBRUARY, 6, 0, 30, 0, 0);

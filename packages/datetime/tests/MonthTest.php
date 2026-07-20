@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\DateTime\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\Month;
 
@@ -13,26 +14,30 @@ final class MonthTest extends TestCase
     use DateTimeTestTrait;
 
     #[DataProvider('provideGetPreviousData')]
-    public function test_get_previous(Month $month, Month $expected): void
+    #[Test]
+    public function get_previous(Month $month, Month $expected): void
     {
         $this->assertSame($expected, $month->getPrevious());
     }
 
     #[DataProvider('provideGetNextData')]
-    public function test_get_next(Month $month, Month $expected): void
+    #[Test]
+    public function get_next(Month $month, Month $expected): void
     {
         $this->assertSame($expected, $month->getNext());
     }
 
     #[DataProvider('provideGetDaysData')]
-    public function test_get_days(Month $month, int $expectedForLeapYear, int $expectedForNonLeapYear): void
+    #[Test]
+    public function get_days(Month $month, int $expectedForLeapYear, int $expectedForNonLeapYear): void
     {
         $this->assertSame($expectedForLeapYear, $month->getLeapYearDays());
         $this->assertSame($expectedForNonLeapYear, $month->getNonLeapYearDays());
     }
 
     #[DataProvider('provideGetDaysForYearData')]
-    public function test_get_days_for_year(Month $month, int $year, int $expected): void
+    #[Test]
+    public function get_days_for_year(Month $month, int $year, int $expected): void
     {
         $this->assertSame($expected, $month->getDaysForYear($year));
     }

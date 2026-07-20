@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
@@ -15,7 +16,8 @@ use function Tempest\Database\query;
 
 final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
 {
-    public function test_deeply_nested_dtos(): void
+    #[Test]
+    public function deeply_nested_dtos(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_spell_structure';
@@ -77,7 +79,8 @@ final class NestedDtoSerializationTest extends FrameworkIntegrationTestCase
         $this->assertSame(EnchantmentLevel::HIGH, $retrieved->structure->components->material->properties->enchantment);
     }
 
-    public function test_nested_dtos_with_mixed_types(): void
+    #[Test]
+    public function nested_dtos_with_mixed_types(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_grimoire';

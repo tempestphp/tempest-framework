@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\MessageFormat\Parser\MessageFormatParser;
 use Tempest\Intl\MessageFormat\Parser\Node\ComplexBody\Matcher;
@@ -16,7 +17,8 @@ use Tempest\Intl\MessageFormat\Parser\Node\SimpleMessage;
 
 final class ParserTest extends TestCase
 {
-    public function test_simple(): void
+    #[Test]
+    public function simple(): void
     {
         $ast = new MessageFormatParser('Hello, world!')->parse();
 
@@ -26,7 +28,8 @@ final class ParserTest extends TestCase
         $this->assertSame('Hello, world!', $ast->pattern->elements[0]->value);
     }
 
-    public function test_local_declaration(): void
+    #[Test]
+    public function local_declaration(): void
     {
         /** @var ComplexMessage $ast */
         $ast = new MessageFormatParser(<<<'MF2'
@@ -49,7 +52,8 @@ final class ParserTest extends TestCase
         $this->assertSame('launch_date', $expression->variable->name->name);
     }
 
-    public function test_input_declaration(): void
+    #[Test]
+    public function input_declaration(): void
     {
         /** @var ComplexMessage $ast */
         $ast = new MessageFormatParser(<<<'MF2'
@@ -85,7 +89,8 @@ final class ParserTest extends TestCase
         $this->assertSame(' three', $thirdVariant->elements[1]->value);
     }
 
-    public function test_function_with_option_quoted_literal(): void
+    #[Test]
+    public function function_with_option_quoted_literal(): void
     {
         $ast = new MessageFormatParser(<<<'MF2'
         Today is {$today :datetime pattern=|yyyy/MM/dd|}.

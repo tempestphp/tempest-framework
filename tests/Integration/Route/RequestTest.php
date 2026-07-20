@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -27,7 +28,8 @@ use function Tempest\Router\uri;
  */
 final class RequestTest extends FrameworkIntegrationTestCase
 {
-    public function test_request_get(): void
+    #[Test]
+    public function request_get(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -66,7 +68,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('2', $request->get('a', 'default'));
     }
 
-    public function test_from_factory(): void
+    #[Test]
+    public function from_factory(): void
     {
         $_COOKIE = [];
 
@@ -91,7 +94,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $this->container->get(Encrypter::class)->decrypt($request->getCookieParams()['test']));
     }
 
-    public function test_custom_request_test(): void
+    #[Test]
+    public function custom_request_test(): void
     {
         $response = $this->http
             ->post(
@@ -106,7 +110,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->body);
     }
 
-    public function test_headers_with_underscores(): void
+    #[Test]
+    public function headers_with_underscores(): void
     {
         $this->http
             ->get(
@@ -119,7 +124,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
             ->assertHeaderMatches('tempest_session_id', 'test');
     }
 
-    public function test_generic_request_can_map_to_custom_request(): void
+    #[Test]
+    public function generic_request_can_map_to_custom_request(): void
     {
         $response = $this->http
             ->post(
@@ -134,7 +140,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->body);
     }
 
-    public function test_custom_request_test_with_validation(): void
+    #[Test]
+    public function custom_request_test_with_validation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -162,7 +169,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $book->title);
     }
 
-    public function test_custom_request_test_with_nested_validation(): void
+    #[Test]
+    public function custom_request_test_with_nested_validation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -192,7 +200,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $book->author->name);
     }
 
-    public function test_has(): void
+    #[Test]
+    public function has(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -225,7 +234,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
     #[TestWith([[], 'foo', true])]
     #[TestWith([['foo' => 'bar'], null, true])]
     #[TestWith([['foo' => 'bar'], 'foo', true])]
-    public function test_body(array $body, ?string $raw, bool $expected): void
+    #[Test]
+    public function body(array $body, ?string $raw, bool $expected): void
     {
         $request = new GenericRequest(
             method: Method::GET,

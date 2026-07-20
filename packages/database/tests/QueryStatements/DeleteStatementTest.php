@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -13,7 +14,8 @@ use function Tempest\Support\arr;
 
 final class DeleteStatementTest extends TestCase
 {
-    public function test_delete(): void
+    #[Test]
+    public function delete(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -31,7 +33,8 @@ final class DeleteStatementTest extends TestCase
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
-    public function test_exception_when_no_condition_is_set(): void
+    #[Test]
+    public function exception_when_no_condition_is_set(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -41,7 +44,8 @@ final class DeleteStatementTest extends TestCase
             ->compile(DatabaseDialect::MYSQL);
     }
 
-    public function test_no_exception_when_allow_all(): void
+    #[Test]
+    public function no_exception_when_allow_all(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 

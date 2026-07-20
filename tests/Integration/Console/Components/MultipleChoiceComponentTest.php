@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_without_filtering(): void
+    #[Test]
+    public function without_filtering(): void
     {
         $this->console
             ->withoutPrompting()
@@ -29,7 +31,8 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_with_filtering(): void
+    #[Test]
+    public function with_filtering(): void
     {
         $this->console
             ->withoutPrompting()
@@ -46,7 +49,8 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_list_options_do_not_retain_keys(): void
+    #[Test]
+    public function list_options_do_not_retain_keys(): void
     {
         $this->console
             ->withoutPrompting()
@@ -62,7 +66,8 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_associative_options_retain_keys(): void
+    #[Test]
+    public function associative_options_retain_keys(): void
     {
         $this->console
             ->withoutPrompting()
@@ -83,7 +88,8 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_searching_does_not_clear_active(): void
+    #[Test]
+    public function searching_does_not_clear_active(): void
     {
         $this->console
             ->withoutPrompting()
@@ -100,7 +106,8 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_multiple_supports_default_value(): void
+    #[Test]
+    public function multiple_supports_default_value(): void
     {
         $this->console
             ->withoutPrompting()

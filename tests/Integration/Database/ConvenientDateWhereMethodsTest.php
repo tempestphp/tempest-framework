@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\MockClock;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
@@ -134,7 +135,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_where_today(): void
+    #[Test]
+    public function where_today(): void
     {
         $events = query(Event::class)
             ->select()
@@ -149,7 +151,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_yesterday(): void
+    #[Test]
+    public function where_yesterday(): void
     {
         $events = query(Event::class)
             ->select()
@@ -162,7 +165,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertTrue($events[0]->event_date->isYesterday());
     }
 
-    public function test_where_this_week(): void
+    #[Test]
+    public function where_this_week(): void
     {
         $events = query(Event::class)
             ->select()
@@ -176,7 +180,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_last_week(): void
+    #[Test]
+    public function where_last_week(): void
     {
         $events = query(Event::class)->select()->whereLastWeek('event_date')->all();
 
@@ -186,7 +191,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_this_month(): void
+    #[Test]
+    public function where_this_month(): void
     {
         $events = query(Event::class)
             ->select()
@@ -200,7 +206,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_last_month(): void
+    #[Test]
+    public function where_last_month(): void
     {
         $events = query(Event::class)
             ->select()
@@ -219,7 +226,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_this_year(): void
+    #[Test]
+    public function where_this_year(): void
     {
         $events = query(Event::class)->select()->whereThisYear('event_date')->all();
 
@@ -234,7 +242,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_last_year(): void
+    #[Test]
+    public function where_last_year(): void
     {
         $events = query(Event::class)->select()->whereLastYear('event_date')->all();
 
@@ -243,7 +252,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertTrue($events[0]->event_date->isPreviousYear());
     }
 
-    public function test_where_after(): void
+    #[Test]
+    public function where_after(): void
     {
         $cutoffDate = $this->clock->now()->plusDays(15);
         $events = query(Event::class)
@@ -257,7 +267,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertTrue($events[0]->event_date->isAfter($cutoffDate));
     }
 
-    public function test_where_before(): void
+    #[Test]
+    public function where_before(): void
     {
         $cutoffDate = $this->clock->now()->minusDays(15);
 
@@ -274,7 +285,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_between_with_datetime(): void
+    #[Test]
+    public function where_between_with_datetime(): void
     {
         $start = $this->clock->now()->minusDays(2);
         $end = $this->clock->now()->plusDays(1);
@@ -293,7 +305,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_or_where_today(): void
+    #[Test]
+    public function or_where_today(): void
     {
         $events = query(Event::class)
             ->select()
@@ -318,7 +331,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $todayEventsCount);
     }
 
-    public function test_or_where_yesterday(): void
+    #[Test]
+    public function or_where_yesterday(): void
     {
         $events = query(Event::class)
             ->select()
@@ -335,7 +349,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertContains('Yesterday event', $names);
     }
 
-    public function test_complex_date_query_combination(): void
+    #[Test]
+    public function complex_date_query_combination(): void
     {
         $events = query(Event::class)
             ->select()
@@ -346,7 +361,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertGreaterThanOrEqual(4, count($events));
     }
 
-    public function test_chaining_date_methods(): void
+    #[Test]
+    public function chaining_date_methods(): void
     {
         $events = query(Event::class)
             ->select()
@@ -362,7 +378,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_methods_with_string_dates(): void
+    #[Test]
+    public function where_methods_with_string_dates(): void
     {
         $stringDate = '2025-08-02';
         $events = query(Event::class)
@@ -373,7 +390,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertGreaterThanOrEqual(1, count($events));
     }
 
-    public function test_edge_case_month_boundary(): void
+    #[Test]
+    public function edge_case_month_boundary(): void
     {
         $this->clock('2025-07-31 23:59:59');
 
@@ -385,7 +403,8 @@ final class ConvenientDateWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, $events);
     }
 
-    public function test_datetime_objects_are_properly_serialized_for_database_queries(): void
+    #[Test]
+    public function datetime_objects_are_properly_serialized_for_database_queries(): void
     {
         $targetDate = DateTime::parse('2025-08-01');
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasOneThrough;
 use Tempest\Database\PrimaryKey;
@@ -12,7 +13,8 @@ use function Tempest\Database\inspect;
 
 final class HasOneThroughTest extends FrameworkIntegrationTestCase
 {
-    public function test_has_one_through(): void
+    #[Test]
+    public function has_one_through(): void
     {
         $model = inspect(model: HasOneThroughOwnerModel::class);
         $relation = $model->getRelation(name: 'target');
@@ -26,7 +28,8 @@ final class HasOneThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_through_select_fields(): void
+    #[Test]
+    public function has_one_through_select_fields(): void
     {
         $model = inspect(model: HasOneThroughOwnerModel::class);
         $relation = $model->getRelation(name: 'target');
@@ -47,7 +50,8 @@ final class HasOneThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_through_with_parent(): void
+    #[Test]
+    public function has_one_through_with_parent(): void
     {
         $model = inspect(model: HasOneThroughOwnerModel::class);
         $relation = $model
@@ -60,7 +64,8 @@ final class HasOneThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_through_with_custom_joins(): void
+    #[Test]
+    public function has_one_through_with_custom_joins(): void
     {
         $model = inspect(model: HasOneThroughCustomOwnerModel::class);
         $relation = $model->getRelation(name: 'target');

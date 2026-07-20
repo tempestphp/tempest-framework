@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Renderers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Renderers\MessageRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MessageRendererTest extends FrameworkIntegrationTestCase
 {
-    public function test_render_message(): void
+    #[Test]
+    public function render_message(): void
     {
         $renderer = new MessageRenderer('ERR', 'blue');
         $rendered = $renderer->render('Hello, World!');

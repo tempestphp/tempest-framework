@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Html;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Support\Html\HtmlString;
@@ -15,7 +16,8 @@ use Tempest\Support\Str\MutableString;
  */
 final class HtmlStringTest extends TestCase
 {
-    public function test_conversions(): void
+    #[Test]
+    public function conversions(): void
     {
         $this->assertInstanceOf(Stringable::class, new HtmlString());
         $this->assertInstanceOf(MutableString::class, new HtmlString()->toMutableString());
@@ -23,7 +25,8 @@ final class HtmlStringTest extends TestCase
         $this->assertSame('', new HtmlString()->toString());
     }
 
-    public function test_create_from_tag(): void
+    #[Test]
+    public function create_from_tag(): void
     {
         $this->assertSame(
             expected: '<div></div>',

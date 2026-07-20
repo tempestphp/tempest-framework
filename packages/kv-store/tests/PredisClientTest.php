@@ -4,6 +4,7 @@ namespace Tempest\KeyValue\Tests;
 
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Predis;
 use Predis\Client;
@@ -50,13 +51,15 @@ final class PredisClientTest extends TestCase
         }
     }
 
-    public function test_basic(): void
+    #[Test]
+    public function basic(): void
     {
         $this->assertSame('response', $this->redis->command('PING', 'response'));
         $this->assertInstanceOf(Client::class, $this->redis->getClient());
     }
 
-    public function test_set(): void
+    #[Test]
+    public function set(): void
     {
         $this->redis->set('key_string', 'my-value');
         $this->redis->set('key_array_associative', ['foo' => 'bar']);
@@ -67,7 +70,8 @@ final class PredisClientTest extends TestCase
         $this->assertSame('["foo","bar"]', $this->redis->getClient()->executeRaw(['GET', 'key_array_list']));
     }
 
-    public function test_get(): void
+    #[Test]
+    public function get(): void
     {
         $this->redis->getClient()->executeRaw(['SET', 'key_string', 'my_value']);
         $this->redis->getClient()->executeRaw(['SET', 'key_array_associative', '{"foo":"bar"}']);

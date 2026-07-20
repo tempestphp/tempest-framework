@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Mailer;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\Email;
 use Tempest\Mail\EmailWasSent;
@@ -14,14 +15,16 @@ use Tests\Tempest\Integration\Mailer\Fixtures\TextEmail;
 
 final class MailerTesterTest extends FrameworkIntegrationTestCase
 {
-    public function test_assert_sent_must_have_valid_class_string(): void
+    #[Test]
+    public function assert_sent_must_have_valid_class_string(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->mailer->assertSent('foo'); // @phpstan-ignore argument.type
     }
 
-    public function test_assert_sent_must_have_class_string_that_implements_email(): void
+    #[Test]
+    public function assert_sent_must_have_class_string_that_implements_email(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("The given email class must implement `Tempest\Mail\Email`.");
@@ -29,12 +32,14 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->mailer->assertSent(self::class); // @phpstan-ignore argument.type
     }
 
-    public function test_assert_sent_with_class_string(): void
+    #[Test]
+    public function assert_sent_with_class_string(): void
     {
         $this->mailer->send(new TextEmail())->assertSent(TextEmail::class);
     }
 
-    public function test_assert_sent_with_class_string_and_callback(): void
+    #[Test]
+    public function assert_sent_with_class_string_and_callback(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage("Email `Tests\Tempest\Integration\Mailer\Fixtures\TextEmail` was sent but failed the assertion.");
@@ -42,17 +47,20 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
         $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => false);
     }
 
-    public function test_assert_sent_with_class_string_and_truthy_callback(): void
+    #[Test]
+    public function assert_sent_with_class_string_and_truthy_callback(): void
     {
         $this->mailer->send(new TextEmail())->assertSent(TextEmail::class, fn (Email $_email) => true);
     }
 
-    public function test_assert_not_sent_with_class_string(): void
+    #[Test]
+    public function assert_not_sent_with_class_string(): void
     {
         $this->mailer->assertNotSent(TextEmail::class);
     }
 
-    public function test_assert_sent_and_not_sent_with_another_class(): void
+    #[Test]
+    public function assert_sent_and_not_sent_with_another_class(): void
     {
         $this->mailer
             ->send(new SendWelcomeEmail(
@@ -63,7 +71,8 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
             ->assertNotSent(TextEmail::class);
     }
 
-    public function test_assertions(): void
+    #[Test]
+    public function assertions(): void
     {
         $this->mailer
             ->send(new GenericEmail(
@@ -81,7 +90,8 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_email_was_sent_event_was_dispatched(): void
+    #[Test]
+    public function email_was_sent_event_was_dispatched(): void
     {
         $this->eventBus->preventEventHandling();
 

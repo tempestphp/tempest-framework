@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
@@ -13,7 +14,8 @@ use function Tempest\Database\query;
 
 final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
 {
-    public function test_model_with_custom_primary_key_name(): void
+    #[Test]
+    public function model_with_custom_primary_key_name(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
@@ -30,7 +32,8 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
         $this->assertTrue($frieren->uuid->equals($retrieved->uuid));
     }
 
-    public function test_update_or_create_with_custom_primary_key(): void
+    #[Test]
+    public function update_or_create_with_custom_primary_key(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateCustomPrimaryKeyUserModelTable::class);
 
@@ -45,7 +48,8 @@ final class CustomPrimaryKeyTest extends FrameworkIntegrationTestCase
         $this->assertSame('Advanced Time Magic', $updated->magic);
     }
 
-    public function test_model_without_id_property_still_works(): void
+    #[Test]
+    public function model_without_id_property_still_works(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateModelWithoutIdMigration::class);
 

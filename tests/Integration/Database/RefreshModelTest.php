@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -15,7 +16,8 @@ use function Tempest\Database\query;
 
 final class RefreshModelTest extends FrameworkIntegrationTestCase
 {
-    public function test_refresh_works_for_models_with_unloaded_relation(): void
+    #[Test]
+    public function refresh_works_for_models_with_unloaded_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -63,7 +65,8 @@ final class RefreshModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($book->author));
     }
 
-    public function test_load_method_only_refreshes_relations_and_nothing_else(): void
+    #[Test]
+    public function load_method_only_refreshes_relations_and_nothing_else(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Core\Config;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\Core\Kernel\LoadConfig;
@@ -31,7 +32,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         ]));
     }
 
-    public function test_config_loaded_in_order(): void
+    #[Test]
+    public function config_loaded_in_order(): void
     {
         $this->setupFixtures([
             'db.local.config.php',
@@ -54,7 +56,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('db.testing.config.php', $config[6]);
     }
 
-    public function test_non_production_configs_are_discarded_in_production(): void
+    #[Test]
+    public function non_production_configs_are_discarded_in_production(): void
     {
         $this->setupFixtures([
             'db.local.config.php',
@@ -73,7 +76,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('db.production.config.php', $config[1]);
     }
 
-    public function test_non_staging_configs_are_discarded_in_staging(): void
+    #[Test]
+    public function non_staging_configs_are_discarded_in_staging(): void
     {
         $this->setupFixtures([
             'db.local.config.php',
@@ -92,7 +96,8 @@ final class LoadConfigTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('db.stg.config.php', $config[1]);
     }
 
-    public function test_non_dev_configs_are_discarded_in_dev(): void
+    #[Test]
+    public function non_dev_configs_are_discarded_in_dev(): void
     {
         $this->setupFixtures([
             'db.local.config.php',

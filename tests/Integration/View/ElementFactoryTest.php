@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
@@ -20,7 +21,8 @@ use function Tempest\Support\arr;
  */
 final class ElementFactoryTest extends FrameworkIntegrationTestCase
 {
-    public function test_parental_relations(): void
+    #[Test]
+    public function parental_relations(): void
     {
         // See https://github.com/php/php-src/issues/16960
         $contents = <<<'HTML'

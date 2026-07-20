@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
 use Tempest\Validation\Rules\IsBetweenDates;
@@ -13,7 +14,8 @@ use Tempest\Validation\Rules\IsBetweenDates;
  */
 final class IsBetweenDatesTest extends TestCase
 {
-    public function test_exclusive(): void
+    #[Test]
+    public function exclusive(): void
     {
         $now = DateTime::now();
         $first = $now->minusMinute();
@@ -32,7 +34,8 @@ final class IsBetweenDatesTest extends TestCase
         $this->assertFalse($rule->isValid($now->plusMinutes(2)));
     }
 
-    public function test_inclusive(): void
+    #[Test]
+    public function inclusive(): void
     {
         $now = DateTime::now();
         $first = $now->minusMinute();

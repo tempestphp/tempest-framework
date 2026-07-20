@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Discovery\Composer;
@@ -23,7 +24,8 @@ use function Tempest\Support\Path\is_absolute_path;
  */
 final class FunctionsTest extends FrameworkIntegrationTestCase
 {
-    public function test_src_path(): void
+    #[Test]
+    public function src_path(): void
     {
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', root_path('/app')));
 
@@ -31,12 +33,14 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertSame(root_path('/app/User.php'), src_path('User.php'));
     }
 
-    public function test_root_path(): void
+    #[Test]
+    public function root_path(): void
     {
         $this->assertSame(root_path(), $this->root);
     }
 
-    public function test_src_namespace_with_absolute_path(): void
+    #[Test]
+    public function src_namespace_with_absolute_path(): void
     {
         $this->container->get(FrameworkKernel::class)->root = __DIR__ . '/tmp';
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
@@ -51,7 +55,8 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertSame('App\\Foo', src_namespace(src_path('Foo/Bar.php')));
     }
 
-    public function test_src_namespace_with_manual_paths(): void
+    #[Test]
+    public function src_namespace_with_manual_paths(): void
     {
         $this->container->get(FrameworkKernel::class)->root = '/path/to/Auth/install';
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', '/path/to/Auth/install/App'));
@@ -59,7 +64,8 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertSame('App', src_namespace('/path/to/Auth/install/App'));
     }
 
-    public function test_main_namespace_with_relative_path(): void
+    #[Test]
+    public function main_namespace_with_relative_path(): void
     {
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
 
@@ -72,7 +78,8 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
     #[TestWith([''])]
     #[TestWith(['Foo.php'])]
     #[TestWith(['src/Foo.php'])]
-    public function test_exception_src_namespace(string $path): void
+    #[Test]
+    public function exception_src_namespace(string $path): void
     {
         $this->expectException(PathCouldNotBeMappedToNamespace::class);
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
@@ -80,7 +87,8 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         src_namespace($path);
     }
 
-    public function test_registered_namespace(): void
+    #[Test]
+    public function registered_namespace(): void
     {
         $this->container
             ->get(Composer::class)
@@ -97,7 +105,8 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertSame('App', registered_namespace('src/App/HomeController.php'));
     }
 
-    public function test_paths_are_absolute(): void
+    #[Test]
+    public function paths_are_absolute(): void
     {
         $this->assertTrue(is_absolute_path(internal_storage_path()));
         $this->assertTrue(is_absolute_path(root_path()));

@@ -4,6 +4,7 @@ namespace Tempest\Support\Tests\Path;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
@@ -23,17 +24,20 @@ final class FunctionsTest extends TestCase
     #[TestWith(['', false])]
     #[TestWith(['foo', false])]
     #[TestWith(['foo/bar', false])]
-    public function test_is_absolute_path(?string $path, bool $expected): void
+    #[Test]
+    public function is_absolute_path(?string $path, bool $expected): void
     {
         $this->assertSame($expected, is_absolute_path($path));
     }
 
-    public function test_is_absolute_path_with_different_types(): void
+    #[Test]
+    public function is_absolute_path_with_different_types(): void
     {
         $this->assertTrue(is_absolute_path('/foo', null, '', new ImmutableString('bar')));
     }
 
-    public function test_is_absolute_path_with_actual_file(): void
+    #[Test]
+    public function is_absolute_path_with_actual_file(): void
     {
         $this->assertTrue(is_absolute_path(__FILE__));
         $this->assertFalse(is_absolute_path(basename(__FILE__)));
@@ -45,18 +49,21 @@ final class FunctionsTest extends TestCase
     #[TestWith(['', true])]
     #[TestWith(['foo', true])]
     #[TestWith(['foo/bar', true])]
-    public function test_is_relative_path(?string $path, bool $expected): void
+    #[Test]
+    public function is_relative_path(?string $path, bool $expected): void
     {
         $this->assertSame($expected, is_relative_path($path));
     }
 
-    public function test_is_relative_path_with_actual_file(): void
+    #[Test]
+    public function is_relative_path_with_actual_file(): void
     {
         $this->assertFalse(is_relative_path(__FILE__));
         $this->assertTrue(is_relative_path(basename(__FILE__)));
     }
 
-    public function test_is_relative_path_with_different_types(): void
+    #[Test]
+    public function is_relative_path_with_different_types(): void
     {
         $this->assertFalse(is_relative_path('/foo', null, '', new ImmutableString('bar')));
     }
@@ -68,7 +75,8 @@ final class FunctionsTest extends TestCase
     #[TestWith(['/some/file', '/some/file/file.txt', 'file.txt'])]
     #[TestWith(['/some/file', 'file.txt', 'file.txt'])]
     #[TestWith(['/some/foo', 'bar/file.txt', 'bar/file.txt'])]
-    public function test_to_relative_path(string $from, ?string $path, string $expected): void
+    #[Test]
+    public function to_relative_path(string $from, ?string $path, string $expected): void
     {
         $this->assertSame($expected, to_relative_path($from, $path));
     }
@@ -92,13 +100,15 @@ final class FunctionsTest extends TestCase
     #[TestWith(['/foo/bar', ['/foo/bar', '/baz'], '/foo/bar/baz'])]
     #[TestWith(['/foo/bar', ['/foo/bar', '/foo/bar'], '/foo/bar/foo/bar'])]
     #[TestWith(['/other/root', '/foo/bar', '/other/root/foo/bar'])]
-    public function test_to_absolute_path(string $cwd, array|string|null $path, string $expected): void
+    #[Test]
+    public function to_absolute_path(string $cwd, array|string|null $path, string $expected): void
     {
         $this->assertSame($expected, to_absolute_path($cwd, ...wrap($path)));
     }
 
     #[DataProvider('paths')]
-    public function test_normalize(array $paths, string $expected): void
+    #[Test]
+    public function normalize(array $paths, string $expected): void
     {
         $this->assertSame($expected, normalize(...$paths));
     }

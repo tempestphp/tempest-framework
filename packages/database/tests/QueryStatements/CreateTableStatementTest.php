@@ -21,7 +21,8 @@ use Tempest\Database\QueryStatements\RawStatement;
 final class CreateTableStatementTest extends TestCase
 {
     #[DataProvider('provide_create_table_database_dialects')]
-    public function test_create_a_table(DatabaseDialect $dialect, string $validSql): void
+    #[Test]
+    public function create_a_table(DatabaseDialect $dialect, string $validSql): void
     {
         $statement = new CreateTableStatement('migrations', [
             new PrimaryKeyStatement(),
@@ -65,7 +66,8 @@ final class CreateTableStatementTest extends TestCase
     }
 
     #[DataProvider('provide_fk_create_table_database_drivers')]
-    public function test_create_a_foreign_key_constraint(DatabaseDialect $dialect, string $validSql): void
+    #[Test]
+    public function create_a_foreign_key_constraint(DatabaseDialect $dialect, string $validSql): void
     {
         $statement = new CreateTableStatement('books')
             ->primary()
@@ -131,7 +133,8 @@ final class CreateTableStatementTest extends TestCase
     }
 
     #[DataProvider('provide_fk_create_table_database_drivers_explicit')]
-    public function test_create_a_foreign_key_constraint_with_explicit_column(DatabaseDialect $dialect, string $validSql): void
+    #[Test]
+    public function create_a_foreign_key_constraint_with_explicit_column(DatabaseDialect $dialect, string $validSql): void
     {
         $statement = new CreateTableStatement('books')
             ->primary()
@@ -182,7 +185,8 @@ final class CreateTableStatementTest extends TestCase
     }
 
     #[DataProvider('provide_uuid_primary_database_dialects')]
-    public function test_create_table_with_uuid_primary(DatabaseDialect $dialect, string $validSql): void
+    #[Test]
+    public function create_table_with_uuid_primary(DatabaseDialect $dialect, string $validSql): void
     {
         $uuid = new CreateTableStatement('users')
             ->uuid('uuid')

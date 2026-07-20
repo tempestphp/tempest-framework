@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Exceptions;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,7 +12,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CommandNotFoundExceptionTest extends FrameworkIntegrationTestCase
 {
-    public function test_console_exception_handler(): void
+    #[Test]
+    public function console_exception_handler(): void
     {
         $this->console
             ->call('foo:bar')

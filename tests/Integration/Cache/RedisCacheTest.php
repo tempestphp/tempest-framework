@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\Attributes\Test;
 use Predis;
 use Predis\Client;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -23,7 +24,8 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_php_redis_cache(): void
+    #[Test]
+    public function php_redis_cache(): void
     {
         if (! extension_loaded('redis') || ! class_exists(\Redis::class)) {
             $this->markTestSkipped('The `redis` extension is not loaded.');
@@ -52,7 +54,8 @@ final class RedisCacheTest extends FrameworkIntegrationTestCase
         $this->assertSame('s:5:"value";', $redis->get('tempest_test:key'));
     }
 
-    public function test_predis_cache(): void
+    #[Test]
+    public function predis_cache(): void
     {
         if (! class_exists(Client::class)) {
             $this->markTestSkipped('The `predis/predis` package is not installed.');

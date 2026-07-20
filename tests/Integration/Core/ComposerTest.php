@@ -42,7 +42,7 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_sorts_namespaces_by_path_length(): void
+    public function sorts_namespaces_by_path_length(): void
     {
         $composer = $this->initializeComposer([
             'autoload' => [
@@ -60,7 +60,7 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_sorts_main_namespace_first(): void
+    public function sorts_main_namespace_first(): void
     {
         $composer = $this->initializeComposer([
             'autoload' => [
@@ -79,7 +79,7 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_loads_composer_class_with_multiple_namespaces(): void
+    public function loads_composer_class_with_multiple_namespaces(): void
     {
         $composer = $this->initializeComposer([
             'autoload' => [

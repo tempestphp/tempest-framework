@@ -11,7 +11,7 @@ use Tempest\Database\QueryStatements\CharStatement;
 final class CharStatementTest extends TestCase
 {
     #[Test]
-    public function test_char(): void
+    public function char(): void
     {
         $statement = new CharStatement(
             name: 'foo',
@@ -28,7 +28,7 @@ final class CharStatementTest extends TestCase
     }
 
     #[Test]
-    public function test_determine_char_size(): void
+    public function determine_char_size(): void
     {
         $fixedSizeStatement = new CharStatement(
             name: 'foo',
@@ -54,7 +54,7 @@ final class CharStatementTest extends TestCase
     }
 
     #[Test]
-    public function test_char_size_less_than_default_value_length(): void
+    public function char_size_less_than_default_value_length(): void
     {
         $this->expectException(DefaultValueWasInvalid::class);
 
@@ -66,7 +66,8 @@ final class CharStatementTest extends TestCase
         $statement->compile(DatabaseDialect::MYSQL);
     }
 
-    public function test_char_size_greater_than_default_value_length(): void
+    #[Test]
+    public function char_size_greater_than_default_value_length(): void
     {
         $statement = new CharStatement(
             name: 'foo',

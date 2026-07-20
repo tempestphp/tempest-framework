@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cache\Commands\CacheClearCommand;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -19,14 +20,16 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
         $this->cache->fake();
     }
 
-    public function test_cache_clear_default(): void
+    #[Test]
+    public function cache_clear_default(): void
     {
         $this->console
             ->call(CacheClearCommand::class)
             ->assertSeeCount('CLEARED', expectedCount: 1);
     }
 
-    public function test_cache_clear_default_named(): void
+    #[Test]
+    public function cache_clear_default_named(): void
     {
         $this->container->config(new InMemoryCacheConfig(tag: 'my-cache'));
 
@@ -35,7 +38,8 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSeeCount('CLEARED', expectedCount: 1);
     }
 
-    public function test_cache_clear_named(): void
+    #[Test]
+    public function cache_clear_named(): void
     {
         $this->container->config(new InMemoryCacheConfig(tag: 'my-cache'));
 
@@ -45,14 +49,16 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSeeCount('CLEARED', expectedCount: 1);
     }
 
-    public function test_cache_clear_default_all(): void
+    #[Test]
+    public function cache_clear_default_all(): void
     {
         $this->console
             ->call(CacheClearCommand::class, ['all' => true])
             ->assertSeeCount('CLEARED', expectedCount: 1);
     }
 
-    public function test_cache_clear_all(): void
+    #[Test]
+    public function cache_clear_all(): void
     {
         $this->container->config(new InMemoryCacheConfig(tag: 'my-cache'));
 
@@ -63,7 +69,8 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSeeCount('CLEARED', expectedCount: 2);
     }
 
-    public function test_cache_clear_filter(): void
+    #[Test]
+    public function cache_clear_filter(): void
     {
         $this->container->config(new InMemoryCacheConfig(tag: 'my-cache'));
 

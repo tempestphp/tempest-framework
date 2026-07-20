@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsPhoneNumber;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsPhoneNumber;
  */
 final class IsPhoneNumberTest extends TestCase
 {
-    public function test_phone_number(): void
+    #[Test]
+    public function phone_number(): void
     {
         $rule = new IsPhoneNumber();
 

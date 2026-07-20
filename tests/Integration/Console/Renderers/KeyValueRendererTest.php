@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Renderers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class KeyValueRendererTest extends FrameworkIntegrationTestCase
 {
-    public function test_render_line(): void
+    #[Test]
+    public function render_line(): void
     {
         $renderer = new KeyValueRenderer();
         $rendered = $renderer->render('Foo', 'bar');
@@ -23,7 +25,8 @@ final class KeyValueRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_render_total_width_smaller_than_text(): void
+    #[Test]
+    public function render_total_width_smaller_than_text(): void
     {
         $renderer = new KeyValueRenderer();
         $rendered = $renderer->render('Some long text', str_repeat('a', KeyValueRenderer::MAX_WIDTH));

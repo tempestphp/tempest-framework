@@ -25,7 +25,8 @@ final class StatusTest extends TestCase
     }
 
     #[DataProvider('provide_status_code_cases')]
-    public function test_status_code(int $code, string $description): void
+    #[Test]
+    public function status_code(int $code, string $description): void
     {
         $status = Status::fromCode($code);
 

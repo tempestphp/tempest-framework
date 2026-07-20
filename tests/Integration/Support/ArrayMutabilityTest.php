@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
@@ -35,7 +36,8 @@ final class ArrayMutabilityTest extends TestCase
         'partition',
     ];
 
-    public function test_immutable_array(): void
+    #[Test]
+    public function immutable_array(): void
     {
         $this->assertAllMethods(
             ImmutableArray::class,
@@ -46,7 +48,8 @@ final class ArrayMutabilityTest extends TestCase
         );
     }
 
-    public function test_mutable_array(): void
+    #[Test]
+    public function mutable_array(): void
     {
         $this->assertAllMethods(
             MutableArray::class,
@@ -59,7 +62,8 @@ final class ArrayMutabilityTest extends TestCase
 
     #[TestWith([MutableArray::class, ImmutableArray::class, 'toImmutableArray'])]
     #[TestWith([ImmutableArray::class, MutableArray::class, 'toMutableArray'])]
-    public function test_convert_between_string_instances(string $initial, string $target, string $method): void
+    #[Test]
+    public function convert_between_string_instances(string $initial, string $target, string $method): void
     {
         $instance = new $initial('foo');
 

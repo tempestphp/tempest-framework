@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ProgressBarComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_progress_bar_component(): void
+    #[Test]
+    public function progress_bar_component(): void
     {
         $this->console
             ->withoutPrompting()
@@ -47,7 +49,8 @@ final class ProgressBarComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_progress_bar_with_format(): void
+    #[Test]
+    public function progress_bar_with_format(): void
     {
         $this->console
             ->withoutPrompting()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\StartsWith;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\StartsWith;
  */
 final class StartsWithTest extends TestCase
 {
-    public function test_starts_with(): void
+    #[Test]
+    public function starts_with(): void
     {
         $rule = new StartsWith(needle: 'ab');
 

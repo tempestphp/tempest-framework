@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Exceptions\CouldNotUpdateRelation;
 use Tempest\Database\HasMany;
@@ -26,7 +27,8 @@ use function Tempest\Database\query;
 
 final class UpdateRelationsTest extends FrameworkIntegrationTestCase
 {
-    public function test_updating_has_many_with_arrays(): void
+    #[Test]
+    public function updating_has_many_with_arrays(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -61,7 +63,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('The Magic Academy', $book->chapters[2]->title);
     }
 
-    public function test_updating_has_one_with_array(): void
+    #[Test]
+    public function updating_has_one_with_array(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -94,7 +97,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234568', $book->isbn->value);
     }
 
-    public function test_updating_has_many_with_objects(): void
+    #[Test]
+    public function updating_has_many_with_objects(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -127,7 +131,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Stark the Warrior', $book->chapters[1]->title);
     }
 
-    public function test_updating_has_one_with_object(): void
+    #[Test]
+    public function updating_has_one_with_object(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -158,7 +163,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234568', $book->isbn->value);
     }
 
-    public function test_updating_mixed_relations(): void
+    #[Test]
+    public function updating_mixed_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -202,7 +208,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234568', $book->isbn->value);
     }
 
-    public function test_updating_empty_has_many_relation(): void
+    #[Test]
+    public function updating_empty_has_many_relation(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -232,7 +239,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, $book->chapters);
     }
 
-    public function test_updating_large_batch_has_many(): void
+    #[Test]
+    public function updating_large_batch_has_many(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -266,7 +274,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Updated Chapter 10', $book->chapters[9]->title);
     }
 
-    public function test_updating_has_many_preserves_additional_data(): void
+    #[Test]
+    public function updating_has_many_preserves_additional_data(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -300,7 +309,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('And then...', $book->chapters[1]->contents);
     }
 
-    public function test_updating_relation_with_mixed_types(): void
+    #[Test]
+    public function updating_relation_with_mixed_types(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -334,7 +344,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Another Object Chapter', $book->chapters[2]->title);
     }
 
-    public function test_updating_with_custom_primary_key_names(): void
+    #[Test]
+    public function updating_with_custom_primary_key_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateUpdateMageTable::class, CreateUpdateSpellTable::class);
 
@@ -373,7 +384,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Defensive', $mage->spells[1]->type);
     }
 
-    public function test_updating_with_non_standard_relation_names(): void
+    #[Test]
+    public function updating_with_non_standard_relation_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateUpdatePartyTable::class, CreateUpdateAdventurerTable::class);
 
@@ -419,7 +431,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Mage', $party->members[3]->class);
     }
 
-    public function test_updating_with_custom_foreign_key_names(): void
+    #[Test]
+    public function updating_with_custom_foreign_key_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateUpdateMageTable::class, CreateUpdateSpellTable::class);
 
@@ -455,7 +468,8 @@ final class UpdateRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Dark Magic', $spell->creator->element);
     }
 
-    public function test_update_throws_exception_when_model_has_no_primary_key(): void
+    #[Test]
+    public function update_throws_exception_when_model_has_no_primary_key(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,

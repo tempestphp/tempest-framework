@@ -7,6 +7,7 @@ namespace Tempest\Support\Tests\Arr;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
 
@@ -17,19 +18,22 @@ use function Tempest\Support\Arr\to_array;
  */
 final class ToArrayTest extends TestCase
 {
-    public function test_array_input_returns_unchanged(): void
+    #[Test]
+    public function array_input_returns_unchanged(): void
     {
         $input = ['a' => 1, 'b' => 2, 'c' => 3];
 
         $this->assertSame($input, to_array($input));
     }
 
-    public function test_null_returns_empty_array(): void
+    #[Test]
+    public function null_returns_empty_array(): void
     {
         $this->assertEquals([], to_array(null));
     }
 
-    public function test_scalar_values_are_wrapped_in_array(): void
+    #[Test]
+    public function scalar_values_are_wrapped_in_array(): void
     {
         $this->assertEquals(['foo'], to_array(new ImmutableString('foo')));
         $this->assertEquals([42], to_array(42));
@@ -38,7 +42,8 @@ final class ToArrayTest extends TestCase
         $this->assertEquals([3.14], to_array(3.14));
     }
 
-    public function test_traversable_objects_are_converted_to_arrays(): void
+    #[Test]
+    public function traversable_objects_are_converted_to_arrays(): void
     {
         $iterator = new ArrayIterator(['a' => 1, 'b' => 2, 'c' => 3]);
         $expected = ['a' => 1, 'b' => 2, 'c' => 3];
@@ -46,7 +51,8 @@ final class ToArrayTest extends TestCase
         $this->assertEquals($expected, to_array($iterator));
     }
 
-    public function test_array_access_and_countable_objects_are_converted_to_arrays(): void
+    #[Test]
+    public function array_access_and_countable_objects_are_converted_to_arrays(): void
     {
         $object = new class() implements ArrayAccess, Countable {
             private $data = [
@@ -88,7 +94,8 @@ final class ToArrayTest extends TestCase
         $this->assertEquals([0 => 'zero', 1 => 'one', 2 => 'two'], to_array($object));
     }
 
-    public function test_array_access_without_traversable_or_countable(): void
+    #[Test]
+    public function array_access_without_traversable_or_countable(): void
     {
         $object = new class() implements ArrayAccess {
             private $data = [
@@ -123,7 +130,8 @@ final class ToArrayTest extends TestCase
         $this->assertEquals([$object], to_array($object));
     }
 
-    public function test_regular_object_is_wrapped(): void
+    #[Test]
+    public function regular_object_is_wrapped(): void
     {
         $object = new class() {
             public $foo = 'bar';

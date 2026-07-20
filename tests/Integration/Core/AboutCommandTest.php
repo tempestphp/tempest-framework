@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Console\Commands\AboutCommand;
 use Tempest\Core\AppConfig;
@@ -15,7 +16,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class AboutCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_about(): void
+    #[Test]
+    public function about(): void
     {
         $this->console
             ->call(AboutCommand::class)
@@ -31,7 +33,8 @@ final class AboutCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('Version');
     }
 
-    public function test_shows_current_uri(): void
+    #[Test]
+    public function shows_current_uri(): void
     {
         $this->container->get(AppConfig::class)->baseUri = 'https://tempestphp.test';
 
@@ -40,21 +43,24 @@ final class AboutCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('https://tempestphp.test');
     }
 
-    public function test_shows_current_kernel_version(): void
+    #[Test]
+    public function shows_current_kernel_version(): void
     {
         $this->console
             ->call(AboutCommand::class)
             ->assertSee(Kernel::VERSION);
     }
 
-    public function test_json(): void
+    #[Test]
+    public function json(): void
     {
         $this->console
             ->call(AboutCommand::class, ['json' => true])
             ->assertJson();
     }
 
-    public function test_cache(): void
+    #[Test]
+    public function cache(): void
     {
         $this->console
             ->call(AboutCommand::class)
@@ -63,7 +69,8 @@ final class AboutCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('Filesystem,');
     }
 
-    public function test_another_cache(): void
+    #[Test]
+    public function another_cache(): void
     {
         $this->container->config(new InMemoryCacheConfig());
 

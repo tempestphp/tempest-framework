@@ -15,7 +15,7 @@ use function Tempest\Support\str;
 final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_similar_commands(): void
+    public function similar_commands(): void
     {
         $this->console
             ->call('discovery:sta')

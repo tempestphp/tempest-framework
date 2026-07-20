@@ -2,11 +2,13 @@
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class ValidateNamedArgumentsMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    public function test_invalid_parameters_throw_exception(): void
+    #[Test]
+    public function invalid_parameters_throw_exception(): void
     {
         $this->console
             ->call('test:flags --unknown --foo --no-flag --help --force --no-interaction')
@@ -19,7 +21,8 @@ final class ValidateNamedArgumentsMiddlewareTest extends FrameworkIntegrationTes
             ->assertDoesNotContain('interaction');
     }
 
-    public function test_command_with_dynamic_parameters(): void
+    #[Test]
+    public function command_with_dynamic_parameters(): void
     {
         $this->console
             ->call('dynamic:params --dynamic')

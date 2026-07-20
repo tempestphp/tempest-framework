@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\CouldNotBeginTransaction;
@@ -16,7 +17,8 @@ use Tempest\Database\Transactions\GenericTransactionManager;
  */
 final class GenericTransactionManagerTest extends TestCase
 {
-    public function test_it_calls_being_transactions(): void
+    #[Test]
+    public function it_calls_being_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -30,7 +32,8 @@ final class GenericTransactionManagerTest extends TestCase
         $manager->begin();
     }
 
-    public function test_it_throws_an_exception_when_transaction_cannot_begin(): void
+    #[Test]
+    public function it_throws_an_exception_when_transaction_cannot_begin(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -46,7 +49,8 @@ final class GenericTransactionManagerTest extends TestCase
         $manager->begin();
     }
 
-    public function test_it_calls_commit_transactions(): void
+    #[Test]
+    public function it_calls_commit_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -60,7 +64,8 @@ final class GenericTransactionManagerTest extends TestCase
         $manager->commit();
     }
 
-    public function test_it_throws_an_exception_when_transaction_cannot_commit(): void
+    #[Test]
+    public function it_throws_an_exception_when_transaction_cannot_commit(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -76,7 +81,8 @@ final class GenericTransactionManagerTest extends TestCase
         $manager->commit();
     }
 
-    public function test_it_calls_rollback_transactions(): void
+    #[Test]
+    public function it_calls_rollback_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -90,7 +96,8 @@ final class GenericTransactionManagerTest extends TestCase
         $manager->rollback();
     }
 
-    public function test_it_throws_an_exception_when_transaction_cannot_rollback(): void
+    #[Test]
+    public function it_throws_an_exception_when_transaction_cannot_rollback(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection

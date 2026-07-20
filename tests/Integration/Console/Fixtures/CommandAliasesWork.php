@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Fixtures;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,7 +12,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CommandAliasesWork extends FrameworkIntegrationTestCase
 {
-    public function test_aliases_work(): void
+    #[Test]
+    public function aliases_work(): void
     {
         $this->console
             ->call('f:l')

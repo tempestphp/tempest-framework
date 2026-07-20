@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\AppConfig;
 use Tempest\DateTime\DateTime;
 use Tempest\Http\Cookie\Cookie;
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class CookieSessionIdResolverTest extends FrameworkIntegrationTestCase
 {
-    public function test_sets_cookie(): void
+    #[Test]
+    public function sets_cookie(): void
     {
         $this->container->get(AppConfig::class)->baseUri = 'https://test.com';
 
@@ -28,7 +30,8 @@ final class CookieSessionIdResolverTest extends FrameworkIntegrationTestCase
         $this->assertSame(SameSite::LAX, $cookie->sameSite);
     }
 
-    public function test_set_cookie_with_insecure_base_uri(): void
+    #[Test]
+    public function set_cookie_with_insecure_base_uri(): void
     {
         $this->container->get(AppConfig::class)->baseUri = 'http://test.com';
 
@@ -41,7 +44,8 @@ final class CookieSessionIdResolverTest extends FrameworkIntegrationTestCase
         $this->assertFalse($cookie->secure);
     }
 
-    public function test_cookie_name(): void
+    #[Test]
+    public function cookie_name(): void
     {
         $this->container->get(AppConfig::class)->name = 'Tempest Cloud';
 

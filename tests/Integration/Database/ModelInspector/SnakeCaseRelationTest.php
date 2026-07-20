@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasMany;
@@ -14,7 +15,8 @@ use function Tempest\Database\inspect;
 
 final class SnakeCaseRelationTest extends FrameworkIntegrationTestCase
 {
-    public function test_belongs_to_with_snake_case_property(): void
+    #[Test]
+    public function belongs_to_with_snake_case_property(): void
     {
         $model = inspect(model: SnakeCaseBookModel::class);
         $relation = $model->getRelation(name: 'main_author');
@@ -31,7 +33,8 @@ final class SnakeCaseRelationTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_snake_case_property(): void
+    #[Test]
+    public function has_one_with_snake_case_property(): void
     {
         $model = inspect(model: SnakeCaseAuthorModel::class);
         $relation = $model->getRelation(name: 'author_profile');
@@ -48,7 +51,8 @@ final class SnakeCaseRelationTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_many_with_snake_case_property(): void
+    #[Test]
+    public function has_many_with_snake_case_property(): void
     {
         $model = inspect(model: SnakeCaseAuthorModel::class);
         $relation = $model->getRelation(name: 'written_books');
@@ -65,14 +69,16 @@ final class SnakeCaseRelationTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_snake_case_property_is_recognized_as_relation(): void
+    #[Test]
+    public function snake_case_property_is_recognized_as_relation(): void
     {
         $model = inspect(model: SnakeCaseBookModel::class);
 
         $this->assertTrue(condition: $model->isRelation(name: 'main_author'));
     }
 
-    public function test_snake_case_property_excluded_from_select_fields(): void
+    #[Test]
+    public function snake_case_property_excluded_from_select_fields(): void
     {
         $model = inspect(model: SnakeCaseAuthorModel::class);
         $fields = $model->getSelectFields();

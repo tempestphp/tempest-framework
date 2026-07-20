@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsIPv4;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsIPv4;
  */
 final class IsIPv4Test extends TestCase
 {
-    public function test_ipv4_address(): void
+    #[Test]
+    public function ipv4_address(): void
     {
         $rule = new IsIPv4();
 
@@ -24,7 +26,8 @@ final class IsIPv4Test extends TestCase
         $this->assertFalse($rule->isValid('2001:db8:85a3::8a2e:370:7334'));
     }
 
-    public function test_ip_address_without_private_range(): void
+    #[Test]
+    public function ip_address_without_private_range(): void
     {
         $rule = new IsIPv4(allowPrivateRange: false);
 
@@ -32,7 +35,8 @@ final class IsIPv4Test extends TestCase
         $this->assertTrue($rule->isValid('210.221.151.70'));
     }
 
-    public function test_ip_address_without_reserved_range(): void
+    #[Test]
+    public function ip_address_without_reserved_range(): void
     {
         $rule = new IsIPv4(allowReservedRange: false);
 

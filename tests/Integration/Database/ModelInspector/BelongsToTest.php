@@ -61,7 +61,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to(): void
+    #[Test]
+    public function belongs_to(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relation');
@@ -74,7 +75,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_with_relation_join_field(): void
+    #[Test]
+    public function belongs_to_with_relation_join_field(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relationJoinField');
@@ -87,7 +89,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_with_relation_join_field_and_table(): void
+    #[Test]
+    public function belongs_to_with_relation_join_field_and_table(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relationJoinFieldAndTable');
@@ -100,7 +103,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_with_owner_join_field(): void
+    #[Test]
+    public function belongs_to_with_owner_join_field(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('ownerJoinField');
@@ -113,7 +117,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_with_owner_join_field_and_table(): void
+    #[Test]
+    public function belongs_to_with_owner_join_field_and_table(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('ownerJoinFieldAndTable');
@@ -126,7 +131,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_with_parent(): void
+    #[Test]
+    public function belongs_to_with_parent(): void
     {
         $model = inspect(BelongsToTestOwnerModel::class);
         $relation = $model->getRelation('relation')->setParent('parent');
@@ -137,7 +143,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_throws_exception_for_model_without_primary_key(): void
+    #[Test]
+    public function belongs_to_throws_exception_for_model_without_primary_key(): void
     {
         $model = inspect(BelongsToTestOwnerWithoutIdModel::class);
         $relation = $model->getRelation('relation');
@@ -150,7 +157,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         $relation->getJoinStatement();
     }
 
-    public function test_multiple_belongs_to_same_table_generates_distinct_joins(): void
+    #[Test]
+    public function multiple_belongs_to_same_table_generates_distinct_joins(): void
     {
         $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
 
@@ -168,7 +176,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_multiple_belongs_to_same_table_with_full_table_column_syntax(): void
+    #[Test]
+    public function multiple_belongs_to_same_table_with_full_table_column_syntax(): void
     {
         $model = inspect(BelongsToTestRoleWithFullSpecRelationsModel::class);
 
@@ -186,7 +195,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_multiple_belongs_to_same_table_select_fields(): void
+    #[Test]
+    public function multiple_belongs_to_same_table_select_fields(): void
     {
         $model = inspect(BelongsToTestRoleWithMultipleSameTableRelationsModel::class);
 
@@ -204,7 +214,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_referencing_belongs_to(): void
+    #[Test]
+    public function self_referencing_belongs_to(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
         $relation = $model->getRelation('parent');
@@ -217,7 +228,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_referencing_belongs_to_select_fields(): void
+    #[Test]
+    public function self_referencing_belongs_to_select_fields(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
         $relation = $model->getRelation('parent');
@@ -240,7 +252,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_referencing_belongs_to_with_custom_owner_join(): void
+    #[Test]
+    public function self_referencing_belongs_to_with_custom_owner_join(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
         $relation = $model->getRelation('parentWithCustomOwnerJoin');
@@ -251,7 +264,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_referencing_has_many(): void
+    #[Test]
+    public function self_referencing_has_many(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
         $relation = $model->getRelation('children');
@@ -264,7 +278,8 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_referencing_has_many_select_fields(): void
+    #[Test]
+    public function self_referencing_has_many_select_fields(): void
     {
         $model = inspect(SelfReferencingCategoryModel::class);
         $relation = $model->getRelation('children');

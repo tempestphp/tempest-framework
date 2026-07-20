@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Arr;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\MutableArray;
 
@@ -12,7 +13,8 @@ use Tempest\Support\Arr\MutableArray;
  */
 final class MutableArrayTest extends TestCase
 {
-    public function test_add(): void
+    #[Test]
+    public function add(): void
     {
         $collection = new MutableArray('a');
 
@@ -27,7 +29,8 @@ final class MutableArrayTest extends TestCase
         );
     }
 
-    public function test_add_diverse_values(): void
+    #[Test]
+    public function add_diverse_values(): void
     {
         $collection = new MutableArray();
 
@@ -67,7 +70,8 @@ final class MutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_with_basic_keys(): void
+    #[Test]
+    public function remove_with_basic_keys(): void
     {
         $collection = new MutableArray([1, 2, 3]);
 
@@ -82,7 +86,8 @@ final class MutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_with_associative_keys(): void
+    #[Test]
+    public function remove_with_associative_keys(): void
     {
         $collection = new MutableArray([
             'first_name' => 'John',
@@ -101,7 +106,8 @@ final class MutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_values_with_basic_keys(): void
+    #[Test]
+    public function remove_values_with_basic_keys(): void
     {
         $collection = new MutableArray([1, 2, 3]);
 
@@ -116,7 +122,8 @@ final class MutableArrayTest extends TestCase
         );
     }
 
-    public function test_pull(): void
+    #[Test]
+    public function pull(): void
     {
         $collection = new MutableArray([
             'first_name' => 'John',

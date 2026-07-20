@@ -2,6 +2,7 @@
 
 namespace Tempest\Support\Tests\Str;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tempest\Support\Str;
@@ -10,7 +11,8 @@ use Tempest\Support\Str\MutableString;
 
 final class FunctionsTest extends TestCase
 {
-    public function test_parse(): void
+    #[Test]
+    public function parse(): void
     {
         $this->assertSame('foo', Str\parse('foo'));
         $this->assertSame('1', Str\parse('1'));

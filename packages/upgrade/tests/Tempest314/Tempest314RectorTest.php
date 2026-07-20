@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tests\Tempest314;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
@@ -13,7 +14,8 @@ final class Tempest314RectorTest extends TestCase
         get => new RectorTester(__DIR__ . '/tempest314_rector.php');
     }
 
-    public function test_connection_implementation_methods_are_added(): void
+    #[Test]
+    public function connection_implementation_methods_are_added(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/ConnectionImplementation.input.php')
@@ -23,7 +25,8 @@ final class Tempest314RectorTest extends TestCase
             ->assertContains('return false;');
     }
 
-    public function test_kernel_implementation_is_updated(): void
+    #[Test]
+    public function kernel_implementation_is_updated(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/KernelImplementation.input.php')
@@ -33,7 +36,8 @@ final class Tempest314RectorTest extends TestCase
             ->assertNotContains('public function shutdown(): self');
     }
 
-    public function test_aliased_interface_implementations_are_updated(): void
+    #[Test]
+    public function aliased_interface_implementations_are_updated(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/AliasedImplementations.input.php')
@@ -42,7 +46,8 @@ final class Tempest314RectorTest extends TestCase
             ->assertContains('public function reconnect(): void');
     }
 
-    public function test_existing_interface_methods_are_not_overwritten(): void
+    #[Test]
+    public function existing_interface_methods_are_not_overwritten(): void
     {
         $this->assertSame(
             '',

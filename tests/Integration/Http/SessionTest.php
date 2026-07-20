@@ -140,7 +140,7 @@ final class SessionTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_session_is_reset(): void
+    public function session_is_reset(): void
     {
         $originalSession = $this->container->get(Session::class);
 

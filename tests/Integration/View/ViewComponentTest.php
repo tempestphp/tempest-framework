@@ -43,7 +43,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[DataProvider('view_components')]
-    public function test_view_components(string $component, string $rendered): void
+    #[Test]
+    public function renders_view_components(string $component, string $rendered): void
     {
         $this->assertSnippetsMatch(
             expected: $rendered,
@@ -51,7 +52,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_component_with_php_code_in_attribute(): void
+    #[Test]
+    public function view_component_with_php_code_in_attribute(): void
     {
         $this->view->registerViewComponent('x-test', '<div :foo="$foo" :bar="$bar"></div>');
 
@@ -66,7 +68,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_component_with_php_code_in_slot(): void
+    #[Test]
+    public function view_component_with_php_code_in_slot(): void
     {
         $this->assertSame(
             expected: '<div>bar</div>',
@@ -74,7 +77,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_can_access_dynamic_slots(): void
+    #[Test]
+    public function view_can_access_dynamic_slots(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div :foreach="$slots as $slot" :if="$slot->name !== 'default'">
@@ -98,7 +102,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML_WRAP, $html);
     }
 
-    public function test_dynamic_slots_are_cleaned_up(): void
+    #[Test]
+    public function dynamic_slots_are_cleaned_up(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div :foreach="$slots as $slot" :if="$slot->name !== 'default'">
@@ -123,7 +128,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<div>slots are cleared</div>', $html);
     }
 
-    public function test_dynamic_slots_include_the_default_slot(): void
+    #[Test]
+    public function dynamic_slots_include_the_default_slot(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div>{{ $slots['default']->name }}</div>
@@ -141,7 +147,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_slots_with_nested_view_components(): void
+    #[Test]
+    public function slots_with_nested_view_components(): void
     {
         $this->view->registerViewComponent('x-a', <<<'HTML'
         <x-slot />
@@ -174,7 +181,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<div>A4</div>', $html);
     }
 
-    public function test_slots_is_a_reserved_variable(): void
+    #[Test]
+    public function slots_is_a_reserved_variable(): void
     {
         $this->expectException(ViewVariableWasReserved::class);
         $this->expectExceptionMessage('Cannot use reserved variable name `slots`');
@@ -182,7 +190,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->view->render('', slots: []);
     }
 
-    public function test_scope_does_not_leak_data(): void
+    #[Test]
+    public function scope_does_not_leak_data(): void
     {
         $html = $this->view->render(<<<'HTML'
         <x-input name="a" />
@@ -196,7 +205,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<input type="text" name="b" id="b"', $html);
     }
 
-    public function test_component_with_anther_component_included(): void
+    #[Test]
+    public function component_with_anther_component_included(): void
     {
         $html = $this->view->render('<x-view-component-with-another-one-included-a/>');
 
@@ -208,7 +218,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_component_with_anther_component_included_with_slot(): void
+    #[Test]
+    public function component_with_anther_component_included_with_slot(): void
     {
         $html = $this->view->render('<x-view-component-with-another-one-included-a>test</x-view-component-with-another-one-included-a>');
 
@@ -222,7 +233,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_view_component_with_injected_view(): void
+    #[Test]
+    public function view_component_with_injected_view(): void
     {
         $between = new FailingRule(new IsBetween(min: 1, max: 10));
         $alphaNumeric = new FailingRule(new IsAlphaNumeric());
@@ -249,7 +261,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString($validator->getErrorMessage($alphaNumeric), $html);
     }
 
-    public function test_component_with_if(): void
+    #[Test]
+    public function component_with_if(): void
     {
         $this->assertSame(
             expected: '<div>true</div>',
@@ -262,7 +275,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_component_with_foreach(): void
+    #[Test]
+    public function component_with_foreach(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div><x-slot /></div>
@@ -274,7 +288,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_anonymous_view_component(): void
+    #[Test]
+    public function anonymous_view_component(): void
     {
         $this->assertSame(
             <<<HTML
@@ -284,7 +299,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_header(): void
+    #[Test]
+    public function with_header(): void
     {
         $this->assertSame(
             '/',
@@ -292,7 +308,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_passed_variable(): void
+    #[Test]
+    public function with_passed_variable(): void
     {
         $rendered = $this->view->render(
             view('<x-with-variable :variable="$variable"></x-with-variable>')->data(
@@ -308,7 +325,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_passed_data(): void
+    #[Test]
+    public function with_passed_data(): void
     {
         $rendered = $this->view->render(
             view('<x-with-variable variable="test"></x-with-variable>'),
@@ -322,7 +340,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_passed_php_data(): void
+    #[Test]
+    public function with_passed_php_data(): void
     {
         $rendered = $this->view->render(
             view(<<<HTML
@@ -338,7 +357,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_component_with_nested_property_to_view(): void
+    #[Test]
+    public function view_component_with_nested_property_to_view(): void
     {
         $view = new DocsView(new Chapter('Current Title'));
 
@@ -347,7 +367,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('Current Title', $html);
     }
 
-    public function test_view_component_with_nested_call_to_view(): void
+    #[Test]
+    public function view_component_with_nested_call_to_view(): void
     {
         $view = new DocsView(new Chapter('Current Title'));
 
@@ -356,7 +377,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('Next Title', $html);
     }
 
-    public function test_with_passed_variable_within_loop(): void
+    #[Test]
+    public function with_passed_variable_within_loop(): void
     {
         $rendered = $this->view->render(
             <<<'HTML'
@@ -372,7 +394,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringCount($rendered, '</div>', 3);
     }
 
-    public function test_inline_view_variables_passed_to_component(): void
+    #[Test]
+    public function inline_view_variables_passed_to_component(): void
     {
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
@@ -381,7 +404,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('nothing', $html);
     }
 
-    public function test_view_component_attribute_variables_without_this(): void
+    #[Test]
+    public function view_component_attribute_variables_without_this(): void
     {
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/view-component-attribute-without-this-b.view.php'));
 
@@ -390,7 +414,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_view_component_slots_without_self_closing_tags(): void
+    #[Test]
+    public function view_component_slots_without_self_closing_tags(): void
     {
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-non-self-closing-slot-b.view.php'));
 
@@ -410,7 +435,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_view_component_with_camelcase_attribute(): void
+    #[Test]
+    public function view_component_with_camelcase_attribute(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
             {{ $metaType ?? 'nothing' }}
@@ -421,14 +447,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $this->view->render('<x-test metaType="test">'));
     }
 
-    public function test_php_code_in_attribute(): void
+    #[Test]
+    public function php_code_in_attribute(): void
     {
         $this->expectException(DataAttributeWasInvalid::class);
 
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
     }
 
-    public function test_template_component(): void
+    #[Test]
+    public function template_component(): void
     {
         $html = $this->view->render(
             <<<'HTML'
@@ -477,7 +505,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         ];
     }
 
-    public function test_full_html_document_as_component(): void
+    #[Test]
+    public function full_html_document_as_component(): void
     {
         $this->view->registerViewComponent('x-layout', <<<'HTML'
         <html lang="en">
@@ -508,7 +537,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('</html>', $html);
     }
 
-    public function test_empty_slots_are_commented_out(): void
+    #[Test]
+    public function empty_slots_are_commented_out(): void
     {
         $this->container->singleton(Environment::class, Environment::LOCAL);
 
@@ -532,7 +562,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_empty_slots_are_removed_in_production(): void
+    #[Test]
+    public function empty_slots_are_removed_in_production(): void
     {
         $this->container->singleton(Environment::class, Environment::PRODUCTION);
 
@@ -556,7 +587,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_custom_components_in_head(): void
+    #[Test]
+    public function custom_components_in_head(): void
     {
         $this->view->registerViewComponent('x-custom-link', <<<'HTML'
         <link rel="stylesheet" href="#" />
@@ -577,7 +609,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_head_injection(): void
+    #[Test]
+    public function head_injection(): void
     {
         $this->view->registerViewComponent('x-custom-link', <<<'HTML'
         <link rel="stylesheet" href="#" />
@@ -604,7 +637,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_attributes_variable_in_view_component(): void
+    #[Test]
+    public function attributes_variable_in_view_component(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div x-data="foo {{ $attributes['x-data'] }}"></div>
@@ -619,7 +653,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_fallthrough_attributes(): void
+    #[Test]
+    public function fallthrough_attributes(): void
     {
         // Root has no class/style/id — all three fall through from the call site.
         $this->view->registerViewComponent('x-test', <<<'HTML'
@@ -635,7 +670,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_merged_fallthrough_attributes(): void
+    #[Test]
+    public function merged_fallthrough_attributes(): void
     {
         // Root defines all three of class, style, and id. None of the parent values
         // are applied — the component's own declarations are left untouched.
@@ -652,7 +688,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_fallthrough_attributes_with_other_attributes(): void
+    #[Test]
+    public function fallthrough_attributes_with_other_attributes(): void
     {
         // Root defines all three of class, style, and id. None of the parent values
         // are applied — the component's own declarations are left untouched.
@@ -670,14 +707,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_file_name_component(): void
+    #[Test]
+    public function file_name_component(): void
     {
         $html = $this->view->render('<x-file-component></x-file-component>');
 
         $this->assertSame('<div>hi!</div>', $html);
     }
 
-    public function test_array_attribute(): void
+    #[Test]
+    public function array_attribute(): void
     {
         $html = $this->view->render(<<<'HTML'
         <div :x="['foo', 'bar']"></div>
@@ -688,7 +727,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_merge_class(): void
+    #[Test]
+    public function merge_class(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div class="inner" :class="'upper'"></div>
@@ -703,7 +743,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_does_not_duplicate_br(): void
+    #[Test]
+    public function does_not_duplicate_br(): void
     {
         $this->view->registerViewComponent('x-html-base', <<<'HTML'
             <!doctype html>
@@ -729,7 +770,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_renders_minified_html_with_void_elements(): void
+    #[Test]
+    public function renders_minified_html_with_void_elements(): void
     {
         $html = $this->view->render(<<<'HTML'
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" view-box="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"/></g></svg>
@@ -740,7 +782,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_multiple_instances_of_custom_component_using_slots(): void
+    #[Test]
+    public function multiple_instances_of_custom_component_using_slots(): void
     {
         $this->view->registerViewComponent('x-foo-bar', 'FOO-BAR');
 
@@ -766,7 +809,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_slots_with_hyphens(): void
+    #[Test]
+    public function slots_with_hyphens(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div>
@@ -789,7 +833,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_nested_table_components(): void
+    #[Test]
+    public function nested_table_components(): void
     {
         $this->view->registerViewComponent('x-my-table-thead', '<thead><x-slot/></thead>');
         $this->view->registerViewComponent('x-my-table-tbody', '<tbody><x-slot/></tbody>');
@@ -828,7 +873,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_dynamic_view_component_with_string_name(): void
+    #[Test]
+    public function dynamic_view_component_with_string_name(): void
     {
         $this->view->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
@@ -839,7 +885,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
-    public function test_dynamic_view_component_with_expression_name(): void
+    #[Test]
+    public function dynamic_view_component_with_expression_name(): void
     {
         $this->view->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
@@ -850,7 +897,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
-    public function test_dynamic_view_component_with_variable_attribute(): void
+    #[Test]
+    public function dynamic_view_component_with_variable_attribute(): void
     {
         $this->view->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
@@ -861,7 +909,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
-    public function test_dynamic_view_component_with_object_attribute_forwarded_as_data(): void
+    #[Test]
+    public function dynamic_view_component_with_object_attribute_forwarded_as_data(): void
     {
         $this->view->registerViewComponent('x-field', '<label>{{ $field->label }}</label>');
 
@@ -876,7 +925,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<label>Email</label>', $html);
     }
 
-    public function test_dynamic_view_component_with_boolean_true_renders_bare_attribute(): void
+    #[Test]
+    public function dynamic_view_component_with_boolean_true_renders_bare_attribute(): void
     {
         $this->view->registerViewComponent('x-test', '<span>{{ isset($disabled) ? "yes" : "no" }}</span>');
 
@@ -887,7 +937,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<span>yes</span>', $html);
     }
 
-    public function test_dynamic_view_component_with_boolean_false_omits_attribute(): void
+    #[Test]
+    public function dynamic_view_component_with_boolean_false_omits_attribute(): void
     {
         $this->view->registerViewComponent('x-test', '<span>{{ isset($disabled) ? "yes" : "no" }}</span>');
 
@@ -898,7 +949,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<span>no</span>', $html);
     }
 
-    public function test_dynamic_view_component_with_slot(): void
+    #[Test]
+    public function dynamic_view_component_with_slot(): void
     {
         $this->view->registerViewComponent('x-test', '<div><x-slot/></div>');
 
@@ -925,7 +977,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div>a</div><div>b</div>', $html);
     }
 
-    public function test_nested_slots(): void
+    #[Test]
+    public function nested_slots(): void
     {
         $this->view->registerViewComponent('x-a', '<a><x-slot /></a>');
         $this->view->registerViewComponent('x-b', '<x-a><b><x-slot /></b></x-a>');
@@ -939,7 +992,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<a><b>hi</b></a>', $html);
     }
 
-    public function test_nested_component_slot_forwarding(): void
+    #[Test]
+    public function nested_component_slot_forwarding(): void
     {
         $this->view->registerViewComponent('x-a', '<aside><x-slot name="left" /></aside><main><x-slot /></main>');
         $this->view->registerViewComponent('x-b', <<<'HTML'
@@ -956,7 +1010,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<aside>left</aside><main>main</main>', $html);
     }
 
-    public function test_nested_slots_with_escaping(): void
+    #[Test]
+    public function nested_slots_with_escaping(): void
     {
         $this->view->registerViewComponent('x-a', '<a><x-slot /></a>');
         $this->view->registerViewComponent('x-b', <<<'HTML'
@@ -976,7 +1031,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<a>testing</a>', $html);
     }
 
-    public function test_repeated_local_var_across_view_components(): void
+    #[Test]
+    public function repeated_local_var_across_view_components(): void
     {
         $this->view->registerViewComponent('x-test', '<div :thing="$thing">{{ $thing }}</div>');
 
@@ -993,7 +1049,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         ', $html);
     }
 
-    public function test_escape_expression_attribute_in_view_components(): void
+    #[Test]
+    public function escape_expression_attribute_in_view_components(): void
     {
         $this->view->registerViewComponent('x-test', '<div class="foo" ::escaped="foo"></div>');
 
@@ -1002,7 +1059,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div class="foo" :escaped="foo"></div>', $html);
     }
 
-    public function test_default_slot_value(): void
+    #[Test]
+    public function default_slot_value(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <x-slot>Default</x-slot>
@@ -1042,7 +1100,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $this->view->render('<x-test></x-test>'));
     }
 
-    public function test_view_variables_are_passed_into_the_component(): void
+    #[Test]
+    public function view_variables_are_passed_into_the_component(): void
     {
         $this->view->registerViewComponent('x-a', '<x-slot />');
 
@@ -1055,7 +1114,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('test', $html);
     }
 
-    public function test_capture_outer_scope_view_component_variables(): void
+    #[Test]
+    public function capture_outer_scope_view_component_variables(): void
     {
         $this->view->registerViewComponent('x-a', '<x-slot />');
         $this->view->registerViewComponent('x-b', '<x-slot />');
@@ -1074,7 +1134,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('a b', $html);
     }
 
-    public function test_fallthrough_attribute_without_value(): void
+    #[Test]
+    public function fallthrough_attribute_without_value(): void
     {
         $this->view->registerViewComponent('x-test', '<div :isset="$flag">hi</div>');
 
@@ -1082,7 +1143,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div>hi</div>', $this->view->render('<x-test :flag/>'));
     }
 
-    public function test_imports_in_slots_from_root_node(): void
+    #[Test]
+    public function imports_in_slots_from_root_node(): void
     {
         $this->view->registerViewComponent('x-test', '<div><x-slot /></div>');
 
@@ -1098,7 +1160,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>/</div>', $html);
     }
 
-    public function test_combined_imports_from_root_node_and_view_component(): void
+    #[Test]
+    public function combined_imports_from_root_node_and_view_component(): void
     {
         $this->view->registerViewComponent('x-parent', <<<'HTML'
         <div class="parent"><x-slot /></div>
@@ -1124,7 +1187,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div class="parent"><div class="child">/</div></div>', $html);
     }
 
-    public function test_exception_for_missing_imports(): void
+    #[Test]
+    public function exception_for_missing_imports(): void
     {
         $this->assertException(
             ViewCompilationFailed::class,
@@ -1215,7 +1279,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_imports_with_nested_view_components(): void
+    #[Test]
+    public function imports_with_nested_view_components(): void
     {
         $this->view->registerViewComponent('x-card', <<<'HTML'
         <div class="card"><x-slot /></div>
@@ -1238,7 +1303,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div class="card">/</div>', $html);
     }
 
-    public function test_imports_in_nested_html_elements(): void
+    #[Test]
+    public function imports_in_nested_html_elements(): void
     {
         $this->view->registerViewComponent('x-a', '<div class="a"><x-slot /></div>">');
         $this->view->registerViewComponent('x-b', '<div class="b"><x-slot /></div>">');
@@ -1260,7 +1326,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div class="a"><div><div class="b">/</div>"></div></div>">', $html);
     }
 
-    public function test_nested_slot_rendering(): void
+    #[Test]
+    public function nested_slot_rendering(): void
     {
         $this->view->registerViewComponent('x-a', <<<'HTML'
         <div>
@@ -1300,7 +1367,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch($expected, $html);
     }
 
-    public function test_define_slot_renders_default_content_into_child_component(): void
+    #[Test]
+    public function define_slot_renders_default_content_into_child_component(): void
     {
         // <x-slot define="left"> in x-header's template is OWNED by x-header.
         // x-container has no "left" slot — it only has a default slot.
@@ -1327,7 +1395,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_define_slot_is_overridden_by_caller_using_name(): void
+    #[Test]
+    public function define_slot_is_overridden_by_caller_using_name(): void
     {
         // When the caller fills the "left" slot using <x-slot name="left">, the compiled
         // caller content replaces the default and flows into x-container's default slot.
@@ -1357,7 +1426,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_multiple_define_slots_alongside_static_content_in_child_component(): void
+    #[Test]
+    public function multiple_define_slots_alongside_static_content_in_child_component(): void
     {
         // The full x-header scenario: two define slots flanking static content,
         // all flowing as one contiguous default slot into x-container.
@@ -1395,7 +1465,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_define_slot_inside_child_named_slot_filler(): void
+    #[Test]
+    public function define_slot_inside_child_named_slot_filler(): void
     {
         // <x-slot define="left"> nested inside <x-slot name="left"> (a named slot filler
         // for x-inner) evaluates x-outer's own "left" slot and places the result into

@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ConnectException;
 use Laminas\Diactoros\RequestFactory;
 use Laminas\Diactoros\StreamFactory;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -46,7 +47,8 @@ final class ClientTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_form_post_request(): void
+    #[Test]
+    public function form_post_request(): void
     {
         $request = new RequestFactory()
             ->createRequest('POST', new Uri('http://localhost:8088/request-test/form'))
@@ -68,7 +70,8 @@ final class ClientTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_json_post_request(): void
+    #[Test]
+    public function json_post_request(): void
     {
         $request = new RequestFactory()
             ->createRequest('POST', new Uri('http://localhost:8088/request-test/form'))

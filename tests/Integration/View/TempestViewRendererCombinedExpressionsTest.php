@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -21,7 +22,8 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         $this->container->get(ViewCache::class)->clear();
     }
 
-    public function test_if_with_data_expression(): void
+    #[Test]
+    public function if_with_data_expression(): void
     {
         $view = <<<'HTML'
         <a :if="($href ?? null) && ($label ?? null)" :href="$href">
@@ -52,7 +54,8 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         HTML, $html);
     }
 
-    public function test_foreach_with_if_and_else_expression(): void
+    #[Test]
+    public function foreach_with_if_and_else_expression(): void
     {
         $view = <<<'HTML'
         <div :foreach="$items as $item" :if="$label ?? null">
@@ -73,7 +76,8 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
         $this->assertStringContainsString('No label', $html);
     }
 
-    public function test_foreach_with_if_and_forelse_expression(): void
+    #[Test]
+    public function foreach_with_if_and_forelse_expression(): void
     {
         $view = <<<'HTML'
         <div :if="$label ?? null" :foreach="$items as $item">

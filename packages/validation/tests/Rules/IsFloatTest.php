@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsFloat;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsFloat;
  */
 final class IsFloatTest extends TestCase
 {
-    public function test_float(): void
+    #[Test]
+    public function float(): void
     {
         $rule = new IsFloat();
 

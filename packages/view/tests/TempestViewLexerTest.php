@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
@@ -11,7 +12,8 @@ use Tempest\View\Parser\TokenType;
 
 final class TempestViewLexerTest extends TestCase
 {
-    public function test_lexer(): void
+    #[Test]
+    public function lexer(): void
     {
         $html = <<<HTML
         <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
@@ -38,7 +40,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_lex_php(): void
+    #[Test]
+    public function lex_php(): void
     {
         $code = '<?php echo "hi"; ?>';
 
@@ -52,7 +55,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_lex_comment(): void
+    #[Test]
+    public function lex_comment(): void
     {
         $code = '<!-- test -->';
 
@@ -69,7 +73,8 @@ final class TempestViewLexerTest extends TestCase
     #[TestWith(['<x-foo />'])]
     #[TestWith(['<x-foo/>'])]
     #[TestWith(['<x-foo    />'])]
-    public function test_self_closing_tag_with_and_without_space(string $tag): void
+    #[Test]
+    public function self_closing_tag_with_and_without_space(string $tag): void
     {
         $this->assertTokens(
             expected: [
@@ -79,7 +84,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_self_closing_tag_with_attributes(): void
+    #[Test]
+    public function self_closing_tag_with_attributes(): void
     {
         $tokens = new TempestViewLexer('<x-foo x-bar="bar" x-baz="baz" />')->lex();
 
@@ -96,7 +102,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_boolean_attribute_with_self_closing_tag(): void
+    #[Test]
+    public function boolean_attribute_with_self_closing_tag(): void
     {
         $code = '<input disabled/>';
 
@@ -112,7 +119,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_boolean_attribute_with_newline(): void
+    #[Test]
+    public function boolean_attribute_with_newline(): void
     {
         $code = '<div hidden
 ></div>';
@@ -131,7 +139,8 @@ final class TempestViewLexerTest extends TestCase
     }
 
     #[TestWith(['</x-foo>'])]
-    public function test_closing_tag(string $tag): void
+    #[Test]
+    public function closing_tag(string $tag): void
     {
         $this->assertTokens(
             expected: [
@@ -141,7 +150,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_multiline_attributes(): void
+    #[Test]
+    public function multiline_attributes(): void
     {
         $html = <<<'HTML'
         <div
@@ -180,7 +190,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_whitespace(): void
+    #[Test]
+    public function whitespace(): void
     {
         $html = <<<'HTML'
         <p><strong>Test</strong> <em>Test</em></p>
@@ -207,7 +218,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_lexer_with_falsy_values(): void
+    #[Test]
+    public function lexer_with_falsy_values(): void
     {
         $html = <<<'HTML'
         a0a
@@ -223,7 +235,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_lexer_attribute_values(): void
+    #[Test]
+    public function lexer_attribute_values(): void
     {
         $tokens = new TempestViewLexer('<div x-foo="<?= $foo ?>" x-bar class="bar" x-foos>')->lex();
 
@@ -242,7 +255,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_php_within_tag(): void
+    #[Test]
+    public function php_within_tag(): void
     {
         $html = <<<'HTML'
         <div <?php if (true) { ?> class="foo" <?php } ?>></div>
@@ -264,7 +278,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_doctype(): void
+    #[Test]
+    public function doctype(): void
     {
         $html = <<<'HTML'
         <!DOCTYPE html><html></html>
@@ -299,7 +314,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_attribute_with_new_line(): void
+    #[Test]
+    public function attribute_with_new_line(): void
     {
         $tokens = new TempestViewLexer('<div x-foo="bar"
 ></div>')->lex();
@@ -316,7 +332,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_unclosed_php_tag(): void
+    #[Test]
+    public function unclosed_php_tag(): void
     {
         $tokens = new TempestViewLexer('<?php echo "hi";')->lex();
 
@@ -328,7 +345,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_unclosed_comment_tag(): void
+    #[Test]
+    public function unclosed_comment_tag(): void
     {
         $tokens = new TempestViewLexer('<!-- comment')->lex();
 
@@ -340,7 +358,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_cdata(): void
+    #[Test]
+    public function cdata(): void
     {
         $tokens = new TempestViewLexer(<<<'RSS'
         <title><![CDATA[ {{ $post['title'] }} ]]></title>
@@ -359,7 +378,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_xml(): void
+    #[Test]
+    public function xml(): void
     {
         $tokens = new TempestViewLexer(<<<'XML'
         <?xml version="1.0" encoding="UTF-8" ?>
@@ -373,7 +393,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_single_quote_attributes(): void
+    #[Test]
+    public function single_quote_attributes(): void
     {
         $html = <<<HTML
         <div class='hello'></div>
@@ -393,7 +414,8 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
-    public function test_source_mapping_line_count(): void
+    #[Test]
+    public function source_mapping_line_count(): void
     {
         $tokens = iterator_to_array(
             new TempestViewLexer("<div>\n<span></span>\n</div>")->lex(),
@@ -409,7 +431,8 @@ final class TempestViewLexerTest extends TestCase
         $this->assertSame(3, $tokens[7]->line);
     }
 
-    public function test_source_mapping_line_count_with_indentation(): void
+    #[Test]
+    public function source_mapping_line_count_with_indentation(): void
     {
         $tokens = iterator_to_array(
             new TempestViewLexer("<div>\n  <span></span>\n</div>")->lex(),

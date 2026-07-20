@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -9,7 +10,8 @@ use Tempest\Database\QueryStatements\CountStatement;
 
 final class CountStatementTest extends TestCase
 {
-    public function test_count_statement(): void
+    #[Test]
+    public function count_statement(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -23,7 +25,8 @@ final class CountStatementTest extends TestCase
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }
 
-    public function test_count_statement_with_specified_column(): void
+    #[Test]
+    public function count_statement_with_specified_column(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -37,7 +40,8 @@ final class CountStatementTest extends TestCase
         $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
     }
 
-    public function test_count_statement_with_distinct_specified_column(): void
+    #[Test]
+    public function count_statement_with_distinct_specified_column(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_without_filtering(): void
+    #[Test]
+    public function without_filtering(): void
     {
         $this->console
             ->withoutPrompting()
@@ -25,7 +27,8 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_with_filtering(): void
+    #[Test]
+    public function with_filtering(): void
     {
         $this->console
             ->withoutPrompting()
@@ -41,7 +44,8 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_associative_options_returns_keys(): void
+    #[Test]
+    public function associative_options_returns_keys(): void
     {
         $this->console
             ->withoutPrompting()
@@ -61,7 +65,8 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_searching_does_not_clear_active(): void
+    #[Test]
+    public function searching_does_not_clear_active(): void
     {
         $this->console
             ->withoutPrompting()
@@ -78,7 +83,8 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_default(): void
+    #[Test]
+    public function default(): void
     {
         $this->console
             ->withoutPrompting()

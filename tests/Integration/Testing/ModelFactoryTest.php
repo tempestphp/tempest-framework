@@ -20,7 +20,7 @@ use function Tempest\Framework\Testing\factory;
 final class ModelFactoryTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_make(): void
+    public function make(): void
     {
         $book = factory(Book::class)->make();
 
@@ -30,7 +30,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_make_with_data(): void
+    public function make_with_data(): void
     {
         $author = new Author(name: 'Brent');
 
@@ -46,7 +46,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_is_immutable(): void
+    public function with_is_immutable(): void
     {
         $factory = factory(Book::class)->with(title: 'A');
 
@@ -58,7 +58,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_nested_factories(): void
+    public function with_nested_factories(): void
     {
         $bookFactory = factory(Book::class);
 
@@ -72,7 +72,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_times(): void
+    public function times(): void
     {
         $books = factory(Book::class)->times(3)->make();
 
@@ -80,7 +80,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_times_with_items(): void
+    public function times_with_items(): void
     {
         $books = factory(Book::class)->times([
             ['title' => 'A'],
@@ -96,7 +96,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_times_with_nested_factories(): void
+    public function times_with_nested_factories(): void
     {
         $authorFactory = factory(Author::class)->with(name: 'Brent');
 
@@ -112,7 +112,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_save_to_the_database(): void
+    public function save_to_the_database(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -127,7 +127,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_save_to_the_database_with_nested_relation(): void
+    public function save_to_the_database_with_nested_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -142,7 +142,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_items_save_to_the_database(): void
+    public function items_save_to_the_database(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -158,7 +158,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_make_with_nested_object(): void
+    public function make_with_nested_object(): void
     {
         $isbn = factory(Isbn::class)->make();
 
@@ -166,7 +166,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_make_with_enum(): void
+    public function make_with_enum(): void
     {
         $author = factory(AuthorWithEnum::class)->make();
 
@@ -174,7 +174,7 @@ final class ModelFactoryTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_datetime(): void
+    public function with_datetime(): void
     {
         $withDateTime = factory(WithDateTime::class)->make();
 

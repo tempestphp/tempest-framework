@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Framework\Commands\MigrateDownCommand;
 use Tempest\Framework\Commands\MigrateUpCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migrate_rollback_command(): void
+    #[Test]
+    public function migrate_rollback_command(): void
     {
         $this->console
             ->call(MigrateUpCommand::class, ['force' => true])
@@ -25,7 +27,8 @@ final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('ROLLED BACK');
     }
 
-    public function test_errors_when_no_migrations_to_rollback(): void
+    #[Test]
+    public function errors_when_no_migrations_to_rollback(): void
     {
         $this->console
             ->call(MigrateDownCommand::class)

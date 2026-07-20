@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
@@ -56,7 +57,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_simple_where_group(): void
+    #[Test]
+    public function simple_where_group(): void
     {
         $products = query(Product::class)
             ->select()
@@ -73,7 +75,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_and_where_group(): void
+    #[Test]
+    public function and_where_group(): void
     {
         $products = query(Product::class)
             ->select()
@@ -92,7 +95,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_or_where_group(): void
+    #[Test]
+    public function or_where_group(): void
     {
         $products = query(Product::class)
             ->select()
@@ -121,7 +125,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $expensiveTechCorpCount);
     }
 
-    public function test_nested_where_groups(): void
+    #[Test]
+    public function nested_where_groups(): void
     {
         $products = query(Product::class)
             ->select()
@@ -145,7 +150,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_complex_grouped_conditions(): void
+    #[Test]
+    public function complex_grouped_conditions(): void
     {
         $products = query(Product::class)
             ->select()
@@ -170,7 +176,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_group_with_convenient_methods(): void
+    #[Test]
+    public function where_group_with_convenient_methods(): void
     {
         $products = query(Product::class)
             ->select()
@@ -190,7 +197,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_group_with_raw_conditions(): void
+    #[Test]
+    public function where_group_with_raw_conditions(): void
     {
         $products = query(Product::class)
             ->select()
@@ -207,7 +215,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_group_with_or_raw_conditions(): void
+    #[Test]
+    public function where_group_with_or_raw_conditions(): void
     {
         $products = query(Product::class)
             ->select()
@@ -233,7 +242,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertGreaterThanOrEqual(1, $highRatingCount);
     }
 
-    public function test_empty_where_group_is_ignored(): void
+    #[Test]
+    public function empty_where_group_is_ignored(): void
     {
         $products = query(Product::class)
             ->select()
@@ -246,7 +256,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_multiple_where_groups(): void
+    #[Test]
+    public function multiple_where_groups(): void
     {
         $products = query(Product::class)
             ->select()
@@ -268,7 +279,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_where_group_with_all_logical_operators(): void
+    #[Test]
+    public function where_group_with_all_logical_operators(): void
     {
         $products = query(Product::class)
             ->select()
@@ -297,7 +309,8 @@ final class GroupedWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertGreaterThanOrEqual(1, $expensiveCount);
     }
 
-    public function test_deeply_nested_where_groups(): void
+    #[Test]
+    public function deeply_nested_where_groups(): void
     {
         $products = query(Product::class)
             ->select()

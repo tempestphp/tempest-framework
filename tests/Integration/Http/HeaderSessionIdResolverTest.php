@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -19,7 +20,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class HeaderSessionIdResolverTest extends FrameworkIntegrationTestCase
 {
-    public function test_resolving_session_from_header(): void
+    #[Test]
+    public function resolving_session_from_header(): void
     {
         $this->container->singleton(
             SessionIdResolver::class,

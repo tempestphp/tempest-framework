@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Components;
 
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Console;
@@ -35,7 +36,8 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
         $this->container->get(Connection::class)->connect();
     }
 
-    public function test_no_task(): void
+    #[Test]
+    public function no_task(): void
     {
         $this->console
             ->withoutPrompting()
@@ -50,7 +52,8 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_process_task(): void
+    #[Test]
+    public function process_task(): void
     {
         $this->skipCI('Flaky on CI');
 
@@ -68,7 +71,8 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_successful_task(): void
+    #[Test]
+    public function successful_task(): void
     {
         $this->skipCI('Flaky on CI');
 
@@ -85,7 +89,8 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_failing_task(): void
+    #[Test]
+    public function failing_task(): void
     {
         $this->skipCI('Flaky on CI');
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasManyThrough;
 use Tempest\Database\PrimaryKey;
@@ -12,7 +13,8 @@ use function Tempest\Database\inspect;
 
 final class HasManyThroughTest extends FrameworkIntegrationTestCase
 {
-    public function test_has_many_through(): void
+    #[Test]
+    public function has_many_through(): void
     {
         $model = inspect(model: HasManyThroughOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');
@@ -30,7 +32,8 @@ final class HasManyThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_many_through_select_fields(): void
+    #[Test]
+    public function has_many_through_select_fields(): void
     {
         $model = inspect(model: HasManyThroughOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');
@@ -51,7 +54,8 @@ final class HasManyThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_many_through_with_parent(): void
+    #[Test]
+    public function has_many_through_with_parent(): void
     {
         $model = inspect(model: HasManyThroughOwnerModel::class);
         $relation = $model
@@ -64,7 +68,8 @@ final class HasManyThroughTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_many_through_with_custom_joins(): void
+    #[Test]
+    public function has_many_through_with_custom_joins(): void
     {
         $model = inspect(model: HasManyThroughCustomOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');

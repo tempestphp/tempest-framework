@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsToMany;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Direction;
@@ -30,7 +31,8 @@ use function Tempest\Database\query;
  */
 final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_select_query(): void
+    #[Test]
+    public function select_query(): void
     {
         $query = query('chapters')
             ->select('title', 'index')
@@ -49,7 +51,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
-    public function test_select_multiple_fields_as_one(): void
+    #[Test]
+    public function select_multiple_fields_as_one(): void
     {
         $this->assertSameWithoutBackticks(
             'SELECT title AS t, index AS i FROM chapters',
@@ -68,7 +71,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_without_any_fields_specified(): void
+    #[Test]
+    public function select_without_any_fields_specified(): void
     {
         $query = query('chapters')->select()->build();
 
@@ -79,7 +83,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_select_from_model(): void
+    #[Test]
+    public function select_from_model(): void
     {
         $query = query(Author::class)->select()->build();
 
@@ -90,7 +95,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where(): void
+    #[Test]
+    public function multiple_where(): void
     {
         $sql = query('books')
             ->select()
@@ -105,7 +111,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where_field(): void
+    #[Test]
+    public function multiple_where_field(): void
     {
         $sql = query('books')
             ->select()
@@ -118,7 +125,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_where_statement(): void
+    #[Test]
+    public function where_statement(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -137,7 +145,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('B', $book->title);
     }
 
-    public function test_join(): void
+    #[Test]
+    public function join(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -160,7 +169,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_order_by(): void
+    #[Test]
+    public function order_by(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -179,7 +189,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('D', $book->title);
     }
 
-    public function test_order_by_with_field_and_direction(): void
+    #[Test]
+    public function order_by_with_field_and_direction(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -200,7 +211,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('A', $book->title);
     }
 
-    public function test_order_by_with_field_defaults_to_asc(): void
+    #[Test]
+    public function order_by_with_field_defaults_to_asc(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -218,7 +230,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('A', $book->title);
     }
 
-    public function test_order_by_raw_shorthand(): void
+    #[Test]
+    public function order_by_raw_shorthand(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -236,7 +249,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('D', $book->title);
     }
 
-    public function test_order_by_sql_generation(): void
+    #[Test]
+    public function order_by_sql_generation(): void
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM `books` ORDER BY `title` ASC',
@@ -254,7 +268,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_limit(): void
+    #[Test]
+    public function limit(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -275,7 +290,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('B', $books[1]->title);
     }
 
-    public function test_offset(): void
+    #[Test]
+    public function offset(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -299,7 +315,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('D', $books[1]->title);
     }
 
-    public function test_chunk(): void
+    #[Test]
+    public function chunk(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -328,7 +345,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(3, $results);
     }
 
-    public function test_chunk_with_relation(): void
+    #[Test]
+    public function chunk_with_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -351,7 +369,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $results);
     }
 
-    public function test_raw(): void
+    #[Test]
+    public function raw(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -368,7 +387,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('A', $books[0]->title);
     }
 
-    public function test_select_query_with_conditions(): void
+    #[Test]
+    public function select_query_with_conditions(): void
     {
         $query = query('chapters')
             ->select('title', 'index')
@@ -398,7 +418,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
-    public function test_select_first_with_non_object_model(): void
+    #[Test]
+    public function select_first_with_non_object_model(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -417,7 +438,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], $author);
     }
 
-    public function test_select_all_with_non_object_model(): void
+    #[Test]
+    public function select_all_with_non_object_model(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -440,7 +462,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_includes_belongs_to(): void
+    #[Test]
+    public function select_includes_belongs_to(): void
     {
         $query = query(Book::class)->select();
 
@@ -450,7 +473,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_belongs_to_relation(): void
+    #[Test]
+    public function with_belongs_to_relation(): void
     {
         $query = query(Book::class)
             ->select()
@@ -463,7 +487,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_execute_with_relations(): void
+    #[Test]
+    public function select_query_execute_with_relations(): void
     {
         $this->seed();
 
@@ -489,7 +514,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('lotr-1', $book->isbn->value);
     }
 
-    public function test_eager_loads_combined_with_manual_loads(): void
+    #[Test]
+    public function eager_loads_combined_with_manual_loads(): void
     {
         $query = AWithEager::select()->with('b.c')->compile();
 
@@ -499,7 +525,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_group_by(): void
+    #[Test]
+    public function group_by(): void
     {
         $sql = query('authors')
             ->select()
@@ -511,7 +538,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_having(): void
+    #[Test]
+    public function having(): void
     {
         $sql = query('authors')
             ->select()
@@ -523,7 +551,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_paginate(): void
+    #[Test]
+    public function paginate(): void
     {
         $this->seed();
 
@@ -569,7 +598,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi Chapter 4', $page10->data[0]->title);
     }
 
-    public function test_paginate_with_where_condition(): void
+    #[Test]
+    public function paginate_with_where_condition(): void
     {
         $this->seed();
 
@@ -586,7 +616,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1.2', $page1->data[1]->title);
     }
 
-    public function test_select_query_builder_from_another_query_builder(): void
+    #[Test]
+    public function select_query_builder_from_another_query_builder(): void
     {
         $this->seed();
 
@@ -603,7 +634,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1.3', $results[2]->title);
     }
 
-    public function test_paginate_preserves_relations(): void
+    #[Test]
+    public function paginate_preserves_relations(): void
     {
         $this->seed();
 
@@ -618,7 +650,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1', $page1->data[0]->book->title);
     }
 
-    public function test_paginate_with_nested_relations(): void
+    #[Test]
+    public function paginate_with_nested_relations(): void
     {
         $this->seed();
 
@@ -688,7 +721,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_select_on_model_with_belongs_to_many_and_through_relations(): void
+    #[Test]
+    public function select_on_model_with_belongs_to_many_and_through_relations(): void
     {
         $query = query(model: Tag::class)
             ->select()
@@ -700,7 +734,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_with_belongs_to_many_relation(): void
+    #[Test]
+    public function select_with_belongs_to_many_relation(): void
     {
         $query = query(model: Tag::class)
             ->select()
@@ -713,7 +748,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_with_has_many_through_relation(): void
+    #[Test]
+    public function select_with_has_many_through_relation(): void
     {
         $query = query(model: Tag::class)
             ->select()
@@ -726,7 +762,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_with_has_one_through_relation(): void
+    #[Test]
+    public function select_with_has_one_through_relation(): void
     {
         $query = query(model: Tag::class)
             ->select()
@@ -739,7 +776,8 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_with_duplicate_belongs_to_many_target_table(): void
+    #[Test]
+    public function select_with_duplicate_belongs_to_many_target_table(): void
     {
         $query = query(model: UserWithRoleAndDirectPermissions::class)
             ->select()

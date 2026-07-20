@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\View\GenericView;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
@@ -17,7 +18,8 @@ use function Tempest\Router\uri;
  */
 final class ViewDataTest extends FrameworkIntegrationTestCase
 {
-    public function test_can_assert_view_data(): void
+    #[Test]
+    public function can_assert_view_data(): void
     {
         $this->http
             ->get(uri([TestController::class, 'withView']))
@@ -32,7 +34,8 @@ final class ViewDataTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_can_assert_generic_view_model(): void
+    #[Test]
+    public function can_assert_generic_view_model(): void
     {
         $this->http
             ->get(uri([RelativeViewController::class, 'asFunction']))
@@ -40,7 +43,8 @@ final class ViewDataTest extends FrameworkIntegrationTestCase
             ->assertView('./relative-view.view.php');
     }
 
-    public function test_can_assert_view_model(): void
+    #[Test]
+    public function can_assert_view_model(): void
     {
         $this->http
             ->get(uri([TestController::class, 'viewModel']))

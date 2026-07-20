@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Support\Html\HtmlString;
 use Tempest\Support\Str\ImmutableString;
@@ -28,7 +29,8 @@ final class StringMutabilityTest extends FrameworkIntegrationTestCase
         'tap',
     ];
 
-    public function test_immutable_string(): void
+    #[Test]
+    public function immutable_string(): void
     {
         $this->assertAllMethods(
             ImmutableString::class,
@@ -40,7 +42,8 @@ final class StringMutabilityTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_mutable_string(): void
+    #[Test]
+    public function mutable_string(): void
     {
         $this->assertAllMethods(
             MutableString::class,
@@ -57,7 +60,8 @@ final class StringMutabilityTest extends FrameworkIntegrationTestCase
     #[TestWith([ImmutableString::class, HtmlString::class, 'toHtmlString'])]
     #[TestWith([HtmlString::class, MutableString::class, 'toMutableString'])]
     #[TestWith([HtmlString::class, ImmutableString::class, 'toImmutableString'])]
-    public function test_convert_between_string_instances(string $initial, string $target, string $method): void
+    #[Test]
+    public function convert_between_string_instances(string $initial, string $target, string $method): void
     {
         $instance = new $initial('foo');
 

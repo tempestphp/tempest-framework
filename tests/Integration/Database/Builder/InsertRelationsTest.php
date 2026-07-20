@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Exceptions\HasManyRelationCouldNotBeInsterted;
 use Tempest\Database\Exceptions\HasOneRelationCouldNotBeInserted;
@@ -26,7 +27,8 @@ use function Tempest\Database\query;
 
 final class InsertRelationsTest extends FrameworkIntegrationTestCase
 {
-    public function test_inserting_has_many_with_arrays(): void
+    #[Test]
+    public function inserting_has_many_with_arrays(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -48,7 +50,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Meeting Fern', $book->chapters[1]->title);
     }
 
-    public function test_inserting_has_one_with_array(): void
+    #[Test]
+    public function inserting_has_one_with_array(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -73,7 +76,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234567', $book->isbn->value);
     }
 
-    public function test_inserting_has_many_with_objects(): void
+    #[Test]
+    public function inserting_has_many_with_objects(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -95,7 +99,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Stark the Warrior', $book->chapters[1]->title);
     }
 
-    public function test_inserting_has_one_with_object(): void
+    #[Test]
+    public function inserting_has_one_with_object(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -120,7 +125,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234567', $book->isbn->value);
     }
 
-    public function test_inserting_mixed_relations(): void
+    #[Test]
+    public function inserting_mixed_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -152,7 +158,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-4091234567', $book->isbn->value);
     }
 
-    public function test_inserting_empty_has_many_relation(): void
+    #[Test]
+    public function inserting_empty_has_many_relation(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -168,7 +175,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, $book->chapters);
     }
 
-    public function test_inserting_large_batch_has_many(): void
+    #[Test]
+    public function inserting_large_batch_has_many(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -189,7 +197,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Chapter 10', $book->chapters[9]->title);
     }
 
-    public function test_inserting_has_many_preserves_additional_data(): void
+    #[Test]
+    public function inserting_has_many_preserves_additional_data(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -213,7 +222,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('And then...', $book->chapters[1]->contents);
     }
 
-    public function test_inserting_has_many_with_invalid_array_throws_exception(): void
+    #[Test]
+    public function inserting_has_many_with_invalid_array_throws_exception(): void
     {
         $this->expectException(HasManyRelationCouldNotBeInsterted::class);
 
@@ -222,7 +232,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_inserting_has_one_with_invalid_type_throws_exception(): void
+    #[Test]
+    public function inserting_has_one_with_invalid_type_throws_exception(): void
     {
         $this->expectException(HasOneRelationCouldNotBeInserted::class);
 
@@ -231,7 +242,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_relation_insertion_with_mixed_types(): void
+    #[Test]
+    public function relation_insertion_with_mixed_types(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
@@ -255,7 +267,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Another Object Chapter', $book->chapters[2]->title);
     }
 
-    public function test_insertion_with_custom_primary_key_names(): void
+    #[Test]
+    public function insertion_with_custom_primary_key_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
 
@@ -283,7 +296,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Defensive', $mage->spells[1]->type);
     }
 
-    public function test_insertion_with_non_standard_relation_names(): void
+    #[Test]
+    public function insertion_with_non_standard_relation_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePartyTable::class, CreateAdventurerTable::class);
 
@@ -317,7 +331,8 @@ final class InsertRelationsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Mage', $party->members[3]->class);
     }
 
-    public function test_insertion_with_custom_foreign_key_names(): void
+    #[Test]
+    public function insertion_with_custom_foreign_key_names(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateMageTable::class, CreateSpellTable::class);
 

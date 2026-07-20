@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\View\Exceptions\ViewComponentWasAlreadyRegistered;
@@ -17,7 +18,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 {
-    public function test_vendor_components_get_overwritten(): void
+    #[Test]
+    public function vendor_components_get_overwritten(): void
     {
         /** @var ViewConfig $viewConfig */
         $viewConfig = $this->get(ViewConfig::class);
@@ -32,7 +34,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $this->assertSame('overwritten', $this->view->render('<x-form />'));
     }
 
-    public function test_project_view_components_cannot_be_overwritten_by_other_project_view_component(): void
+    #[Test]
+    public function project_view_components_cannot_be_overwritten_by_other_project_view_component(): void
     {
         /** @var ViewConfig $viewConfig */
         $viewConfig = $this->get(ViewConfig::class);
@@ -57,7 +60,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_project_view_components_will_not_be_overwritten_by_vendor_view_component(): void
+    #[Test]
+    public function project_view_components_will_not_be_overwritten_by_vendor_view_component(): void
     {
         /** @var ViewConfig $viewConfig */
         $viewConfig = $this->get(ViewConfig::class);
@@ -79,7 +83,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $this->assertSame('overwritten', $this->view->render('<x-form />'));
     }
 
-    public function test_auto_registration(): void
+    #[Test]
+    public function auto_registration(): void
     {
         $discovery = $this->container->get(ViewComponentDiscovery::class);
         $discovery->setItems(new DiscoveryItems([]));
@@ -93,7 +98,8 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $this->assertSame('<span>Hello World</span>', $html);
     }
 
-    public function test_auto_registration_with_x_component(): void
+    #[Test]
+    public function auto_registration_with_x_component(): void
     {
         $discovery = $this->container->get(ViewComponentDiscovery::class);
         $discovery->setItems(new DiscoveryItems([]));

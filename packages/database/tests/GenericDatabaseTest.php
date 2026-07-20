@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests;
 
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\Connection\Connection;
@@ -20,7 +21,8 @@ use Tempest\Mapper\SerializerFactory;
  */
 final class GenericDatabaseTest extends TestCase
 {
-    public function test_it_executes_transactions(): void
+    #[Test]
+    public function it_executes_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection
@@ -50,7 +52,8 @@ final class GenericDatabaseTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_it_rolls_back_transactions_on_failure(): void
+    #[Test]
+    public function it_rolls_back_transactions_on_failure(): void
     {
         $connection = $this->createMock(Connection::class);
         $connection

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
@@ -16,7 +17,8 @@ use function Tempest\Database\query;
 
 final class QueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_select(): void
+    #[Test]
+    public function select(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -51,7 +53,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Frieren', $resultsWithSpecificColumns[0]->name);
     }
 
-    public function test_insert(): void
+    #[Test]
+    public function insert(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -75,7 +78,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Stark', $starkRecords[0]->name);
     }
 
-    public function test_update(): void
+    #[Test]
+    public function update(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -100,7 +104,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Fern', $starkRecords[0]->name);
     }
 
-    public function test_delete(): void
+    #[Test]
+    public function delete(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -127,7 +132,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Eisen', $remainingWithoutId[0]->name);
     }
 
-    public function test_count(): void
+    #[Test]
+    public function builds_count_queries(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -156,7 +162,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $countFilteredWithoutId);
     }
 
-    public function test_new(): void
+    #[Test]
+    public function new(): void
     {
         $modelWithId = query(TestUserModel::class)->new(name: 'Frieren');
         $modelWithoutId = query(TestUserModelWithoutId::class)->new(name: 'Fern');
@@ -168,7 +175,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Fern', $modelWithoutId->name);
     }
 
-    public function test_get_with_id_query(): void
+    #[Test]
+    public function get_with_id_query(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -180,7 +188,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertTrue($created->id->equals($retrieved->id));
     }
 
-    public function test_get_throws_for_model_without_id(): void
+    #[Test]
+    public function get_throws_for_model_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
@@ -192,7 +201,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         query(TestUserModelWithoutId::class)->get(1);
     }
 
-    public function test_all(): void
+    #[Test]
+    public function all(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -214,7 +224,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(TestUserModelWithoutId::class, $allWithoutId[1]);
     }
 
-    public function test_find(): void
+    #[Test]
+    public function find(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -240,7 +251,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Ubel', $resultWithoutId->name);
     }
 
-    public function test_create(): void
+    #[Test]
+    public function create(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -255,7 +267,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Serie', $createdWithoutId->name);
     }
 
-    public function test_find_or_new_finds_existing(): void
+    #[Test]
+    public function find_or_new_finds_existing(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -280,7 +293,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Updated Macht', $resultWithoutId->name);
     }
 
-    public function test_find_or_new_creates_new(): void
+    #[Test]
+    public function find_or_new_creates_new(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class, TestModelWithoutIdMigration::class);
 
@@ -302,7 +316,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Updated Name', $resultWithoutId->name);
     }
 
-    public function test_update_or_create_updates_existing(): void
+    #[Test]
+    public function update_or_create_updates_existing(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -318,7 +333,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Updated Qual', $resultWithId->name);
     }
 
-    public function test_update_or_create_creates_new(): void
+    #[Test]
+    public function update_or_create_creates_new(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -332,7 +348,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Aura', $resultWithId->name);
     }
 
-    public function test_get_with_string_id(): void
+    #[Test]
+    public function get_with_string_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -344,7 +361,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertTrue($created->id->equals($retrieved->id));
     }
 
-    public function test_get_with_int_id(): void
+    #[Test]
+    public function get_with_int_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -356,7 +374,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertTrue($created->id->equals($retrieved->id));
     }
 
-    public function test_get_returns_null_for_non_existent_id(): void
+    #[Test]
+    public function get_returns_null_for_non_existent_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWrapperMigration::class);
 
@@ -365,7 +384,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertNull($result);
     }
 
-    public function test_find_by_id_throws_for_model_without_id(): void
+    #[Test]
+    public function find_by_id_throws_for_model_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
@@ -377,7 +397,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         query(TestUserModelWithoutId::class)->findById(1);
     }
 
-    public function test_update_or_create_throws_for_model_without_id(): void
+    #[Test]
+    public function update_or_create_throws_for_model_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWithoutIdMigration::class);
 
@@ -392,7 +413,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_custom_primary_key_name(): void
+    #[Test]
+    public function custom_primary_key_name(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
 
@@ -408,7 +430,8 @@ final class QueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertTrue($created->uuid->equals($retrieved->uuid));
     }
 
-    public function test_custom_primary_key_update_or_create(): void
+    #[Test]
+    public function custom_primary_key_update_or_create(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, TestModelWithCustomPrimaryKeyMigration::class);
 

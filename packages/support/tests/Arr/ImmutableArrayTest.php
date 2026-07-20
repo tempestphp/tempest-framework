@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Arr;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -12,7 +13,8 @@ use Tempest\Support\Arr\ImmutableArray;
  */
 final class ImmutableArrayTest extends TestCase
 {
-    public function test_add(): void
+    #[Test]
+    public function add(): void
     {
         $collection = new ImmutableArray('a');
 
@@ -27,7 +29,8 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
-    public function test_add_diverse_values(): void
+    #[Test]
+    public function add_diverse_values(): void
     {
         $collection = new ImmutableArray();
 
@@ -67,7 +70,8 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
-    public function test_null_values_are_accessible_by_offset(): void
+    #[Test]
+    public function null_values_are_accessible_by_offset(): void
     {
         $collection = new ImmutableArray(['key' => null]);
 
@@ -75,7 +79,8 @@ final class ImmutableArrayTest extends TestCase
         $this->assertNull($collection['key']);
     }
 
-    public function test_remove_with_basic_keys(): void
+    #[Test]
+    public function remove_with_basic_keys(): void
     {
         $collection = new ImmutableArray([1, 2, 3]);
 
@@ -90,7 +95,8 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_with_associative_keys(): void
+    #[Test]
+    public function remove_with_associative_keys(): void
     {
         $collection = new ImmutableArray([
             'first_name' => 'John',
@@ -109,7 +115,8 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_values_with_basic_keys(): void
+    #[Test]
+    public function remove_values_with_basic_keys(): void
     {
         $collection = new ImmutableArray([1, 2, 3]);
 
@@ -129,7 +136,8 @@ final class ImmutableArrayTest extends TestCase
         );
     }
 
-    public function test_remove_values_with_associative_keys(): void
+    #[Test]
+    public function remove_values_with_associative_keys(): void
     {
         $collection = new ImmutableArray([
             'first_name' => 'John',

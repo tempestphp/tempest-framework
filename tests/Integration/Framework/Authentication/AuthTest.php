@@ -8,5 +8,5 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class AuthTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_auth(): void {}
+    public function auth(): void {}
 }

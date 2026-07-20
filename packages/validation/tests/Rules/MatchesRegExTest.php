@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tempest\Validation\Rules\MatchesRegEx;
@@ -13,7 +14,8 @@ use Tempest\Validation\Rules\MatchesRegEx;
  */
 final class MatchesRegExTest extends TestCase
 {
-    public function test_regex_rule(): void
+    #[Test]
+    public function regex_rule(): void
     {
         $rule = new MatchesRegEx('/^[aA][bB]$/');
 
@@ -25,7 +27,8 @@ final class MatchesRegExTest extends TestCase
         $this->assertTrue($rule->isValid('Ab'));
     }
 
-    public function test_non_imvalid_types(): void
+    #[Test]
+    public function non_imvalid_types(): void
     {
         $rule = new MatchesRegEx('/^\d+$/');
 

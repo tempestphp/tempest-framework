@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -14,7 +15,8 @@ use function Tempest\Support\arr;
 
 final class UpdateStatementTest extends TestCase
 {
-    public function test_update(): void
+    #[Test]
+    public function update(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -33,7 +35,8 @@ final class UpdateStatementTest extends TestCase
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
-    public function test_exception_when_no_values(): void
+    #[Test]
+    public function exception_when_no_values(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -45,7 +48,8 @@ final class UpdateStatementTest extends TestCase
         )->compile(DatabaseDialect::MYSQL);
     }
 
-    public function test_exception_when_no_conditions_without_explicit_allow_all(): void
+    #[Test]
+    public function exception_when_no_conditions_without_explicit_allow_all(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -56,7 +60,8 @@ final class UpdateStatementTest extends TestCase
         )->compile(DatabaseDialect::MYSQL);
     }
 
-    public function test_no_exception_when_no_conditions_with_explicit_allow_all(): void
+    #[Test]
+    public function no_exception_when_no_conditions_with_explicit_allow_all(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -29,14 +30,16 @@ use function Tempest\Mapper\map;
  */
 final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_missing_values(): void
+    #[Test]
+    public function missing_values(): void
     {
         $this->expectException(MappingValuesWereMissing::class);
 
         map([])->to(ObjectA::class);
     }
 
-    public function test_map_to_existing_object(): void
+    #[Test]
+    public function map_to_existing_object(): void
     {
         $object = map(['a' => 'a', 'b' => 'b'])->to(new ObjectA('', ''));
 
@@ -44,21 +47,24 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $object->b);
     }
 
-    public function test_caster_on_property(): void
+    #[Test]
+    public function caster_on_property(): void
     {
         $object = map(['prop' => 'a'])->to(ObjectWithDoubleStringCaster::class);
 
         $this->assertSame('aa', $object->prop);
     }
 
-    public function test_caster_on_target_object(): void
+    #[Test]
+    public function caster_on_target_object(): void
     {
         $object = map(['obj' => 'name'])->to(ObjectWithMyObject::class);
 
         $this->assertSame('name', $object->obj->name);
     }
 
-    public function test_default_values(): void
+    #[Test]
+    public function default_values(): void
     {
         $object = map([])->to(ObjectWithDefaultValues::class);
 
@@ -66,7 +72,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertNull($object->b);
     }
 
-    public function test_built_in_casters(): void
+    #[Test]
+    public function built_in_casters(): void
     {
         $object = map([
             'nullableDateTimeImmutable' => '',
@@ -90,7 +97,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $object->int);
     }
 
-    public function test_wrongly_formatted_date(): void
+    #[Test]
+    public function wrongly_formatted_date(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Must be a valid date in the format Y-m-d H:i:s');
@@ -101,7 +109,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
             ->to(ObjectWithBuiltInCasters::class);
     }
 
-    public function test_parent_child(): void
+    #[Test]
+    public function parent_child(): void
     {
         $parent = map(
             [
@@ -117,7 +126,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->child->parentCollection[0]->name);
     }
 
-    public function test_parent_children(): void
+    #[Test]
+    public function parent_children(): void
     {
         $parent = map(
             [
@@ -138,21 +148,24 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->children[1]->parentCollection[0]->name);
     }
 
-    public function test_backed_enum_value(): void
+    #[Test]
+    public function backed_enum_value(): void
     {
         $object = map(['method' => 'GET'])->to(ObjectWithEnum::class);
 
         $this->assertSame(Method::GET, $object->method);
     }
 
-    public function test_non_strict_values_with_magic_getter(): void
+    #[Test]
+    public function non_strict_values_with_magic_getter(): void
     {
         $object = map([])->to(ObjectWithMagicGetter::class);
 
         $this->assertSame('magic', $object->a);
     }
 
-    public function test_map_array_of_enums(): void
+    #[Test]
+    public function map_array_of_enums(): void
     {
         $object = map(['roles' => ['admin', 'user']])->to(ObjectWithArrayEnumProperty::class);
 
@@ -161,7 +174,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(EnumToBeMappedToArray::USER, $object->roles[1]);
     }
 
-    public function test_map_array_of_serialized_enums(): void
+    #[Test]
+    public function map_array_of_serialized_enums(): void
     {
         $object = map(['roles' => json_encode(['admin'])])->to(ObjectWithArrayEnumProperty::class);
 
@@ -169,7 +183,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(EnumToBeMappedToArray::ADMIN, $object->roles[0]);
     }
 
-    public function test_parent_child_with_virtual_property(): void
+    #[Test]
+    public function parent_child_with_virtual_property(): void
     {
         $parent = map(
             [
@@ -186,7 +201,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->child->virtualParent->name);
     }
 
-    public function test_parent_children_with_virtual_property(): void
+    #[Test]
+    public function parent_children_with_virtual_property(): void
     {
         $parent = map(
             [
@@ -209,7 +225,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->children[1]->virtualParent->name);
     }
 
-    public function test_parent_child_with_getter_only_property(): void
+    #[Test]
+    public function parent_child_with_getter_only_property(): void
     {
         $parent = map(
             [
@@ -226,7 +243,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->child->parentCollection[0]->name);
     }
 
-    public function test_parent_children_with_getter_only_property(): void
+    #[Test]
+    public function parent_children_with_getter_only_property(): void
     {
         $parent = map(
             [
@@ -247,7 +265,8 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $parent->children[1]->parent->name);
     }
 
-    public function test_map_primitive_array_properties(): void
+    #[Test]
+    public function map_primitive_array_properties(): void
     {
         $object = map([
             'strings' => ['a', 'b', 'c'],

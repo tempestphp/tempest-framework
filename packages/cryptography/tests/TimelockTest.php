@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tempest\Clock\GenericClock;
@@ -13,7 +14,8 @@ final class TimelockTest extends TestCase
 {
     use HasMoreIntegerAssertions;
 
-    public function test_callback_is_executed(): void
+    #[Test]
+    public function callback_is_executed(): void
     {
         $clock = new GenericClock();
         $result = new Timelock($clock)->invoke(fn () => 'hello', Duration::zero());
@@ -21,7 +23,8 @@ final class TimelockTest extends TestCase
         $this->assertSame('hello', $result);
     }
 
-    public function test_locks_for_duration(): void
+    #[Test]
+    public function locks_for_duration(): void
     {
         $clock = new GenericClock();
         $start = microtime(true);
@@ -34,7 +37,8 @@ final class TimelockTest extends TestCase
         $this->assertEqualsToMoreOrLess(0.1, $elapsed, margin: 0.015, windowsMargin: 0.025);
     }
 
-    public function test_return_early(): void
+    #[Test]
+    public function return_early(): void
     {
         $clock = new GenericClock();
         $timelock = new Timelock($clock);
@@ -49,7 +53,8 @@ final class TimelockTest extends TestCase
         $this->assertLessThan(0.1, $elapsed, 'The timelock did not return early as expected.');
     }
 
-    public function test_throws_exception_after_delay(): void
+    #[Test]
+    public function throws_exception_after_delay(): void
     {
         $clock = new GenericClock();
         $timelock = new Timelock($clock);
@@ -67,7 +72,8 @@ final class TimelockTest extends TestCase
         }
     }
 
-    public function test_uses_clock_to_sleep(): void
+    #[Test]
+    public function uses_clock_to_sleep(): void
     {
         $clock = new MockClock();
         $timelock = new Timelock($clock);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,7 +12,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    public function test_overview(): void
+    #[Test]
+    public function overview(): void
     {
         $this->console
             ->call('')
@@ -25,7 +27,8 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertContains('test:test');
     }
 
-    public function test_overview_with_hidden(): void
+    #[Test]
+    public function overview_with_hidden(): void
     {
         $this->console
             ->call('', ['-a'])

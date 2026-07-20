@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -12,7 +13,8 @@ use function Tempest\Support\arr;
 
 final class InsertStatementTest extends TestCase
 {
-    public function test_insert_statement(): void
+    #[Test]
+    public function insert_statement(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 
@@ -31,7 +33,8 @@ final class InsertStatementTest extends TestCase
         $this->assertSame($expectedPostgres, $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
-    public function test_insert_empty_row(): void
+    #[Test]
+    public function insert_empty_row(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
         $statement = new InsertStatement($tableDefinition);
@@ -41,7 +44,8 @@ final class InsertStatementTest extends TestCase
         $this->assertSame('INSERT INTO `foo` AS `bar` DEFAULT VALUES RETURNING *', $statement->compile(DatabaseDialect::POSTGRESQL));
     }
 
-    public function test_exception_on_column_mismatch(): void
+    #[Test]
+    public function exception_on_column_mismatch(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 

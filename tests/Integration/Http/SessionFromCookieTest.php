@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Config\FileSessionConfig;
@@ -15,7 +16,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SessionFromCookieTest extends FrameworkIntegrationTestCase
 {
-    public function test_resolving_session_from_cookie(): void
+    #[Test]
+    public function resolving_session_from_cookie(): void
     {
         $this->container->config(new FileSessionConfig(
             expiration: Duration::hours(2),
@@ -33,7 +35,8 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $this->assertEquals('a', $sessionA->get('test'));
     }
 
-    public function test_cookie_expiration(): void
+    #[Test]
+    public function cookie_expiration(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 

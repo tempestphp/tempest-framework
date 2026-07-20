@@ -16,7 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class TextInputComponentTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_basic_input(): void
+    public function basic_input(): void
     {
         $this->console
             ->withoutPrompting()
@@ -43,7 +43,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_multiline_input(): void
+    public function multiline_input(): void
     {
         $this->console
             ->withoutPrompting()
@@ -70,7 +70,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_multiline_input_with_scroll(): void
+    public function multiline_input_with_scroll(): void
     {
         $this->console
             ->withoutPrompting()
@@ -113,7 +113,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_single_line_cannot_have_new_lines(): void
+    public function single_line_cannot_have_new_lines(): void
     {
         $this->console
             ->withoutPrompting()
@@ -129,7 +129,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_multiline_may_have_new_lines(): void
+    public function multiline_may_have_new_lines(): void
     {
         $this->console
             ->withoutPrompting()
@@ -145,7 +145,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_truncates_label(): void
+    public function truncates_label(): void
     {
         $this->console
             ->withoutPrompting()

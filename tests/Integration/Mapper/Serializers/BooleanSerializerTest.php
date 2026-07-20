@@ -2,13 +2,15 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\BooleanSerializer;
 
 final class BooleanSerializerTest extends TestCase
 {
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $this->assertSame(
             'true',
@@ -21,7 +23,8 @@ final class BooleanSerializerTest extends TestCase
         );
     }
 
-    public function test_only_arrays_allowed(): void
+    #[Test]
+    public function only_arrays_allowed(): void
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 

@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tests\Tempest20;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
@@ -13,14 +14,16 @@ final class Tempest20RectorTest extends TestCase
         get => new RectorTester(__DIR__ . '/tempest20_rector.php');
     }
 
-    public function test_migration_with_only_up(): void
+    #[Test]
+    public function migration_with_only_up(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MigrateUpMigration.input.php')
             ->assertMatchesExpected();
     }
 
-    public function test_migration_with_up_and_down(): void
+    #[Test]
+    public function migration_with_up_and_down(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MigrateUpAndDownMigration.input.php')
@@ -30,7 +33,8 @@ final class Tempest20RectorTest extends TestCase
             ->assertContains('public function down(): QueryStatement');
     }
 
-    public function test_database_id_rename(): void
+    #[Test]
+    public function database_id_rename(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/Model.input.php')
@@ -41,7 +45,8 @@ final class Tempest20RectorTest extends TestCase
             ->assertNotContains('Tempest\Database\Id');
     }
 
-    public function test_uri_namespace_change(): void
+    #[Test]
+    public function uri_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/UriNamespaceChange.input.php')
@@ -49,7 +54,8 @@ final class Tempest20RectorTest extends TestCase
             ->assertNotContains('use function Tempest\uri;');
     }
 
-    public function test_is_current_uri_namespace_change(): void
+    #[Test]
+    public function is_current_uri_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/IsCurrentUriNamespaceChange.input.php')

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Container;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\Config\SQLiteConfig;
@@ -14,7 +15,8 @@ use Tempest\Mapper\SerializerFactory;
 
 final class TaggedDynamicInitializerTest extends TestCase
 {
-    public function test_resolve(): void
+    #[Test]
+    public function resolve(): void
     {
         $container = new GenericContainer();
         $container->singleton(SerializerFactory::class, new SerializerFactory($container));

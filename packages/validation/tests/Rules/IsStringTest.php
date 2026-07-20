@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Validation\Rules\IsString;
@@ -13,7 +14,8 @@ use Tempest\Validation\Rules\IsString;
  */
 final class IsStringTest extends TestCase
 {
-    public function test_valid_non_nullable_string(): void
+    #[Test]
+    public function valid_non_nullable_string(): void
     {
         $rule = new IsString();
 
@@ -22,7 +24,8 @@ final class IsStringTest extends TestCase
         $this->assertFalse($rule->isValid([]));
     }
 
-    public function test_valid_nullable_string(): void
+    #[Test]
+    public function valid_nullable_string(): void
     {
         $rule = new IsString(orNull: true);
 
@@ -32,7 +35,8 @@ final class IsStringTest extends TestCase
         $this->assertFalse($rule->isValid([]));
     }
 
-    public function test_valid_stringable_object(): void
+    #[Test]
+    public function valid_stringable_object(): void
     {
         $rule = new IsString();
 

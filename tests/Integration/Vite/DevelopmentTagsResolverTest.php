@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Vite\Exceptions\FileSystemEntrypointWasNotFoundException;
@@ -26,7 +27,8 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
         $this->vite->setRootDirectory(__DIR__ . '/Fixtures/tmp');
     }
 
-    public function test_resolve_tags(): void
+    #[Test]
+    public function resolve_tags(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -53,7 +55,8 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_throw_if_entrypoint_not_found(): void
+    #[Test]
+    public function throw_if_entrypoint_not_found(): void
     {
         $this->expectException(FileSystemEntrypointWasNotFoundException::class);
 
@@ -72,7 +75,8 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_automatically_converts_relative_paths(): void
+    #[Test]
+    public function automatically_converts_relative_paths(): void
     {
         $this->container->get(Composer::class)->mainNamespace = new Psr4Namespace(
             namespace: 'App',

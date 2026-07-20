@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\DateTime\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Duration;
@@ -27,21 +28,24 @@ final class TimestampTest extends TestCase
 {
     use DateTimeTestTrait;
 
-    public function test_now(): void
+    #[Test]
+    public function now(): void
     {
         $timestamp = Timestamp::now();
 
         $this->assertEQUALsWithDelta(time(), $timestamp->getSeconds(), 1);
     }
 
-    public function test_monotonic(): void
+    #[Test]
+    public function monotonic(): void
     {
         $timestamp = Timestamp::monotonic();
 
         $this->assertEQUALsWithDelta(time(), $timestamp->getSeconds(), 1);
     }
 
-    public function test_since(): void
+    #[Test]
+    public function since(): void
     {
         $a = Timestamp::fromParts(20, 1);
         $b = Timestamp::fromParts(30, 2);
@@ -52,7 +56,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(1, $duration->getNanoseconds());
     }
 
-    public function test_from_row_overflow(): void
+    #[Test]
+    public function from_row_overflow(): void
     {
         $this->expectException(OverflowException::class);
         $this->expectExceptionMessage('Adding nanoseconds would cause an overflow.');
@@ -60,7 +65,8 @@ final class TimestampTest extends TestCase
         Timestamp::fromParts(Math\INT64_MAX, NANOSECONDS_PER_SECOND);
     }
 
-    public function test_from_row_underflow(): void
+    #[Test]
+    public function from_row_underflow(): void
     {
         $this->expectException(UnderflowException::class);
         $this->expectExceptionMessage('Subtracting nanoseconds would cause an underflow.');
@@ -68,7 +74,8 @@ final class TimestampTest extends TestCase
         Timestamp::fromParts(Math\INT64_MIN, -NANOSECONDS_PER_SECOND);
     }
 
-    public function test_from_row_simplifies_nanoseconds(): void
+    #[Test]
+    public function from_row_simplifies_nanoseconds(): void
     {
         $timestamp = Timestamp::fromParts(0, NANOSECONDS_PER_SECOND * 20);
 
@@ -91,7 +98,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(100, $timestamp->getNanoseconds());
     }
 
-    public function test_parsing_from_pattern(): void
+    #[Test]
+    public function parsing_from_pattern(): void
     {
         $timestamp = Timestamp::fromPattern(
             rawString: '2024 091',
@@ -105,7 +113,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(31, $datetime->getDay());
     }
 
-    public function test_from_pattern_fails(): void
+    #[Test]
+    public function from_pattern_fails(): void
     {
         $this->expectException(ParserException::class);
         $this->expectExceptionMessage("Unable to interpret '2' as a valid date/time using pattern 'yyyy DDD'.");
@@ -113,7 +122,8 @@ final class TimestampTest extends TestCase
         Timestamp::fromPattern('2', pattern: FormatPattern::JULIAN_DAY);
     }
 
-    public function test_parse_format(): void
+    #[Test]
+    public function parse_format(): void
     {
         $a = Timestamp::now();
         $string = $a->format();
@@ -123,7 +133,8 @@ final class TimestampTest extends TestCase
         $this->assertSame($a->getSeconds(), $b->getSeconds());
     }
 
-    public function test_from_string_to_string(): void
+    #[Test]
+    public function from_string_to_string(): void
     {
         $a = Timestamp::now();
         $string = $a->toString();
@@ -133,7 +144,8 @@ final class TimestampTest extends TestCase
         $this->assertSame($a->getSeconds(), $b->getSeconds());
     }
 
-    public function test_parse_fails(): void
+    #[Test]
+    public function parse_fails(): void
     {
         $this->expectException(ParserException::class);
         $this->expectExceptionMessage("Unable to interpret 'x' as a valid date/time using pattern 'yyyy-MM-dd'T'HH:mm:ss.SSSXXX'.");
@@ -196,7 +208,8 @@ final class TimestampTest extends TestCase
     }
 
     #[DataProvider('provide_format_parsing_data')]
-    public function test_formatting_and_pattern_parsing(int $timestamp, string|FormatPattern $pattern, Timezone $timezone, Locale $locale, string $expected): void
+    #[Test]
+    public function formatting_and_pattern_parsing(int $timestamp, string|FormatPattern $pattern, Timezone $timezone, Locale $locale, string $expected): void
     {
         $timestamp = Timestamp::fromParts($timestamp);
 
@@ -214,7 +227,8 @@ final class TimestampTest extends TestCase
         $this->assertSame($timestamp->getNanoseconds(), $other->getNanoseconds());
     }
 
-    public function test_to_raw(): void
+    #[Test]
+    public function to_raw(): void
     {
         $timestamp = Timestamp::fromParts(12, 10);
         $parts = $timestamp->toParts();
@@ -240,7 +254,8 @@ final class TimestampTest extends TestCase
     }
 
     #[DataProvider('provide_compare_data')]
-    public function test_compare(Timestamp $a, Timestamp $b, Order $expected): void
+    #[Test]
+    public function compare(Timestamp $a, Timestamp $b, Order $expected): void
     {
         $opposite = Order::from(-$expected->value);
 
@@ -261,7 +276,8 @@ final class TimestampTest extends TestCase
         $this->assertSame($expected === Order::EQUAL, $a->betweenTimeInclusive($b, $b));
     }
 
-    public function test_nanoseconds_modifications(): void
+    #[Test]
+    public function nanoseconds_modifications(): void
     {
         $timestamp = Timestamp::fromParts(0, 100);
 
@@ -300,7 +316,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(100, $timestamp->getNanoseconds());
     }
 
-    public function test_seconds_modifications(): void
+    #[Test]
+    public function seconds_modifications(): void
     {
         $timestamp = Timestamp::fromParts(5);
 
@@ -339,7 +356,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(5, $timestamp->getSeconds());
     }
 
-    public function test_minute_modifications(): void
+    #[Test]
+    public function minute_modifications(): void
     {
         $timestamp = Timestamp::fromParts(5);
 
@@ -378,7 +396,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(5, $timestamp->getSeconds());
     }
 
-    public function test_hour_modifications(): void
+    #[Test]
+    public function hour_modifications(): void
     {
         $timestamp = Timestamp::fromParts(5);
 
@@ -417,7 +436,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(5, $timestamp->getSeconds());
     }
 
-    public function test_convert_to_timezone(): void
+    #[Test]
+    public function convert_to_timezone(): void
     {
         $timestamp = Timestamp::fromParts(1_711_917_232, 501_000_000);
 
@@ -442,7 +462,8 @@ final class TimestampTest extends TestCase
         );
     }
 
-    public function test_json_serialization(): void
+    #[Test]
+    public function json_serialization(): void
     {
         $serialized = Timestamp::fromParts(1_711_917_232, 12)->jsonSerialize();
 
@@ -450,7 +471,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(12, $serialized['nanoseconds']);
     }
 
-    public function test_to_rfc3999(): void
+    #[Test]
+    public function to_rfc3999(): void
     {
         $timestamp = Timestamp::fromParts(1_711_917_232, 12);
 
@@ -459,7 +481,8 @@ final class TimestampTest extends TestCase
         $this->assertSame('2024-03-31T20:33:52.12Z', $timestamp->toRfc3339(useZ: true));
     }
 
-    public function test_temporal_convenience_methods(): void
+    #[Test]
+    public function temporal_convenience_methods(): void
     {
         $timestamp1 = Timestamp::now();
         $timestamp2 = $timestamp1->plusMilliseconds(300);
@@ -492,7 +515,8 @@ final class TimestampTest extends TestCase
         $this->assertFalse($timestamp1->isSameTime($timestamp2));
     }
 
-    public function test_at_the_same_time_edge_cases(): void
+    #[Test]
+    public function at_the_same_time_edge_cases(): void
     {
         $timestamp1 = Timestamp::fromParts(1_234_567_890, 123_456_789);
         $timestamp2 = Timestamp::fromParts(1_234_567_890, 123_456_789);
@@ -504,7 +528,8 @@ final class TimestampTest extends TestCase
         $this->assertFalse($timestamp1->isSameTime($timestamp3));
     }
 
-    public function test_between_time_boundary_conditions(): void
+    #[Test]
+    public function between_time_boundary_conditions(): void
     {
         $start = Timestamp::fromParts(1000, 0);
         $middle = Timestamp::fromParts(1500, 0);
@@ -533,7 +558,8 @@ final class TimestampTest extends TestCase
         $this->assertFalse($end->isBetweenExclusive($start, $end));
     }
 
-    public function test_between_time_reversed_parameters(): void
+    #[Test]
+    public function between_time_reversed_parameters(): void
     {
         $early = Timestamp::fromParts(1000, 0);
         $middle = Timestamp::fromParts(1500, 0);
@@ -545,7 +571,8 @@ final class TimestampTest extends TestCase
         $this->assertTrue($middle->isBetweenExclusive($late, $early));
     }
 
-    public function test_nano_precision_temporal_comparisons(): void
+    #[Test]
+    public function nano_precision_temporal_comparisons(): void
     {
         $base = Timestamp::fromParts(1_234_567_890, 0);
         $plusOneNano = Timestamp::fromParts(1_234_567_890, 1);
@@ -566,7 +593,8 @@ final class TimestampTest extends TestCase
         $this->assertTrue($base->isSameTime($base));
     }
 
-    public function test_future_past_comprehensive(): void
+    #[Test]
+    public function future_past_comprehensive(): void
     {
         $now = Timestamp::monotonic();
         $future = $now->plusMilliseconds(30);
@@ -590,7 +618,8 @@ final class TimestampTest extends TestCase
         $this->assertFalse($veryPast->isFuture());
     }
 
-    public function test_since_and_between_duration_methods(): void
+    #[Test]
+    public function since_and_between_duration_methods(): void
     {
         $start = Timestamp::fromParts(1000, 500_000_000);
         $end = Timestamp::fromParts(1005, 750_000_000);
@@ -612,7 +641,8 @@ final class TimestampTest extends TestCase
         $this->assertSame(0, $sameDuration->getNanoseconds());
     }
 
-    public function test_temporal_comparison_with_large_values(): void
+    #[Test]
+    public function temporal_comparison_with_large_values(): void
     {
         $large1 = Timestamp::fromParts(9_223_372_036, 999_999_999);
         $large2 = Timestamp::fromParts(9_223_372_036, 999_999_998);
@@ -624,7 +654,8 @@ final class TimestampTest extends TestCase
         $this->assertFalse($large1->isSameTime($large2));
     }
 
-    public function test_temporal_comparison_edge_case_overflow_boundary(): void
+    #[Test]
+    public function temporal_comparison_edge_case_overflow_boundary(): void
     {
         $maxSeconds = Timestamp::fromParts(9_223_372_036_854_775_806, 0);
         $nearMax = Timestamp::fromParts(9_223_372_036_854_775_805, 999_999_999);

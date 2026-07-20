@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -35,7 +36,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_scheduler_executes_handlers(): void
+    #[Test]
+    public function scheduler_executes_handlers(): void
     {
         $this->process->mockProcessResult();
 
@@ -56,7 +58,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_scheduler_executes_commands(): void
+    #[Test]
+    public function scheduler_executes_commands(): void
     {
         $this->process->mockProcessResult();
 
@@ -77,7 +80,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_scheduler_only_dispatches_the_command_in_desired_times(): void
+    #[Test]
+    public function scheduler_only_dispatches_the_command_in_desired_times(): void
     {
         $this->process->mockProcessResult();
         $at = new DateTime('2024-05-01 00:00:00');

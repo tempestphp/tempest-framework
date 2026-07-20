@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Tests\Encryption;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Cryptography\Encryption\EncryptionAlgorithm;
@@ -41,7 +42,8 @@ final class EncryptionTest extends TestCase
     #[TestWith([''])]
     #[TestWith(['sensitive data'])]
     #[TestWith(['{"foo":"bar"}'])]
-    public function test_encrypt(string $data): void
+    #[Test]
+    public function encrypt(string $data): void
     {
         $encrypter = $this->createEncrypter();
         $encrypted = $encrypter->encrypt($data);
@@ -52,7 +54,8 @@ final class EncryptionTest extends TestCase
         $this->assertSame($data, $encrypter->decrypt($serialized));
     }
 
-    public function test_time_protection(): void
+    #[Test]
+    public function time_protection(): void
     {
         $encrypter = $this->createEncrypter(minimumExecutionDuration: Duration::milliseconds(300));
 
@@ -65,7 +68,8 @@ final class EncryptionTest extends TestCase
         $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.020, windowsMargin: 0.025);
     }
 
-    public function test_wrong_key(): void
+    #[Test]
+    public function wrong_key(): void
     {
         $this->expectException(SignatureMismatched::class);
 
@@ -76,7 +80,8 @@ final class EncryptionTest extends TestCase
         $wrongEncrypter->decrypt($encrypted->serialize());
     }
 
-    public function test_missing_key(): void
+    #[Test]
+    public function missing_key(): void
     {
         $this->expectException(EncryptionKeyWasInvalid::class);
 

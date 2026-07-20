@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Framework\Commands;
 
 use PHPUnit\Framework\Attributes\PreCondition;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\ExitCode;
 use Tempest\Database\MigratesDown;
 use Tempest\Database\Migrations\Migration;
@@ -34,14 +35,16 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_migration_validate_command_verifies_valid_migrations(): void
+    #[Test]
+    public function migration_validate_command_verifies_valid_migrations(): void
     {
         $this->console
             ->call(MigrateValidateCommand::class)
             ->assertContains('Migration files are valid');
     }
 
-    public function test_migration_validate_command_fails_when_migrations_are_tampered_with(): void
+    #[Test]
+    public function migration_validate_command_fails_when_migrations_are_tampered_with(): void
     {
         $this->console->call(MigrateFreshCommand::class, ['force' => true]);
 
@@ -56,7 +59,8 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_migration_validate_command_fails_when_migration_file_is_missing(): void
+    #[Test]
+    public function migration_validate_command_fails_when_migration_file_is_missing(): void
     {
         $this->console->call(MigrateFreshCommand::class, ['force' => true]);
 

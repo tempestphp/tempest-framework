@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\PrimaryKey;
@@ -15,27 +16,32 @@ use function Tempest\Database\inspect;
 
 final class ModelInspectorTest extends IntegrationTestCase
 {
-    public function test_virtual_array_is_never_a_relation(): void
+    #[Test]
+    public function virtual_array_is_never_a_relation(): void
     {
         $this->assertFalse(inspect(ModelInspectorTestModelWithVirtualHasMany::class)->isRelation('dtos'));
     }
 
-    public function test_virtual_property_is_never_a_relation(): void
+    #[Test]
+    public function virtual_property_is_never_a_relation(): void
     {
         $this->assertFalse(inspect(ModelInspectorTestModelWithVirtualDto::class)->isRelation('dto'));
     }
 
-    public function test_serialized_property_type_is_never_a_relation(): void
+    #[Test]
+    public function serialized_property_type_is_never_a_relation(): void
     {
         $this->assertFalse(inspect(ModelInspectorTestModelWithSerializedDto::class)->isRelation('dto'));
     }
 
-    public function test_serialized_property_is_never_a_relation(): void
+    #[Test]
+    public function serialized_property_is_never_a_relation(): void
     {
         $this->assertFalse(inspect(ModelInspectorTestModelWithSerializedDtoProperty::class)->isRelation('dto'));
     }
 
-    public function test_select_doesnt_contain_duplicate_fields(): void
+    #[Test]
+    public function select_doesnt_contain_duplicate_fields(): void
     {
         $model = inspect(HasRelatedModelWithId::class);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Regex;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Regex\InvalidPatternException;
@@ -30,12 +31,14 @@ final class FunctionsTest extends TestCase
     #[TestWith([false, 'PHP is the website scripting language of choice.', '/\bweb\b/i'])]
     #[TestWith([false, 'php is the web scripting language of choice.', '/PHP/'])]
     #[TestWith([false, 'hello', '/[^.]+\.[^.]+$/'])]
-    public function test_matches(bool $expected, string $subject, string $pattern, int $offset = 0): void
+    #[Test]
+    public function matches_subject_against_pattern(bool $expected, string $subject, string $pattern, int $offset = 0): void
     {
         $this->assertSame($expected, matches($subject, $pattern, $offset));
     }
 
-    public function test_matches_with_invalid_pattern(): void
+    #[Test]
+    public function matches_with_invalid_pattern(): void
     {
         $this->expectException(InvalidPatternException::class);
         $this->expectExceptionMessage("No ending delimiter '/' found");
@@ -46,18 +49,21 @@ final class FunctionsTest extends TestCase
     #[TestWith(['adc', 'abc', '/b/i', 'd'])]
     #[TestWith(['April1,2003', 'April 15, 2003', '/(\w+) (\d+), (\d+)/i', '${1}1,$3'])]
     #[TestWith(['Hello, World!', 'Hello, World!', '/foo/', 'bar'])]
-    public function test_replace(string $expected, string $subject, string $pattern, string $replacement): void
+    #[Test]
+    public function replace(string $expected, string $subject, string $pattern, string $replacement): void
     {
         $this->assertSame($expected, replace($subject, $pattern, $replacement));
     }
 
-    public function test_replace_with_callback(): void
+    #[Test]
+    public function replace_with_callback(): void
     {
         $this->assertSame('Hello, Jon!', replace('Hello, World!', '/World/', fn () => 'Jon'));
         $this->assertSame('Count: 2', replace('Count: 1', '/\d/', fn (array $matches) => $matches[0] + 1));
     }
 
-    public function test_replace_with_invalid_pattern(): void
+    #[Test]
+    public function replace_with_invalid_pattern(): void
     {
         $this->expectException(InvalidPatternException::class);
         $this->expectExceptionMessage("No ending delimiter '/' found");
@@ -68,12 +74,14 @@ final class FunctionsTest extends TestCase
     #[TestWith(['April1,2003', 'April 15, 2003', ['/(\w+) (\d+), (\d+)/i' => '${1}1,$3']])]
     #[TestWith(['The slow black bear jumps over the lazy dog.', 'The quick brown fox jumps over the lazy dog.', ['/quick/' => 'slow', '/brown/' => 'black', '/fox/' => 'bear']])]
     #[TestWith(['Hello, World!', 'Hello, World!', ['/foo/' => 'bar']])]
-    public function test_replace_every(string $expected, string $subject, array $replacements): void
+    #[Test]
+    public function replace_every(string $expected, string $subject, array $replacements): void
     {
         $this->assertSame($expected, replace_every($subject, $replacements));
     }
 
-    public function test_replace_every_with_invalid_pattern(): void
+    #[Test]
+    public function replace_every_with_invalid_pattern(): void
     {
         $this->expectException(InvalidPatternException::class);
         $this->expectExceptionMessage("No ending delimiter '/' found");
@@ -81,7 +89,8 @@ final class FunctionsTest extends TestCase
         replace_every('April 15, 2003', ['/(\w+) (\d+), (\d+)' => '${1}1,$3']);
     }
 
-    public function test_get_match(): void
+    #[Test]
+    public function get_match(): void
     {
         $this->assertSame('10', get_match('10-abc', '/(?<id>\d+)-.*/', match: 'id'));
         $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/', match: 1));
@@ -107,7 +116,8 @@ final class FunctionsTest extends TestCase
         );
     }
 
-    public function test_all_matches(): void
+    #[Test]
+    public function all_matches(): void
     {
         $this->assertSame(
             [
@@ -142,7 +152,8 @@ final class FunctionsTest extends TestCase
         );
     }
 
-    public function test_get_matches(): void
+    #[Test]
+    public function get_matches(): void
     {
         $this->assertSame([], get_matches('The quick brown fox, then the lazy dog', '/cat/', global: true));
 

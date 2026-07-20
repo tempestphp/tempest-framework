@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mailer;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Mail\Attachment;
 use Tempest\Mail\EmailAddress;
 use Tempest\Mail\EmailPriority;
@@ -18,7 +19,8 @@ use function Tempest\View\view;
 
 final class SentEmailTest extends FrameworkIntegrationTestCase
 {
-    public function test_sent_email_assertions(): void
+    #[Test]
+    public function sent_email_assertions(): void
     {
         $this->mailer
             ->send(new GenericEmail(
@@ -55,7 +57,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('X-Foo', 'bar');
     }
 
-    public function test_with_default_sender(): void
+    #[Test]
+    public function with_default_sender(): void
     {
         /** @var \Tempest\Mail\Transports\Smtp\SmtpMailerConfig $mailerConfig */
         $mailerConfig = $this->container->get(MailerConfig::class);
@@ -66,7 +69,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertFrom('brendt@stitcher.io');
     }
 
-    public function test_send_to_address_vo(): void
+    #[Test]
+    public function send_to_address_vo(): void
     {
         $this
             ->sendTestEmail(
@@ -77,7 +81,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertSentTo('recipient2@example.com');
     }
 
-    public function test_send_to_address_with_brackets(): void
+    #[Test]
+    public function send_to_address_with_brackets(): void
     {
         $sent = $this->sendTestEmail(
             to: ['Jon Doe <recipient1@example.com>', 'recipient2@example.com'],
@@ -88,7 +93,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent->assertSentTo('recipient2@example.com');
     }
 
-    public function test_assert_sent_to(): void
+    #[Test]
+    public function assert_sent_to(): void
     {
         $this
             ->sendTestEmail(
@@ -102,14 +108,16 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertNotSentTo(['recipient3@exampe.com', 'recipient4@example.com']);
     }
 
-    public function test_rendered_html(): void
+    #[Test]
+    public function rendered_html(): void
     {
         $this->sendTestEmail(
             html: view(__DIR__ . '/Fixtures/welcome.view.php', fullName: 'Jon Doe'),
         )->assertSeeInHtml('Welcome Jon Doe');
     }
 
-    public function test_class_based_html(): void
+    #[Test]
+    public function class_based_html(): void
     {
         $this->mailer
             ->send(new SendWelcomeEmail('jon@doe.co', 'Jon Doe'))
@@ -118,7 +126,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
             ->assertSentTo('jon@doe.co');
     }
 
-    public function test_assert_attachment_from_closure(): void
+    #[Test]
+    public function assert_attachment_from_closure(): void
     {
         $this->sendTestEmail(
             text: 'Hello',
@@ -133,7 +142,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_assert_attachment_from_filesystem(): void
+    #[Test]
+    public function assert_attachment_from_filesystem(): void
     {
         $this->sendTestEmail(
             text: 'Hello',
@@ -148,7 +158,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_assert_attachment_from_storage(): void
+    #[Test]
+    public function assert_attachment_from_storage(): void
     {
         $this->skipWindows('Flaky behavior in storage component on Windows and it will be too deep a rabbit hole to debug now.');
 
@@ -168,7 +179,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_assert_attachment_from_named_storage(): void
+    #[Test]
+    public function assert_attachment_from_named_storage(): void
     {
         $storage = $this->storage->fake('test-disk');
         $storage->write('file.txt', 'owo');
@@ -181,7 +193,8 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         )->assertAttached('file.txt');
     }
 
-    public function test_html_path(): void
+    #[Test]
+    public function html_path(): void
     {
         $this->mailer->send(new GenericEmail(
             subject: 'Hello there!',

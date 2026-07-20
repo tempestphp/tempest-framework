@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Router\GenericResponseSender;
 use Tempest\Router\ResponseSenderInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ResponseSenderInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_response_sender_initializer(): void
+    #[Test]
+    public function response_sender_initializer(): void
     {
         $initializer = new ResponseSenderInitializer();
 

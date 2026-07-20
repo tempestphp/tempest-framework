@@ -273,7 +273,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_throw_exceptions(): void
+    public function throw_exceptions(): void
     {
         $this->expectException(Exception::class);
 

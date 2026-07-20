@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsAlpha;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsAlpha;
  */
 final class IsAlphaTest extends TestCase
 {
-    public function test_alpha(): void
+    #[Test]
+    public function alpha(): void
     {
         $rule = new IsAlpha();
 

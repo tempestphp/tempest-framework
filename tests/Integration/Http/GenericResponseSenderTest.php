@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use JsonSerializable;
+use PHPUnit\Framework\Attributes\Test;
 use Stringable;
 use Tempest\DateTime\Duration;
 use Tempest\Http\GenericRequest;
@@ -30,7 +31,8 @@ use function Tempest\View\view;
  */
 final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 {
-    public function test_sending(): void
+    #[Test]
+    public function sending(): void
     {
         ob_start();
 
@@ -47,7 +49,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         ob_get_clean();
     }
 
-    public function test_sending_head_request(): void
+    #[Test]
+    public function sending_head_request(): void
     {
         $request = new GenericRequest(
             method: Method::HEAD,
@@ -76,7 +79,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame('', $content);
     }
 
-    public function test_file_response(): void
+    #[Test]
+    public function file_response(): void
     {
         ob_start();
         $path = __DIR__ . '/Fixtures/sample.png';
@@ -89,7 +93,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame(file_get_contents($path), $content);
     }
 
-    public function test_download_response(): void
+    #[Test]
+    public function download_response(): void
     {
         ob_start();
         $path = __DIR__ . '/Fixtures/sample.png';
@@ -102,7 +107,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame(file_get_contents($path), $content);
     }
 
-    public function test_sending_of_array_to_json(): void
+    #[Test]
+    public function sending_of_array_to_json(): void
     {
         ob_start();
         $response = new GenericResponse(
@@ -118,7 +124,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame('{"key":"value"}', $output);
     }
 
-    public function test_sending_invalid_json_throws_exception(): void
+    #[Test]
+    public function sending_invalid_json_throws_exception(): void
     {
         ob_start();
         $response = new GenericResponse(
@@ -133,7 +140,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         ob_get_clean();
     }
 
-    public function test_sending_of_json_serializable_to_json(): void
+    #[Test]
+    public function sending_of_json_serializable_to_json(): void
     {
         ob_start();
         $response = new GenericResponse(
@@ -154,7 +162,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame('{"key":"value"}', $output);
     }
 
-    public function test_view_body(): void
+    #[Test]
+    public function view_body(): void
     {
         ob_start();
         $response = new Ok(
@@ -171,7 +180,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('Hello Brent!', $output);
     }
 
-    public function test_stream(): void
+    #[Test]
+    public function stream(): void
     {
         ob_start();
         $response = new EventStream(fn () => yield 'hello');
@@ -185,7 +195,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('data: "hello"', $output);
     }
 
-    public function test_stream_with_custom_event(): void
+    #[Test]
+    public function stream_with_custom_event(): void
     {
         ob_start();
         $response = new EventStream(function () {
@@ -204,7 +215,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('data: "goodbye"', $output);
     }
 
-    public function test_stream_with_custom_id(): void
+    #[Test]
+    public function stream_with_custom_id(): void
     {
         ob_start();
         $response = new EventStream(function () {
@@ -223,7 +235,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('data: "goodbye"', $output);
     }
 
-    public function test_stream_with_custom_retry(): void
+    #[Test]
+    public function stream_with_custom_retry(): void
     {
         ob_start();
         $response = new EventStream(function () {
@@ -242,7 +255,8 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('data: "goodbye"', $output);
     }
 
-    public function test_stream_with_custom_implementation(): void
+    #[Test]
+    public function stream_with_custom_implementation(): void
     {
         ob_start();
         $response = new EventStream(function () {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class OkTest extends FrameworkIntegrationTestCase
 {
-    public function test_ok(): void
+    #[Test]
+    public function ok(): void
     {
         $response = new Ok('test');
 

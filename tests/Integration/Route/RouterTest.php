@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\ContentType;
@@ -36,7 +37,8 @@ use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
  */
 final class RouterTest extends FrameworkIntegrationTestCase
 {
-    public function test_dispatch(): void
+    #[Test]
+    public function dispatch(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -46,7 +48,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test', $response->body);
     }
 
-    public function test_dispatch_with_parameter(): void
+    #[Test]
+    public function dispatch_with_parameter(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -56,7 +59,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1a/extra', $response->body);
     }
 
-    public function test_dispatch_with_parameter_with_custom_regex(): void
+    #[Test]
+    public function dispatch_with_parameter_with_custom_regex(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -66,7 +70,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1a', $response->body);
     }
 
-    public function test_dispatch_with_parameter_with_complex_custom_regex(): void
+    #[Test]
+    public function dispatch_with_parameter_with_complex_custom_regex(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -76,7 +81,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1', $response->body);
     }
 
-    public function test_with_view(): void
+    #[Test]
+    public function with_view(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -85,7 +91,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(Ok::class, $response);
     }
 
-    public function test_route_binding(): void
+    #[Test]
+    public function route_binding(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -107,7 +114,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame('Test', $response->body);
     }
 
-    public function test_route_binding_with_nonexistent_model_returns_404(): void
+    #[Test]
+    public function route_binding_with_nonexistent_model_returns_404(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -121,7 +129,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertNotFound();
     }
 
-    public function test_middleware(): void
+    #[Test]
+    public function middleware(): void
     {
         $this
             ->container->get(RouteConfig::class)
@@ -134,7 +143,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals(['yes'], $response->getHeader('global-middleware')->values);
     }
 
-    public function test_skip_middleware(): void
+    #[Test]
+    public function skip_middleware(): void
     {
         $this
             ->container->get(RouteConfig::class)
@@ -145,7 +155,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertDoesNotHaveHeader('middleware');
     }
 
-    public function test_trailing_slash(): void
+    #[Test]
+    public function trailing_slash(): void
     {
         $this->http
             ->get('/test')
@@ -156,7 +167,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_repeated_routes(): void
+    #[Test]
+    public function repeated_routes(): void
     {
         $this->http->get('/repeated/a')->assertOk();
         $this->http->get('/repeated/b')->assertOk();
@@ -166,14 +178,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http->post('/repeated/f')->assertOk();
     }
 
-    public function test_enum_route_binding(): void
+    #[Test]
+    public function enum_route_binding(): void
     {
         $this->http->get('/with-enum/foo')->assertOk();
         $this->http->get('/with-enum/bar')->assertOk();
         $this->http->get('/with-enum/unknown')->assertNotFound();
     }
 
-    public function test_json_request(): void
+    #[Test]
+    public function json_request(): void
     {
         $router = $this->container->get(Router::class);
 
@@ -192,7 +206,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame('foo', $response->body);
     }
 
-    public function test_discovers_response_processors(): void
+    #[Test]
+    public function discovers_response_processors(): void
     {
         $this->http
             ->get('/', headers: ['X-Processed' => 'false'])
@@ -200,7 +215,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_can_add_response_processor(): void
+    #[Test]
+    public function can_add_response_processor(): void
     {
         $this->container->get(RouteConfig::class)->addResponseProcessor(TestProcessedResponseProcessor::class);
 
@@ -210,7 +226,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
+    #[Test]
+    public function error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
     {
         $this->http->registerRoute([Http500Controller::class, 'serverErrorWithBody']);
 
@@ -220,7 +237,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertSee('custom error');
     }
 
-    public function test_converts_to_response(): void
+    #[Test]
+    public function converts_to_response(): void
     {
         $this->http->registerRoute([Http500Controller::class, 'convertsToResponse']);
 
@@ -230,7 +248,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHeaderContains('Location', 'https://tempestphp.com');
     }
 
-    public function test_router_returns_json_exception_when_accepts_json(): void
+    #[Test]
+    public function router_returns_json_exception_when_accepts_json(): void
     {
         $this->http->registerRoute([Http500Controller::class, 'throwsException']);
 
@@ -240,7 +259,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertJsonHasKeys('message');
     }
 
-    public function test_head_requests(): void
+    #[Test]
+    public function head_requests(): void
     {
         $this->http->registerRoute([HeadController::class, 'implicitHead']);
         $this->http->registerRoute([HeadController::class, 'explicitHead']);
@@ -256,7 +276,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('x-custom');
     }
 
-    public function test_stateless_decorator(): void
+    #[Test]
+    public function stateless_decorator(): void
     {
         $this->http
             ->get('/stateless')
@@ -264,7 +285,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertDoesNotHaveCookie('tempest_session_id');
     }
 
-    public function test_stateless_decorator_does_not_manage_session(): void
+    #[Test]
+    public function stateless_decorator_does_not_manage_session(): void
     {
         $sessionManager = new RouteTestingSessionManager($this->container->get(Clock::class));
 
@@ -278,14 +300,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $sessionManager->savedSessions);
     }
 
-    public function test_prefix_decorator(): void
+    #[Test]
+    public function prefix_decorator(): void
     {
         $this->http
             ->get('/prefix/method/endpoint')
             ->assertOk();
     }
 
-    public function test_with_middleware_decorator(): void
+    #[Test]
+    public function with_middleware_decorator(): void
     {
         $this->http
             ->get('/with-decorated-middleware')
@@ -293,7 +317,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertHasHeader('middleware');
     }
 
-    public function test_without_middleware_decorator(): void
+    #[Test]
+    public function without_middleware_decorator(): void
     {
         $this->http
             ->get('/without-decorated-middleware')
@@ -301,7 +326,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertDoesNotHaveHeader('set-cookie');
     }
 
-    public function test_optional_parameter_with_required_parameter(): void
+    #[Test]
+    public function optional_parameter_with_required_parameter(): void
     {
         $this->http
             ->get('/articles/123')
@@ -314,7 +340,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertSee('Article 123 with slug my-article');
     }
 
-    public function test_optional_parameter_only(): void
+    #[Test]
+    public function optional_parameter_only(): void
     {
         $this->http
             ->get('/users')
@@ -327,7 +354,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertSee('User 456');
     }
 
-    public function test_multiple_optional_parameters(): void
+    #[Test]
+    public function multiple_optional_parameters(): void
     {
         $this->http
             ->get('/posts')

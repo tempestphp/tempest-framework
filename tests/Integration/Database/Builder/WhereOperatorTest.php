@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\WhereOperator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use function Tempest\Database\query;
 
 final class WhereOperatorTest extends FrameworkIntegrationTestCase
 {
-    public function test_hybrid_where_equals(): void
+    #[Test]
+    public function hybrid_where_equals(): void
     {
         $query = query('books')
             ->select()
@@ -25,7 +27,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi'], $query->bindings);
     }
 
-    public function test_hybrid_where_superior(): void
+    #[Test]
+    public function hybrid_where_superior(): void
     {
         $query = query('books')
             ->select()
@@ -38,7 +41,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([20], $query->bindings);
     }
 
-    public function test_hybrid_where_field(): void
+    #[Test]
+    public function hybrid_where_field(): void
     {
         $query = query('books')
             ->select()
@@ -51,7 +55,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi'], $query->bindings);
     }
 
-    public function test_hybrid_where_with_operator(): void
+    #[Test]
+    public function hybrid_where_with_operator(): void
     {
         $query = query('books')
             ->select()
@@ -64,7 +69,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([4.0], $query->bindings);
     }
 
-    public function test_where_field(): void
+    #[Test]
+    public function where_field(): void
     {
         $query = query('books')
             ->select()
@@ -77,7 +83,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi'], $query->bindings);
     }
 
-    public function test_where_field_explicit_operator(): void
+    #[Test]
+    public function where_field_explicit_operator(): void
     {
         $query = query('books')
             ->select()
@@ -90,7 +97,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([4.0], $query->bindings);
     }
 
-    public function test_basic_where_with_field_and_value(): void
+    #[Test]
+    public function basic_where_with_field_and_value(): void
     {
         $query = query('books')
             ->select()
@@ -103,7 +111,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Test Book'], $query->bindings);
     }
 
-    public function test_where_with_string_operator(): void
+    #[Test]
+    public function where_with_string_operator(): void
     {
         $query = query('books')
             ->select()
@@ -116,7 +125,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
-    public function test_where_in_operator(): void
+    #[Test]
+    public function where_in_operator(): void
     {
         $query = query('books')
             ->select()
@@ -129,7 +139,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
-    public function test_where_between_operator(): void
+    #[Test]
+    public function where_between_operator(): void
     {
         $query = query('books')
             ->select()
@@ -142,7 +153,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
-    public function test_where_is_null_operator(): void
+    #[Test]
+    public function where_is_null_operator(): void
     {
         $query = query('books')
             ->select()
@@ -155,7 +167,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_multiple_where_conditions(): void
+    #[Test]
+    public function multiple_where_conditions(): void
     {
         $query = query('books')
             ->select()
@@ -170,7 +183,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 4.0, 'bestseller'], $query->bindings);
     }
 
-    public function test_where_raw_for_complex_conditions(): void
+    #[Test]
+    public function where_raw_for_complex_conditions(): void
     {
         $query = query('books')
             ->select()
@@ -184,7 +198,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, '%test%', '%test%'], $query->bindings);
     }
 
-    public function test_nested_where_groups_with_new_api(): void
+    #[Test]
+    public function nested_where_groups_with_new_api(): void
     {
         $query = query('books')
             ->select()
@@ -202,7 +217,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'fiction', 4.5], $query->bindings);
     }
 
-    public function test_mixed_raw_and_typed_conditions_in_groups(): void
+    #[Test]
+    public function mixed_raw_and_typed_conditions_in_groups(): void
     {
         $query = query('books')
             ->select()
@@ -220,7 +236,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
         $this->assertSame(['published', 'fiction', 'mystery'], $query->bindings);
     }
 
-    public function test_error_handling_for_in_operator_without_array(): void
+    #[Test]
+    public function error_handling_for_in_operator_without_array(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('IN operator requires an array of values');
@@ -231,7 +248,8 @@ final class WhereOperatorTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_error_handling_for_between_operator_with_wrong_array_size(): void
+    #[Test]
+    public function error_handling_for_between_operator_with_wrong_array_size(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('BETWEEN operator requires an array with exactly 2 values');

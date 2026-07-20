@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\HttpClient;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\HttpClientDriver;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class HttpClientDriverInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_container_can_initialize_http_client_driver(): void
+    #[Test]
+    public function container_can_initialize_http_client_driver(): void
     {
         $driver = $this->container->get(HttpClientDriver::class);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsEmail;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsEmail;
  */
 final class IsEmailTest extends TestCase
 {
-    public function test_email(): void
+    #[Test]
+    public function email(): void
     {
         $rule = new IsEmail();
 

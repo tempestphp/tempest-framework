@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tempest\Console\Key;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_with_options(): void
+    #[Test]
+    public function with_options(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -28,7 +30,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked a');
     }
 
-    public function test_with_default_option(): void
+    #[Test]
+    public function with_default_option(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -40,7 +43,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_with_default_option_without_prompting(): void
+    #[Test]
+    public function with_default_option_without_prompting(): void
     {
         $this->console
             ->withoutPrompting()
@@ -52,7 +56,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_assoc_submit_key(): void
+    #[Test]
+    public function assoc_submit_key(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -64,7 +69,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_assoc_submit_value(): void
+    #[Test]
+    public function assoc_submit_value(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -76,7 +82,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_enum_submit_value(): void
+    #[Test]
+    public function enum_submit_value(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -89,7 +96,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_enum_submit_index(): void
+    #[Test]
+    public function enum_submit_index(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -102,7 +110,8 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_enum_default_value(): void
+    #[Test]
+    public function enum_default_value(): void
     {
         $this->console
             ->call(function (Console $console): void {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Exceptions;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\GenericContainer;
@@ -15,7 +16,8 @@ use Tempest\Container\Tests\Fixtures\CircularZ;
  */
 final class CircularDependencyExceptionTest extends TestCase
 {
-    public function test_circular_dependency_test(): void
+    #[Test]
+    public function circular_dependency_test(): void
     {
         $this->expectException(CircularDependencyEncountered::class);
 
@@ -44,7 +46,8 @@ final class CircularDependencyExceptionTest extends TestCase
         }
     }
 
-    public function test_circular_dependency_as_a_child_test(): void
+    #[Test]
+    public function circular_dependency_as_a_child_test(): void
     {
         $this->expectException(CircularDependencyEncountered::class);
 

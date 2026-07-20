@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Framework\Commands;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Framework\Commands\MigrateFreshCommand;
@@ -16,7 +17,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migrate_fresh_command(): void
+    #[Test]
+    public function migrate_fresh_command(): void
     {
         $this->console
             ->call(MigrateUpCommand::class)
@@ -32,7 +34,8 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
         Assert::assertNotEmpty(Migration::all());
     }
 
-    public function test_migrate_fresh_command_inserts_new_records(): void
+    #[Test]
+    public function migrate_fresh_command_inserts_new_records(): void
     {
         $this->console
             ->call(MigrateFreshCommand::class)
@@ -41,7 +44,8 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
         Assert::assertNotEmpty(Migration::all());
     }
 
-    public function test_migrate_fresh_command_fails_with_validate_when_migrations_are_tampered_with(): void
+    #[Test]
+    public function migrate_fresh_command_fails_with_validate_when_migrations_are_tampered_with(): void
     {
         $this->console
             ->call(MigrateFreshCommand::class)
@@ -58,7 +62,8 @@ final class MigrateFreshCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::INVALID);
     }
 
-    public function test_migrate_fresh_command_skips_validation_by_default(): void
+    #[Test]
+    public function migrate_fresh_command_skips_validation_by_default(): void
     {
         $this->console
             ->call(MigrateFreshCommand::class)

@@ -2,6 +2,7 @@
 
 namespace Tempest\Support\Tests\Path;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Path\Path;
@@ -9,7 +10,8 @@ use Tempest\Support\Path\Path;
 final class PathTest extends TestCase
 {
     #[TestWith([['FunctionsTest.php', 'PathTest.php'], __DIR__, '*.php'])]
-    public function test_glob(array $expected, string $input, string $glob): void
+    #[Test]
+    public function glob(array $expected, string $input, string $glob): void
     {
         $this->assertSame(
             $expected,

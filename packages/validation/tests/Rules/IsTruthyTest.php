@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsTruthy;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsTruthy;
  */
 final class IsTruthyTest extends TestCase
 {
-    public function test_should_be_true(): void
+    #[Test]
+    public function should_be_true(): void
     {
         $rule = new IsTruthy();
 

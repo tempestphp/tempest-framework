@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
@@ -29,7 +30,8 @@ use function Tempest\Database\query;
 
 final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_update_on_plain_table(): void
+    #[Test]
+    public function update_on_plain_table(): void
     {
         $query = query('chapters')
             ->update(
@@ -50,7 +52,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_global_update(): void
+    #[Test]
+    public function global_update(): void
     {
         $query = query('chapters')
             ->update(index: 0)
@@ -68,7 +71,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_global_update_fails_without_allow_all(): void
+    #[Test]
+    public function global_update_fails_without_allow_all(): void
     {
         $this->expectException(UpdateStatementWasInvalid::class);
 
@@ -78,7 +82,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->compile();
     }
 
-    public function test_model_update_with_values(): void
+    #[Test]
+    public function model_update_with_values(): void
     {
         $query = query(Book::class)
             ->update(
@@ -98,7 +103,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_model_update_with_object(): void
+    #[Test]
+    public function model_update_with_object(): void
     {
         $book = Book::new(
             id: new PrimaryKey(10),
@@ -122,7 +128,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_model_values_get_serialized(): void
+    #[Test]
+    public function model_values_get_serialized(): void
     {
         $author = Author::new(
             id: new PrimaryKey(10),
@@ -140,7 +147,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_insert_new_relation_on_update(): void
+    #[Test]
+    public function insert_new_relation_on_update(): void
     {
         $book = Book::new(
             id: new PrimaryKey(10),
@@ -170,7 +178,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Brent'], $authorQuery->bindings);
     }
 
-    public function test_attach_existing_relation_on_update(): void
+    #[Test]
+    public function attach_existing_relation_on_update(): void
     {
         $book = Book::new(
             id: new PrimaryKey(10),
@@ -188,7 +197,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([5, 10], $bookQuery->bindings);
     }
 
-    public function test_update_has_many_relation_without_primary_key(): void
+    #[Test]
+    public function update_has_many_relation_without_primary_key(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -201,7 +211,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_update_on_plain_table_with_conditions(): void
+    #[Test]
+    public function update_on_plain_table_with_conditions(): void
     {
         $query = query('chapters')
             ->update(
@@ -229,7 +240,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_update_with_non_object_model(): void
+    #[Test]
+    public function update_with_non_object_model(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -252,7 +264,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $count);
     }
 
-    public function test_multiple_where(): void
+    #[Test]
+    public function multiple_where(): void
     {
         $sql = query('books')
             ->update(
@@ -269,7 +282,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where_field(): void
+    #[Test]
+    public function multiple_where_field(): void
     {
         $sql = query('books')
             ->update(
@@ -284,7 +298,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_nested_where_with_update_query(): void
+    #[Test]
+    public function nested_where_with_update_query(): void
     {
         $query = query('books')
             ->update(status: 'archived')
@@ -302,7 +317,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['archived', true, 100, '2023-01-01'], $query->bindings);
     }
 
-    public function test_update_mapping(): void
+    #[Test]
+    public function update_mapping(): void
     {
         $author = Author::new(id: new PrimaryKey(1), name: 'original');
 
@@ -326,7 +342,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['other', 1], $query->bindings);
     }
 
-    public function test_update_with_where_in(): void
+    #[Test]
+    public function update_with_where_in(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -338,7 +355,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_where_not_in(): void
+    #[Test]
+    public function update_with_where_not_in(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -350,7 +368,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_where_null(): void
+    #[Test]
+    public function update_with_where_null(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -362,7 +381,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_where_not_null(): void
+    #[Test]
+    public function update_with_where_not_null(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -374,7 +394,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_where_between(): void
+    #[Test]
+    public function update_with_where_between(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -386,7 +407,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_where_not_between(): void
+    #[Test]
+    public function update_with_where_not_between(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -398,7 +420,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_with_or_where_in(): void
+    #[Test]
+    public function update_with_or_where_in(): void
     {
         $sql = query('books')
             ->update(title: 'Updated Book')
@@ -411,7 +434,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_update_captures_primary_key_for_relations_with_convenience_where_methods(): void
+    #[Test]
+    public function update_captures_primary_key_for_relations_with_convenience_where_methods(): void
     {
         $sql = query(Book::class)
             ->update(title: 'Updated Book')
@@ -423,7 +447,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_throws_exception_when_relation_update_with_non_primary_key_where(): void
+    #[Test]
+    public function throws_exception_when_relation_update_with_non_primary_key_where(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -433,7 +458,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_throws_exception_when_relation_update_with_whereIn_multiple_values(): void
+    #[Test]
+    public function throws_exception_when_relation_update_with_whereIn_multiple_values(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -443,7 +469,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_throws_exception_when_relation_update_with_whereNotIn(): void
+    #[Test]
+    public function throws_exception_when_relation_update_with_whereNotIn(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -453,7 +480,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_throws_exception_when_relation_update_with_whereBetween(): void
+    #[Test]
+    public function throws_exception_when_relation_update_with_whereBetween(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -463,7 +491,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_throws_exception_when_relation_update_with_whereNot(): void
+    #[Test]
+    public function throws_exception_when_relation_update_with_whereNot(): void
     {
         $this->expectException(CouldNotUpdateRelation::class);
 
@@ -473,7 +502,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ->execute();
     }
 
-    public function test_update_skips_has_many_through_property(): void
+    #[Test]
+    public function update_skips_has_many_through_property(): void
     {
         $tag = Tag::new(
             id: new PrimaryKey(value: 1),
@@ -492,7 +522,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['php8', 1], $query->bindings);
     }
 
-    public function test_update_skips_has_one_through_property(): void
+    #[Test]
+    public function update_skips_has_one_through_property(): void
     {
         $tag = Tag::new(
             id: new PrimaryKey(value: 1),
@@ -511,7 +542,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['php8', 1], $query->bindings);
     }
 
-    public function test_update_with_belongs_to_many_syncs_pivot_rows(): void
+    #[Test]
+    public function update_with_belongs_to_many_syncs_pivot_rows(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -549,7 +581,8 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $pivotCount);
     }
 
-    public function test_update_query_builder_from_another_query_builder(): void
+    #[Test]
+    public function update_query_builder_from_another_query_builder(): void
     {
         $query = query(Chapter::class)
             ->select()

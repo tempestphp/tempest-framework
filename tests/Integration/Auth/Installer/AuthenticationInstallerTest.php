@@ -30,7 +30,7 @@ final class AuthenticationInstallerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_route_decorator_and_middleware_get_published(): void
+    public function route_decorator_and_middleware_get_published(): void
     {
         $this->console
             ->call('install auth --force --migrate')

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Container;
@@ -81,7 +82,8 @@ final class ContainerTest extends TestCase
         SingletonClass::$count = 0;
     }
 
-    public function test_get_with_autowire(): void
+    #[Test]
+    public function get_with_autowire(): void
     {
         $container = new GenericContainer();
 
@@ -91,7 +93,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $b->a);
     }
 
-    public function test_get_with_definition(): void
+    #[Test]
+    public function get_with_definition(): void
     {
         $container = new GenericContainer();
 
@@ -105,7 +108,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals('test', $c->prop);
     }
 
-    public function test_get_with_initializer(): void
+    #[Test]
+    public function get_with_initializer(): void
     {
         $container = new GenericContainer()->setInitializers([
             ContainerObjectD::class => ContainerObjectDInitializer::class,
@@ -116,7 +120,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals('test', $d->prop);
     }
 
-    public function test_singleton(): void
+    #[Test]
+    public function singleton(): void
     {
         $container = new GenericContainer();
 
@@ -131,7 +136,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals(1, $instance::$count);
     }
 
-    public function test_initialize_with_can_initializer(): void
+    #[Test]
+    public function initialize_with_can_initializer(): void
     {
         $container = new GenericContainer();
 
@@ -142,7 +148,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $object);
     }
 
-    public function test_call_tries_to_transform_unmatched_values(): void
+    #[Test]
+    public function call_tries_to_transform_unmatched_values(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(ContainerObjectEInitializer::class);
@@ -158,7 +165,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('other', $return->id);
     }
 
-    public function test_dynamic_initializer_instances_are_reused(): void
+    #[Test]
+    public function dynamic_initializer_instances_are_reused(): void
     {
         CountingDynamicInitializer::reset();
 
@@ -171,7 +179,8 @@ final class ContainerTest extends TestCase
         $this->assertSame(1, CountingDynamicInitializer::$instances);
     }
 
-    public function test_arrays_are_automatically_created(): void
+    #[Test]
+    public function arrays_are_automatically_created(): void
     {
         $container = new GenericContainer();
 
@@ -183,7 +192,8 @@ final class ContainerTest extends TestCase
         $this->assertEmpty($class->anArray);
     }
 
-    public function test_builtin_defaults_are_used(): void
+    #[Test]
+    public function builtin_defaults_are_used(): void
     {
         $container = new GenericContainer();
 
@@ -195,7 +205,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('This is a default value', $class->aString);
     }
 
-    public function test_optional_types_resolve_to_null(): void
+    #[Test]
+    public function optional_types_resolve_to_null(): void
     {
         $container = new GenericContainer();
 
@@ -207,7 +218,8 @@ final class ContainerTest extends TestCase
         $this->assertNull($class->aString);
     }
 
-    public function test_union_types_iterate_to_resolution(): void
+    #[Test]
+    public function union_types_iterate_to_resolution(): void
     {
         $container = new GenericContainer();
 
@@ -218,7 +230,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $class->input);
     }
 
-    public function test_singleton_initializers(): void
+    #[Test]
+    public function singleton_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(SingletonInitializer::class);
@@ -228,7 +241,8 @@ final class ContainerTest extends TestCase
         $this->assertSame(spl_object_id($a), spl_object_id($b));
     }
 
-    public function test_union_initializers(): void
+    #[Test]
+    public function union_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(UnionInitializer::class);
@@ -240,7 +254,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(UnionImplementation::class, $b);
     }
 
-    public function test_intersection_initializers(): void
+    #[Test]
+    public function intersection_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(IntersectionInitializer::class);
@@ -252,7 +267,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(UnionImplementation::class, $b);
     }
 
-    public function test_circular_with_initializer_log(): void
+    #[Test]
+    public function circular_with_initializer_log(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(CircularWithInitializerBInitializer::class);
@@ -269,7 +285,8 @@ final class ContainerTest extends TestCase
         }
     }
 
-    public function test_tagged_singleton(): void
+    #[Test]
+    public function tagged_singleton(): void
     {
         $container = new GenericContainer();
 
@@ -289,7 +306,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('cli', $container->get(TaggedDependency::class, 'cli')->name);
     }
 
-    public function test_tagged_singleton_with_enum(): void
+    #[Test]
+    public function tagged_singleton_with_enum(): void
     {
         $container = new GenericContainer();
 
@@ -309,7 +327,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('cli', $container->get(TaggedDependency::class, EnumTag::BAR)->name);
     }
 
-    public function test_tagged_singleton_with_initializer(): void
+    #[Test]
+    public function tagged_singleton_with_initializer(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(TaggedDependencyWebInitializer::class);
@@ -319,7 +338,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('cli', $container->get(TaggedDependency::class, 'cli')->name);
     }
 
-    public function test_tagged_singleton_exception(): void
+    #[Test]
+    public function tagged_singleton_exception(): void
     {
         $container = new GenericContainer();
 
@@ -328,7 +348,8 @@ final class ContainerTest extends TestCase
         $container->get(TaggedDependency::class, 'web');
     }
 
-    public function test_autowired_tagged_dependency(): void
+    #[Test]
+    public function autowired_tagged_dependency(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(TaggedDependencyWebInitializer::class);
@@ -337,7 +358,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('web', $dependency->dependency->name);
     }
 
-    public function test_autowired_tagged_dependency_exception(): void
+    #[Test]
+    public function autowired_tagged_dependency_exception(): void
     {
         $container = new GenericContainer();
 
@@ -354,7 +376,8 @@ final class ContainerTest extends TestCase
         }
     }
 
-    public function test_singleton_on_class(): void
+    #[Test]
+    public function singleton_on_class(): void
     {
         $container = new GenericContainer();
 
@@ -367,7 +390,8 @@ final class ContainerTest extends TestCase
         $this->assertTrue($b->flag);
     }
 
-    public function test_invoke_callable(): void
+    #[Test]
+    public function invoke_callable(): void
     {
         $container = new GenericContainer();
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
@@ -378,7 +402,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(ReflectionClass::class, $container->invoke(fn (SingletonClass $class) => new ReflectionClass($class)));
     }
 
-    public function test_invoke_invokable_class(): void
+    #[Test]
+    public function invoke_invokable_class(): void
     {
         $container = new GenericContainer();
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
@@ -388,7 +413,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('bar', $result);
     }
 
-    public function test_call_function_with_parameters(): void
+    #[Test]
+    public function call_function_with_parameters(): void
     {
         $container = new GenericContainer();
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
@@ -401,7 +427,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals('My resolved class is Tempest\Container\Tests\Fixtures\SingletonClass', $result);
     }
 
-    public function test_call_function_with_dependencies_and_parameters(): void
+    #[Test]
+    public function call_function_with_dependencies_and_parameters(): void
     {
         $container = new GenericContainer();
 
@@ -410,7 +437,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals('foo', $result);
     }
 
-    public function test_call_function_with_unresolvable_parameters(): void
+    #[Test]
+    public function call_function_with_unresolvable_parameters(): void
     {
         $this->expectException(DependencyCouldNotBeAutowired::class);
         $this->expectExceptionMessageMatches('/because string cannot be resolved/');
@@ -419,7 +447,8 @@ final class ContainerTest extends TestCase
         $container->invoke(fn (string $param) => $param);
     }
 
-    public function test_call_invalid_closure(): void
+    #[Test]
+    public function call_invalid_closure(): void
     {
         $this->expectException(InvokedCallableWasInvalid::class);
         $this->expectExceptionMessage('[array_map] cannot be invoked through the container.');
@@ -428,7 +457,8 @@ final class ContainerTest extends TestCase
         $container->invoke('array_map');
     }
 
-    public function test_invoke_closure_with_function(): void
+    #[Test]
+    public function invoke_closure_with_function(): void
     {
         GenericContainer::setInstance($container = new GenericContainer());
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
@@ -438,7 +468,8 @@ final class ContainerTest extends TestCase
         $this->assertEquals(SingletonClass::class, $result);
     }
 
-    public function test_builtin_dependency_initializer(): void
+    #[Test]
+    public function builtin_dependency_initializer(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(BuiltinDependencyArrayInitializer::class);
@@ -453,7 +484,8 @@ final class ContainerTest extends TestCase
         $this->assertTrue($a->boolValue);
     }
 
-    public function test_inject(): void
+    #[Test]
+    public function inject(): void
     {
         $container = new GenericContainer();
         $container->singleton(InjectB::class, $bTagged = new InjectB(), 'tagged');
@@ -465,7 +497,8 @@ final class ContainerTest extends TestCase
         $this->assertSame($bTagged, $a->getBTagged());
     }
 
-    public function test_unregister(): void
+    #[Test]
+    public function unregister(): void
     {
         $container = new GenericContainer();
 
@@ -480,7 +513,8 @@ final class ContainerTest extends TestCase
         $container->get(InterfaceA::class);
     }
 
-    public function test_unregister_singleton(): void
+    #[Test]
+    public function unregister_singleton(): void
     {
         $container = new GenericContainer();
 
@@ -496,7 +530,8 @@ final class ContainerTest extends TestCase
         $container->get(InterfaceA::class);
     }
 
-    public function test_unregister_tagged(): void
+    #[Test]
+    public function unregister_tagged(): void
     {
         $container = new GenericContainer();
 
@@ -515,7 +550,8 @@ final class ContainerTest extends TestCase
         $container->get(TaggedDependency::class, 'web');
     }
 
-    public function test_has(): void
+    #[Test]
+    public function has(): void
     {
         $container = new GenericContainer();
 
@@ -526,7 +562,8 @@ final class ContainerTest extends TestCase
         $this->assertTrue($container->has(InterfaceA::class));
     }
 
-    public function test_has_singleton(): void
+    #[Test]
+    public function has_singleton(): void
     {
         $container = new GenericContainer();
 
@@ -537,7 +574,8 @@ final class ContainerTest extends TestCase
         $this->assertTrue($container->has(InterfaceA::class));
     }
 
-    public function test_has_tagged_singleton(): void
+    #[Test]
+    public function has_tagged_singleton(): void
     {
         $container = new GenericContainer();
 
@@ -580,7 +618,8 @@ final class ContainerTest extends TestCase
         return $result;
     }
 
-    public function test_lazy_dependency(): void
+    #[Test]
+    public function lazy_dependency(): void
     {
         $container = new GenericContainer();
 
@@ -610,7 +649,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('value2', $this->assertSlowerThan(fn () => $instance2->dependency->value, $delay));
     }
 
-    public function test_lazy_property_dependency(): void
+    #[Test]
+    public function lazy_property_dependency(): void
     {
         $container = new GenericContainer();
 
@@ -631,7 +671,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('value1', $this->assertSlowerThan(fn () => $instance->dependency->value, $delay));
     }
 
-    public function test_has_tags_support(): void
+    #[Test]
+    public function has_tags_support(): void
     {
         $container = new GenericContainer();
 
@@ -642,7 +683,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('B', $container->get(HasTagObject::class, 'tagB')->name);
     }
 
-    public function test_tag_attribute_with_enum(): void
+    #[Test]
+    public function tag_attribute_with_enum(): void
     {
         $container = new GenericContainer();
 
@@ -664,7 +706,8 @@ final class ContainerTest extends TestCase
         $this->assertSame('bar', $dependency->bar->name);
     }
 
-    public function test_returns_decorated_instance(): void
+    #[Test]
+    public function returns_decorated_instance(): void
     {
         $container = new GenericContainer();
         $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
@@ -676,7 +719,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(DecoratedClass::class, $instance->decorated);
     }
 
-    public function test_returns_multiple_decorated_instance(): void
+    #[Test]
+    public function returns_multiple_decorated_instance(): void
     {
         $container = new GenericContainer();
         $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
@@ -690,7 +734,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(DecoratedClass::class, $instance->decorated->decorated);
     }
 
-    public function test_throws_on_decorator_not_implementing_interface(): void
+    #[Test]
+    public function throws_on_decorator_not_implementing_interface(): void
     {
         $container = new GenericContainer();
         $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
@@ -701,7 +746,8 @@ final class ContainerTest extends TestCase
         $container->get(DecoratedInterface::class);
     }
 
-    public function test_returns_decorator_without_constructor(): void
+    #[Test]
+    public function returns_decorator_without_constructor(): void
     {
         $container = new GenericContainer();
         $container->register(DecoratedInterface::class, fn () => new DecoratedClass());
@@ -712,7 +758,8 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(DecoratorWithoutConstructor::class, $instance);
     }
 
-    public function test_reset(): void
+    #[Test]
+    public function reset(): void
     {
         ResettableDependency::$reset = false;
 

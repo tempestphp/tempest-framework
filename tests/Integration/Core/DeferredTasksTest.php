@@ -19,7 +19,8 @@ use function Tempest\Router\uri;
  */
 final class DeferredTasksTest extends FrameworkIntegrationTestCase
 {
-    public function test_deferred_tasks_are_executed(): void
+    #[Test]
+    public function deferred_tasks_are_executed(): void
     {
         DeferController::$executed = false;
 
@@ -33,7 +34,8 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
         $this->assertEmpty($this->container->get(DeferredTasks::class)->getTasks());
     }
 
-    public function test_deferred_tasks_are_executed_with_container_parameters(): void
+    #[Test]
+    public function deferred_tasks_are_executed_with_container_parameters(): void
     {
         $executed = false;
 
@@ -50,7 +52,7 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_tasks_are_reset(): void
+    public function tasks_are_reset(): void
     {
         $first = $this->container->get(DeferredTasks::class);
 

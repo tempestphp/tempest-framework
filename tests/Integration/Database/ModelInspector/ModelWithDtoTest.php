@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
@@ -17,13 +18,15 @@ use function Tempest\Database\inspect;
 
 final class ModelWithDtoTest extends FrameworkIntegrationTestCase
 {
-    public function test_model_inspector_is_relation_with_dto(): void
+    #[Test]
+    public function model_inspector_is_relation_with_dto(): void
     {
         $definition = inspect(ModelWithDtoTestModelWithSerializedDto::class);
         $this->assertFalse($definition->isRelation('dto'));
     }
 
-    public function test_dto_is_skipped_as_relation(): void
+    #[Test]
+    public function dto_is_skipped_as_relation(): void
     {
         $migration = new class implements MigratesUp {
             public string $name = '000_model_with_dto';

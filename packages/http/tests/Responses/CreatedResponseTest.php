@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Tests\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Responses\Created;
 use Tempest\Http\Responses\Json;
@@ -14,7 +15,8 @@ use Tempest\Http\Status;
  */
 final class CreatedResponseTest extends TestCase
 {
-    public function test_created_response(): void
+    #[Test]
+    public function created_response(): void
     {
         $response = new Created(json_encode(['foo' => 'bar']));
 
@@ -24,7 +26,8 @@ final class CreatedResponseTest extends TestCase
         $this->assertNotSame(Status::OK, $response->status);
     }
 
-    public function test_json_response(): void
+    #[Test]
+    public function json_response(): void
     {
         $response = new Json(['foo' => 'bar']);
 

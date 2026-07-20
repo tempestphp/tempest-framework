@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -31,7 +32,8 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_it_can_force_install(): void
+    #[Test]
+    public function it_can_force_install(): void
     {
         $this->console
             ->call('install framework --force')
@@ -73,7 +75,8 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_it_does_not_overwrite_files(): void
+    #[Test]
+    public function it_does_not_overwrite_files(): void
     {
         $this->installer->put('/tempest', 'foo');
         $this->installer->put('/public/index.php', 'foo');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsNotIn;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsNotIn;
  */
 final class IsNotInTest extends TestCase
 {
-    public function test_it_works(): void
+    #[Test]
+    public function it_works(): void
     {
         $rule = new IsNotIn([4, 2, 0]);
 

@@ -6,6 +6,7 @@ namespace Tempest\Database\Tests;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Connection\PDOConnection;
@@ -19,7 +20,8 @@ final class PDOConnectionTest extends TestCase
     private const string PATH = ':memory:';
 
     #[DataProvider('provideQueryMethods')]
-    public function test_connection_must_be_open(string $method, array $params): void
+    #[Test]
+    public function connection_must_be_open(string $method, array $params): void
     {
         $this->expectException(ConnectionClosed::class);
 
@@ -29,7 +31,8 @@ final class PDOConnectionTest extends TestCase
     }
 
     #[DataProvider('provideQueryMethods')]
-    public function test_close_must_be_open(string $method, array $params): void
+    #[Test]
+    public function close_must_be_open(string $method, array $params): void
     {
         $this->expectException(ConnectionClosed::class);
 
@@ -49,7 +52,8 @@ final class PDOConnectionTest extends TestCase
         yield 'prepare' => ['prepare', ['select 1']];
     }
 
-    public function test_commit(): void
+    #[Test]
+    public function commit(): void
     {
         $connection = new PDOConnection(new SQLiteConfig(self::PATH));
         $connection->connect();
@@ -58,7 +62,8 @@ final class PDOConnectionTest extends TestCase
         $this->assertTrue($connection->commit());
     }
 
-    public function test_rollback(): void
+    #[Test]
+    public function rollback(): void
     {
         $connection = new PDOConnection(new SQLiteConfig(self::PATH));
         $connection->connect();
@@ -67,7 +72,8 @@ final class PDOConnectionTest extends TestCase
         $this->assertTrue($connection->rollback());
     }
 
-    public function test_last_insert_id(): void
+    #[Test]
+    public function last_insert_id(): void
     {
         $connection = new PDOConnection(new SQLiteConfig(self::PATH));
         $connection->connect();
@@ -75,7 +81,8 @@ final class PDOConnectionTest extends TestCase
         $this->assertSame('0', $connection->lastInsertId());
     }
 
-    public function test_prepare(): void
+    #[Test]
+    public function prepare(): void
     {
         $connection = new PDOConnection(new SQLiteConfig(self::PATH));
         $connection->connect();

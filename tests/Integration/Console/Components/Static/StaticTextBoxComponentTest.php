@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_text_box(): void
+    #[Test]
+    public function text_box(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -24,7 +26,8 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('Hello Brent');
     }
 
-    public function test_supports_default(): void
+    #[Test]
+    public function supports_default(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -36,7 +39,8 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('Hello Brent');
     }
 
-    public function test_supports_default_without_prompting(): void
+    #[Test]
+    public function supports_default_without_prompting(): void
     {
         $this->console
             ->withoutPrompting()

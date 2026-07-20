@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Validator;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\Rule;
@@ -74,7 +75,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Creation date'])]
-    public function test_after_date(?string $field = null): void
+    #[Test]
+    public function after_date(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be after or equal to January 1, 2024', $field, expected: 'Date'),
@@ -89,7 +91,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Creation date'])]
-    public function test_before_date(?string $field = null): void
+    #[Test]
+    public function before_date(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date before or equal to January 1, 2024', $field, expected: 'Date'),
@@ -104,7 +107,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Creation date'])]
-    public function test_between_dates(?string $field = null): void
+    #[Test]
+    public function between_dates(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a date between January 1, 2024 and January 1, 2025, included', $field, expected: 'Date'),
@@ -119,7 +123,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_alpha(?string $field = null): void
+    #[Test]
+    public function alpha(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain only alphabetic characters', $field),
@@ -129,7 +134,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_alpha_numeric(?string $field = null): void
+    #[Test]
+    public function alpha_numeric(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain only alphanumeric characters', $field),
@@ -139,7 +145,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_array_list(?string $field = null): void
+    #[Test]
+    public function array_list(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a list', $field),
@@ -149,7 +156,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_between(?string $field = null): void
+    #[Test]
+    public function between(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be between 0 and 2', $field, expected: 'Number'),
@@ -164,7 +172,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Array'])]
-    public function test_count(?string $field = null): void
+    #[Test]
+    public function translates_count_rule(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must have at least 3 items', $field),
@@ -194,7 +203,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_date_time_format(?string $field = null): void
+    #[Test]
+    public function date_time_format(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must use the format yyyy-MM-dd', $field),
@@ -209,7 +219,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_divisible_by(?string $field = null): void
+    #[Test]
+    public function divisible_by(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be divisible by 1', $field, expected: 'Number'),
@@ -219,7 +230,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_does_not_end_with(?string $field = null): void
+    #[Test]
+    public function does_not_end_with(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not end with "foo"', $field),
@@ -229,7 +241,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_email(?string $field = null): void
+    #[Test]
+    public function email(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid email address', $field, expected: 'Email'),
@@ -239,7 +252,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_does_not_start_with(?string $field = null): void
+    #[Test]
+    public function does_not_start_with(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not start with "foo"', $field),
@@ -249,7 +263,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_ends_with(?string $field = null): void
+    #[Test]
+    public function ends_with(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must end with "foo"', $field),
@@ -259,7 +274,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_exists(?string $field = null): void
+    #[Test]
+    public function exists(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s could not be found', $field),
@@ -269,7 +285,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_even(?string $field = null): void
+    #[Test]
+    public function even(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be even', $field, expected: 'Number'),
@@ -279,7 +296,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_hex_color(?string $field = null): void
+    #[Test]
+    public function hex_color(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a hexadecimal color', $field),
@@ -289,7 +307,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_in(?string $field = null): void
+    #[Test]
+    public function in(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a', $field),
@@ -313,7 +332,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
     #[TestWith(['IPv4', 'Input'])]
     #[TestWith(['IPv6', null])]
     #[TestWith(['IPv6', 'Input'])]
-    public function test_ip(string $ip, ?string $field = null): void
+    #[Test]
+    public function ip(string $ip, ?string $field = null): void
     {
         $class = match ($ip) {
             'IPv4' => IsIPv4::class,
@@ -344,7 +364,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_boolean(?string $field = null): void
+    #[Test]
+    public function is_boolean(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a boolean', $field),
@@ -359,7 +380,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_enum(?string $field = null): void
+    #[Test]
+    public function is_enum(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be FOO, BAR or BAZ', $field),
@@ -384,7 +406,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_float(?string $field = null): void
+    #[Test]
+    public function is_float(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a floating point number', $field),
@@ -399,7 +422,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_integer(?string $field = null): void
+    #[Test]
+    public function is_integer(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a number', $field),
@@ -414,7 +438,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_string(?string $field = null): void
+    #[Test]
+    public function is_string(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a string', $field),
@@ -429,7 +454,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_is_json(?string $field = null): void
+    #[Test]
+    public function is_json(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid JSON string', $field),
@@ -439,7 +465,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_length(?string $field = null): void
+    #[Test]
+    public function length(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be at least 0', $field),
@@ -459,7 +486,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_lowercase(?string $field = null): void
+    #[Test]
+    public function lowercase(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a lowercase string', $field),
@@ -469,7 +497,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_mac_address(?string $field = null): void
+    #[Test]
+    public function mac_address(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid MAC address', $field),
@@ -479,7 +508,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_multiple_of(?string $field = null): void
+    #[Test]
+    public function multiple_of(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a multiple of 5', $field, expected: 'Number'),
@@ -489,7 +519,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_not_empty(?string $field = null): void
+    #[Test]
+    public function not_empty(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not be empty', $field),
@@ -499,7 +530,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_not_in(?string $field = null): void
+    #[Test]
+    public function not_in(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must not be a', $field),
@@ -519,7 +551,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_not_null(?string $field = null): void
+    #[Test]
+    public function not_null(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be specified', $field),
@@ -529,7 +562,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_numeric(?string $field = null): void
+    #[Test]
+    public function numeric(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be numeric', $field),
@@ -539,7 +573,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_odd(?string $field = null): void
+    #[Test]
+    public function odd(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be odd', $field, expected: 'Number'),
@@ -549,7 +584,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_password(?string $field = null): void
+    #[Test]
+    public function password(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must contain at least 12 characters', $field, expected: 'Password'),
@@ -628,7 +664,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_phone_number(?string $field = null): void
+    #[Test]
+    public function phone_number(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a phone number', $field),
@@ -638,7 +675,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_regex(?string $field = null): void
+    #[Test]
+    public function regex(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must match the pattern /[A-Z]/', $field),
@@ -648,7 +686,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_should_be_false(?string $field = null): void
+    #[Test]
+    public function should_be_false(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be false', $field),
@@ -658,7 +697,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_should_be_true(?string $field = null): void
+    #[Test]
+    public function should_be_true(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be true', $field),
@@ -668,7 +708,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_starts_with(?string $field = null): void
+    #[Test]
+    public function starts_with(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must start with foo', $field),
@@ -678,7 +719,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_time(?string $field = null): void
+    #[Test]
+    public function time(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid time in 24-hour format', $field),
@@ -693,7 +735,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_timestamp(?string $field = null): void
+    #[Test]
+    public function timestamp(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid timestamp', $field),
@@ -703,7 +746,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_timezone(?string $field = null): void
+    #[Test]
+    public function timezone(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid timezone', $field),
@@ -713,7 +757,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_ulid(?string $field = null): void
+    #[Test]
+    public function ulid(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a lexicographically sortable identifier', $field),
@@ -723,7 +768,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_uppercase(?string $field = null): void
+    #[Test]
+    public function uppercase(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be an uppercase string', $field),
@@ -733,7 +779,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_url(?string $field = null): void
+    #[Test]
+    public function url(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a valid URL', $field),
@@ -758,7 +805,8 @@ final class TranslationsTest extends FrameworkIntegrationTestCase
 
     #[TestWith([null])]
     #[TestWith(['Input'])]
-    public function test_uuid(?string $field = null): void
+    #[Test]
+    public function uuid(?string $field = null): void
     {
         $this->assertSame(
             expected: $this->formatWithField('%s must be a universally unique identifier', $field),

@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\TableDefinition;
@@ -18,7 +19,8 @@ use function Tempest\Support\arr;
 
 final class SelectStatementTest extends TestCase
 {
-    public function test_select(): void
+    #[Test]
+    public function select(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');
 

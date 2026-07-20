@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\GenericCache;
 use Tempest\Cache\LockAcquisitionTimedOut;
@@ -10,7 +11,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class LockTest extends FrameworkIntegrationTestCase
 {
-    public function test_lock(): void
+    #[Test]
+    public function lock(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -20,7 +22,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($lock->release());
     }
 
-    public function test_same_lock_can_be_acquired_by_same_owner(): void
+    #[Test]
+    public function same_lock_can_be_acquired_by_same_owner(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -37,7 +40,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($lock2->release()); // but can release
     }
 
-    public function test_same_lock_cannot_be_acquired_by_different_owners(): void
+    #[Test]
+    public function same_lock_cannot_be_acquired_by_different_owners(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -56,7 +60,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($lock2->acquire());
     }
 
-    public function test_lock_with_ttl(): void
+    #[Test]
+    public function lock_with_ttl(): void
     {
         $clock = $this->clock();
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
@@ -76,7 +81,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($lock->release());
     }
 
-    public function test_lock_execution_without_timeout(): void
+    #[Test]
+    public function lock_execution_without_timeout(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -86,7 +92,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertFalse($lock->release());
     }
 
-    public function test_lock_execution_when_already_locked_by_another_owner(): void
+    #[Test]
+    public function lock_execution_when_already_locked_by_another_owner(): void
     {
         $this->expectException(LockAcquisitionTimedOut::class);
 
@@ -100,7 +107,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $cache->lock('processing')->execute(fn () => true);
     }
 
-    public function test_lock_execution_when_already_locked_by_another_owner_with_timeout(): void
+    #[Test]
+    public function lock_execution_when_already_locked_by_another_owner_with_timeout(): void
     {
         $clock = $this->clock();
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));
@@ -117,7 +125,8 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1)));
     }
 
-    public function test_lock_can_be_reacquired_after_expiration(): void
+    #[Test]
+    public function lock_can_be_reacquired_after_expiration(): void
     {
         $clock = $this->clock();
         $cache = new GenericCache(new ArrayAdapter(clock: $clock->toPsrClock()));

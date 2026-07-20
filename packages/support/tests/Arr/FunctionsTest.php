@@ -2,12 +2,14 @@
 
 namespace Tempest\Support\Tests\Arr;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr;
 
 final class FunctionsTest extends TestCase
 {
-    public function test_forget_values_mutates_array(): void
+    #[Test]
+    public function forget_values_mutates_array(): void
     {
         $original = [
             'foo',
@@ -20,7 +22,8 @@ final class FunctionsTest extends TestCase
         $this->assertContains('bar', $original);
     }
 
-    public function test_remove_values_does_not_mutate_array(): void
+    #[Test]
+    public function remove_values_does_not_mutate_array(): void
     {
         $original = [
             'foo',
@@ -37,7 +40,8 @@ final class FunctionsTest extends TestCase
         $this->assertContains('bar', $result);
     }
 
-    public function test_forget_keys_mutates_array(): void
+    #[Test]
+    public function forget_keys_mutates_array(): void
     {
         $original = [
             'foo' => 'bar',
@@ -51,7 +55,8 @@ final class FunctionsTest extends TestCase
         $this->assertArrayHasKey('baz', $original);
     }
 
-    public function test_remove_keys_does_not_mutate_array(): void
+    #[Test]
+    public function remove_keys_does_not_mutate_array(): void
     {
         $original = [
             'foo' => 'bar',

@@ -17,7 +17,8 @@ use function Tempest\View\view;
 
 final class StandaloneViewRendererTest extends TestCase
 {
-    public function test_render(): void
+    #[Test]
+    public function render(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
@@ -39,7 +40,8 @@ final class StandaloneViewRendererTest extends TestCase
         HTML, $html);
     }
 
-    public function test_invalid_view_component_paths(): void
+    #[Test]
+    public function invalid_view_component_paths(): void
     {
         try {
             ViewComponent::fromPath('component.view.php');
@@ -60,7 +62,8 @@ final class StandaloneViewRendererTest extends TestCase
         }
     }
 
-    public function test_invalid_view_component_paths_within_config(): void
+    #[Test]
+    public function invalid_view_component_paths_within_config(): void
     {
         try {
             new ViewConfig()->addViewComponents(
@@ -71,7 +74,8 @@ final class StandaloneViewRendererTest extends TestCase
         }
     }
 
-    public function test_with_cache_enabled(): void
+    #[Test]
+    public function with_cache_enabled(): void
     {
         $viewCache = ViewCache::create();
         $viewCache->clear();
@@ -92,7 +96,8 @@ final class StandaloneViewRendererTest extends TestCase
         HTML, $html);
     }
 
-    public function test_with_cache_disabled(): void
+    #[Test]
+    public function with_cache_disabled(): void
     {
         $renderer = TempestViewRenderer::make(
             viewCache: ViewCache::create(enabled: false),
@@ -109,7 +114,8 @@ final class StandaloneViewRendererTest extends TestCase
         HTML, $html);
     }
 
-    public function test_xml_declaration_with_short_open_tag(): void
+    #[Test]
+    public function xml_declaration_with_short_open_tag(): void
     {
         if (! ini_get('short_open_tag')) {
             $this->markTestSkipped('This test requires short_open_tag to be enabled.');
@@ -122,7 +128,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_view_errors(): void
+    public function maps_source_path_and_line_for_view_errors(): void
     {
         $renderer = TempestViewRenderer::make();
 
@@ -136,7 +142,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_undefined_variable_errors(): void
+    public function maps_source_path_and_line_for_undefined_variable_errors(): void
     {
         $renderer = TempestViewRenderer::make();
 
@@ -150,7 +156,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_component_errors(): void
+    public function maps_source_path_and_line_for_component_errors(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-standalone-error-component.view.php',
@@ -171,7 +177,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_slot_content_errors(): void
+    public function maps_source_path_and_line_for_slot_content_errors(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
@@ -192,7 +198,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_slot_expression_errors(): void
+    public function maps_source_path_and_line_for_slot_expression_errors(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-standalone-base.view.php',
@@ -213,7 +219,7 @@ final class StandaloneViewRendererTest extends TestCase
     }
 
     #[Test]
-    public function test_maps_source_path_and_line_for_expression_attribute_errors_after_component_rendering(): void
+    public function maps_source_path_and_line_for_expression_attribute_errors_after_component_rendering(): void
     {
         $viewConfig = new ViewConfig()->addViewComponents(
             __DIR__ . '/Fixtures/x-standalone-base.view.php',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ConfirmComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_confirm_component(): void
+    #[Test]
+    public function confirm_component(): void
     {
         $this->console
             ->withoutPrompting()
@@ -34,7 +36,8 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_confirm_component_shortcuts(): void
+    #[Test]
+    public function confirm_component_shortcuts(): void
     {
         $this->console
             ->withoutPrompting()
@@ -49,7 +52,8 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_confirm_component_default(): void
+    #[Test]
+    public function confirm_component_default(): void
     {
         // false by default
         $this->console

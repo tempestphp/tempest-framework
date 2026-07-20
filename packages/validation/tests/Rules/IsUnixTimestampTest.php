@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsUnixTimestamp;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsUnixTimestamp;
  */
 final class IsUnixTimestampTest extends TestCase
 {
-    public function test_timestamp(): void
+    #[Test]
+    public function timestamp(): void
     {
         $rule = new IsUnixTimestamp();
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Process;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Process\PendingProcess;
 use Tempest\Process\ProcessExecutor;
@@ -13,19 +14,22 @@ final class ProcessTesterAssertNotRanTest extends FrameworkIntegrationTestCase
         get => $this->container->get(ProcessExecutor::class);
     }
 
-    public function test_succeeds_when_command_is_not_ran(): void
+    #[Test]
+    public function succeeds_when_command_is_not_ran(): void
     {
         $this->process->recordProcessExecutions();
         $this->process->assertCommandDidNotRun('echo "hello"');
     }
 
-    public function test_succeeds_with_callback_when_no_command_ran(): void
+    #[Test]
+    public function succeeds_with_callback_when_no_command_ran(): void
     {
         $this->process->recordProcessExecutions();
         $this->process->assertCommandDidNotRun(function (): void {});
     }
 
-    public function test_succeeds_with_callback_when_other_commands_ran(): void
+    #[Test]
+    public function succeeds_with_callback_when_other_commands_ran(): void
     {
         $this->process->mockProcessResult('echo *', 'hello');
         $this->executor->run('echo "hello"');
@@ -36,7 +40,8 @@ final class ProcessTesterAssertNotRanTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_fails_with_callback_when_returning_false(): void
+    #[Test]
+    public function fails_with_callback_when_returning_false(): void
     {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Callback for command "echo "hello"" returned true.');

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
@@ -14,7 +15,8 @@ use function Tempest\Database\inspect;
 
 final class HasOneTest extends FrameworkIntegrationTestCase
 {
-    public function test_has_one(): void
+    #[Test]
+    public function has_one(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('owner');
@@ -26,7 +28,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_overwritten_owner_join_field(): void
+    #[Test]
+    public function has_one_with_overwritten_owner_join_field(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinField');
@@ -38,7 +41,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_overwritten_owner_join_field_and_table(): void
+    #[Test]
+    public function has_one_with_overwritten_owner_join_field_and_table(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('ownerJoinFieldAndTable');
@@ -50,7 +54,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_overwritten_relation_join_field(): void
+    #[Test]
+    public function has_one_with_overwritten_relation_join_field(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('relationJoinField');
@@ -62,7 +67,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_overwritten_relation_join_field_and_table(): void
+    #[Test]
+    public function has_one_with_overwritten_relation_join_field_and_table(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('relationJoinFieldAndTable');
@@ -74,7 +80,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_with_parent(): void
+    #[Test]
+    public function has_one_with_parent(): void
     {
         $model = inspect(HasOneTestRelationModel::class);
         $relation = $model->getRelation('owner')->setParent('parent');
@@ -85,7 +92,8 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_has_one_throws_exception_for_model_without_primary_key(): void
+    #[Test]
+    public function has_one_throws_exception_for_model_without_primary_key(): void
     {
         $model = inspect(HasOneTestRelationNoIdModel::class);
         $relation = $model->getRelation('owner');

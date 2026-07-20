@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\PrefetchConfig;
@@ -20,7 +21,8 @@ final class ManifestTagsResolverTest extends FrameworkIntegrationTestCase
 {
     use HasFixtures;
 
-    public function test_resolve_script(): void
+    #[Test]
+    public function resolve_script(): void
     {
         $resolver = new ManifestTagsResolver(
             viteConfig: $this->container->get(ViteConfig::class),
@@ -36,7 +38,8 @@ final class ManifestTagsResolverTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_resolve_script_with_css(): void
+    #[Test]
+    public function resolve_script_with_css(): void
     {
         $resolver = new ManifestTagsResolver(
             viteConfig: $this->container->get(ViteConfig::class),
@@ -56,7 +59,8 @@ final class ManifestTagsResolverTest extends FrameworkIntegrationTestCase
     #[TestWith([PrefetchStrategy::WATERFALL])]
     #[TestWith([PrefetchStrategy::AGGRESSIVE])]
     #[TestWith([PrefetchStrategy::NONE])]
-    public function test_resolve_script_with_prefetching(PrefetchStrategy $strategy): void
+    #[Test]
+    public function resolve_script_with_prefetching(PrefetchStrategy $strategy): void
     {
         $this->container->config(new ViteConfig(
             prefetching: new PrefetchConfig(

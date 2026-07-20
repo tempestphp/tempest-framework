@@ -2,13 +2,15 @@
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\EnumStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class EnumStatementTest extends FrameworkIntegrationTestCase
 {
-    public function test_it_can_compile_an_enum_statement_for_mysql(): void
+    #[Test]
+    public function it_can_compile_an_enum_statement_for_mysql(): void
     {
         $enumStatement = new EnumStatement(
             name: 'enum',
@@ -21,7 +23,8 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_can_compile_an_enum_statement_for_sqlite(): void
+    #[Test]
+    public function it_can_compile_an_enum_statement_for_sqlite(): void
     {
         $enumStatement = new EnumStatement(
             name: 'enum',
@@ -34,7 +37,8 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_it_can_compile_an_enum_statement_for_postgresql(): void
+    #[Test]
+    public function it_can_compile_an_enum_statement_for_postgresql(): void
     {
         $enumStatement = new EnumStatement(
             name: 'enum',

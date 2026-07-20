@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\ModelInspector;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsToMany;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\PrimaryKey;
@@ -12,7 +13,8 @@ use function Tempest\Database\inspect;
 
 final class BelongsToManyTest extends FrameworkIntegrationTestCase
 {
-    public function test_belongs_to_many(): void
+    #[Test]
+    public function belongs_to_many(): void
     {
         $model = inspect(model: BelongsToManyOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');
@@ -29,7 +31,8 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_many_select_fields(): void
+    #[Test]
+    public function belongs_to_many_select_fields(): void
     {
         $model = inspect(model: BelongsToManyOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');
@@ -46,7 +49,8 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_many_with_parent(): void
+    #[Test]
+    public function belongs_to_many_with_parent(): void
     {
         $model = inspect(model: BelongsToManyOwnerModel::class);
         $relation = $model
@@ -59,7 +63,8 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_many_with_parent_join_uses_alias(): void
+    #[Test]
+    public function belongs_to_many_with_parent_join_uses_alias(): void
     {
         $model = inspect(model: BelongsToManyOwnerModel::class);
         $relation = $model
@@ -74,7 +79,8 @@ final class BelongsToManyTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_belongs_to_many_with_custom_pivot(): void
+    #[Test]
+    public function belongs_to_many_with_custom_pivot(): void
     {
         $model = inspect(model: BelongsToManyCustomOwnerModel::class);
         $relation = $model->getRelation(name: 'targets');

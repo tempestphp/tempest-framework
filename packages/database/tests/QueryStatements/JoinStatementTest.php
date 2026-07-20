@@ -2,13 +2,15 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\JoinStatement;
 
 final class JoinStatementTest extends TestCase
 {
-    public function test_inner_join_is_added_when_needed(): void
+    #[Test]
+    public function inner_join_is_added_when_needed(): void
     {
         $this->assertSame(
             'INNER JOIN authors on authors.id = books.author_id',

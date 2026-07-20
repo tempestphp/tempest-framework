@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\HttpClient\Tests\Testing;
 
 use GuzzleHttp\Psr7\HttpFactory;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\HttpClient\Testing\ResponseBag;
 
@@ -13,7 +14,8 @@ use Tempest\HttpClient\Testing\ResponseBag;
  */
 final class ResponseBagTest extends TestCase
 {
-    public function test_it_will_retrieve_responses_in_sequence(): void
+    #[Test]
+    public function it_will_retrieve_responses_in_sequence(): void
     {
         $responseFactory = new HttpFactory();
 
@@ -30,7 +32,8 @@ final class ResponseBagTest extends TestCase
         $this->assertSame($sequence[1], $responseBag->getNextResponse());
     }
 
-    public function test_it_will_retrieve_responses_randomly(): void
+    #[Test]
+    public function it_will_retrieve_responses_randomly(): void
     {
         $responseFactory = new HttpFactory();
 

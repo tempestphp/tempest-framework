@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Intl;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\EventBus\EventBus;
 use Tempest\Intl\Catalog\Catalog;
@@ -26,7 +27,8 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $config->addTranslationMessageFile(Locale::ENGLISH, __DIR__ . '/Fixtures/messages.en_US.json');
     }
 
-    public function test_translator(): void
+    #[Test]
+    public function translator(): void
     {
         $translator = $this->container->get(Translator::class);
 
@@ -37,14 +39,16 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame('Il y a 3 articles dans votre panier.', $translator->translateForLocale(Locale::FRENCH, 'cart.items', count: 3));
     }
 
-    public function test_function(): void
+    #[Test]
+    public function function(): void
     {
         $this->assertSame('Hello, Jon Doe!', translate('hello', name: 'Jon Doe'));
         $this->assertSame('Checkout', translate('cart.checkout'));
         $this->assertSame('Passer à la caisse', translate_locale(Locale::FRENCH, 'cart.checkout'));
     }
 
-    public function test_event_miss(): void
+    #[Test]
+    public function event_miss(): void
     {
         /** @var TranslationMiss|null $received */
         $received = null;
@@ -62,7 +66,8 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame('unknown', $received->key);
     }
 
-    public function test_event_fail(): void
+    #[Test]
+    public function event_fail(): void
     {
         /** @var TranslationFailure|null $received */
         $received = null;
@@ -84,7 +89,8 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
         $this->assertSame('Failed to parse message.', $received->exception->getMessage());
     }
 
-    public function test_icon_markup(): void
+    #[Test]
+    public function icon_markup(): void
     {
         $translator = $this->container->get(Translator::class);
         $catalog = $this->container->get(Catalog::class);
@@ -96,7 +102,8 @@ final class TranslatorTest extends FrameworkIntegrationTestCase
     #[TestWith(['Click {#a href=|https://tempestphp.com|}here{/a}.', 'Click <a href="https://tempestphp.com">here</a>.'])]
     #[TestWith(['This is {#strong}bold{/strong}.', 'This is <strong>bold</strong>.'])]
     #[TestWith(['Hello{#br/}World', 'Hello<br />World'])]
-    public function test_html_markup(string $input, string $expected): void
+    #[Test]
+    public function html_markup(string $input, string $expected): void
     {
         $translator = $this->container->get(Translator::class);
         $catalog = $this->container->get(Catalog::class);

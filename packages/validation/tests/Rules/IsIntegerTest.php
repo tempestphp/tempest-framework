@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsInteger;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsInteger;
  */
 final class IsIntegerTest extends TestCase
 {
-    public function test_integer(): void
+    #[Test]
+    public function integer(): void
     {
         $rule = new IsInteger();
 

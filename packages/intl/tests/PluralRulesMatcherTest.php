@@ -2,13 +2,15 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Locale;
 use Tempest\Intl\PluralRules\PluralRulesMatcher;
 
 final class PluralRulesMatcherTest extends TestCase
 {
-    public function test_en(): void
+    #[Test]
+    public function en(): void
     {
         $matcher = new PluralRulesMatcher();
 
@@ -17,7 +19,8 @@ final class PluralRulesMatcherTest extends TestCase
         $this->assertSame('other', $matcher->getPluralCategory(Locale::ENGLISH, 11));
     }
 
-    public function test_ru(): void
+    #[Test]
+    public function ru(): void
     {
         $matcher = new PluralRulesMatcher();
 
@@ -26,7 +29,8 @@ final class PluralRulesMatcherTest extends TestCase
         $this->assertSame('many', $matcher->getPluralCategory(Locale::RUSSIAN, 11));
     }
 
-    public function test_fr(): void
+    #[Test]
+    public function fr(): void
     {
         $matcher = new PluralRulesMatcher();
 

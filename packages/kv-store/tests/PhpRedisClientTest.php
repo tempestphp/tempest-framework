@@ -5,6 +5,7 @@ namespace Tempest\KeyValue\Tests;
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\PhpRedisClient;
@@ -43,13 +44,15 @@ final class PhpRedisClientTest extends TestCase
         }
     }
 
-    public function test_basic(): void
+    #[Test]
+    public function basic(): void
     {
         $this->assertSame('response', $this->redis->command('PING', 'response'));
         $this->assertInstanceOf(\Redis::class, $this->redis->getClient());
     }
 
-    public function test_set(): void
+    #[Test]
+    public function set(): void
     {
         $this->redis->set('key_string', 'my-value');
         $this->redis->set('key_array_associative', ['foo' => 'bar']);
@@ -60,7 +63,8 @@ final class PhpRedisClientTest extends TestCase
         $this->assertSame('["foo","bar"]', $this->redis->getClient()->rawcommand('GET', 'key_array_list'));
     }
 
-    public function test_get(): void
+    #[Test]
+    public function get(): void
     {
         $this->redis->getClient()->rawcommand('SET', 'key_string', 'my_value');
         $this->redis->getClient()->rawcommand('SET', 'key_array_associative', '{"foo":"bar"}');

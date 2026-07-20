@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Clock\Tests;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\GenericClock;
 use Tempest\DateTime\Duration;
@@ -16,7 +17,8 @@ use const Tempest\DateTime\NANOSECONDS_PER_MILLISECOND;
  */
 final class GenericClockTest extends TestCase
 {
-    public function test_that_generic_clock_returns_the_current_date_time(): void
+    #[Test]
+    public function that_generic_clock_returns_the_current_date_time(): void
     {
         $dateTimeBefore = new DateTimeImmutable('now');
         $clockDateTime = new GenericClock()->now();
@@ -26,7 +28,8 @@ final class GenericClockTest extends TestCase
         $this->assertLessThanOrEqual($dateTimeAfter->getTimestamp(), $clockDateTime->getTimestamp()->getSeconds());
     }
 
-    public function test_that_generic_clock_returns_the_current_time(): void
+    #[Test]
+    public function that_generic_clock_returns_the_current_time(): void
     {
         $timeBefore = new DateTimeImmutable()->getTimestamp();
         $clockTime = new GenericClock()->seconds();
@@ -36,7 +39,8 @@ final class GenericClockTest extends TestCase
         $this->assertLessThanOrEqual($timeAfter, $clockTime);
     }
 
-    public function test_that_generic_clock_sleeps(): void
+    #[Test]
+    public function that_generic_clock_sleeps(): void
     {
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Sleeping on Windows is not precise enough.');
@@ -49,7 +53,8 @@ final class GenericClockTest extends TestCase
         $this->assertGreaterThanOrEqual($timeBefore + (250 * NANOSECONDS_PER_MILLISECOND), $timeAfter);
     }
 
-    public function test_that_generic_clock_sleeps_with_duration(): void
+    #[Test]
+    public function that_generic_clock_sleeps_with_duration(): void
     {
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Sleeping on Windows is not precise enough.');

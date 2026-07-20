@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Tests;
 
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\ViewCachePool;
 
@@ -41,7 +42,8 @@ final class ViewCachePoolTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_get_item(): void
+    #[Test]
+    public function get_item(): void
     {
         $item = $this->pool->getItem('test');
         $item->set('hi');
@@ -52,7 +54,8 @@ final class ViewCachePoolTest extends TestCase
         $this->assertEquals('hi', file_get_contents(path(self::DIRECTORY, 'test.php')->toString()));
     }
 
-    public function test_has_item(): void
+    #[Test]
+    public function has_item(): void
     {
         $item = $this->pool->getItem('test');
         $item->set('hi');
@@ -63,7 +66,8 @@ final class ViewCachePoolTest extends TestCase
         $this->assertFalse($this->pool->hasItem('test-1'));
     }
 
-    public function test_get_items(): void
+    #[Test]
+    public function get_items(): void
     {
         $items = $this->pool->getItems(['a', 'b']);
 
@@ -81,7 +85,8 @@ final class ViewCachePoolTest extends TestCase
         $this->assertFalse($items[1]->isHit());
     }
 
-    public function test_delete_item(): void
+    #[Test]
+    public function delete_item(): void
     {
         $item = $this->pool->getItem('test');
         $item->set('hi');
@@ -92,7 +97,8 @@ final class ViewCachePoolTest extends TestCase
         $this->assertFileDoesNotExist(path(self::DIRECTORY, 'test.php')->toString());
     }
 
-    public function test_delete_items(): void
+    #[Test]
+    public function delete_items(): void
     {
         $items = $this->pool->getItems(['a', 'b']);
 
@@ -111,7 +117,8 @@ final class ViewCachePoolTest extends TestCase
         $this->assertFileDoesNotExist(path(self::DIRECTORY, 'b.php')->toString());
     }
 
-    public function test_clear_pool(): void
+    #[Test]
+    public function clear_pool(): void
     {
         $item = $this->pool->getItem('test');
         $item->set('hi');
@@ -123,14 +130,16 @@ final class ViewCachePoolTest extends TestCase
         $this->assertDirectoryDoesNotExist(path(self::DIRECTORY)->toString());
     }
 
-    public function test_save_deferred(): void
+    #[Test]
+    public function save_deferred(): void
     {
         $this->expectException(Exception::class);
 
         $this->pool->saveDeferred($this->pool->getItem('test'));
     }
 
-    public function test_commit(): void
+    #[Test]
+    public function commit(): void
     {
         $this->expectException(Exception::class);
 

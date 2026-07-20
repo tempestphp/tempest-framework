@@ -101,7 +101,8 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
         $this->assertTrue($this->container->get(ViewCache::class)->enabled);
     }
 
-    public function test_view_cache(): void
+    #[Test]
+    public function view_cache(): void
     {
         $path = $this->viewCache->getCachedViewPath('path', fn () => 'hi');
 
@@ -109,7 +110,8 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
         $this->assertSame('hi', file_get_contents($path));
     }
 
-    public function test_view_cache_when_disabled(): void
+    #[Test]
+    public function view_cache_when_disabled(): void
     {
         $hit = 0;
 
@@ -129,7 +131,8 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $hit);
     }
 
-    public function test_view_cache_when_enabled(): void
+    #[Test]
+    public function view_cache_when_enabled(): void
     {
         $hit = 0;
 

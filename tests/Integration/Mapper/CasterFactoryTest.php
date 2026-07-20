@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Casters\BooleanCaster;
 use Tempest\Mapper\Casters\DateTimeCaster;
@@ -18,7 +19,8 @@ use function Tempest\Reflection\reflect;
 
 final class CasterFactoryTest extends FrameworkIntegrationTestCase
 {
-    public function test_for_property(): void
+    #[Test]
+    public function for_property(): void
     {
         $factory = $this->container->get(CasterFactory::class);
         $class = reflect(ObjectWithSerializerProperties::class);
@@ -37,7 +39,8 @@ final class CasterFactoryTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(EnumCaster::class, $factory->forProperty($class->getProperty('backedEnum')));
     }
 
-    public function test_caster_from_interface_attribute(): void
+    #[Test]
+    public function caster_from_interface_attribute(): void
     {
         $factory = $this->container->get(CasterFactory::class);
         $class = reflect(ObjectWithInterfaceTypedProperties::class);

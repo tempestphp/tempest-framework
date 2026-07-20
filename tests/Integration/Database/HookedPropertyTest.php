@@ -19,7 +19,7 @@ use function Tempest\Database\query;
 final class HookedPropertyTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_hooked_property_gets_persisted(): void
+    public function hooked_property_gets_persisted(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
 
@@ -37,7 +37,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_hooked_property_can_be_overwritten(): void
+    public function hooked_property_can_be_overwritten(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
 
@@ -57,7 +57,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_hooked_property_with_dto(): void
+    public function hooked_property_with_dto(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithKey::class);
 
@@ -66,7 +66,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_hooked_property_with_dto_via_trait(): void
+    public function hooked_property_with_dto_via_trait(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithTrait::class);
 
@@ -75,7 +75,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_hooked_property_with_dto_and_provided_value(): void
+    public function hooked_property_with_dto_and_provided_value(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithKey::class);
 
@@ -87,7 +87,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_hooked_property_with_set_hook(): void
+    public function hooked_property_with_set_hook(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModelWithKey::class);
 
@@ -99,7 +99,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_inspect(): void
+    public function with_inspect(): void
     {
         $values = inspect(new HookedModel())->getPropertyValues();
 
@@ -107,7 +107,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_create_query_builder(): void
+    public function with_create_query_builder(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
 
@@ -124,7 +124,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_default_with_create_query_builder(): void
+    public function default_with_create_query_builder(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
 
@@ -139,7 +139,7 @@ final class HookedPropertyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_with_update_query_builder(): void
+    public function with_update_query_builder(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, HookedModel::class);
 

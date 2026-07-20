@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Exceptions\TaggedDependencyCouldNotBeResolved;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Config\MysqlConfig;
@@ -68,7 +69,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         ));
     }
 
-    public function test_with_multiple_connections(): void
+    #[Test]
+    public function with_multiple_connections(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
@@ -149,7 +151,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, query(Publisher::class)->count()->onDatabase('backup')->execute());
     }
 
-    public function test_with_different_dialects(): void
+    #[Test]
+    public function with_different_dialects(): void
     {
         $this->expectNotToPerformAssertions();
 
@@ -172,7 +175,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager->onDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
     }
 
-    public function test_fails_with_unknown_connection(): void
+    #[Test]
+    public function fails_with_unknown_connection(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
@@ -186,7 +190,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_migrate_up_command(): void
+    #[Test]
+    public function migrate_up_command(): void
     {
         $this->console
             ->call('migrate:up --database=main')
@@ -202,7 +207,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableExists(Migration::class, 'backup');
     }
 
-    public function test_migrate_fresh_command(): void
+    #[Test]
+    public function migrate_fresh_command(): void
     {
         $this->console
             ->call('migrate:fresh --database=main')
@@ -218,7 +224,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableExists(Migration::class, 'backup');
     }
 
-    public function test_migrate_up_fresh_command(): void
+    #[Test]
+    public function migrate_up_fresh_command(): void
     {
         $this->console
             ->call('migrate:up --fresh --database=main')
@@ -234,7 +241,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableExists(Migration::class, 'backup');
     }
 
-    public function test_migrate_down_command(): void
+    #[Test]
+    public function migrate_down_command(): void
     {
         $this->console
             ->call('migrate:up --database=main')
@@ -252,14 +260,16 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableDoesNotExist(Migration::class, 'backup');
     }
 
-    public function test_migrate_validate_command(): void
+    #[Test]
+    public function migrate_validate_command(): void
     {
         $this->console
             ->call('migrate:validate --database=main')
             ->assertSuccess();
     }
 
-    public function test_should_migrate(): void
+    #[Test]
+    public function should_migrate(): void
     {
         /** @var MigrationManager $migrationManager */
         $migrationManager = $this->container->get(MigrationManager::class);
@@ -290,7 +300,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertTableDoesNotExist('main_table', 'backup');
     }
 
-    public function test_database_seed_on_selected_database(): void
+    #[Test]
+    public function database_seed_on_selected_database(): void
     {
         /** @var MigrationManager $migrationManager */
         $migrationManager = $this->container->get(MigrationManager::class);
@@ -326,7 +337,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_migrate_fresh_seed_on_selected_database(): void
+    #[Test]
+    public function migrate_fresh_seed_on_selected_database(): void
     {
         $this->console
             ->call('migrate:fresh --seed --database=main --all')

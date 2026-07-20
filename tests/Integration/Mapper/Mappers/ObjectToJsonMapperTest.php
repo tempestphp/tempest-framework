@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
@@ -14,7 +15,8 @@ use function Tempest\Mapper\map;
  */
 final class ObjectToJsonMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_object_to_json(): void
+    #[Test]
+    public function object_to_json(): void
     {
         $json = map(new ObjectA('a', 'b'))->toJson();
 

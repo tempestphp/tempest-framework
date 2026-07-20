@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -21,7 +22,8 @@ use function Tempest\Database\query;
  */
 final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_simple_count_query(): void
+    #[Test]
+    public function simple_count_query(): void
     {
         $query = query('chapters')
             ->count()
@@ -39,7 +41,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
-    public function test_count_query_with_specified_asterisk(): void
+    #[Test]
+    public function count_query_with_specified_asterisk(): void
     {
         $query = query('chapters')
             ->count('*')
@@ -52,7 +55,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_count_query_with_specified_field(): void
+    #[Test]
+    public function count_query_with_specified_field(): void
     {
         $query = query('chapters')->count('title')->build();
 
@@ -63,7 +67,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_count_query_without_specifying_column_cannot_be_distinct(): void
+    #[Test]
+    public function count_query_without_specifying_column_cannot_be_distinct(): void
     {
         $this->expectException(CannotCountDistinctWithoutSpecifyingAColumn::class);
 
@@ -73,7 +78,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_count_query_with_specified_asterisk_cannot_be_distinct(): void
+    #[Test]
+    public function count_query_with_specified_asterisk_cannot_be_distinct(): void
     {
         $this->expectException(CannotCountDistinctWithoutSpecifyingAColumn::class);
 
@@ -83,7 +89,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
     }
 
-    public function test_count_query_with_distinct_specified_field(): void
+    #[Test]
+    public function count_query_with_distinct_specified_field(): void
     {
         $query = query('chapters')
             ->count('title')
@@ -97,7 +104,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_count_from_model(): void
+    #[Test]
+    public function count_from_model(): void
     {
         $query = query(Author::class)->count()->build();
 
@@ -108,7 +116,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_count_query_with_conditions(): void
+    #[Test]
+    public function count_query_with_conditions(): void
     {
         $query = query('chapters')
             ->count()
@@ -137,7 +146,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
-    public function test_count(): void
+    #[Test]
+    public function counts_records(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -153,7 +163,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $count);
     }
 
-    public function test_multiple_where_raw(): void
+    #[Test]
+    public function multiple_where_raw(): void
     {
         $sql = query('books')
             ->count()
@@ -168,7 +179,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where(): void
+    #[Test]
+    public function multiple_where(): void
     {
         $sql = query('books')
             ->count()
@@ -181,7 +193,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_where_in(): void
+    #[Test]
+    public function where_in(): void
     {
         $query = query('books')
             ->count()
@@ -194,7 +207,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
-    public function test_where_in_with_enum_class(): void
+    #[Test]
+    public function where_in_with_enum_class(): void
     {
         $query = query('books')
             ->count()
@@ -207,7 +221,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', 'published', 'archived', 'featured'], $query->bindings);
     }
 
-    public function test_where_in_with_enums(): void
+    #[Test]
+    public function where_in_with_enums(): void
     {
         $query = query('books')
             ->count()
@@ -220,7 +235,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['published', 'featured'], $query->bindings);
     }
 
-    public function test_where_not_in(): void
+    #[Test]
+    public function where_not_in(): void
     {
         $query = query('books')
             ->count()
@@ -233,7 +249,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
-    public function test_where_not_in_with_enums(): void
+    #[Test]
+    public function where_not_in_with_enums(): void
     {
         $query = query('books')
             ->count()
@@ -246,7 +263,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
-    public function test_where_between(): void
+    #[Test]
+    public function where_between(): void
     {
         $query = query('books')
             ->count()
@@ -259,7 +277,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
-    public function test_where_not_between(): void
+    #[Test]
+    public function where_not_between(): void
     {
         $query = query('books')
             ->count()
@@ -272,7 +291,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([10.0, 50.0], $query->bindings);
     }
 
-    public function test_where_null(): void
+    #[Test]
+    public function where_null(): void
     {
         $query = query('books')
             ->count()
@@ -285,7 +305,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_where_not_null(): void
+    #[Test]
+    public function where_not_null(): void
     {
         $query = query('books')
             ->count()
@@ -298,7 +319,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_where_not(): void
+    #[Test]
+    public function where_not(): void
     {
         $query = query('books')
             ->count()
@@ -311,7 +333,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft'], $query->bindings);
     }
 
-    public function test_where_like(): void
+    #[Test]
+    public function where_like(): void
     {
         $query = query('books')
             ->count()
@@ -324,7 +347,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
-    public function test_where_not_like(): void
+    #[Test]
+    public function where_not_like(): void
     {
         $query = query('books')
             ->count()
@@ -337,7 +361,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%test%'], $query->bindings);
     }
 
-    public function test_or_where_in(): void
+    #[Test]
+    public function or_where_in(): void
     {
         $query = query('books')
             ->count()
@@ -351,7 +376,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'fiction', 'mystery'], $query->bindings);
     }
 
-    public function test_or_where_not_in(): void
+    #[Test]
+    public function or_where_not_in(): void
     {
         $query = query('books')
             ->count()
@@ -365,7 +391,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'draft', 'archived'], $query->bindings);
     }
 
-    public function test_or_where_between(): void
+    #[Test]
+    public function or_where_between(): void
     {
         $query = query('books')
             ->count()
@@ -379,7 +406,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 4.0, 5.0], $query->bindings);
     }
 
-    public function test_or_where_not_between(): void
+    #[Test]
+    public function or_where_not_between(): void
     {
         $query = query('books')
             ->count()
@@ -393,7 +421,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 20.0, 80.0], $query->bindings);
     }
 
-    public function test_or_where_null(): void
+    #[Test]
+    public function or_where_null(): void
     {
         $query = query('books')
             ->count()
@@ -407,7 +436,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true], $query->bindings);
     }
 
-    public function test_or_where_not_null(): void
+    #[Test]
+    public function or_where_not_null(): void
     {
         $query = query('books')
             ->count()
@@ -421,7 +451,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([false], $query->bindings);
     }
 
-    public function test_or_where_not(): void
+    #[Test]
+    public function or_where_not(): void
     {
         $query = query('books')
             ->count()
@@ -435,7 +466,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'archived'], $query->bindings);
     }
 
-    public function test_or_where_like(): void
+    #[Test]
+    public function or_where_like(): void
     {
         $query = query('books')
             ->count()
@@ -449,7 +481,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, '%adventure%'], $query->bindings);
     }
 
-    public function test_or_where_not_like(): void
+    #[Test]
+    public function or_where_not_like(): void
     {
         $query = query('books')
             ->count()
@@ -463,7 +496,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, '%boring%'], $query->bindings);
     }
 
-    public function test_chained_convenient_where_methods(): void
+    #[Test]
+    public function chained_convenient_where_methods(): void
     {
         $query = query('books')
             ->count()
@@ -479,7 +513,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 'mystery', 3.0, 5.0, 'draft'], $query->bindings);
     }
 
-    public function test_mixed_convenient_and_or_where_methods(): void
+    #[Test]
+    public function mixed_convenient_and_or_where_methods(): void
     {
         $query = query('books')
             ->count()
@@ -494,7 +529,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 100.0, 200.0], $query->bindings);
     }
 
-    public function test_convenient_where_methods_in_groups(): void
+    #[Test]
+    public function convenient_where_methods_in_groups(): void
     {
         $query = query('books')
             ->count()
@@ -512,7 +548,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['published', 'featured', 4.0, 5.0], $query->bindings);
     }
 
-    public function test_nested_where_with_count_query(): void
+    #[Test]
+    public function nested_where_with_count_query(): void
     {
         $query = query('books')
             ->count()
@@ -530,7 +567,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'featured', 4.5], $query->bindings);
     }
 
-    public function test_count_query_builder_from_another_query_builder(): void
+    #[Test]
+    public function count_query_builder_from_another_query_builder(): void
     {
         $query = query(Chapter::class)
             ->select()
@@ -539,7 +577,8 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, CountQueryBuilder::fromQueryBuilder($query)->wheres);
     }
 
-    public function test_count_on_model_with_belongs_to_many_and_through_relations(): void
+    #[Test]
+    public function count_on_model_with_belongs_to_many_and_through_relations(): void
     {
         $query = query(model: Tag::class)
             ->count()

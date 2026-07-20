@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Environment;
 use Tempest\Database\Config\SeederConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -17,7 +18,8 @@ use function Tempest\Database\query;
 
 final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_seed_with_selected_seeder(): void
+    #[Test]
+    public function seed_with_selected_seeder(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -37,7 +39,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, query(Book::class)->count()->execute());
     }
 
-    public function test_seed_with_manually_selected_seeder(): void
+    #[Test]
+    public function seed_with_manually_selected_seeder(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -55,7 +58,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi 2', $book->title);
     }
 
-    public function test_migrate_fresh_seed_with_manually_selected_seeder(): void
+    #[Test]
+    public function migrate_fresh_seed_with_manually_selected_seeder(): void
     {
         $this->console
             ->call(sprintf('migrate:fresh --seeder=%s', SecondTestDatabaseSeeder::class))
@@ -66,7 +70,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi 2', $book->title);
     }
 
-    public function test_seed_all(): void
+    #[Test]
+    public function seed_all(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -88,7 +93,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertNotNull($book);
     }
 
-    public function test_seed_when_only_one_seeder_is_available(): void
+    #[Test]
+    public function seed_when_only_one_seeder_is_available(): void
     {
         $seederConfig = $this->container->get(SeederConfig::class);
         $seederConfig->seeders = [
@@ -111,7 +117,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi', $book->title);
     }
 
-    public function test_seed_via_migrate_fresh(): void
+    #[Test]
+    public function seed_via_migrate_fresh(): void
     {
         $this->console
             ->call('migrate:fresh --seed --all')
@@ -126,7 +133,8 @@ final class DatabaseSeedCommandTest extends FrameworkIntegrationTestCase
         $this->assertNotNull($book);
     }
 
-    public function test_db_seed_caution(): void
+    #[Test]
+    public function db_seed_caution(): void
     {
         $this->container->singleton(Environment::class, Environment::PRODUCTION);
 

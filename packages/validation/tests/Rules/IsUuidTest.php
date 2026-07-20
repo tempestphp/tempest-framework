@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsUuid;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsUuid;
  */
 final class IsUuidTest extends TestCase
 {
-    public function test_uuid(): void
+    #[Test]
+    public function uuid(): void
     {
         $rule = new IsUuid();
 

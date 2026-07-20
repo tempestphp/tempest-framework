@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\Tables;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Migrations\Migration;
@@ -16,7 +17,8 @@ final class PascalCaseStrategyTest extends TestCase
 {
     #[TestWith([Migration::class, 'Migration'])]
     #[TestWith(['App\\Models\\PersonalAccessToken', 'PersonalAccessToken'])]
-    public function test_strategy(string $actual, string $expected): void
+    #[Test]
+    public function strategy(string $actual, string $expected): void
     {
         $this->assertSame($expected, new PascalCaseStrategy()->getName($actual));
     }

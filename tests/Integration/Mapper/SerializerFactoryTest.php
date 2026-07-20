@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use DateTime as NativeDateTime;
 use DateTimeImmutable as NativeDateTimeImmutable;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\DateTime;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
@@ -27,7 +28,8 @@ use function Tempest\Reflection\reflect;
 
 final class SerializerFactoryTest extends FrameworkIntegrationTestCase
 {
-    public function test_for_value(): void
+    #[Test]
+    public function for_value(): void
     {
         /** @var SerializerFactory $factory */
         $factory = $this->container->get(SerializerFactory::class);
@@ -47,7 +49,8 @@ final class SerializerFactoryTest extends FrameworkIntegrationTestCase
         $this->assertNull($factory->forValue(new NestedObjectB('name')));
     }
 
-    public function test_for_property(): void
+    #[Test]
+    public function for_property(): void
     {
         $factory = $this->container->get(SerializerFactory::class);
 
@@ -69,7 +72,8 @@ final class SerializerFactoryTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(DateTimeSerializer::class, $factory->forProperty($class->getProperty('dateTimeProp')));
     }
 
-    public function test_serializer_from_interface_attribute(): void
+    #[Test]
+    public function serializer_from_interface_attribute(): void
     {
         $factory = $this->container->get(SerializerFactory::class);
         $class = reflect(ObjectWithInterfaceTypedProperties::class);

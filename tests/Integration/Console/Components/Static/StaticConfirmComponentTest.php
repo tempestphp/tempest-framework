@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tempest\Console\Key;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_confirm(): void
+    #[Test]
+    public function confirm(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -27,7 +29,8 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('continued');
     }
 
-    public function test_not_confirm(): void
+    #[Test]
+    public function not_confirm(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -41,7 +44,8 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('continued');
     }
 
-    public function test_with_default(): void
+    #[Test]
+    public function with_default(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -55,7 +59,8 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('continued');
     }
 
-    public function test_without_default(): void
+    #[Test]
+    public function without_default(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -69,7 +74,8 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('not continued');
     }
 
-    public function test_with_default_without_prompting(): void
+    #[Test]
+    public function with_default_without_prompting(): void
     {
         $this->console
             ->withoutPrompting()

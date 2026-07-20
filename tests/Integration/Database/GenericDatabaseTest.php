@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Database;
 use Tempest\Database\Exceptions\QueryWasInvalid;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -22,7 +23,8 @@ use function Tempest\Database\query;
  */
 final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 {
-    public function test_transaction_manager_execute(): void
+    #[Test]
+    public function transaction_manager_execute(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -39,7 +41,8 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, query(Author::class)->count()->execute());
     }
 
-    public function test_transaction_manager_fails(): void
+    #[Test]
+    public function transaction_manager_fails(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -58,7 +61,8 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, query(Author::class)->count()->execute());
     }
 
-    public function test_query_with_semicolons(): void
+    #[Test]
+    public function query_with_semicolons(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class);
 
@@ -73,14 +77,16 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, query(Publisher::class)->count()->execute());
     }
 
-    public function test_query_was_invalid_exception_is_thrown_on_fetch(): void
+    #[Test]
+    public function query_was_invalid_exception_is_thrown_on_fetch(): void
     {
         $this->assertException(QueryWasInvalid::class, function (): void {
             query('books')->select()->orderByRaw('title DES')->first();
         });
     }
 
-    public function test_query_was_invalid_exception_is_thrown_on_execute(): void
+    #[Test]
+    public function query_was_invalid_exception_is_thrown_on_execute(): void
     {
         $this->assertException(QueryWasInvalid::class, function (): void {
             query('books')->update(title: 'Timeline Taxi')->whereRaw('title = ?')->execute();

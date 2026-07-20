@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Actions;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Actions\ResolveConsoleCommand;
 use Tempest\Console\ConsoleCommand;
 use Tests\Tempest\Integration\Console\Fixtures\ArrayInputCommand;
@@ -16,7 +17,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_resolve_string_command(): void
+    #[Test]
+    public function resolve_string_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: 'array_input');
 
@@ -25,7 +27,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('array_input', $command->getName());
     }
 
-    public function test_resolve_string_with_colon_command(): void
+    #[Test]
+    public function resolve_string_with_colon_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: 'with:middleware');
 
@@ -34,7 +37,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('with:middleware', $command->getName());
     }
 
-    public function test_resolve_fqcn_command(): void
+    #[Test]
+    public function resolve_fqcn_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: CommandWithMiddleware::class);
 
@@ -43,7 +47,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('with:middleware', $command->getName());
     }
 
-    public function test_resolve_array_command(): void
+    #[Test]
+    public function resolve_array_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: [CommandWithMiddleware::class, '__invoke']);
 
@@ -52,7 +57,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('with:middleware', $command->getName());
     }
 
-    public function test_resolve_implicit_string_command(): void
+    #[Test]
+    public function resolve_implicit_string_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: 'test:not-empty');
 
@@ -61,7 +67,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('test:not-empty', $command->getName());
     }
 
-    public function test_resolve_array_with_method_command(): void
+    #[Test]
+    public function resolve_array_with_method_command(): void
     {
         $command = $this->container->invoke(ResolveConsoleCommand::class, command: [CommandWithNonCommandMethods::class, 'do']);
 
@@ -70,7 +77,8 @@ final class ResolveConsoleCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('test:not-empty', $command->getName());
     }
 
-    public function test_non_console_command_throw(): void
+    #[Test]
+    public function non_console_command_throw(): void
     {
         $this->expectExceptionMessage('Command not found.');
 

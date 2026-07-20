@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Discovery\DiscoveryConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\Html\HtmlString;
@@ -29,7 +30,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->container->get(ViewCache::class)->clear();
     }
 
-    public function test_view_renderer(): void
+    #[Test]
+    public function view_renderer(): void
     {
         $this->assertSame(
             '<h1>Hello</h1>',
@@ -52,7 +54,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_relative_view_path_rendering(): void
+    #[Test]
+    public function relative_view_path_rendering(): void
     {
         $this->http
             ->get(uri([RelativeViewController::class, 'asFunction']))
@@ -65,7 +68,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             ->assertSee('Yes!');
     }
 
-    public function test_if_attribute(): void
+    #[Test]
+    public function if_attribute(): void
     {
         $this->assertSame(
             '',
@@ -78,7 +82,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_isset_attribute(): void
+    #[Test]
+    public function isset_attribute(): void
     {
         $this->assertSame(
             '',
@@ -106,7 +111,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_isset_attribute_array_and_object_cases(): void
+    #[Test]
+    public function isset_attribute_array_and_object_cases(): void
     {
         $this->assertSame(
             '<div>Hello</div>',
@@ -139,7 +145,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_isset_attribute_dual_cases(): void
+    #[Test]
+    public function isset_attribute_dual_cases(): void
     {
         $this->assertSame(
             '',
@@ -177,7 +184,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_if_with_other_expression_attributes(): void
+    #[Test]
+    public function if_with_other_expression_attributes(): void
     {
         $html = $this->view->render('<div :if="$this->show" :data="$data">Hello</div>', show: true, data: 'test');
 
@@ -187,7 +195,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_else_with_other_expression_attributes(): void
+    #[Test]
+    public function else_with_other_expression_attributes(): void
     {
         $html = $this->view->render('<div :if="$this->show" :data="$data">Hello</div><div :else :data="$data">Nothing to see</div>', show: false, data: 'test');
 
@@ -197,7 +206,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_elseif_attribute(): void
+    #[Test]
+    public function elseif_attribute(): void
     {
         $this->assertSame(
             '<div>A</div>',
@@ -243,7 +253,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_else_if_with_other_expression_attributes(): void
+    #[Test]
+    public function else_if_with_other_expression_attributes(): void
     {
         $html = $this->view->render('<div :if="$show" :data="$data">Hello</div><div :elseif="$show === false" :data="$data">Nothing to see</div>', show: false, data: 'test');
 
@@ -253,7 +264,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_else_attribute(): void
+    #[Test]
+    public function else_attribute(): void
     {
         $this->assertSame(
             '<div>True</div>',
@@ -266,7 +278,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_foreach_attribute(): void
+    #[Test]
+    public function foreach_attribute(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
@@ -277,7 +290,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_foreach_consumes_attribute(): void
+    #[Test]
+    public function foreach_consumes_attribute(): void
     {
         $html = $this->view->render(
             <<<'HTML'
@@ -318,7 +332,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_forelse_attribute(): void
+    #[Test]
+    public function forelse_attribute(): void
     {
         $this->assertSame(
             <<<'HTML'
@@ -335,7 +350,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_forelse_with_other_expression_attribute(): void
+    #[Test]
+    public function forelse_with_other_expression_attribute(): void
     {
         $this->assertSame(
             <<<'HTML'
@@ -345,7 +361,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_default_slot(): void
+    #[Test]
+    public function default_slot(): void
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -361,7 +378,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_implicit_default_slot(): void
+    #[Test]
+    public function implicit_default_slot(): void
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -381,7 +399,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_multiple_slots(): void
+    #[Test]
+    public function multiple_slots(): void
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -424,7 +443,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_pre(): void
+    #[Test]
+    public function pre(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
@@ -444,14 +464,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_use_statements_are_grouped(): void
+    #[Test]
+    public function use_statements_are_grouped(): void
     {
         $html = $this->view->render('<x-view-component-with-use-import></x-view-component-with-use-import><x-view-component-with-use-import></x-view-component-with-use-import>');
 
         $this->assertStringContainsString('/', $html);
     }
 
-    public function test_raw_and_escaped(): void
+    #[Test]
+    public function raw_and_escaped(): void
     {
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
 
@@ -462,7 +484,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_html_string(): void
+    #[Test]
+    public function html_string(): void
     {
         $html = $this->view->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: HtmlString::createTag('h1', content: 'hi')));
 
@@ -476,7 +499,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_no_double_else_attributes(): void
+    #[Test]
+    public function no_double_else_attributes(): void
     {
         $this->expectException(ElementWasInvalid::class);
 
@@ -489,7 +513,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_else_must_be_after_if_or_elseif(): void
+    #[Test]
+    public function else_must_be_after_if_or_elseif(): void
     {
         $this->view->render(
             <<<'HTML'
@@ -515,7 +540,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_elseif_must_be_after_if_or_elseif(): void
+    #[Test]
+    public function elseif_must_be_after_if_or_elseif(): void
     {
         $this->view->render(
             <<<'HTML'
@@ -534,7 +560,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_forelse_must_be_before_foreach(): void
+    #[Test]
+    public function forelse_must_be_before_foreach(): void
     {
         $this->view->render(
             view(<<<'HTML'
@@ -552,7 +579,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_no_double_forelse_attributes(): void
+    #[Test]
+    public function no_double_forelse_attributes(): void
     {
         $this->view->render(
             view(<<<'HTML'
@@ -572,7 +600,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_render_element_with_attribute_with_dash(): void
+    #[Test]
+    public function render_element_with_attribute_with_dash(): void
     {
         $view = view(
             <<<HTML
@@ -588,7 +617,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_component_with_multiple_attributes(): void
+    #[Test]
+    public function view_component_with_multiple_attributes(): void
     {
         $expected = '<div class="a">
         a    </div>
@@ -608,7 +638,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch($expected, $html);
     }
 
-    public function test_slot_with_comment(): void
+    #[Test]
+    public function slot_with_comment(): void
     {
         $this->assertSnippetsMatch(
             <<<'HTML'
@@ -629,7 +660,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_self_closing_component_tags_are_compiled(): void
+    #[Test]
+    public function self_closing_component_tags_are_compiled(): void
     {
         $this->view->registerViewComponent('x-foo', '<div>foo</div>');
 
@@ -649,7 +681,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_html_tags(): void
+    #[Test]
+    public function html_tags(): void
     {
         $view = <<<'HTML'
         <!doctype html> 
@@ -678,14 +711,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<!-- test comment -->', $html);
     }
 
-    public function test_view_processors(): void
+    #[Test]
+    public function view_processors(): void
     {
         $html = $this->view->render('<div>{{ $global }}</div>');
 
         $this->assertStringEqualsStringIgnoringLineEndings('<div>test</div>', $html);
     }
 
-    public function test_with_at_symbol_in_html_tag(): void
+    #[Test]
+    public function with_at_symbol_in_html_tag(): void
     {
         $rendered = $this->view->render(
             view('<button @click="foo">test</button>'),
@@ -699,7 +734,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_with_colon_symbol_in_html_tag(): void
+    #[Test]
+    public function with_colon_symbol_in_html_tag(): void
     {
         $rendered = $this->view->render(
             view('<button x-on:click="foo">test</button>'),
@@ -713,7 +749,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_loop_variable_can_be_used_within_the_looped_tag(): void
+    #[Test]
+    public function loop_variable_can_be_used_within_the_looped_tag(): void
     {
         $html = $this->view->render(
             view(
@@ -742,7 +779,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_if_and_foreach_precedence(): void
+    #[Test]
+    public function if_and_foreach_precedence(): void
     {
         $html = $this->view->render(
             <<<'HTML'
@@ -841,14 +879,16 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('', $html);
     }
 
-    public function test_escape_expression_attribute(): void
+    #[Test]
+    public function escape_expression_attribute(): void
     {
         $html = $this->view->render('<div ::escaped="foo">');
 
         $this->assertSnippetsMatch('<div :escaped="foo"></div>', $html);
     }
 
-    public function test_unclosed_php_tag(): void
+    #[Test]
+    public function unclosed_php_tag(): void
     {
         $html = $this->view->render(<<<'HTML'
         <?php echo 'hi';
@@ -857,7 +897,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSame('hi', $html);
     }
 
-    public function test_view_comments(): void
+    #[Test]
+    public function view_comments(): void
     {
         $html = $this->view->render(<<<'HTML'
         <p>{{-- this is a comment --}}this is rendered text</p>{{-- this is a comment --}}
@@ -866,7 +907,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<p>this is rendered text</p>', $html);
     }
 
-    public function test_multiline_view_comments(): void
+    #[Test]
+    public function multiline_view_comments(): void
     {
         $html = $this->view->render(<<<'HTML'
         {{-- this is a comment
@@ -886,7 +928,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<p>This should be rendered</p>', $html);
     }
 
-    public function test_parse_rss_feed(): void
+    #[Test]
+    public function parse_rss_feed(): void
     {
         if (ini_get('short_open_tag')) {
             $this->expectException(XmlDeclarationCouldNotBeParsed::class);
@@ -927,7 +970,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         RSS, $parsed);
     }
 
-    public function test_attributes_with_single_quotes(): void
+    #[Test]
+    public function attributes_with_single_quotes(): void
     {
         $html = $this->view->render(<<<'HTML'
         <div class='hello'></div>
@@ -936,7 +980,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div class="hello"></div>', $html);
     }
 
-    public function test_zero_in_attribute(): void
+    #[Test]
+    public function zero_in_attribute(): void
     {
         $html = $this->view->render(<<<'HTML'
         <table border="0"></table>
@@ -945,7 +990,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<table border="0"></table>', $html);
     }
 
-    public function test_discovery_locations_are_passed_to_compiler(): void
+    #[Test]
+    public function discovery_locations_are_passed_to_compiler(): void
     {
         $discoveryConfig = $this->get(DiscoveryConfig::class);
 
@@ -962,7 +1008,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSnippetsMatch('<div>Hi</div>', $html);
     }
 
-    public function test_whitespace_between_inline_elements_is_preserved(): void
+    #[Test]
+    public function whitespace_between_inline_elements_is_preserved(): void
     {
         /** @var TempestViewRenderer $renderer */
         $renderer = $this->get(TempestViewRenderer::class);
@@ -973,7 +1020,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_whitespace_introduced_by_line_breaks_is_preserved(): void
+    #[Test]
+    public function whitespace_introduced_by_line_breaks_is_preserved(): void
     {
         /** @var TempestViewRenderer $renderer */
         $renderer = $this->get(TempestViewRenderer::class);
@@ -986,7 +1034,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_whitespace_with_blank_lines_between_inline_elements_is_preserved(): void
+    #[Test]
+    public function whitespace_with_blank_lines_between_inline_elements_is_preserved(): void
     {
         /** @var TempestViewRenderer $renderer */
         $renderer = $this->get(TempestViewRenderer::class);
@@ -1001,7 +1050,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_expressions_attributes_are_escaped(): void
+    #[Test]
+    public function expressions_attributes_are_escaped(): void
     {
         $html = $this->view->render(view(
             '<a :href="$v">click</a>',

@@ -5,6 +5,7 @@ namespace Tempest\Support\Tests\Comparison;
 use Generator;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Comparison;
 use Tempest\Support\Comparison\Comparable;
@@ -14,12 +15,14 @@ use Tempest\Support\Comparison\Order;
 final class ComparisonTest extends TestCase
 {
     #[DataProvider('provideComparisonCases')]
-    public function test_it_can_compare(mixed $a, mixed $b, Order $expected): void
+    #[Test]
+    public function it_can_compare(mixed $a, mixed $b, Order $expected): void
     {
         $this->assertSame($expected, Comparison\compare($a, $b));
     }
 
-    public function test_it_can_fail_comparing(): void
+    #[Test]
+    public function it_can_fail_comparing(): void
     {
         $a = $this->createIncomparableWrapper(1);
         $b = $this->createIncomparableWrapper(2);
@@ -30,7 +33,8 @@ final class ComparisonTest extends TestCase
         Comparison\compare($a, $b);
     }
 
-    public function test_it_can_fail_comparing_with_additional_info(): void
+    #[Test]
+    public function it_can_fail_comparing_with_additional_info(): void
     {
         $a = $this->createIncomparableWrapper(1, 'Can only compare even numbers');
         $b = $this->createIncomparableWrapper(2);

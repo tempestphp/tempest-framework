@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsFalsy;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsFalsy;
  */
 final class IsFalsyTest extends TestCase
 {
-    public function test_should_be_false(): void
+    #[Test]
+    public function should_be_false(): void
     {
         $rule = new IsFalsy();
 

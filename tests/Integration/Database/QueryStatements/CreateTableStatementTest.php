@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
@@ -25,7 +26,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
-    public function test_defaults(): void
+    #[Test]
+    public function defaults(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0000_test_migration';
@@ -55,7 +57,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_set_statement(): void
+    #[Test]
+    public function set_statement(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -81,7 +84,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_array_statement(): void
+    #[Test]
+    public function array_statement(): void
     {
         $migration = new class() implements MigratesUp {
             public string $name = '0';
@@ -101,7 +105,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_enum_statement(): void
+    #[Test]
+    public function enum_statement(): void
     {
         $this->database->migrate(CreateMigrationsTable::class);
 
@@ -140,7 +145,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_invalid_json_default(): void
+    #[Test]
+    public function invalid_json_default(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -161,7 +167,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_dto_field(): void
+    #[Test]
+    public function dto_field(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -181,7 +188,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_invalid_set_values(): void
+    #[Test]
+    public function invalid_set_values(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -202,7 +210,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_string_method_integration(): void
+    #[Test]
+    public function string_method_integration(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -221,7 +230,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_string_method_with_custom_parameters(): void
+    #[Test]
+    public function string_method_with_custom_parameters(): void
     {
         $varcharStatement = new CreateTableStatement('frieren_mages')
             ->primary()
@@ -236,7 +246,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame($varcharStatement, $stringStatement);
     }
 
-    public function test_text_with_length_limit(): void
+    #[Test]
+    public function text_with_length_limit(): void
     {
         $tinyText = new CreateTableStatement('test-table')
             ->text('content', false, DatabaseTextLength::TINY, null)
@@ -265,7 +276,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('TINYTEXT', $value);
     }
 
-    public function test_object_field(): void
+    #[Test]
+    public function object_field(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -282,7 +294,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_object_field_with_default(): void
+    #[Test]
+    public function object_field_with_default(): void
     {
         $migration = new class() implements MigratesUp {
             private(set) string $name = '0';
@@ -299,7 +312,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_object_method_produces_same_sql_as_json_and_dto(): void
+    #[Test]
+    public function object_method_produces_same_sql_as_json_and_dto(): void
     {
         $jsonStatement = new CreateTableStatement('test_table')
             ->json('data')
@@ -318,7 +332,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame($dtoStatement, $objectStatement);
     }
 
-    public function test_integer_field_with_bytes_mysql(): void
+    #[Test]
+    public function integer_field_with_bytes_mysql(): void
     {
         $bigInteger = new CreateTableStatement('test-table')
             ->integer('content', false, false, 6)
@@ -339,7 +354,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('INTEGER', $integer);
     }
 
-    public function test_integer_field_with_bytes_postgresql(): void
+    #[Test]
+    public function integer_field_with_bytes_postgresql(): void
     {
         $bigInteger = new CreateTableStatement('test-table')
             ->integer('content', false, false, 6)
@@ -360,7 +376,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('INTEGER', $integer);
     }
 
-    public function test_integer_field_with_bytes_sqlite(): void
+    #[Test]
+    public function integer_field_with_bytes_sqlite(): void
     {
         $bigInteger = new CreateTableStatement('test-table')
             ->integer('content', false, false, 6)

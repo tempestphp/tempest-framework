@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Vite\Exceptions\ManifestEntrypointWasNotFoundException;
@@ -26,7 +27,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         $this->vite->setRootDirectory($this->internalStorage . '/Fixtures/tmp');
     }
 
-    public function test_set_nonce(): void
+    #[Test]
+    public function set_nonce(): void
     {
         $vite = $this->container->get(Vite::class);
         $vite->setNonce('expected-nonce');
@@ -35,7 +37,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         $this->assertSame('expected-nonce', $config->nonce);
     }
 
-    public function test_get_tags_in_development_with_custom_entrypoints(): void
+    #[Test]
+    public function get_tags_in_development_with_custom_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -57,7 +60,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_get_tags_in_development_with_configured_entrypoints(): void
+    #[Test]
+    public function get_tags_in_development_with_configured_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -85,7 +89,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_get_tags_with_manifest_with_specified_entrypoints(): void
+    #[Test]
+    public function get_tags_with_manifest_with_specified_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -106,7 +111,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_throws_when_getting_tags_with_manifest_with_unknown_entrypoint(): void
+    #[Test]
+    public function throws_when_getting_tags_with_manifest_with_unknown_entrypoint(): void
     {
         $this->expectException(ManifestEntrypointWasNotFoundException::class);
 
@@ -121,7 +127,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_get_tags_with_manifest_with_css(): void
+    #[Test]
+    public function get_tags_with_manifest_with_css(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -142,7 +149,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_get_tags_with_manifest_and_preloading(): void
+    #[Test]
+    public function get_tags_with_manifest_and_preloading(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -164,7 +172,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_get_tags_with_entrypoints_and_global_entrypoints(): void
+    #[Test]
+    public function get_tags_with_entrypoints_and_global_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -187,7 +196,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_discovery(): void
+    #[Test]
+    public function discovery(): void
     {
         $this->vite->call(
             callback: function (string $path): void {

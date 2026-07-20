@@ -7,6 +7,7 @@ namespace Tempest\Http\Tests\Mappers;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -49,7 +50,8 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
     }
 
     #[DataProvider('nonPostMethodsProvider')]
-    public function test_non_post_requests_are_not_affected_by_method_param(string $originalMethod): void
+    #[Test]
+    public function non_post_requests_are_not_affected_by_method_param(string $originalMethod): void
     {
         $request = $this->createServerRequest(
             $originalMethod,
@@ -62,7 +64,8 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
     }
 
     #[DataProvider('validSpoofedMethodsProvider')]
-    public function test_post_with_valid_method_is_spoofed(string $spoofedMethod): void
+    #[Test]
+    public function post_with_valid_method_is_spoofed(string $spoofedMethod): void
     {
         $request = $this->createServerRequest(
             'POST',
@@ -74,7 +77,8 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
         $this->assertSame(Method::from(strtoupper($spoofedMethod)), $method);
     }
 
-    public function test_post_with_invalid_method_is_not_spoofed(): void
+    #[Test]
+    public function post_with_invalid_method_is_not_spoofed(): void
     {
         $request = $this->createServerRequest(
             'POST',
@@ -86,7 +90,8 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
         $this->assertSame(Method::POST, $method);
     }
 
-    public function test_method_param_is_case_insensitive(): void
+    #[Test]
+    public function method_param_is_case_insensitive(): void
     {
         $request = $this->createServerRequest(
             'POST',

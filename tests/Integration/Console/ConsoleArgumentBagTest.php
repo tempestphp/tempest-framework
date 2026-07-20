@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Exceptions\InvalidEnumArgument;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -16,7 +17,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
 {
-    public function test_argument_bag_works(): void
+    #[Test]
+    public function argument_bag_works(): void
     {
         $argv = [
             'tempest',
@@ -51,7 +53,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_positional_vs_named_input(): void
+    #[Test]
+    public function positional_vs_named_input(): void
     {
         $this->console
             ->call('complex a --c=c --b=b --flag')
@@ -59,21 +62,24 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
             ->assertContains('true');
     }
 
-    public function test_combined_flags(): void
+    #[Test]
+    public function combined_flags(): void
     {
         $this->console
             ->call('flags -ab')
             ->assertContains('ok');
     }
 
-    public function test_short_flags_are_mapped_to_parameters_directly(): void
+    #[Test]
+    public function short_flags_are_mapped_to_parameters_directly(): void
     {
         $this->console
             ->call('flags:short -ab')
             ->assertContains('ok');
     }
 
-    public function test_array_input(): void
+    #[Test]
+    public function array_input(): void
     {
         $argv = [
             'tempest',
@@ -96,14 +102,16 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->assertSame(['a', 'b', 'c'], $bag->findArrayFor($definition)->value);
     }
 
-    public function test_array_input_to_command(): void
+    #[Test]
+    public function array_input_to_command(): void
     {
         $this->console
             ->call('array_input --input=a --input=b')
             ->assertContains('["a","b"]');
     }
 
-    public function test_array_with_one_element_to_command(): void
+    #[Test]
+    public function array_with_one_element_to_command(): void
     {
         $this->console
             ->call('array_input --input=a')
@@ -115,7 +123,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
     #[TestWith(['baz', false])]
     #[TestWith(['qux', true])]
     #[TestWith(['bux', true])]
-    public function test_negative_input(string $name, bool $expected): void
+    #[Test]
+    public function negative_input(string $name, bool $expected): void
     {
         $argv = [
             'tempest',
@@ -140,7 +149,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->assertSame($expected, $bag->findFor($definition)->value);
     }
 
-    public function test_backed_enum_input(): void
+    #[Test]
+    public function backed_enum_input(): void
     {
         $argv = [
             'tempest',
@@ -161,7 +171,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->assertSame(TestStringEnum::A, $bag->findFor($definition)->value);
     }
 
-    public function test_invalid_backed_enum_input(): void
+    #[Test]
+    public function invalid_backed_enum_input(): void
     {
         $argv = [
             'tempest',
@@ -183,7 +194,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $bag->findFor($definition);
     }
 
-    public function test_name_mapping(): void
+    #[Test]
+    public function name_mapping(): void
     {
         $this->console
             ->call('command-with-argument-name --new-name=foo --new-flag')
@@ -194,7 +206,8 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
     #[TestWith(['variadic-string-argument foo bar baz', '["foo","bar","baz"]'])]
     #[TestWith(['variadic-integer-argument 1 2 3', '[1,2,3]'])]
     #[TestWith(['variadic-backed-enum-argument a b c', '["a","b","c"]'])]
-    public function test_variadic_argument(string $command, string $jsonOutput): void
+    #[Test]
+    public function variadic_argument(string $command, string $jsonOutput): void
     {
         $this->console
             ->call($command)

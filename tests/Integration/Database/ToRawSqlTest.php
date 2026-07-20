@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
@@ -23,7 +24,8 @@ use function Tempest\Database\query;
  */
 final class ToRawSqlTest extends FrameworkIntegrationTestCase
 {
-    public function test_select_query_to_raw_sql_without_bindings(): void
+    #[Test]
+    public function select_query_to_raw_sql_without_bindings(): void
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM books',
@@ -31,7 +33,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_where_clause(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_where_clause(): void
     {
         $this->assertSameWithoutBackticks(
             expected: "SELECT * FROM books WHERE books.title = 'The Hobbit'",
@@ -39,7 +42,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_multiple_bindings(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_multiple_bindings(): void
     {
         $this->assertSameWithoutBackticks(
             expected: "SELECT title, author_id FROM books WHERE books.title = 'The Hobbit' AND books.author_id = 1 AND books.category IN ('fantasy','adventure')",
@@ -53,7 +57,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_raw_where(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_raw_where(): void
     {
         $this->assertSameWithoutBackticks(
             expected: "SELECT * FROM books WHERE published_date > '2020-01-01' AND rating >= 4.5",
@@ -66,7 +71,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_boolean_values(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_boolean_values(): void
     {
         $rawSql = query('books')
             ->select()
@@ -79,7 +85,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'featured', haystack: $rawSql);
     }
 
-    public function test_select_query_to_raw_sql_with_null_values(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_null_values(): void
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM books WHERE books.deleted_at IS NULL AND books.published_at IS NOT NULL',
@@ -92,7 +99,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_numeric_values(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_numeric_values(): void
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM books WHERE books.price = 29.99 AND books.pages = 350',
@@ -105,7 +113,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_between_clause(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_between_clause(): void
     {
         $this->assertSameWithoutBackticks(
             expected: 'SELECT * FROM books WHERE books.price BETWEEN 10 AND 50',
@@ -117,7 +126,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_like_clause(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_like_clause(): void
     {
         $this->assertSameWithoutBackticks(
             expected: "SELECT * FROM books WHERE books.title LIKE '%fantasy%'",
@@ -129,7 +139,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_select_query_to_raw_sql_with_order_and_limit(): void
+    #[Test]
+    public function select_query_to_raw_sql_with_order_and_limit(): void
     {
         $rawSql = query('books')
             ->select()
@@ -145,7 +156,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'OFFSET 5', haystack: $rawSql);
     }
 
-    public function test_insert_query_to_raw_sql(): void
+    #[Test]
+    public function insert_query_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->insert(['title' => 'New Book', 'author_id' => 1, 'published' => true])
@@ -157,7 +169,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: "'New Book'", haystack: $rawSql);
     }
 
-    public function test_update_query_to_raw_sql(): void
+    #[Test]
+    public function update_query_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->update(title: 'Updated Title')
@@ -171,7 +184,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'WHERE', haystack: $rawSql);
     }
 
-    public function test_delete_query_to_raw_sql(): void
+    #[Test]
+    public function delete_query_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->delete()
@@ -184,7 +198,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'WHERE', haystack: $rawSql);
     }
 
-    public function test_count_query_to_raw_sql(): void
+    #[Test]
+    public function count_query_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->count()
@@ -199,7 +214,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'published', haystack: $rawSql);
     }
 
-    public function test_count_query_with_column_to_raw_sql(): void
+    #[Test]
+    public function count_query_with_column_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->count('author_id')
@@ -215,7 +231,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'published', haystack: $rawSql);
     }
 
-    public function test_count_distinct_query_to_raw_sql(): void
+    #[Test]
+    public function count_distinct_query_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->count('author_id')
@@ -230,7 +247,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'books', haystack: $rawSql);
     }
 
-    public function test_complex_select_query_with_groups_to_raw_sql(): void
+    #[Test]
+    public function complex_select_query_with_groups_to_raw_sql(): void
     {
         $rawSql = query('books')
             ->select()
@@ -250,7 +268,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: ')', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_string_escaping(): void
+    #[Test]
+    public function raw_sql_with_string_escaping(): void
     {
         $rawSql = query('books')
             ->select()
@@ -263,7 +282,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: '"double quotes"', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_model_queries(): void
+    #[Test]
+    public function raw_sql_with_model_queries(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -286,7 +306,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: "'Test Author'", haystack: $rawSql);
     }
 
-    public function test_raw_sql_preserves_field_aliases(): void
+    #[Test]
+    public function raw_sql_preserves_field_aliases(): void
     {
         $rawSql = query('books')
             ->select('title as book_title', 'author_id as author')
@@ -299,7 +320,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'author', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_joins(): void
+    #[Test]
+    public function raw_sql_with_joins(): void
     {
         $rawSql = query('books')
             ->select('books.title', 'authors.name')
@@ -314,7 +336,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'published', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_group_by_and_having(): void
+    #[Test]
+    public function raw_sql_with_group_by_and_having(): void
     {
         $rawSql = query('books')
             ->select('author_id', 'COUNT(*) as book_count')
@@ -328,7 +351,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'HAVING COUNT(*) > 1', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_raw_subquery_in_where(): void
+    #[Test]
+    public function raw_sql_with_raw_subquery_in_where(): void
     {
         $rawSql = query('books')
             ->select()
@@ -342,7 +366,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: ')', haystack: $rawSql);
     }
 
-    public function test_raw_sql_handles_array_values_properly(): void
+    #[Test]
+    public function raw_sql_handles_array_values_properly(): void
     {
         $rawSql = query('books')
             ->select()
@@ -355,7 +380,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: "('draft','archived')", haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_backed_enum_values(): void
+    #[Test]
+    public function raw_sql_with_backed_enum_values(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -372,7 +398,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: '"a"', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_unit_enum_values(): void
+    #[Test]
+    public function raw_sql_with_unit_enum_values(): void
     {
         $rawSql = query('authors')
             ->select()
@@ -383,7 +410,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: '"FOO"', haystack: $rawSql);
     }
 
-    public function test_raw_sql_consistency_across_database_dialects(): void
+    #[Test]
+    public function raw_sql_consistency_across_database_dialects(): void
     {
         $rawSql = query('books')
             ->select('title', 'author_id')
@@ -407,7 +435,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'LIMIT 5', haystack: $rawSql);
     }
 
-    public function test_raw_sql_handles_null_and_empty_values(): void
+    #[Test]
+    public function raw_sql_handles_null_and_empty_values(): void
     {
         $rawSql = query('books')
             ->select()
@@ -421,7 +450,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'title', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_named_bindings(): void
+    #[Test]
+    public function raw_sql_with_named_bindings(): void
     {
         $query = new Query(
             'SELECT * FROM books WHERE title = :title AND author_id = :author_id',
@@ -436,7 +466,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringNotContainsString(needle: ':author_id', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_positional_bindings(): void
+    #[Test]
+    public function raw_sql_with_positional_bindings(): void
     {
         $query = new Query(
             'SELECT * FROM books WHERE title = ? AND author_id = ? AND rating > ?',
@@ -451,7 +482,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringNotContainsString(needle: '?', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_mixed_data_types(): void
+    #[Test]
+    public function raw_sql_with_mixed_data_types(): void
     {
         $rawSql = query('books')
             ->select()
@@ -470,7 +502,8 @@ final class ToRawSqlTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString(needle: 'IS NULL', haystack: $rawSql);
     }
 
-    public function test_raw_sql_with_date_where_methods(): void
+    #[Test]
+    public function raw_sql_with_date_where_methods(): void
     {
         $rawSql = query('books')
             ->select()

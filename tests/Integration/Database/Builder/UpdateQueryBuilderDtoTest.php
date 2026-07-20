@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -15,7 +16,8 @@ use function Tempest\Database\query;
 
 final class UpdateQueryBuilderDtoTest extends FrameworkIntegrationTestCase
 {
-    public function test_update_with_serialize_as_dto(): void
+    #[Test]
+    public function update_with_serialize_as_dto(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_create_users_table_for_dto_update';

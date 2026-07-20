@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\EventBus;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Fixtures\Events\DiscoveredEventBusMiddleware;
 use Tests\Tempest\Fixtures\Events\EnumEvent;
 use Tests\Tempest\Fixtures\Events\EventForListenerWithoutPropagation;
@@ -23,7 +24,8 @@ use function Tempest\EventBus\event;
  */
 final class EventBusTest extends FrameworkIntegrationTestCase
 {
-    public function test_string_events(): void
+    #[Test]
+    public function string_events(): void
     {
         TestEventHandler::$fromStringEvent = false;
 
@@ -32,7 +34,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertTrue(TestEventHandler::$fromStringEvent);
     }
 
-    public function test_enum_events(): void
+    #[Test]
+    public function enum_events(): void
     {
         TestEventHandler::$fromEnumEvent = false;
 
@@ -41,7 +44,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertTrue(TestEventHandler::$fromEnumEvent);
     }
 
-    public function test_enum_events_with_colliding_names(): void
+    #[Test]
+    public function enum_events_with_colliding_names(): void
     {
         TestEventHandler::$fromEnumEvent = false;
 
@@ -50,7 +54,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertFalse(TestEventHandler::$fromEnumEvent);
     }
 
-    public function test_interface_events_are_discovered(): void
+    #[Test]
+    public function interface_events_are_discovered(): void
     {
         EventInterfaceHandler::$itHappened = false;
 
@@ -59,7 +64,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertTrue(EventInterfaceHandler::$itHappened);
     }
 
-    public function test_discovered_middleware(): void
+    #[Test]
+    public function discovered_middleware(): void
     {
         DiscoveredEventBusMiddleware::$hit = false;
 
@@ -68,7 +74,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertTrue(DiscoveredEventBusMiddleware::$hit);
     }
 
-    public function test_event_without_propagation(): void
+    #[Test]
+    public function event_without_propagation(): void
     {
         $handler = $this->get(HandlersForEventWithoutPropagation::class);
         $handler->count = 0;
@@ -78,7 +85,8 @@ final class EventBusTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $handler->count);
     }
 
-    public function test_listener_without_propagation(): void
+    #[Test]
+    public function listener_without_propagation(): void
     {
         $handler = $this->get(HandlersForEventWithListenerWithoutPropagation::class);
         $handler->count = 0;

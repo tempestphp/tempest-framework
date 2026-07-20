@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Matching;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -55,7 +56,8 @@ final class GenericRouteMatcherTest extends TestCase
         $this->subject = new GenericRouteMatcher($this->routeConfig);
     }
 
-    public function test_match_on_static_route(): void
+    #[Test]
+    public function match_on_static_route(): void
     {
         $request = new GenericRequest(method: Method::GET, uri: '/static');
 
@@ -66,7 +68,8 @@ final class GenericRouteMatcherTest extends TestCase
         $this->assertEquals('/static', $matchedRoute->route->uri);
     }
 
-    public function test_match_returns_null_on_unknown_route(): void
+    #[Test]
+    public function match_returns_null_on_unknown_route(): void
     {
         $request = new GenericRequest(Method::GET, '/non-existing');
 
@@ -75,7 +78,8 @@ final class GenericRouteMatcherTest extends TestCase
         $this->assertNull($matchedRoute);
     }
 
-    public function test_match_returns_null_on_unconfigured_method(): void
+    #[Test]
+    public function match_returns_null_on_unconfigured_method(): void
     {
         $request = new GenericRequest(method: Method::POST, uri: '/static');
 
@@ -84,7 +88,8 @@ final class GenericRouteMatcherTest extends TestCase
         $this->assertNull($matchedRoute);
     }
 
-    public function test_match_on_dynamic_route(): void
+    #[Test]
+    public function match_on_dynamic_route(): void
     {
         $request = new GenericRequest(method: Method::GET, uri: '/dynamic/5');
 
@@ -95,7 +100,8 @@ final class GenericRouteMatcherTest extends TestCase
         $this->assertEquals('/dynamic/{id}', $matchedRoute->route->uri);
     }
 
-    public function test_match_on_dynamic_route_with_many_parameters(): void
+    #[Test]
+    public function match_on_dynamic_route_with_many_parameters(): void
     {
         $request = new GenericRequest(method: Method::GET, uri: '/dynamic/5/brendt/brent/6');
 

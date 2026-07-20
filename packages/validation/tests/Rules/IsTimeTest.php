@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tempest\Validation\Rules\IsTime;
@@ -13,7 +14,8 @@ use Tempest\Validation\Rules\IsTime;
  */
 final class IsTimeTest extends TestCase
 {
-    public function test_time(): void
+    #[Test]
+    public function time(): void
     {
         $rule = new IsTime(twentyFourHour: false);
 
@@ -37,7 +39,8 @@ final class IsTimeTest extends TestCase
         $this->assertFalse($rule->isValid([])); // Should return false, not a TypeError from preg_match
     }
 
-    public function test_military_time(): void
+    #[Test]
+    public function military_time(): void
     {
         $rule = new IsTime(twentyFourHour: true);
 
@@ -81,7 +84,8 @@ final class IsTimeTest extends TestCase
         $this->assertTrue($rule->isValid('2340'));
     }
 
-    public function test_non_string_pregmatch_subject(): void
+    #[Test]
+    public function non_string_pregmatch_subject(): void
     {
         $rule = new IsTime(twentyFourHour: true);
 

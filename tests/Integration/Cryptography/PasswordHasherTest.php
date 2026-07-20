@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cryptography;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Password\BcryptConfig;
 use Tempest\Cryptography\Password\HashingAlgorithm;
 use Tempest\Cryptography\Password\PasswordHasher;
@@ -9,7 +10,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class PasswordHasherTest extends FrameworkIntegrationTestCase
 {
-    public function test_default_algorithm(): void
+    #[Test]
+    public function default_algorithm(): void
     {
         $hasher = $this->container->get(PasswordHasher::class);
         $expected = in_array(HashingAlgorithm::ARGON2ID->value, password_algos(), true)
@@ -18,7 +20,8 @@ final class PasswordHasherTest extends FrameworkIntegrationTestCase
         $this->assertSame($expected, $hasher->algorithm);
     }
 
-    public function test_hash_verify(): void
+    #[Test]
+    public function hash_verify(): void
     {
         $hasher = $this->container->get(PasswordHasher::class);
 
@@ -28,7 +31,8 @@ final class PasswordHasherTest extends FrameworkIntegrationTestCase
         $this->assertTrue($hasher->verify($password, $hash));
     }
 
-    public function test_update_config(): void
+    #[Test]
+    public function update_config(): void
     {
         $this->container->config(new BcryptConfig());
 

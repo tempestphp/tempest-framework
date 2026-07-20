@@ -2,13 +2,15 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\FieldStatement;
 
 final class FieldStatementTest extends TestCase
 {
-    public function test_sqlite(): void
+    #[Test]
+    public function sqlite(): void
     {
         $this->assertSame(
             'table.field',
@@ -26,7 +28,8 @@ final class FieldStatementTest extends TestCase
         );
     }
 
-    public function test_mysql(): void
+    #[Test]
+    public function mysql(): void
     {
         $this->assertSame(
             '`table`.`field`',
@@ -44,7 +47,8 @@ final class FieldStatementTest extends TestCase
         );
     }
 
-    public function test_postgres(): void
+    #[Test]
+    public function postgres(): void
     {
         $this->assertSame(
             '"table"."field"',
@@ -57,7 +61,8 @@ final class FieldStatementTest extends TestCase
         );
     }
 
-    public function test_with_as(): void
+    #[Test]
+    public function with_as(): void
     {
         $this->assertSame(
             'authors.name AS `authors.name`',
@@ -75,7 +80,8 @@ final class FieldStatementTest extends TestCase
         );
     }
 
-    public function test_with_alias(): void
+    #[Test]
+    public function with_alias(): void
     {
         $this->assertSame(
             'authors.name AS `authors.name`',
@@ -92,7 +98,8 @@ final class FieldStatementTest extends TestCase
         );
     }
 
-    public function test_with_alias_prefix(): void
+    #[Test]
+    public function with_alias_prefix(): void
     {
         $this->assertSame(
             'authors.name AS `parent.authors.name`',

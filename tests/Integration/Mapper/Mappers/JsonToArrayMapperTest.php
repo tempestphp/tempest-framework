@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Mapper\map;
@@ -13,7 +14,8 @@ use function Tempest\Mapper\map;
  */
 final class JsonToArrayMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_mapper(): void
+    #[Test]
+    public function mapper(): void
     {
         $array = map('["a"]')->toArray();
 

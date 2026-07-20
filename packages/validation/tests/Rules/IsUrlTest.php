@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsUrl;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsUrl;
  */
 final class IsUrlTest extends TestCase
 {
-    public function test_url(): void
+    #[Test]
+    public function url(): void
     {
         $rule = new IsUrl();
 
@@ -22,7 +24,8 @@ final class IsUrlTest extends TestCase
         $this->assertTrue($rule->isValid('http://example.com'));
     }
 
-    public function test_url_with_restricted_protocols(): void
+    #[Test]
+    public function url_with_restricted_protocols(): void
     {
         $rule = new IsUrl(['https']);
 
@@ -30,7 +33,8 @@ final class IsUrlTest extends TestCase
         $this->assertTrue($rule->isValid('https://example.com'));
     }
 
-    public function test_url_with_integer_value(): void
+    #[Test]
+    public function url_with_integer_value(): void
     {
         $rule = new IsUrl();
 

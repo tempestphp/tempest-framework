@@ -3,13 +3,15 @@
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\NativeDateTimeSerializer;
 
 final class NativeDateTimeSerializerTest extends TestCase
 {
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $this->assertSame(
             '2025-01-01 00:00:00',
@@ -22,7 +24,8 @@ final class NativeDateTimeSerializerTest extends TestCase
         );
     }
 
-    public function test_only_arrays_allowed(): void
+    #[Test]
+    public function only_arrays_allowed(): void
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SearchComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_single(): void
+    #[Test]
+    public function single(): void
     {
         $this->console
             ->withoutPrompting()
@@ -49,7 +51,8 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_multiple(): void
+    #[Test]
+    public function multiple(): void
     {
         $this->console
             ->withoutPrompting()
@@ -64,7 +67,8 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_multiple_with_filtering(): void
+    #[Test]
+    public function multiple_with_filtering(): void
     {
         $this->console
             ->withoutPrompting()
@@ -116,7 +120,8 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
     //     });
     // }
 
-    public function test_multiple_supports_default_value(): void
+    #[Test]
+    public function multiple_supports_default_value(): void
     {
         $this->console
             ->withoutPrompting()
@@ -131,7 +136,8 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_no_value_returns_null(): void
+    #[Test]
+    public function no_value_returns_null(): void
     {
         $this->console
             ->withoutPrompting()
@@ -147,7 +153,8 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
             });
     }
 
-    public function test_multiple_no_value_returns_default(): void
+    #[Test]
+    public function multiple_no_value_returns_default(): void
     {
         $this->console
             ->withoutPrompting()

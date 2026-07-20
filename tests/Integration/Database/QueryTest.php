@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -18,7 +19,8 @@ use Tests\Tempest\Integration\Validator\UnitEnumFixture;
  */
 final class QueryTest extends FrameworkIntegrationTestCase
 {
-    public function test_with_bindings(): void
+    #[Test]
+    public function with_bindings(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -34,7 +36,8 @@ final class QueryTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, new Query('SELECT * FROM authors WHERE name = ?')->fetch('A'));
     }
 
-    public function test_raw_sql_enum_value(): void
+    #[Test]
+    public function raw_sql_enum_value(): void
     {
         $this->assertTrue(
             new Query('?', [UnitEnumFixture::FOO])

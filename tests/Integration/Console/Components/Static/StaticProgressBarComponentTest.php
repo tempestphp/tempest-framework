@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_progress_bar(): void
+    #[Test]
+    public function progress_bar(): void
     {
         $this->console
             ->call(function (Console $console): void {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\Option;
 use Tempest\Console\Components\OptionCollection;
@@ -13,7 +14,8 @@ use Tempest\Console\Components\OptionCollection;
  */
 final class OptionCollectionTest extends TestCase
 {
-    public function test_filter(): void
+    #[Test]
+    public function filter(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz']);
 
@@ -34,7 +36,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertNull($options->getActive());
     }
 
-    public function test_keeps_active_on_filter(): void
+    #[Test]
+    public function keeps_active_on_filter(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz']);
 
@@ -53,7 +56,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertNull($options->getActive());
     }
 
-    public function test_navigate(): void
+    #[Test]
+    public function navigate(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz']);
 
@@ -76,7 +80,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('foo', $options->getActive()->value);
     }
 
-    public function test_select(): void
+    #[Test]
+    public function select(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz']);
 
@@ -93,7 +98,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame(['bar', 'baz'], $this->toValues($options->getSelectedOptions()));
     }
 
-    public function test_select_and_filter(): void
+    #[Test]
+    public function select_and_filter(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz']);
 
@@ -115,7 +121,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('bar', $options->current()->value);
     }
 
-    public function test_scrollable_section(): void
+    #[Test]
+    public function scrollable_section(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz', 'qux', 'quux']);
 
@@ -123,7 +130,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame(['bar', 'baz'], $this->toValues($options->getScrollableSection(1, 2)));
     }
 
-    public function test_enum_options(): void
+    #[Test]
+    public function enum_options(): void
     {
         $options = new OptionCollection(OptionCollectionEnum::cases());
 
@@ -137,7 +145,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('OPT_1', $options->getActive()->displayValue);
     }
 
-    public function test_set_active_list(): void
+    #[Test]
+    public function set_active_list(): void
     {
         $options = new OptionCollection(['foo', 'bar', 'baz', 'qux', 'quux']);
 
@@ -146,7 +155,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('qux', $options->getActive()->value);
     }
 
-    public function test_set_active_assoc(): void
+    #[Test]
+    public function set_active_assoc(): void
     {
         $options = new OptionCollection(['foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz']);
 
@@ -157,7 +167,8 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('Baz', $options->getActive()->value);
     }
 
-    public function test_set_active_enum(): void
+    #[Test]
+    public function set_active_enum(): void
     {
         $options = new OptionCollection(OptionCollectionEnum::cases());
 

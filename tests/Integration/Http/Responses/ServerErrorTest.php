@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ServerErrorTest extends FrameworkIntegrationTestCase
 {
-    public function test_server_error(): void
+    #[Test]
+    public function server_error(): void
     {
         $response = new ServerError('test');
 

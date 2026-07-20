@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Support;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -17,14 +18,16 @@ use function Tempest\Support\arr;
  */
 final class ArrayTest extends FrameworkIntegrationTestCase
 {
-    public function test_map_to(): void
+    #[Test]
+    public function map_to(): void
     {
         $array = arr([['name' => 'test']])->mapTo(TestObject::class);
 
         $this->assertInstanceOf(TestObject::class, $array[0]);
     }
 
-    public function test_map_first_to(): void
+    #[Test]
+    public function map_first_to(): void
     {
         $array = arr([
             'foo',
@@ -42,7 +45,8 @@ final class ArrayTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(TestObject::class, $array->mapFirstTo(TestObject::class));
     }
 
-    public function test_map_last_to(): void
+    #[Test]
+    public function map_last_to(): void
     {
         $array = arr([
             'foo',
@@ -62,7 +66,8 @@ final class ArrayTest extends FrameworkIntegrationTestCase
     }
 
     #[DataProvider('provide_sort_cases')]
-    public function test_sort(array $input, array $expected): void
+    #[Test]
+    public function sort(array $input, array $expected): void
     {
         $array = arr($input)->sort()->toArray();
         $this->assertEquals($expected, $array);

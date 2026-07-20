@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cache\Cache;
 use Tempest\Cache\Commands\CacheStatusCommand;
 use Tempest\Cache\Config\InMemoryCacheConfig;
@@ -18,14 +19,16 @@ final class CacheStatusCommandTest extends FrameworkIntegrationTestCase
         $this->cache->fake();
     }
 
-    public function test_cache_status(): void
+    #[Test]
+    public function cache_status(): void
     {
         $this->console
             ->call(CacheStatusCommand::class, ['internal' => false])
             ->assertSeeCount('ENABLED', expectedCount: 1);
     }
 
-    public function test_cache_status_when_disabled(): void
+    #[Test]
+    public function cache_status_when_disabled(): void
     {
         $cache = $this->container->get(Cache::class);
         $cache->enabled = false;
@@ -35,7 +38,8 @@ final class CacheStatusCommandTest extends FrameworkIntegrationTestCase
             ->assertSeeCount('DISABLED', expectedCount: 1);
     }
 
-    public function test_cache_status_with_multiple_caches(): void
+    #[Test]
+    public function cache_status_with_multiple_caches(): void
     {
         $this->container->config(new InMemoryCacheConfig(tag: 'test-cache'));
 
@@ -45,7 +49,8 @@ final class CacheStatusCommandTest extends FrameworkIntegrationTestCase
             ->assertSeeCount('ENABLED', expectedCount: 2);
     }
 
-    public function test_with_internal_caches(): void
+    #[Test]
+    public function with_internal_caches(): void
     {
         $this->console
             ->call(CacheStatusCommand::class, ['internal' => true])

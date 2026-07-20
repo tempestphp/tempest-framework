@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Arr\MutableArray;
@@ -16,7 +17,8 @@ use Tempest\Validation\Rules\IsArrayList;
 final class IsArrayListTest extends TestCase
 {
     #[DataProvider('provide_array_list_cases')]
-    public function test_array_list(array $value, bool $expected): void
+    #[Test]
+    public function array_list(array $value, bool $expected): void
     {
         $rule = new IsArrayList();
 

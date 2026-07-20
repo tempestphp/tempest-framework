@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Http\Exceptions;
 
 use Closure;
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Container\Container;
 use Tempest\Core\Exceptions\ExceptionsConfig;
@@ -82,7 +83,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_exception_handler_shuts_down_kernel(): void
+    #[Test]
+    public function exception_handler_shuts_down_kernel(): void
     {
         $this->expectExceptionMessage('Shutdown.');
 
@@ -90,7 +92,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $handler->handle(new Exception());
     }
 
-    public function test_exception_handler_sends_response_specified_by_sends_response(): void
+    #[Test]
+    public function exception_handler_sends_response_specified_by_sends_response(): void
     {
         $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
@@ -101,7 +104,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertContains('https://tempestphp.com', $this->response->getHeader('Location')->values);
     }
 
-    public function test_exception_handler_returns_500_by_default(): void
+    #[Test]
+    public function exception_handler_returns_500_by_default(): void
     {
         $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
@@ -117,7 +121,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     #[TestWith([Status::NOT_FOUND])]
     #[TestWith([Status::FORBIDDEN])]
     #[TestWith([Status::METHOD_NOT_ALLOWED])]
-    public function test_exception_handler_returns_same_code_as_http_exception(Status $status): void
+    #[Test]
+    public function exception_handler_returns_same_code_as_http_exception(Status $status): void
     {
         $this->callExceptionHandler(function () use ($status): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
@@ -127,7 +132,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertSame($status, $this->response->status);
     }
 
-    public function test_exception_handler_runs_exception_processors(): void
+    #[Test]
+    public function exception_handler_runs_exception_processors(): void
     {
         $this->exceptions->preventProcessing(false);
 

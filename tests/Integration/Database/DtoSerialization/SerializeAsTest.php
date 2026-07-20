@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
@@ -17,7 +18,8 @@ use function Tempest\Database\query;
 
 final class SerializeAsTest extends FrameworkIntegrationTestCase
 {
-    public function test_serialize_as_simple_object(): void
+    #[Test]
+    public function serialize_as_simple_object(): void
     {
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(SimpleSpell::class, 'simple-spell');
@@ -59,7 +61,8 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $this->assertSame('destruction', $json['data']['element']);
     }
 
-    public function test_serialize_as_nested_objects(): void
+    #[Test]
+    public function serialize_as_nested_objects(): void
     {
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(MageProfile::class, 'mage-profile');
@@ -107,7 +110,8 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Zoltraak', $json['data']['favoriteSpell']['data']['name']);
     }
 
-    public function test_serialize_as_with_arrays(): void
+    #[Test]
+    public function serialize_as_with_arrays(): void
     {
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(SpellCollection::class, 'spell-collection');
@@ -161,7 +165,8 @@ final class SerializeAsTest extends FrameworkIntegrationTestCase
         $this->assertSame('Zoltraak', $json['data']['spells'][0]['data']['name']);
     }
 
-    public function test_serialize_as_without_explicit_casters(): void
+    #[Test]
+    public function serialize_as_without_explicit_casters(): void
     {
         $config = $this->container->get(MapperConfig::class);
         $config->serializeAs(MagicItem::class, 'magic-item');

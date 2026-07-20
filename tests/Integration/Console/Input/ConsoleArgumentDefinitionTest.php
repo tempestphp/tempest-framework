@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Input;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -27,7 +28,8 @@ final class ConsoleArgumentDefinitionTest extends TestCase
     #[TestWith(['camelCaseStringWithDefault', 'camel-case-string-with-default', 'string', 'foo'])]
     #[TestWith(['camelCaseBoolWithTrueDefault', 'camel-case-bool-with-true-default', 'bool', true])]
     #[TestWith(['camelCaseBoolWithFalseDefault', 'camel-case-bool-with-false-default', 'bool', false])]
-    public function test_parse_named_arguments_with_types_and_defaults(string $originalParameter, string $expectedName, string $expectedType, mixed $expectedDefault): void
+    #[Test]
+    public function parse_named_arguments_with_types_and_defaults(string $originalParameter, string $expectedName, string $expectedType, mixed $expectedDefault): void
     {
         $definition = ConsoleArgumentDefinition::fromParameter($this->getParameter($originalParameter));
         $this->assertSame($expectedName, $definition->name);

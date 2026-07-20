@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateProfileWithEagerTable;
 use Tests\Tempest\Fixtures\Migrations\CreateUserWithEagerTable;
@@ -19,7 +20,8 @@ use function Tempest\Database\query;
  */
 final class CircularEagerLoadingTest extends FrameworkIntegrationTestCase
 {
-    public function test_circular_eager_loading_does_not_cause_infinite_loop(): void
+    #[Test]
+    public function circular_eager_loading_does_not_cause_infinite_loop(): void
     {
         $userInspector = inspect(UserWithEager::class);
         $eagerRelations = $userInspector->resolveEagerRelations();
@@ -29,7 +31,8 @@ final class CircularEagerLoadingTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, $eagerRelations);
     }
 
-    public function test_circular_with_relations_does_not_cause_infinite_loop(): void
+    #[Test]
+    public function circular_with_relations_does_not_cause_infinite_loop(): void
     {
         $userInspector = inspect(UserWithEager::class);
         $relations = $userInspector->resolveRelations('profile.user.profile');
@@ -39,7 +42,8 @@ final class CircularEagerLoadingTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $relations);
     }
 
-    public function test_it_saves_and_loads_relations_without_causing_infinite_loop(): void
+    #[Test]
+    public function it_saves_and_loads_relations_without_causing_infinite_loop(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,

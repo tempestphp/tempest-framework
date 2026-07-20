@@ -2,6 +2,7 @@
 
 namespace Tempest\Icon\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Container\GenericContainer;
@@ -23,7 +24,8 @@ use Tempest\Icon\IconDownloadFailed;
 
 final class IconTest extends TestCase
 {
-    public function test_rendering(): void
+    #[Test]
+    public function rendering(): void
     {
         $icon = new Icon(
             iconCache: new IconCache(pool: new ArrayAdapter()),
@@ -35,7 +37,8 @@ final class IconTest extends TestCase
         $this->assertSame('<svg></svg>', $icon->render('ph:eye'));
     }
 
-    public function test_is_cached_after_first_render(): void
+    #[Test]
+    public function is_cached_after_first_render(): void
     {
         $icon = new Icon(
             iconCache: $cache = new IconCache(pool: new ArrayAdapter()),
@@ -49,7 +52,8 @@ final class IconTest extends TestCase
         $this->assertSame('<svg></svg>', $icon->render('ph:eye'));
     }
 
-    public function test_event_downloaded(): void
+    #[Test]
+    public function event_downloaded(): void
     {
         if (! interface_exists(EventBus::class)) {
             $this->markTestSkipped('EventBus is not available.');
@@ -74,7 +78,8 @@ final class IconTest extends TestCase
         $this->assertTrue($wasDownloaded);
     }
 
-    public function test_event_failed(): void
+    #[Test]
+    public function event_failed(): void
     {
         if (! interface_exists(EventBus::class)) {
             $this->markTestSkipped('EventBus is not available.');

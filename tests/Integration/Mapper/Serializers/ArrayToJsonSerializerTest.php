@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
@@ -9,7 +10,8 @@ use Tempest\Support\Arr\ImmutableArray;
 
 final class ArrayToJsonSerializerTest extends TestCase
 {
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $this->assertSame(
             '{"foo":"bar"}',
@@ -22,7 +24,8 @@ final class ArrayToJsonSerializerTest extends TestCase
         );
     }
 
-    public function test_only_arrays_allowed(): void
+    #[Test]
+    public function only_arrays_allowed(): void
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 

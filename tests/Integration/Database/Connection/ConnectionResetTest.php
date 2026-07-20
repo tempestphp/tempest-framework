@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class ConnectionResetTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_open_transaction_prevents_connection_from_being_reset(): void
+    public function open_transaction_prevents_connection_from_being_reset(): void
     {
         /** @var Connection $connection */
         $connection = $this->container->get(Connection::class);
@@ -26,7 +26,7 @@ final class ConnectionResetTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_properly_closed_transaction_can_reset_connection(): void
+    public function properly_closed_transaction_can_reset_connection(): void
     {
         /** @var Connection $connection */
         $connection = $this->container->get(Connection::class);
@@ -41,7 +41,7 @@ final class ConnectionResetTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_reset_with_uninstantiated_singletons(): void
+    public function reset_with_uninstantiated_singletons(): void
     {
         $this->container->singleton(
             Connection::class,

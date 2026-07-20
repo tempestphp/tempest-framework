@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Reflection\ClassReflector;
@@ -18,14 +19,16 @@ use Tempest\Reflection\Tests\Fixtures\TestClassB;
  */
 final class ClassReflectorTest extends TestCase
 {
-    public function test_getting_underlying_reflection_class(): void
+    #[Test]
+    public function getting_underlying_reflection_class(): void
     {
         $reflector = new ClassReflector(TestClassA::class);
 
         $this->assertEquals(new ReflectionClass(TestClassA::class), $reflector->getReflection());
     }
 
-    public function test_getting_name(): void
+    #[Test]
+    public function getting_name(): void
     {
         $reflector = new ClassReflector(TestClassA::class);
         $reflection = new ReflectionClass(TestClassA::class);
@@ -33,7 +36,8 @@ final class ClassReflectorTest extends TestCase
         $this->assertSame($reflector->getName(), $reflection->getName());
     }
 
-    public function test_getting_short_name(): void
+    #[Test]
+    public function getting_short_name(): void
     {
         $reflector = new ClassReflector(TestClassA::class);
         $reflection = new ReflectionClass(TestClassA::class);
@@ -41,27 +45,31 @@ final class ClassReflectorTest extends TestCase
         $this->assertSame($reflector->getShortName(), $reflection->getShortName());
     }
 
-    public function test_nullable_property_type(): void
+    #[Test]
+    public function nullable_property_type(): void
     {
         $reflector = new ClassReflector(TestClassB::class);
         $this->assertTrue($reflector->getProperty('name')->isNullable());
     }
 
-    public function test_recursive_attribute_from_interface(): void
+    #[Test]
+    public function recursive_attribute_from_interface(): void
     {
         $reflector = new ClassReflector(ClassWithInterfaceWithRecursiveAttribute::class);
         $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
         $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
     }
 
-    public function test_recursive_attribute_from_parent(): void
+    #[Test]
+    public function recursive_attribute_from_parent(): void
     {
         $reflector = new ClassReflector(ChildWithRecursiveAttribute::class);
         $this->assertNull($reflector->getAttribute(RecursiveAttribute::class));
         $this->assertNotNull($reflector->getAttribute(RecursiveAttribute::class, recursive: true));
     }
 
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $reflector = new ClassReflector(TestClassA::class);
 

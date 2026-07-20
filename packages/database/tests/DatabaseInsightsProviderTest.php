@@ -4,6 +4,7 @@ namespace Tempest\Database\Tests;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Core\Insight;
 use Tempest\Database\Config\DatabaseConfig;
@@ -16,7 +17,8 @@ use Tempest\Database\DatabaseInsightsProvider;
 final class DatabaseInsightsProviderTest extends TestCase
 {
     #[DataProvider('provide_database_drivers')]
-    public function test_get_insights(DatabaseConfig $config, string $version, array $expected): void
+    #[Test]
+    public function get_insights(DatabaseConfig $config, string $version, array $expected): void
     {
         $database = $this->createMock(Database::class);
         $database

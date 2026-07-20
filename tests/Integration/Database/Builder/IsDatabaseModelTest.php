@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Carbon\Carbon;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
@@ -70,7 +71,8 @@ use function Tempest\Mapper\map;
  */
 final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 {
-    public function test_create_and_update_model(): void
+    #[Test]
+    public function create_and_update_model(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -98,7 +100,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
-    public function test_get_with_non_id_object(): void
+    #[Test]
+    public function get_with_non_id_object(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -114,7 +117,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $foo->id->value);
     }
 
-    public function test_creating_many_and_saving_preserves_model_id(): void
+    #[Test]
+    public function creating_many_and_saving_preserves_model_id(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -133,7 +137,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals(1, $a->id->value);
     }
 
-    public function test_complex_query(): void
+    #[Test]
+    public function complex_query(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -162,7 +167,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals(1, $book->author->id->value);
     }
 
-    public function test_all_with_relations(): void
+    #[Test]
+    public function all_with_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -195,7 +201,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals(1, $book->author->id->value);
     }
 
-    public function test_create_with_hasone_relation(): void
+    #[Test]
+    public function create_with_hasone_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -215,7 +222,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('123-456-789', $book->isbn->value);
     }
 
-    public function test_missing_relation_exception(): void
+    #[Test]
+    public function missing_relation_exception(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -237,7 +245,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $b = $a->b;
     }
 
-    public function test_missing_value_exception(): void
+    #[Test]
+    public function missing_value_exception(): void
     {
         $a = map([])->to(AWithValue::class);
 
@@ -246,7 +255,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $name = $a->name;
     }
 
-    public function test_nested_relations(): void
+    #[Test]
+    public function nested_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -268,7 +278,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $a->b->c->name);
     }
 
-    public function test_load_belongs_to(): void
+    #[Test]
+    public function load_belongs_to(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -291,7 +302,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($a->b->c));
     }
 
-    public function test_has_many_relations(): void
+    #[Test]
+    public function has_many_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -320,7 +332,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $author->books);
     }
 
-    public function test_query_has_many_returns_scoped_results(): void
+    #[Test]
+    public function query_has_many_returns_scoped_results(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -350,7 +363,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
     }
 
-    public function test_query_has_many_supports_where(): void
+    #[Test]
+    public function query_has_many_supports_where(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -378,7 +392,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Beta', $books[0]->title);
     }
 
-    public function test_query_has_many_supports_limit(): void
+    #[Test]
+    public function query_has_many_supports_limit(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -401,7 +416,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, $books);
     }
 
-    public function test_query_has_many_through_returns_scoped_results(): void
+    #[Test]
+    public function query_has_many_through_returns_scoped_results(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -427,7 +443,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertContainsOnlyInstancesOf(Reviewer::class, $reviewers);
     }
 
-    public function test_query_has_many_through_supports_where(): void
+    #[Test]
+    public function query_has_many_through_supports_where(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -454,7 +471,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Alice', $reviewers[0]->name);
     }
 
-    public function test_query_belongs_to_many_returns_scoped_results(): void
+    #[Test]
+    public function query_belongs_to_many_returns_scoped_results(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -483,7 +501,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertContainsOnlyInstancesOf(Book::class, $books);
     }
 
-    public function test_query_belongs_to_many_supports_where(): void
+    #[Test]
+    public function query_belongs_to_many_supports_where(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -513,7 +532,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Alpha', $books[0]->title);
     }
 
-    public function test_query_has_many_with_explicit_attribute(): void
+    #[Test]
+    public function query_has_many_with_explicit_attribute(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -536,7 +556,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertContainsOnlyInstancesOf(TestPost::class, $posts);
     }
 
-    public function test_query_belongs_to_select(): void
+    #[Test]
+    public function query_belongs_to_select(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -554,7 +575,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Target Author', $result->name);
     }
 
-    public function test_query_belongs_to_count(): void
+    #[Test]
+    public function query_belongs_to_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -569,7 +591,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $book->query('author')->count()->execute());
     }
 
-    public function test_query_has_one_select(): void
+    #[Test]
+    public function query_has_one_select(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -588,7 +611,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('978-123', $result->value);
     }
 
-    public function test_query_has_one_count(): void
+    #[Test]
+    public function query_has_one_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -604,7 +628,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $book->query('isbn')->count()->execute());
     }
 
-    public function test_query_has_one_update(): void
+    #[Test]
+    public function query_has_one_update(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -628,7 +653,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('keep-isbn', $isbnB->value);
     }
 
-    public function test_query_has_one_delete(): void
+    #[Test]
+    public function query_has_one_delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -649,7 +675,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $bookB->query('isbn')->count()->execute());
     }
 
-    public function test_query_has_one_through_select(): void
+    #[Test]
+    public function query_has_one_through_select(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -668,7 +695,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Alice', $result->name);
     }
 
-    public function test_query_has_one_through_count(): void
+    #[Test]
+    public function query_has_one_through_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -684,7 +712,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $tag->query('topReviewer')->count()->execute());
     }
 
-    public function test_query_has_one_through_update(): void
+    #[Test]
+    public function query_has_one_through_update(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -709,7 +738,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Bob', $resultB->name);
     }
 
-    public function test_query_has_one_through_delete(): void
+    #[Test]
+    public function query_has_one_through_delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -731,7 +761,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $tagB->query('topReviewer')->count()->execute());
     }
 
-    public function test_query_has_many_with_where_has(): void
+    #[Test]
+    public function query_has_many_with_where_has(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -757,7 +788,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('With Chapters', $books[0]->title);
     }
 
-    public function test_query_has_many_with_where_doesnt_have_and_where_field(): void
+    #[Test]
+    public function query_has_many_with_where_doesnt_have_and_where_field(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -785,7 +817,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Beta', $books[0]->title);
     }
 
-    public function test_query_has_many_with_where_has_callback(): void
+    #[Test]
+    public function query_has_many_with_where_has_callback(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -814,7 +847,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Book B', $books[0]->title);
     }
 
-    public function test_query_has_many_with_where_doesnt_have_callback(): void
+    #[Test]
+    public function query_has_many_with_where_doesnt_have_callback(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -842,7 +876,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Book B', $books[0]->title);
     }
 
-    public function test_query_throws_for_nonexistent_property(): void
+    #[Test]
+    public function query_throws_for_nonexistent_property(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -857,7 +892,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $author->query('nonexistent');
     }
 
-    public function test_query_throws_for_unsaved_model(): void
+    #[Test]
+    public function query_throws_for_unsaved_model(): void
     {
         $author = new Author(name: 'Unsaved');
 
@@ -866,7 +902,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $author->query('books');
     }
 
-    public function test_query_has_many_returns_empty_for_no_results(): void
+    #[Test]
+    public function query_has_many_returns_empty_for_no_results(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -882,7 +919,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, $books);
     }
 
-    public function test_query_has_many_count(): void
+    #[Test]
+    public function query_has_many_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -904,7 +942,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(3, $count);
     }
 
-    public function test_query_has_many_update(): void
+    #[Test]
+    public function query_has_many_update(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -930,7 +969,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Keep This', $booksB[0]->title);
     }
 
-    public function test_query_has_many_delete(): void
+    #[Test]
+    public function query_has_many_delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -952,7 +992,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $authorB->query('books')->count()->execute());
     }
 
-    public function test_query_has_many_through_count(): void
+    #[Test]
+    public function query_has_many_through_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -976,7 +1017,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $tagB->query('reviewers')->count()->execute());
     }
 
-    public function test_query_belongs_to_many_count(): void
+    #[Test]
+    public function query_belongs_to_many_count(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -999,7 +1041,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $tag->query('books')->count()->execute());
     }
 
-    public function test_query_has_many_through_update(): void
+    #[Test]
+    public function query_has_many_through_update(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1026,7 +1069,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Bob', $reviewersB[0]->name);
     }
 
-    public function test_query_has_many_through_delete(): void
+    #[Test]
+    public function query_has_many_through_delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1050,7 +1094,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $tagB->query('reviewers')->count()->execute());
     }
 
-    public function test_query_belongs_to_many_delete(): void
+    #[Test]
+    public function query_belongs_to_many_delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1079,7 +1124,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $tagB->query('books')->count()->execute());
     }
 
-    public function test_query_belongs_to_many_update(): void
+    #[Test]
+    public function query_belongs_to_many_update(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1112,7 +1158,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Keep', $booksB[0]->title);
     }
 
-    public function test_has_many_through_relation(): void
+    #[Test]
+    public function has_many_through_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1135,7 +1182,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('B', $parent->through[1]->child->name);
     }
 
-    public function test_empty_has_many_relation(): void
+    #[Test]
+    public function empty_has_many_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1151,7 +1199,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEmpty($book->chapters);
     }
 
-    public function test_has_one_relation(): void
+    #[Test]
+    public function has_one_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1171,7 +1220,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi', $isbn->book->title);
     }
 
-    public function test_invalid_has_one_relation(): void
+    #[Test]
+    public function invalid_has_one_relation(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1194,7 +1244,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('parent', $child2->through2->parent->name);
     }
 
-    public function test_lazy_load(): void
+    #[Test]
+    public function lazy_load(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1219,7 +1270,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($a->b));
     }
 
-    public function test_eager_load(): void
+    #[Test]
+    public function eager_load(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1239,7 +1291,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($a->b->c));
     }
 
-    public function test_no_result(): void
+    #[Test]
+    public function no_result(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1251,7 +1304,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull(A::select()->first());
     }
 
-    public function test_create_with_virtual_property(): void
+    #[Test]
+    public function create_with_virtual_property(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1269,7 +1323,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(-$a->id->value, $a->fake);
     }
 
-    public function test_virtual_hooked_property(): void
+    #[Test]
+    public function virtual_hooked_property(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1290,7 +1345,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('B', $a->hookedName);
     }
 
-    public function test_select_virtual_property(): void
+    #[Test]
+    public function select_virtual_property(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1310,7 +1366,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(-$a->id->value, $a->fake);
     }
 
-    public function test_update_with_virtual_property(): void
+    #[Test]
+    public function update_with_virtual_property(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1340,7 +1397,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('updated', $updatedA->b->c->name);
     }
 
-    public function test_update_or_create(): void
+    #[Test]
+    public function update_or_create(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1366,7 +1424,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotNull(Book::select()->where('title', 'B')->first());
     }
 
-    public function test_update_or_create_uses_initial_data_to_create(): void
+    #[Test]
+    public function update_or_create_uses_initial_data_to_create(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1387,7 +1446,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_delete(): void
+    #[Test]
+    public function delete(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1408,7 +1468,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotNull(Foo::get($bar->id));
     }
 
-    public function test_delete_via_model_class_with_where_conditions(): void
+    #[Test]
+    public function delete_via_model_class_with_where_conditions(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1429,7 +1490,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull(Foo::get($foo3->id));
     }
 
-    public function test_delete_via_model_instance_with_primary_key(): void
+    #[Test]
+    public function delete_via_model_instance_with_primary_key(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1445,7 +1507,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('second', Foo::get($foo2->id)->bar);
     }
 
-    public function test_delete_with_uninitialized_primary_key(): void
+    #[Test]
+    public function delete_with_uninitialized_primary_key(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1459,7 +1522,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $foo->delete();
     }
 
-    public function test_delete_nonexistent_record(): void
+    #[Test]
+    public function delete_nonexistent_record(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1478,7 +1542,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull(Foo::get($fooId));
     }
 
-    public function test_nullable_relations(): void
+    #[Test]
+    public function nullable_relations(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1495,7 +1560,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull($a->b);
     }
 
-    public function test_nullable_relation_save(): void
+    #[Test]
+    public function nullable_relation_save(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1519,7 +1585,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $a->b->name);
     }
 
-    public function test_on_returns_query_builder_with_database_tag(): void
+    #[Test]
+    public function on_returns_query_builder_with_database_tag(): void
     {
         $builder = Foo::on('analytics');
 
@@ -1527,49 +1594,56 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('analytics', $builder->onDatabase);
     }
 
-    public function test_on_propagates_tag_to_select_builder(): void
+    #[Test]
+    public function on_propagates_tag_to_select_builder(): void
     {
         $selectBuilder = Foo::on('analytics')->select();
 
         $this->assertSame('analytics', $selectBuilder->onDatabase);
     }
 
-    public function test_on_propagates_tag_to_insert_builder(): void
+    #[Test]
+    public function on_propagates_tag_to_insert_builder(): void
     {
         $insertBuilder = Foo::on('analytics')->insert();
 
         $this->assertSame('analytics', $insertBuilder->onDatabase);
     }
 
-    public function test_on_propagates_tag_to_count_builder(): void
+    #[Test]
+    public function on_propagates_tag_to_count_builder(): void
     {
         $countBuilder = Foo::on('analytics')->count();
 
         $this->assertSame('analytics', $countBuilder->onDatabase);
     }
 
-    public function test_on_propagates_tag_to_delete_builder(): void
+    #[Test]
+    public function on_propagates_tag_to_delete_builder(): void
     {
         $deleteBuilder = Foo::on('analytics')->delete();
 
         $this->assertSame('analytics', $deleteBuilder->onDatabase);
     }
 
-    public function test_on_with_null_sets_null_tag(): void
+    #[Test]
+    public function on_with_null_sets_null_tag(): void
     {
         $builder = Foo::on(null);
 
         $this->assertNull($builder->onDatabase);
     }
 
-    public function test_on_with_enum_tag(): void
+    #[Test]
+    public function on_with_enum_tag(): void
     {
         $builder = Foo::on(TestDatabaseTag::Analytics);
 
         $this->assertSame(TestDatabaseTag::Analytics, $builder->onDatabase);
     }
 
-    public function test_on_database_returns_clone(): void
+    #[Test]
+    public function on_database_returns_clone(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1582,7 +1656,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNotSame($foo, $clone);
     }
 
-    public function test_on_database_does_not_mutate_original(): void
+    #[Test]
+    public function on_database_does_not_mutate_original(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -1600,7 +1675,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('updated', $refreshed->bar);
     }
 
-    public function test_on_database_preserves_model_data(): void
+    #[Test]
+    public function on_database_preserves_model_data(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,

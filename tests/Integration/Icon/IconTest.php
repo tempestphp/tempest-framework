@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Icon;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Clock\Clock;
@@ -22,7 +23,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class IconTest extends FrameworkIntegrationTestCase
 {
-    public function test_icon_render(): void
+    #[Test]
+    public function icon_render(): void
     {
         $this->registerMocks();
 
@@ -31,14 +33,16 @@ final class IconTest extends FrameworkIntegrationTestCase
         $this->assertSame('<svg></svg>', $icon->render('mdi:tsunami'));
     }
 
-    public function test_icon_function(): void
+    #[Test]
+    public function icon_function(): void
     {
         $this->registerMocks();
 
         $this->assertSame('<svg></svg>', Icon\render('mdi:tsunami'));
     }
 
-    public function test_cache_expiry(): void
+    #[Test]
+    public function cache_expiry(): void
     {
         $this->registerMocks(
             clock: $clock = $this->clock(),
@@ -61,7 +65,8 @@ final class IconTest extends FrameworkIntegrationTestCase
         $this->assertSame('<svg></svg>', $icon->render('mdi:tsunami'));
     }
 
-    public function test_failure_retry_after(): void
+    #[Test]
+    public function failure_retry_after(): void
     {
         $this->registerMocks(
             response: new NotFound(),
@@ -85,7 +90,8 @@ final class IconTest extends FrameworkIntegrationTestCase
         $this->assertTrue($iconCache->get('icon-failure-mdi-tsunami'));
     }
 
-    public function test_downloaded_event(): void
+    #[Test]
+    public function downloaded_event(): void
     {
         $this->registerMocks(response: new NotFound());
 
@@ -104,7 +110,8 @@ final class IconTest extends FrameworkIntegrationTestCase
         $this->assertTrue($hasFailed);
     }
 
-    public function test_download_failed_event(): void
+    #[Test]
+    public function download_failed_event(): void
     {
         $this->registerMocks();
 

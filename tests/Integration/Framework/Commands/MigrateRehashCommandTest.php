@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Framework\Commands\MigrateFreshCommand;
@@ -15,7 +16,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class MigrateRehashCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migrate_rehash_rehashes_all_existing_migrations(): void
+    #[Test]
+    public function migrate_rehash_rehashes_all_existing_migrations(): void
     {
         $this->console->call(MigrateFreshCommand::class, ['force' => true]);
 

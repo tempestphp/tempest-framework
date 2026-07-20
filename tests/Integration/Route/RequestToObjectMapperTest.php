@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionProperty;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
@@ -25,7 +26,8 @@ use function Tempest\Support\arr;
 
 final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_request(): void
+    #[Test]
+    public function request(): void
     {
         $request = new GenericRequest(method: Method::POST, uri: '/', body: []);
 
@@ -36,7 +38,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_files_are_mapped_to_properties(): void
+    #[Test]
+    public function files_are_mapped_to_properties(): void
     {
         $currentPath = __DIR__ . '/Fixtures/upload.txt';
 
@@ -58,7 +61,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertTrue(arr($request->files)->isAssociative());
     }
 
-    public function test_query_parameters_are_mapped_to_properties(): void
+    #[Test]
+    public function query_parameters_are_mapped_to_properties(): void
     {
         $request = map(new GenericRequest(
             method: Method::GET,
@@ -71,7 +75,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('hello', $request->queryParam);
     }
 
-    public function test_query_params_with_types(): void
+    #[Test]
+    public function query_params_with_types(): void
     {
         $request = map(new GenericRequest(
             method: Method::GET,
@@ -87,7 +92,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(0.1, $request->floatParam);
     }
 
-    public function test_mapping_with_enum(): void
+    #[Test]
+    public function mapping_with_enum(): void
     {
         $request = map(new GenericRequest(
             method: Method::GET,
@@ -99,7 +105,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(EnumForRequest::BAR, $request->enumParam);
     }
 
-    public function test_validation_fails_for_enum(): void
+    #[Test]
+    public function validation_fails_for_enum(): void
     {
         try {
             map(new GenericRequest(
@@ -113,7 +120,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_reserved_properties_cannot_be_mapped(): void
+    #[Test]
+    public function reserved_properties_cannot_be_mapped(): void
     {
         $this->assertException(
             expectedExceptionClass: RequestParametersIncludedReservedNames::class,
@@ -135,7 +143,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_missing_enum_value(): void
+    #[Test]
+    public function missing_enum_value(): void
     {
         $request = new GenericRequest(method: Method::POST, uri: '/', body: []);
 
@@ -146,7 +155,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_missing_optional_properties_are_not_initialized(): void
+    #[Test]
+    public function missing_optional_properties_are_not_initialized(): void
     {
         $request = map(new GenericRequest(
             method: Method::PATCH,
@@ -161,7 +171,8 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertNull($request->expiryDate);
     }
 
-    public function test_present_optional_properties_are_validated(): void
+    #[Test]
+    public function present_optional_properties_are_validated(): void
     {
         $this->assertException(
             expectedExceptionClass: ValidationFailed::class,

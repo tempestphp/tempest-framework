@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Process\Process;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\CommandRepository;
@@ -21,7 +22,8 @@ use function Tempest\Support\arr;
  */
 final class AsyncCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_async_commands_are_stored_and_handled_afterwards(): void
+    #[Test]
+    public function async_commands_are_stored_and_handled_afterwards(): void
     {
         $repository = new MemoryRepository();
 
@@ -46,7 +48,8 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
     }
 
-    public function test_commands_with_async_handlers_are_stored_and_handled_afterwards(): void
+    #[Test]
+    public function commands_with_async_handlers_are_stored_and_handled_afterwards(): void
     {
         $repository = new MemoryRepository();
 
@@ -71,7 +74,8 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
     }
 
-    public function test_async_command_monitor(): void
+    #[Test]
+    public function async_command_monitor(): void
     {
         $process = new Process(['php', 'tempest', 'command:monitor']);
         $process->start();
@@ -86,7 +90,8 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $process->stop();
     }
 
-    public function test_async_failed_command_monitor(): void
+    #[Test]
+    public function async_failed_command_monitor(): void
     {
         $process = new Process(['php', 'tempest', 'command:monitor']);
         $process->start();

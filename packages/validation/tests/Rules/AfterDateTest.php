@@ -6,6 +6,7 @@ namespace Tempest\Validation\Tests\Rules;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\Timezone;
@@ -16,7 +17,8 @@ use Tempest\Validation\Rules\IsAfterDate;
  */
 final class AfterDateTest extends TestCase
 {
-    public function test_exclusive(): void
+    #[Test]
+    public function exclusive(): void
     {
         $now = DateTime::now();
         $rule = new IsAfterDate($now);
@@ -26,7 +28,8 @@ final class AfterDateTest extends TestCase
         $this->assertTrue($rule->isValid($now->plusSecond()));
     }
 
-    public function test_inclusive(): void
+    #[Test]
+    public function inclusive(): void
     {
         $now = DateTime::now();
         $rule = new IsAfterDate($now, inclusive: true);
@@ -36,7 +39,8 @@ final class AfterDateTest extends TestCase
         $this->assertTrue($rule->isValid($now->plusSecond()));
     }
 
-    public function test_native_exclusive(): void
+    #[Test]
+    public function native_exclusive(): void
     {
         $date = new DateTimeImmutable();
         $rule = new IsAfterDate($date);
@@ -46,7 +50,8 @@ final class AfterDateTest extends TestCase
         $this->assertFalse($rule->isValid($date));
     }
 
-    public function test_native_inclusive(): void
+    #[Test]
+    public function native_inclusive(): void
     {
         $date = new DateTimeImmutable();
         $rule = new IsAfterDate($date, inclusive: true);
@@ -56,7 +61,8 @@ final class AfterDateTest extends TestCase
         $this->assertTrue($rule->isValid($date));
     }
 
-    public function test_timezone(): void
+    #[Test]
+    public function timezone(): void
     {
         $now = DateTime::now(timezone: Timezone::EUROPE_PARIS);
         $rule = new IsAfterDate($now->convertToTimezone(Timezone::AMERICA_NEW_YORK), inclusive: false);
@@ -67,7 +73,8 @@ final class AfterDateTest extends TestCase
         $this->assertTrue($rule->isValid($now->plusSecond()));
     }
 
-    public function test_native_timezone(): void
+    #[Test]
+    public function native_timezone(): void
     {
         $date = new DateTimeImmutable('now', new DateTimeZone('America/New_York'));
         $rule = new IsAfterDate($date, inclusive: false);

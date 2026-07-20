@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Html;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Support\Html\HtmlString;
@@ -17,7 +18,8 @@ use function Tempest\Support\Html\create_tag;
  */
 final class FunctionsTest extends TestCase
 {
-    public function test_conversions(): void
+    #[Test]
+    public function conversions(): void
     {
         $this->assertInstanceOf(HtmlString::class, create_tag('div'));
         $this->assertInstanceOf(Stringable::class, create_tag('div'));
@@ -26,7 +28,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('<div></div>', create_tag('div')->toString());
     }
 
-    public function test_create_tag(): void
+    #[Test]
+    public function create_tag(): void
     {
         $this->assertSame(
             expected: '<div></div>',

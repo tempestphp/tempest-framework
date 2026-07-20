@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Str;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
@@ -18,7 +19,8 @@ use function Tempest\Support\str;
  */
 final class ManipulatesStringTest extends TestCase
 {
-    public function test_title(): void
+    #[Test]
+    public function title(): void
     {
         $this->assertTrue(str('jefferson costella')->title()->equals('Jefferson Costella'));
         $this->assertTrue(str('jefFErson coSTella')->title()->equals('Jefferson Costella'));
@@ -36,7 +38,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str($longString)->title()->equals($expectedResult));
     }
 
-    public function test_deduplicate(): void
+    #[Test]
+    public function deduplicate(): void
     {
         $this->assertTrue(str('/some//odd//path/')->deduplicate('/')->equals('/some/odd/path/'));
         $this->assertTrue(str(' tempest   php  framework ')->deduplicate()->equals(' tempest php framework '));
@@ -44,7 +47,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('ムだだム')->deduplicate('だ')->equals('ムだム'));
     }
 
-    public function test_pascal(): void
+    #[Test]
+    public function pascal(): void
     {
         $this->assertTrue(str()->pascal()->equals(''));
         $this->assertTrue(str('foo bar')->pascal()->equals('FooBar'));
@@ -63,7 +67,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertSame('ÖffentlicheÜberraschungen', str('öffentliche-überraschungen')->pascal()->toString());
     }
 
-    public function test_kebab(): void
+    #[Test]
+    public function kebab(): void
     {
         $this->assertTrue(str()->kebab()->equals(''));
         $this->assertTrue(str('foo bar')->kebab()->equals('foo-bar'));
@@ -99,7 +104,8 @@ final class ManipulatesStringTest extends TestCase
     #[TestWith(['URI', 'uri'])]
     #[TestWith(['XMLHTTPRequest', 'xmlhttp_request'])]
     #[TestWith(['HTTPRequest', 'http_request'])]
-    public function test_snake(string $input, string $output): void
+    #[Test]
+    public function snake(string $input, string $output): void
     {
         $this->assertEquals($output, str($input)->snake()->toString());
     }
@@ -107,12 +113,14 @@ final class ManipulatesStringTest extends TestCase
     #[TestWith([0])]
     #[TestWith([16])]
     #[TestWith([100])]
-    public function test_random(int $length): void
+    #[Test]
+    public function random(int $length): void
     {
         $this->assertEquals($length, str()->random($length)->length());
     }
 
-    public function test_finish(): void
+    #[Test]
+    public function finish(): void
     {
         $this->assertTrue(str('foo')->finish('/')->equals('foo/'));
         $this->assertTrue(str('foo/')->finish('/')->equals('foo/'));
@@ -120,12 +128,14 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('abcbbcbc')->finish('bc')->equals('abcbbc'));
     }
 
-    public function test_format(): void
+    #[Test]
+    public function format(): void
     {
         $this->assertTrue(str('%sfoo%s')->format('[', ']')->equals('[foo]'));
     }
 
-    public function test_str_after_first(): void
+    #[Test]
+    public function str_after_first(): void
     {
         $this->assertTrue(str('hannah')->afterFirst('han')->equals('nah'));
         $this->assertTrue(str('hannah')->afterFirst(str('han'))->equals('nah'));
@@ -140,7 +150,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('foobar.com')->afterFirst(['@', '.'])->equals('com'));
     }
 
-    public function test_str_after_last(): void
+    #[Test]
+    public function str_after_last(): void
     {
         $this->assertTrue(str('yvette')->afterLast('yve')->equals('tte'));
         $this->assertTrue(str('yvette')->afterLast(str('yve'))->equals('tte'));
@@ -155,7 +166,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('@foo@bar.com')->afterLast(['@', '.'])->equals('com'));
     }
 
-    public function test_str_between(): void
+    #[Test]
+    public function str_between(): void
     {
         $this->assertTrue(str('abc')->between('', 'c')->equals('abc'));
         $this->assertTrue(str('abc')->between('a', '')->equals('abc'));
@@ -174,7 +186,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('nothing')->between('foo', 'bar')->equals('nothing'));
     }
 
-    public function test_str_before(): void
+    #[Test]
+    public function str_before(): void
     {
         $this->assertTrue(str('hannah')->before('nah')->equals('han'));
         $this->assertTrue(str('hannah')->before(str('nah'))->equals('han'));
@@ -194,7 +207,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('@foo@bar.com')->before(['@', '.'])->equals(''));
     }
 
-    public function test_str_before_last(): void
+    #[Test]
+    public function str_before_last(): void
     {
         $this->assertTrue(str('yvette')->beforeLast('tte')->equals('yve'));
         $this->assertTrue(str('yvette')->beforeLast(str('tte'))->equals('yve'));
@@ -213,21 +227,24 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('This is Tempest')->beforeLast([' ', '.'])->equals('This is'));
     }
 
-    public function test_starts_with(): void
+    #[Test]
+    public function starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
         $this->assertTrue(str('abc')->startsWith(str('a')));
         $this->assertFalse(str('abc')->startsWith('c'));
     }
 
-    public function test_ends_with(): void
+    #[Test]
+    public function ends_with(): void
     {
         $this->assertTrue(str('abc')->endsWith('c'));
         $this->assertTrue(str('abc')->endsWith(str('c')));
         $this->assertFalse(str('abc')->endsWith('a'));
     }
 
-    public function test_replace(): void
+    #[Test]
+    public function replace(): void
     {
         $this->assertTrue(str('foo bar')->replace('bar', 'baz')->equals('foo baz'));
         $this->assertTrue(str('foo bar')->replace(str('bar'), 'baz')->equals('foo baz'));
@@ -239,13 +256,15 @@ final class ManipulatesStringTest extends TestCase
         );
     }
 
-    public function test_erase(): void
+    #[Test]
+    public function erase(): void
     {
         $this->assertTrue(str('foo bar')->erase('bar')->equals('foo '));
         $this->assertTrue(str('foo bar')->erase('')->equals('foo bar'));
     }
 
-    public function test_replace_last(): void
+    #[Test]
+    public function replace_last(): void
     {
         $this->assertTrue(str('foobar foobar')->replaceLast('bar', 'qux')->equals('foobar fooqux'));
         $this->assertTrue(str('foo/bar? foo/bar?')->replaceLast('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
@@ -260,7 +279,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertEquals('foobar foobaz', str('foobar foobar')->replaceLast(['bar', 'foo'], 'baz')->toString());
     }
 
-    public function test_replace_first(): void
+    #[Test]
+    public function replace_first(): void
     {
         $this->assertTrue(str('foobar foobar')->replaceFirst('bar', 'qux')->equals('fooqux foobar'));
         $this->assertTrue(str('foo/bar? foo/bar?')->replaceFirst('bar?', 'qux?')->equals('foo/qux? foo/bar?'));
@@ -274,7 +294,8 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('foobar foobar')->replaceFirst(['foobar', 'foo'], 'baz')->equals('baz foobar'));
     }
 
-    public function test_replace_end(): void
+    #[Test]
+    public function replace_end(): void
     {
         $this->assertTrue(str('foobar fooqux')->replaceEnd('bar', 'qux')->equals('foobar fooqux'));
         $this->assertTrue(str('foo/bar? foo/qux?')->replaceEnd('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
@@ -289,28 +310,32 @@ final class ManipulatesStringTest extends TestCase
         $this->assertEquals('foobar baz', str('foobar foo')->replaceEnd(['bar', 'foo'], 'baz')->toString());
     }
 
-    public function test_append(): void
+    #[Test]
+    public function append(): void
     {
         $this->assertTrue(str('foo')->append('bar')->equals('foobar'));
         $this->assertTrue(str('foo')->append('bar', 'baz')->equals('foobarbaz'));
         $this->assertTrue(str('foo')->append(str('bar'), str('baz'))->equals('foobarbaz'));
     }
 
-    public function test_prepend(): void
+    #[Test]
+    public function prepend(): void
     {
         $this->assertTrue(str('bar')->prepend('foo')->equals('foobar'));
         $this->assertTrue(str('baz')->prepend('bar', 'foo')->equals('barfoobaz'));
         $this->assertTrue(str('baz')->prepend(str('bar'), str('foo'))->equals('barfoobaz'));
     }
 
-    public function test_match(): void
+    #[Test]
+    public function match(): void
     {
         $match = str('10-abc')->match('/(?<id>\d+-)/', match: 'id');
 
         $this->assertSame('10-', $match);
     }
 
-    public function test_matches(): void
+    #[Test]
+    public function matches_pattern(): void
     {
         $this->assertTrue(str('10-abc')->matches('/(?<id>\d+-)/'));
         $this->assertTrue(str('10-abc')->matches('/(\d+-)/'));
@@ -319,14 +344,16 @@ final class ManipulatesStringTest extends TestCase
         $this->assertFalse(str('abc')->matches('/\d+-/'));
     }
 
-    public function test_replace_regex(): void
+    #[Test]
+    public function replace_regex(): void
     {
         $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', '')->equals('abc'));
         $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', fn () => '')->equals('abc'));
         $this->assertTrue(str('10-abc')->replaceRegex(['/\d/', '/\w/'], ['#', 'X'])->equals('##-XXX'));
     }
 
-    public function test_match_all(): void
+    #[Test]
+    public function match_all(): void
     {
         $this->assertSame(
             expected: [
@@ -359,14 +386,16 @@ final class ManipulatesStringTest extends TestCase
         );
     }
 
-    public function test_explode(): void
+    #[Test]
+    public function explode(): void
     {
         $this->assertTrue(str('path/to/tempest')->explode('/')->equals(['path', 'to', 'tempest']));
         $this->assertTrue(str('john doe')->explode()->equals(['john', 'doe']));
         $this->assertTrue(str('john doe foo bar')->explode(limit: 2)->equals(['john', 'doe foo bar']));
     }
 
-    public function test_implode(): void
+    #[Test]
+    public function implode(): void
     {
         $this->assertSame('path/to/tempest', ImmutableString::implode(['path', 'to', 'tempest'], '/')->toString());
         $this->assertSame('john doe', ImmutableString::implode(['john', 'doe'])->toString());
@@ -376,7 +405,8 @@ final class ManipulatesStringTest extends TestCase
 
     #[TestWith([['Jon', 'Jane'], 'Jon and Jane'])]
     #[TestWith([['Jon', 'Jane', 'Jill'], 'Jon, Jane and Jill'])]
-    public function test_join(array $initial, string $expected): void
+    #[Test]
+    public function join(array $initial, string $expected): void
     {
         $this->assertEquals($expected, ImmutableString::join($initial));
     }
@@ -384,12 +414,14 @@ final class ManipulatesStringTest extends TestCase
     #[TestWith([['Jon', 'Jane'], ', ', ' and maybe ', 'Jon and maybe Jane'])]
     #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', ' and ', 'Jon + Jane and Jill'])]
     #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', null, 'Jon + Jane + Jill'])]
-    public function test_join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
+    #[Test]
+    public function join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
     {
         $this->assertTrue(ImmutableString::join($initial, $glue, $finalGlue)->equals($expected));
     }
 
-    public function test_excerpt(): void
+    #[Test]
+    public function excerpt(): void
     {
         $content = str('a
 b
@@ -411,13 +443,15 @@ b'));
         $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
     }
 
-    public function test_wrap(): void
+    #[Test]
+    public function wrap(): void
     {
         $this->assertSame('Leon Scott Kennedy', str('Scott')->wrap(before: 'Leon ', after: ' Kennedy')->toString());
         $this->assertSame('"value"', str('value')->wrap('"')->toString());
     }
 
-    public function test_unwrap(): void
+    #[Test]
+    public function unwrap(): void
     {
         $this->assertSame('Scott', str('Leon Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy')->toString());
         $this->assertSame('value', str('"value"')->unwrap('"')->toString());
@@ -430,13 +464,15 @@ b'));
         $this->assertSame('Scott', str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false)->toString());
     }
 
-    public function test_start(): void
+    #[Test]
+    public function start(): void
     {
         $this->assertSame('Leon Scott Kennedy', str('Scott Kennedy')->start('Leon ')->toString());
         $this->assertSame('Leon Scott Kennedy', str('Leon Scott Kennedy')->start('Leon ')->toString());
     }
 
-    public function test_limit(): void
+    #[Test]
+    public function limit(): void
     {
         $this->assertSame('Lorem', str('Lorem ipsum')->truncate(5)->toString());
         $this->assertSame('Lorem...', str('Lorem ipsum')->truncate(5, end: '...')->toString());
@@ -446,7 +482,8 @@ b'));
         $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncate(100, end: '...')->toString());
     }
 
-    public function test_substr(): void
+    #[Test]
+    public function substr(): void
     {
         $this->assertSame('Lorem', str('Lorem ipsum')->substr(0, length: 5)->toString());
         $this->assertSame('ipsum', str('Lorem ipsum')->substr(6, length: 5)->toString());
@@ -455,7 +492,8 @@ b'));
         $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5, length: 5)->toString());
     }
 
-    public function test_take(): void
+    #[Test]
+    public function take(): void
     {
         // positive
         $this->assertSame('Lorem', str('Lorem ipsum')->take(5)->toString());
@@ -465,7 +503,8 @@ b'));
         $this->assertSame('ipsum', str('Lorem ipsum')->take(-5)->toString());
     }
 
-    public function test_chunk(): void
+    #[Test]
+    public function chunk(): void
     {
         $this->assertTrue(str(PHP_EOL)->chunk(100)->equals([PHP_EOL]));
         $this->assertTrue(str('')->chunk(1)->equals(['']));
@@ -476,7 +515,8 @@ b'));
         $this->assertTrue(str('foobarbaz22')->chunk(3)->equals(['foo', 'bar', 'baz', '22']));
     }
 
-    public function test_insert_at(): void
+    #[Test]
+    public function insert_at(): void
     {
         $this->assertSame('foo', str()->insertAt(0, 'foo')->toString());
         $this->assertSame('foo', str()->insertAt(-1, 'foo')->toString());
@@ -488,7 +528,8 @@ b'));
         $this->assertSame('123', str('13')->insertAt(-1, '2')->toString());
     }
 
-    public function test_replace_at(): void
+    #[Test]
+    public function replace_at(): void
     {
         $this->assertSame('foobar', str('foo2bar')->replaceAt(4, -1, '')->toString());
         $this->assertSame('foobar', str('foo2bar')->replaceAt(3, 1, '')->toString());
@@ -504,12 +545,14 @@ b'));
     #[TestWith(['Hello, you!', 'Hello, you!', ['You' => 'World']])]
     #[TestWith(['Hello, World!', 'Hello, You!', ['You' => 'World']])]
     #[TestWith(['Foo', 'Foo', ['bar' => 'baz']])]
-    public function test_replace_every(string $expected, string $haystack, iterable $replacements): void
+    #[Test]
+    public function replace_every(string $expected, string $haystack, iterable $replacements): void
     {
         $this->assertSame($expected, str($haystack)->replaceEvery($replacements)->toString());
     }
 
-    public function test_strip_tags(): void
+    #[Test]
+    public function strip_tags(): void
     {
         $this->assertSame('Hello World', str('<p>Hello World</p>')->stripTags()->toString());
         $this->assertSame('Hello World', str('<p>Hello <strong>World</strong></p>')->stripTags()->toString());
@@ -520,7 +563,8 @@ b'));
         $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'p')->toString());
     }
 
-    public function test_align_center(): void
+    #[Test]
+    public function align_center(): void
     {
         $this->assertSame('  foo  ', str('foo')->alignCenter(7)->toString());
         $this->assertSame('  foo  ', str(' foo ')->alignCenter(7)->toString());
@@ -531,7 +575,8 @@ b'));
         $this->assertSame('  foo  ', str(' foo ')->alignCenter(2, padding: 2)->toString());
     }
 
-    public function test_align_right(): void
+    #[Test]
+    public function align_right(): void
     {
         $this->assertSame('foo', str('foo')->alignRight(3)->toString());
         $this->assertSame('       foo', str('foo')->alignRight(10)->toString());
@@ -540,7 +585,8 @@ b'));
         $this->assertSame('  foo  ', str('foo')->alignRight(2, padding: 2)->toString());
     }
 
-    public function test_align_left(): void
+    #[Test]
+    public function align_left(): void
     {
         $this->assertSame('foo', str('foo')->alignLeft(3)->toString());
         $this->assertSame('foo       ', str('foo')->alignLeft(10)->toString());
@@ -549,7 +595,8 @@ b'));
         $this->assertSame('  foo  ', str('foo')->alignLeft(2, padding: 2)->toString());
     }
 
-    public function test_contains(): void
+    #[Test]
+    public function contains(): void
     {
         $this->assertTrue(str('foo')->contains('fo'));
         $this->assertFalse(str('foo')->contains('bar'));
@@ -557,31 +604,36 @@ b'));
         $this->assertFalse(str('foo')->contains([]));
     }
 
-    public function test_levenshtein(): void
+    #[Test]
+    public function levenshtein(): void
     {
         $this->assertSame(0, str('foo')->levenshtein('foo'));
         $this->assertSame(3, str('foo')->levenshtein('bar'));
     }
 
-    public function test_is_empty(): void
+    #[Test]
+    public function is_empty(): void
     {
         $this->assertTrue(str('')->isEmpty());
         $this->assertFalse(str('a')->isEmpty());
     }
 
-    public function test_is_not_empty(): void
+    #[Test]
+    public function is_not_empty(): void
     {
         $this->assertTrue(str('a')->isNotEmpty());
         $this->assertFalse(str('')->isNotEmpty());
     }
 
-    public function test_reverse(): void
+    #[Test]
+    public function reverse(): void
     {
         $this->assertSame('oof', str('foo')->reverse()->toString());
         $this->assertSame('…oof', str('foo…')->reverse()->toString());
     }
 
-    public function test_truncate_start(): void
+    #[Test]
+    public function truncate_start(): void
     {
         $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncateStart(20, start: '…')->toString());
         $this->assertSame('…ipsum', str('Lorem ipsum')->truncateStart(5, start: '…')->toString());
@@ -589,7 +641,8 @@ b'));
         $this->assertSame('…orem ipsum', str('Lorem ipsum')->truncateStart(-1, start: '…')->toString());
     }
 
-    public function test_tap(): void
+    #[Test]
+    public function tap(): void
     {
         $string = str('foo');
 
@@ -602,14 +655,16 @@ b'));
         $this->assertEquals('foo', $log);
     }
 
-    public function test_class_basename(): void
+    #[Test]
+    public function class_basename(): void
     {
         $this->assertSame('ImmutableString', str(ImmutableString::class)->classBasename()->toString());
         $this->assertSame('ImmutableString', str('ImmutableString')->classBasename()->toString());
         $this->assertSame('', str()->classBasename()->toString());
     }
 
-    public function test_basename(): void
+    #[Test]
+    public function basename(): void
     {
         $this->assertSame('file.txt', str('path/to/file.txt')->basename()->toString());
         $this->assertSame('file.txt', str('file.txt')->basename()->toString());
@@ -617,7 +672,8 @@ b'));
         $this->assertSame('', str()->basename()->toString());
     }
 
-    public function test_ascii(): void
+    #[Test]
+    public function ascii(): void
     {
         $this->assertSame('@', str('@')->ascii()->toString());
         $this->assertSame('u', str('ü')->ascii()->toString());
@@ -625,7 +681,8 @@ b'));
         $this->assertSame('a!2e', str('a!2ë')->ascii()->toString());
     }
 
-    public function test_slug(): void
+    #[Test]
+    public function slug(): void
     {
         $this->assertSame('hello-world', str('hello world')->slug()->toString());
         $this->assertSame('hello-world', str('hello-world')->slug()->toString());
@@ -645,7 +702,8 @@ b'));
         $this->assertSame('ahmdfyalmdrs', str('أحمد@المدرسة')->slug(separator: '-', replacements: ['@' => 'في'])->toString());
     }
 
-    public function test_is_ascii(): void
+    #[Test]
+    public function is_ascii(): void
     {
         $this->assertTrue(str('hello')->isAscii());
         $this->assertTrue(str()->isAscii());
@@ -661,7 +719,8 @@ b'));
     #[TestWith(['Jon Doe', ['Jon', 'Doe']])]
     #[TestWith(['-Jon Doe', ['Jon', 'Doe']])]
     #[TestWith(['_Jon_Doe', ['_Jon_Doe']])]
-    public function test_words(string $input, array $output): void
+    #[Test]
+    public function words(string $input, array $output): void
     {
         $this->assertEquals($output, str($input)->words()->toArray());
     }
@@ -672,7 +731,8 @@ b'));
     #[TestWith(['1foo_bar1', '1foo_bar1'])]
     #[TestWith(['getting-started', 'Getting started'])]
     #[TestWith(['Getting Started', 'Getting started'])]
-    public function test_sentence(string $input, string $output): void
+    #[Test]
+    public function sentence(string $input, string $output): void
     {
         $this->assertEquals($output, str($input)->sentence()->toString());
     }
@@ -683,7 +743,8 @@ b'));
     #[TestWith(['http://tempestphp.com', [], 'http://tempestphp.com'])]
     #[TestWith(['http://tempestphp.com', '://', 'http://tempestphp.com'])]
     #[TestWith(['http://tempestphp.com', ['http', 'http://'], '://tempestphp.com'])]
-    public function test_strip_start(string $input, string|array $strip, string $output): void
+    #[Test]
+    public function strip_start(string $input, string|array $strip, string $output): void
     {
         $this->assertEquals($output, str($input)->stripStart($strip)->toString());
     }
@@ -692,7 +753,8 @@ b'));
     #[TestWith(['foo.bar/', '/', 'foo.bar'])]
     #[TestWith(['foo.bar/', ['/', 'bar/'], 'foo.bar'])]
     #[TestWith(['foo.bar/', ['bar/', '/'], 'foo.'])]
-    public function test_strip_end(string $input, string|array $strip, string $output): void
+    #[Test]
+    public function strip_end(string $input, string|array $strip, string $output): void
     {
         $this->assertEquals($output, str($input)->stripEnd($strip)->toString());
     }
@@ -701,7 +763,8 @@ b'));
     #[TestWith(['aaayy', 'aaay', 5, 'y'])]
     #[TestWith(['Yeet', 'Yee', 4, 't'])]
     #[TestWith(['مرحباااا', 'مرحبا', 8, 'ا'])]
-    public function test_pad_right(string $expected, string $str, int $totalLength, string $padString = ' '): void
+    #[Test]
+    public function pad_right(string $expected, string $str, int $totalLength, string $padString = ' '): void
     {
         $this->assertSame($expected, str($str)->padRight($totalLength, $padString)->toString());
     }
@@ -710,12 +773,14 @@ b'));
     #[TestWith(['Aaaay', 'aaay', 5, 'A'])]
     #[TestWith(['Yeet', 'eet', 4, 'Yeeeee'])]
     #[TestWith(['ممممرحبا', 'مرحبا', 8, 'م'])]
-    public function test_pad_left(string $expected, string $str, int $totalLength, string $padString = ' '): void
+    #[Test]
+    public function pad_left(string $expected, string $str, int $totalLength, string $padString = ' '): void
     {
         $this->assertSame($expected, str($str)->padLeft($totalLength, $padString)->toString());
     }
 
-    public function test_is_uuid(): void
+    #[Test]
+    public function is_uuid(): void
     {
         $this->assertTrue(str()->uuid()->isUuid());
 
@@ -738,7 +803,8 @@ b'));
         $this->assertFalse(str(null)->isUuid());
     }
 
-    public function test_is_ulid(): void
+    #[Test]
+    public function is_ulid(): void
     {
         $this->assertTrue(str()->ulid()->isUlid());
 
@@ -752,12 +818,14 @@ b'));
         $this->assertFalse(str(null)->isUlid());
     }
 
-    public function test_uuid(): void
+    #[Test]
+    public function uuid(): void
     {
         $this->assertTrue(str()->uuid()->isUuid());
     }
 
-    public function test_json_decode(): void
+    #[Test]
+    public function json_decode(): void
     {
         $json = '{"name": "tempest", "version": "1.0", "tags": ["php", "framework"]}';
         $result = str($json)->decodeJson();
@@ -769,7 +837,8 @@ b'));
         $this->assertSame(['php', 'framework'], $result->get('tags')->toArray());
     }
 
-    public function test_json_decode_array(): void
+    #[Test]
+    public function json_decode_array(): void
     {
         $json = '["php", "framework", "tempest"]';
         $result = str($json)->decodeJson();
@@ -780,7 +849,8 @@ b'));
         $this->assertSame('tempest', $result->get(2));
     }
 
-    public function test_json_decode_invalid_json(): void
+    #[Test]
+    public function json_decode_invalid_json(): void
     {
         $this->expectException(JsonCouldNotBeDecoded::class);
 

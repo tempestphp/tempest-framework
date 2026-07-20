@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\ExitCode;
 use Tempest\Core\AppConfig;
 use Tempest\Router\Static\StaticGenerateCommand;
@@ -25,7 +26,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->http->registerStaticPage(StaticPageController::class);
     }
 
-    public function test_static_site_generate_command(): void
+    #[Test]
+    public function static_site_generate_command(): void
     {
         $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
@@ -50,7 +52,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('d', $d);
     }
 
-    public function test_failure_status_code(): void
+    #[Test]
+    public function failure_status_code(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'http500']);
         $this->http->registerStaticPage([StaticPageController::class, 'http500']);
@@ -63,7 +66,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_failure_no_textual_content(): void
+    #[Test]
+    public function failure_no_textual_content(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'noTextualContent']);
         $this->http->registerStaticPage([StaticPageController::class, 'noTextualContent']);
@@ -76,7 +80,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_failure_no_build(): void
+    #[Test]
+    public function failure_no_build(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'vite']);
         $this->http->registerStaticPage([StaticPageController::class, 'vite']);
@@ -89,7 +94,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_dead_link(): void
+    #[Test]
+    public function dead_link(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'deadLink']);
         $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
@@ -103,7 +109,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_dead_link_with_redirect(): void
+    #[Test]
+    public function dead_link_with_redirect(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'redirectingRoute']);
         $this->http->registerRoute([StaticPageController::class, 'hasRedirect']);
@@ -116,7 +123,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::SUCCESS);
     }
 
-    public function test_allow_dead_links(): void
+    #[Test]
+    public function allow_dead_links(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'deadLink']);
         $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
@@ -128,7 +136,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::SUCCESS);
     }
 
-    public function test_external_dead_links(): void
+    #[Test]
+    public function external_dead_links(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'deadLink']);
         $this->http->registerStaticPage([StaticPageController::class, 'deadLink']);
@@ -143,7 +152,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
-    public function test_ignore_dead_links(): void
+    #[Test]
+    public function ignore_dead_links(): void
     {
         $this->http->registerRoute([StaticPageController::class, 'allowedDeadLink']);
         $this->http->registerStaticPage([StaticPageController::class, 'allowedDeadLink']);

@@ -46,7 +46,8 @@ final class TempestConsoleLanguageTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_root_path(): void
+    #[Test]
+    public function root_path(): void
     {
         $highlighter = new Highlighter(new TempestTerminalTheme());
         $content = sprintf("<file='%s'/>", root_path('composer.json'));

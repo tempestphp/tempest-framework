@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests;
 
 use LogicException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\ContentType;
 use Tempest\Http\GenericRequest;
@@ -13,7 +14,8 @@ use Tempest\Http\Method;
 
 final class GenericRequestTest extends TestCase
 {
-    public function test_normalizes_header_access(): void
+    #[Test]
+    public function normalizes_header_access(): void
     {
         $upperCaseValue = 'UpperCase';
         $lowerCaseValue = 'LowerCase';
@@ -39,7 +41,8 @@ final class GenericRequestTest extends TestCase
         );
     }
 
-    public function test_throws_on_set(): void
+    #[Test]
+    public function throws_on_set(): void
     {
         $headers = new GenericRequest(
             method: Method::GET,
@@ -50,7 +53,8 @@ final class GenericRequestTest extends TestCase
         $headers['x'] = 'yes';
     }
 
-    public function test_throws_on_unset(): void
+    #[Test]
+    public function throws_on_unset(): void
     {
         $headers = new GenericRequest(
             method: Method::GET,
@@ -64,7 +68,8 @@ final class GenericRequestTest extends TestCase
         unset($headers['x']);
     }
 
-    public function test_accepts_with_accept_header(): void
+    #[Test]
+    public function accepts_with_accept_header(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -79,7 +84,8 @@ final class GenericRequestTest extends TestCase
         $this->assertFalse($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_with_no_accept_header(): void
+    #[Test]
+    public function accepts_with_no_accept_header(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -91,7 +97,8 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_with_empty_accept_header(): void
+    #[Test]
+    public function accepts_with_empty_accept_header(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -106,7 +113,8 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_with_wildcard(): void
+    #[Test]
+    public function accepts_with_wildcard(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -121,7 +129,8 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_with_multiple_values(): void
+    #[Test]
+    public function accepts_with_multiple_values(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -136,7 +145,8 @@ final class GenericRequestTest extends TestCase
         $this->assertFalse($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_with_wildcard_subtype(): void
+    #[Test]
+    public function accepts_with_wildcard_subtype(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -151,7 +161,8 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_can_handle_priorities(): void
+    #[Test]
+    public function accepts_can_handle_priorities(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
@@ -165,7 +176,8 @@ final class GenericRequestTest extends TestCase
         $this->assertTrue($request->accepts(ContentType::XML));
     }
 
-    public function test_accepts_returns_true_on_first_match(): void
+    #[Test]
+    public function accepts_returns_true_on_first_match(): void
     {
         $request = new GenericRequest(
             method: Method::GET,

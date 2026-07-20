@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Core\Middleware;
 use Tempest\Reflection\ClassReflector;
@@ -17,7 +18,8 @@ use Tests\Tempest\Integration\Core\Fixtures\MiddlewareNormal;
 
 final class MiddlewareTest extends TestCase
 {
-    public function test_middleware_construct(): void
+    #[Test]
+    public function middleware_construct(): void
     {
         $middleware = new Middleware(
             MiddlewareA::class,
@@ -46,7 +48,8 @@ final class MiddlewareTest extends TestCase
         $this->assertSame(MiddlewareC::class, $middlewareAsArray[MiddlewareC::class]->getName());
     }
 
-    public function test_add_middleware(): void
+    #[Test]
+    public function add_middleware(): void
     {
         $middleware = new Middleware(MiddlewareA::class, MiddlewareC::class)->add(MiddlewareB::class);
 
@@ -60,7 +63,8 @@ final class MiddlewareTest extends TestCase
         );
     }
 
-    public function test_remove_middleware(): void
+    #[Test]
+    public function remove_middleware(): void
     {
         $middleware = new Middleware(
             MiddlewareA::class,
@@ -77,7 +81,8 @@ final class MiddlewareTest extends TestCase
         );
     }
 
-    public function test_sort_with_additions(): void
+    #[Test]
+    public function sort_with_additions(): void
     {
         $middleware = new Middleware(
             MiddlewareC::class,
@@ -107,7 +112,8 @@ final class MiddlewareTest extends TestCase
         );
     }
 
-    public function test_sort_with_removals_(): void
+    #[Test]
+    public function sort_with_removals_(): void
     {
         $middleware = new Middleware(
             MiddlewareC::class,
@@ -134,7 +140,8 @@ final class MiddlewareTest extends TestCase
         );
     }
 
-    public function test_unwrap(): void
+    #[Test]
+    public function unwrap(): void
     {
         $middleware = new Middleware(
             MiddlewareC::class,
@@ -164,7 +171,8 @@ final class MiddlewareTest extends TestCase
         );
     }
 
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $middleware = new Middleware(
             MiddlewareB::class,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Exceptions;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Exceptions\DependencyCouldNotBeAutowired;
 use Tempest\Container\GenericContainer;
@@ -14,13 +15,17 @@ use Tempest\Container\Tests\Fixtures\AutowireA;
  */
 final class CannotAutowireExceptionTest extends TestCase
 {
-    public function test_autowire_without_exception(): void
+    #[Test]
+    public function autowire_without_exception(): void
     {
         $this->expectException(DependencyCouldNotBeAutowired::class);
+
+        $callLine = 0;
 
         try {
             $container = new GenericContainer();
 
+            $callLine = __LINE__ + 1;
             $container->get(AutowireA::class);
         } catch (DependencyCouldNotBeAutowired $cannotAutowireException) {
             $this->assertStringContainsString('Cannot autowire ' . AutowireA::class . '::__construct because string cannot be resolved', $cannotAutowireException->getMessage());
@@ -33,7 +38,7 @@ final class CannotAutowireExceptionTest extends TestCase
             TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $cannotAutowireException->getMessage());
-            $this->assertStringContainsString('CannotAutowireExceptionTest.php:24', $cannotAutowireException->getMessage());
+            $this->assertStringContainsString("CannotAutowireExceptionTest.php:{$callLine}", $cannotAutowireException->getMessage());
 
             throw $cannotAutowireException;
         }

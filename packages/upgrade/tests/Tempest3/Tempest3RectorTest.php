@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tests\Tempest3;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
@@ -13,7 +14,8 @@ final class Tempest3RectorTest extends TestCase
         get => new RectorTester(__DIR__ . '/tempest30_rector.php');
     }
 
-    public function test_map_namespace_change(): void
+    #[Test]
+    public function map_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MapNamespaceChange.input.php')
@@ -21,7 +23,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('use function Tempest\map;');
     }
 
-    public function test_make_namespace_change(): void
+    #[Test]
+    public function make_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MakeNamespaceChange.input.php')
@@ -29,7 +32,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('use function Tempest\make;');
     }
 
-    public function test_fully_qualified_map_call(): void
+    #[Test]
+    public function fully_qualified_map_call(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedMapCall.input.php')
@@ -37,7 +41,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('return map($data)->to(Author::class);');
     }
 
-    public function test_fully_qualified_make_call(): void
+    #[Test]
+    public function fully_qualified_make_call(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedMakeCall.input.php')
@@ -45,7 +50,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('return make(Author::class)');
     }
 
-    public function test_exception_processor_to_exception_reporter_fully_qualified(): void
+    #[Test]
+    public function exception_processor_to_exception_reporter_fully_qualified(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorFullyQualified.input.php')
@@ -56,7 +62,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('public function process(');
     }
 
-    public function test_exception_processor_to_exception_reporter_with_constructor(): void
+    #[Test]
+    public function exception_processor_to_exception_reporter_with_constructor(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorWithConstructor.input.php')
@@ -67,7 +74,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('public function process(');
     }
 
-    public function test_exception_processor_to_exception_reporter_imported_only(): void
+    #[Test]
+    public function exception_processor_to_exception_reporter_imported_only(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/ExceptionProcessorImportedOnly.input.php')
@@ -78,7 +86,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('public function process(');
     }
 
-    public function test_has_context_to_provides_context_fully_qualified(): void
+    #[Test]
+    public function has_context_to_provides_context_fully_qualified(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/HasContextFullyQualified.input.php')
@@ -87,7 +96,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('use Tempest\Core\HasContext');
     }
 
-    public function test_view_namespace_change(): void
+    #[Test]
+    public function view_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/ViewNamespaceChange.input.php')
@@ -95,7 +105,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('use function Tempest\view;');
     }
 
-    public function test_fully_qualified_view_call(): void
+    #[Test]
+    public function fully_qualified_view_call(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedViewCall.input.php')
@@ -103,7 +114,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('return view($template);');
     }
 
-    public function test_map_iterable_namespace_change(): void
+    #[Test]
+    public function map_iterable_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/MapIterableNamespaceChange.input.php')
@@ -111,7 +123,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertNotContains('use function Tempest\Support\Arr\map_iterable;');
     }
 
-    public function test_fully_qualified_map_iterable_call(): void
+    #[Test]
+    public function fully_qualified_map_iterable_call(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedMapIterableCall.input.php')
@@ -119,7 +132,8 @@ final class Tempest3RectorTest extends TestCase
             ->assertContains('return map($data, fn ($item) => $item * 2);');
     }
 
-    public function test_bindable_resolve_return_type_becomes_nullable(): void
+    #[Test]
+    public function bindable_resolve_return_type_becomes_nullable(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/BindableResolveReturnType.input.php')

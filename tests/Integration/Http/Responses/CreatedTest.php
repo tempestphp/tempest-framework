@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Responses\Created;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CreatedTest extends FrameworkIntegrationTestCase
 {
-    public function test_create(): void
+    #[Test]
+    public function create(): void
     {
         $response = new Created('test');
 

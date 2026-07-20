@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
@@ -15,7 +16,8 @@ use function Tempest\Database\query;
 
 final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
 {
-    public function test_simple_dto_serialization(): void
+    #[Test]
+    public function simple_dto_serialization(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character';
@@ -47,7 +49,8 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
         $this->assertSame(80, $retrievedCharacter->stats->mana);
     }
 
-    public function test_simple_dto_serialization_with_named_arguments(): void
+    #[Test]
+    public function simple_dto_serialization_with_named_arguments(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_simple_character_named_args';
@@ -79,7 +82,8 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
         $this->assertSame(120, $retrievedCharacter->stats->mana);
     }
 
-    public function test_dto_with_enums(): void
+    #[Test]
+    public function dto_with_enums(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_character_class_infos';
@@ -115,7 +119,8 @@ final class BasicDtoSerializationTest extends FrameworkIntegrationTestCase
         $this->assertSame(ClassRank::MASTER, $retrieved->details->rank);
     }
 
-    public function test_dto_with_custom_serialization_name(): void
+    #[Test]
+    public function dto_with_custom_serialization_name(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_settings';

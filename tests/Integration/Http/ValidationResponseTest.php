@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\ContentType;
 use Tempest\Http\Session\FormSession;
@@ -24,7 +25,8 @@ use function Tempest\Router\uri;
  */
 final class ValidationResponseTest extends FrameworkIntegrationTestCase
 {
-    public function test_validation_errors_are_listed_in_the_response_body(): void
+    #[Test]
+    public function validation_errors_are_listed_in_the_response_body(): void
     {
         $this->http
             ->as(ContentType::HTML)
@@ -37,7 +39,8 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->assertHasValidationError('number');
     }
 
-    public function test_original_values(): void
+    #[Test]
+    public function original_values(): void
     {
         $values = ['number' => 11, 'item.number' => 11];
 
@@ -53,7 +56,8 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->assertHasFormOriginalValues($values);
     }
 
-    public function test_update_book(): void
+    #[Test]
+    public function update_book(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -82,7 +86,8 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
         $this->assertSame($book->title, 'Beyond the Odyssee');
     }
 
-    public function test_failing_post_request(): void
+    #[Test]
+    public function failing_post_request(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -106,7 +111,8 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi', Book::find(id: 1)->first()->title);
     }
 
-    public function test_sensitive_fields_are_excluded_from_original_values(): void
+    #[Test]
+    public function sensitive_fields_are_excluded_from_original_values(): void
     {
         $this->http
             ->as(ContentType::HTML)

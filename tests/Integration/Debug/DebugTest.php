@@ -16,7 +16,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class DebugTest extends FrameworkIntegrationTestCase
 {
-    public function test_event(): void
+    #[Test]
+    public function event(): void
     {
         $class = new stdClass();
 

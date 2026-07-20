@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,14 +12,16 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ForceMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    public function test_force(): void
+    #[Test]
+    public function force(): void
     {
         $this->console
             ->call('force --force')
             ->assertContains('continued');
     }
 
-    public function test_force_flag(): void
+    #[Test]
+    public function force_flag(): void
     {
         $this->console
             ->call('force -f')

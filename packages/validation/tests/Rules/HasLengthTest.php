@@ -6,6 +6,7 @@ namespace Tempest\Validation\Tests\Rules;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\HasLength;
 
@@ -15,12 +16,14 @@ use Tempest\Validation\Rules\HasLength;
 final class HasLengthTest extends TestCase
 {
     #[DataProvider('provide_length_cases')]
-    public function test_length(HasLength $rule, string $stringToTest, bool $expected): void
+    #[Test]
+    public function length(HasLength $rule, string $stringToTest, bool $expected): void
     {
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    public function test_throws_an_exception_if_neither_min_or_max_is_supplied(): void
+    #[Test]
+    public function throws_an_exception_if_neither_min_or_max_is_supplied(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

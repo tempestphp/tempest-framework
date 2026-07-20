@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\JavaScript;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\JavaScript\PackageManager;
@@ -20,7 +21,8 @@ final class PackageManagerTest extends TestCase
     #[TestWith(['pnpm', PackageManager::PNPM])]
     #[TestWith(['multiple', PackageManager::BUN])]
     #[TestWith(['empty', null])]
-    public function test_can_detect_package_manager(string $fixture, ?PackageManager $expectedPackageManager): void
+    #[Test]
+    public function can_detect_package_manager(string $fixture, ?PackageManager $expectedPackageManager): void
     {
         $this->assertSame(
             expected: $expectedPackageManager,
@@ -35,7 +37,8 @@ final class PackageManagerTest extends TestCase
     #[TestWith(['pnpm', 'pnpm dev'])]
     #[TestWith(['multiple', 'bun dev'])]
     #[TestWith(['empty', null])]
-    public function test_print_run_command(string $fixture, ?string $expectedCommand): void
+    #[Test]
+    public function print_run_command(string $fixture, ?string $expectedCommand): void
     {
         $this->assertSame(
             expected: $expectedCommand,

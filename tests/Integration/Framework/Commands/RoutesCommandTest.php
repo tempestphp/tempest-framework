@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Fixtures\Modules\Posts\PostController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class RoutesCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_displays_uri_and_controller(): void
+    #[Test]
+    public function displays_uri_and_controller(): void
     {
         $this->console
             ->call('routes')
@@ -20,7 +22,8 @@ final class RoutesCommandTest extends FrameworkIntegrationTestCase
             ->assertContains(PostController::class);
     }
 
-    public function test_outputs_as_json(): void
+    #[Test]
+    public function outputs_as_json(): void
     {
         $this->console
             ->call('routes', ['--json'])

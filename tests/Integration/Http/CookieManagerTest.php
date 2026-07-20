@@ -16,7 +16,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CookieManagerTest extends FrameworkIntegrationTestCase
 {
-    public function test_cookie_manager_does_not_get_initialized_with_request_cookies(): void
+    #[Test]
+    public function cookie_manager_does_not_get_initialized_with_request_cookies(): void
     {
         $_COOKIE['existing'] = 'value';
 
@@ -27,7 +28,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         unset($_COOKIE['existing']);
     }
 
-    public function test_creating_a_cookie(): void
+    #[Test]
+    public function creating_a_cookie(): void
     {
         $this->container->get(AppConfig::class)->baseUri = 'https://test.com';
 
@@ -41,7 +43,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
             ->assertHasCookie('new', 'value');
     }
 
-    public function test_creating_a_cookie_with_unsecure_local_host(): void
+    #[Test]
+    public function creating_a_cookie_with_unsecure_local_host(): void
     {
         $this->container->get(AppConfig::class)->baseUri = 'http://test.com';
 
@@ -55,7 +58,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
             ->assertHasCookie('new', 'value');
     }
 
-    public function test_removing_a_cookie(): void
+    #[Test]
+    public function removing_a_cookie(): void
     {
         $cookies = $this->container->get(CookieManager::class);
         $cookies->remove('new');
@@ -66,7 +70,8 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
             ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0; Path=/; Secure; SameSite=Lax');
     }
 
-    public function test_manually_adding_a_cookie(): void
+    #[Test]
+    public function manually_adding_a_cookie(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');
         $cookies = $this->container->get(CookieManager::class);
@@ -89,7 +94,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_cookie_manager_is_reset(): void
+    public function cookie_manager_is_reset(): void
     {
         $originalCookieManager = $this->container->get(CookieManager::class);
 

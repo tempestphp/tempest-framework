@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Storage;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\Storage;
 use Tempest\Support\Filesystem;
@@ -20,7 +21,8 @@ final class MultipleStoragesTest extends FrameworkIntegrationTestCase
         Filesystem\delete_directory($this->fixtures);
     }
 
-    public function test_basic(): void
+    #[Test]
+    public function basic(): void
     {
         $this->container->config(new LocalStorageConfig(
             path: $this->fixtures . '/storage1',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Intl\Tests;
 
 use Countable;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Pluralizer\InflectorPluralizer;
@@ -22,7 +23,8 @@ final class InflectorPluralizerTest extends TestCase
     #[TestWith(['category', 'categories', 2])]
     #[TestWith(['status', 'statuses', 2])]
     #[TestWith(['child', 'children', 2])]
-    public function test_that_pluralizer_pluralizes(string $value, string $expected, int|array|Countable $count): void
+    #[Test]
+    public function that_pluralizer_pluralizes(string $value, string $expected, int|array|Countable $count): void
     {
         $pluralizer = new InflectorPluralizer();
 
@@ -34,7 +36,8 @@ final class InflectorPluralizerTest extends TestCase
     #[TestWith(['categories', 'category'])]
     #[TestWith(['statuses', 'status'])]
     #[TestWith(['children', 'child'])]
-    public function test_that_pluralizer_singularizes(string $value, string $expected): void
+    #[Test]
+    public function that_pluralizer_singularizes(string $value, string $expected): void
     {
         $pluralizer = new InflectorPluralizer();
 
@@ -63,7 +66,8 @@ final class InflectorPluralizerTest extends TestCase
     #[TestWith(['Multiple Aircraft', 'Multiple Aircraft'])]
     #[TestWith(['multiple aircraft', 'multiple aircraft'])]
     #[TestWith(['small dogs', 'small dog'])]
-    public function test_singularize_last_word(string $value, string $expected): void
+    #[Test]
+    public function singularize_last_word(string $value, string $expected): void
     {
         $pluralizer = new InflectorPluralizer();
 
@@ -92,7 +96,8 @@ final class InflectorPluralizerTest extends TestCase
     #[TestWith(['Multiple Aircraft', 'Multiple Aircraft'])]
     #[TestWith(['multiple aircraft', 'multiple aircraft'])]
     #[TestWith(['small dog', 'small dogs'])]
-    public function test_pluralize_last_word(string $value, string $expected): void
+    #[Test]
+    public function pluralize_last_word(string $value, string $expected): void
     {
         $pluralizer = new InflectorPluralizer();
 

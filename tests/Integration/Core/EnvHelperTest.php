@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\env;
@@ -14,13 +15,15 @@ use function Tempest\env;
  */
 final class EnvHelperTest extends FrameworkIntegrationTestCase
 {
-    public function test_env_fallback_value(): void
+    #[Test]
+    public function env_fallback_value(): void
     {
         $this->assertTrue(env('missing', true));
     }
 
     #[DataProvider('types')]
-    public function test_env_maps_values(string $value, mixed $expectedValue): void
+    #[Test]
+    public function env_maps_values(string $value, mixed $expectedValue): void
     {
         putenv('test=' . $value);
 

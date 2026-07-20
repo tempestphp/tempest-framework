@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use PDOException;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Transactions\TransactionManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -17,7 +18,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {
-    public function test_transaction_manager(): void
+    #[Test]
+    public function transaction_manager(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -33,7 +35,8 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->assertCount(0, Author::all());
     }
 
-    public function test_transaction_manager_commit(): void
+    #[Test]
+    public function transaction_manager_commit(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -49,7 +52,8 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, Author::all());
     }
 
-    public function test_transaction_manager_commit_rollback(): void
+    #[Test]
+    public function transaction_manager_commit_rollback(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 

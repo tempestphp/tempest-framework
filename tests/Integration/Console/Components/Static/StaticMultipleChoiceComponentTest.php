@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_ask(): void
+    #[Test]
+    public function ask(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -23,7 +25,8 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains('You picked a and b;');
     }
 
-    public function test_with_invalid_options(): void
+    #[Test]
+    public function with_invalid_options(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -33,7 +36,8 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains('You picked a and c;');
     }
 
-    public function test_confirm(): void
+    #[Test]
+    public function confirm(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -51,7 +55,8 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains('["a","b"]');
     }
 
-    public function test_supports_defaults(): void
+    #[Test]
+    public function supports_defaults(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -69,7 +74,8 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains(json_encode(['foo']));
     }
 
-    public function test_supports_enum(): void
+    #[Test]
+    public function supports_enum(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -89,7 +95,8 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->assertContains(json_encode(['a', 'c']));
     }
 
-    public function test_supports_enum_with_default(): void
+    #[Test]
+    public function supports_enum_with_default(): void
     {
         $this->console
             ->call(function (Console $console): void {

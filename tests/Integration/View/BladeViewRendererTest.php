@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\BladeViewRenderer;
 use Tempest\View\ViewConfig;
@@ -17,7 +18,8 @@ use function Tempest\View\view;
  */
 final class BladeViewRendererTest extends FrameworkIntegrationTestCase
 {
-    public function test_blade(): void
+    #[Test]
+    public function blade(): void
     {
         $viewConfig = $this->container->get(ViewConfig::class);
         $viewConfig->rendererClass = BladeViewRenderer::class;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_search_component(): void
+    #[Test]
+    public function search_component(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -48,7 +50,8 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('Hello Brent');
     }
 
-    public function test_no_answer(): void
+    #[Test]
+    public function no_answer(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -71,7 +74,8 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('<no answer>');
     }
 
-    public function test_default_answer(): void
+    #[Test]
+    public function default_answer(): void
     {
         $this->console
             ->call(function (Console $console): void {
@@ -95,7 +99,8 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('foo');
     }
 
-    public function test_without_prompting(): void
+    #[Test]
+    public function without_prompting(): void
     {
         $this->console
             ->withoutPrompting()
@@ -110,7 +115,8 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('<no answer>');
     }
 
-    public function test_default_answer_without_prompting(): void
+    #[Test]
+    public function default_answer_without_prompting(): void
     {
         $this->console
             ->withoutPrompting()

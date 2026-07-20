@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
 
 final class NestedWhereTest extends FrameworkIntegrationTestCase
 {
-    public function test_nested_where_with_and_group(): void
+    #[Test]
+    public function nested_where_with_and_group(): void
     {
         $query = query('books')
             ->select()
@@ -28,7 +30,8 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $this->assertSame(['test', 1, 2], $query->bindings);
     }
 
-    public function test_nested_where_with_or_group(): void
+    #[Test]
+    public function nested_where_with_or_group(): void
     {
         $query = query('books')
             ->select()
@@ -46,7 +49,8 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $this->assertSame(['active', 'high', true], $query->bindings);
     }
 
-    public function test_deeply_nested_where_groups(): void
+    #[Test]
+    public function deeply_nested_where_groups(): void
     {
         $query = query('books')
             ->select()
@@ -68,7 +72,8 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'fiction', 'Tolkien', 4.5], $query->bindings);
     }
 
-    public function test_complex_nested_where_scenario(): void
+    #[Test]
+    public function complex_nested_where_scenario(): void
     {
         // WHERE status = 'published'
         // AND (
@@ -115,7 +120,8 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_where_group_without_existing_conditions(): void
+    #[Test]
+    public function where_group_without_existing_conditions(): void
     {
         $query = query('books')
             ->select()
@@ -132,7 +138,8 @@ final class NestedWhereTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%test%', '%test%'], $query->bindings);
     }
 
-    public function test_nested_where_with_where(): void
+    #[Test]
+    public function nested_where_with_where(): void
     {
         $query = query('books')
             ->select()

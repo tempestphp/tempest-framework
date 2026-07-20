@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cryptography;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Signing\Signer;
 use Tempest\Cryptography\Signing\SigningAlgorithm;
 use Tempest\Cryptography\Signing\SigningConfig;
@@ -13,12 +14,14 @@ final class SignerTest extends FrameworkIntegrationTestCase
         get => $this->container->get(Signer::class);
     }
 
-    public function test_default_algorithm(): void
+    #[Test]
+    public function default_algorithm(): void
     {
         $this->assertSame(SigningAlgorithm::SHA256, $this->signer->algorithm);
     }
 
-    public function test_signature_valid(): void
+    #[Test]
+    public function signature_valid(): void
     {
         $this->container->config(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -32,7 +35,8 @@ final class SignerTest extends FrameworkIntegrationTestCase
         $this->assertTrue($this->signer->verify($data, $signature));
     }
 
-    public function test_update_key(): void
+    #[Test]
+    public function update_key(): void
     {
         $this->container->config(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,

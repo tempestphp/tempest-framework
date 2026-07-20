@@ -23,7 +23,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_it_can_alter_a_table_definition(): void
+    public function it_can_alter_a_table_definition(): void
     {
         $migration = $this->getAlterTableMigration();
 

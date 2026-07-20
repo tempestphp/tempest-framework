@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\DateTime;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\Clock;
 use Tempest\DateTime\DateTime;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -10,7 +11,8 @@ use function Tempest\Clock\now;
 
 final class DateTimeTest extends FrameworkIntegrationTestCase
 {
-    public function test_now_resolved_from_clock(): void
+    #[Test]
+    public function now_resolved_from_clock(): void
     {
         $clock = $this->clock('2024-01-01');
 

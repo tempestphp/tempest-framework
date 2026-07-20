@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
@@ -51,7 +52,8 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_all_vendor_view_components_are_listed(): void
+    #[Test]
+    public function all_vendor_view_components_are_listed(): void
     {
         $this->console
             ->call('install view-components --force')
@@ -70,7 +72,8 @@ final class ViewComponentsInstallerTest extends FrameworkIntegrationTestCase
             );
     }
 
-    public function test_installed_vendor_components_are_not_listed_anymore(): void
+    #[Test]
+    public function installed_vendor_components_are_not_listed_anymore(): void
     {
         $this->view->registerViewComponent(
             name: 'x-vendor-b',

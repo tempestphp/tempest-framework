@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
@@ -13,7 +14,8 @@ use function Tempest\Support\str;
  */
 final class StringTest extends FrameworkIntegrationTestCase
 {
-    public function test_plural_studly(): void
+    #[Test]
+    public function plural_studly(): void
     {
         $this->assertTrue(str('RealHuman')->pluralizeLastWord()->equals('RealHumans'));
         $this->assertTrue(str('Model')->pluralizeLastWord()->equals('Models'));
@@ -21,7 +23,8 @@ final class StringTest extends FrameworkIntegrationTestCase
         $this->assertTrue(str('MultipleWordsInOneString')->pluralizeLastWord()->equals('MultipleWordsInOneStrings'));
     }
 
-    public function test_singularize(): void
+    #[Test]
+    public function singularize(): void
     {
         $this->assertTrue(str('RealHumans')->singularizeLastWord()->equals('RealHuman'));
         $this->assertTrue(str('Models')->singularizeLastWord()->equals('Model'));

@@ -2,6 +2,7 @@
 
 namespace Tempest\Process\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Process\GenericProcessExecutor;
 use Tempest\Process\InvokedProcessPool;
@@ -10,7 +11,8 @@ use Tempest\Process\Pool;
 
 final class PoolTest extends TestCase
 {
-    public function test_pool(): void
+    #[Test]
+    public function pool(): void
     {
         $executor = new GenericProcessExecutor();
         $pool = $executor->pool([
@@ -37,7 +39,8 @@ final class PoolTest extends TestCase
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
 
-    public function test_concurrently(): void
+    #[Test]
+    public function concurrently(): void
     {
         $executor = new GenericProcessExecutor();
         $results = $executor->concurrently([
@@ -50,7 +53,8 @@ final class PoolTest extends TestCase
         $this->assertStringEqualsStringIgnoringLineEndings("world\n", $results[1]->output);
     }
 
-    public function test_concurrently_deconstruct(): void
+    #[Test]
+    public function concurrently_deconstruct(): void
     {
         $executor = new GenericProcessExecutor();
         [$hello, $world] = $executor->concurrently([

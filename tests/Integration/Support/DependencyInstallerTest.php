@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Support;
 
 use Closure;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Support\Filesystem;
 use Tempest\Support\JavaScript\DependencyInstaller;
@@ -26,7 +27,8 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
 
     #[TestWith(['bun.lock'])]
     #[TestWith(['package-lock.json'])]
-    public function test_can_silently_install_deps(string $lockfile): void
+    #[Test]
+    public function can_silently_install_deps(string $lockfile): void
     {
         $this->callInTemporaryDirectory(function (string $directory) use ($lockfile): void {
             file_put_contents("{$directory}/package.json", data: '{}');
@@ -40,7 +42,8 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_asks_for_package_manager(): void
+    #[Test]
+    public function asks_for_package_manager(): void
     {
         $this->callInTemporaryDirectory(function (string $directory): void {
             file_put_contents("{$directory}/package.json", data: '{}');
@@ -60,7 +63,8 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
 
     #[TestWith(['bun.lock'])]
     #[TestWith(['package-lock.json'])]
-    public function test_can_install_non_dev_dependencies(string $lockfile): void
+    #[Test]
+    public function can_install_non_dev_dependencies(string $lockfile): void
     {
         $this->callInTemporaryDirectory(function (string $directory) use ($lockfile): void {
             file_put_contents("{$directory}/package.json", data: '{}');

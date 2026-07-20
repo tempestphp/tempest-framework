@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\View\Exceptions\ExpressionAttributeWasInvalid;
 use Tempest\View\ViewCache;
@@ -21,7 +22,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         $this->container->get(ViewCache::class)->clear();
     }
 
-    public function test_normal_attribute(): void
+    #[Test]
+    public function normal_attribute(): void
     {
         // <a href="http://"                    💯 <a href="https://"
         $this->assertSame(
@@ -32,7 +34,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_variable(): void
+    #[Test]
+    public function expression_attribute_with_variable(): void
     {
         // <a :href="$href"                     💯 <a href="https://"
         $this->assertSame(
@@ -44,7 +47,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_expression(): void
+    #[Test]
+    public function expression_attribute_with_expression(): void
     {
         // <a :href="strtoupper('string')"      💯 <a href="HTTPS://"
         $this->assertSame(
@@ -56,7 +60,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_normal_attribute_with_php_short_echo(): void
+    #[Test]
+    public function normal_attribute_with_php_short_echo(): void
     {
         // <a href="<?= $href "                 💯 <a href="https://"
         $this->assertSame(
@@ -70,7 +75,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_normal_attribute_with_view_echo(): void
+    #[Test]
+    public function normal_attribute_with_view_echo(): void
     {
         // <a href="{{ $href }}"                💯 <a href="https://&amp;"
         $this->assertSame(
@@ -84,7 +90,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_normal_attribute_with_raw_view_echo(): void
+    #[Test]
+    public function normal_attribute_with_raw_view_echo(): void
     {
         // <a href="{!! $href !!}"                💯 <a href="https://&"
         $this->assertSame(
@@ -98,7 +105,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_view_echo_not_allowed(): void
+    #[Test]
+    public function expression_attribute_with_view_echo_not_allowed(): void
     {
         // <a :href="{{ $href }}"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
@@ -110,7 +118,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_raw_view_echo_not_allowed(): void
+    #[Test]
+    public function expression_attribute_with_raw_view_echo_not_allowed(): void
     {
         // <a :href="{!! $href !!}"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
@@ -122,7 +131,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_short_php_echo_not_allowed(): void
+    #[Test]
+    public function expression_attribute_with_short_php_echo_not_allowed(): void
     {
         // <a :href="<?= $href …"               ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
@@ -134,7 +144,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_object_without_view_component_not_allowed(): void
+    #[Test]
+    public function expression_attribute_with_object_without_view_component_not_allowed(): void
     {
         // <a :href="$object"                   ❌ exception
         $this->expectException(ExpressionAttributeWasInvalid::class);
@@ -147,7 +158,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_object_on_view_component(): void
+    #[Test]
+    public function expression_attribute_with_object_on_view_component(): void
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
@@ -171,7 +183,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_on_view_component(): void
+    #[Test]
+    public function expression_attribute_on_view_component(): void
     {
         // <x-button :href="$href" />        💯 always pass as variable, never set directly as attribute
 
@@ -193,7 +206,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_zero_expression_attribute_literal_on_view_component(): void
+    #[Test]
+    public function zero_expression_attribute_literal_on_view_component(): void
     {
         $this->view->registerViewComponent(
             'x-link',
@@ -212,7 +226,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_normal_attribute_on_view_component(): void
+    #[Test]
+    public function normal_attribute_on_view_component(): void
     {
         // <x-button href="http://…" />      💯 always pass as variable, never set directly as attribute
 
@@ -233,7 +248,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_expression_attribute_with_same_name(): void
+    #[Test]
+    public function expression_attribute_with_same_name(): void
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
@@ -265,7 +281,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_boolean_attributes(): void
+    #[Test]
+    public function boolean_attributes(): void
     {
         $this->assertSame(
             '<option value="value" selected>name</option>',
@@ -291,7 +308,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     #[TestWith(['null'])]
     #[TestWith(["''"])]
     #[TestWith(['$show'])]
-    public function test_falsy_bool_attribute(mixed $value): void
+    #[Test]
+    public function falsy_bool_attribute(mixed $value): void
     {
         $html = $this->view->render(<<<HTML
         <div :data-active="{$value}"></div>
@@ -305,7 +323,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     #[TestWith([0])]
     #[TestWith([0.0])]
     #[TestWith(['0'])]
-    public function test_zero_expression_attribute_value_is_rendered(mixed $value): void
+    #[Test]
+    public function zero_expression_attribute_value_is_rendered(mixed $value): void
     {
         $html = $this->view->render(<<<'HTML'
         <div :data-start-percent="$value"></div>
@@ -318,7 +337,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     #[TestWith(['true'])]
     #[TestWith(['$show'])]
-    public function test_truthy_bool_attribute(mixed $value): void
+    #[Test]
+    public function truthy_bool_attribute(mixed $value): void
     {
         $html = $this->view->render(<<<HTML
         <div :data-active="{$value}"></div>
@@ -329,7 +349,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML, $html);
     }
 
-    public function test_multiple_boolean_attribute(): void
+    #[Test]
+    public function multiple_boolean_attribute(): void
     {
         $html = $this->view->render(<<<HTML
         <div :data-a="false" :data-b="false" :data-c="true"></div>
@@ -340,7 +361,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML, $html);
     }
 
-    public function test_expression_attribute_in_raw_element(): void
+    #[Test]
+    public function expression_attribute_in_raw_element(): void
     {
         $this->view->registerViewComponent(
             'x-test',
@@ -363,7 +385,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_echo_in_attributes(): void
+    #[Test]
+    public function echo_in_attributes(): void
     {
         $this->assertSame(
             '<div class="hi hi hi"></div>',
@@ -380,7 +403,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    public function test_boolean_attributes_in_view_component(): void
+    #[Test]
+    public function boolean_attributes_in_view_component(): void
     {
         $this->view->registerViewComponent('x-test', <<<HTML
         <div>
@@ -397,7 +421,8 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         $this->assertStringContainsString(' href="hi"', $html);
     }
 
-    public function test_global_variables_are_kept(): void
+    #[Test]
+    public function global_variables_are_kept(): void
     {
         $this->view->registerViewComponent('x-test', <<<'HTML'
         <div>{{ $item }}</div>

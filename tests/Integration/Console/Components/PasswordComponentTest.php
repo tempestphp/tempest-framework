@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -14,7 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class PasswordComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_password_component(): void
+    #[Test]
+    public function password_component(): void
     {
         $this->console
             ->withoutPrompting()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Mapper\Exceptions\DataCouldNotBeMapped;
 use Tempest\Mapper\Exceptions\MapperWasMissing;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
@@ -21,7 +22,8 @@ use function Tempest\Mapper\map;
  */
 final class ObjectFactoryTest extends FrameworkIntegrationTestCase
 {
-    public function test_single_object(): void
+    #[Test]
+    public function single_object(): void
     {
         $factory = $this->container->get(ObjectFactory::class);
 
@@ -34,7 +36,8 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertEquals('b', $object->b);
     }
 
-    public function test_collection(): void
+    #[Test]
+    public function collection(): void
     {
         $factory = $this->container->get(ObjectFactory::class);
 
@@ -52,7 +55,8 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertEquals('bb', $objects[1]->b);
     }
 
-    public function test_make_function(): void
+    #[Test]
+    public function make_function(): void
     {
         $object = make(ObjectA::class)->from(['a' => 'a', 'b' => 'b']);
 
@@ -60,7 +64,8 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertEquals('b', $object->b);
     }
 
-    public function test_map_function(): void
+    #[Test]
+    public function map_function(): void
     {
         $object = map(['a' => 'a', 'b' => 'b'])->to(ObjectA::class);
 
@@ -68,14 +73,16 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertEquals('b', $object->b);
     }
 
-    public function test_cannot_map_exception(): void
+    #[Test]
+    public function cannot_map_exception(): void
     {
         $this->expectException(DataCouldNotBeMapped::class);
 
         map(['a' => 'a', 'b' => 'b'])->to('unknown');
     }
 
-    public function test_map_with(): void
+    #[Test]
+    public function map_with(): void
     {
         $result = map(['a' => 'a', 'b' => 'b'])->with(
             fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
@@ -86,14 +93,16 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertSame('{"a":"a","b":"b"}', $result);
     }
 
-    public function test_map_do_without_with_throws(): void
+    #[Test]
+    public function map_do_without_with_throws(): void
     {
         $this->expectException(MapperWasMissing::class);
 
         map([])->do();
     }
 
-    public function test_map_with_to(): void
+    #[Test]
+    public function map_with_to(): void
     {
         $result = map(['a' => 'a', 'b' => 'b'])->with(ArrayToObjectMapper::class)->to(ObjectA::class);
 
@@ -101,7 +110,8 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $result->b);
     }
 
-    public function test_map_with_collection_to(): void
+    #[Test]
+    public function map_with_collection_to(): void
     {
         $result = map([
             ['a' => 'a', 'b' => 'b'],

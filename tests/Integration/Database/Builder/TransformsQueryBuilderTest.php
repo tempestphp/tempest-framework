@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -14,7 +15,8 @@ use function Tempest\Database\query;
  */
 final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_select_query_builder_transform(): void
+    #[Test]
+    public function select_query_builder_transform(): void
     {
         $query = query(Author::class)
             ->select()
@@ -25,7 +27,8 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Frieren'], $bindings);
     }
 
-    public function test_count_query_builder_transform(): void
+    #[Test]
+    public function count_query_builder_transform(): void
     {
         $query = query(Author::class)
             ->count()
@@ -36,7 +39,8 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Himmel'], $bindings);
     }
 
-    public function test_update_query_builder_transform(): void
+    #[Test]
+    public function update_query_builder_transform(): void
     {
         $query = query(Author::class)
             ->update(name: 'Heiter')
@@ -47,7 +51,8 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Heiter', 1], $bindings);
     }
 
-    public function test_delete_query_builder_transform(): void
+    #[Test]
+    public function delete_query_builder_transform(): void
     {
         $query = query(Author::class)
             ->delete()
@@ -58,7 +63,8 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Eisen'], $bindings);
     }
 
-    public function test_insert_query_builder_transform(): void
+    #[Test]
+    public function insert_query_builder_transform(): void
     {
         $query = query(Author::class)
             ->insert(['name' => 'Stark'])
@@ -69,7 +75,8 @@ final class TransformsQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['Stark'], $bindings);
     }
 
-    public function test_transform_returns_new_instance(): void
+    #[Test]
+    public function transform_returns_new_instance(): void
     {
         $original = query(Author::class)->select();
 

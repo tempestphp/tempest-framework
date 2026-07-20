@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -16,7 +17,8 @@ use Tempest\Router\Routing\Matching\GenericRouteMatcher;
  */
 final class OptionalParametersTest extends TestCase
 {
-    public function test_route_with_optional_parameter_matches_both_paths(): void
+    #[Test]
+    public function route_with_optional_parameter_matches_both_paths(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
         $tree = new RoutingTree();
@@ -52,7 +54,8 @@ final class OptionalParametersTest extends TestCase
         $this->assertEquals(['id' => '123'], $matchedWithParam->params);
     }
 
-    public function test_route_with_multiple_optional_parameters(): void
+    #[Test]
+    public function route_with_multiple_optional_parameters(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
         $tree = new RoutingTree();
@@ -90,7 +93,8 @@ final class OptionalParametersTest extends TestCase
         $this->assertEquals(['id' => '123', 'slug' => 'my-post'], $matchedTwoParams->params);
     }
 
-    public function test_route_with_required_and_optional_parameters(): void
+    #[Test]
+    public function route_with_required_and_optional_parameters(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
         $tree = new RoutingTree();
@@ -124,7 +128,8 @@ final class OptionalParametersTest extends TestCase
         $this->assertEquals(['id' => '123', 'slug' => 'my-post'], $matchedBoth->params);
     }
 
-    public function test_route_with_optional_parameter_and_custom_regex(): void
+    #[Test]
+    public function route_with_optional_parameter_and_custom_regex(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
         $tree = new RoutingTree();
@@ -161,7 +166,8 @@ final class OptionalParametersTest extends TestCase
         $this->assertNull($matchedWithNonNumeric);
     }
 
-    public function test_optional_parameters_are_parsed_correctly(): void
+    #[Test]
+    public function optional_parameters_are_parsed_correctly(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
 
@@ -174,7 +180,8 @@ final class OptionalParametersTest extends TestCase
         $this->assertEquals(['id' => true], $route->optionalParameters);
     }
 
-    public function test_mixed_optional_and_required_parameters_are_parsed_correctly(): void
+    #[Test]
+    public function mixed_optional_and_required_parameters_are_parsed_correctly(): void
     {
         $routeBuilder = new FakeRouteBuilderWithOptionalParams();
 

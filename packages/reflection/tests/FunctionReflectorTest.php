@@ -2,12 +2,14 @@
 
 namespace Tempest\Reflection\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\FunctionReflector;
 
 final class FunctionReflectorTest extends TestCase
 {
-    public function test_get_parameter(): void
+    #[Test]
+    public function get_parameter(): void
     {
         $reflector = new FunctionReflector(fn (string $_test) => null);
 

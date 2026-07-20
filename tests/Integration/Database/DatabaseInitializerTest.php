@@ -26,7 +26,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_resolves_multiple_persistent_connections_by_tag(): void
+    public function it_resolves_multiple_persistent_connections_by_tag(): void
     {
         $this->configureSqliteDatabase('main', 'multi-main.sqlite');
         $this->configureSqliteDatabase('backup', 'multi-backup.sqlite');
@@ -48,7 +48,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_reuses_a_persistent_connection_for_the_same_connection_config(): void
+    public function it_reuses_a_persistent_connection_for_the_same_connection_config(): void
     {
         $this->configureSqliteDatabase('main', 'persistent-main.sqlite');
 
@@ -67,7 +67,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_does_not_reuse_a_non_persistent_connection_for_the_same_connection_config(): void
+    public function it_does_not_reuse_a_non_persistent_connection_for_the_same_connection_config(): void
     {
         $this->configureSqliteDatabase('main', 'non-persistent-main.sqlite', persistent: false);
 
@@ -90,7 +90,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_does_not_reuse_a_persistent_connection_for_the_same_tag_with_a_different_connection_config(): void
+    public function it_does_not_reuse_a_persistent_connection_for_the_same_tag_with_a_different_connection_config(): void
     {
         $this->configureSqliteDatabase('main', 'first-main.sqlite');
 
@@ -115,7 +115,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_does_not_reuse_a_persistent_connection_when_only_the_password_differs(): void
+    public function it_does_not_reuse_a_persistent_connection_when_only_the_password_differs(): void
     {
         $initializer = new DatabaseInitializer();
         $method = new ReflectionMethod($initializer, 'getConnectionKey');
@@ -145,7 +145,7 @@ final class DatabaseInitializerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_it_reconnects_a_stale_persistent_connection_when_reusing_it(): void
+    public function it_reconnects_a_stale_persistent_connection_when_reusing_it(): void
     {
         $this->configureSqliteDatabase('main', 'stale-persistent-main.sqlite');
 

@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Tests\Signing;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;
@@ -16,7 +17,8 @@ final class SignerTest extends TestCase
     use CreatesSigner;
     use HasMoreIntegerAssertions;
 
-    public function test_good_signature(): void
+    #[Test]
+    public function good_signature(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -30,7 +32,8 @@ final class SignerTest extends TestCase
         $this->assertTrue($signer->verify($data, $signature));
     }
 
-    public function test_bad_signature(): void
+    #[Test]
+    public function bad_signature(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -47,7 +50,8 @@ final class SignerTest extends TestCase
         $this->assertFalse($signer->verify($tamperedData, $signature));
     }
 
-    public function test_different_algoritms(): void
+    #[Test]
+    public function different_algoritms(): void
     {
         $signer1 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -77,7 +81,8 @@ final class SignerTest extends TestCase
         $this->assertFalse($signer2->verify($data, $signature1));
     }
 
-    public function test_no_signing_key(): void
+    #[Test]
+    public function no_signing_key(): void
     {
         $this->expectException(SigningKeyWasInvalid::class);
 
@@ -90,7 +95,8 @@ final class SignerTest extends TestCase
         $signer->sign('important data');
     }
 
-    public function test_empty_data(): void
+    #[Test]
+    public function empty_data(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -104,7 +110,8 @@ final class SignerTest extends TestCase
         $this->assertTrue($signer->verify('', $signature));
     }
 
-    public function test_consistent_signature(): void
+    #[Test]
+    public function consistent_signature(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -120,7 +127,8 @@ final class SignerTest extends TestCase
         $this->assertEquals($signature1, $signature2);
     }
 
-    public function test_different_keys(): void
+    #[Test]
+    public function different_keys(): void
     {
         $signer1 = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -150,7 +158,8 @@ final class SignerTest extends TestCase
         $this->assertFalse($signer2->verify($data, $signature1));
     }
 
-    public function test_time_protection(): void
+    #[Test]
+    public function time_protection(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,
@@ -168,7 +177,8 @@ final class SignerTest extends TestCase
         $this->assertEqualsToMoreOrLess(0.3, $elapsed, margin: 0.015, windowsMargin: 0.025);
     }
 
-    public function test_time_protection_with_mock_clock(): void
+    #[Test]
+    public function time_protection_with_mock_clock(): void
     {
         $signer = $this->createSigner(new SigningConfig(
             algorithm: SigningAlgorithm::SHA256,

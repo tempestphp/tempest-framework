@@ -2,6 +2,7 @@
 
 namespace Tempest\Support\Tests\Json;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Json;
 use Tempest\Support\Json\Exception\JsonCouldNotBeDecoded;
@@ -11,7 +12,8 @@ use Tempest\Support\Str;
 
 final class JsonTest extends TestCase
 {
-    public function test_decode(): void
+    #[Test]
+    public function decode(): void
     {
         $actual = Json\decode('{
             "name": "azjezz/psl",
@@ -33,7 +35,8 @@ final class JsonTest extends TestCase
         );
     }
 
-    public function test_decode_throws_for_invalid_syntax(): void
+    #[Test]
+    public function decode_throws_for_invalid_syntax(): void
     {
         $this->expectException(JsonCouldNotBeDecoded::class);
         $this->expectExceptionMessage('The decoded property name is invalid.');
@@ -41,7 +44,8 @@ final class JsonTest extends TestCase
         Json\decode('{"\u0000": 1}', false);
     }
 
-    public function test_decode_malformed_utf8(): void
+    #[Test]
+    public function decode_malformed_utf8(): void
     {
         $this->expectException(JsonCouldNotBeDecoded::class);
         $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded.');
@@ -49,14 +53,16 @@ final class JsonTest extends TestCase
         Json\decode("\"\xC1\xBF\"");
     }
 
-    public function test_encode(): void
+    #[Test]
+    public function encode(): void
     {
         $actual = Json\encode(['a']);
 
         $this->assertSame('["a"]', $actual);
     }
 
-    public function test_pretty_encode(): void
+    #[Test]
+    public function pretty_encode(): void
     {
         $actual = Json\encode([
             'name' => 'azjezz/psl',
@@ -85,7 +91,8 @@ final class JsonTest extends TestCase
         $this->assertSame($json, $actual);
     }
 
-    public function test_encode_throws_for_malformed_utf8(): void
+    #[Test]
+    public function encode_throws_for_malformed_utf8(): void
     {
         $this->expectException(JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded.');
@@ -93,7 +100,8 @@ final class JsonTest extends TestCase
         Json\encode(["bad utf\xFF"]);
     }
 
-    public function test_encode_throws_with_nan(): void
+    #[Test]
+    public function encode_throws_with_nan(): void
     {
         $this->expectException(JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Inf and NaN cannot be JSON encoded.');
@@ -101,7 +109,8 @@ final class JsonTest extends TestCase
         Json\encode(Math\NAN);
     }
 
-    public function test_encode_throws_with_inf(): void
+    #[Test]
+    public function encode_throws_with_inf(): void
     {
         $this->expectException(JsonCouldNotBeEncoded::class);
         $this->expectExceptionMessage('Inf and NaN cannot be JSON encoded.');
@@ -109,12 +118,14 @@ final class JsonTest extends TestCase
         Json\encode(Math\INFINITY);
     }
 
-    public function test_encode_preserve_zero_fraction(): void
+    #[Test]
+    public function encode_preserve_zero_fraction(): void
     {
         $this->assertSame('1.0', Json\encode(1.0));
     }
 
-    public function test_is_valid(): void
+    #[Test]
+    public function is_valid(): void
     {
         $this->assertTrue(Json\is_valid('{"foo": "bar"}'));
         $this->assertTrue(Json\is_valid('"foo"'));
@@ -127,7 +138,8 @@ final class JsonTest extends TestCase
         $this->assertFalse(Json\is_valid(1));
     }
 
-    public function test_base64_encode_and_decode(): void
+    #[Test]
+    public function base64_encode_and_decode(): void
     {
         $data = [
             'name' => 'azjezz/psl',
@@ -143,7 +155,8 @@ final class JsonTest extends TestCase
         $this->assertSame($data, $decoded);
     }
 
-    public function test_base64_decode_failure(): void
+    #[Test]
+    public function base64_decode_failure(): void
     {
         $this->expectException(JsonCouldNotBeDecoded::class);
         $this->expectExceptionMessage('The provided base64 string is not valid.');

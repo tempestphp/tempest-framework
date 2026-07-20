@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Vite\ViteConfig;
 use Tempest\Vite\ViteConfigCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,14 +14,16 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViteConfigCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_outputs_json_default_config(): void
+    #[Test]
+    public function outputs_json_default_config(): void
     {
         $this->console
             ->call(ViteConfigCommand::class)
             ->assertSee('{"build_directory":"build","bridge_file_name":"vite-tempest","manifest":"manifest.json","entrypoints":[]}');
     }
 
-    public function test_outputs_json_custom_config(): void
+    #[Test]
+    public function outputs_json_custom_config(): void
     {
         $this->container->config(new ViteConfig(
             buildDirectory: 'build/website',

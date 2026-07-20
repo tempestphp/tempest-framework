@@ -38,7 +38,8 @@ use function Tempest\Mapper\map;
  */
 final class MapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_make_object_from_class_string(): void
+    #[Test]
+    public function make_object_from_class_string(): void
     {
         $author = make(Author::class)->from([
             'id' => 1,
@@ -49,7 +50,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->value);
     }
 
-    public function test_make_collection(): void
+    #[Test]
+    public function make_collection(): void
     {
         $authors = make(Author::class)
             ->collection()
@@ -65,7 +67,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $authors[0]->id->value);
     }
 
-    public function test_make_object_from_existing_object(): void
+    #[Test]
+    public function make_object_from_existing_object(): void
     {
         $author = Author::new(
             name: 'original',
@@ -81,7 +84,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->value);
     }
 
-    public function test_make_object_with_map_to(): void
+    #[Test]
+    public function make_object_with_map_to(): void
     {
         $author = Author::new(
             name: 'original',
@@ -97,7 +101,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->value);
     }
 
-    public function test_make_object_with_has_many_relation(): void
+    #[Test]
+    public function make_object_with_has_many_relation(): void
     {
         $author = make(Author::class)->from([
             'name' => 'test',
@@ -114,7 +119,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $author->books[0]->author->name);
     }
 
-    public function test_make_object_with_one_to_one_relation(): void
+    #[Test]
+    public function make_object_with_one_to_one_relation(): void
     {
         $book = make(Book::class)->from([
             'title' => 'test',
@@ -128,7 +134,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $book->author->books[0]->title);
     }
 
-    public function test_make_object_from_array_with_object_relation(): void
+    #[Test]
+    public function make_object_from_array_with_object_relation(): void
     {
         $book = map([
             'title' => 'Book Title',
@@ -144,14 +151,16 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(AuthorType::B, $book->author->type);
     }
 
-    public function test_can_make_non_strict_object_with_uninitialized_values(): void
+    #[Test]
+    public function can_make_non_strict_object_with_uninitialized_values(): void
     {
         $author = make(Author::class)->from([]);
 
         $this->assertFalse(isset($author->name));
     }
 
-    public function test_make_object_with_missing_values_throws_exception_for_strict_property(): void
+    #[Test]
+    public function make_object_with_missing_values_throws_exception_for_strict_property(): void
     {
         try {
             make(ObjectWithStrictProperty::class)->from([]);
@@ -161,7 +170,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_make_object_with_missing_values_throws_exception_for_strict_class(): void
+    #[Test]
+    public function make_object_with_missing_values_throws_exception_for_strict_class(): void
     {
         try {
             make(ObjectWithStrictOnClass::class)->from([]);
@@ -170,7 +180,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_caster_on_field(): void
+    #[Test]
+    public function caster_on_field(): void
     {
         $object = make(ObjectFactoryA::class)
             ->from([
@@ -180,7 +191,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('casted', $object->prop);
     }
 
-    public function test_map_from_attribute(): void
+    #[Test]
+    public function map_from_attribute(): void
     {
         $object = map([
             'name' => 'Guillaume',
@@ -190,7 +202,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Guillaume', $object->fullName);
     }
 
-    public function test_map_to_attribute(): void
+    #[Test]
+    public function map_to_attribute(): void
     {
         $array = map(new ObjectWithMapToAttribute(
             fullName: 'Guillaume',
@@ -199,7 +212,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(['name' => 'Guillaume'], $array);
     }
 
-    public function test_map_to_handle_name_collisions(): void
+    #[Test]
+    public function map_to_handle_name_collisions(): void
     {
         $array = map(new ObjectWithMapToCollisions(
             first_name: 'my first name',
@@ -217,7 +231,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_map_to_array_with_json_serializable(): void
+    #[Test]
+    public function map_to_array_with_json_serializable(): void
     {
         $array = map(new ObjectWithMapToCollisionsJsonSerializable(
             first_name: 'my first name',
@@ -234,7 +249,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_nested_value_object_mapping(): void
+    #[Test]
+    public function nested_value_object_mapping(): void
     {
         $data = [
             'name' => [
@@ -249,7 +265,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Roose', $person->name->last);
     }
 
-    public function test_object_to_array_mapper_use_serializers(): void
+    #[Test]
+    public function object_to_array_mapper_use_serializers(): void
     {
         $this->assertSame(
             expected: [
@@ -267,7 +284,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_map_two_way(): void
+    #[Test]
+    public function map_two_way(): void
     {
         $object = new ObjectThatShouldUseCasters(
             name: 'Guillaume',
@@ -325,7 +343,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('2024-12-01 10:10:10', $object->date->format('yyyy-MM-dd HH:mm:ss'));
     }
 
-    public function test_multiple_map_from_source(): void
+    #[Test]
+    public function multiple_map_from_source(): void
     {
         $object = map(['name' => 'Guillaume'])->to(ObjectWithMultipleMapFrom::class);
         $this->assertSame('Guillaume', $object->fullName);
@@ -334,7 +353,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Guillaume', $object->fullName);
     }
 
-    public function test_multiple_map_from_take_first_occurence(): void
+    #[Test]
+    public function multiple_map_from_take_first_occurence(): void
     {
         $data = [
             'name' => 'Guillaume',
@@ -345,7 +365,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Guillaume', $object->fullName);
     }
 
-    public function test_multiple_map_from_fallback_to_property_name(): void
+    #[Test]
+    public function multiple_map_from_fallback_to_property_name(): void
     {
         $object = map([
             'fullName' => 'Guillaume',
@@ -355,7 +376,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Guillaume', $object->fullName);
     }
 
-    public function test_nested_object_to_array_casting(): void
+    #[Test]
+    public function nested_object_to_array_casting(): void
     {
         $object = new NestedObjectA(
             items: [
@@ -377,7 +399,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_array_of_objects_to_array(): void
+    #[Test]
+    public function array_of_objects_to_array(): void
     {
         $objects = [
             new ObjectA('a', 'b'),
@@ -402,7 +425,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_cast_with_and_serialize_with_from_interface(): void
+    #[Test]
+    public function cast_with_and_serialize_with_from_interface(): void
     {
         $object = make(ObjectWithInterfaceTypedProperties::class)->from([
             'castable' => 'test-value',

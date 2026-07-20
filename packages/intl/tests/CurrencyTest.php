@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Currency;
 
@@ -9,7 +10,8 @@ use function Tempest\Support\str;
 
 final class CurrencyTest extends TestCase
 {
-    public function test_parse(): void
+    #[Test]
+    public function parse(): void
     {
         $this->assertSame(Currency::EUR, Currency::parse('EUR'));
         $this->assertSame(Currency::EUR, Currency::parse(' EUR   '));

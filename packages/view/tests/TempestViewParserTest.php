@@ -4,6 +4,7 @@ namespace Tempest\View\Tests;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Exceptions\ClosingTagWasInvalid;
 use Tempest\View\Parser\TempestViewLexer;
@@ -14,7 +15,8 @@ use Tempest\View\Parser\TokenType;
 
 final class TempestViewParserTest extends TestCase
 {
-    public function test_parser(): void
+    #[Test]
+    public function parser(): void
     {
         $tokens = new TokenCollection([
             new Token('<html', TokenType::OPEN_TAG_START),
@@ -38,7 +40,8 @@ final class TempestViewParserTest extends TestCase
         HTML, $parsed->compile());
     }
 
-    public function test_token_collection_treats_null_as_an_existing_offset(): void
+    #[Test]
+    public function token_collection_treats_null_as_an_existing_offset(): void
     {
         $tokens = new TokenCollection();
         $tokens['nullable'] = null;
@@ -47,7 +50,8 @@ final class TempestViewParserTest extends TestCase
         $this->assertNull($tokens['nullable']);
     }
 
-    public function test_parse_self_closing_tag_with_attributes(): void
+    #[Test]
+    public function parse_self_closing_tag_with_attributes(): void
     {
         $tokens = new TokenCollection([
             new Token('<x-foo', TokenType::OPEN_TAG_START),
@@ -65,7 +69,8 @@ final class TempestViewParserTest extends TestCase
         HTML, $parsed->compile());
     }
 
-    public function test_self_closing_tags_with_attributes(): void
+    #[Test]
+    public function self_closing_tags_with_attributes(): void
     {
         $tokens = new TempestViewLexer('<x-foo foo="bar"/><x-bar foo="bar"/>')->lex();
 
@@ -76,7 +81,8 @@ final class TempestViewParserTest extends TestCase
         HTML, $ast->compile());
     }
 
-    public function test_invalid_closing_tag(): void
+    #[Test]
+    public function invalid_closing_tag(): void
     {
         $tokens = new TempestViewLexer('<a></span></a>')->lex();
 
@@ -85,7 +91,8 @@ final class TempestViewParserTest extends TestCase
         new TempestViewParser($tokens)->parse();
     }
 
-    public function test_invalid_closing_tag_ignores_commented_out_code(): void
+    #[Test]
+    public function invalid_closing_tag_ignores_commented_out_code(): void
     {
         $tokens = new TempestViewLexer(<<<HTML
         <h1>
@@ -103,7 +110,8 @@ final class TempestViewParserTest extends TestCase
         HTML, $compiled);
     }
 
-    public function test_doctype(): void
+    #[Test]
+    public function doctype(): void
     {
         $tokens = new TokenCollection([
             new Token('<!doctype html>', TokenType::DOCTYPE),
@@ -119,7 +127,8 @@ final class TempestViewParserTest extends TestCase
         HTML, $parsed->compile());
     }
 
-    public function test_void_tags(): void
+    #[Test]
+    public function void_tags(): void
     {
         $html = <<<'HTML'
         <meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/main.css" rel="stylesheet"><div></div>
@@ -133,7 +142,8 @@ final class TempestViewParserTest extends TestCase
         $this->assertSame($html, $ast->compile());
     }
 
-    public function test_php_within_tag(): void
+    #[Test]
+    public function php_within_tag(): void
     {
         $tokens = new TokenCollection([
             new Token('<div', TokenType::OPEN_TAG_START),
@@ -151,14 +161,16 @@ final class TempestViewParserTest extends TestCase
     }
 
     #[DataProvider('data')]
-    public function test_parser_from_lexed_result(string $html): void
+    #[Test]
+    public function parser_from_lexed_result(string $html): void
     {
         $parsed = new TempestViewParser(new TempestViewLexer($html)->lex())->parse();
 
         $this->assertSame($html, $parsed->compile());
     }
 
-    public function test_parse_xml(): void
+    #[Test]
+    public function parse_xml(): void
     {
         $parsed = new TempestViewParser(new TempestViewLexer('<?xml version="1.0" encoding="UTF-8" ?>')->lex())->parse();
 

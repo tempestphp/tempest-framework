@@ -3,6 +3,7 @@
 namespace Tempest\Storage\Tests;
 
 use League\Flysystem\UnableToWriteFile;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\GenericStorage;
@@ -19,7 +20,8 @@ final class StorageTest extends TestCase
         Filesystem\delete_directory($this->fixtures);
     }
 
-    public function test_storage_write(): void
+    #[Test]
+    public function storage_write(): void
     {
         $storage = new GenericStorage(new LocalStorageConfig(
             path: $this->fixtures,
@@ -31,7 +33,8 @@ final class StorageTest extends TestCase
         $this->assertSame('bar', Filesystem\read_file($this->fixtures . 'foo.txt'));
     }
 
-    public function test_storage_read(): void
+    #[Test]
+    public function storage_read(): void
     {
         Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
 
@@ -42,7 +45,8 @@ final class StorageTest extends TestCase
         $this->assertSame('baz', $storage->read('foo.txt'));
     }
 
-    public function test_storage_list(): void
+    #[Test]
+    public function storage_list(): void
     {
         Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
 
@@ -53,7 +57,8 @@ final class StorageTest extends TestCase
         $this->assertCount(1, $storage->list()->toArray());
     }
 
-    public function test_storage_list_deep(): void
+    #[Test]
+    public function storage_list_deep(): void
     {
         Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
         Filesystem\write_file($this->fixtures . 'dir/baz.txt', 'bar');
@@ -66,7 +71,8 @@ final class StorageTest extends TestCase
         $this->assertCount(1, $storage->list(location: 'dir')->toArray());
     }
 
-    public function test_storage_clean_directory(): void
+    #[Test]
+    public function storage_clean_directory(): void
     {
         Filesystem\write_file($this->fixtures . 'foo.txt', 'baz');
         Filesystem\write_file($this->fixtures . 'dir/foo.txt', 'baz');
@@ -82,7 +88,8 @@ final class StorageTest extends TestCase
         $this->assertEmpty(glob($this->fixtures . '*'));
     }
 
-    public function test_storage_readonly(): void
+    #[Test]
+    public function storage_readonly(): void
     {
         $this->expectException(UnableToWriteFile::class);
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Process;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Process\PendingProcess;
@@ -18,21 +19,24 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
     #[TestWith(['*'])]
     #[TestWith(['echo *'])]
     #[TestWith(['echo "hello"'])]
-    public function test_expectation_succeeds_when_command_is_ran(string $pattern): void
+    #[Test]
+    public function expectation_succeeds_when_command_is_ran(string $pattern): void
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan($pattern);
     }
 
-    public function test_expectation_succeeds_when_command_is_ran_and_callback_returns_true(): void
+    #[Test]
+    public function expectation_succeeds_when_command_is_ran_and_callback_returns_true(): void
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('echo *', fn (ProcessResult $result) => $result->output === "hello\n");
     }
 
-    public function test_expectation_fails_when_specified_command_is_not_ran(): void
+    #[Test]
+    public function expectation_fails_when_specified_command_is_not_ran(): void
     {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Expected process with command "not-ran" to be executed, but it was not.');
@@ -42,7 +46,8 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->assertCommandRan('not-ran');
     }
 
-    public function test_expectation_fails_when_command_is_ran_and_callback_returns_false(): void
+    #[Test]
+    public function expectation_fails_when_command_is_ran_and_callback_returns_false(): void
     {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Callback for command "echo "hello"" returned false.');
@@ -52,14 +57,16 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->assertCommandRan('echo *', fn (ProcessResult $result) => $result->output !== "hello\n");
     }
 
-    public function test_expectation_succeeds_when_callback_returns_nothing(): void
+    #[Test]
+    public function expectation_succeeds_when_callback_returns_nothing(): void
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
         $this->process->assertCommandRan('echo *', function (): void {});
     }
 
-    public function test_expectation_succeeds_when_callback_returns_true(): void
+    #[Test]
+    public function expectation_succeeds_when_callback_returns_true(): void
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
@@ -67,7 +74,8 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->assertRan(fn (PendingProcess $process): bool => $process->command === 'echo "hello"');
     }
 
-    public function test_returning_false_from_callback_fails_expectation(): void
+    #[Test]
+    public function returning_false_from_callback_fails_expectation(): void
     {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Callback for command "echo "hello"" returned false.');
@@ -78,7 +86,8 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         $this->process->assertRan(fn (PendingProcess $_process): bool => false);
     }
 
-    public function test_returning_true_from_callback_skips_other_iterations(): void
+    #[Test]
+    public function returning_true_from_callback_skips_other_iterations(): void
     {
         $this->process->mockProcessResult('echo *', "hello\n");
         $this->executor->run('echo "hello"');
@@ -93,7 +102,8 @@ final class ProcessTesterAssertRanTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_never_returning_fails_expectation(): void
+    #[Test]
+    public function never_returning_fails_expectation(): void
     {
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Could not find a matching command for the provided callback.');

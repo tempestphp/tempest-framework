@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsUppercase;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsUppercase;
  */
 final class IsUppercaseTest extends TestCase
 {
-    public function test_uppercase(): void
+    #[Test]
+    public function uppercase(): void
     {
         $rule = new IsUppercase();
 

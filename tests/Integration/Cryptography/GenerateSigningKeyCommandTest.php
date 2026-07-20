@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Cryptography;
 
 use Dotenv\Dotenv;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Cryptography\GenerateSigningKeyCommand;
 use Tempest\Support\Filesystem;
@@ -26,7 +27,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_creates_dot_env(): void
+    #[Test]
+    public function creates_dot_env(): void
     {
         $this->assertFalse(Filesystem\is_file(root_path('.env')));
         $this->console->call(GenerateSigningKeyCommand::class)->assertSuccess();
@@ -39,7 +41,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertIsString($env['SIGNING_KEY']);
     }
 
-    public function test_updates_existing(): void
+    #[Test]
+    public function updates_existing(): void
     {
         Filesystem\write_file(root_path('.env'), 'SIGNING_KEY=abc');
         $this->console->call(GenerateSigningKeyCommand::class)->assertSuccess();
@@ -52,7 +55,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertNotSame('abc', $env['SIGNING_KEY']);
     }
 
-    public function test_add_if_missing(): void
+    #[Test]
+    public function add_if_missing(): void
     {
         Filesystem\create_file(root_path('.env'));
         $this->console->call(GenerateSigningKeyCommand::class)->assertSuccess();
@@ -65,7 +69,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertIsString($env['SIGNING_KEY']);
     }
 
-    public function test_override_flag_true_replaces_existing_key(): void
+    #[Test]
+    public function override_flag_true_replaces_existing_key(): void
     {
         Filesystem\write_file(root_path('.env'), 'SIGNING_KEY=original_key');
         $this->console->call(GenerateSigningKeyCommand::class, ['override' => true])->assertSuccess();
@@ -79,7 +84,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertIsString($env['SIGNING_KEY']);
     }
 
-    public function test_override_flag_false_preserves_existing_key(): void
+    #[Test]
+    public function override_flag_false_preserves_existing_key(): void
     {
         Filesystem\write_file(root_path('.env'), 'SIGNING_KEY=original_key');
         $this->console->call(GenerateSigningKeyCommand::class, ['override' => false])->assertSuccess();
@@ -92,7 +98,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertSame('original_key', $env['SIGNING_KEY']);
     }
 
-    public function test_override_flag_false_still_adds_key_when_missing(): void
+    #[Test]
+    public function override_flag_false_still_adds_key_when_missing(): void
     {
         Filesystem\write_file(root_path('.env'), 'OTHER_VAR=value');
         $this->console->call(GenerateSigningKeyCommand::class, ['override' => false])->assertSuccess();
@@ -108,7 +115,8 @@ final class GenerateSigningKeyCommandTest extends FrameworkIntegrationTestCase
         $this->assertIsString($env['SIGNING_KEY']);
     }
 
-    public function test_override_flag_preserves_other_env_variables(): void
+    #[Test]
+    public function override_flag_preserves_other_env_variables(): void
     {
         Filesystem\write_file(root_path('.env'), "APP_NAME=Tempest\nSIGNING_KEY=old_key\nDATABASE_URL=sqlite://db.sqlite");
         $this->console->call(GenerateSigningKeyCommand::class, ['override' => true])->assertSuccess();

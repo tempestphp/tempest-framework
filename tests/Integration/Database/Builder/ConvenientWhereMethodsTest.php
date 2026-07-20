@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\DateTime;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -14,7 +15,8 @@ use function Tempest\Database\query;
  */
 final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 {
-    public function test_select_where_in(): void
+    #[Test]
+    public function select_where_in(): void
     {
         $query = query('books')
             ->select()
@@ -27,7 +29,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 'mystery', 'thriller'], $query->bindings);
     }
 
-    public function test_select_where_not_in(): void
+    #[Test]
+    public function select_where_not_in(): void
     {
         $query = query('books')
             ->select()
@@ -40,7 +43,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
-    public function test_select_where_between(): void
+    #[Test]
+    public function select_where_between(): void
     {
         $query = query('books')
             ->select()
@@ -53,7 +57,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([2020, 2024], $query->bindings);
     }
 
-    public function test_select_where_not_between(): void
+    #[Test]
+    public function select_where_not_between(): void
     {
         $query = query('books')
             ->select()
@@ -66,7 +71,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([10.0, 50.0], $query->bindings);
     }
 
-    public function test_select_where_null(): void
+    #[Test]
+    public function select_where_null(): void
     {
         $query = query('books')
             ->select()
@@ -79,7 +85,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_select_where_not_null(): void
+    #[Test]
+    public function select_where_not_null(): void
     {
         $query = query('books')
             ->select()
@@ -92,7 +99,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_select_where_not(): void
+    #[Test]
+    public function select_where_not(): void
     {
         $query = query('books')
             ->select()
@@ -105,7 +113,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft'], $query->bindings);
     }
 
-    public function test_select_where_like(): void
+    #[Test]
+    public function select_where_like(): void
     {
         $query = query('books')
             ->select()
@@ -118,7 +127,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%fantasy%'], $query->bindings);
     }
 
-    public function test_select_where_not_like(): void
+    #[Test]
+    public function select_where_not_like(): void
     {
         $query = query('books')
             ->select()
@@ -131,7 +141,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['%test%'], $query->bindings);
     }
 
-    public function test_update_where_in(): void
+    #[Test]
+    public function update_where_in(): void
     {
         $query = query('books')
             ->update(title: 'New Title')
@@ -144,7 +155,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['New Title', 'fiction', 'mystery'], $query->bindings);
     }
 
-    public function test_update_where_between(): void
+    #[Test]
+    public function update_where_between(): void
     {
         $query = query('books')
             ->update(status: 'updated')
@@ -157,7 +169,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['updated', 3.0, 5.0], $query->bindings);
     }
 
-    public function test_update_where_null(): void
+    #[Test]
+    public function update_where_null(): void
     {
         $query = query('books')
             ->update(status: 'archived')
@@ -170,7 +183,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['archived'], $query->bindings);
     }
 
-    public function test_delete_where_in(): void
+    #[Test]
+    public function delete_where_in(): void
     {
         $query = query('books')
             ->delete()
@@ -183,7 +197,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', 'archived'], $query->bindings);
     }
 
-    public function test_delete_where_not_null(): void
+    #[Test]
+    public function delete_where_not_null(): void
     {
         $query = query('books')
             ->delete()
@@ -196,7 +211,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([], $query->bindings);
     }
 
-    public function test_complex_chaining_with_convenient_methods(): void
+    #[Test]
+    public function complex_chaining_with_convenient_methods(): void
     {
         $query = query('books')
             ->select()
@@ -213,7 +229,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['fiction', 'mystery', 3.0, 5.0, 'draft', '%bestseller%'], $query->bindings);
     }
 
-    public function test_convenient_methods_in_where_groups(): void
+    #[Test]
+    public function convenient_methods_in_where_groups(): void
     {
         $query = query('books')
             ->select()
@@ -236,7 +253,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([true, 'fiction', 'mystery', 4.0, 5.0, '%draft%'], $query->bindings);
     }
 
-    public function test_nested_where_groups_with_convenient_methods(): void
+    #[Test]
+    public function nested_where_groups_with_convenient_methods(): void
     {
         $query = query('books')
             ->select()
@@ -260,7 +278,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
 
     // Note: Validation error tests removed since API changed to two separate arguments
 
-    public function test_all_convenient_methods_together(): void
+    #[Test]
+    public function all_convenient_methods_together(): void
     {
         $query = query('books')
             ->select()
@@ -312,7 +331,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_where_between_with_tempest_datetime(): void
+    #[Test]
+    public function where_between_with_tempest_datetime(): void
     {
         $startDate = DateTime::parse('2024-01-01 00:00:00');
         $endDate = DateTime::parse('2024-12-31 23:59:59');
@@ -328,7 +348,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
-    public function test_where_between_with_mixed_datetime_types(): void
+    #[Test]
+    public function where_between_with_mixed_datetime_types(): void
     {
         $startDate = DateTime::parse('2024-01-01 00:00:00');
         $endDate = '2024-12-31 23:59:59';
@@ -344,7 +365,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
-    public function test_where_not_between_with_tempest_datetime(): void
+    #[Test]
+    public function where_not_between_with_tempest_datetime(): void
     {
         $startDate = DateTime::parse('2024-06-01 00:00:00');
         $endDate = DateTime::parse('2024-08-31 23:59:59');
@@ -360,7 +382,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
-    public function test_or_where_between_with_tempest_datetime(): void
+    #[Test]
+    public function or_where_between_with_tempest_datetime(): void
     {
         $startDate = DateTime::parse('2024-01-01 00:00:00');
         $endDate = DateTime::parse('2024-03-31 23:59:59');
@@ -377,7 +400,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['active', $startDate, $endDate], $query->bindings);
     }
 
-    public function test_or_where_not_between_with_tempest_datetime(): void
+    #[Test]
+    public function or_where_not_between_with_tempest_datetime(): void
     {
         $startDate = DateTime::parse('2024-07-01 00:00:00');
         $endDate = DateTime::parse('2024-09-30 23:59:59');
@@ -394,7 +418,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame(['high', $startDate, $endDate], $query->bindings);
     }
 
-    public function test_where_between_with_datetime_convenience_methods(): void
+    #[Test]
+    public function where_between_with_datetime_convenience_methods(): void
     {
         $today = DateTime::now();
         $startDate = $today->startOfDay();
@@ -411,7 +436,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
-    public function test_where_between_with_datetime_start_and_end_of_month(): void
+    #[Test]
+    public function where_between_with_datetime_start_and_end_of_month(): void
     {
         $today = DateTime::now();
         $startDate = $today->startOfMonth();
@@ -428,7 +454,8 @@ final class ConvenientWhereMethodsTest extends FrameworkIntegrationTestCase
         $this->assertSame([$startDate, $endDate], $query->bindings);
     }
 
-    public function test_where_between_with_datetime_start_and_end_of_week(): void
+    #[Test]
+    public function where_between_with_datetime_start_and_end_of_week(): void
     {
         // Use a safe date in the middle of the month to avoid edge cases
         $baseDate = DateTime::parse('2024-08-15 12:00:00');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Vite\ViteConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -21,7 +22,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         $this->vite->setRootDirectory(__DIR__ . '/Fixtures/tmp');
     }
 
-    public function test_dev_entrypoint(): void
+    #[Test]
+    public function dev_entrypoint(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -54,7 +56,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_dev_entrypoints(): void
+    #[Test]
+    public function dev_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -87,7 +90,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_dev_entrypoints_from_config(): void
+    #[Test]
+    public function dev_entrypoints_from_config(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -120,7 +124,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_dev_entrypoints_from_config_and_react_refresh_from_bridgefile(): void
+    #[Test]
+    public function dev_entrypoints_from_config_and_react_refresh_from_bridgefile(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -163,7 +168,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_production_entrypoint_from_config(): void
+    #[Test]
+    public function production_entrypoint_from_config(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -191,7 +197,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_production_entrypoint(): void
+    #[Test]
+    public function production_entrypoint(): void
     {
         $this->vite->call(
             callback: function (): void {
@@ -219,7 +226,8 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_production_entrypoints(): void
+    #[Test]
+    public function production_entrypoints(): void
     {
         $this->vite->call(
             callback: function (): void {

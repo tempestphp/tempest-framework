@@ -2,11 +2,13 @@
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_show_meta_for_all_components(): void
+    #[Test]
+    public function show_meta_for_all_components(): void
     {
         $this->console
             ->call('meta:view-component')
@@ -21,7 +23,8 @@ final class MetaViewComponentCommandTest extends FrameworkIntegrationTestCase
             ->assertNotSee('$this');
     }
 
-    public function test_show_meta_for_view_component(): void
+    #[Test]
+    public function show_meta_for_view_component(): void
     {
         $this->console
             ->call('meta:view-component x-view-component-with-named-slots')

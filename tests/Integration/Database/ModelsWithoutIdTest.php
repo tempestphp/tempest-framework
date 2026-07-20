@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Exceptions\ModelDidNotHavePrimaryColumn;
 use Tempest\Database\HasOne;
@@ -22,7 +23,8 @@ use function Tempest\Database\query;
  */
 final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
 {
-    public function test_update_model_without_id_with_specific_conditions(): void
+    #[Test]
+    public function update_model_without_id_with_specific_conditions(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
@@ -45,7 +47,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('Himmel was here', $updatedLog->message);
     }
 
-    public function test_delete_operations_on_models_without_id(): void
+    #[Test]
+    public function delete_operations_on_models_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
@@ -73,7 +76,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('IMPORTANT', $remaining[0]->level);
     }
 
-    public function test_model_without_id_with_unique_constraints(): void
+    #[Test]
+    public function model_without_id_with_unique_constraints(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateCacheEntryMigration::class);
 
@@ -95,7 +99,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         $this->assertSame('updated_flame_data', $updatedData->cache_value);
     }
 
-    public function test_relationship_methods_throw_for_models_without_id(): void
+    #[Test]
+    public function relationship_methods_throw_for_models_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
@@ -105,7 +110,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         query(LogEntry::class)->findById(id: 1);
     }
 
-    public function test_get_method_throws_for_models_without_id(): void
+    #[Test]
+    public function get_method_throws_for_models_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
@@ -115,7 +121,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         query(LogEntry::class)->get(id: 1);
     }
 
-    public function test_update_or_create_throws_for_models_without_id(): void
+    #[Test]
+    public function update_or_create_throws_for_models_without_id(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateLogEntryMigration::class);
 
@@ -128,7 +135,8 @@ final class ModelsWithoutIdTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_model_with_mixed_id_and_non_id_properties(): void
+    #[Test]
+    public function model_with_mixed_id_and_non_id_properties(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreateMixedModelMigration::class);
 

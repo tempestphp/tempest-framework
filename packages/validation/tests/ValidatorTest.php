@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationFailed;
@@ -36,7 +37,8 @@ final class ValidatorTest extends TestCase
         get => new Validator(new NullTranslator());
     }
 
-    public function test_validate(): void
+    #[Test]
+    public function validate(): void
     {
         try {
             $this->validator->validateObject(new ObjectToBeValidated(name: 'a'));
@@ -51,14 +53,16 @@ final class ValidatorTest extends TestCase
         }
     }
 
-    public function test_validate_passes_with_valid_object(): void
+    #[Test]
+    public function validate_passes_with_valid_object(): void
     {
         $this->validator->validateObject(new ObjectToBeValidated(name: 'ab'));
 
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_validate_value_for_property_sets_field_and_value(): void
+    #[Test]
+    public function validate_value_for_property_sets_field_and_value(): void
     {
         $property = new ClassReflector(ValidateObjectA::class)->getProperty('title');
 
@@ -69,21 +73,24 @@ final class ValidatorTest extends TestCase
         $this->assertSame(123, $failingRules[0]->value);
     }
 
-    public function test_validate_value(): void
+    #[Test]
+    public function validate_value(): void
     {
         $failingRules = $this->validator->validateValue('a', [new IsEmail()]);
 
         $this->assertCount(1, $failingRules);
     }
 
-    public function test_closure_fails_with_false_response(): void
+    #[Test]
+    public function closure_fails_with_false_response(): void
     {
         $failingRules = $this->validator->validateValue('a', fn (mixed $_) => false);
 
         $this->assertCount(1, $failingRules);
     }
 
-    public function test_closure_fails_with_string_response(): void
+    #[Test]
+    public function closure_fails_with_string_response(): void
     {
         $failingRules = $this->validator->validateValue('a', fn (mixed $_) => 'I expected b');
 
@@ -94,14 +101,16 @@ final class ValidatorTest extends TestCase
         $this->assertSame('I expected b', $rule->getErrorMessage());
     }
 
-    public function test_get_error_message_uses_custom_error_message_from_failing_rule(): void
+    #[Test]
+    public function get_error_message_uses_custom_error_message_from_failing_rule(): void
     {
         $failingRules = $this->validator->validateValue('a', fn (mixed $_) => 'I expected b');
 
         $this->assertSame('I expected b', $this->validator->getErrorMessage($failingRules[0]));
     }
 
-    public function test_get_error_message_does_not_require_translator_for_custom_error_message(): void
+    #[Test]
+    public function get_error_message_does_not_require_translator_for_custom_error_message(): void
     {
         $validator = new Validator();
         $failingRules = $validator->validateValue('a', fn (mixed $_) => 'I expected b');
@@ -109,7 +118,8 @@ final class ValidatorTest extends TestCase
         $this->assertSame('I expected b', $validator->getErrorMessage($failingRules[0]));
     }
 
-    public function test_validation_failed_can_be_created_from_messages(): void
+    #[Test]
+    public function validation_failed_can_be_created_from_messages(): void
     {
         $validationFailed = ValidationFailed::withMessages([
             'credential' => 'Passkey not valid',
@@ -133,7 +143,8 @@ final class ValidatorTest extends TestCase
         $this->assertSame('Email domain is not allowed', $this->validator->getErrorMessage($validationFailed->failingRules['email'][1]));
     }
 
-    public function test_validation_failed_message_includes_error_messages(): void
+    #[Test]
+    public function validation_failed_message_includes_error_messages(): void
     {
         $validationFailed = ValidationFailed::withMessages([
             'credential' => 'Passkey not valid',
@@ -153,14 +164,16 @@ final class ValidatorTest extends TestCase
         );
     }
 
-    public function test_validation_failed_message_omits_error_messages_when_empty(): void
+    #[Test]
+    public function validation_failed_message_omits_error_messages_when_empty(): void
     {
         $validationFailed = new ValidationFailed(failingRules: []);
 
         $this->assertSame('Validation failed.', $validationFailed->getMessage());
     }
 
-    public function test_validation_failed_provides_error_messages_as_context(): void
+    #[Test]
+    public function validation_failed_provides_error_messages_as_context(): void
     {
         $validationFailed = ValidationFailed::withMessages([
             'email' => 'Email is already taken',
@@ -170,7 +183,8 @@ final class ValidatorTest extends TestCase
         $this->assertSame([], new ValidationFailed(failingRules: [])->context());
     }
 
-    public function test_closure_passes_with_null_response(): void
+    #[Test]
+    public function closure_passes_with_null_response(): void
     {
         $validator = $this->validator;
         $validator->validateValue('a', fn (mixed $_) => null);
@@ -178,7 +192,8 @@ final class ValidatorTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_closure_passes_with_true_response(): void
+    #[Test]
+    public function closure_passes_with_true_response(): void
     {
         $validator = $this->validator;
         $validator->validateValue('a', fn (mixed $_) => true);
@@ -186,7 +201,8 @@ final class ValidatorTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_closure_passes(): void
+    #[Test]
+    public function closure_passes(): void
     {
         $validator = $this->validator;
 
@@ -197,7 +213,8 @@ final class ValidatorTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function test_nested_property_validation(): void
+    #[Test]
+    public function nested_property_validation(): void
     {
         $validator = $this->validator;
 
@@ -245,7 +262,8 @@ final class ValidatorTest extends TestCase
         $this->assertEmpty($failingRules);
     }
 
-    public function test_nested_property_validation_with_dotted_keys(): void
+    #[Test]
+    public function nested_property_validation_with_dotted_keys(): void
     {
         $validator = $this->validator;
 
@@ -269,7 +287,8 @@ final class ValidatorTest extends TestCase
         $this->assertCount(4, $failingRules);
     }
 
-    public function test_validation_infers_string_rule_from_property_type(): void
+    #[Test]
+    public function validation_infers_string_rule_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => (object) []]);
 
@@ -277,7 +296,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_int_rule_from_property_type(): void
+    #[Test]
+    public function validation_infers_int_rule_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithIntProp::class, ['prop' => 'a']);
 
@@ -285,7 +305,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsInteger::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_float_rule_from_property_type(): void
+    #[Test]
+    public function validation_infers_float_rule_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithFloatProp::class, ['prop' => 'a']);
 
@@ -293,7 +314,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsFloat::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_bool_rule_from_property_type(): void
+    #[Test]
+    public function validation_infers_bool_rule_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithBoolProp::class, ['prop' => 'a']);
 
@@ -301,7 +323,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsBoolean::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_enum_rule_from_property_type(): void
+    #[Test]
+    public function validation_infers_enum_rule_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithEnumProp::class, ['prop' => 'a']);
 
@@ -309,7 +332,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsEnum::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_not_null_from_scalar_property_type(): void
+    #[Test]
+    public function validation_infers_not_null_from_scalar_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => null]);
 
@@ -317,7 +341,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_validation_infers_not_null_from_property_type(): void
+    #[Test]
+    public function validation_infers_not_null_from_property_type(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithObjectProperty::class, ['prop' => null]);
 
@@ -325,14 +350,16 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsNotNull::class, $failingRules['prop'][0]->rule);
     }
 
-    public function test_skip_validation_attribute(): void
+    #[Test]
+    public function skip_validation_attribute(): void
     {
         $failingRules = $this->validator->validateValuesForClass(ObjectWithSkipValidation::class, []);
 
         $this->assertEmpty($failingRules);
     }
 
-    public function test_validate_values_some_invalid(): void
+    #[Test]
+    public function validate_values_some_invalid(): void
     {
         $failingRules = $this->validator->validateValues(
             [
@@ -351,7 +378,8 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsEmail::class, $failingRules['email'][0]->rule);
     }
 
-    public function test_validate_values_all_valid(): void
+    #[Test]
+    public function validate_values_all_valid(): void
     {
         $failingRules = $this->validator->validateValues(
             [

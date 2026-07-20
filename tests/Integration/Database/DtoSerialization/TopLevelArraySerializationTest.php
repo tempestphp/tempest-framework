@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\DtoSerialization;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Casters\DataTransferObjectCaster;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -19,7 +20,8 @@ use function Tempest\Database\query;
 
 final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
 {
-    public function test_top_level_array_of_simple_dtos_serialization(): void
+    #[Test]
+    public function top_level_array_of_simple_dtos_serialization(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '001_array_containers';
@@ -61,7 +63,8 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_top_level_array_of_nested_dtos_serialization(): void
+    #[Test]
+    public function top_level_array_of_nested_dtos_serialization(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '002_array_containers_nested';
@@ -104,7 +107,8 @@ final class TopLevelArraySerializationTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_empty_top_level_array(): void
+    #[Test]
+    public function empty_top_level_array(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, new class implements MigratesUp {
             public string $name = '003_array_containers_empty';

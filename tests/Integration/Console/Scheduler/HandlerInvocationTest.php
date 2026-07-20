@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Schedule;
@@ -16,7 +17,8 @@ use Tempest\Reflection\MethodReflector;
  */
 final class HandlerInvocationTest extends TestCase
 {
-    public function test_name_gets_constructed_properly(): void
+    #[Test]
+    public function name_gets_constructed_properly(): void
     {
         $invocation = new ScheduledInvocation(
             schedule: new Schedule(Every::DAY),

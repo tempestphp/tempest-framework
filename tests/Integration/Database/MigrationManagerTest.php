@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\MigratesDown;
 use Tempest\Database\MigratesUp;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -21,7 +22,8 @@ use function Tempest\Database\query;
  */
 final class MigrationManagerTest extends FrameworkIntegrationTestCase
 {
-    public function test_migration(): void
+    #[Test]
+    public function migration(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
@@ -38,7 +40,8 @@ final class MigrationManagerTest extends FrameworkIntegrationTestCase
         $this->assertSame($oldCount, count($migrations));
     }
 
-    public function test_execute_down_removes_rolled_back_migration_record(): void
+    #[Test]
+    public function execute_down_removes_rolled_back_migration_record(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
         $migration = new MigrationManagerTestRollbackMigration();

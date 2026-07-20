@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ScheduleRunCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_invoke(): void
+    #[Test]
+    public function invoke(): void
     {
         $this->process->mockProcessResult();
 

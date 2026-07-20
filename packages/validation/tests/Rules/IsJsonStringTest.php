@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsJsonString;
 use ValueError;
@@ -13,19 +14,22 @@ use ValueError;
  */
 final class IsJsonStringTest extends TestCase
 {
-    public function test_it_returns_true_for_valid_json_string(): void
+    #[Test]
+    public function it_returns_true_for_valid_json_string(): void
     {
         $rule = new IsJsonString();
         $this->assertTrue($rule->isValid('{"test": "test"}'));
     }
 
-    public function test_it_returns_false_for_invalid_json_string(): void
+    #[Test]
+    public function it_returns_false_for_invalid_json_string(): void
     {
         $rule = new IsJsonString();
         $this->assertFalse($rule->isValid('{"test": test}'));
     }
 
-    public function test_it_allows_to_specify_depth(): void
+    #[Test]
+    public function it_allows_to_specify_depth(): void
     {
         // Not sure if there is a better way of asserting that a php function was called with a given argument
         $this->expectException(ValueError::class);
@@ -33,7 +37,8 @@ final class IsJsonStringTest extends TestCase
         $rule->isValid('{"test": "test"}');
     }
 
-    public function test_it_allows_to_specify_flags(): void
+    #[Test]
+    public function it_allows_to_specify_flags(): void
     {
         // Not sure if there is a better way of asserting that a php function was called with a given argument
         $this->expectException(ValueError::class);

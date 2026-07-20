@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\Weekday;
 
@@ -11,7 +12,8 @@ final class WeekdayTest extends TestCase
 {
     use DateTimeTestTrait;
 
-    public function test_get_previous(): void
+    #[Test]
+    public function get_previous(): void
     {
         $this->assertSame(Weekday::MONDAY, Weekday::TUESDAY->getPrevious());
         $this->assertSame(Weekday::TUESDAY, Weekday::WEDNESDAY->getPrevious());
@@ -22,7 +24,8 @@ final class WeekdayTest extends TestCase
         $this->assertSame(Weekday::SUNDAY, Weekday::MONDAY->getPrevious());
     }
 
-    public function test_get_next(): void
+    #[Test]
+    public function get_next(): void
     {
         $this->assertSame(Weekday::TUESDAY, Weekday::MONDAY->getNext());
         $this->assertSame(Weekday::WEDNESDAY, Weekday::TUESDAY->getNext());

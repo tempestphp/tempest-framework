@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Actions;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,7 +12,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CompleteConsoleCommandArgumentsTest extends FrameworkIntegrationTestCase
 {
-    public function test_arguments_are_printed(): void
+    #[Test]
+    public function arguments_are_printed(): void
     {
         $this->console
             ->complete('completion:test')
@@ -20,7 +22,8 @@ final class CompleteConsoleCommandArgumentsTest extends FrameworkIntegrationTest
             ->assertSee('--items=' . PHP_EOL);
     }
 
-    public function test_existing_arguments_are_skipped(): void
+    #[Test]
+    public function existing_arguments_are_skipped(): void
     {
         $this->console
             ->complete('completion:test --flag')
@@ -35,14 +38,16 @@ final class CompleteConsoleCommandArgumentsTest extends FrameworkIntegrationTest
             ->assertNotSee('--value');
     }
 
-    public function test_multiple_array_values_are_allowed(): void
+    #[Test]
+    public function multiple_array_values_are_allowed(): void
     {
         $this->console
             ->complete('completion:test --items=a')
             ->assertSee('--items=');
     }
 
-    public function test_open_flag_must_first_be_completed(): void
+    #[Test]
+    public function open_flag_must_first_be_completed(): void
     {
         $this->console
             ->complete('completion:test --items=')

@@ -3,6 +3,7 @@
 namespace Tempest\Upgrade\Tests\Tempest310;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
@@ -13,7 +14,8 @@ final class Tempest310RectorTest extends TestCase
         get => new RectorTester(__DIR__ . '/tempest310_rector.php');
     }
 
-    public function test_priority_namespace_change(): void
+    #[Test]
+    public function priority_namespace_change(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/PriorityNamespaceChange.input.php')
@@ -21,7 +23,8 @@ final class Tempest310RectorTest extends TestCase
             ->assertNotContains('use Tempest\Core\Priority;');
     }
 
-    public function test_fully_qualified_priority(): void
+    #[Test]
+    public function fully_qualified_priority(): void
     {
         $this->rector
             ->runFixture(__DIR__ . '/Fixtures/FullyQualifiedPriority.input.php')

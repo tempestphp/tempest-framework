@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Catalog\Catalog;
 use Tempest\Intl\Catalog\GenericCatalog;
@@ -44,7 +45,8 @@ final class GenericTranslatorTest extends TestCase
         );
     }
 
-    public function test_translate(): void
+    #[Test]
+    public function translate(): void
     {
         // existing
         $this->assertSame('Bonjour!', $this->translator->translate('hello'));
@@ -54,7 +56,8 @@ final class GenericTranslatorTest extends TestCase
         $this->assertSame('Goodbye!', $this->translator->translate('goodbye'));
     }
 
-    public function test_fallback(): void
+    #[Test]
+    public function fallback(): void
     {
         $this->config->currentLocale = Locale::FRENCH;
         $this->config->fallbackLocale = Locale::ENGLISH;
@@ -63,7 +66,8 @@ final class GenericTranslatorTest extends TestCase
         $this->assertSame('2 aircraft', $this->translator->translate('aircraft_count', count: 2));
     }
 
-    public function test_complex_message(): void
+    #[Test]
+    public function complex_message(): void
     {
         $this->config->currentLocale = Locale::FRENCH;
 
@@ -80,20 +84,23 @@ final class GenericTranslatorTest extends TestCase
         $this->assertSame('2 avions', $this->translator->translate('aircraft_count', aircraft: 2));
     }
 
-    public function test_translate_missing(): void
+    #[Test]
+    public function translate_missing(): void
     {
         $this->assertSame('missing_key', $this->translator->translate('missing_key'));
         $this->assertSame('missing.key', $this->translator->translate('missing.key'));
     }
 
-    public function test_translate_variables(): void
+    #[Test]
+    public function translate_variables(): void
     {
         $this->catalog->add(Locale::ENGLISH, 'goodbye_user', 'Goodbye, {$user :string}!');
 
         $this->assertSame('Goodbye, Jon Doe!', $this->translator->translate('goodbye_user', user: 'Jon Doe'));
     }
 
-    public function test_change_locale(): void
+    #[Test]
+    public function change_locale(): void
     {
         $this->config->currentLocale = Locale::ENGLISH;
         $this->assertSame('Hello!', $this->translator->translate('hello'));
@@ -102,7 +109,8 @@ final class GenericTranslatorTest extends TestCase
         $this->assertSame('Bonjour!', $this->translator->translate('hello'));
     }
 
-    public function test_translate_for_locale(): void
+    #[Test]
+    public function translate_for_locale(): void
     {
         $this->config->currentLocale = Locale::ENGLISH;
 

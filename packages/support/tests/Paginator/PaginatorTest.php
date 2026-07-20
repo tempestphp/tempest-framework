@@ -17,7 +17,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_calculates_basic_pagination_properties(): void
+    public function it_calculates_basic_pagination_properties(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 5);
 
@@ -30,7 +30,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_navigation_properties(): void
+    public function it_handles_navigation_properties(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 5);
 
@@ -43,7 +43,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_first_page_navigation(): void
+    public function it_handles_first_page_navigation(): void
     {
         $paginator = $this->createPaginator(currentPage: 1);
 
@@ -54,7 +54,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_last_page_navigation(): void
+    public function it_handles_last_page_navigation(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 10);
 
@@ -65,7 +65,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_single_page_scenario(): void
+    public function it_handles_single_page_scenario(): void
     {
         $paginator = $this->createPaginator(totalItems: 5, itemsPerPage: 10, currentPage: 1);
 
@@ -77,7 +77,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_empty_results(): void
+    public function it_handles_empty_results(): void
     {
         $paginator = $this->createPaginator(totalItems: 0);
 
@@ -90,7 +90,7 @@ final class PaginatorTest extends TestCase
 
     #[Test]
     #[DataProvider('pageRangeProvider')]
-    public function test_it_calculates_page_ranges_correctly(int $totalItems, int $itemsPerPage, int $currentPage, int $maxLinks, array $expectedRange): void
+    public function it_calculates_page_ranges_correctly(int $totalItems, int $itemsPerPage, int $currentPage, int $maxLinks, array $expectedRange): void
     {
         $paginator = $this->createPaginator($totalItems, $itemsPerPage, $currentPage, $maxLinks);
 
@@ -110,7 +110,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_constrains_current_page_to_valid_range(): void
+    public function it_constrains_current_page_to_valid_range(): void
     {
         $paginator = $this->createPaginator(totalItems: 50, itemsPerPage: 10, currentPage: 100);
 
@@ -121,7 +121,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_creates_paginated_data_with_array(): void
+    public function it_creates_paginated_data_with_array(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 5);
         $data = ['item1', 'item2', 'item3'];
@@ -136,7 +136,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_creates_paginated_data_with_callback(): void
+    public function it_creates_paginated_data_with_callback(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10, currentPage: 3);
 
@@ -149,7 +149,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_creates_immutable_copies_with_different_page(): void
+    public function it_creates_immutable_copies_with_different_page(): void
     {
         $original = $this->createPaginator(currentPage: 1);
         $modified = $original->withPage(5);
@@ -160,7 +160,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_creates_immutable_copies_with_different_items_per_page(): void
+    public function it_creates_immutable_copies_with_different_items_per_page(): void
     {
         $original = $this->createPaginator(itemsPerPage: 10);
         $modified = $original->withItemsPerPage(25);
@@ -171,7 +171,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_handles_fractional_pages_correctly(): void
+    public function it_handles_fractional_pages_correctly(): void
     {
         // 105 items with 10 per page should give 11 pages
         $paginator = $this->createPaginator(totalItems: 105, itemsPerPage: 10);
@@ -180,7 +180,7 @@ final class PaginatorTest extends TestCase
     }
 
     #[Test]
-    public function test_it_calculates_offset_correctly_for_different_pages(): void
+    public function it_calculates_offset_correctly_for_different_pages(): void
     {
         $paginator = $this->createPaginator(totalItems: 100, itemsPerPage: 10);
 

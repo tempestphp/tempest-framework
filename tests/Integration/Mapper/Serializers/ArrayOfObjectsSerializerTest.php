@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Mapper\Exceptions\ValueCouldNotBeSerialized;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;
@@ -10,7 +11,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 
 final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_serialize(): void
+    #[Test]
+    public function serialize(): void
     {
         $this->assertSame(
             [
@@ -42,7 +44,8 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_only_arrays_allowed(): void
+    #[Test]
+    public function only_arrays_allowed(): void
     {
         $this->expectException(ValueCouldNotBeSerialized::class);
 

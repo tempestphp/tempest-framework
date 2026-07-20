@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Mappers;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsToMany;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\IsDatabaseModel;
@@ -25,7 +26,8 @@ use function Tempest\Mapper\map;
 
 final class SelectModelMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_map(): void
+    #[Test]
+    public function map(): void
     {
         $data = $this->data();
 
@@ -48,7 +50,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('lotr-1', $book->isbn->value);
     }
 
-    public function test_has_many_map(): void
+    #[Test]
+    public function has_many_map(): void
     {
         $data = [
             [
@@ -76,7 +79,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1.3', $books[0]->chapters[2]->title);
     }
 
-    public function test_deeply_nested_map(): void
+    #[Test]
+    public function deeply_nested_map(): void
     {
         $data = [
             [
@@ -94,7 +98,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Houghton Mifflin', $books[0]->author->publisher->name);
     }
 
-    public function test_deeply_nested_has_many_map(): void
+    #[Test]
+    public function deeply_nested_has_many_map(): void
     {
         $data = [
             [
@@ -117,7 +122,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, $authors[0]->books);
     }
 
-    public function test_lazy_belongs_to_many_not_eager_loaded_is_unset(): void
+    #[Test]
+    public function lazy_belongs_to_many_not_eager_loaded_is_unset(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -148,7 +154,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(expected: 'Book Two', actual: $tag->books[1]->title);
     }
 
-    public function test_untagged_belongs_to_many_not_loaded_is_unset(): void
+    #[Test]
+    public function untagged_belongs_to_many_not_loaded_is_unset(): void
     {
         $data = [
             [
@@ -170,7 +177,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $tag->books;
     }
 
-    public function test_has_many_through_not_loaded_is_unset(): void
+    #[Test]
+    public function has_many_through_not_loaded_is_unset(): void
     {
         $data = [
             [
@@ -191,7 +199,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $tag->reviewers;
     }
 
-    public function test_has_one_through_not_loaded_is_unset(): void
+    #[Test]
+    public function has_one_through_not_loaded_is_unset(): void
     {
         $data = [
             [
@@ -212,7 +221,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $tag->topReviewer;
     }
 
-    public function test_eager_belongs_to_many_loaded_has_books(): void
+    #[Test]
+    public function eager_belongs_to_many_loaded_has_books(): void
     {
         $data = [
             [
@@ -240,7 +250,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(expected: 'LOTR 2', actual: $tag->books[1]->title);
     }
 
-    public function test_belongs_to_many_loaded_with_no_results_returns_empty_array(): void
+    #[Test]
+    public function belongs_to_many_loaded_with_no_results_returns_empty_array(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -260,7 +271,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(expected: [], actual: $tag->books);
     }
 
-    public function test_has_one_not_loaded_is_unset(): void
+    #[Test]
+    public function has_one_not_loaded_is_unset(): void
     {
         $data = [
             [
@@ -282,7 +294,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $book->isbn;
     }
 
-    public function test_has_many_not_loaded_is_unset(): void
+    #[Test]
+    public function has_many_not_loaded_is_unset(): void
     {
         $data = [
             [
@@ -304,7 +317,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $book->chapters;
     }
 
-    public function test_nested_belongs_to_many_on_belongs_to(): void
+    #[Test]
+    public function nested_belongs_to_many_on_belongs_to(): void
     {
         $data = [
             [
@@ -336,7 +350,8 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(expected: 'delete', actual: $user->role->permissions[1]->label);
     }
 
-    public function test_array_of_serialized_enums(): void
+    #[Test]
+    public function array_of_serialized_enums(): void
     {
         $users = map([['id' => 1, 'roles' => json_encode(['admin', 'user'])]])
             ->with(SelectModelMapper::class)

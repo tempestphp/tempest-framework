@@ -2,6 +2,7 @@
 
 namespace Tempest\Reflection\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\Tests\Fixtures\AnnulledInvoice;
@@ -11,7 +12,8 @@ use Tempest\Reflection\TypeReflector;
 
 final class TypeReflectorTest extends TestCase
 {
-    public function test_is_enum(): void
+    #[Test]
+    public function is_enum(): void
     {
         $this->assertTrue(
             new ClassReflector(TestClassA::class)
@@ -94,7 +96,8 @@ final class TypeReflectorTest extends TestCase
         );
     }
 
-    public function test_is_nullable(): void
+    #[Test]
+    public function is_nullable(): void
     {
         $this->assertTrue(new TypeReflector('?string')->isNullable());
         $this->assertTrue(new TypeReflector('string|null')->isNullable());
@@ -102,7 +105,8 @@ final class TypeReflectorTest extends TestCase
         $this->assertFalse(new TypeReflector('string')->isNullable());
     }
 
-    public function test_class_name_containing_null_is_not_nullable(): void
+    #[Test]
+    public function class_name_containing_null_is_not_nullable(): void
     {
         $this->assertFalse(new TypeReflector(AnnulledInvoice::class)->isNullable());
         $this->assertFalse(new TypeReflector(NullableClass::class)->isNullable());

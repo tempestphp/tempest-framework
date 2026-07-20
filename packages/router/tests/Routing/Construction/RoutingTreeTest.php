@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Construction;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\Routing\Construction\DuplicateRouteException;
@@ -16,13 +17,15 @@ use Tempest\Router\Tests\FakeRouteBuilder;
  */
 final class RoutingTreeTest extends TestCase
 {
-    public function test_empty_tree(): void
+    #[Test]
+    public function empty_tree(): void
     {
         $subject = new RoutingTree();
         $this->assertEquals([], $subject->toMatchingRegexes());
     }
 
-    public function test_add_throws_on_duplicated_routes(): void
+    #[Test]
+    public function add_throws_on_duplicated_routes(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 
@@ -34,7 +37,8 @@ final class RoutingTreeTest extends TestCase
         $subject->add($routeBuilder->asMarkedRoute('b'));
     }
 
-    public function test_multiple_routes(): void
+    #[Test]
+    public function multiple_routes(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 
@@ -55,7 +59,8 @@ final class RoutingTreeTest extends TestCase
         );
     }
 
-    public function test_chunked_routes(): void
+    #[Test]
+    public function chunked_routes(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 
@@ -76,7 +81,8 @@ final class RoutingTreeTest extends TestCase
         $this->assertNotNull($matchingRegexes->match('/test/1000/route_1000'));
     }
 
-    public function test_multiple_http_methods(): void
+    #[Test]
+    public function multiple_http_methods(): void
     {
         $routeBuilder = new FakeRouteBuilder();
 

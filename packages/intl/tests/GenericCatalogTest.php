@@ -2,13 +2,15 @@
 
 namespace Tempest\Intl\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Catalog\GenericCatalog;
 use Tempest\Intl\Locale;
 
 final class GenericCatalogTest extends TestCase
 {
-    public function test_basic(): void
+    #[Test]
+    public function basic(): void
     {
         $catalog = new GenericCatalog();
         $catalog->add(Locale::FRENCH, 'hello', 'Bonjour');

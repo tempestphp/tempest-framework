@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Process;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Process\InvokedProcess;
 use Tempest\Process\ProcessExecutor;
 use Tempest\Process\ProcessResult;
@@ -13,7 +14,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         get => $this->container->get(ProcessExecutor::class);
     }
 
-    public function test_run(): void
+    #[Test]
+    public function runs_processes(): void
     {
         $this->process->mockProcessResult('echo *', "Hello\n");
 
@@ -24,7 +26,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         $this->process->assertRanTimes('echo *', times: 1);
     }
 
-    public function test_describe_and_assert_async_process(): void
+    #[Test]
+    public function describe_and_assert_async_process(): void
     {
         $this->process->mockProcessResults([
             'echo *' => $this->process
@@ -55,7 +58,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         });
     }
 
-    public function test_concurrently(): void
+    #[Test]
+    public function concurrently(): void
     {
         $this->process->mockProcessResults([
             'echo "hello"' => $this->process->describe()->output('hello'),
@@ -75,7 +79,8 @@ final class ProcessExecutorTest extends FrameworkIntegrationTestCase
         $this->process->assertRanTimes('echo "world"', times: 1);
     }
 
-    public function test_pool(): void
+    #[Test]
+    public function pool(): void
     {
         $this->process->mockProcessResults([
             'echo "hello"' => $this->process->describe()->output('hello'),

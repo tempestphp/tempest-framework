@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cryptography;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Cryptography\Encryption\EncryptionAlgorithm;
 use Tempest\Cryptography\Encryption\EncryptionConfig;
@@ -16,12 +17,14 @@ final class EncrypterTest extends FrameworkIntegrationTestCase
         get => $this->container->get(Encrypter::class);
     }
 
-    public function test_default_algorithm(): void
+    #[Test]
+    public function default_algorithm(): void
     {
         $this->assertSame(EncryptionAlgorithm::AES_256_GCM, $this->encrypter->algorithm);
     }
 
-    public function test_using_config(): void
+    #[Test]
+    public function using_config(): void
     {
         $this->container->config(new EncryptionConfig(
             algorithm: EncryptionAlgorithm::AES_256_GCM,

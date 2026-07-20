@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsBetween;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\IsBetween;
  */
 final class IsBetweenTest extends TestCase
 {
-    public function test_between(): void
+    #[Test]
+    public function between(): void
     {
         $rule = new IsBetween(min: 0, max: 10);
 

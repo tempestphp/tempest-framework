@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
@@ -23,7 +24,8 @@ use function Tempest\Database\query;
  */
 final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegrationTestCase
 {
-    public function test_has_one_relationship_with_uuid_primary_keys(): void
+    #[Test]
+    public function has_one_relationship_with_uuid_primary_keys(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -55,7 +57,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertTrue($grimoire->uuid->equals($loadedMage->grimoire->uuid));
     }
 
-    public function test_has_many_relationship_with_uuid_primary_keys(): void
+    #[Test]
+    public function has_many_relationship_with_uuid_primary_keys(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -98,7 +101,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         }
     }
 
-    public function test_belongs_to_relationship_with_uuid_primary_keys(): void
+    #[Test]
+    public function belongs_to_relationship_with_uuid_primary_keys(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -127,7 +131,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertTrue($mage->uuid->equals($loadedSpell->mage->uuid));
     }
 
-    public function test_nested_relationship_loading_with_uuid_primary_keys(): void
+    #[Test]
+    public function nested_relationship_loading_with_uuid_primary_keys(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -172,7 +177,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertSame('Combat Magic Fundamentals', $loadedSpell->mage->grimoire->title);
     }
 
-    public function test_relationship_with_custom_foreign_key_naming(): void
+    #[Test]
+    public function relationship_with_custom_foreign_key_naming(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -207,7 +213,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertTrue($mage->uuid->equals($loadedArtifact->owner->uuid));
     }
 
-    public function test_relationship_loading_preserves_uuid_integrity(): void
+    #[Test]
+    public function relationship_loading_preserves_uuid_integrity(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,
@@ -251,7 +258,8 @@ final class CustomPrimaryKeyRelationshipLoadingTest extends FrameworkIntegration
         $this->assertFalse($spell1->uuid->equals($spell2->uuid));
     }
 
-    public function test_automatic_uuid_primary_key_detection(): void
+    #[Test]
+    public function automatic_uuid_primary_key_detection(): void
     {
         $this->database->migrate(
             CreateMigrationsTable::class,

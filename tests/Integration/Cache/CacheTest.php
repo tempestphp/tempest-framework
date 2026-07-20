@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\CacheKeyCouldNotBeIncremented;
 use Tempest\Cache\GenericCache;
@@ -19,7 +20,8 @@ use function Tempest\Support\str;
  */
 final class CacheTest extends FrameworkIntegrationTestCase
 {
-    public function test_put(): void
+    #[Test]
+    public function put(): void
     {
         $interval = Duration::days(1);
         $clock = $this->clock();
@@ -44,7 +46,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertTrue($item->isHit());
     }
 
-    public function test_put_many(): void
+    #[Test]
+    public function put_many(): void
     {
         $cache = new GenericCache($pool = new ArrayAdapter());
 
@@ -61,7 +64,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame('bar2', $cache->get('foo2'));
     }
 
-    public function test_increment(): void
+    #[Test]
+    public function increment(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -81,7 +85,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $cache->get('b'));
     }
 
-    public function test_increment_non_int_key(): void
+    #[Test]
+    public function increment_non_int_key(): void
     {
         $this->expectException(CacheKeyCouldNotBeIncremented::class);
 
@@ -91,7 +96,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $cache->increment('a', by: 1);
     }
 
-    public function test_increment_non_int_numeric_key(): void
+    #[Test]
+    public function increment_non_int_numeric_key(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -101,7 +107,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame(2, $cache->get('a'));
     }
 
-    public function test_decrement_non_int_key(): void
+    #[Test]
+    public function decrement_non_int_key(): void
     {
         $this->expectException(CacheKeyCouldNotBeIncremented::class);
 
@@ -111,7 +118,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $cache->decrement('a', by: 1);
     }
 
-    public function test_decrement_non_int_numeric_key(): void
+    #[Test]
+    public function decrement_non_int_numeric_key(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -121,7 +129,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $cache->get('a'));
     }
 
-    public function test_decrement(): void
+    #[Test]
+    public function decrement(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -138,7 +147,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame(-6, $cache->get('a'));
     }
 
-    public function test_get(): void
+    #[Test]
+    public function gets_cached_values(): void
     {
         $interval = Duration::days(1);
         $clock = $this->clock();
@@ -156,7 +166,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $cache->get('b'));
     }
 
-    public function test_get_many(): void
+    #[Test]
+    public function get_many(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -174,7 +185,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertNull($values['foo3']);
     }
 
-    public function test_resolve(): void
+    #[Test]
+    public function resolve(): void
     {
         $interval = Duration::days(1);
         $clock = $this->clock();
@@ -195,7 +207,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertSame('b', $b);
     }
 
-    public function test_remove(): void
+    #[Test]
+    public function remove(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -205,7 +218,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertNull($cache->get('a'));
     }
 
-    public function test_clear(): void
+    #[Test]
+    public function clear(): void
     {
         $cache = new GenericCache(new ArrayAdapter());
 
@@ -218,7 +232,8 @@ final class CacheTest extends FrameworkIntegrationTestCase
         $this->assertNull($cache->get('b'));
     }
 
-    public function test_stale_while_revalidate(): void
+    #[Test]
+    public function stale_while_revalidate(): void
     {
         $clock = $this->clock();
         $cache = new GenericCache(

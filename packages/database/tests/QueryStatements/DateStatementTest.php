@@ -11,7 +11,7 @@ use Tempest\Database\QueryStatements\DateStatement;
 final class DateStatementTest extends TestCase
 {
     #[Test]
-    public function test_date(): void
+    public function date(): void
     {
         $statement = new DateStatement(
             name: 'foo',
@@ -26,7 +26,7 @@ final class DateStatementTest extends TestCase
     }
 
     #[Test]
-    public function test_date_with_current(): void
+    public function date_with_current(): void
     {
         $statement = new DateStatement(
             name: 'foo',
@@ -42,7 +42,7 @@ final class DateStatementTest extends TestCase
     }
 
     #[Test]
-    public function test_date_with_default_and_current(): void
+    public function date_with_default_and_current(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

@@ -2,6 +2,7 @@
 
 namespace Tempest\Cryptography\Tests\Password;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Cryptography\Password\ArgonConfig;
 use Tempest\Cryptography\Password\BcryptConfig;
@@ -11,7 +12,8 @@ use Tempest\Cryptography\Password\HashingAlgorithm;
 
 final class PasswordHasherTest extends TestCase
 {
-    public function test_algorithm(): void
+    #[Test]
+    public function algorithm(): void
     {
         $hasher = new GenericPasswordHasher(new ArgonConfig());
         $this->assertSame(HashingAlgorithm::ARGON2ID, $hasher->algorithm);
@@ -20,7 +22,8 @@ final class PasswordHasherTest extends TestCase
         $this->assertSame(HashingAlgorithm::BCRYPT, $hasher->algorithm);
     }
 
-    public function test_algorithm_values_match_password_constants(): void
+    #[Test]
+    public function algorithm_values_match_password_constants(): void
     {
         $this->assertSame(PASSWORD_BCRYPT, HashingAlgorithm::BCRYPT->value);
 
@@ -29,7 +32,8 @@ final class PasswordHasherTest extends TestCase
         }
     }
 
-    public function test_config_options(): void
+    #[Test]
+    public function config_options(): void
     {
         $this->assertSame(
             ['memory_cost' => 1024, 'time_cost' => 2, 'threads' => 2],
@@ -42,7 +46,8 @@ final class PasswordHasherTest extends TestCase
         );
     }
 
-    public function test_hash_verify(): void
+    #[Test]
+    public function hash_verify(): void
     {
         $hasher = new GenericPasswordHasher(new ArgonConfig());
         $password = 'my_secure_password'; // @mago-expect lint:no-literal-password
@@ -51,7 +56,8 @@ final class PasswordHasherTest extends TestCase
         $this->assertTrue($hasher->verify($password, $hash));
     }
 
-    public function test_wrong_password(): void
+    #[Test]
+    public function wrong_password(): void
     {
         $hasher = new GenericPasswordHasher(new ArgonConfig());
         $hash = $hasher->hash('my_secure_password');
@@ -59,7 +65,8 @@ final class PasswordHasherTest extends TestCase
         $this->assertFalse($hasher->verify('wrong_password', $hash));
     }
 
-    public function test_needs_rehash(): void
+    #[Test]
+    public function needs_rehash(): void
     {
         $hasher1 = new GenericPasswordHasher(new ArgonConfig(timeCost: 2));
         $hasher2 = new GenericPasswordHasher(new ArgonConfig(timeCost: 4));
@@ -69,7 +76,8 @@ final class PasswordHasherTest extends TestCase
         $this->assertTrue($hasher2->needsRehash($hash));
     }
 
-    public function test_analyze(): void
+    #[Test]
+    public function analyze(): void
     {
         $hasher = new GenericPasswordHasher(new ArgonConfig(
             memoryCost: 1024,
@@ -88,7 +96,8 @@ final class PasswordHasherTest extends TestCase
         $this->assertSame(2, $analysis->config->threads);
     }
 
-    public function test_hashing_failed_empty_password(): void
+    #[Test]
+    public function hashing_failed_empty_password(): void
     {
         $this->expectException(HashingFailed::class);
         $this->expectExceptionMessage('Could not hash an empty password.');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,7 +14,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TerminalTest extends FrameworkIntegrationTestCase
 {
-    public function test_supports_tty(): void
+    #[Test]
+    public function supports_tty(): void
     {
         $this->console
             ->withoutPrompting()

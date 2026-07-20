@@ -3,6 +3,7 @@
 namespace Tempest\Intl\Tests;
 
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Intl\Currency;
 use Tempest\Intl\Locale;
@@ -12,7 +13,8 @@ use Tempest\Support\Math;
 final class FunctionsTest extends TestCase
 {
     #[RequiresPhpExtension('intl')]
-    public function test_format_number(): void
+    #[Test]
+    public function format_number(): void
     {
         $this->assertSame('0', Number\format(0));
         $this->assertSame('0', Number\format(0.0));
@@ -44,7 +46,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_format_with_different_locale(): void
+    #[Test]
+    public function format_with_different_locale(): void
     {
         $this->assertSame('123,456,789', Number\format(123_456_789, locale: Locale::ENGLISH));
         $this->assertSame('123.456.789', Number\format(123_456_789, locale: Locale::GERMAN));
@@ -54,20 +57,23 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_spellout(): void
+    #[Test]
+    public function spellout(): void
     {
         $this->assertSame('ten', Number\spell_out(10));
         $this->assertSame('one point two', Number\spell_out(1.2));
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_spellout_with_locale(): void
+    #[Test]
+    public function spellout_with_locale(): void
     {
         $this->assertSame('trois', Number\spell_out(3, Locale::FRENCH));
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_spellout_with_threshold(): void
+    #[Test]
+    public function spellout_with_threshold(): void
     {
         $this->assertSame('9', Number\spell_out(9, after: 10));
         $this->assertSame('10', Number\spell_out(10, after: 10));
@@ -82,7 +88,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_ordinal(): void
+    #[Test]
+    public function ordinal(): void
     {
         $this->assertSame('1st', Number\to_ordinal(1));
         $this->assertSame('2nd', Number\to_ordinal(2));
@@ -90,7 +97,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_spell_ordinal(): void
+    #[Test]
+    public function spell_ordinal(): void
     {
         $this->assertSame('first', Number\to_spelled_ordinal(1));
         $this->assertSame('second', Number\to_spelled_ordinal(2));
@@ -98,7 +106,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_to_percent(): void
+    #[Test]
+    public function to_percent(): void
     {
         $this->assertSame('0%', Number\to_percentage(0, precision: 0));
         $this->assertSame('0%', Number\to_percentage(0));
@@ -121,7 +130,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_to_currency(): void
+    #[Test]
+    public function to_currency(): void
     {
         $this->assertSame('$0.00', Number\currency(0, Currency::USD));
         $this->assertSame('$1.00', Number\currency(1, Currency::USD));
@@ -141,7 +151,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_to_currency_with_different_locale(): void
+    #[Test]
+    public function to_currency_with_different_locale(): void
     {
         $this->assertSame('1,00 €', Number\currency(1, Currency::EUR, Locale::GERMAN));
         $this->assertSame('1,00 $', Number\currency(1, Currency::USD, Locale::GERMAN));
@@ -153,7 +164,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_bytes_to_human(): void
+    #[Test]
+    public function bytes_to_human(): void
     {
         $this->assertSame('0 B', Number\to_file_size(0));
         $this->assertSame('0.00 B', Number\to_file_size(0, precision: 2));
@@ -193,7 +205,8 @@ final class FunctionsTest extends TestCase
     }
 
     #[RequiresPhpExtension('intl')]
-    public function test_summarize(): void
+    #[Test]
+    public function summarize(): void
     {
         $this->assertSame('1', Number\to_human_readable(1));
         $this->assertSame('1.00', Number\to_human_readable(1, precision: 2));
@@ -249,7 +262,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame('-1KQ', Number\to_human_readable(-1_000_000_000_000_000_000));
     }
 
-    public function test_parse_int(): void
+    #[Test]
+    public function parse_int(): void
     {
         $this->assertSame(1, Number\parse_int(1));
         $this->assertSame(1, Number\parse_int(1, default: 0));
@@ -260,7 +274,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame(Math\INT64_MAX, Number\parse_int(Math\INT64_MAX));
     }
 
-    public function test_parse_float(): void
+    #[Test]
+    public function parse_float(): void
     {
         $this->assertSame(1.0, Number\parse_float(1));
         $this->assertSame(1.0, Number\parse_float(1, default: 0.0));
@@ -271,7 +286,8 @@ final class FunctionsTest extends TestCase
         $this->assertSame(Math\FLOAT32_MAX, Number\parse_float(Math\FLOAT32_MAX));
     }
 
-    public function test_parse_number(): void
+    #[Test]
+    public function parse_number(): void
     {
         $this->assertSame(1, Number\parse(1));
         $this->assertSame(1, Number\parse(1, default: 0));

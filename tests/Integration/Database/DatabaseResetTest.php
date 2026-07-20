@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class DatabaseResetTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_active_transaction_prevents_database_from_being_reset(): void
+    public function active_transaction_prevents_database_from_being_reset(): void
     {
         $this->container->config(new SQLiteConfig(
             path: __DIR__ . '/db-main.sqlite',
@@ -31,7 +31,7 @@ final class DatabaseResetTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function test_properly_closed_transaction_allows_database_reset(): void
+    public function properly_closed_transaction_allows_database_reset(): void
     {
         $this->container->config(new SQLiteConfig(
             path: __DIR__ . '/db-main.sqlite',

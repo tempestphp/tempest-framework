@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +23,8 @@ final class IsLeapYearTest extends TestCase
     #[TestWith([2400, true])]
     #[TestWith([1996, true])]
     #[TestWith([1999, false])]
-    public function test_is_leap_year(int $year, bool $expected): void
+    #[Test]
+    public function is_leap_year(int $year, bool $expected): void
     {
         $this->assertSame($expected, is_leap_year($year));
     }

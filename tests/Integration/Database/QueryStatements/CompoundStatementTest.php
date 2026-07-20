@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\RawStatement;
@@ -9,7 +10,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class CompoundStatementTest extends FrameworkIntegrationTestCase
 {
-    public function test_it_can_compile_create_enum_type_statement(): void
+    #[Test]
+    public function it_can_compile_create_enum_type_statement(): void
     {
         $statement = new CompoundStatement(
             new RawStatement('SELECT 1'),

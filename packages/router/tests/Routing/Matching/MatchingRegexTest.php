@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Matching;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Router\Routing\Matching\MatchingRegex;
@@ -26,7 +27,8 @@ final class MatchingRegexTest extends TestCase
         ]);
     }
 
-    public function test_empty(): void
+    #[Test]
+    public function empty(): void
     {
         $subject = new MatchingRegex([]);
 
@@ -36,7 +38,8 @@ final class MatchingRegexTest extends TestCase
     #[TestWith(['a'])]
     #[TestWith(['b'])]
     #[TestWith(['c'])]
-    public function test_match(string $expectedMatch): void
+    #[Test]
+    public function match(string $expectedMatch): void
     {
         $match = $this->subject->match($expectedMatch);
 
@@ -47,7 +50,8 @@ final class MatchingRegexTest extends TestCase
 
     #[TestWith([''])]
     #[TestWith(['d'])]
-    public function test_non_match(string $expectedNonMatch): void
+    #[Test]
+    public function non_match(string $expectedNonMatch): void
     {
         $match = $this->subject->match($expectedNonMatch);
 

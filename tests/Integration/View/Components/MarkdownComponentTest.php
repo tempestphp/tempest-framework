@@ -2,11 +2,13 @@
 
 namespace Tests\Tempest\Integration\View\Components;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class MarkdownComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_render_markdown_as_content(): void
+    #[Test]
+    public function render_markdown_as_content(): void
     {
         $html = $this->view->render(<<<'HTML'
         <x-markdown># hi</x-markdown>
@@ -15,7 +17,8 @@ final class MarkdownComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<h1>hi</h1>', $html);
     }
 
-    public function test_render_markdown_as_variable(): void
+    #[Test]
+    public function render_markdown_as_variable(): void
     {
         $html = $this->view->render(<<<'HTML'
         <x-markdown :content="$text"></x-markdown>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests\Random;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Random;
 
@@ -15,7 +16,8 @@ use function Tempest\Support\Str\contains;
  */
 final class FunctionsTest extends TestCase
 {
-    public function test_string(): void
+    #[Test]
+    public function string(): void
     {
         $random = Random\secure_string(32);
 
@@ -26,7 +28,8 @@ final class FunctionsTest extends TestCase
         }
     }
 
-    public function test_string_with_specific_chars(): void
+    #[Test]
+    public function string_with_specific_chars(): void
     {
         $random = Random\secure_string(32, 'abc');
 
@@ -37,12 +40,14 @@ final class FunctionsTest extends TestCase
         }
     }
 
-    public function test_string_early_return_for_zero_length(): void
+    #[Test]
+    public function string_early_return_for_zero_length(): void
     {
         $this->assertSame('', Random\secure_string(0));
     }
 
-    public function test_string_alphabet_min(): void
+    #[Test]
+    public function string_alphabet_min(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$alphabet\'s length must be in [2^1, 2^56]');
@@ -50,17 +55,20 @@ final class FunctionsTest extends TestCase
         Random\secure_string(32, 'a');
     }
 
-    public function test_uuid(): void
+    #[Test]
+    public function uuid(): void
     {
         $this->assertTrue(Random\is_uuid(Random\uuid()));
     }
 
-    public function test_ulid(): void
+    #[Test]
+    public function ulid(): void
     {
         $this->assertTrue(Random\is_ulid(Random\ulid()));
     }
 
-    public function test_is_uuid(): void
+    #[Test]
+    public function is_uuid(): void
     {
         $this->assertTrue(Random\is_uuid(Random\uuid()));
 
@@ -84,7 +92,8 @@ final class FunctionsTest extends TestCase
         $this->assertFalse(Random\is_uuid(null));
     }
 
-    public function test_is_ulid(): void
+    #[Test]
+    public function is_ulid(): void
     {
         $this->assertTrue(Random\is_ulid(Random\ulid()));
 

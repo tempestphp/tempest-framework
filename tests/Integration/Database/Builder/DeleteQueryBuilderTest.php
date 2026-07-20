@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\PrimaryKey;
@@ -16,7 +17,8 @@ use function Tempest\Database\query;
 
 final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_delete_on_plain_table(): void
+    #[Test]
+    public function delete_on_plain_table(): void
     {
         $query = query('foo')
             ->delete()
@@ -34,7 +36,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_delete_on_model_table(): void
+    #[Test]
+    public function delete_on_model_table(): void
     {
         $query = query(Author::class)
             ->delete()
@@ -47,7 +50,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_delete_on_model_object(): void
+    #[Test]
+    public function delete_on_model_object(): void
     {
         $author = new Author(name: 'brent');
         $author->id = new PrimaryKey(10);
@@ -67,7 +71,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_delete_on_plain_table_with_conditions(): void
+    #[Test]
+    public function delete_on_plain_table_with_conditions(): void
     {
         $query = query('foo')
             ->delete()
@@ -92,7 +97,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_delete_with_non_object_model(): void
+    #[Test]
+    public function delete_with_non_object_model(): void
     {
         $this->database->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
@@ -110,7 +116,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(0, $count);
     }
 
-    public function test_multiple_where_raw(): void
+    #[Test]
+    public function multiple_where_raw(): void
     {
         $sql = query('books')
             ->delete()
@@ -125,7 +132,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_multiple_where(): void
+    #[Test]
+    public function multiple_where(): void
     {
         $sql = query('books')
             ->delete()
@@ -138,7 +146,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSameWithoutBackticks($expected, $sql);
     }
 
-    public function test_nested_where_with_delete_query(): void
+    #[Test]
+    public function nested_where_with_delete_query(): void
     {
         $query = query('books')
             ->delete()
@@ -156,7 +165,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(['draft', '2022-01-01'], $query->bindings);
     }
 
-    public function test_delete_query_builder_from_another_query_builder(): void
+    #[Test]
+    public function delete_query_builder_from_another_query_builder(): void
     {
         $query = query(Chapter::class)
             ->select()
@@ -165,7 +175,8 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(1, DeleteQueryBuilder::fromQueryBuilder($query)->wheres);
     }
 
-    public function test_delete_on_model_with_belongs_to_many_and_through_relations(): void
+    #[Test]
+    public function delete_on_model_with_belongs_to_many_and_through_relations(): void
     {
         $tag = Tag::new(id: new PrimaryKey(value: 1), label: 'php');
 

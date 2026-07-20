@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Process\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\DateTime\Duration;
 use Tempest\Process\Exceptions\ProcessHasTimedOut;
@@ -16,7 +17,8 @@ use Tempest\Process\PendingProcess;
  */
 final class GenericProcessExecutorTest extends TestCase
 {
-    public function test_run_string(): void
+    #[Test]
+    public function run_string(): void
     {
         $executor = new GenericProcessExecutor();
         $result = $executor->run('echo hello');
@@ -26,7 +28,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(0, $result->exitCode);
     }
 
-    public function test_run(): void
+    #[Test]
+    public function run_pending_process(): void
     {
         $executor = new GenericProcessExecutor();
         $result = $executor->run(new PendingProcess('echo hello'));
@@ -36,7 +39,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(0, $result->exitCode);
     }
 
-    public function test_start(): void
+    #[Test]
+    public function start(): void
     {
         $executor = new GenericProcessExecutor();
         $process = $executor->start('echo hello');
@@ -58,7 +62,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(0, $result->exitCode);
     }
 
-    public function test_wait_callback(): void
+    #[Test]
+    public function wait_callback(): void
     {
         $executor = new GenericProcessExecutor();
         $process = $executor->start('echo hello');
@@ -74,7 +79,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $output[OutputChannel::OUTPUT->value][0]);
     }
 
-    public function test_run_timeout(): void
+    #[Test]
+    public function run_timeout(): void
     {
         $this->skipOnWindows();
         $this->expectException(ProcessHasTimedOut::class);
@@ -83,7 +89,8 @@ final class GenericProcessExecutorTest extends TestCase
         $executor->run(new PendingProcess('sleep .2', timeout: Duration::milliseconds(100)));
     }
 
-    public function test_run_idle_timeout(): void
+    #[Test]
+    public function run_idle_timeout(): void
     {
         $this->skipOnWindows();
         $this->expectException(ProcessHasTimedOut::class);
@@ -92,7 +99,8 @@ final class GenericProcessExecutorTest extends TestCase
         $executor->run(new PendingProcess('sleep .2', idleTimeout: Duration::milliseconds(100)));
     }
 
-    public function test_run_input(): void
+    #[Test]
+    public function run_input(): void
     {
         $executor = new GenericProcessExecutor();
         $result = $executor->run(new PendingProcess('cat', input: 'hello'));
@@ -102,7 +110,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(0, $result->exitCode);
     }
 
-    public function test_run_with_error_output(): void
+    #[Test]
+    public function run_with_error_output(): void
     {
         $this->skipOnWindows();
 
@@ -114,7 +123,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(0, $result->exitCode);
     }
 
-    public function test_run_with_exit_code(): void
+    #[Test]
+    public function run_with_exit_code(): void
     {
         $this->skipOnWindows();
 
@@ -126,7 +136,8 @@ final class GenericProcessExecutorTest extends TestCase
         $this->assertSame(42, $result->exitCode);
     }
 
-    public function test_run_with_env(): void
+    #[Test]
+    public function run_with_env(): void
     {
         $this->skipOnWindows();
 

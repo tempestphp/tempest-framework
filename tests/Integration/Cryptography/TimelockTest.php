@@ -2,13 +2,15 @@
 
 namespace Tests\Tempest\Integration\Cryptography;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cryptography\Timelock;
 use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class TimelockTest extends FrameworkIntegrationTestCase
 {
-    public function test_uses_mocked_clock(): void
+    #[Test]
+    public function uses_mocked_clock(): void
     {
         $clock = $this->clock();
         $timelock = $this->container->get(Timelock::class);

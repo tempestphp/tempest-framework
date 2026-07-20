@@ -6,6 +6,7 @@ namespace Tempest\Validation\Tests\Rules;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\HasCount;
 
@@ -15,12 +16,14 @@ use Tempest\Validation\Rules\HasCount;
 final class HasCountTest extends TestCase
 {
     #[DataProvider('provide_count_cases')]
-    public function test_count(HasCount $rule, array $stringToTest, bool $expected): void
+    #[Test]
+    public function validates_item_count(HasCount $rule, array $stringToTest, bool $expected): void
     {
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    public function test_throws_an_exception_if_neither_min_or_max_is_supplied(): void
+    #[Test]
+    public function throws_an_exception_if_neither_min_or_max_is_supplied(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

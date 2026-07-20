@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class WorkerModeApplicationTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function test_shutdown_and_reset_are_called(): void
+    public function shutdown_and_reset_are_called(): void
     {
         $this->eventBus->preventEventHandling();
 

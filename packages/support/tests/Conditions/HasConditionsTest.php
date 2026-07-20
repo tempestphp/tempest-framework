@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Conditions;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Conditions\HasConditions;
 
@@ -12,7 +13,8 @@ use Tempest\Support\Conditions\HasConditions;
  */
 final class HasConditionsTest extends TestCase
 {
-    public function test_when(): void
+    #[Test]
+    public function when(): void
     {
         $class = new class() {
             use HasConditions;
@@ -25,7 +27,8 @@ final class HasConditionsTest extends TestCase
         $this->assertTrue($class->value);
     }
 
-    public function test_when_with_callback(): void
+    #[Test]
+    public function when_with_callback(): void
     {
         $class = new class() {
             use HasConditions;
@@ -38,7 +41,8 @@ final class HasConditionsTest extends TestCase
         $this->assertTrue($class->value);
     }
 
-    public function test_unless(): void
+    #[Test]
+    public function unless(): void
     {
         $class = new class() {
             use HasConditions;
@@ -51,7 +55,8 @@ final class HasConditionsTest extends TestCase
         $this->assertFalse($class->value);
     }
 
-    public function test_unless_with_callback(): void
+    #[Test]
+    public function unless_with_callback(): void
     {
         $class = new class() {
             use HasConditions;
@@ -64,7 +69,8 @@ final class HasConditionsTest extends TestCase
         $this->assertFalse($class->value);
     }
 
-    public function test_returns_same_instance(): void
+    #[Test]
+    public function returns_same_instance(): void
     {
         $class = new class() {
             use HasConditions;

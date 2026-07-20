@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
@@ -13,7 +14,8 @@ use function Tempest\Support\str;
  */
 final class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_discovery_status_command(): void
+    #[Test]
+    public function discovery_status_command(): void
     {
         $output = $this->console->call('discovery:status -cl');
 

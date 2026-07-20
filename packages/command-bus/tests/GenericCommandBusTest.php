@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
@@ -26,7 +27,8 @@ final class GenericCommandBusTest extends TestCase
 
     private CommandBus $commandBus;
 
-    public function test_getting_command_handler_that_exists(): void
+    #[Test]
+    public function getting_command_handler_that_exists(): void
     {
         $command = new CreateUserCommand('Jim', 'Halpert');
 
@@ -36,7 +38,8 @@ final class GenericCommandBusTest extends TestCase
         $this->assertSame($command, $this->commandBus->getHistory()[0]);
     }
 
-    public function test_exception_is_thrown_when_command_handler_doesnt_exist(): void
+    #[Test]
+    public function exception_is_thrown_when_command_handler_doesnt_exist(): void
     {
         $command = new DeleteUserCommand(12);
 
@@ -47,7 +50,8 @@ final class GenericCommandBusTest extends TestCase
         $this->commandBus->dispatch($command);
     }
 
-    public function test_exception_is_thrown_when_command_handler_already_exist(): void
+    #[Test]
+    public function exception_is_thrown_when_command_handler_already_exist(): void
     {
         $createUserCommandHandlerClass = new ClassReflector(CreateUserCommandHandler::class);
         $createUserCommandHandlerMethod = $createUserCommandHandlerClass->getMethod('__invoke');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Responses\File;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,7 +13,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class FileTest extends FrameworkIntegrationTestCase
 {
-    public function test_file(): void
+    #[Test]
+    public function file(): void
     {
         $path = __DIR__ . '/Fixtures/sample.pdf';
 

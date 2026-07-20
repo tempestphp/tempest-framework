@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeInterface;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Storage\AdapterWasMissing;
 use Tempest\Storage\Config\InMemoryStorageConfig;
 use Tempest\Storage\Config\StorageConfig;
@@ -24,7 +25,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->skipWindows('Flaky behavior in storage component on Windows and it will be too deep a rabbit hole to debug now.');
     }
 
-    public function test_fake_storage_is_registered_in_container(): void
+    #[Test]
+    public function fake_storage_is_registered_in_container(): void
     {
         $faked = $this->storage->fake();
         $actual = $this->container->get(Storage::class);
@@ -34,7 +36,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->assertSame($faked, $actual);
     }
 
-    public function test_multiple_fake_storage_are_registered_in_container(): void
+    #[Test]
+    public function multiple_fake_storage_are_registered_in_container(): void
     {
         $faked1 = $this->storage->fake('storage1');
         $faked2 = $this->storage->fake('storage2');
@@ -53,7 +56,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->assertNotSame($actual1, $actual2);
     }
 
-    public function test_multiple_storages(): void
+    #[Test]
+    public function multiple_storages(): void
     {
         $storage1 = $this->storage->fake('storage1');
         $storage2 = $this->storage->fake('storage2');
@@ -70,7 +74,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage2->assertFileDoesNotExist('foo1.txt');
     }
 
-    public function test_basic(): void
+    #[Test]
+    public function basic(): void
     {
         $storage = $this->storage->fake();
 
@@ -80,7 +85,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->assertSee('foo.txt', 'bar');
     }
 
-    public function test_file_assertions(): void
+    #[Test]
+    public function file_assertions(): void
     {
         $storage = $this->storage->fake();
 
@@ -94,7 +100,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->assertFileOrDirectoryDoesNotExist('do-not-exists.txt');
     }
 
-    public function test_directory_assertions(): void
+    #[Test]
+    public function directory_assertions(): void
     {
         $storage = $this->storage->fake();
 
@@ -129,7 +136,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->assertDirectoryEmpty();
     }
 
-    public function test_public_url(): void
+    #[Test]
+    public function public_url(): void
     {
         $storage = $this->storage->fake();
 
@@ -141,7 +149,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->assertSame('https://localhost/foo.txt', $storage->publicUrl('foo.txt'));
     }
 
-    public function test_temporary_urls(): void
+    #[Test]
+    public function temporary_urls(): void
     {
         $storage = $this->storage->fake();
 
@@ -159,7 +168,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('https://localhost/bar.txt?expires=2024-01-01T00:00:00+00:00', $url);
     }
 
-    public function test_prevent_usage_without_fake(): void
+    #[Test]
+    public function prevent_usage_without_fake(): void
     {
         $this->expectException(StorageUsageWasForbidden::class);
 
@@ -169,7 +179,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->write('bar.txt', 'baz');
     }
 
-    public function test_prevent_usage_without_fake_with_tagged_storage(): void
+    #[Test]
+    public function prevent_usage_without_fake_with_tagged_storage(): void
     {
         $this->expectException(StorageUsageWasForbidden::class);
 
@@ -180,7 +191,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->write('bar.txt', 'baz');
     }
 
-    public function test_prevent_usage_without_fake_with_fake(): void
+    #[Test]
+    public function prevent_usage_without_fake_with_fake(): void
     {
         $this->storage->preventUsageWithoutFake();
 
@@ -189,7 +201,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->assertFileExists('bar.txt');
     }
 
-    public function test_prevent_usage_without_fake_with_fake_tagged_storage(): void
+    #[Test]
+    public function prevent_usage_without_fake_with_fake_tagged_storage(): void
     {
         $this->container->config(new InMemoryStorageConfig(tag: 'tagged'));
         $this->storage->preventUsageWithoutFake();
@@ -199,7 +212,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->assertFileExists('bar.txt');
     }
 
-    public function test_no_adapter(): void
+    #[Test]
+    public function no_adapter(): void
     {
         $this->expectException(AdapterWasMissing::class);
         $this->expectExceptionMessage('The `UnknownClass` adapter is missing');
@@ -221,7 +235,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->write('bar.txt', 'baz');
     }
 
-    public function test_persistent_fake(): void
+    #[Test]
+    public function persistent_fake(): void
     {
         $storage = $this->storage->fake();
         $storage->write('test.txt', '');

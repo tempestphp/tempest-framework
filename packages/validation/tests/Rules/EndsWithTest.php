@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\EndsWith;
 
@@ -12,7 +13,8 @@ use Tempest\Validation\Rules\EndsWith;
  */
 final class EndsWithTest extends TestCase
 {
-    public function test_ends_with(): void
+    #[Test]
+    public function ends_with(): void
     {
         $rule = new EndsWith(needle: 'ab');
 
