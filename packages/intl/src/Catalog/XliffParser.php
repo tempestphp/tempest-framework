@@ -453,7 +453,7 @@ final readonly class XliffParser
 
         $codePoint = hexdec($hex);
 
-        if (! is_int($codePoint) || $codePoint > 0x10_FFFF || ($codePoint >= 0xD800 && $codePoint <= 0xDFFF)) {
+        if (! is_int($codePoint) || $codePoint > 0x10_FFFF || $codePoint >= 0xD800 && $codePoint <= 0xDFFF) {
             return '';
         }
 
