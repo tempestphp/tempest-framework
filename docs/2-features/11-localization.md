@@ -65,7 +65,7 @@ final readonly class SetLocaleMiddleware implements HttpMiddleware
 
 ## Defining translation messages
 
-Translation messages are usually stored in translation files. Tempest automatically [discovers](../1-essentials/05-discovery.md) YAML and JSON translation files that use the `<name>.<locale>.{yaml,json}` naming format, where `<name>` may be any string, and `<locale>` must be an [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) language code.
+Translation messages are usually stored in translation files. Tempest automatically [discovers](../1-essentials/05-discovery.md) YAML, JSON, and XLIFF translation files that use the `<name>.<locale>.{yaml,json,xlf,xliff}` naming format. The `<name>` may be any string, and `<locale>` must be an [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) language code.
 
 For instance, you may store translation files in a `lang` directory:
 
@@ -73,7 +73,24 @@ For instance, you may store translation files in a `lang` directory:
 src/
 └── lang/
     ├── messages.fr.yaml
-    └── messages.en.yaml
+    ├── messages.en.yaml
+    └── messages.de.xlf
+```
+
+Tempest supports XLIFF 1.2, 2.0, 2.1, and 2.2 files with the `.xlf` and `.xliff` extensions. Translation units are available by their `id` and resource name (`resname` in XLIFF 1.2, `name` in XLIFF 2.x). The `<source>` value is also registered as an alias. Tempest preserves inline code equivalents, combines segmented XLIFF 2.x units in target order, and converts XLIFF 2.2 plural, ordinal, gender, and select messages to MessageFormat 2.
+
+```xml messages.fr.xlf
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="2.0" srcLang="en" trgLang="fr" xmlns="urn:oasis:names:tc:xliff:document:2.0">
+  <file id="messages">
+    <unit id="continue-shopping" name="order.continue_shopping">
+      <segment>
+        <source>Continue shopping</source>
+        <target>Continuer vos achats</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
 ```
 
 Alternatively, you may call the `add()` method on a {`Tempest\Intl\Catalog\Catalog`} instance to add a translation message at runtime.

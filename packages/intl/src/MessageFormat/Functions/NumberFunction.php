@@ -13,6 +13,9 @@ use Tempest\Support\Arr;
 
 final class NumberFunction implements FormattingFunction, SelectorFunction
 {
+    /** @var array<string, string> */
+    private array $ordinalCategories = [];
+
     public string $name = 'number';
 
     public function __construct(
@@ -36,7 +39,22 @@ final class NumberFunction implements FormattingFunction, SelectorFunction
             return true;
         }
 
+        if (Arr\get_by_key($parameters, 'select') === 'ordinal') {
+            return $key === $this->getOrdinalCategory($number);
+        }
+
         return $key === $this->pluralRules->getPluralCategory($this->intlConfig->currentLocale, $number);
+    }
+
+    private function getOrdinalCategory(float|int $number): string
+    {
+        $cacheKey = "{$this->intlConfig->currentLocale->value}:{$number}";
+
+        return $this->ordinalCategories[$cacheKey] ??= \MessageFormatter::formatMessage(
+            $this->intlConfig->currentLocale->value,
+            '{number, selectordinal, zero {zero} one {one} two {two} few {few} many {many} other {other}}',
+            ['number' => $number],
+        ) ?: 'other';
     }
 
     private function matchExists(string $key, mixed $value): bool

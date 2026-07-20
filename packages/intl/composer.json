@@ -10,7 +10,8 @@
         "tempest/core": "3.x-dev",
         "tempest/container": "3.x-dev",
         "tempest/support": "3.x-dev",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "ext-dom": "*"
     },
     "suggest": {
         "tempest/datetime": "In order to use the `datetime` function",

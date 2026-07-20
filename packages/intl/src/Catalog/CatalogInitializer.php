@@ -31,6 +31,7 @@ final class CatalogInitializer implements Initializer
                 $messages = match (true) {
                     Str\ends_with($path, '.json') => Json\decode($contents),
                     Str\ends_with($path, ['.yaml', '.yml']) => Yaml::parse($contents),
+                    Str\ends_with($path, ['.xlf', '.xliff']) => XliffParser::parse($contents),
                     default => throw new RuntimeException("Unsupported translation file format: {$path}"),
                 };
 

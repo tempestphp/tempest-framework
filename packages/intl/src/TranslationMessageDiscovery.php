@@ -29,7 +29,7 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
 
     public function discoverPath(DiscoveryLocation $location, string $path): void
     {
-        if (! ends_with($path, ['.json', '.yml', '.yaml'])) {
+        if (! ends_with($path, ['.json', '.xlf', '.xliff', '.yml', '.yaml'])) {
             return;
         }
 
