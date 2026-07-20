@@ -36,7 +36,8 @@ final class ConfigInstallerTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_it_can_install(): void
+    #[Test]
+    public function it_can_install(): void
     {
         $loadConfig = $this->container->get(LoadConfig::class);
 
