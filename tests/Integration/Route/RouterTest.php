@@ -16,11 +16,20 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Status;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Router\Bindable;
+use Tempest\Router\Exceptions\RouteBindingDidNotSupportRelations;
 use Tempest\Router\GenericRouter;
+use Tempest\Router\Get;
+use Tempest\Router\MatchedRoute;
+use Tempest\Router\RouteBindingInitializer;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\SecFetchMode;
 use Tempest\Router\SecFetchSite;
+use Tempest\Router\WithRelations;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Controllers\TestMiddleware;
 use Tests\Tempest\Fixtures\Events\QueryLogger;
@@ -143,6 +152,26 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->assertSee('Brent:1');
 
         $this->assertCount(1, QueryLogger::$queries);
+    }
+
+    #[Test]
+    public function route_binding_with_relations_rejects_an_unsupported_resolver(): void
+    {
+        $handler = MethodReflector::fromParts(UnsupportedRelationsController::class, 'handle');
+        $route = DiscoveredRoute::fromRoute(new Get('/unsupported/{binding}'), [], $handler);
+
+        $this->container->singleton(
+            MatchedRoute::class,
+            new MatchedRoute($route, ['binding' => 'test']),
+        );
+
+        $this->expectException(RouteBindingDidNotSupportRelations::class);
+
+        new RouteBindingInitializer()->initialize(
+            new ClassReflector(UnsupportedRelationsBindable::class),
+            tag: null,
+            container: $this->container,
+        );
     }
 
     #[Test]
@@ -402,6 +431,22 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/posts/789/tech')
             ->assertOk()
             ->assertSee('Post 789 in category tech');
+    }
+}
+
+final readonly class UnsupportedRelationsController
+{
+    public function handle(#[WithRelations('author')] UnsupportedRelationsBindable $binding): Ok
+    {
+        return new Ok();
+    }
+}
+
+final readonly class UnsupportedRelationsBindable implements Bindable
+{
+    public static function resolve(string $input): static
+    {
+        return new self();
     }
 }
 
