@@ -63,7 +63,7 @@ jobs:
             phpstan-result-cache-
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan --error-format=github
+        run: vendor/bin/phpstan --error-format=github -vv
 
       - name: Save PHPStan result cache
         uses: actions/cache/save@v4
