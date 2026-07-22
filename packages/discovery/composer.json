@@ -8,7 +8,7 @@
         "tempest/reflection": "3.x-dev",
         "tempest/support": "3.x-dev",
         "psr/container": "^2.0",
-        "symfony/cache": "^7.3"
+        "symfony/cache": "^7.3|^8.0"
     },
     "require-dev": {
         "tempest/container": "3.x-dev",

@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.5",
         "voku/portable-ascii": "^2.0.3",
-        "symfony/uid": "^7.1"
+        "symfony/uid": "^7.1|^8.0"
     },
     "autoload": {
         "psr-4": {

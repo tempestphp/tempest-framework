@@ -8,7 +8,7 @@
         "tempest/http": "3.x-dev",
         "tempest/view": "3.x-dev",
         "tempest/highlight": "^2.11.4",
-        "symfony/var-exporter": "^7.1"
+        "symfony/var-exporter": "^7.1|^8.0"
     },
     "autoload": {
         "files": [

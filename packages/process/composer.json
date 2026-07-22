@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "symfony/process": "^7.3",
+        "symfony/process": "^7.3|^8.0",
         "tempest/container": "3.x-dev",
         "tempest/support": "3.x-dev",
         "tempest/datetime": "3.x-dev"

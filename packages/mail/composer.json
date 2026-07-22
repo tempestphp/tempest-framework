@@ -8,11 +8,11 @@
         "tempest/reflection": "3.x-dev",
         "tempest/support": "3.x-dev",
         "tempest/event-bus": "3.x-dev",
-        "symfony/mailer": "^7.2.6"
+        "symfony/mailer": "^7.2.6|^8.0"
     },
     "require-dev": {
-        "symfony/postmark-mailer": "^7.2.6",
-        "symfony/amazon-mailer": "^7.2.0"
+        "symfony/postmark-mailer": "^7.2.6|^8.0",
+        "symfony/amazon-mailer": "^7.2.0|^8.0"
     },
     "suggest": {
         "tempest/storage": "For storage attachment support"

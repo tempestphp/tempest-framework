@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Reflection\ClassReflector;
@@ -43,7 +44,7 @@ final class RouteBindingInitializer implements DynamicInitializer
         if ($withRelations !== null) {
             $resolve = $class->getMethod('resolve');
 
-            if ($resolve->getParameter('relations') === null && ! $resolve->getReflection()->isVariadic()) {
+            if (!$resolve->getParameter('relations') instanceof ParameterReflector && ! $resolve->getReflection()->isVariadic()) {
                 throw new RouteBindingDidNotSupportRelations($class->getName());
             }
         }

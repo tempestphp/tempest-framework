@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.5",
         "tempest/highlight": "^2.11.4",
-        "symfony/var-dumper": "^7.1"
+        "symfony/var-dumper": "^7.1|^8.0"
     },
     "require-dev": {
         "tempest/console": "3.x-dev"

@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.5",
         "psr/cache": "^3.0",
-        "symfony/cache": "^7.3",
+        "symfony/cache": "^7.3|^8.0",
         "tempest/core": "3.x-dev",
         "tempest/clock": "3.x-dev",
         "tempest/kv-store": "3.x-dev",

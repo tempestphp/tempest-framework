@@ -2,6 +2,7 @@
 
 namespace Tempest\Intl\MessageFormat\Functions;
 
+use MessageFormatter;
 use Tempest\Intl\Currency;
 use Tempest\Intl\IntlConfig;
 use Tempest\Intl\MessageFormat\Formatter\FormattedValue;
@@ -50,7 +51,7 @@ final class NumberFunction implements FormattingFunction, SelectorFunction
     {
         $cacheKey = "{$this->intlConfig->currentLocale->value}:{$number}";
 
-        return $this->ordinalCategories[$cacheKey] ??= \MessageFormatter::formatMessage(
+        return $this->ordinalCategories[$cacheKey] ??= MessageFormatter::formatMessage(
             $this->intlConfig->currentLocale->value,
             '{number, selectordinal, zero {zero} one {one} two {two} few {few} many {many} other {other}}',
             ['number' => $number],
