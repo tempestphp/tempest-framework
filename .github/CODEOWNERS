@@ -40,6 +40,7 @@
 /packages/log/                                       @brendt
 /packages/mail/                                      @innocenzi
 /packages/mapper/                                    @brendt
+/packages/mcp/                                       @xHeaven
 /packages/process/                                   @innocenzi
 /packages/reflection/                                @brendt @aidan-casey
 /packages/router/                                    @brendt @aidan-casey

@@ -6,6 +6,7 @@ namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Tests\Rules\Fixtures\SomeBackedEnum;
 use Tempest\Validation\Tests\Rules\Fixtures\SomeEnum;
@@ -36,6 +37,23 @@ final class IsEnumTest extends TestCase
         $this->assertFalse($rule->isValid('four'));
         $this->assertTrue($rule->isValid('one'));
         $this->assertTrue($rule->isValid('two'));
+    }
+
+    #[Test]
+    public function validating_values_with_non_matching_types(): void
+    {
+        $backed = new IsEnum(SomeBackedEnum::class);
+
+        $this->assertFalse($backed->isValid(5));
+        $this->assertFalse($backed->isValid(1.5));
+        $this->assertFalse($backed->isValid(true));
+        $this->assertFalse($backed->isValid([]));
+        $this->assertFalse($backed->isValid(new stdClass()));
+
+        $pure = new IsEnum(SomeEnum::class);
+
+        $this->assertFalse($pure->isValid(5));
+        $this->assertFalse($pure->isValid([]));
     }
 
     #[Test]

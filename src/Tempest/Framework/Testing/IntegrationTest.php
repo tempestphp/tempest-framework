@@ -32,6 +32,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
+use Tempest\Mcp\Testing\McpTester;
 use Tempest\Process\Testing\ProcessTester;
 use Tempest\Storage\Testing\StorageTester;
 use Throwable;
@@ -118,6 +119,11 @@ abstract class IntegrationTest extends TestCase
      */
     protected ViewTester $view;
 
+    /**
+     * Provides utilities for testing MCP servers.
+     */
+    protected McpTester $mcp;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -198,6 +204,7 @@ abstract class IntegrationTest extends TestCase
         $this->oauth = new OAuthTester($this->container);
         $this->database = new DatabaseTester($this->container);
         $this->view = new ViewTester($this->container);
+        $this->mcp = new McpTester($this->container);
 
         return $this;
     }

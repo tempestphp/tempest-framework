@@ -23,6 +23,12 @@ validation_error:
   is_alpha_numeric: |
     .input {$field :string}
     {$field} must contain only alphanumeric characters
+  is_array: |
+    .input {$field :string}
+    .input {$or_null :boolean}
+    .match $or_null
+      true {{{$field} must be an array if specified}}
+      false {{{$field} must be an array}}
   is_array_list: |
     .input {$field :string}
     {$field} must be a list

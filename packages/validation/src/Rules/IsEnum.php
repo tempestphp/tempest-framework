@@ -8,6 +8,7 @@ use Attribute;
 use BackedEnum;
 use Tempest\Validation\HasTranslationVariables;
 use Tempest\Validation\Rule;
+use TypeError;
 use UnexpectedValueException;
 use UnitEnum;
 
@@ -114,7 +115,19 @@ final readonly class IsEnum implements Rule, HasTranslationVariables
         }
 
         if (method_exists($this->enum, 'tryFrom')) {
-            return $this->enum::tryFrom($value);
+            if (! is_string($value) && ! is_int($value)) {
+                return null;
+            }
+
+            try {
+                return $this->enum::tryFrom($value);
+            } catch (TypeError) {
+                return null;
+            }
+        }
+
+        if (! is_string($value)) {
+            return null;
         }
 
         return defined("{$this->enum}::{$value}") ? $this->enum::{$value} : null;

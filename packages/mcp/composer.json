@@ -1,0 +1,29 @@
+{
+    "name": "tempest/mcp",
+    "description": "The PHP framework that gets out of your way.",
+    "require": {
+        "php": "^8.5",
+        "tempest/console": "3.x-dev",
+        "tempest/container": "3.x-dev",
+        "tempest/core": "3.x-dev",
+        "tempest/discovery": "3.x-dev",
+        "tempest/http": "3.x-dev",
+        "tempest/mapper": "3.x-dev",
+        "tempest/reflection": "3.x-dev",
+        "tempest/router": "3.x-dev",
+        "tempest/support": "3.x-dev",
+        "tempest/validation": "3.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Mcp\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Mcp\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
