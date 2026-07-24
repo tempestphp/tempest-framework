@@ -17,7 +17,7 @@ final class XliffParserTest extends TestCase
     #[Test]
     public function parses_xliff_1_2_resource_identifiers_and_source_aliases(): void
     {
-        $messages = XliffParser::parse(<<<'XLIFF'
+        $messages = XliffParser::parse(<<<'XLIFF_WRAP'
         <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
           <file original="namespace1" datatype="plaintext" source-language="en-US" target-language="de-CH">
             <body>
@@ -40,7 +40,7 @@ final class XliffParserTest extends TestCase
             </body>
           </file>
         </xliff>
-        XLIFF);
+        XLIFF_WRAP);
 
         $this->assertSame('Hallo', $messages['key1']);
         $this->assertSame('Hallo', $messages['Hello']);

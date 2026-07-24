@@ -3,6 +3,7 @@
 namespace Tempest\Intl\Catalog;
 
 use DOMDocument;
+use DOMDocumentType;
 use DOMElement;
 use DOMNodeList;
 use DOMText;
@@ -13,6 +14,7 @@ use RuntimeException;
 final readonly class XliffParser
 {
     private const string VERSION_1_NAMESPACE = 'urn:oasis:names:tc:xliff:document:1.2';
+
     private const string PGS_NAMESPACE = 'urn:oasis:names:tc:xliff:pgs:1.0';
 
     private const string VERSION_2_NAMESPACE = 'urn:oasis:names:tc:xliff:document:2.0';
@@ -48,7 +50,7 @@ final readonly class XliffParser
                 throw new RuntimeException('Invalid XLIFF document: malformed XML.');
             }
 
-            if ($document->doctype !== null) {
+            if ($document->doctype instanceof DOMDocumentType) {
                 throw new RuntimeException('Invalid XLIFF document: document types are not allowed.');
             }
         } finally {
@@ -159,8 +161,11 @@ final readonly class XliffParser
 
             for ($index = 0; $index < $unit->childNodes->length; $index++) {
                 $part = $unit->childNodes->item($index);
+                if (! $part instanceof DOMElement) {
+                    continue;
+                }
 
-                if (! $part instanceof DOMElement || ! in_array($part->localName, ['segment', 'ignorable'], true)) {
+                if (! in_array($part->localName, ['segment', 'ignorable'], true)) {
                     continue;
                 }
 
@@ -238,7 +243,11 @@ final readonly class XliffParser
             ));
 
         foreach ($segments as $segment) {
-            if (! $segment instanceof DOMElement || ! $segment->hasAttributeNS(self::PGS_NAMESPACE, 'case')) {
+            if (! $segment instanceof DOMElement) {
+                continue;
+            }
+
+            if (! $segment->hasAttributeNS(self::PGS_NAMESPACE, 'case')) {
                 continue;
             }
 
@@ -426,8 +435,11 @@ final readonly class XliffParser
 
         for ($index = 0; $index < $unit->childNodes->length; $index++) {
             $originalData = $unit->childNodes->item($index);
+            if (! $originalData instanceof DOMElement) {
+                continue;
+            }
 
-            if (! $originalData instanceof DOMElement || $originalData->localName !== 'originalData') {
+            if ($originalData->localName !== 'originalData') {
                 continue;
             }
 
