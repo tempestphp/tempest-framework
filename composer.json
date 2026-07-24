@@ -269,12 +269,17 @@
             "Composer\\Config::disableProcessTimeout",
             "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices"
         ],
+        "paratest": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/bin/paratest --runner WrapperRunner"
+        ],
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "fmt": "vendor/bin/mago fmt",
         "lint:fix": "vendor/bin/mago lint --fix --format-after-fix",
         "style": "composer fmt && composer lint:fix",
         "test": "composer phpunit",
         "test:stop": "composer phpunit -- --stop-on-error --stop-on-failure",
+        "test:parallel": "composer paratest",
         "lint": "vendor/bin/mago lint --potentially-unsafe --minimum-fail-level=note",
         "phpstan": "vendor/bin/phpstan analyse --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",

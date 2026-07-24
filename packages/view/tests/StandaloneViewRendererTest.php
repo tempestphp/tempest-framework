@@ -77,7 +77,7 @@ final class StandaloneViewRendererTest extends TestCase
     #[Test]
     public function with_cache_enabled(): void
     {
-        $viewCache = ViewCache::create();
+        $viewCache = ViewCache::create(path: sys_get_temp_dir() . '/tempest-view-cache-tests-' . getmypid());
         $viewCache->clear();
 
         $renderer =

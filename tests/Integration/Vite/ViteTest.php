@@ -218,7 +218,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 'src/main.entrypoint.ts' => '',
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
             ],
-            root: __DIR__ . '/Fixtures/tmp',
+            root: $this->internalStorage . '/Fixtures/tmp',
         );
     }
 }

@@ -138,6 +138,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertException(JsonCouldNotBeEncoded::class, fn () => $responseSender->send($response));
 
         ob_get_clean();
+        ob_end_clean();
     }
 
     #[Test]

@@ -22,6 +22,8 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        $this->kernel->root = $this->internalStorage;
+
         $this->http->registerRoute(StaticPageController::class);
         $this->http->registerStaticPage(StaticPageController::class);
     }

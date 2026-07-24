@@ -2,6 +2,7 @@
 
 namespace Integration\Router;
 
+use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\FrameworkKernel;
@@ -17,8 +18,12 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class WorkerModeApplicationTest extends FrameworkIntegrationTestCase
 {
     #[Test]
+    #[BackupGlobals(true)]
     public function shutdown_and_reset_are_called(): void
     {
+        unset($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+        $_COOKIE = [];
+
         $this->eventBus->preventEventHandling();
 
         $container = new GenericContainer();

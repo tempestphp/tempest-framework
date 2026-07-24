@@ -28,6 +28,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
+use function Tempest\env;
 
 /**
  * @property \Tempest\Console\Testing\ConsoleTester $console
@@ -161,11 +162,12 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         }
 
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/db-main.sqlite',
+            path: $this->internalStorage . '/db-main.sqlite',
             tag: 'sqlite-main',
         ));
 
         $this->container->config(new MysqlConfig(
+            database: 'app' . env('TEST_TOKEN', ''),
             tag: 'mysql-main',
         ));
 

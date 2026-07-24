@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Cryptography\Encryption\Encrypter;
@@ -69,6 +70,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    #[BackupGlobals(true)]
     public function from_factory(): void
     {
         $_COOKIE = [];

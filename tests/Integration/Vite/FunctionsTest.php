@@ -18,7 +18,7 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
     #[PreCondition]
     protected function configure(): void
     {
-        $this->vite->setRootDirectory(__DIR__ . '/Fixtures/tmp');
+        $this->vite->setRootDirectory($this->internalStorage . '/Fixtures/tmp');
     }
 
     #[Test]

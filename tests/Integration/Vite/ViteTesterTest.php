@@ -66,7 +66,7 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
             files: [
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
             ],
-            root: __DIR__ . '/Fixtures/tmp',
+            root: $this->internalStorage . '/Fixtures/tmp',
         );
 
         $this->assertNotNull($path);
@@ -92,7 +92,7 @@ final class ViteTesterTest extends FrameworkIntegrationTestCase
         $this->vite->call(
             callback: fn () => null,
             files: [],
-            root: __DIR__ . '/Fixtures/tmp',
+            root: $this->internalStorage . '/Fixtures/tmp',
         );
 
         $this->assertInstanceOf(NullTagsResolver::class, $this->container->get(TagsResolver::class));

@@ -14,10 +14,10 @@ final class AuthenticationInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->configure(
-                __DIR__ . '/install',
-                new Psr4Namespace('App\\', __DIR__ . '/install/App'),
+                __DIR__ . '/install-authentication',
+                new Psr4Namespace('App\\', __DIR__ . '/install-authentication/App'),
             )
-            ->setRoot(__DIR__ . '/install')
+            ->setRoot(__DIR__ . '/install-authentication')
             ->put('.env.example', '')
             ->put('.env', '');
     }

@@ -18,10 +18,10 @@ final class OAuthInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->configure(
-                __DIR__ . '/install',
-                new Psr4Namespace('App\\', __DIR__ . '/install/App'),
+                __DIR__ . '/install-oauth',
+                new Psr4Namespace('App\\', __DIR__ . '/install-oauth/App'),
             )
-            ->setRoot(__DIR__ . '/install')
+            ->setRoot(__DIR__ . '/install-oauth')
             ->put('.env.example', '')
             ->put('.env', '');
     }

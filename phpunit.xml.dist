@@ -30,9 +30,11 @@
     </exclude>
   </source>
   <php>
+    <ini name="memory_limit" value="2G" />
     <env name="ENVIRONMENT" value="testing" />
     <env name="BASE_URI" value="" />
     <env name="INTERNAL_CACHES" value="null" />
+    <env name="CONFIG_CACHE" value="true" />
     <env name="DISCOVERY_CACHE" value="true" />
   </php>
 </phpunit>

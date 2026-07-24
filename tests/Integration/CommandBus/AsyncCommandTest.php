@@ -82,9 +82,8 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $this->console->call('command:dispatch 1');
 
-        sleep(1);
+        $output = $this->waitForOutput($process, 'SUCCESS');
 
-        $output = $this->getOutput($process);
         $this->assertStringContainsString('Monitoring for new commands', $output);
         $this->assertStringContainsString('SUCCESS', $output);
         $process->stop();
@@ -98,9 +97,8 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $this->console->call('command:dispatch 1 --fail');
 
-        sleep(1);
+        $output = $this->waitForOutput($process, 'FAILED');
 
-        $output = $this->getOutput($process);
         $this->assertStringContainsString('Monitoring for new commands', $output);
         $this->assertStringContainsString('FAILED', $output);
         $process->stop();
@@ -109,6 +107,23 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
             ->each(function (string $filename): void {
                 unlink($filename);
             });
+    }
+
+    private function waitForOutput(Process $process, string $needle, float $timeoutInSeconds = 10.0): string
+    {
+        $deadline = hrtime(as_number: true) + ($timeoutInSeconds * 1_000_000_000);
+
+        do {
+            $output = $this->getOutput($process);
+
+            if (str_contains($output, $needle)) {
+                return $output;
+            }
+
+            usleep(50_000);
+        } while (hrtime(as_number: true) < $deadline);
+
+        return $this->getOutput($process);
     }
 
     private function getOutput(Process $process): string

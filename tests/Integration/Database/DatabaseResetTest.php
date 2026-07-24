@@ -14,7 +14,7 @@ final class DatabaseResetTest extends FrameworkIntegrationTestCase
     public function active_transaction_prevents_database_from_being_reset(): void
     {
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/db-main.sqlite',
+            path: $this->internalStorage . '/db-main.sqlite',
             tag: 'sqlite-main',
         ));
 
@@ -34,7 +34,7 @@ final class DatabaseResetTest extends FrameworkIntegrationTestCase
     public function properly_closed_transaction_allows_database_reset(): void
     {
         $this->container->config(new SQLiteConfig(
-            path: __DIR__ . '/db-main.sqlite',
+            path: $this->internalStorage . '/db-main.sqlite',
             tag: 'sqlite-main',
         ));
 

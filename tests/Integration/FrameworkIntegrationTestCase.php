@@ -37,7 +37,18 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $databaseConfigPath = Path\normalize(__DIR__, '..', 'Fixtures/Config/database.config.php');
 
         if (! Filesystem\exists($databaseConfigPath)) {
-            Filesystem\copy_file($defaultDatabaseConfigPath, $databaseConfigPath);
+            $temporaryDatabaseConfigPath = $databaseConfigPath . '.' . getmypid() . '.tmp';
+
+            Filesystem\copy_file($defaultDatabaseConfigPath, $temporaryDatabaseConfigPath);
+
+            try {
+                Filesystem\move($temporaryDatabaseConfigPath, $databaseConfigPath);
+            } catch (Filesystem\Exceptions\FilesystemException) {
+            }
+
+            if (Filesystem\exists($temporaryDatabaseConfigPath)) {
+                Filesystem\delete_file($temporaryDatabaseConfigPath);
+            }
         }
 
         $this->container->config(require $databaseConfigPath);

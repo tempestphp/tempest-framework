@@ -108,6 +108,14 @@ jobs:
         if: ${{ matrix.database == 'postgres' }}
         uses: ankane/setup-postgres@v1
 
+      - name: Create worker databases - mysql
+        if: ${{ matrix.database == 'mysql' }}
+        run: for i in 1 2 3 4; do mysql -u root -e "CREATE DATABASE IF NOT EXISTS app$i;"; done
+
+      - name: Create worker databases - postgres
+        if: ${{ matrix.database == 'postgres' }}
+        run: for i in 1 2 3 4; do createdb "${POSTGRES_DB}$i"; done
+
       - name: Set database config - ${{ matrix.database }}
         run: php -r "copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
 
@@ -118,4 +126,4 @@ jobs:
         run: php ./tempest discovery:status
 
       - name: Execute tests
-        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=2G vendor/bin/phpunit
+        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=2G vendor/bin/paratest --runner WrapperRunner --processes 4

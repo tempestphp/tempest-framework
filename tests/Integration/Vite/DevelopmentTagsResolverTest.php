@@ -24,7 +24,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->vite->setRootDirectory(__DIR__ . '/Fixtures/tmp');
+        $this->vite->setRootDirectory($this->internalStorage . '/Fixtures/tmp');
     }
 
     #[Test]
