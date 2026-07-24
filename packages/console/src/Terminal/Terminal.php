@@ -175,7 +175,7 @@ final class Terminal
         if ($requiredHeight > $availableHeight) {
             $this->initialCursor->setPosition(new Point(
                 x: $this->initialCursor->getPosition()->x,
-                y: $this->height - $requiredHeight,
+                y: max(0, $this->height - $requiredHeight),
             ));
         }
     }
