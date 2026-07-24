@@ -43,7 +43,7 @@ final class GenericProcessExecutorTest extends TestCase
     public function start(): void
     {
         $executor = new GenericProcessExecutor();
-        $process = $executor->start('echo hello');
+        $process = $executor->start('"' . PHP_BINARY . '" -r "usleep(500000); echo \'hello\';"');
 
         $this->assertIsInt($process->pid);
         $this->assertTrue($process->running);
@@ -54,10 +54,10 @@ final class GenericProcessExecutorTest extends TestCase
 
         $this->assertNull($process->pid);
         $this->assertFalse($process->running);
-        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $process->output);
+        $this->assertSame('hello', $process->output);
         $this->assertSame('', $process->errorOutput);
 
-        $this->assertStringEqualsStringIgnoringLineEndings("hello\n", $result->output);
+        $this->assertSame('hello', $result->output);
         $this->assertSame('', $result->errorOutput);
         $this->assertSame(0, $result->exitCode);
     }
