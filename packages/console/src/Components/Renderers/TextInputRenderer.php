@@ -35,7 +35,7 @@ final class TextInputRenderer
         $this->label($label);
 
         if ($hint) {
-            $this->offsetY++;
+            $this->offsetY += substr_count($hint, "\n") + 1;
             $this->line($this->style('fg-gray', $hint))->newLine();
         }
 
