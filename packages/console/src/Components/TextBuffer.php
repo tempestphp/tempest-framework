@@ -335,7 +335,10 @@ final class TextBuffer
 
     private function getGraphemeWidth(string $grapheme): int
     {
-        if (preg_match('/[\p{Extended_Pictographic}\p{Regional_Indicator}\x{20E3}]/u', $grapheme) === 1) {
+        $hasEmojiPresentation = preg_match('/[\p{Emoji_Presentation}\x{20E3}]/u', $grapheme) === 1;
+        $hasEmojiVariation = preg_match('/\p{Extended_Pictographic}\x{FE0F}/u', $grapheme) === 1;
+
+        if ($hasEmojiPresentation || $hasEmojiVariation) {
             return 2;
         }
 

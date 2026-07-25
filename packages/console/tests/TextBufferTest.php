@@ -329,6 +329,12 @@ final class TextBufferTest extends TestCase
     #[TestWith(['你a', 1, [2, 0]])]
     #[TestWith(["e\u{0301}x", 1, [1, 0]])]
     #[TestWith(['👨‍👩‍👧‍👦x', 1, [2, 0]])]
+    #[TestWith(['©x', 1, [1, 0]])]
+    #[TestWith(['❤x', 1, [1, 0]])]
+    #[TestWith(['©️x', 1, [2, 0]])]
+    #[TestWith(['❤️x', 1, [2, 0]])]
+    #[TestWith(['🇺🇸x', 1, [2, 0]])]
+    #[TestWith(['1️⃣x', 1, [2, 0]])]
     #[Test]
     public function relative_cursor_index(string $initialText, int $cursor, array $expectedPoint): void
     {
