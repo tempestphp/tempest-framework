@@ -16,6 +16,9 @@ final class TextBufferTest extends TestCase
 {
     #[TestWith(['Hello', 5])]
     #[TestWith(['', 0])]
+    #[TestWith(["e\u{0301}", 1])]
+    #[TestWith(['👨‍👩‍👧‍👦', 1])]
+    #[TestWith(['你好', 2])]
     #[Test]
     public function construct(string $text, int $cursor): void
     {
@@ -43,6 +46,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([5, 11, 'Scott ', 'Leon Kennedy', 'Leon Scott Kennedy'])]
     #[TestWith([6, 7, '.', 'Leon S', 'Leon S.'])]
     #[TestWith([0, 1, '0', '123', '0123'])]
+    #[TestWith([1, 2, "e\u{0301}", '你a', "你e\u{0301}a"])]
+    #[TestWith([1, 2, '👍🏽', '你a', '你👍🏽a'])]
     #[Test]
     public function input(int $initialCursor, int $expectedCursor, string $input, string $initialText, string $expectedText): void
     {
@@ -57,6 +62,7 @@ final class TextBufferTest extends TestCase
 
     #[TestWith([13, 0, 'complete line', ''])]
     #[TestWith([8, 6, "first\nsecond\nthird", "first\n\nthird"])]
+    #[TestWith([3, 2, "你\n👍🏽x\nz", "你\n\nz"])]
     #[Test]
     public function delete_current_line(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
@@ -78,6 +84,9 @@ final class TextBufferTest extends TestCase
     #[TestWith([12, 11, 'Hey! Listen!', 'Hey! Listen'])]
     #[TestWith([14, 11, 'My name is Joe', 'My name is '])]
     #[TestWith([7, 5, '$foo = ', '$foo '])]
+    #[TestWith([10, 7, 'привет мир', 'привет '])]
+    #[TestWith([3, 0, '日本語', ''])]
+    #[TestWith([2, 1, 'a👍🏽', 'a'])]
     #[Test]
     public function delete_previous_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
@@ -101,6 +110,8 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 3, 'foo-bar-baz', 'foobar-baz'])]
     #[TestWith([4, 4, 'foo-bar-baz', 'foo--baz'])]
     #[TestWith([3, 3, 'foo--baz', 'foobaz'])]
+    #[TestWith([0, 0, '日本語', ''])]
+    #[TestWith([0, 0, '👍🏽a', 'a'])]
     #[Test]
     public function delete_next_word(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
@@ -119,6 +130,9 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 3, 'abc', 'abc'])]
     #[TestWith([0, 0, '', ''])]
     #[TestWith([0, 0, '-', ''])]
+    #[TestWith([0, 0, "e\u{0301}x", 'x'])]
+    #[TestWith([0, 0, '👨‍👩‍👧‍👦x', 'x'])]
+    #[TestWith([0, 0, '👍🏽x', 'x'])]
     #[Test]
     public function delete_next_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
@@ -137,6 +151,9 @@ final class TextBufferTest extends TestCase
     #[TestWith([3, 2, 'abc', 'ab'])]
     #[TestWith([0, 0, '', ''])]
     #[TestWith([1, 0, '-', ''])]
+    #[TestWith([1, 0, "e\u{0301}x", 'x'])]
+    #[TestWith([1, 0, '👨‍👩‍👧‍👦x', 'x'])]
+    #[TestWith([1, 0, '👍🏽x', 'x'])]
     #[Test]
     public function delete_previous_character(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
     {
@@ -289,6 +306,18 @@ final class TextBufferTest extends TestCase
         $this->assertSame($expectedPosition, $buffer->cursor);
     }
 
+    #[TestWith(['你ab', 3, ['你a', 'b']])]
+    #[TestWith(["e\u{0301}abc", 3, ["e\u{0301}ab", 'c']])]
+    #[TestWith(['👨‍👩‍👧‍👦ab', 3, ['👨‍👩‍👧‍👦a', 'b']])]
+    #[TestWith(["a\n\n你b", 2, ['a', '', '你', 'b']])]
+    #[Test]
+    public function wrapped_lines(string $text, int $maximumWidth, array $expected): void
+    {
+        $buffer = new TextBuffer($text);
+
+        $this->assertSame($expected, $buffer->getWrappedLines($maximumWidth));
+    }
+
     #[TestWith(['123', 0, [0, 0]])]
     #[TestWith(["123\n456", 4, [0, 1]])]
     #[TestWith(["123\n456", 5, [1, 1]])]
@@ -297,6 +326,9 @@ final class TextBufferTest extends TestCase
     #[TestWith(["different\nline\nlength", 10, [0, 1]])]
     #[TestWith(["different\nline\nlength", 11, [1, 1]])]
     #[TestWith(["different\nline\nlength", 21, [6, 2]])]
+    #[TestWith(['你a', 1, [2, 0]])]
+    #[TestWith(["e\u{0301}x", 1, [1, 0]])]
+    #[TestWith(['👨‍👩‍👧‍👦x', 1, [2, 0]])]
     #[Test]
     public function relative_cursor_index(string $initialText, int $cursor, array $expectedPoint): void
     {
@@ -314,6 +346,9 @@ final class TextBufferTest extends TestCase
     #[TestWith(["different\nline\nlength", 5, 9, [4, 1]])]
     #[TestWith(["different\nline\nlength", 5, 13, [3, 2]])]
     #[TestWith(["different\nline\nlength", 5, 21, [1, 4]])]
+    #[TestWith(['你ab', 3, 3, [1, 1]])]
+    #[TestWith(["e\u{0301}abc", 3, 4, [1, 1]])]
+    #[TestWith(['👨‍👩‍👧‍👦ab', 3, 3, [1, 1]])]
     #[Test]
     public function relative_cursor_index_with_wrapping(string $initialText, int $maxLineWidth, int $cursor, array $expectedPoint): void
     {

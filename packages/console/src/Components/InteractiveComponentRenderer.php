@@ -28,6 +28,7 @@ final class InteractiveComponentRenderer
 
     /** @var list<string> */
     private array $pendingKeys = [];
+    private string $pendingInput = '';
 
     public function __construct(
         private readonly Validator $validator,
@@ -179,14 +180,15 @@ final class InteractiveComponentRenderer
                 return '';
             }
 
-            $this->pendingKeys = $this->splitKeys($input);
+            $this->pendingInput .= $input;
+            $this->pendingKeys = $this->splitKeys($this->pendingInput);
         }
 
         return array_shift($this->pendingKeys);
     }
 
     /** @return list<string> */
-    private function splitKeys(string $input): array
+    private function splitKeys(string &$input): array
     {
         /** @var null|list<string> $knownKeys */
         static $knownKeys = null;
@@ -218,7 +220,13 @@ final class InteractiveComponentRenderer
                 preg_match('/^\e(?:\[[0-?]*[ -\/]*[@-~]|O.)/s', $input, $matches);
                 $key = $matches[0] ?? mb_substr($input, 0, 2);
             } else {
-                $key = mb_substr($input, 0, 1);
+                $length = $this->getUtf8CharacterLength($input);
+
+                if (strlen($input) < $length) {
+                    break;
+                }
+
+                $key = substr($input, 0, $length);
             }
 
             $keys[] = $key;
@@ -226,6 +234,19 @@ final class InteractiveComponentRenderer
         }
 
         return $keys;
+    }
+
+    private function getUtf8CharacterLength(string $input): int
+    {
+        $firstByte = ord($input[0]);
+
+        return match (true) {
+            ($firstByte & 0x80) === 0 => 1,
+            ($firstByte & 0xE0) === 0xC0 => 2,
+            ($firstByte & 0xF0) === 0xE0 => 3,
+            ($firstByte & 0xF8) === 0xF0 => 4,
+            default => 1,
+        };
     }
 
     private function renderFrames(InteractiveConsoleComponent $component, Terminal $terminal): mixed
