@@ -123,6 +123,7 @@ final class Terminal
             }
 
             if ($this->previousRender !== $content) {
+                $this->cursor->hide();
                 $this->clear();
                 $this->write($content);
                 $this->resetInitialCursor();
