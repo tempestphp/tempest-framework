@@ -321,14 +321,11 @@ final class TextBuffer
     /** @return list<string> */
     private function getGraphemes(?string $text): array
     {
+        /** @var array{0: list<string>} $matches */
         $matches = [];
         preg_match_all('/\X/u', $text ?? '', $matches);
 
-        $graphemes = $matches[0];
-
-        assert(array_is_list($graphemes), 'Grapheme matches must be a list.');
-
-        return $graphemes;
+        return $matches[0];
     }
 
     private function getGraphemeLength(?string $text): int
