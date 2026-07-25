@@ -16,6 +16,8 @@ enum Key: string
     case ENTER = "\n";
     case ALT_ENTER = "\e\n";
     case BACKSPACE = "\x7F";
+    case ALT_BACKSPACE = "\e\x7F";
+    case CMD_BACKSPACE = "\x15";
     case CTRL_BACKSPACE = "\x17";
     case DELETE = "\e[3~";
     case CTRL_DELETE = "\ed";

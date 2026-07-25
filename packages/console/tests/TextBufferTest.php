@@ -55,6 +55,20 @@ final class TextBufferTest extends TestCase
         $this->assertSame($expectedCursor, $buffer->cursor);
     }
 
+    #[TestWith([13, 0, 'complete line', ''])]
+    #[TestWith([8, 6, "first\nsecond\nthird", "first\n\nthird"])]
+    #[Test]
+    public function delete_current_line(int $initialCursor, int $expectedCursor, string $initialText, string $expectedText): void
+    {
+        $buffer = new TextBuffer($initialText);
+
+        $buffer->cursor = $initialCursor;
+        $buffer->deleteCurrentLine();
+
+        $this->assertSame($expectedText, $buffer->text);
+        $this->assertSame($expectedCursor, $buffer->cursor);
+    }
+
     #[TestWith([11, 8, 'foo-bar-baz', 'foo-bar-'])]
     #[TestWith([8, 7, 'foo-bar-', 'foo-bar'])]
     #[TestWith([7, 4, 'foo-bar', 'foo-'])]

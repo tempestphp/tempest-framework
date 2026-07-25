@@ -63,6 +63,18 @@ final class TextBuffer
         $this->moveCursorX(-1);
     }
 
+    public function deleteCurrentLine(): void
+    {
+        $lines = $this->getLines();
+        $linePositions = $this->getLinePositions();
+        $currentLineIndex = $this->getCurrentLineIndex();
+        $lineStart = $linePositions[$currentLineIndex];
+        $lineLength = mb_strlen($lines[$currentLineIndex]);
+
+        $this->text = mb_substr($this->text, 0, $lineStart) . mb_substr($this->text, $lineStart + $lineLength);
+        $this->cursor = $lineStart;
+    }
+
     public function moveCursorToPreviousWord(): void
     {
         if ($this->cursor === 0) {
