@@ -77,7 +77,7 @@
         "php-di/php-di": "^7.0",
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "^1.4",
-        "phpstan/phpstan": "2.1.40",
+        "phpstan/phpstan": "2.2.x-dev",
         "phpunit/phpunit": "^12.5.22",
         "predis/predis": "^3.0.0",
         "riskio/oauth2-auth0": "^2.4",
