@@ -18,6 +18,7 @@ use Rector\Php82\Rector\Param\AddSensitiveParameterAttributeRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Php85\Rector\FuncCall\ArrayKeyExistsNullToEmptyStringRector;
 use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use Tempest\Rector\ImportClassNamesRector;
 
 return RectorConfig::configure()
@@ -54,6 +55,7 @@ return RectorConfig::configure()
         ArrayKeyExistsNullToEmptyStringRector::class,
         StringClassNameToClassConstantRector::class,
         ReturnBinaryOrToEarlyReturnRector::class,
+        SafeDeclareStrictTypesRector::class,
     ])
     ->withConfiguredRule(ImportClassNamesRector::class, [
         'importShortClasses' => true,

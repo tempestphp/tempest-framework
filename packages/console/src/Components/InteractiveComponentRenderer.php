@@ -28,6 +28,7 @@ final class InteractiveComponentRenderer
 
     /** @var list<string> */
     private array $pendingKeys = [];
+
     private string $pendingInput = '';
 
     public function __construct(

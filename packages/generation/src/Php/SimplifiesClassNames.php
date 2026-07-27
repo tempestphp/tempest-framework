@@ -136,10 +136,12 @@ trait SimplifiesClassNames
                     }
 
                     foreach ($type->getTypes() as $subtype) {
-                        if (! ($subtype->isClass() && ! $subtype->isClassKeyword())) {
+                        if (!$subtype->isClass()) {
                             continue;
                         }
-
+                        if ($subtype->isClassKeyword()) {
+                            continue;
+                        }
                         $namespace->addUse((string) $subtype);
                     }
                 }

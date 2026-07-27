@@ -128,10 +128,8 @@ final class Cookie implements Stringable
             maxAge: isset($cookie['max-age']) ? (int) $cookie['max-age'] : null,
             domain: $cookie['domain'] ?? null,
             path: $cookie['path'] ?? '/',
-            // @phpstan-ignore identical.alwaysTrue
-            secure: isset($cookie['secure']) && $cookie['secure'] === true,
-            // @phpstan-ignore identical.alwaysTrue
-            httpOnly: isset($cookie['httponly']) && $cookie['httponly'] === true,
+            secure: isset($cookie['secure']),
+            httpOnly: isset($cookie['httponly']),
             sameSite: isset($cookie['samesite']) ? SameSite::from($cookie['samesite']) : null,
         );
     }
