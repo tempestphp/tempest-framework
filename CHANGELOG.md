@@ -2,7 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.16.2](https://github.com/tempestphp/tempest-framework/compare/v3.16.1..3.16.2)  —  2026-07-17
+## [3.17.0](https://github.com/tempestphp/tempest-framework/compare/v3.16.2..3.17.0)  —  2026-07-27
+
+### 🚨 Breaking changes
+
+- **support**: [**breaking**] use PHP 8.5 native URI parser (#2227) ([6ffff55](https://github.com/tempestphp/tempest-framework/commit/6ffff5528dd70b919573f7ff8895caf2f5956a19))
+
+### 🚀 Features
+
+- **core**: add config installer (#2226) ([c1e590a](https://github.com/tempestphp/tempest-framework/commit/c1e590abacab20f287860cf1724dced5da65ccc4))
+- **intl**: support XLIFF translation files (#2233) ([d363fc5](https://github.com/tempestphp/tempest-framework/commit/d363fc5f236ef855dff36fae48deac1d9542f287))
+- **router**: preload model relations during route binding (#2232) ([46e1c86](https://github.com/tempestphp/tempest-framework/commit/46e1c86567b6b49ef141aa10bd7bcf00ea553bbb))
+
+### 🐛 Bug fixes
+
+- **console**: improve interactive text input handling (#2239) ([dbd7737](https://github.com/tempestphp/tempest-framework/commit/dbd773795cb1680186913928ccc050ef49864f9d))
+- **database**: quote relation query identifiers (#2229) ([8865aa3](https://github.com/tempestphp/tempest-framework/commit/8865aa389d8c3032ca6162230ed9d20a305941cd))
+- test speed (#2238) ([1f0085c](https://github.com/tempestphp/tempest-framework/commit/1f0085cda591d0c3e9b89d67b1b33849979c8ef1))
+
+
+## [3.16.2](https://github.com/tempestphp/tempest-framework/compare/v3.16.1..v3.16.2)  —  2026-07-17
 
 ### 🐛 Bug fixes
 
