@@ -251,12 +251,14 @@ if (trait_exists(HasConsole::class)) {
                     // PHP will output empty arrays for empty dependencies,
                     // which is invalid and will make package managers crash.
                     foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
-                        if (!isset($json[$key])) {
+                        if (! isset($json[$key])) {
                             continue;
                         }
+
                         if ($json[$key]) {
                             continue;
                         }
+
                         unset($json[$key]);
                     }
 
