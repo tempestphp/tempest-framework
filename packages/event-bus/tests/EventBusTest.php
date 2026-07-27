@@ -218,7 +218,7 @@ final class EventBusTest extends TestCase
 
         $eventBus->dispatch(EventEnum::TWO);
 
-        /** @var bool $hasHappened */
+        /** @phpstan-ignore method.impossibleType */
         $this->assertTrue($hasHappened);
     }
 }

@@ -150,7 +150,7 @@ function high_resolution_time(): array
     if ($offset === null) {
         $offset = hrtime();
 
-        if ($offset === false) { // @phpstan-ignore-line identical.alwaysFalse
+        if ($offset === false) {
             throw new RuntimeException('The system does not provide a monotonic timer.');
         }
 
@@ -243,7 +243,7 @@ function to_intl_timezone(Timezone $timezone): IntlTimeZone
 
     $tz = IntlTimeZone::createTimeZone($value);
 
-    if ($tz === null) { // @phpstan-ignore-line identical.alwaysFalse
+    if ($tz === null) {
         throw new RuntimeException(sprintf(
             'Failed to create intl timezone from timezone "%s" ("%s" / "%s").',
             $timezone->name,

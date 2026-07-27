@@ -22,8 +22,8 @@ services:
 parameters:
     level: 5
     tmpDir: .cache/phpstan
-    tips:
-        treatPhpDocTypesAsCertain: false
+    treatPhpDocTypesAsCertain: false
+
     paths:
         - src
         - packages

@@ -7,6 +7,9 @@ use Tempest\Cryptography\Signing\Exceptions\SigningKeyWasInvalid;
 
 final readonly class SigningKey implements Stringable
 {
+    /**
+     * @throws SigningKeyWasInvalid
+     */
     public function __construct(
         private(set) string $value,
     ) {
@@ -17,6 +20,8 @@ final readonly class SigningKey implements Stringable
 
     /**
      * Creates a signing key from a string.
+     *
+     * @throws SigningKeyWasInvalid
      */
     public static function fromString(?string $key): self
     {

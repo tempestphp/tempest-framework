@@ -60,7 +60,6 @@ final class StubFileGenerator
                 ->setClassName($classname);
 
             foreach ($replacements as $placeholder => $replacement) {
-                // @phpstan-ignore function.alreadyNarrowedType
                 if (! is_string($replacement)) {
                     continue;
                 }
@@ -117,7 +116,6 @@ final class StubFileGenerator
             $fileContent = Filesystem\read_file($stubFile->filePath);
 
             foreach ($replacements as $placeholder => $replacement) {
-                // @phpstan-ignore function.alreadyNarrowedType
                 if (! is_string($replacement)) {
                     continue;
                 }

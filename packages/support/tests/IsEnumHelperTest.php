@@ -106,7 +106,6 @@ final class IsEnumHelperTest extends TestCase
         );
 
         // It's case sensitive
-        // @phpstan-ignore method.alreadyNarrowedType ( Because it's a regression test )
         $this->assertNull(
             SampleStatusBackedEnum::tryFrom('PUBLISH'),
         );

@@ -42,16 +42,6 @@ parameters:
                 - packages/**/tests/**/*.php
                 - packages/**/tests/*.php
         -
-            identifier: smaller.alwaysFalse
-            path: packages/support/src/Arr/functions.php
-            count: 1
-            # Runtime guard: positive-int type guarantees $number >= 1, but we keep the check for safety
-        -
-            identifier: instanceof.alwaysTrue
-            path: packages/support/src/Arr/functions.php
-            count: 1
-            # Runtime guard: closure return type guarantees Generator, but we validate for a clear error message
-        -
             identifier: disallowed.function
             path: packages/clock/src/MockClock.php
             count: 1
@@ -82,21 +72,6 @@ parameters:
             count: 2
             # Intentional: dd() is the purpose of TemporalInterface::dd()
         -
-            identifier: identical.alwaysFalse
-            path: packages/datetime/src/DateTime.php
-            count: 6
-            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
-        -
-            identifier: booleanOr.alwaysFalse
-            path: packages/datetime/src/DateTime.php
-            count: 5
-            # Runtime guard: IntlCalendar::get() returns false at runtime for extreme year values
-        -
-            identifier: instanceof.alwaysTrue
-            path: packages/datetime/src/DateTime.php
-            count: 1
-            # Runtime guard: DateTimeInterface::getTimezone() can return false at runtime
-        -
             identifier: disallowed.function
             path: packages/console/src/Testing/ConsoleTester.php
             count: 1
@@ -121,11 +96,6 @@ parameters:
             path: packages/support/tests/Fixtures/Phar/normalize_path.php
             count: 1
             # Intentional: require_once target exists only inside generated Phar archive at runtime
-        -
-            identifier: function.alreadyNarrowedType
-            path: packages/console/src/GenericConsole.php
-            count: 1
-            # Runtime guard: PHPDoc narrows string to class-string<BackedEnum>, but is_a() check is needed at runtime
         -
             identifier: argument.type
             path: packages/validation/tests/Rules/IsEnumTest.php

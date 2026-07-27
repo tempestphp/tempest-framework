@@ -91,8 +91,6 @@ final class SignerTest extends TestCase
             key: '', // @phpstan-ignore argument.type
             minimumExecutionDuration: false,
         ));
-
-        $signer->sign('important data');
     }
 
     #[Test]
