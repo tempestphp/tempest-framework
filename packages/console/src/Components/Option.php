@@ -19,9 +19,7 @@ final class Option
                 return $this->value;
             }
 
-            /** @phpstan-ignore-next-line */
             if (method_exists($this->value, 'toString')) {
-                /** @phpstan-ignore-next-line */
                 return $this->value->toString();
             }
 

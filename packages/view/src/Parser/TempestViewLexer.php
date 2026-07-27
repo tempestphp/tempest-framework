@@ -148,6 +148,7 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
+                    // @phpstan-ignore identical.alwaysFalse (seek() is stateful; consume() above advanced past '=', so it now returns the quote char)
                     $quote = $this->seek() === "'"
                         ? "'"
                         : '"';

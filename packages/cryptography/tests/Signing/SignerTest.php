@@ -87,7 +87,7 @@ final class SignerTest extends TestCase
             minimumExecutionDuration: false,
         ));
 
-        $signer->sign('important data');
+        $signer->sign('important data'); // @phpstan-ignore method.resultUnused (call is expected to throw before returning)
     }
 
     public function test_empty_data(): void

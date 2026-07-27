@@ -234,7 +234,7 @@ final class GenericContainer implements Container
             return $this->invokeClosure($method, ...$params);
         }
 
-        if (is_array($method) && count($method) === 2) {
+        if (is_array($method)) {
             return $this->invokeClosure($method(...), ...$params);
         }
 

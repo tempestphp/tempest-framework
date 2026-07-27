@@ -123,13 +123,13 @@ final class Cookie implements Stringable
 
         return new Cookie(
             key: $cookie['name'],
-            value: $cookie['value'] ?? null,
+            value: $cookie['value'],
             expiresAt: isset($cookie['expires']) ? (int) $cookie['expires'] : null,
             maxAge: isset($cookie['max-age']) ? (int) $cookie['max-age'] : null,
             domain: $cookie['domain'] ?? null,
             path: $cookie['path'] ?? '/',
-            secure: isset($cookie['secure']) && $cookie['secure'] === true,
-            httpOnly: isset($cookie['httponly']) && $cookie['httponly'] === true,
+            secure: isset($cookie['secure']),
+            httpOnly: isset($cookie['httponly']),
             sameSite: isset($cookie['samesite']) ? SameSite::from($cookie['samesite']) : null,
         );
     }

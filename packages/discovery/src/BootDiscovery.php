@@ -288,7 +288,7 @@ final class BootDiscovery
         if ($discovery === null) {
             try {
                 $discovery = new $discoveryClass();
-            } catch (ArgumentCountError) { // @phpstan-ignore catch.neverThrown
+            } catch (ArgumentCountError) {
                 throw DiscoveryClassCouldNotBeResolved::forDiscoveryClass($discoveryClass);
             }
         }
