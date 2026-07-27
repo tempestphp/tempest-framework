@@ -143,7 +143,18 @@ trait HasTextBuffer
         $this->buffer->deletePreviousCharacter();
     }
 
+    #[HandlesKey(Key::CMD_BACKSPACE)]
+    public function deleteCurrentLine(): void
+    {
+        if (! $this->bufferEnabled) {
+            return;
+        }
+
+        $this->buffer->deleteCurrentLine();
+    }
+
     #[HandlesKey(Key::CTRL_BACKSPACE)]
+    #[HandlesKey(Key::ALT_BACKSPACE)]
     public function deletePreviousWord(): void
     {
         if (! $this->bufferEnabled) {

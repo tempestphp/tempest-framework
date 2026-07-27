@@ -26,6 +26,10 @@ final class InteractiveComponentRenderer
 
     private bool $shouldRerender = true;
 
+    /** @var list<string> */
+    private array $pendingKeys = [];
+    private string $pendingInput = '';
+
     public function __construct(
         private readonly Validator $validator,
     ) {}
@@ -87,7 +91,7 @@ final class InteractiveComponentRenderer
             }
 
             usleep(50);
-            $key = $console->read(16);
+            $key = $this->readKey($console);
 
             // If there's no keypress, continue.
             if ($key === '') {
@@ -167,6 +171,84 @@ final class InteractiveComponentRenderer
         }
     }
 
+    private function readKey(Console $console): string
+    {
+        while ($this->pendingKeys === []) {
+            $input = $console->read(16);
+
+            if ($input === '') {
+                return '';
+            }
+
+            $this->pendingInput .= $input;
+            $this->pendingKeys = $this->splitKeys($this->pendingInput);
+        }
+
+        return array_shift($this->pendingKeys);
+    }
+
+    /** @return list<string> */
+    private function splitKeys(string &$input): array
+    {
+        /** @var null|list<string> $knownKeys */
+        static $knownKeys = null;
+
+        if ($knownKeys === null) {
+            $knownKeys = array_map(
+                static fn (Key $key): string => $key->value,
+                Key::cases(),
+            );
+            usort($knownKeys, static fn (string $left, string $right): int => strlen($right) <=> strlen($left));
+        }
+
+        $keys = [];
+
+        while ($input !== '') {
+            foreach ($knownKeys as $knownKey) {
+                if (! str_starts_with($input, $knownKey)) {
+                    continue;
+                }
+
+                $keys[] = $knownKey;
+                $input = substr($input, strlen($knownKey));
+
+                continue 2;
+            }
+
+            if (str_starts_with($input, "\e")) {
+                $matches = [];
+                preg_match('/^\e(?:\[[0-?]*[ -\/]*[@-~]|O.)/s', $input, $matches);
+                $key = $matches[0] ?? mb_substr($input, 0, 2);
+            } else {
+                $length = $this->getUtf8CharacterLength($input);
+
+                if (strlen($input) < $length) {
+                    break;
+                }
+
+                $key = substr($input, 0, $length);
+            }
+
+            $keys[] = $key;
+            $input = substr($input, strlen($key));
+        }
+
+        return $keys;
+    }
+
+    private function getUtf8CharacterLength(string $input): int
+    {
+        $firstByte = ord($input[0]);
+
+        return match (true) {
+            ($firstByte & 0x80) === 0 => 1,
+            ($firstByte & 0xE0) === 0xC0 => 2,
+            ($firstByte & 0xF0) === 0xE0 => 3,
+            ($firstByte & 0xF8) === 0xF0 => 4,
+            default => 1,
+        };
+    }
+
     private function renderFrames(InteractiveConsoleComponent $component, Terminal $terminal): mixed
     {
         while (true) {
@@ -179,6 +261,8 @@ final class InteractiveComponentRenderer
 
                 continue;
             }
+
+            $this->shouldRerender = false;
 
             // Rerender the frames, it could be one or more
             $frames = $terminal->render(
@@ -194,9 +278,6 @@ final class InteractiveComponentRenderer
             }
 
             $return = $frames->getReturn();
-
-            // Everything's rerendered
-            $this->shouldRerender = false;
 
             if ($return !== null) {
                 return $return;

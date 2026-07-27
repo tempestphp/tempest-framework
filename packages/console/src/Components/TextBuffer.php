@@ -6,8 +6,6 @@ namespace Tempest\Console\Components;
 
 use Tempest\Console\Point;
 
-use function Tempest\Support\str;
-
 /**
  * Offers the ability to manipulate a string based on a cursor position.
  */
@@ -23,7 +21,7 @@ final class TextBuffer
     public function setText(?string $text): void
     {
         $this->text = str_replace("\r\n", "\n", $text ?? '');
-        $this->cursor = mb_strlen($this->text);
+        $this->cursor = $this->getGraphemeLength($this->text);
     }
 
     public function input(string $key): void
@@ -32,22 +30,19 @@ final class TextBuffer
             return;
         }
 
-        $this->text = str($this->text)
-            ->insertAt($this->cursor, str_replace("\r\n", "\n", $key))
-            ->toString();
+        $input = str_replace("\r\n", "\n", $key);
 
-        $this->moveCursorX(mb_strlen($key));
+        $this->replaceGraphemes($this->cursor, 0, $input);
+        $this->moveCursorX($this->getGraphemeLength($input));
     }
 
     public function deleteNextCharacter(): void
     {
-        if ($this->cursor === mb_strlen($this->text)) {
+        if ($this->cursor === $this->getGraphemeLength($this->text)) {
             return;
         }
 
-        $this->text = str($this->text)
-            ->replaceAt($this->cursor, 1, '')
-            ->toString();
+        $this->replaceGraphemes($this->cursor, 1);
     }
 
     public function deletePreviousCharacter(): void
@@ -56,11 +51,20 @@ final class TextBuffer
             return;
         }
 
-        $this->text = str($this->text)
-            ->replaceAt($this->cursor, -1, '')
-            ->toString();
-
+        $this->replaceGraphemes($this->cursor - 1, 1);
         $this->moveCursorX(-1);
+    }
+
+    public function deleteCurrentLine(): void
+    {
+        $lines = $this->getLines();
+        $linePositions = $this->getLinePositions();
+        $currentLineIndex = $this->getCurrentLineIndex();
+        $lineStart = $linePositions[$currentLineIndex];
+        $lineLength = $this->getGraphemeLength($lines[$currentLineIndex]);
+
+        $this->replaceGraphemes($lineStart, $lineLength);
+        $this->cursor = $lineStart;
     }
 
     public function moveCursorToPreviousWord(): void
@@ -69,30 +73,24 @@ final class TextBuffer
             return;
         }
 
-        $end = $this->cursor;
-        $pos = $end - 1;
+        $graphemes = $this->getGraphemes($this->text);
+        $position = $this->cursor - 1;
 
-        // Ignore whitespace
-        while ($pos >= 0 && $this->isWhitespace($this->text[$pos])) {
-            $pos--;
+        while ($position >= 0 && $this->isWhitespace($graphemes[$position])) {
+            $position--;
         }
 
-        // If we started on a word character, keep going until we hit non-word
-        if ($pos >= 0 && $this->isAlphaNumeric($this->text[$pos])) {
-            while ($pos >= 0 && $this->isAlphaNumeric($this->text[$pos])) {
-                $pos--;
+        if ($position >= 0 && $this->isAlphaNumeric($graphemes[$position])) {
+            while ($position >= 0 && $this->isAlphaNumeric($graphemes[$position])) {
+                $position--;
             }
-
-            $pos++; // Move back to include the first character of the word
-        } elseif ($pos >= 0) { // If we started on a non-word character, we delete symbols
-            while ($pos >= 0 && $this->isSymbol($this->text[$pos])) {
-                $pos--;
+        } elseif ($position >= 0) {
+            while ($position >= 0 && $this->isSymbol($graphemes[$position])) {
+                $position--;
             }
-
-            $pos++; // Move back to include the first character of the word
         }
 
-        $this->cursor = $pos;
+        $this->cursor = $position + 1;
     }
 
     public function deletePreviousWord(): void
@@ -100,36 +98,35 @@ final class TextBuffer
         $previousCursor = $this->cursor;
 
         $this->moveCursorToPreviousWord();
-
-        $this->text = substr($this->text, 0, $this->cursor) . substr($this->text, $previousCursor);
+        $this->replaceGraphemes($this->cursor, $previousCursor - $this->cursor);
     }
 
     public function moveCursorToNextWord(): void
     {
-        if ($this->cursor >= mb_strlen($this->text)) {
+        $graphemes = $this->getGraphemes($this->text);
+        $length = count($graphemes);
+
+        if ($this->cursor >= $length) {
             return;
         }
 
-        $start = $this->cursor;
-        $pos = $start;
+        $position = $this->cursor;
 
-        // Skip leading whitespace
-        while ($pos < mb_strlen($this->text) && $this->isWhitespace($this->text[$pos])) {
-            $pos++;
+        while ($position < $length && $this->isWhitespace($graphemes[$position])) {
+            $position++;
         }
 
-        // If we start on a word, keep going until we hit non-word
-        if ($pos < mb_strlen($this->text) && $this->isAlphaNumeric($this->text[$pos])) {
-            while ($pos < mb_strlen($this->text) && $this->isAlphaNumeric($this->text[$pos])) {
-                $pos++;
+        if ($position < $length && $this->isAlphaNumeric($graphemes[$position])) {
+            while ($position < $length && $this->isAlphaNumeric($graphemes[$position])) {
+                $position++;
             }
-        } elseif ($pos < mb_strlen($this->text)) { // If we started on a non-word character, just delete that
-            while ($pos < mb_strlen($this->text) && $this->isSymbol($this->text[$pos])) {
-                $pos++;
+        } elseif ($position < $length) {
+            while ($position < $length && $this->isSymbol($graphemes[$position])) {
+                $position++;
             }
         }
 
-        $this->cursor = $pos;
+        $this->cursor = $position;
     }
 
     public function deleteNextWord(): void
@@ -137,14 +134,13 @@ final class TextBuffer
         $previousCursor = $this->cursor;
 
         $this->moveCursorToNextWord();
-
-        $this->text = substr($this->text, 0, $previousCursor) . substr($this->text, $this->cursor);
+        $this->replaceGraphemes($previousCursor, $this->cursor - $previousCursor);
         $this->cursor = $previousCursor;
     }
 
     public function setCursorIndex(int $index): void
     {
-        $this->cursor = min(max(0, $index), mb_strlen($this->text ?? ''));
+        $this->cursor = min(max(0, $index), $this->getGraphemeLength($this->text));
     }
 
     public function moveCursorX(int $offset): void
@@ -169,7 +165,7 @@ final class TextBuffer
         }
 
         $xOffset = $this->cursor - $linePositions[$currentLineIndex];
-        $newPosition = $linePositions[$targetLineIndex] + min($xOffset, mb_strlen($lines[$targetLineIndex]));
+        $newPosition = $linePositions[$targetLineIndex] + min($xOffset, $this->getGraphemeLength($lines[$targetLineIndex]));
 
         $this->setCursorIndex($newPosition);
     }
@@ -199,7 +195,7 @@ final class TextBuffer
         $currentLine = $lines[$currentLineIndex];
         $lineStart = $linePositions[$currentLineIndex];
 
-        $this->setCursorIndex($lineStart + mb_strlen($currentLine));
+        $this->setCursorIndex($lineStart + $this->getGraphemeLength($currentLine));
     }
 
     public function moveCursorToStart(): void
@@ -209,65 +205,73 @@ final class TextBuffer
 
     public function moveCursorToEnd(): void
     {
-        $this->setCursorIndex(mb_strlen($this->text));
+        $this->setCursorIndex($this->getGraphemeLength($this->text));
     }
 
-    // This method returns the X and Y coordinates of the cursor, relative to the text only.
-    // The difficulty resides in the fact that some lines are wrapped (due to `$maxLineCharacters`)
-    // and some lines are simply using `\n`, resulting in potential one-off cursor positioning errors.
-    // Good luck refactoring that!
     public function getRelativeCursorPosition(?int $maxLineCharacters = null): Point
     {
-        $cursorPosition = $this->cursor;
-        $lines = str($this->text ?? '')->explode("\n");
+        $x = 0;
+        $y = 0;
 
-        $yPosition = 0;
-        $xPosition = 0;
-        $lineIndex = 0;
-        $charIndex = 0;
+        foreach (array_slice($this->getGraphemes($this->text), 0, $this->cursor) as $grapheme) {
+            if ($grapheme === "\n") {
+                $x = 0;
+                $y++;
 
-        foreach ($lines as $line) {
-            $splitLines = str($line)->chunk($maxLineCharacters ?? mb_strlen($line))->toArray();
-
-            foreach ($splitLines as $splitLineIndex => $splitLine) {
-                $lineLength = mb_strlen($splitLine);
-
-                // If the cursor is within this line, update the x position and return.
-                if (($charIndex + $lineLength) >= $cursorPosition) {
-                    $xPosition = $cursorPosition - $charIndex;
-
-                    return new Point($xPosition, $yPosition);
-                }
-
-                // If the cursor is not within this line, update the character index and y position.
-                $charIndex += $lineLength;
-
-                // If this is not the last split line, increment the y position.
-                if ($splitLineIndex < (count($splitLines) - 1)) {
-                    $yPosition++;
-                }
+                continue;
             }
 
-            // If this is not the last line, increment the y position and reset the character index.
-            if ($lineIndex < (count($lines) - 1)) {
-                $yPosition++;
-                $charIndex += 1; // Account for the newline character
+            $width = $this->getGraphemeWidth($grapheme);
+
+            if ($maxLineCharacters !== null && $x > 0 && ($x + $width) > $maxLineCharacters) {
+                $x = 0;
+                $y++;
             }
 
-            $lineIndex++;
+            $x += $width;
         }
 
-        // If the cursor is beyond the last line, set the x position to the length of the last line.
-        $xPosition = str($lines->last())->length();
-
-        return new Point($xPosition, $yPosition);
+        return new Point($x, $y);
     }
 
+    /**
+     * @return list<string>
+     */
+    public function getWrappedLines(int $maximumWidth, ?string $fallback = null): array
+    {
+        $maximumWidth = max(1, $maximumWidth);
+        $wrappedLines = [];
+
+        foreach (explode("\n", $this->text ?: $fallback ?? '') as $line) {
+            $wrappedLine = '';
+            $wrappedLineWidth = 0;
+
+            foreach ($this->getGraphemes($line) as $grapheme) {
+                $width = $this->getGraphemeWidth($grapheme);
+
+                if ($wrappedLine !== '' && ($wrappedLineWidth + $width) > $maximumWidth) {
+                    $wrappedLines[] = $wrappedLine;
+                    $wrappedLine = '';
+                    $wrappedLineWidth = 0;
+                }
+
+                $wrappedLine .= $grapheme;
+                $wrappedLineWidth += $width;
+            }
+
+            $wrappedLines[] = $wrappedLine;
+        }
+
+        return $wrappedLines;
+    }
+
+    /** @return list<string> */
     private function getLines(): array
     {
-        return str($this->text)->explode("\n")->toArray();
+        return explode("\n", $this->text ?? '');
     }
 
+    /** @return list<int> */
     private function getLinePositions(): array
     {
         $lines = $this->getLines();
@@ -276,7 +280,7 @@ final class TextBuffer
 
         foreach ($lines as $line) {
             $positions[] = $position;
-            $position += mb_strlen($line) + 1; // +1 for newline
+            $position += $this->getGraphemeLength($line) + 1;
         }
 
         return $positions;
@@ -289,7 +293,7 @@ final class TextBuffer
         foreach ($linePositions as $index => $startPosition) {
             $nextPosition = ($index + 1) < count($linePositions)
                 ? $linePositions[$index + 1]
-                : mb_strlen($this->text) + 1;
+                : $this->getGraphemeLength($this->text) + 1;
 
             if ($this->cursor >= $startPosition && $this->cursor < $nextPosition) {
                 return $index;
@@ -299,18 +303,56 @@ final class TextBuffer
         return count($linePositions) - 1; // Default to last line if not found
     }
 
-    private function isWhitespace(string $char): bool
+    private function isWhitespace(string $grapheme): bool
     {
-        return preg_match('/\s/', $char) === 1;
+        return preg_match('/^\s+$/u', $grapheme) === 1;
     }
 
-    private function isAlphaNumeric(string $char): bool
+    private function isAlphaNumeric(string $grapheme): bool
     {
-        return preg_match('/[\w]/', $char) === 1;
+        return preg_match('/[\p{L}\p{N}_]/u', $grapheme) === 1;
     }
 
-    private function isSymbol(string $char): bool
+    private function isSymbol(string $grapheme): bool
     {
-        return preg_match('/[^\w\s]/', $char) === 1;
+        return ! $this->isWhitespace($grapheme) && ! $this->isAlphaNumeric($grapheme);
+    }
+
+    /** @return list<string> */
+    private function getGraphemes(?string $text): array
+    {
+        /** @var array{0: list<string>} $matches */
+        $matches = [];
+        preg_match_all('/\X/u', $text ?? '', $matches);
+
+        return $matches[0];
+    }
+
+    private function getGraphemeLength(?string $text): int
+    {
+        return count($this->getGraphemes($text));
+    }
+
+    private function getGraphemeWidth(string $grapheme): int
+    {
+        $hasEmojiPresentation = preg_match('/[\p{Emoji_Presentation}\x{20E3}]/u', $grapheme) === 1;
+        $hasEmojiVariation = preg_match('/\p{Extended_Pictographic}\x{FE0F}/u', $grapheme) === 1;
+
+        if ($hasEmojiPresentation || $hasEmojiVariation) {
+            return 2;
+        }
+
+        $printable = preg_replace('/[\p{M}\p{Cf}\p{Emoji_Modifier}]/u', '', $grapheme);
+
+        return mb_strwidth($printable ?? $grapheme, 'UTF-8');
+    }
+
+    private function replaceGraphemes(int $position, int $length, string $replacement = ''): void
+    {
+        $graphemes = $this->getGraphemes($this->text);
+
+        array_splice($graphemes, $position, $length, $this->getGraphemes($replacement));
+
+        $this->text = implode('', $graphemes);
     }
 }

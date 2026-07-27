@@ -10,6 +10,7 @@ use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Str\ImmutableString;
 
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class TextInputRenderer
@@ -35,14 +36,11 @@ final class TextInputRenderer
         $this->label($label);
 
         if ($hint) {
-            $this->offsetY++;
+            $this->offsetY += substr_count($hint, "\n") + 1;
             $this->line($this->style('fg-gray', $hint))->newLine();
         }
 
-        // splits the text to an array so we can work with individual lines
-        $lines = str($buffer->text ?: ($placeholder ?: ''))
-            ->explode("\n")
-            ->flatMap(fn (string $line) => str($line)->chunk($this->maxLineCharacters)->toArray())
+        $lines = arr($buffer->getWrappedLines($this->maxLineCharacters, $placeholder))
             ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '));
 
         // calculates scroll offset based on cursor position
