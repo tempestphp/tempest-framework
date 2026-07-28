@@ -22,6 +22,8 @@ final readonly class StdioTransport
      */
     public function run(McpServerDefinition $server, mixed $input, mixed $output): void
     {
+        stream_set_timeout($input, PHP_INT_MAX);
+
         while (($line = fgets($input)) !== false) {
             $line = trim($line);
 

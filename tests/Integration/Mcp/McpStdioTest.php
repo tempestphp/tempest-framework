@@ -52,6 +52,61 @@ final class McpStdioTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function socket_timeouts_do_not_stop_the_message_loop(): void
+    {
+        $sockets = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+
+        if ($sockets === false) {
+            self::fail('Could not create a socket pair.');
+        }
+
+        [$input, $writer] = $sockets;
+        $output = fopen('php://memory', 'r+');
+        $message = encode(['jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize', 'params' => ['protocolVersion' => '2025-11-25']]) . PHP_EOL;
+        $pipes = [];
+        $process = proc_open(
+            [PHP_BINARY, '-r', 'usleep(100_000); echo $argv[1];', $message],
+            [
+                0 => ['pipe', 'r'],
+                1 => $writer,
+                2 => ['pipe', 'w'],
+            ],
+            $pipes,
+        );
+
+        if (! is_resource($process)) {
+            self::fail('Could not start the delayed writer process.');
+        }
+
+        fclose($writer);
+        foreach ($pipes as $pipe) {
+            if (! is_resource($pipe)) {
+                continue;
+            }
+
+            fclose($pipe);
+        }
+        stream_set_timeout($input, seconds: 0, microseconds: 25_000);
+
+        $server = $this->container->get(McpConfig::class)->servers[StdioMcpServer::class];
+
+        $this->container->get(StdioTransport::class)->run($server, $input, $output);
+
+        $this->assertSame(0, proc_close($process));
+
+        rewind($output);
+
+        $contents = stream_get_contents($output);
+
+        if ($contents === false) {
+            self::fail('Could not read the transport output.');
+        }
+
+        $this->assertStringContainsString('"id":1', $contents);
+        $this->assertStringContainsString('"name":"stdio-demo"', $contents);
+    }
+
+    #[Test]
     public function serve_command_fails_for_unknown_servers(): void
     {
         $this->console
