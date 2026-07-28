@@ -121,6 +121,18 @@ public function user(int $id): string
 
 String return values become text resource contents, while {b`Tempest\Mcp\Content\Blob`} instances become binary blob contents.
 
+Some MCP clients only request the standard resource list and do not request resource templates. To also include resource templates in `resources/list`, create an `mcp.config.php` file:
+
+```php app/mcp.config.php
+use Tempest\Mcp\McpConfig;
+
+return new McpConfig(
+    listResourceTemplatesAsResources: true,
+);
+```
+
+Resource templates will remain available through `resources/templates/list`.
+
 ## Transports
 
 ### HTTP

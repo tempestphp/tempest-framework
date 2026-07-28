@@ -19,6 +19,10 @@ final class McpConfig
     /** @var array<class-string, McpServerDefinition> */
     public array $servers = [];
 
+    public function __construct(
+        public bool $listResourceTemplatesAsResources = false,
+    ) {}
+
     public function addServer(string $class, McpServer $attribute): void
     {
         $name = $attribute->name ?? str($class)->classBasename()->kebab()->toString();

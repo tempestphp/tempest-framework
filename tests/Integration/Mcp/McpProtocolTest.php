@@ -382,6 +382,22 @@ final class McpProtocolTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function resource_templates_may_also_be_listed_as_resources(): void
+    {
+        $this->container->get(McpConfig::class)->listResourceTemplatesAsResources = true;
+        $connection = $this->mcp->onServer(DemoMcpServer::class);
+
+        $resources = $connection->listResources()->assertOk()->result()['resources'];
+        $resourceUris = array_column($resources, 'uri');
+
+        $this->assertContains('demo://users/{id}', $resourceUris);
+
+        $templates = $connection->listResourceTemplates()->assertOk()->result()['resourceTemplates'];
+
+        $this->assertSame('demo://users/{id}', $templates[0]['uriTemplate']);
+    }
+
+    #[Test]
     public function reads_a_resource(): void
     {
         $response = $this->mcp

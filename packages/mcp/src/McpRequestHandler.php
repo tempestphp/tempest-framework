@@ -35,6 +35,7 @@ final readonly class McpRequestHandler
 {
     public function __construct(
         private Container $container,
+        private McpConfig $config,
         private SchemaGenerator $schemaGenerator,
         private ArgumentBinder $argumentBinder,
         private ExceptionProcessor $exceptionProcessor,
@@ -189,6 +190,16 @@ final readonly class McpRequestHandler
             ];
         }
 
+        if ($this->config->listResourceTemplatesAsResources) {
+            foreach ($server->resourceTemplates as $resource) {
+                $resources[] = [
+                    'uri' => $resource->uri,
+                    'name' => $resource->name,
+                    ...($resource->description === null ? [] : ['description' => $resource->description]),
+                    ...($resource->mimeType === null ? [] : ['mimeType' => $resource->mimeType]),
+                ];
+            }
+        }
         return ['resources' => $resources];
     }
 
