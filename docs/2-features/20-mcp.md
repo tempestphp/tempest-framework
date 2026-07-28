@@ -1,7 +1,13 @@
 ---
 title: MCP
 description: "Tempest's MCP component lets your application expose tools, prompts and resources to AI clients over the Model Context Protocol."
+keywords: "Experimental"
+experimental: true
 ---
+
+:::warning
+Tempest's MCP component is currently experimental and is not covered by our backwards compatibility promise.
+:::
 
 ## Overview
 
