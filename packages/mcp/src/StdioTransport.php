@@ -22,9 +22,26 @@ final readonly class StdioTransport
      */
     public function run(McpServerDefinition $server, mixed $input, mixed $output): void
     {
-        stream_set_timeout($input, PHP_INT_MAX);
+        $pollForInput = PHP_OS_FAMILY === 'Windows';
 
-        while (($line = fgets($input)) !== false) {
+        if ($pollForInput) {
+            stream_set_blocking($input, false);
+        } else {
+            stream_set_timeout($input, PHP_INT_MAX);
+        }
+
+        while (! feof($input)) {
+            $line = fgets($input);
+
+            if ($line === false) {
+                if (! $pollForInput) {
+                    break;
+                }
+
+                usleep(10_000);
+
+                continue;
+            }
             $line = trim($line);
 
             if ($line === '') {
