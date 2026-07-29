@@ -5,10 +5,10 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "rector/rector": "2.3.8"
+        "rector/rector": "2.5.8"
     },
     "require-dev": {
-        "phpstan/phpstan": "2.1.40"
+        "phpstan/phpstan": "2.2.6"
     },
     "autoload": {
         "psr-4": {
