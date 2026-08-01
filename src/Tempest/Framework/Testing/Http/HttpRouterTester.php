@@ -39,6 +39,8 @@ final class HttpRouterTester
 
     private(set) bool $throwExceptions = false;
 
+    private(set) ?string $ip = null;
+
     public function __construct(
         private Container $container,
     ) {}
@@ -125,6 +127,16 @@ final class HttpRouterTester
     }
 
     /**
+     * Specifies the IP address that subsequent requests are made from.
+     */
+    public function fromIp(string $ip): self
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
      * Specifies that subsequent requests should be sent without Sec-Fetch headers.
      */
     public function withoutSecFetchHeaders(): self
@@ -141,6 +153,7 @@ final class HttpRouterTester
             uri: Uri\merge_query($uri, ...$query),
             body: [],
             headers: $this->createHeaders($headers),
+            ip: $this->ip,
         ));
     }
 
@@ -151,6 +164,7 @@ final class HttpRouterTester
             uri: Uri\merge_query($uri, ...$query),
             body: [],
             headers: $this->createHeaders($headers),
+            ip: $this->ip,
         ));
     }
 
@@ -162,6 +176,7 @@ final class HttpRouterTester
             body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
             raw: is_string($body) ? $body : null,
+            ip: $this->ip,
         ));
     }
 
@@ -173,6 +188,7 @@ final class HttpRouterTester
             body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
             raw: is_string($body) ? $body : null,
+            ip: $this->ip,
         ));
     }
 
@@ -184,6 +200,7 @@ final class HttpRouterTester
             body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
             raw: is_string($body) ? $body : null,
+            ip: $this->ip,
         ));
     }
 
@@ -195,6 +212,7 @@ final class HttpRouterTester
             body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
             raw: is_string($body) ? $body : null,
+            ip: $this->ip,
         ));
     }
 
@@ -205,6 +223,7 @@ final class HttpRouterTester
             uri: Uri\merge_query($uri, ...$query),
             body: [],
             headers: $this->createHeaders($headers),
+            ip: $this->ip,
         ));
     }
 
@@ -215,6 +234,7 @@ final class HttpRouterTester
             uri: Uri\merge_query($uri, ...$query),
             body: [],
             headers: $this->createHeaders($headers),
+            ip: $this->ip,
         ));
     }
 
@@ -225,6 +245,7 @@ final class HttpRouterTester
             uri: Uri\merge_query($uri, ...$query),
             body: [],
             headers: $this->createHeaders($headers),
+            ip: $this->ip,
         ));
     }
 
@@ -236,6 +257,7 @@ final class HttpRouterTester
             body: is_string($body) ? [] : $body,
             headers: $this->createHeaders($headers),
             raw: is_string($body) ? $body : null,
+            ip: $this->ip,
         ));
     }
 
@@ -291,7 +313,9 @@ final class HttpRouterTester
 
         $_POST = is_array($body) ? $body : [];
 
-        return ServerRequestFactory::fromGlobals()->withUploadedFiles($files);
+        $server = $this->ip === null ? $_SERVER : [...$_SERVER, 'REMOTE_ADDR' => $this->ip];
+
+        return ServerRequestFactory::fromGlobals($server)->withUploadedFiles($files);
     }
 
     private function createHeaders(array $headers = []): array

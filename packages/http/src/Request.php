@@ -28,6 +28,8 @@ interface Request
     /** @var Cookie[] $cookies */
     public array $cookies { get; }
 
+    public ?string $ip { get; }
+
     public function has(string $key): bool;
 
     public function hasBody(?string $key = null): bool;

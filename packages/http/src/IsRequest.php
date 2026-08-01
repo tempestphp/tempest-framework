@@ -14,7 +14,11 @@ use function Tempest\Support\Arr\get_by_key;
 use function Tempest\Support\Arr\has_key;
 use function Tempest\Support\str;
 
-/** @phpstan-require-implements \Tempest\Http\Request */
+/**
+ * @phpstan-require-implements \Tempest\Http\Request
+ *
+ * @mago-expect lint:too-many-properties
+ */
 trait IsRequest
 {
     #[SkipValidation]
@@ -50,6 +54,9 @@ trait IsRequest
     #[SkipValidation]
     public array $cookies = [];
 
+    #[SkipValidation]
+    private(set) ?string $ip = null;
+
     public function __construct(
         Method $method,
         string $uri,
@@ -57,6 +64,7 @@ trait IsRequest
         array $headers = [],
         array $files = [],
         ?string $raw = null,
+        ?string $ip = null,
     ) {
         $this->method = $method;
         $this->uri = $uri;
@@ -64,6 +72,7 @@ trait IsRequest
         $this->headers = RequestHeaders::normalizeFromArray($headers);
         $this->files = $files;
         $this->raw = $raw;
+        $this->ip = $ip;
 
         if ($this->method === Method::CONNECT) {
             $this->path ??= '';
