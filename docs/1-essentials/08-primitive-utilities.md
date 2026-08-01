@@ -17,6 +17,7 @@ Most utilities provided by Tempest have a function-based implementation under th
 - [Filesystem paths](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Path/functions.php)
 - [Json manipulation](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Json/functions.php)
 - [Random values](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Random/functions.php)
+- [IP addresses](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Ip/functions.php)
 - [Pluralization](https://github.com/tempestphp/tempest-intl)
 - [PHP namespaces](https://github.com/tempestphp/tempest-framework/blob/main/packages/support/src/Namespace/functions.php)
 

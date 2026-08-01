@@ -50,6 +50,7 @@ final readonly class RequestToObjectMapper implements Mapper
                     'query' => $from->query,
                     'files' => $from->files,
                     'cookies' => $from->cookies,
+                    'ip' => $from->ip,
                 ],
                 ...$data,
             ];

@@ -13,6 +13,8 @@ use Tempest\Cryptography\Encryption\Encrypter;
 use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Ip\ClientIpResolver;
+use Tempest\Http\Ip\TrustedProxiesConfig;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
@@ -32,7 +34,7 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
     }
 
     private PsrRequestToGenericRequestMapper $mapper {
-        get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies, new CookieConfig());
+        get => new PsrRequestToGenericRequestMapper($this->encrypter, $this->cookies, new CookieConfig(), new ClientIpResolver(new TrustedProxiesConfig()));
     }
 
     #[Test]

@@ -466,6 +466,59 @@ final readonly class AircraftController
 }
 ```
 
+### Client IP address
+
+The address a request came from is available as the `ip` property of {b`Tempest\Http\Request`}. It is `null` when the server does not report one, such as for requests that were not made over a network.
+
+```php app/AircraftController.php
+use Tempest\Router\Get;
+use Tempest\Http\Request;
+
+final readonly class AircraftController
+{
+    #[Get(uri: '/aircraft')]
+    public function index(Request $request): View
+    {
+        $ip = $request->ip;
+    }
+}
+```
+
+Within tests, the address can be specified using the `fromIp()` method.
+
+```php
+$this->http
+    ->fromIp('203.0.113.9')
+    ->get('/aircraft')
+    ->assertOk();
+```
+
+#### Trusted proxies
+
+Forwarding headers are only read when the request came from a trusted proxy. None are trusted by default; they can be declared by creating a `trusted-proxies.config.php` file [anywhere](../1-essentials/06-configuration.md#configuration-files).
+
+```php app/trusted-proxies.config.php
+use Tempest\Http\Ip\TrustedProxiesConfig;
+
+return new TrustedProxiesConfig(
+    proxies: ['10.0.0.0/8'],
+    headers: ['x-forwarded-for'],
+);
+```
+
+Addresses and CIDR ranges are accepted, in IPv4 as well as IPv6, along with two constants for proxies that have no stable address:
+
+- `TrustedProxiesConfig::PRIVATE_RANGES` trusts the application's own network, which covers container platforms such as Docker, Railway or Fly.
+- `TrustedProxiesConfig::ANY` trusts whichever address connects, which covers a CDN such as Cloudflare.
+
+Headers are read in order of preference, each as a comma-separated chain of hops, of which the nearest one that is not itself a trusted proxy is the client.
+
+Note that only the client address is derived from a trusted proxy—the scheme and the host are not affected by this configuration. Headers that describe hops differently, such as the `{txt}Forwarded` header defined by RFC 7239, are not supported.
+
+:::warning
+Trusting a proxy that is not actually in front of the application allows any client to choose its own address, defeating anything built on top of it, such as rate limiting or allow-listing.
+:::
+
 ## Form validation
 
 When users submit forms—like updating profile settings, or posting comments—the data needs validation before processing. Tempest automatically validates request objects using type hints and validation attributes, then provides errors back to users when something is wrong.

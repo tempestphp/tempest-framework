@@ -193,6 +193,8 @@
             "packages/support/src/Comparison/functions.php",
             "packages/support/src/Filesystem/functions.php",
             "packages/support/src/Html/functions.php",
+            "packages/support/src/Ip/constants.php",
+            "packages/support/src/Ip/functions.php",
             "packages/support/src/Json/functions.php",
             "packages/support/src/Math/constants.php",
             "packages/support/src/Math/functions.php",

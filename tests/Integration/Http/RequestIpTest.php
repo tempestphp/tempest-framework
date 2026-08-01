@@ -6,9 +6,11 @@ namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Ip\TrustedProxiesConfig;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
+use Tests\Tempest\Fixtures\Requests\BookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Mapper\map;
@@ -53,8 +55,38 @@ final class RequestIpTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function ip_is_carried_over_to_a_custom_request(): void
+    {
+        $request = new GenericRequest(method: Method::POST, uri: '/', body: ['title' => 'Timeline Taxi'], ip: '203.0.113.9');
+
+        $bookRequest = map($request)->to(BookRequest::class);
+
+        $this->assertSame('203.0.113.9', $bookRequest->ip);
+    }
+
+    #[Test]
     public function requests_without_an_ip_are_dispatched_normally(): void
     {
         $this->http->get('/ip')->assertSee('unknown');
+    }
+
+    #[Test]
+    public function forwarding_headers_are_ignored_by_default(): void
+    {
+        $this->http
+            ->fromIp('10.0.0.1')
+            ->get('/ip', headers: ['X-Forwarded-For' => '198.51.100.7'])
+            ->assertSee('10.0.0.1');
+    }
+
+    #[Test]
+    public function forwarding_headers_are_read_from_a_trusted_proxy(): void
+    {
+        $this->container->config(new TrustedProxiesConfig(proxies: ['10.0.0.0/8']));
+
+        $this->http
+            ->fromIp('10.0.0.1')
+            ->get('/ip', headers: ['X-Forwarded-For' => '198.51.100.7'])
+            ->assertSee('198.51.100.7');
     }
 }

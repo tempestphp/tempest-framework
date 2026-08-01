@@ -11,6 +11,7 @@ use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Ip\ClientIpResolver;
 use Tempest\Http\Method;
 use Tempest\Http\RequestHeaders;
 use Tempest\Http\Upload;
@@ -27,6 +28,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         private Encrypter $encrypter,
         private CookieManager $cookies,
         private CookieConfig $cookieConfig,
+        private ClientIpResolver $clientIpResolver,
     ) {}
 
     public function canMap(mixed $from, mixed $to): bool
@@ -49,6 +51,8 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             $from->getHeaders(),
         );
 
+        $headers = RequestHeaders::normalizeFromArray($headersAsString);
+
         parse_str($from->getUri()->getQuery(), $query);
 
         $uploads = array_map(
@@ -61,11 +65,11 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'uri' => (string) $from->getUri(),
             'raw' => $raw,
             'body' => $data,
-            'headers' => RequestHeaders::normalizeFromArray($headersAsString),
+            'headers' => $headers,
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            'ip' => $from->getServerParams()['REMOTE_ADDR'] ?? null,
+            'ip' => $this->clientIpResolver->resolve($from->getServerParams()['REMOTE_ADDR'] ?? null, $headers),
             'cookies' => Arr\filter(Arr\map(
                 array: $_COOKIE,
                 map: function (string $rawValue, string $key) {

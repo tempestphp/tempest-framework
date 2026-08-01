@@ -28,6 +28,9 @@ interface Request
     /** @var Cookie[] $cookies */
     public array $cookies { get; }
 
+    /**
+     * The address the request came from. Behind a reverse proxy, this is the proxy's address unless it is declared in {@see \Tempest\Http\Ip\TrustedProxiesConfig}.
+     */
     public ?string $ip { get; }
 
     public function has(string $key): bool;
