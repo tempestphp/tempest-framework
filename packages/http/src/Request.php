@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Tempest\Http\Cookie\Cookie;
+use Tempest\Support\Ip\IpAddress;
 
 interface Request
 {
@@ -31,7 +32,7 @@ interface Request
     /**
      * The address the request came from. Behind a reverse proxy, this is the proxy's address unless it is declared in {@see \Tempest\Http\Ip\TrustedProxiesConfig}.
      */
-    public ?string $ip { get; }
+    public ?IpAddress $ip { get; }
 
     public function has(string $key): bool;
 

@@ -14,6 +14,6 @@ final readonly class IpController
     #[Get('/ip')]
     public function __invoke(Request $request): Response
     {
-        return new Ok($request->ip ?? 'unknown');
+        return new Ok($request->ip?->toString() ?? 'unknown');
     }
 }

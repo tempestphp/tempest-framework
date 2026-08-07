@@ -10,69 +10,24 @@ namespace Tempest\Support\Ip;
  *
  * ### Example
  * ```php
- * matches('10.0.1.24', '10.0.0.0/8'); // true
- * matches('10.0.1.24', '10.0.1.24'); // true
- * matches('10.0.1.24', '::/0'); // false
+ * ip_matches('10.0.1.24', '10.0.0.0/8'); // true
+ * ip_matches('10.0.1.24', '10.0.1.24'); // true
+ * ip_matches('10.0.1.24', '::/0'); // false
  * ```
  */
-function matches(string $ip, string $range): bool
+function ip_matches(IpAddress|string $ip, IpAddress|string $range): bool
 {
-    $prefix = null;
-
-    if (str_contains($range, '/')) {
-        [$range, $length] = explode('/', $range, limit: 2);
-
-        if (! is_numeric($length)) {
-            return false;
-        }
-
-        $prefix = (int) $length;
-    }
-
-    $address = to_bytes($ip);
-    $subnet = to_bytes($range);
-
-    if ($address === null || $subnet === null) {
-        return false;
-    }
-
-    // Different lengths indicate different families, which never match.
-    if (strlen($address) !== strlen($subnet)) {
-        return false;
-    }
-
-    $bits = strlen($subnet) * 8;
-    $prefix ??= $bits;
-
-    if ($prefix < 0 || $prefix > $bits) {
-        return false;
-    }
-
-    $wholeBytes = intdiv($prefix, 8);
-
-    if ($wholeBytes > 0 && substr($address, 0, $wholeBytes) !== substr($subnet, 0, $wholeBytes)) {
-        return false;
-    }
-
-    $remainingBits = $prefix % 8;
-
-    if ($remainingBits === 0) {
-        return true;
-    }
-
-    $mask = chr((0xFF << (8 - $remainingBits)) & 0xFF);
-
-    return ($address[$wholeBytes] & $mask) === ($subnet[$wholeBytes] & $mask);
+    return IpAddress::tryFrom($ip)?->matches($range) ?? false;
 }
 
 /**
  * Determines whether the given IP address falls within any of the given addresses or CIDR ranges.
  *
- * @param string[] $ranges
+ * @param iterable<IpAddress|string> $ranges
  */
-function matches_any(string $ip, array $ranges): bool
+function ip_matches_any(IpAddress|string $ip, iterable $ranges): bool
 {
-    return array_any($ranges, static fn (string $range) => matches($ip, $range));
+    return IpAddress::tryFrom($ip)?->matchesAny($ranges) ?? false;
 }
 
 /**
@@ -80,13 +35,13 @@ function matches_any(string $ip, array $ranges): bool
  *
  * ### Example
  * ```php
- * is_private('10.0.1.24'); // true
- * is_private('203.0.113.9'); // false
+ * ip_is_private('10.0.1.24'); // true
+ * ip_is_private('203.0.113.9'); // false
  * ```
  */
-function is_private(string $ip): bool
+function ip_is_private(IpAddress|string $ip): bool
 {
-    return matches_any($ip, PRIVATE_RANGES);
+    return IpAddress::tryFrom($ip)?->isPrivate === true;
 }
 
 /**
@@ -94,21 +49,7 @@ function is_private(string $ip): bool
  *
  * @internal
  */
-function to_bytes(string $ip): ?string
+function ip_to_bytes(IpAddress|string $ip): ?string
 {
-    if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
-        return null;
-    }
-
-    $bytes = inet_pton($ip);
-
-    if ($bytes === false) {
-        return null;
-    }
-
-    if (strlen($bytes) === 16 && str_starts_with($bytes, "\0\0\0\0\0\0\0\0\0\0\xFF\xFF")) {
-        return substr($bytes, 12);
-    }
-
-    return $bytes;
+    return IpAddress::tryFrom($ip)?->bytes;
 }

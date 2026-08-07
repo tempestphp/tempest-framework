@@ -6,6 +6,7 @@ namespace Tempest\Http;
 
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Session\Session;
+use Tempest\Support\Ip\IpAddress;
 use Tempest\Support\Uri\Uri;
 use Tempest\Validation\SkipValidation;
 
@@ -55,7 +56,7 @@ trait IsRequest
     public array $cookies = [];
 
     #[SkipValidation]
-    private(set) ?string $ip = null;
+    private(set) ?IpAddress $ip = null;
 
     public function __construct(
         Method $method,
@@ -64,7 +65,7 @@ trait IsRequest
         array $headers = [],
         array $files = [],
         ?string $raw = null,
-        ?string $ip = null,
+        IpAddress|string|null $ip = null,
     ) {
         $this->method = $method;
         $this->uri = $uri;
@@ -72,7 +73,7 @@ trait IsRequest
         $this->headers = RequestHeaders::normalizeFromArray($headers);
         $this->files = $files;
         $this->raw = $raw;
-        $this->ip = $ip;
+        $this->ip = IpAddress::tryFrom($ip);
 
         if ($this->method === Method::CONNECT) {
             $this->path ??= '';

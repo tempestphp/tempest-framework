@@ -21,7 +21,7 @@ final readonly class RequestToPsrRequestMapper implements Mapper
     {
         /** @var Request $from */
         $request = new ServerRequest(
-            serverParams: $from->ip === null ? [] : ['REMOTE_ADDR' => $from->ip],
+            serverParams: $from->ip === null ? [] : ['REMOTE_ADDR' => $from->ip->toString()],
             uploadedFiles: $from->files,
             uri: $from->uri,
             method: $from->method->value,

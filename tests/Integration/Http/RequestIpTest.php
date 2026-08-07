@@ -10,6 +10,7 @@ use Tempest\Http\Ip\TrustedProxiesConfig;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
+use Tempest\Support\Ip\IpAddress;
 use Tests\Tempest\Fixtures\Requests\BookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -27,7 +28,8 @@ final class RequestIpTest extends FrameworkIntegrationTestCase
 
         $request = map($psrRequest)->with(PsrRequestToGenericRequestMapper::class)->do();
 
-        $this->assertSame('203.0.113.9', $request->ip);
+        $this->assertInstanceOf(IpAddress::class, $request->ip);
+        $this->assertTrue($request->ip->equals('203.0.113.9'));
     }
 
     #[Test]
@@ -61,7 +63,24 @@ final class RequestIpTest extends FrameworkIntegrationTestCase
 
         $bookRequest = map($request)->to(BookRequest::class);
 
-        $this->assertSame('203.0.113.9', $bookRequest->ip);
+        $this->assertInstanceOf(IpAddress::class, $bookRequest->ip);
+        $this->assertTrue($bookRequest->ip->equals('203.0.113.9'));
+    }
+
+    #[Test]
+    public function ip_is_accepted_as_a_value_object(): void
+    {
+        $request = new GenericRequest(method: Method::GET, uri: '/', ip: IpAddress::from('203.0.113.9'));
+
+        $this->assertTrue($request->ip->equals('203.0.113.9'));
+    }
+
+    #[Test]
+    public function ip_is_compared_regardless_of_notation(): void
+    {
+        $request = new GenericRequest(method: Method::GET, uri: '/', ip: '::ffff:203.0.113.9');
+
+        $this->assertTrue($request->ip->equals('203.0.113.9'));
     }
 
     #[Test]

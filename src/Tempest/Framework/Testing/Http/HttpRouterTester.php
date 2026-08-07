@@ -26,6 +26,7 @@ use Tempest\Router\SecFetchMode;
 use Tempest\Router\SecFetchSite;
 use Tempest\Router\Static\StaticPageConfig;
 use Tempest\Router\StaticPage;
+use Tempest\Support\Ip\IpAddress;
 use Tempest\Support\Uri;
 use Throwable;
 
@@ -39,7 +40,7 @@ final class HttpRouterTester
 
     private(set) bool $throwExceptions = false;
 
-    private(set) ?string $ip = null;
+    private(set) ?IpAddress $ip = null;
 
     public function __construct(
         private Container $container,
@@ -129,9 +130,9 @@ final class HttpRouterTester
     /**
      * Specifies the IP address that subsequent requests are made from.
      */
-    public function fromIp(string $ip): self
+    public function fromIp(IpAddress|string $ip): self
     {
-        $this->ip = $ip;
+        $this->ip = IpAddress::from($ip);
 
         return $this;
     }
@@ -313,7 +314,7 @@ final class HttpRouterTester
 
         $_POST = is_array($body) ? $body : [];
 
-        $server = $this->ip === null ? $_SERVER : [...$_SERVER, 'REMOTE_ADDR' => $this->ip];
+        $server = $this->ip === null ? $_SERVER : [...$_SERVER, 'REMOTE_ADDR' => $this->ip->toString()];
 
         return ServerRequestFactory::fromGlobals($server)->withUploadedFiles($files);
     }

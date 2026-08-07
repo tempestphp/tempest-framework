@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Ip;
 
 use Tempest\Http\RequestHeaders;
+use Tempest\Support\Ip\IpAddress;
 use Tempest\Support\Str;
 
 /**
@@ -16,7 +17,7 @@ final readonly class ClientIpResolver
         private TrustedProxiesConfig $trustedProxies,
     ) {}
 
-    public function resolve(?string $remoteAddress, RequestHeaders $headers): ?string
+    public function resolve(IpAddress|string|null $remoteAddress, RequestHeaders $headers): ?IpAddress
     {
         $remoteAddress = $this->parse($remoteAddress);
 
@@ -33,7 +34,7 @@ final readonly class ClientIpResolver
 
             $client = array_find(
                 array_reverse($chain),
-                fn (string $candidate) => ! $this->trustedProxies->trusts($candidate),
+                fn (IpAddress $candidate) => ! $this->trustedProxies->trusts($candidate),
             );
 
             // When every hop is trusted, the client is on the proxy network itself.
@@ -44,7 +45,7 @@ final readonly class ClientIpResolver
     }
 
     /**
-     * @return string[]
+     * @return IpAddress[]
      */
     private function parseChain(?string $header): array
     {
@@ -61,10 +62,10 @@ final readonly class ClientIpResolver
     /**
      * Strips the port a hop may carry, discarding anything that is not a valid address.
      */
-    private function parse(?string $value): ?string
+    private function parse(IpAddress|string|null $value): ?IpAddress
     {
-        if ($value === null) {
-            return null;
+        if ($value === null || $value instanceof IpAddress) {
+            return $value;
         }
 
         $value = trim($value);
@@ -77,10 +78,6 @@ final readonly class ClientIpResolver
             $value = Str\before_first($value, ':');
         }
 
-        if (filter_var($value, FILTER_VALIDATE_IP) === false) {
-            return null;
-        }
-
-        return $value;
+        return IpAddress::tryFrom($value);
     }
 }

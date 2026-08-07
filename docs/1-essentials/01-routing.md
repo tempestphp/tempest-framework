@@ -468,7 +468,7 @@ final readonly class AircraftController
 
 ### Client IP address
 
-The address a request came from is available as the `ip` property of {b`Tempest\Http\Request`}. It is `null` when the server does not report one, such as for requests that were not made over a network.
+The address a request came from is available as the `ip` property of {b`Tempest\Http\Request`}, an instance of {b`Tempest\Support\Ip\IpAddress`}. It is `null` when the server does not report one, such as for requests that were not made over a network.
 
 ```php app/AircraftController.php
 use Tempest\Router\Get;
@@ -480,9 +480,15 @@ final readonly class AircraftController
     public function index(Request $request): View
     {
         $ip = $request->ip;
+
+        $ip->equals('203.0.113.9');
+        $ip->matches('10.0.0.0/8');
+        $ip->isPrivate;
     }
 }
 ```
+
+The same address may be written in more than one notation, so addresses should be compared using `equals()` rather than as strings. [Read more about the `IpAddress` object](../1-essentials/08-primitive-utilities.md#ip-addresses).
 
 Within tests, the address can be specified using the `fromIp()` method.
 

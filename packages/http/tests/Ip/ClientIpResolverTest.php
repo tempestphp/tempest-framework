@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Http\Ip\ClientIpResolver;
 use Tempest\Http\Ip\TrustedProxiesConfig;
 use Tempest\Http\RequestHeaders;
+use Tempest\Support\Ip\IpAddress;
 
 /**
  * @internal
@@ -180,6 +181,17 @@ final class ClientIpResolverTest extends TestCase
         $this->assertNull($this->resolve(remoteAddress: 'not-an-address', headers: []));
     }
 
+    #[Test]
+    public function resolved_address_is_a_value_object(): void
+    {
+        $resolver = new ClientIpResolver(new TrustedProxiesConfig());
+
+        $ip = $resolver->resolve('::ffff:203.0.113.9', RequestHeaders::normalizeFromArray([]));
+
+        $this->assertInstanceOf(IpAddress::class, $ip);
+        $this->assertTrue($ip->equals('203.0.113.9'));
+    }
+
     /**
      * @param array<string, string> $headers
      * @param string[] $proxies
@@ -196,6 +208,6 @@ final class ClientIpResolverTest extends TestCase
             headers: $headerNames,
         ));
 
-        return $resolver->resolve($remoteAddress, RequestHeaders::normalizeFromArray($headers));
+        return $resolver->resolve($remoteAddress, RequestHeaders::normalizeFromArray($headers))?->toString();
     }
 }
