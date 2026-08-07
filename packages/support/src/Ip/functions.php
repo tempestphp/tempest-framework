@@ -46,8 +46,6 @@ function ip_is_private(IpAddress|string $ip): bool
 
 /**
  * Converts an IP address to its packed representation, or `null` when it is not an address.
- *
- * @internal
  */
 function ip_to_bytes(IpAddress|string $ip): ?string
 {
