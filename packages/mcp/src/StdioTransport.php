@@ -42,7 +42,6 @@ final readonly class StdioTransport
 
                 continue;
             }
-
             $line = trim($line);
 
             if ($line === '') {

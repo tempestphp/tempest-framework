@@ -200,7 +200,6 @@ final readonly class McpRequestHandler
                 ];
             }
         }
-
         return ['resources' => $resources];
     }
 
