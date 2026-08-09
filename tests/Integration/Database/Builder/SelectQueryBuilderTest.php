@@ -10,7 +10,9 @@ use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Direction;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\QueryExecuted;
 use Tempest\Database\Table;
+use Tests\Tempest\Fixtures\Events\QueryLogger;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -596,6 +598,55 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(7, $page10->currentPage);
         $this->assertSame('Timeline Taxi Chapter 4', $page10->data[0]->title);
+    }
+
+    #[Test]
+    public function simple_paginate_uses_one_query_and_an_additional_item_to_determine_the_next_page(): void
+    {
+        $this->seed();
+        QueryLogger::reset();
+
+        $page2 = query(Chapter::class)
+            ->select()
+            ->simplePaginate(itemsPerPage: 2, currentPage: 2);
+
+        $this->assertSame(2, $page2->currentPage);
+        $this->assertSame(2, $page2->itemsPerPage);
+        $this->assertSame(2, $page2->offset);
+        $this->assertSame(2, $page2->limit);
+        $this->assertTrue($page2->hasNext);
+        $this->assertTrue($page2->hasPrevious);
+        $this->assertSame(3, $page2->nextPage);
+        $this->assertSame(1, $page2->previousPage);
+        $this->assertSame(['LOTR 1.3', 'LOTR 2.1'], array_map(fn (Chapter $chapter): string => $chapter->title, $page2->data));
+
+        $this->assertCount(1, QueryLogger::$queries);
+        $this->assertInstanceOf(QueryExecuted::class, QueryLogger::$queries[0]);
+        $this->assertStringContainsStringIgnoringCase('LIMIT 3 OFFSET 2', QueryLogger::$queries[0]->sql);
+        $this->assertStringNotContainsStringIgnoringCase('COUNT(', QueryLogger::$queries[0]->sql);
+    }
+
+    #[Test]
+    public function simple_paginate_handles_the_last_and_out_of_range_pages(): void
+    {
+        $this->seed();
+
+        $lastPage = query(Chapter::class)
+            ->select()
+            ->simplePaginate(itemsPerPage: 2, currentPage: 7);
+
+        $this->assertSame(['Timeline Taxi Chapter 4'], array_map(fn (Chapter $chapter): string => $chapter->title, $lastPage->data));
+        $this->assertFalse($lastPage->hasNext);
+        $this->assertTrue($lastPage->hasPrevious);
+
+        $outOfRangePage = query(Chapter::class)
+            ->select()
+            ->simplePaginate(itemsPerPage: 2, currentPage: 100);
+
+        $this->assertSame([], $outOfRangePage->data);
+        $this->assertFalse($outOfRangePage->hasNext);
+        $this->assertTrue($outOfRangePage->hasPrevious);
+        $this->assertSame(99, $outOfRangePage->previousPage);
     }
 
     #[Test]

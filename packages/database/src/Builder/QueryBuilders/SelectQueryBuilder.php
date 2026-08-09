@@ -134,8 +134,11 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     }
 
     /**
-     * Returns simple paginated data for the current query without
-     * executing a count query.
+     * Returns offset-paginated data for the current query without executing a count query.
+     *
+     * Because the total number of items is unknown, a page beyond the available data
+     * is returned empty and still reports a previous page when `currentPage` is greater than one.
+     * For large or frequently changing datasets, cursor pagination may be more appropriate.
      *
      * @return SimplePaginatedData<TModel>
      */

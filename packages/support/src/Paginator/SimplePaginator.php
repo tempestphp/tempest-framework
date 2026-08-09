@@ -58,8 +58,8 @@ final class SimplePaginator
     /**
      * Creates simple paginated data with the provided items.
      *
-     * The array may contain one additional item, which is used
-     * to determine whether the next page exists.
+     * Any items beyond the configured page size are used to determine
+     * whether the next page exists and are omitted from the result.
      *
      * @template T
      * @param array<T> $data
@@ -68,10 +68,7 @@ final class SimplePaginator
     public function paginate(array $data): SimplePaginatedData
     {
         $hasNext = count($data) > $this->itemsPerPage;
-
-        if ($hasNext) {
-            array_pop($data);
-        }
+        $data = array_slice($data, 0, $this->itemsPerPage);
 
         return new SimplePaginatedData(
             data: $data,
