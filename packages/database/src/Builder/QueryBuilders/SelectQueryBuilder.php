@@ -28,6 +28,8 @@ use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\Paginator\PaginatedData;
 use Tempest\Support\Paginator\Paginator;
+use Tempest\Support\Paginator\SimplePaginatedData;
+use Tempest\Support\Paginator\SimplePaginator;
 use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Container\get;
@@ -128,6 +130,29 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
 
         return $paginator->paginateWith(
             callback: fn (int $limit, int $offset) => $this->limit($limit)->offset($offset)->all(),
+        );
+    }
+
+    /**
+     * Returns simple paginated data for the current query without
+     * executing a count query.
+     *
+     * @return SimplePaginatedData<TModel>
+     */
+    public function simplePaginate(
+        int $itemsPerPage = 20,
+        int $currentPage = 1,
+    ): SimplePaginatedData {
+        $paginator = new SimplePaginator(
+            itemsPerPage: $itemsPerPage,
+            currentPage: $currentPage,
+        );
+
+        return $paginator->paginateWith(
+            callback: fn (int $limit, int $offset) => $this
+                ->limit($limit)
+                ->offset($offset)
+                ->all(),
         );
     }
 
