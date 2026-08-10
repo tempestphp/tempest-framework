@@ -242,7 +242,7 @@ final readonly class AddressSerializer implements Serializer
 
 :::
 
-Of course, Tempest provides casters and serializers for the most common data types, including arrays, booleans, dates, enumerations, integers and value objects.
+Of course, Tempest provides casters and serializers for the most common data types, including arrays, booleans, dates, enumerations, floats, integers and value objects.
 
 ### Registering casters and serializers globally
 

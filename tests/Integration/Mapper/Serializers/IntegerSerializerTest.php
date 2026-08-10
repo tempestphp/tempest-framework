@@ -13,7 +13,7 @@ final class IntegerSerializerTest extends TestCase
     public function serialize(): void
     {
         $this->assertSame(
-            '1',
+            1,
             new IntegerSerializer()->serialize(1),
         );
     }

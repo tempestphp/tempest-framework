@@ -23,12 +23,12 @@ final class BooleanSerializer implements Serializer, DynamicSerializer
         return in_array($type->getName(), ['bool', 'boolean'], strict: true);
     }
 
-    public function serialize(mixed $input): string
+    public function serialize(mixed $input): bool
     {
         if (! is_bool($input)) {
             throw new ValueCouldNotBeSerialized('boolean');
         }
 
-        return $input ? 'true' : 'false';
+        return $input;
     }
 }

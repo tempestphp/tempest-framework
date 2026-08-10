@@ -23,12 +23,12 @@ final class IntegerSerializer implements Serializer, DynamicSerializer
         return in_array($type->getName(), ['int', 'integer'], strict: true);
     }
 
-    public function serialize(mixed $input): string
+    public function serialize(mixed $input): int
     {
         if (! is_int($input)) {
             throw new ValueCouldNotBeSerialized('integer');
         }
 
-        return (string) $input;
+        return $input;
     }
 }

@@ -23,12 +23,12 @@ final class FloatSerializer implements Serializer, DynamicSerializer
         return in_array($type->getName(), ['double', 'float'], strict: true);
     }
 
-    public function serialize(mixed $input): string
+    public function serialize(mixed $input): float
     {
         if (! is_float($input)) {
             throw new ValueCouldNotBeSerialized('float');
         }
 
-        return (string) $input;
+        return $input;
     }
 }

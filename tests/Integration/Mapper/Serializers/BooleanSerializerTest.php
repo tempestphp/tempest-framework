@@ -13,12 +13,12 @@ final class BooleanSerializerTest extends TestCase
     public function serialize(): void
     {
         $this->assertSame(
-            'true',
+            true,
             new BooleanSerializer()->serialize(true),
         );
 
         $this->assertSame(
-            'false',
+            false,
             new BooleanSerializer()->serialize(false),
         );
     }

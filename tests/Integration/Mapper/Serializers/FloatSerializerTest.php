@@ -13,7 +13,7 @@ final class FloatSerializerTest extends TestCase
     public function serialize(): void
     {
         $this->assertSame(
-            '0.1',
+            0.1,
             new FloatSerializer()->serialize(0.1),
         );
     }

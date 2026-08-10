@@ -9,6 +9,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithJsonSerialize;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNullableProperties;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithScalarValues;
 
 use function Tempest\Mapper\map;
 
@@ -43,8 +44,27 @@ final class ObjectToArrayMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             [
                 'a' => 'a',
-                'b' => '3.1416',
+                'b' => 3.1416,
                 'c' => null,
+            ],
+            $array,
+        );
+    }
+
+    #[Test]
+    public function object_with_scalar_values_to_array(): void
+    {
+        $array = map(new ObjectWithScalarValues(
+            active: true,
+            score: 1.5,
+            count: 3,
+        ))->toArray();
+
+        $this->assertSame(
+            [
+                'active' => true,
+                'score' => 1.5,
+                'count' => 3,
             ],
             $array,
         );
