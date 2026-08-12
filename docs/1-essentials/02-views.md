@@ -736,7 +736,6 @@ Besides components that you may create yourself, Tempest provides a default set 
 
  <dim>│</dim> <em>Select which view components you want to install</em>
  <dim>│</dim> / <dim>Filter...</dim>
- <dim>│</dim> → ⋅ x-csrf-token
  <dim>│</dim>   ⋅ x-markdown
  <dim>│</dim>   ⋅ x-input
  <dim>│</dim>   ⋅ x-icon
@@ -758,7 +757,7 @@ A base template you can install into your own project as a starting point. This 
 
 ### `x-form`
 
-This component provides a form element that will post by default and includes the csrf token out of the box:
+This component provides a form element that will post by default:
 
 ```html
 <?php
@@ -787,16 +786,6 @@ A submit button component that prefills with a "Submit" label:
 ```html
 <x-submit />
 <x-submit label="Send" />
-```
-
-### `x-csrf-token`
-
-Includes the CSRF token in a form
-
-```html
-<form action="…">
-    <x-csrf-token />
-</form>
 ```
 
 ### `x-icon`
