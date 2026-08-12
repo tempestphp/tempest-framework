@@ -121,7 +121,7 @@ public function user(int $id): string
 
 String return values become text resource contents, while {b`Tempest\Mcp\Content\Blob`} instances become binary blob contents.
 
-Some MCP clients only request the standard resource list and do not request resource templates. To also include resource templates in `resources/list`, create an `mcp.config.php` file:
+Some MCP clients only request the standard resource list and do not request resource templates. To also include resource templates in `{txt}resources/list`, create an `mcp.config.php` file:
 
 ```php app/mcp.config.php
 use Tempest\Mcp\McpConfig;
@@ -131,7 +131,7 @@ return new McpConfig(
 );
 ```
 
-Resource templates will remain available through `resources/templates/list`.
+Resource templates will remain available through `{txt}resources/templates/list`.
 
 ## Transports
 
@@ -148,7 +148,7 @@ Every discovered server can be served over standard input and output, which is t
 ./tempest mcp:serve demo-server
 ```
 
-Use `mcp:list` to see all discovered servers, their transports, and how many tools, prompts and resources they expose.
+Use `{txt}mcp:list` to see all discovered servers, their transports, and how many tools, prompts and resources they expose.
 
 ## Testing
 
