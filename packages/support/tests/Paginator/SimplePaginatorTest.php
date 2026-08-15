@@ -7,7 +7,8 @@ namespace Tempest\Support\Tests\Paginator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\Paginator\Exceptions\ArgumentWasInvalid;
+use Tempest\Support\Paginator\Exceptions\CurrentPageWasInvalid;
+use Tempest\Support\Paginator\Exceptions\ItemsPerPageWasInvalid;
 use Tempest\Support\Paginator\SimplePaginatedData;
 use Tempest\Support\Paginator\SimplePaginator;
 
@@ -99,22 +100,52 @@ final class SimplePaginatorTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('invalidArgumentsProvider')]
-    public function it_rejects_invalid_arguments(int $itemsPerPage, int $currentPage): void
+    #[DataProvider('invalidItemsPerPageProvider')]
+    public function it_rejects_invalid_items_per_page(int $itemsPerPage): void
     {
-        $this->expectException(ArgumentWasInvalid::class);
+        $this->expectException(ItemsPerPageWasInvalid::class);
+
+        new SimplePaginator(itemsPerPage: $itemsPerPage);
+    }
+
+    public static function invalidItemsPerPageProvider(): array
+    {
+        return [
+            'zero' => [0],
+            'negative' => [-1],
+            'overflowing limit' => [PHP_INT_MAX],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('invalidCurrentPageProvider')]
+    public function it_rejects_invalid_current_pages(int $itemsPerPage, int $currentPage): void
+    {
+        $this->expectException(CurrentPageWasInvalid::class);
 
         new SimplePaginator(itemsPerPage: $itemsPerPage, currentPage: $currentPage);
     }
 
-    public static function invalidArgumentsProvider(): array
+    public static function invalidCurrentPageProvider(): array
     {
         return [
-            'zero items per page' => [0, 1],
-            'negative items per page' => [-1, 1],
-            'zero current page' => [20, 0],
-            'negative current page' => [20, -1],
+            'zero' => [20, 0],
+            'negative' => [20, -1],
+            'overflowing next page' => [1, PHP_INT_MAX],
+            'overflowing offset' => [PHP_INT_MAX - 1, 3],
         ];
+    }
+
+    #[Test]
+    public function it_accepts_the_largest_values_that_do_not_overflow(): void
+    {
+        $largestPageSize = new SimplePaginator(itemsPerPage: PHP_INT_MAX - 1, currentPage: 2);
+        $largestPage = new SimplePaginator(itemsPerPage: 1, currentPage: PHP_INT_MAX - 1);
+
+        $this->assertSame(PHP_INT_MAX, $largestPageSize->limit);
+        $this->assertSame(PHP_INT_MAX - 1, $largestPageSize->offset);
+        $this->assertSame(PHP_INT_MAX - 2, $largestPage->offset);
+        $this->assertSame(PHP_INT_MAX, $largestPage->paginate([1, 2])->nextPage);
     }
 
     #[Test]

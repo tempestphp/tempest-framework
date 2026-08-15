@@ -2,7 +2,8 @@
 
 namespace Tempest\Support\Paginator;
 
-use Tempest\Support\Paginator\Exceptions\ArgumentWasInvalid;
+use Tempest\Support\Paginator\Exceptions\CurrentPageWasInvalid;
+use Tempest\Support\Paginator\Exceptions\ItemsPerPageWasInvalid;
 
 final class SimplePaginator
 {
@@ -10,12 +11,18 @@ final class SimplePaginator
         private(set) int $itemsPerPage = 20,
         private(set) int $currentPage = 1,
     ) {
-        if ($this->itemsPerPage <= 0) {
-            throw new ArgumentWasInvalid('Items per page must be positive');
+        if ($this->itemsPerPage <= 0 || $this->itemsPerPage === PHP_INT_MAX) {
+            throw new ItemsPerPageWasInvalid($this->itemsPerPage);
         }
 
-        if ($this->currentPage <= 0) {
-            throw new ArgumentWasInvalid('Current page must be positive');
+        $maximumCurrentPage = min(PHP_INT_MAX - 2, intdiv(PHP_INT_MAX, $this->itemsPerPage)) + 1;
+
+        if ($this->currentPage <= 0 || $this->currentPage > $maximumCurrentPage) {
+            throw new CurrentPageWasInvalid(
+                currentPage: $this->currentPage,
+                itemsPerPage: $this->itemsPerPage,
+                maximumCurrentPage: $maximumCurrentPage,
+            );
         }
     }
 
