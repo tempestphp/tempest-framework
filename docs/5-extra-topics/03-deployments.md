@@ -36,7 +36,7 @@ This `deploy.sh` script could look something like this:
 {:hl-keyword:tempest:} migrate:up --force
 {:hl-keyword:tempest:} static:clean --force
 {:hl-keyword:bun:} run build
-{:hl-keyword:tempest:} static:generate --allow-dead-links --verbose=true
+{:hl-keyword:tempest:} static:generate --crawl --verbose=true
 ```
 
 As you can see, there are a number of steps involved to deploying a Tempest project:
