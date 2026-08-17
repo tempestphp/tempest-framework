@@ -7,7 +7,7 @@ namespace Tempest\Http\Ip;
 use Tempest\Support\Ip;
 use Tempest\Support\Ip\IpAddress;
 
-use function Tempest\Support\Ip\ip_matches_any;
+use function Tempest\Support\Ip\matches_any;
 
 /**
  * Configures which reverse proxies may report the client address. No proxy is trusted by default.
@@ -37,6 +37,6 @@ final class TrustedProxiesConfig
 
     public function trusts(IpAddress|string $ip): bool
     {
-        return in_array(self::ANY, $this->proxies, strict: true) || ip_matches_any($ip, $this->proxies);
+        return in_array(self::ANY, $this->proxies, strict: true) || matches_any($ip, $this->proxies);
     }
 }

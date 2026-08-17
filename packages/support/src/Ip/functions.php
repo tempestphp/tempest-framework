@@ -10,12 +10,12 @@ namespace Tempest\Support\Ip;
  *
  * ### Example
  * ```php
- * ip_matches('10.0.1.24', '10.0.0.0/8'); // true
- * ip_matches('10.0.1.24', '10.0.1.24'); // true
- * ip_matches('10.0.1.24', '::/0'); // false
+ * matches('10.0.1.24', '10.0.0.0/8'); // true
+ * matches('10.0.1.24', '10.0.1.24'); // true
+ * matches('10.0.1.24', '::/0'); // false
  * ```
  */
-function ip_matches(IpAddress|string $ip, IpAddress|string $range): bool
+function matches(IpAddress|string $ip, IpAddress|string $range): bool
 {
     return IpAddress::tryFrom($ip)?->matches($range) ?? false;
 }
@@ -25,7 +25,7 @@ function ip_matches(IpAddress|string $ip, IpAddress|string $range): bool
  *
  * @param iterable<IpAddress|string> $ranges
  */
-function ip_matches_any(IpAddress|string $ip, iterable $ranges): bool
+function matches_any(IpAddress|string $ip, iterable $ranges): bool
 {
     return IpAddress::tryFrom($ip)?->matchesAny($ranges) ?? false;
 }
@@ -35,11 +35,11 @@ function ip_matches_any(IpAddress|string $ip, iterable $ranges): bool
  *
  * ### Example
  * ```php
- * ip_is_private('10.0.1.24'); // true
- * ip_is_private('203.0.113.9'); // false
+ * is_private('10.0.1.24'); // true
+ * is_private('203.0.113.9'); // false
  * ```
  */
-function ip_is_private(IpAddress|string $ip): bool
+function is_private(IpAddress|string $ip): bool
 {
     return IpAddress::tryFrom($ip)?->isPrivate === true;
 }
@@ -47,7 +47,7 @@ function ip_is_private(IpAddress|string $ip): bool
 /**
  * Converts an IP address to its packed representation, or `null` when it is not an address.
  */
-function ip_to_bytes(IpAddress|string $ip): ?string
+function to_bytes(IpAddress|string $ip): ?string
 {
     return IpAddress::tryFrom($ip)?->bytes;
 }

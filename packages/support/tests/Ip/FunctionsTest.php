@@ -25,7 +25,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['::ffff:10.0.1.24', '10.0.0.0/8'])]
     public function matching_addresses(string $ip, string $range): void
     {
-        $this->assertTrue(Ip\ip_matches($ip, $range));
+        $this->assertTrue(Ip\matches($ip, $range));
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['2001:db9::1', '2001:db8::/32'])]
     public function non_matching_addresses(string $ip, string $range): void
     {
-        $this->assertFalse(Ip\ip_matches($ip, $range));
+        $this->assertFalse(Ip\matches($ip, $range));
     }
 
     #[Test]
@@ -43,7 +43,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['2001:db8::1', '0.0.0.0/0'])]
     public function families_are_never_matched_against_each_other(string $ip, string $range): void
     {
-        $this->assertFalse(Ip\ip_matches($ip, $range));
+        $this->assertFalse(Ip\matches($ip, $range));
     }
 
     #[Test]
@@ -55,15 +55,15 @@ final class FunctionsTest extends TestCase
     #[TestWith(['', ''])]
     public function malformed_input_never_matches(string $ip, string $range): void
     {
-        $this->assertFalse(Ip\ip_matches($ip, $range));
+        $this->assertFalse(Ip\matches($ip, $range));
     }
 
     #[Test]
     public function matching_any_range(): void
     {
-        $this->assertTrue(Ip\ip_matches_any('10.0.1.24', ['203.0.113.9', '10.0.0.0/8']));
-        $this->assertFalse(Ip\ip_matches_any('10.0.1.24', ['203.0.113.9', '192.168.0.0/16']));
-        $this->assertFalse(Ip\ip_matches_any('10.0.1.24', []));
+        $this->assertTrue(Ip\matches_any('10.0.1.24', ['203.0.113.9', '10.0.0.0/8']));
+        $this->assertFalse(Ip\matches_any('10.0.1.24', ['203.0.113.9', '192.168.0.0/16']));
+        $this->assertFalse(Ip\matches_any('10.0.1.24', []));
     }
 
     #[Test]
@@ -78,7 +78,7 @@ final class FunctionsTest extends TestCase
     #[TestWith(['::ffff:10.0.1.24'])]
     public function private_addresses(string $ip): void
     {
-        $this->assertTrue(Ip\ip_is_private($ip));
+        $this->assertTrue(Ip\is_private($ip));
     }
 
     #[Test]
@@ -90,6 +90,6 @@ final class FunctionsTest extends TestCase
     #[TestWith(['not-an-address'])]
     public function public_addresses(string $ip): void
     {
-        $this->assertFalse(Ip\ip_is_private($ip));
+        $this->assertFalse(Ip\is_private($ip));
     }
 }

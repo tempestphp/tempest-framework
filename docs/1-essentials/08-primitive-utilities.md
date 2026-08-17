@@ -80,8 +80,8 @@ use Tempest\Support\Ip;
 use Tempest\Support\Ip\IpAddress;
 
 // Functional API
-Ip\ip_matches('10.0.1.24', '10.0.0.0/8');
-Ip\ip_is_private('10.0.1.24');
+Ip\matches('10.0.1.24', '10.0.0.0/8');
+Ip\is_private('10.0.1.24');
 
 // Object-oriented API
 $ip = IpAddress::from('10.0.1.24');
