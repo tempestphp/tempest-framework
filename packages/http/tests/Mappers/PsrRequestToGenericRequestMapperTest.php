@@ -6,6 +6,7 @@ namespace Tempest\Http\Tests\Mappers;
 
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -25,12 +26,15 @@ use Tempest\Http\Cookie\CookieConfig;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Method;
+use Tempest\Http\Upload;
 
 final class PsrRequestToGenericRequestMapperTest extends TestCase
 {
     private PsrRequestToGenericRequestMapper $mapper;
 
     private ReflectionMethod $requestMethod;
+
+    private ReflectionMethod $createUploads;
 
     protected function setUp(): void
     {
@@ -47,6 +51,24 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
 
         $reflection = new ReflectionClass($this->mapper);
         $this->requestMethod = $reflection->getMethod('requestMethod');
+        $this->createUploads = $reflection->getMethod('createUploads');
+    }
+
+    #[Test]
+    public function nested_uploaded_files_are_mapped_to_uploads(): void
+    {
+        $files = $this->createUploads->invoke($this->mapper, [
+            'avatar' => $this->createUploadedFile('avatar.png'),
+            'documents' => [
+                $this->createUploadedFile('one.txt'),
+                'contract' => $this->createUploadedFile('contract.pdf'),
+            ],
+        ]);
+
+        $this->assertInstanceOf(Upload::class, $files['avatar']);
+        $this->assertSame('avatar.png', $files['avatar']->getClientFilename());
+        $this->assertSame('one.txt', $files['documents'][0]->getClientFilename());
+        $this->assertSame('contract.pdf', $files['documents']['contract']->getClientFilename());
     }
 
     #[DataProvider('nonPostMethodsProvider')]
@@ -155,5 +177,15 @@ final class PsrRequestToGenericRequestMapperTest extends TestCase
 
         $stream = new Stream('php://temp', 'r+');
         return $request->withBody($stream);
+    }
+
+    private function createUploadedFile(string $filename): UploadedFile
+    {
+        return new UploadedFile(
+            streamOrFile: new Stream('php://temp', 'r+'),
+            size: 0,
+            errorStatus: UPLOAD_ERR_OK,
+            clientFilename: $filename,
+        );
     }
 }
