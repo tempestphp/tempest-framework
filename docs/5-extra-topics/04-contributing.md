@@ -259,7 +259,7 @@ Commit descriptions **should not** start with an uppercase letter and should use
 
 ### Commit scopes
 
-Scopes are not mandatory, but are highly recommended for consistency and easy of read. The following scopes are the most commonly used:
+Scopes are not mandatory, but are highly recommended for consistency and ease of reading. The following scopes are the most commonly used:
 
 - `feat` — for a new feature
 - `fix` — for a bug fix
@@ -293,7 +293,7 @@ All pull requests will be renamed to the conventional commit convention if neces
 
 ## Release cycles
 
-Tempest current does not follow a fixed release cycle. In general, bug fixes and minor features can be released as soon as possible. For breaking changes, though, we aim to bundle as many as possible in a single major release. 
+Tempest currently does not follow a fixed release cycle. In general, bug fixes and minor features can be released as soon as possible. For breaking changes, though, we aim to bundle as many as possible in a single major release.
 
 ### Milestones
 
@@ -320,7 +320,7 @@ Finally, as we close in on tagging `next major`, features that would usually go 
 
 ### Milestone deadlines
 
-Even though we release on a non-fixed schedule, we do assign deadlines to the `next major` version. This gives all contributors a clear goal to work towards, and helps us stay on track. The dealine for `next major` also determines the end date of `current minor`
+Even though we release on a non-fixed schedule, we do assign deadlines to the `next major` version. This gives all contributors a clear goal to work towards, and helps us stay on track. The deadline for `next major` also determines the end date of `current minor`
 
 ## Brand Guidelines
 
