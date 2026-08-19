@@ -54,6 +54,8 @@ final class GenericContainer implements Container
         private(set) ArrayIterator $resettables = new ArrayIterator(),
 
         private(set) ?DependencyChain $chain = null,
+
+        private(set) bool $getClassAsSingletonByDefault = false,
     ) {
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
@@ -203,6 +205,17 @@ final class GenericContainer implements Container
      * @param class-string<TClassName> $className
      * @return TClassName
      * @throws CircularDependencyEncountered
+     */
+    public function make(string $className, ...$params): mixed
+    {
+        return $this->resolve($className, null, ...$params);
+    }
+
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return TClassName
+     * @throws CircularDependencyEncountered
      * @throws TaggedDependencyCouldNotBeResolved
      */
     public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
@@ -212,6 +225,10 @@ final class GenericContainer implements Container
         $dependency = $this->resolve($className, $tag, ...$params);
 
         $this->stopChain();
+
+        if ($this->getClassAsSingletonByDefault) {
+            $this->singleton($className, $dependency, $tag);
+        }
 
         return $dependency;
     }

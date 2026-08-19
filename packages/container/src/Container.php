@@ -25,6 +25,13 @@ interface Container extends ContainerInterface
      * @param class-string<TClassName> $className
      * @return TClassName
      */
+    public function make(string $className, mixed ...$params): mixed;
+
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return TClassName
+     */
     public function get(string $className, string|UnitEnum|null $tag = null, mixed ...$params): mixed;
 
     public function has(string $className, string|UnitEnum|null $tag = null): bool;
