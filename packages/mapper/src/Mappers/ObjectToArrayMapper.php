@@ -69,7 +69,9 @@ final readonly class ObjectToArrayMapper implements Mapper
                     continue;
                 }
 
-                $propertyValue[$key] = map($value)->toArray();
+                $propertyValue[$key] = map($value)
+                    ->in($this->context)
+                    ->toArray();
             }
 
             return $propertyValue;
@@ -77,6 +79,12 @@ final readonly class ObjectToArrayMapper implements Mapper
 
         if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) instanceof Serializer) {
             return $serializer->serialize($propertyValue);
+        }
+
+        if ($propertyValue !== null && is_object($propertyValue)) {
+            return map($propertyValue)
+                ->in($this->context)
+                ->toArray();
         }
 
         return $propertyValue;

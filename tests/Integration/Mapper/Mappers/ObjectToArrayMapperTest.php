@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\DateTime\DateTime;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectWithDate;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithJsonSerialize;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNestedObjectAndDate;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNullableProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithScalarValues;
 
@@ -65,6 +68,31 @@ final class ObjectToArrayMapperTest extends FrameworkIntegrationTestCase
                 'active' => true,
                 'score' => 1.5,
                 'count' => 3,
+            ],
+            $array,
+        );
+    }
+
+    #[Test]
+    public function object_with_single_nested_object_to_array(): void
+    {
+        $date = DateTime::parse('2026-08-19T12:34:56+00:00');
+
+        $array = map(new ObjectWithNestedObjectAndDate(
+            createdAt: $date,
+            child: new NestedObjectWithDate($date),
+            children: [new NestedObjectWithDate($date)],
+        ))->toArray();
+
+        $this->assertSame(
+            [
+                'createdAt' => '2026-08-19T12:34:56.000Z',
+                'child' => [
+                    'createdAt' => '2026-08-19T12:34:56.000Z',
+                ],
+                'children' => [
+                    ['createdAt' => '2026-08-19T12:34:56.000Z'],
+                ],
             ],
             $array,
         );
