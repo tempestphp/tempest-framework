@@ -44,7 +44,7 @@ final class ArrayOfObjectsSerializer implements Serializer, DynamicSerializer, C
 
     public function serialize(mixed $input): array
     {
-        if (!is_array($input)) {
+        if (! is_array($input)) {
             throw new ValueCouldNotBeSerialized('array');
         }
 
