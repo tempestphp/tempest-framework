@@ -51,10 +51,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
 
         parse_str($from->getUri()->getQuery(), $query);
 
-        $uploads = array_map(
-            fn (UploadedFileInterface $uploadedFile) => new Upload($uploadedFile),
-            $from->getUploadedFiles(),
-        );
+        $uploads = $this->createUploads($from->getUploadedFiles());
 
         return map([
             'method' => $this->requestMethod($from, $data),
@@ -86,6 +83,22 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             )),
         ])
             ->to(GenericRequest::class);
+    }
+
+    /**
+     * Array-style file inputs, such as `files[]`, are exposed by PSR-7 as nested arrays.
+     *
+     * @param array<array-key, UploadedFileInterface|array> $uploadedFiles
+     * @return array<array-key, Upload|array>
+     */
+    private function createUploads(array $uploadedFiles): array
+    {
+        return array_map(
+            fn (UploadedFileInterface|array $uploadedFile) => $uploadedFile instanceof UploadedFileInterface
+                ? new Upload($uploadedFile)
+                : $this->createUploads($uploadedFile),
+            $uploadedFiles,
+        );
     }
 
     private function requestMethod(PsrRequest $request, array $data): Method

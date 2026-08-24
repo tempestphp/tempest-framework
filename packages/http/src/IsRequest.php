@@ -38,7 +38,7 @@ trait IsRequest
     #[SkipValidation]
     private(set) array $query;
 
-    /** @var \Tempest\Http\Upload[] */
+    /** @var array<array-key, \Tempest\Http\Upload|array> */
     #[SkipValidation]
     private(set) array $files;
 

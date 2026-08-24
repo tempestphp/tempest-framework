@@ -22,7 +22,7 @@ interface Request
 
     public array $query { get; }
 
-    /** @var \Tempest\Http\Upload[] $files */
+    /** @var array<array-key, \Tempest\Http\Upload|array> $files */
     public array $files { get; }
 
     /** @var Cookie[] $cookies */

@@ -107,6 +107,31 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
     }
 
     #[Test]
+    public function nested_files(): void
+    {
+        /** @var GenericRequest $request */
+        $request = $this->mapper->map(
+            from: $this->http->makePsrRequest('/', files: [
+                'avatar' => $this->createUploadedFile('avatar.png'),
+                'documents' => [
+                    $this->createUploadedFile('one.txt'),
+                    'contract' => $this->createUploadedFile('contract.pdf'),
+                ],
+            ]),
+            to: Request::class,
+        );
+
+        $this->assertInstanceOf(Upload::class, $request->files['avatar']);
+        $this->assertSame('avatar.png', $request->files['avatar']->getClientFilename());
+
+        $this->assertInstanceOf(Upload::class, $request->files['documents'][0]);
+        $this->assertSame('one.txt', $request->files['documents'][0]->getClientFilename());
+
+        $this->assertInstanceOf(Upload::class, $request->files['documents']['contract']);
+        $this->assertSame('contract.pdf', $request->files['documents']['contract']->getClientFilename());
+    }
+
+    #[Test]
     public function body_field_in_body(): void
     {
         $request = $this->mapper->map(
@@ -143,5 +168,15 @@ final class PsrRequestToGenericRequestMapperTest extends FrameworkIntegrationTes
         $cookies = $this->cookies->all();
         $this->assertSame($cookies['foo']->expiresAt, -1);
         $this->assertSame($cookies['foo']->value, '');
+    }
+
+    private function createUploadedFile(string $filename): UploadedFile
+    {
+        return new UploadedFile(
+            streamOrFile: new Stream('php://temp', 'r+'),
+            size: 0,
+            errorStatus: UPLOAD_ERR_OK,
+            clientFilename: $filename,
+        );
     }
 }
