@@ -83,11 +83,13 @@ final class SelectModelMapper implements Mapper
             $relation = $model->getRelation($key);
 
             if ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof HasOneThrough) {
-                if ($relation->property->isNullable() && array_filter($data[$relation->name] ?? []) === []) {
-                    $data[$relation->name] = null;
-                } elseif (is_array($data[$relation->name] ?? null)) {
+                if (is_array($data[$relation->name] ?? null)) {
                     $relationModel = inspect($relation);
                     $data[$relation->name] = $this->values($relationModel, $data[$relation->name]);
+                }
+
+                if ($relation->property->isNullable() && $this->relationDataIsEmpty($data[$relation->name] ?? null)) {
+                    $data[$relation->name] = null;
                 }
 
                 continue;
@@ -106,6 +108,25 @@ final class SelectModelMapper implements Mapper
         }
 
         return $data;
+    }
+
+    private function relationDataIsEmpty(mixed $value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach ($value as $item) {
+            if (! $this->relationDataIsEmpty($item)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function normalizeRow(ModelInspector $model, array $row, MutableArray $data): array

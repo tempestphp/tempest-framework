@@ -3,8 +3,11 @@
 namespace Tests\Tempest\Integration\Database\Mappers;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Database\BelongsTo;
 use Tempest\Database\BelongsToMany;
+use Tempest\Database\Eager;
 use Tempest\Database\Exceptions\RelationWasMissing;
+use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -362,6 +365,25 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(EnumToBeMappedToArray::USER, $users[0]->roles[1]);
     }
 
+    #[Test]
+    public function nullable_eager_relation_with_nested_empty_relations_maps_to_null(): void
+    {
+        $users = map([
+            [
+                'users.id' => 1,
+                'users.name' => 'Rado',
+                'profile.id' => null,
+                'profile.createdBy.id' => null,
+                'profile.createdBy.name' => null,
+                'profile.updatedBy.id' => null,
+                'profile.updatedBy.name' => null,
+            ],
+        ])->with(mapper: SelectModelMapper::class)->to(to: UserWithNullableEagerProfile::class);
+
+        $this->assertSame(expected: 'Rado', actual: $users[0]->name);
+        $this->assertNull(actual: $users[0]->profile);
+    }
+
     private function data(): array
     {
         return [
@@ -503,6 +525,40 @@ final class ObjectWithArrayEnumProperty
 {
     /** @var \Tests\Tempest\Integration\Database\Mappers\EnumToBeMappedToArray[] */
     public array $roles;
+}
+
+#[Table(name: 'users')]
+final class UserWithNullableEagerProfile
+{
+    use IsDatabaseModel;
+
+    public string $name;
+
+    #[Eager]
+    #[HasOne]
+    public ?NullableEagerProfile $profile = null;
+}
+
+#[Table(name: 'profiles')]
+final class NullableEagerProfile
+{
+    use IsDatabaseModel;
+
+    #[Eager]
+    #[BelongsTo]
+    public ?NullableEagerUserLookup $createdBy = null;
+
+    #[Eager]
+    #[BelongsTo]
+    public ?NullableEagerUserLookup $updatedBy = null;
+}
+
+#[Table(name: 'users')]
+final class NullableEagerUserLookup
+{
+    use IsDatabaseModel;
+
+    public string $name;
 }
 
 enum EnumToBeMappedToArray: string
