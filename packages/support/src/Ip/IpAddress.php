@@ -17,13 +17,6 @@ use Tempest\Support\Comparison\Equable;
 final class IpAddress implements Stringable, Equable
 {
     /**
-     * The packed representation of the address. IPv4-mapped IPv6 addresses, such as `::ffff:127.0.0.1`, are narrowed to their IPv4 form.
-     *
-     * @internal
-     */
-    private(set) string $bytes;
-
-    /**
      * Whether the address is an IPv4 address.
      */
     public bool $isIpv4 {
@@ -49,10 +42,13 @@ final class IpAddress implements Stringable, Equable
          * The address as it was given.
          */
         private(set) string $value,
-        string $bytes,
-    ) {
-        $this->bytes = $bytes;
-    }
+        /**
+         * The packed representation of the address. IPv4-mapped IPv6 addresses, such as `::ffff:127.0.0.1`, are narrowed to their IPv4 form.
+         *
+         * @internal
+         */
+        private(set) string $bytes,
+    ) {}
 
     /**
      * Creates an address from the given notation, throwing when it is not an address.

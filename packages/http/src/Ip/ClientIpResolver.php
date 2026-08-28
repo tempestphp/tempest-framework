@@ -21,7 +21,7 @@ final readonly class ClientIpResolver
     {
         $remoteAddress = $this->parse($remoteAddress);
 
-        if ($remoteAddress === null || ! $this->trustedProxies->trusts($remoteAddress)) {
+        if (! $remoteAddress instanceof IpAddress || ! $this->trustedProxies->trusts($remoteAddress)) {
             return $remoteAddress;
         }
 

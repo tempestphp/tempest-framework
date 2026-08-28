@@ -314,7 +314,7 @@ final class HttpRouterTester
 
         $_POST = is_array($body) ? $body : [];
 
-        $server = $this->ip === null ? $_SERVER : [...$_SERVER, 'REMOTE_ADDR' => $this->ip->toString()];
+        $server = $this->ip instanceof IpAddress ? [...$_SERVER, 'REMOTE_ADDR' => $this->ip->toString()] : $_SERVER;
 
         return ServerRequestFactory::fromGlobals($server)->withUploadedFiles($files);
     }

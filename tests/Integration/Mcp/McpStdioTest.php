@@ -90,6 +90,7 @@ final class McpStdioTest extends FrameworkIntegrationTestCase
 
             fclose($pipe);
         }
+
         stream_set_timeout($input, seconds: 0, microseconds: 25_000);
 
         $server = $this->container->get(McpConfig::class)->servers[StdioMcpServer::class];
