@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.5",
         "psr/clock": "^1.0.0",
-        "tempest/datetime": "3.19.0"
+        "tempest/datetime": "3.x-dev"
     },
     "autoload": {
         "psr-4": {

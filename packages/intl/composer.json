@@ -7,9 +7,9 @@
         "php": "^8.5",
         "doctrine/inflector": "^2.0",
         "symfony/yaml": "^7.3|^8.0",
-        "tempest/core": "3.19.0",
-        "tempest/container": "3.19.0",
-        "tempest/support": "3.19.0",
+        "tempest/core": "3.x-dev",
+        "tempest/container": "3.x-dev",
+        "tempest/support": "3.x-dev",
         "ext-intl": "*",
         "ext-dom": "*"
     },

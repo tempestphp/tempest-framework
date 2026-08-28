@@ -3,10 +3,10 @@
     "description": "A flexible authentication package for Tempest, providing authentication and authorization.",
     "require": {
         "php": "^8.5",
-        "tempest/core": "3.19.0",
-        "tempest/router": "3.19.0",
-        "tempest/database": "3.19.0",
-        "tempest/mapper": "3.19.0",
+        "tempest/core": "3.x-dev",
+        "tempest/router": "3.x-dev",
+        "tempest/database": "3.x-dev",
+        "tempest/mapper": "3.x-dev",
         "league/oauth2-client": "^2.8"
     },
     "require-dev": {

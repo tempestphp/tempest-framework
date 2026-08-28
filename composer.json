@@ -90,6 +90,7 @@
         "symplify/monorepo-builder": "^11.2",
         "tempest/blade": "dev-main",
         "thenetworg/oauth2-azure": "^2.2",
+        "typephp/typephp" : "*",
         "twig/twig": "^3.16",
         "vertisan/oauth2-twitch-helix": "^2.0",
         "wohali/oauth2-discord-new": "^1.2"

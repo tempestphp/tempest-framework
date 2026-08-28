@@ -6,14 +6,14 @@
     "require": {
         "php": "^8.5",
         "symfony/filesystem": "^7.3|^8.0",
-        "tempest/core": "3.19.0",
-        "tempest/container": "3.19.0",
-        "tempest/generation": "3.19.0",
+        "tempest/core": "3.x-dev",
+        "tempest/container": "3.x-dev",
+        "tempest/generation": "3.x-dev",
         "tempest/highlight": "^2.11.4",
-        "tempest/log": "3.19.0",
-        "tempest/reflection": "3.19.0",
-        "tempest/support": "3.19.0",
-        "tempest/validation": "3.19.0",
+        "tempest/log": "3.x-dev",
+        "tempest/reflection": "3.x-dev",
+        "tempest/support": "3.x-dev",
+        "tempest/validation": "3.x-dev",
         "ext-readline": "*"
     },
     "suggest": {
