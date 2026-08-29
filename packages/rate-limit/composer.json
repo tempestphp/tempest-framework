@@ -1,0 +1,29 @@
+{
+    "name": "tempest/rate-limit",
+    "description": "Rate limiting for Tempest applications.",
+    "type": "library",
+    "require": {
+        "php": "^8.5",
+        "tempest/cache": "3.x-dev",
+        "tempest/clock": "3.x-dev",
+        "tempest/container": "3.x-dev",
+        "tempest/core": "3.x-dev",
+        "tempest/datetime": "3.x-dev",
+        "tempest/http": "3.x-dev",
+        "tempest/kv-store": "3.x-dev",
+        "tempest/router": "3.x-dev",
+        "tempest/support": "3.x-dev"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tempest\\RateLimit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\RateLimit\\Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "dev"
+}

@@ -34,6 +34,7 @@ use Tempest\Mail\Testing\MailTester;
 use Tempest\Mail\Testing\TestingMailer;
 use Tempest\Mcp\Testing\McpTester;
 use Tempest\Process\Testing\ProcessTester;
+use Tempest\RateLimit\Testing\RateLimitTester;
 use Tempest\Storage\Testing\StorageTester;
 use Throwable;
 
@@ -124,6 +125,11 @@ abstract class IntegrationTest extends TestCase
      */
     protected McpTester $mcp;
 
+    /**
+     * Provides utilities for testing rate limits.
+     */
+    protected RateLimitTester $rateLimit;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -205,6 +211,7 @@ abstract class IntegrationTest extends TestCase
         $this->database = new DatabaseTester($this->container);
         $this->view = new ViewTester($this->container);
         $this->mcp = new McpTester($this->container);
+        $this->rateLimit = new RateLimitTester($this->container);
 
         return $this;
     }
