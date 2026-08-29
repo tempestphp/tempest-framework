@@ -12,6 +12,7 @@ use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Response;
+use Tempest\Http\Responses\Json;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Status;
 use Tempest\Router\Exceptions\HttpExceptionHandler;
@@ -130,6 +131,53 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         });
 
         $this->assertSame($status, $this->response->status);
+    }
+
+    #[Test]
+    public function exception_handler_applies_headers_declared_on_the_exception(): void
+    {
+        $this->callExceptionHandler(function (): void {
+            $handler = $this->container->get(HttpExceptionHandler::class);
+            $handler->handle(new HttpRequestFailed(
+                status: Status::UNAUTHORIZED,
+                headers: ['www-authenticate' => 'Bearer'],
+            ));
+        });
+
+        $this->assertContains('Bearer', $this->response->getHeader('www-authenticate')->values);
+    }
+
+    #[Test]
+    public function exception_handler_replaces_headers_that_the_rendered_response_already_carries(): void
+    {
+        // The renderer forwards a cause that has a body, so the response it returns already carries the header
+        $cause = new Json(body: ['message' => 'Slow down.'], status: Status::TOO_MANY_REQUESTS)
+            ->addHeader('Retry-After', '30');
+
+        $this->callExceptionHandler(function () use ($cause): void {
+            $handler = $this->container->get(HttpExceptionHandler::class);
+            $handler->handle(new HttpRequestFailed(
+                status: Status::TOO_MANY_REQUESTS,
+                cause: $cause,
+                headers: ['retry-after' => '60'],
+            ));
+        });
+
+        $this->assertSame(['60'], $this->response->getHeader('retry-after')->values);
+    }
+
+    #[Test]
+    public function exception_handler_applies_every_value_of_a_declared_header(): void
+    {
+        $this->callExceptionHandler(function (): void {
+            $handler = $this->container->get(HttpExceptionHandler::class);
+            $handler->handle(new HttpRequestFailed(
+                status: Status::METHOD_NOT_ALLOWED,
+                headers: ['allow' => ['GET', 'HEAD']],
+            ));
+        });
+
+        $this->assertSame(['GET', 'HEAD'], $this->response->getHeader('allow')->values);
     }
 
     #[Test]

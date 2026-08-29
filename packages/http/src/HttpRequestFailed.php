@@ -15,12 +15,14 @@ final class HttpRequestFailed extends Exception implements ProvidesContext
      * @param string|null $message An optional message that will be displayed to the client.
      * @param Response|null $cause The response that caused the failure, if any.
      * @param Request|null $request The request that failed, for debug purposes.
+     * @param array<string, string|string[]> $headers Headers that the response must carry, such as `retry-after` on a `429`.
      */
     public function __construct(
         private(set) readonly Status $status,
         ?string $message = null,
         private(set) readonly ?Response $cause = null,
         private(set) readonly ?Request $request = null,
+        private(set) readonly array $headers = [],
     ) {
         parent::__construct(
             message: $message ?: '',
