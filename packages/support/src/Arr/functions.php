@@ -346,12 +346,10 @@ function pluck(iterable $array, string $value, ?string $key = null): array
  *
  * @template TKey of array-key
  * @template TValue
- * @template TPrepended
  *
  * @param iterable<TKey,TValue> $array
- * @param TPrepended $values
  *
- * @return array<array-key, TValue|TPrepended>
+ * @return array<array-key, mixed>
  */
 function prepend(iterable $array, mixed ...$values): array
 {
@@ -369,12 +367,10 @@ function prepend(iterable $array, mixed ...$values): array
  *
  * @template TKey of array-key
  * @template TValue
- * @template TAppended
  *
  * @param iterable<TKey,TValue> $array
- * @param TAppended $values
  *
- * @return array<array-key, TValue|TAppended>
+ * @return array<array-key, mixed>
  */
 function append(iterable $array, mixed ...$values): array
 {
@@ -499,8 +495,8 @@ function unique(iterable $array, Closure|string|null $key = null, bool $shouldBe
  * @template TKey of array-key
  * @template TValue
  *
- * @param iterable<TKey,TValue> $array
- * @param array<TKey, TValue> ...$arrays
+ * @param array<TKey, TValue> $array
+ * @param array<array-key, TValue> ...$arrays
  *
  * @return array<TKey, TValue>
  */
@@ -531,8 +527,8 @@ function diff_keys(iterable $array, array ...$arrays): array
  * @template TKey of array-key
  * @template TValue
  *
- * @param iterable<TKey,TValue> $array
- * @param array<TKey, TValue> ...$arrays
+ * @param array<TKey, TValue> $array
+ * @param array<array-key, TValue> ...$arrays
  *
  * @return array<TKey, TValue>
  */
@@ -547,8 +543,8 @@ function intersect(iterable $array, array ...$arrays): array
  * @template TKey of array-key
  * @template TValue
  *
- * @param iterable<TKey,TValue> $array
- * @param array<TKey, TValue> ...$arrays
+ * @param iterable<TKey, TValue> $array
+ * @param array<TKey, mixed> ...$arrays
  *
  * @return array<TKey, TValue>
  */
@@ -647,7 +643,7 @@ function first(iterable $array, ?Closure $filter = null, mixed $default = null):
  *
  * @param iterable<TKey,TValue> $array
  *
- * @return TValue
+ * @return TValue|null
  */
 function at(iterable $array, int $index, mixed $default = null): mixed
 {
@@ -1093,7 +1089,7 @@ function undot(iterable $array): array
  *
  * @param iterable<TKey,TValue> $array
  *
- * @return array<string,mixed>
+ * @return array<array-key, mixed>
  */
 function dot(iterable $array, string $prefix = ''): array
 {

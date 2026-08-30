@@ -8,6 +8,9 @@
         "tempest/reflection": "3.x-dev",
         "psr/container": "^2.0"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "files": [
             "src/functions.php"

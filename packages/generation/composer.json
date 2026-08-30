@@ -14,7 +14,8 @@
     "require-dev": {
         "spatie/phpunit-snapshot-assertions": "^5.1.8",
         "phpunit/phpunit": "^12.5.22",
-        "tempest/container": "3.x-dev"
+        "tempest/container": "3.x-dev",
+        "typephp/typephp": "^0.7.1"
     },
     "autoload": {
         "psr-4": {

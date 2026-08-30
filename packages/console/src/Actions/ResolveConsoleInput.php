@@ -12,7 +12,7 @@ use Tempest\Console\Input\ConsoleInputArgument;
 final readonly class ResolveConsoleInput
 {
     /**
-     * @param list<ConsoleArgumentDefinition> $argumentDefinitions
+     * @param ConsoleArgumentDefinition[] $argumentDefinitions
      *
      * @return array{0: list<ConsoleInputArgument>, 1: list<ConsoleArgumentDefinition>}
      */

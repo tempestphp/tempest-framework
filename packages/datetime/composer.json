@@ -8,6 +8,9 @@
         "tempest/intl": "3.x-dev",
         "tempest/support": "3.x-dev"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\DateTime\\": "src"

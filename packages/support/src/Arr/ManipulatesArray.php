@@ -214,8 +214,6 @@ trait ManipulatesArray
     /**
      * Prepends the specified values to the array.
      *
-     * @param TValue $values
-     *
      * @return static<TKey, TValue>
      */
     public function prepend(mixed ...$values): self
@@ -225,8 +223,6 @@ trait ManipulatesArray
 
     /**
      * Appends the specified values to the instance.
-     *
-     * @param TValue $values
      *
      * @return static<TKey, TValue>
      */
@@ -327,7 +323,7 @@ trait ManipulatesArray
     /**
      * Returns a new instance of the array with only the items whose keys are present in all of the given arrays.
      *
-     * @param array<TKey, TValue>|static<TKey, TValue> ...$arrays
+     * @param array<TKey, mixed>|static<TKey, mixed> ...$arrays
      *
      * @return static<TKey, TValue>
      */
@@ -828,7 +824,7 @@ trait ManipulatesArray
      *
      * @param (Closure(TValue): bool) $predicate
      *
-     * @return static<int, array<array<TValue>, array<TValue>>>
+     * @return static<int, list<TValue>>
      */
     public function partition(Closure $predicate): self
     {

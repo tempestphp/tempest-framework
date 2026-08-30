@@ -16,6 +16,9 @@
         "tempest/validation": "3.x-dev",
         "ext-readline": "*"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "suggest": {
         "ext-pcntl": "Required to use some interactive console components.",
         "ext-posix": "Required to use some interactive console components."

@@ -16,6 +16,7 @@ use Tests\Tempest\Integration\Mailer\Fixtures\TextEmail;
 final class MailerTesterTest extends FrameworkIntegrationTestCase
 {
     #[Test]
+    /** @typephp-ignore */
     public function assert_sent_must_have_valid_class_string(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -24,6 +25,7 @@ final class MailerTesterTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    /** @typephp-ignore */
     public function assert_sent_must_have_class_string_that_implements_email(): void
     {
         $this->expectException(InvalidArgumentException::class);

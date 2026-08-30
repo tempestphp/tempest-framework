@@ -58,7 +58,7 @@ final class NamespacedFileWriter implements TypeScriptWriter
     }
 
     /**
-     * @param TypeDefinition[]|InterfaceDefinition[] $definitions
+     * @param array<TypeDefinition|InterfaceDefinition> $definitions
      */
     private function generateNamespace(string $namespace, array $definitions): string
     {

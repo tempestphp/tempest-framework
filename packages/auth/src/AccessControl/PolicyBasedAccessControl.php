@@ -17,9 +17,7 @@ use Throwable;
 use UnitEnum;
 
 /**
- * @template TSubject of object
- * @template TResource of object
- * @implements AccessControl<TSubject, TResource>
+ * @implements AccessControl<object, object>
  */
 final readonly class PolicyBasedAccessControl implements AccessControl
 {

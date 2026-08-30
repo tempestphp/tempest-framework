@@ -6,8 +6,8 @@ use Tempest\Auth\Exceptions\AccessWasDenied;
 use UnitEnum;
 
 /**
- * @template TSubject of object
- * @template TResource of object
+ * @template TSubject of object = object
+ * @template TResource of object = object
  */
 interface AccessControl
 {

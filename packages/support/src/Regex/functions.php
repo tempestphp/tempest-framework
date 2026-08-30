@@ -135,7 +135,7 @@ function matches(string $subject, string $pattern, int $offset = 0): bool
 /**
  * Returns the '$haystack' string with all occurrences of `$pattern` replaced by `$replacement`.
  *
- * @param non-empty-string $pattern The pattern to search for.
+ * @param non-empty-string|non-empty-string[] $pattern The pattern to search for.
  * @param null|positive-int $limit The maximum possible replacements for $pattern within $haystack.
  */
 function replace(array|string $haystack, array|string $pattern, Closure|array|string $replacement, ?int $limit = null): string

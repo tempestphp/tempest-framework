@@ -73,7 +73,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
      * Extracts route parameters from the routeMatches
      *
      * @param array<string|int, string> $routeMatches
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     private function extractParams(DiscoveredRoute $route, array $routeMatches): array
     {

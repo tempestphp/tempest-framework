@@ -64,7 +64,7 @@ function to_namespace(Stringable|string $path, Stringable|string|null $root = nu
  * Converts the given file system path to the equivalent specified PSR-4 namespace.
  * The given path is expected to be absolute or relative to the root path. An exception will be thrown otherwise.
  *
- * @param array<Psr4Namespace> $namespaces
+ * @param Psr4Namespace|array<Psr4Namespace> $namespaces
  *
  * ## Example
  * ```php

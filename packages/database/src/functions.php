@@ -9,7 +9,7 @@ use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
  * Creates a new query builder instance for the given model or table name.
  *
  * @template TModel
- * @param TModel $model
+ * @param class-string<TModel>|string|TModel $model
  * @return QueryBuilder<TModel>
  */
 function query(string|object $model): QueryBuilder

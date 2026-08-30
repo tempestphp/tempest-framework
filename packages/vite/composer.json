@@ -6,6 +6,9 @@
     "require": {
         "php": "^8.5"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Vite\\": "src"

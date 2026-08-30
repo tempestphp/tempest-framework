@@ -120,6 +120,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         }
     }
 
+    /** @typephp-ignore */
     #[Test]
     public function reserved_properties_cannot_be_mapped(): void
     {

@@ -13,7 +13,7 @@ final class ConsoleArgumentBag
     /** @var ConsoleInputArgument[] */
     private(set) array $arguments = [];
 
-    /** @var string[] */
+    /** @var (string|null)[] */
     private array $path = [];
 
     /**

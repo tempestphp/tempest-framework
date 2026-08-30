@@ -16,6 +16,9 @@ use Tempest\Auth\OAuth\GenericOAuthClient;
 
 final class AuthenticationAndOAuthSafetyTest extends TestCase
 {
+    /**
+     * @typephp-ignore
+     */
     #[Test]
     public function database_authenticatable_resolver_rejects_non_authenticatable_classes(): void
     {

@@ -21,6 +21,7 @@ interface Container extends ContainerInterface
     public function config(object $config): self;
 
     /**
+     * @typephp-ignore
      * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName

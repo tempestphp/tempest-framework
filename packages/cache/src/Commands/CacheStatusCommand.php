@@ -50,7 +50,7 @@ if (class_exists(ConsoleCommand::class)) {
                 $this->console->header('Internal caches');
 
                 foreach ([ConfigCache::class, ViewCache::class, IconCache::class] as $cacheName) {
-                    /** @var Cache $cache */
+                    /** @var ConfigCache|ViewCache|IconCache $cache */
                     $cache = $this->container->get($cacheName);
 
                     $this->console->keyValue(
