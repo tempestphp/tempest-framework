@@ -9,13 +9,34 @@ use Tempest\CommandBus\Exceptions\PendingCommandCouldNotBeResolved;
 use Tempest\KeyValue\Redis\Redis;
 use Throwable;
 
-use function Tempest\Support\Str\after_first;
-
-final class RedisCommandRepository implements CommandRepository
+final readonly class RedisCommandRepository implements CommandRepository
 {
-    private const string PENDING_PREFIX = 'command:pending:';
+    private const string PENDING_KEY = 'command:pending';
 
-    private const string FAILED_PREFIX = 'command:failed:';
+    private const string FAILED_KEY = 'command:failed';
+
+    /**
+     * How many fields to read per `HSCAN` batch. Bigger batches mean fewer round trips but larger
+     * replies; 500 measured as a good middle ground.
+     */
+    private const string SCAN_COUNT = '500';
+
+    /**
+     * Moves a command from the pending hash to the failed one. Runs as a script so the two writes
+     * cannot be interrupted halfway.
+     */
+    private const string MARK_AS_FAILED_SCRIPT = <<<'LUA'
+    local command = redis.call('HGET', KEYS[1], ARGV[1])
+
+    if not command then
+        return 0
+    end
+
+    redis.call('HSET', KEYS[2], ARGV[1], command)
+    redis.call('HDEL', KEYS[1], ARGV[1])
+
+    return 1
+    LUA;
 
     public function __construct(
         private Redis $redis,
@@ -23,80 +44,105 @@ final class RedisCommandRepository implements CommandRepository
 
     public function store(string $uuid, object $command): void
     {
-        $this->redis->set(
-            key: self::PENDING_PREFIX . $uuid,
-            value: serialize($command),
-        );
+        $this->redis->command('HSET', self::PENDING_KEY, $uuid, serialize($command));
     }
 
     public function getPendingCommands(): array
     {
         $commands = [];
-        $cursor = '0';
 
-        do {
-            /** @var array<int,string> $keys */
-            [$cursor, $keys] = $this->redis->command('SCAN', $cursor, 'MATCH', self::PENDING_PREFIX . '*', 'COUNT', '100');
+        foreach ($this->scanHash(self::PENDING_KEY) as $uuid => $payload) {
+            $command = $this->unserializeCommand($payload);
 
-            foreach ($keys as $key) {
-                $value = $this->redis->get($key);
-
-                if (! is_string($value)) {
-                    continue;
-                }
-
-                try {
-                    $command = unserialize($value);
-                } catch (Throwable) {
-                    continue;
-                }
-
-                if (! is_object($command)) {
-                    continue;
-                }
-
-                $uuid = after_first($key, self::PENDING_PREFIX);
-                $commands[$uuid] = $command;
+            if ($command === null) {
+                continue;
             }
-        } while ($cursor !== '0');
+
+            $commands[$uuid] = $command;
+        }
 
         return $commands;
     }
 
     public function findPendingCommand(string $uuid): object
     {
-        $value = $this->redis->get(self::PENDING_PREFIX . $uuid);
+        $value = $this->redis->command('HGET', self::PENDING_KEY, $uuid);
 
         if (! is_string($value)) {
             throw new PendingCommandCouldNotBeResolved($uuid);
         }
 
-        try {
-            $command = unserialize($value);
-        } catch (Throwable) {
-            throw new PendingCommandCouldNotBeResolved($uuid);
-        }
-
-        if (! is_object($command)) {
-            throw new PendingCommandCouldNotBeResolved($uuid);
-        }
-
-        return $command;
+        return $this->unserializeCommand($value) ?? throw new PendingCommandCouldNotBeResolved($uuid);
     }
 
     public function markAsDone(string $uuid): void
     {
-        $this->redis->command('UNLINK', self::PENDING_PREFIX . $uuid);
+        $this->redis->command('HDEL', self::PENDING_KEY, $uuid);
     }
 
     public function markAsFailed(string $uuid): void
     {
-        $pendingKey = self::PENDING_PREFIX . $uuid;
+        $this->redis->command('EVAL', self::MARK_AS_FAILED_SCRIPT, '2', self::PENDING_KEY, self::FAILED_KEY, $uuid);
+    }
 
-        if (! $this->redis->command('EXISTS', $pendingKey)) {
-            return;
+    /**
+     * Reads a hash in batches, instead of using `HGETALL`, which would make every other client
+     * wait while Redis reads a large backlog.
+     *
+     * @return iterable<string, string>
+     */
+    private function scanHash(string $key): iterable
+    {
+        $cursor = '0';
+
+        do {
+            $response = $this->redis->command('HSCAN', $key, $cursor, 'COUNT', self::SCAN_COUNT);
+
+            if (! is_array($response) || count($response) !== 2) {
+                return;
+            }
+
+            [$cursor, $fields] = $response;
+
+            yield from $this->parseHash($fields);
+        } while ((string) $cursor !== '0');
+    }
+
+    /**
+     * The clients pass raw commands straight through, so a hash comes back as a flat list:
+     * field, value, field, value. This pairs them up again.
+     *
+     * @return array<string, string>
+     */
+    private function parseHash(mixed $fields): array
+    {
+        if (! is_array($fields)) {
+            return [];
         }
 
-        $this->redis->command('RENAME', $pendingKey, self::FAILED_PREFIX . $uuid);
+        if (! array_is_list($fields)) {
+            return $fields;
+        }
+
+        $hash = [];
+
+        for ($i = 0; $i < (count($fields) - 1); $i += 2) {
+            $hash[$fields[$i]] = $fields[$i + 1];
+        }
+
+        return $hash;
+    }
+
+    private function unserializeCommand(string $value): ?object
+    {
+        try {
+            // A corrupted payload warns and returns `false` instead of throwing, but a custom
+            // `__wakeup()` or `__unserialize()` can still throw
+            $command = @unserialize($value);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return is_object($command) ? $command : null;
     }
 }
