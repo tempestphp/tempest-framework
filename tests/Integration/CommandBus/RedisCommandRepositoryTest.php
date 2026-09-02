@@ -149,6 +149,51 @@ final class RedisCommandRepositoryTest extends FrameworkIntegrationTestCase
         $this->assertArrayNotHasKey($corrupted, $pending);
     }
 
+    /**
+     * @deprecated Remove in 4.0, together with the migration itself.
+     */
+    #[Test]
+    public function migrates_commands_stored_under_their_own_key(): void
+    {
+        $this->redis->command('SET', 'command:pending:' . ($pending = uuid()), serialize($command = new MyCommand()));
+        $this->redis->command('SET', 'command:failed:' . ($failed = uuid()), serialize(new MyCommand()));
+
+        $this->assertSame(2, $this->repository->migrateStoredCommands());
+
+        $this->assertSame(0, (int) $this->redis->command('EXISTS', 'command:pending:' . $pending));
+        $this->assertSame(0, (int) $this->redis->command('EXISTS', 'command:failed:' . $failed));
+
+        $this->assertEquals([$pending => $command], $this->repository->getPendingCommands());
+        $this->assertSame(1, (int) $this->redis->command('HEXISTS', 'command:failed', $failed));
+    }
+
+    /**
+     * @deprecated Remove in 4.0, together with the migration itself.
+     */
+    #[Test]
+    public function migrating_leaves_commands_already_stored_in_the_hash_alone(): void
+    {
+        $this->repository->store($uuid = uuid(), $command = new MyCommand());
+
+        $this->assertSame(0, $this->repository->migrateStoredCommands());
+        $this->assertEquals([$uuid => $command], $this->repository->getPendingCommands());
+    }
+
+    /**
+     * @deprecated Remove in 4.0, together with the migration itself.
+     */
+    #[Test]
+    public function migrating_only_scans_the_keyspace_once(): void
+    {
+        $this->assertSame(0, $this->repository->migrateStoredCommands());
+
+        // Not picked up again, which is what keeps later boots from walking the keyspace
+        $this->redis->command('SET', 'command:pending:' . ($uuid = uuid()), serialize(new MyCommand()));
+
+        $this->assertSame(0, $this->repository->migrateStoredCommands());
+        $this->assertSame(1, (int) $this->redis->command('EXISTS', 'command:pending:' . $uuid));
+    }
+
     #[Test]
     public function cant_find_a_command_that_cannot_be_unserialized(): void
     {

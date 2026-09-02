@@ -6,6 +6,7 @@ namespace Tempest\CommandBus;
 
 use DateTimeImmutable;
 use Symfony\Component\Process\Process;
+use Tempest\CommandBus\AsyncCommandRepositories\RedisCommandRepository;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
@@ -27,6 +28,8 @@ if (class_exists(ConsoleCommand::class)) {
         #[ConsoleCommand(name: 'command:monitor', description: 'Monitors and executes pending async commands')]
         public function __invoke(): void
         {
+            $this->migrateStoredCommands();
+
             $this->info('Monitoring for new commands. Press <em>Ctrl+C</em> to stop.');
             $this->writeln();
 
@@ -101,6 +104,26 @@ if (class_exists(ConsoleCommand::class)) {
 
                 $processes[$uuid] = $process;
             }
+        }
+
+        /**
+         * Moves Redis commands stored by an older version over, on the first start after the upgrade.
+         *
+         * @deprecated Remove in 4.0.
+         */
+        private function migrateStoredCommands(): void
+        {
+            if (! $this->repository instanceof RedisCommandRepository) {
+                return;
+            }
+
+            $migrated = $this->repository->migrateStoredCommands();
+
+            if ($migrated === 0) {
+                return;
+            }
+
+            $this->info("Migrated <em>{$migrated}</em> stored commands to the current storage format.");
         }
 
         private function sleep(float $seconds): void

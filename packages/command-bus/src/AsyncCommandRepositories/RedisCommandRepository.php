@@ -16,6 +16,13 @@ final readonly class RedisCommandRepository implements CommandRepository
     private const string FAILED_KEY = 'command:failed';
 
     /**
+     * Set once the old one key per command layout has been migrated, so the keyspace is scanned once.
+     *
+     * @deprecated Remove in 4.0, along with the key itself.
+     */
+    private const string MIGRATION_KEY = 'command:migrated';
+
+    /**
      * How many fields to read per `HSCAN` batch. Bigger batches mean fewer round trips but larger
      * replies; 500 measured as a good middle ground.
      */
@@ -34,6 +41,24 @@ final readonly class RedisCommandRepository implements CommandRepository
 
     redis.call('HSET', KEYS[2], ARGV[1], command)
     redis.call('HDEL', KEYS[1], ARGV[1])
+
+    return 1
+    LUA;
+
+    /**
+     * Moves one command from its own key into the matching hash, as a script so it ends up in exactly one.
+     *
+     * @deprecated Remove in 4.0.
+     */
+    private const string MIGRATE_COMMAND_SCRIPT = <<<'LUA'
+    local command = redis.call('GET', KEYS[1])
+
+    if not command then
+        return 0
+    end
+
+    redis.call('HSET', KEYS[2], ARGV[1], command)
+    redis.call('UNLINK', KEYS[1])
 
     return 1
     LUA;
@@ -83,6 +108,54 @@ final readonly class RedisCommandRepository implements CommandRepository
     public function markAsFailed(string $uuid): void
     {
         $this->redis->command('EVAL', self::MARK_AS_FAILED_SCRIPT, '2', self::PENDING_KEY, self::FAILED_KEY, $uuid);
+    }
+
+    /**
+     * Moves commands that earlier versions stored under their own key into the hashes, and returns how many.
+     *
+     * @deprecated Remove in 4.0.
+     */
+    public function migrateStoredCommands(): int
+    {
+        if ((int) $this->redis->command('EXISTS', self::MIGRATION_KEY) === 1) {
+            return 0;
+        }
+
+        $migrated = $this->migrateLegacyKeys(self::PENDING_KEY) + $this->migrateLegacyKeys(self::FAILED_KEY);
+
+        $this->redis->command('SET', self::MIGRATION_KEY, '1');
+
+        return $migrated;
+    }
+
+    /**
+     * Scans from the client, since Redis before 7 refuses to write after a `SCAN`.
+     *
+     * @deprecated Remove in 4.0.
+     */
+    private function migrateLegacyKeys(string $hash): int
+    {
+        $prefix = $hash . ':';
+        $migrated = 0;
+        $cursor = '0';
+
+        do {
+            $response = $this->redis->command('SCAN', $cursor, 'MATCH', $prefix . '*', 'COUNT', self::SCAN_COUNT);
+
+            if (! is_array($response) || count($response) !== 2) {
+                return $migrated;
+            }
+
+            [$cursor, $keys] = $response;
+
+            foreach (is_array($keys) ? $keys : [] as $key) {
+                $uuid = substr((string) $key, strlen($prefix));
+
+                $migrated += (int) $this->redis->command('EVAL', self::MIGRATE_COMMAND_SCRIPT, '2', (string) $key, $hash, $uuid);
+            }
+        } while ((string) $cursor !== '0');
+
+        return $migrated;
     }
 
     /**
