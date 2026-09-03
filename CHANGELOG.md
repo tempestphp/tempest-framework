@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.19.0](https://github.com/tempestphp/tempest-framework/compare/v3.18.0..3.19.0)  —  2026-08-28
+## [3.19.1](https://github.com/tempestphp/tempest-framework/compare/v3.19.0..3.19.1)  —  2026-09-03
+
+### 🚀 Features
+
+- **router**: allow error responses to carry headers (#2267) ([dc589be](https://github.com/tempestphp/tempest-framework/commit/dc589be2dd3ed392137d4baa2c4d542ac4107186))
+
+### ⚡ Performance
+
+- **command-bus**: store pending commands in a single Redis hash (#2269) ([34caa57](https://github.com/tempestphp/tempest-framework/commit/34caa571eb941a69469ae3614bfd429c97054d20))
+
+
+## [3.19.0](https://github.com/tempestphp/tempest-framework/compare/v3.18.0..v3.19.0)  —  2026-08-28
 
 ### 🚀 Features
 
