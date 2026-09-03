@@ -7,6 +7,7 @@
         displayDetailsOnTestsThatTriggerErrors="true"
         displayDetailsOnTestsThatTriggerNotices="true"
         displayDetailsOnTestsThatTriggerWarnings="true"
+        failOnWarning="true"
         bootstrap="./tests/bootstrap.php"
         cacheDirectory=".cache/phpunit"
 >
