@@ -37,7 +37,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -83,7 +83,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup problem matchers
         run: |

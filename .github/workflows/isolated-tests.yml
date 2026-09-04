@@ -63,7 +63,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, intl
-          coverage: pcov
+          coverage: none
 
       - name: Setup Redis
         if: ${{ matrix.os != 'windows-latest' && matrix.package.name == 'kv-store' }}
