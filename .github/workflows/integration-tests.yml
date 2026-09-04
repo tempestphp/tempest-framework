@@ -95,7 +95,7 @@ jobs:
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: ${{ matrix.dependencies }}
-          composer-options: ""--prefer-dist --ignore-platform-reqs"
+          composer-options: "--prefer-dist --ignore-platform-reqs"
 
       - name: "Setup Redis"
         if: ${{ matrix.os != 'windows-latest' }}
