@@ -25,10 +25,6 @@ parameters:
             identifier: class.notFound
             paths:
                 - packages/database/src/Builder/*
-        -
-            identifier: varTag.nativeType
-            paths:
-                - packages/database/src/Builder/*
         # End of database ignores
 
         -
