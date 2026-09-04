@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\RateLimit;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Status;
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\CacheRateLimitConfig;
 use Tests\Tempest\Fixtures\RateLimit\UnidentifiedKeyResolver;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -61,7 +61,7 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
     #[Test]
     public function unidentified_clients_share_a_single_counter(): void
     {
-        $this->container->config(new RateLimitConfig(keyResolverClass: UnidentifiedKeyResolver::class));
+        $this->container->config(new CacheRateLimitConfig(keyResolverClass: UnidentifiedKeyResolver::class));
 
         $this->http->fromIp('203.0.113.9')->get('/throttled')->assertOk();
         $this->http->fromIp('198.51.100.7')->get('/throttled')->assertOk();
@@ -112,7 +112,7 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
     #[Test]
     public function headers_may_be_disabled(): void
     {
-        $this->container->config(new RateLimitConfig(includeHeaders: false));
+        $this->container->config(new CacheRateLimitConfig(includeHeaders: false));
 
         $this->http
             ->fromIp('203.0.113.9')

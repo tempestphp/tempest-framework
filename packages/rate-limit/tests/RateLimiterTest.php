@@ -10,7 +10,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\GenericCache;
 use Tempest\Clock\MockClock;
 use Tempest\DateTime\Duration;
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\CacheRateLimitConfig;
 use Tempest\RateLimit\GenericRateLimiter;
 use Tempest\RateLimit\Per;
 use Tempest\RateLimit\RateLimit;
@@ -38,7 +38,7 @@ final class RateLimiterTest extends TestCase
             storage: new CacheRateLimitStorage(
                 cache: new GenericCache(new ArrayAdapter(clock: $this->clock->toPsrClock())),
                 clock: $this->clock,
-                config: new RateLimitConfig(),
+                config: new CacheRateLimitConfig(),
             ),
             clock: $this->clock,
         );

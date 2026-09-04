@@ -7,7 +7,7 @@ namespace Tempest\RateLimit\Storage;
 use Tempest\Clock\Clock;
 use Tempest\DateTime\Duration;
 use Tempest\KeyValue\Redis\Redis;
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\RedisRateLimitConfig;
 use Tempest\RateLimit\RateLimitStorage;
 
 /**
@@ -47,7 +47,7 @@ final readonly class RedisRateLimitStorage implements RateLimitStorage
     public function __construct(
         private Redis $redis,
         private Clock $clock,
-        private RateLimitConfig $config,
+        private RedisRateLimitConfig $config,
     ) {}
 
     public function find(string $key): ?RateLimitState

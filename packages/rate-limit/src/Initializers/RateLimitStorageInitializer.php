@@ -15,6 +15,6 @@ final readonly class RateLimitStorageInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): RateLimitStorage
     {
-        return $container->get($container->get(RateLimitConfig::class)->storageClass);
+        return $container->get(RateLimitConfig::class)->createStorage($container);
     }
 }

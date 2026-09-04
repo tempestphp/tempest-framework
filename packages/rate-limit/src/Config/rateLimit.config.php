@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\CacheRateLimitConfig;
 
-return new RateLimitConfig();
+return new CacheRateLimitConfig();

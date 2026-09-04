@@ -7,7 +7,7 @@ namespace Tempest\RateLimit\Storage;
 use Tempest\Cache\Cache;
 use Tempest\Clock\Clock;
 use Tempest\DateTime\Duration;
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\CacheRateLimitConfig;
 use Tempest\RateLimit\RateLimitStorage;
 
 /**
@@ -18,7 +18,7 @@ final readonly class CacheRateLimitStorage implements RateLimitStorage
     public function __construct(
         private Cache $cache,
         private Clock $clock,
-        private RateLimitConfig $config,
+        private CacheRateLimitConfig $config,
     ) {}
 
     public function find(string $key): ?RateLimitState

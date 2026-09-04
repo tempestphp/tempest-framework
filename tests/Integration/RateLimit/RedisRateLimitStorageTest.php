@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
 use Tempest\KeyValue\Redis\Config\RedisConfig;
 use Tempest\KeyValue\Redis\Redis;
+use Tempest\RateLimit\Config\RedisRateLimitConfig;
 use Tempest\RateLimit\RateLimitStorage;
-use Tempest\RateLimit\Storage\RedisRateLimitStorage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Throwable;
 
@@ -45,7 +45,7 @@ final class RedisRateLimitStorageTest extends FrameworkIntegrationTestCase
             $this->markTestSkipped('Could not connect to Redis.');
         }
 
-        $this->rateLimitStorage = $this->container->get(RedisRateLimitStorage::class);
+        $this->rateLimitStorage = new RedisRateLimitConfig()->createStorage($this->container);
     }
 
     #[PostCondition]

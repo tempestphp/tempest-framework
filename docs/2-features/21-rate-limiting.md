@@ -61,7 +61,7 @@ X-RateLimit-Reset: 1767225600
 
 Exceeded limits return a `429 Too Many Requests` status paired with a `Retry-After` header.
 
-Because rate limit headers represent a single client's unique usage, responses carrying them should not be shared via proxy caches. Disable headers entirely by setting `includeHeaders: false` in {b`Tempest\RateLimit\Config\RateLimitConfig`}, or turn off throttling completely during development via `enabled: false`.
+Because rate limit headers represent a single client's unique usage, responses carrying them should not be shared via proxy caches. Disable headers entirely by setting `includeHeaders: false` in your rate limit configuration, or turn off throttling completely during development via `enabled: false`.
 
 ### Multiple limits
 
@@ -103,9 +103,9 @@ final readonly class ApiKeyResolver implements RateLimitKeyResolver
 Register your resolver in the configuration:
 
 ```php app/rateLimit.config.php
-use Tempest\RateLimit\Config\RateLimitConfig;
+use Tempest\RateLimit\Config\CacheRateLimitConfig;
 
-return new RateLimitConfig(
+return new CacheRateLimitConfig(
     keyResolverClass: ApiKeyResolver::class,
 );
 
@@ -212,21 +212,18 @@ Exceeding limits via `throttle()` throws {b`Tempest\RateLimit\RateLimitWasExceed
 
 ## Storage
 
-Windows are managed via {b`Tempest\RateLimit\RateLimitStorage`}. Tempest defaults to {b`Tempest\RateLimit\Storage\CacheRateLimitStorage`}, which requires no external services beyond a standard [cache](./06-cache.md). Because it serialises updates using locks rather than atomic operations, concurrent loads may lead to undercounting. It is also only as durable as the cache itself—when the cache is disabled, no counter is persisted and no limit is ever reached.
+Windows are managed via {b`Tempest\RateLimit\RateLimitStorage`}, which is built by the configured {b`Tempest\RateLimit\Config\RateLimitConfig`}. Tempest defaults to {b`Tempest\RateLimit\Config\CacheRateLimitConfig`}, which requires no external services beyond a standard [cache](./06-cache.md). Because it serialises updates using locks rather than atomic operations, concurrent loads may lead to undercounting. It is also only as durable as the cache itself—when the cache is disabled, no counter is persisted and no limit is ever reached.
 
-For high-concurrency production environments, switch to {b`Tempest\RateLimit\Storage\RedisRateLimitStorage`} to utilize atomic Lua-script increments:
+For high-concurrency production environments, switch to {b`Tempest\RateLimit\Config\RedisRateLimitConfig`}, which stores windows in Redis using atomic Lua-script increments:
 
 ```php app/rateLimit.config.php
-use Tempest\RateLimit\Config\RateLimitConfig;
-use Tempest\RateLimit\Storage\RedisRateLimitStorage;
+use Tempest\RateLimit\Config\RedisRateLimitConfig;
 
-return new RateLimitConfig(
-    storageClass: RedisRateLimitStorage::class,
-);
+return new RedisRateLimitConfig();
 
 ```
 
-Custom storage engines can be integrated by pointing `storageClass` to any custom implementation of the storage interface.
+Custom storage engines can be integrated by implementing {b`Tempest\RateLimit\Config\RateLimitConfig`} and returning your own {b`Tempest\RateLimit\RateLimitStorage`} from `createStorage()`.
 
 ## Testing
 
