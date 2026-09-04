@@ -4,7 +4,7 @@ on:
   pull_request:
     paths-ignore:
       - "docs/**"
-      - ".github/**"
+#      - ".github/**"
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
@@ -48,10 +48,10 @@ jobs:
         package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
         php:
           - 8.5
-        stability:
-          - prefer-stable
-          - prefer-lowest
-    name: "Run tests: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
+        dependencies:
+          - highest
+          - lowest
+    name: "Run tests: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.dependencies }}"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -77,11 +77,18 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+      - name: Build Packages
+        run: ./bin/build-packages
+
       - name: Install dependencies
-        run: |
-          ./bin/build-packages
-          cd "packages/${{ matrix.package.basename }}"
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction  --ignore-platform-reqs
+        uses: ramsey/composer-install@v4
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: >-
+            --prefer-dist
+            --ignore-platform-reqs
+            --prefer-stable
+            --working-dir=packages/${{ matrix.package.basename }}
 
       - name: Execute tests
         run: phpunit -c "packages/${{ matrix.package.basename }}/phpunit.xml"
