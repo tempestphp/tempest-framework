@@ -257,7 +257,7 @@ $this->rateLimit->preventThrottling();
 
 Attempts are not recorded while throttling is prevented, so counters are left exactly as they were when `allowThrottling()` restores enforcement.
 
-This state lasts for a single test. Call it from `setUp()` to cover an entire test case.
+This state lasts for a single test. Call it from `setUp()` to cover an entire test case; `fake()` and `preventThrottling()` compose in either order.
 
 HTTP tests interact with throttled routes naturally through simulated requests:
 

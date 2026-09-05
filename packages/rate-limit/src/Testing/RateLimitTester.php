@@ -30,11 +30,19 @@ final readonly class RateLimitTester
 
         $this->container->singleton(RateLimitStorage::class, $storage);
 
-        // The limiter holds on to the storage it was built with. It's rebuilt around the new one.
+        // Read before the rebuild below discards the instance.
+        $prevented = $this->isThrottlingPrevented();
+
+        // The limiter holds on to the storage it was built with, so it's rebuilt around the new one.
         $this->container->singleton(RateLimiter::class, new GenericRateLimiter(
             storage: $storage,
             clock: $this->container->get(Clock::class),
         ));
+
+        // Prevention is unrelated to storage, so it carries over.
+        if ($prevented) {
+            $this->preventThrottling();
+        }
 
         return $this;
     }
@@ -154,5 +162,10 @@ final readonly class RateLimitTester
     private function limiter(): RateLimiter
     {
         return $this->container->get(RateLimiter::class);
+    }
+
+    private function isThrottlingPrevented(): bool
+    {
+        return $this->limiter() instanceof UnlimitedRateLimiter;
     }
 }

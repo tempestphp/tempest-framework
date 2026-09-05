@@ -56,6 +56,18 @@ final class RateLimitTesterTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function faking_storage_keeps_throttling_prevented(): void
+    {
+        $limit = RateLimit::perMinute(1)->withKey('login');
+
+        // Prevention is commonly set up once for a whole test case, before an individual test fakes
+        // storage of its own. Swapping storage is unrelated to whether limits are enforced.
+        $this->rateLimit->preventThrottling()->fake();
+
+        $this->rateLimit->exhaust($limit)->assertNotThrottled($limit);
+    }
+
+    #[Test]
     public function preventing_throttling_lets_an_exhausted_limit_run_its_callback(): void
     {
         $limit = RateLimit::perMinute(1)->withKey('login');
