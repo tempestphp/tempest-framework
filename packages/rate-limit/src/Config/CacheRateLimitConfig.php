@@ -7,7 +7,7 @@ namespace Tempest\RateLimit\Config;
 use Tempest\Cache\Cache;
 use Tempest\Clock\Clock;
 use Tempest\Container\Container;
-use Tempest\RateLimit\Http\ClientIpKeyResolver;
+use Tempest\RateLimit\Http\ClientIPKeyResolver;
 use Tempest\RateLimit\Http\RateLimitKeyResolver;
 use Tempest\RateLimit\Storage\CacheRateLimitStorage;
 
@@ -41,7 +41,7 @@ final class CacheRateLimitConfig implements RateLimitConfig
         public bool $includeHeaders = true,
 
         /** @var class-string<RateLimitKeyResolver> */
-        public string $keyResolverClass = ClientIpKeyResolver::class,
+        public string $keyResolverClass = ClientIPKeyResolver::class,
     ) {}
 
     public function storageKey(string $key): string

@@ -7,7 +7,7 @@ namespace Tempest\RateLimit\Config;
 use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\KeyValue\Redis\Redis;
-use Tempest\RateLimit\Http\ClientIpKeyResolver;
+use Tempest\RateLimit\Http\ClientIPKeyResolver;
 use Tempest\RateLimit\Http\RateLimitKeyResolver;
 use Tempest\RateLimit\Storage\RedisRateLimitStorage;
 
@@ -35,7 +35,7 @@ final class RedisRateLimitConfig implements RateLimitConfig
         public bool $includeHeaders = true,
 
         /** @var class-string<RateLimitKeyResolver> */
-        public string $keyResolverClass = ClientIpKeyResolver::class,
+        public string $keyResolverClass = ClientIPKeyResolver::class,
     ) {}
 
     public function storageKey(string $key): string

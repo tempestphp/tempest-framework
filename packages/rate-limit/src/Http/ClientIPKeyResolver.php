@@ -10,7 +10,7 @@ use Tempest\Http\Request;
  * Counts requests by client IP. Requires {@see \Tempest\Http\Ip\TrustedProxiesConfig}
  * for reliable client IPs behind proxies.
  */
-final readonly class ClientIpKeyResolver implements RateLimitKeyResolver
+final readonly class ClientIPKeyResolver implements RateLimitKeyResolver
 {
     public function resolve(Request $request): ?string
     {

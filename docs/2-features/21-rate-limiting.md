@@ -80,7 +80,7 @@ Limits evaluate sequentially—starting with route-level rules and following up 
 
 ## Choosing what to count
 
-Requests default to tracking against the client's IP address via {b`Tempest\RateLimit\Http\ClientIpKeyResolver`}, utilizing packed formats so `::ffff:127.0.0.1` and `127.0.0.1` share a single counter.
+Requests default to tracking against the client's IP address via {b`Tempest\RateLimit\Http\ClientIPKeyResolver`}, utilizing packed formats so `::ffff:127.0.0.1` and `127.0.0.1` share a single counter.
 
 Applications behind a reverse proxy must configure trusted proxies in {b`Tempest\Http\Ip\TrustedProxiesConfig`} (see the [trusted proxies documentation](../1-essentials/01-routing.md#trusted-proxies)). Without this, all incoming proxy requests collapse into a single shared counter.
 
