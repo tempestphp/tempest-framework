@@ -65,7 +65,9 @@ final class ClassReflector implements Reflector
     /** @return PropertyReflector[] */
     public function getPublicProperties(): array
     {
-        return array_map(
+        static $cache = [];
+
+        return $cache[$this->reflectionClass->getName()] ??= array_map(
             fn (PHPReflectionProperty $property) => new PropertyReflector($property),
             $this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC),
         );

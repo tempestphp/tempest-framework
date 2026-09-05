@@ -135,45 +135,67 @@ final class ArrayToObjectMapper implements Mapper
 
     private function setParentRelations(object $parent, ClassReflector $parentClass): void
     {
-        foreach ($parentClass->getPublicProperties() as $property) {
+        static $plans = [];
+
+        $plan = $plans[$parentClass->getName()] ??= array_filter(array_map(
+            function (PropertyReflector $property): ?array {
+                if ($property->isVirtual()) {
+                    return null;
+                }
+
+                $type = $property->getIterableType() ?? $property->getType();
+
+                if (! $type->isClass()) {
+                    return null;
+                }
+
+                return [$property, $type->asClass()];
+            },
+            $parentClass->getPublicProperties(),
+        ));
+
+        foreach ($plan as [$property, $childClass]) {
             if (! $property->isInitialized($parent)) {
-                continue;
-            }
-
-            if ($property->isVirtual()) {
-                continue;
-            }
-
-            $type = $property->getIterableType() ?? $property->getType();
-
-            if (! $type->isClass()) {
                 continue;
             }
 
             $child = $property->getValue($parent);
 
-            if ($child === null) {
+            if ($child === null || $child === []) {
                 continue;
             }
 
-            $this->setChildParentRelation($parent, $child, $type->asClass());
+            $this->setChildParentRelation($parent, $child, $childClass);
         }
     }
 
     private function setChildParentRelation(object $parent, mixed $child, ClassReflector $childClass): void
     {
-        foreach ($childClass->getPublicProperties() as $childProperty) {
-            if ($childProperty->isVirtual()) {
-                continue;
-            }
+        static $plans = [];
 
-            if ($childProperty->getType()->equals($parent::class)) {
-                $valueToSet = $parent;
-            } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
-                $valueToSet = [$parent];
-            } else {
-                continue;
-            }
+        $key = $childClass->getName() . '|' . $parent::class;
+
+        $plan = $plans[$key] ??= array_filter(array_map(
+            function (PropertyReflector $childProperty) use ($parent): ?array {
+                if ($childProperty->isVirtual()) {
+                    return null;
+                }
+
+                if ($childProperty->getType()->equals($parent::class)) {
+                    return [$childProperty, false];
+                }
+
+                if ($childProperty->getIterableType()?->equals($parent::class)) {
+                    return [$childProperty, true];
+                }
+
+                return null;
+            },
+            $childClass->getPublicProperties(),
+        ));
+
+        foreach ($plan as [$childProperty, $wrapInArray]) {
+            $valueToSet = $wrapInArray ? [$parent] : $parent;
 
             if (is_array($child)) {
                 foreach ($child as $childItem) {
