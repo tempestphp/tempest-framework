@@ -653,7 +653,7 @@ final class GenericContainer implements Container
     private function resolveChain(): DependencyChain
     {
         if (! $this->chain instanceof DependencyChain) {
-            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2);
 
             $this->chain = new DependencyChain($trace[1]['file'] . ':' . $trace[1]['line']);
         }

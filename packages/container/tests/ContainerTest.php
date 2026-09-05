@@ -448,6 +448,16 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
+    public function dependency_chain_reports_the_call_site_as_its_origin(): void
+    {
+        $this->expectException(DependencyCouldNotBeAutowired::class);
+        $this->expectExceptionMessageMatches('/Originally called in .*ContainerTest\.php:\d+/');
+
+        $container = new GenericContainer();
+        $container->get(ContainerObjectC::class);
+    }
+
+    #[Test]
     public function call_invalid_closure(): void
     {
         $this->expectException(InvokedCallableWasInvalid::class);
