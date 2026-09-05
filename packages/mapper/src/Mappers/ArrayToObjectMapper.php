@@ -137,7 +137,9 @@ final class ArrayToObjectMapper implements Mapper
     {
         static $plans = [];
 
-        $plan = $plans[$parentClass->getName()] ??= array_filter(array_map(
+        $key = $parentClass->getName();
+
+        $plans[$key] ??= array_filter(array_map(
             function (PropertyReflector $property): ?array {
                 if ($property->isVirtual()) {
                     return null;
@@ -154,7 +156,7 @@ final class ArrayToObjectMapper implements Mapper
             $parentClass->getPublicProperties(),
         ));
 
-        foreach ($plan as [$property, $childClass]) {
+        foreach ($plans[$key] as [$property, $childClass]) {
             if (! $property->isInitialized($parent)) {
                 continue;
             }
@@ -175,7 +177,7 @@ final class ArrayToObjectMapper implements Mapper
 
         $key = $childClass->getName() . '|' . $parent::class;
 
-        $plan = $plans[$key] ??= array_filter(array_map(
+        $plans[$key] ??= array_filter(array_map(
             function (PropertyReflector $childProperty) use ($parent): ?array {
                 if ($childProperty->isVirtual()) {
                     return null;
@@ -194,7 +196,7 @@ final class ArrayToObjectMapper implements Mapper
             $childClass->getPublicProperties(),
         ));
 
-        foreach ($plan as [$childProperty, $wrapInArray]) {
+        foreach ($plans[$key] as [$childProperty, $wrapInArray]) {
             $valueToSet = $wrapInArray ? [$parent] : $parent;
 
             if (is_array($child)) {
