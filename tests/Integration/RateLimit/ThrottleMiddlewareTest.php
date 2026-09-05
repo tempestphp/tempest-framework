@@ -238,7 +238,7 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function throttling_may_be_turned_off_entirely(): void
+    public function throttling_may_be_prevented_and_allowed_again(): void
     {
         $this->rateLimit->preventThrottling();
 

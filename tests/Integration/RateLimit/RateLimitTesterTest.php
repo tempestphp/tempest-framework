@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Clock\MockClock;
 use Tempest\DateTime\Duration;
 use Tempest\RateLimit\RateLimit;
+use Tempest\RateLimit\RateLimiter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -36,6 +37,35 @@ final class RateLimitTesterTest extends FrameworkIntegrationTestCase
             ->assertHits($limit, 2)
             ->assertRemaining($limit, 1)
             ->assertNotThrottled($limit);
+    }
+
+    #[Test]
+    public function preventing_throttling_leaves_limits_untouched(): void
+    {
+        $limit = RateLimit::perMinute(3)->withKey('login');
+
+        $this->rateLimit
+            ->exhaust($limit)
+            ->assertThrottled($limit)
+            ->preventThrottling()
+            ->hit($limit, times: 10)
+            ->assertNotThrottled($limit)
+            ->allowThrottling()
+            ->assertThrottled($limit)
+            ->assertHits($limit, 3);
+    }
+
+    #[Test]
+    public function preventing_throttling_lets_an_exhausted_limit_run_its_callback(): void
+    {
+        $limit = RateLimit::perMinute(1)->withKey('login');
+
+        $this->rateLimit->exhaust($limit)->preventThrottling();
+
+        $this->assertSame(
+            expected: 'executed',
+            actual: $this->container->get(RateLimiter::class)->throttle($limit, fn () => 'executed'),
+        );
     }
 
     #[Test]

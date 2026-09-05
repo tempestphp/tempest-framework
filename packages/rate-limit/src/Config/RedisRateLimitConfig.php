@@ -18,12 +18,6 @@ final class RedisRateLimitConfig implements RateLimitConfig
 {
     public function __construct(
         /**
-         * Whether `#[Throttle]` applies the limits it declares. Limits consumed directly through
-         * {@see \Tempest\RateLimit\RateLimiter} are not affected.
-         */
-        public bool $enabled = true,
-
-        /**
          * Prefix used for the keys under which rate limit windows are stored.
          */
         public string $keyPrefix = 'rate_limit',

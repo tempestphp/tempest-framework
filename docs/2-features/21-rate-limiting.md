@@ -61,7 +61,7 @@ X-RateLimit-Reset: 1767225600
 
 Exceeded limits return a `429 Too Many Requests` status paired with a `Retry-After` header.
 
-Because rate limit headers represent a single client's unique usage, responses carrying them should not be shared via proxy caches. Disable headers entirely by setting `includeHeaders: false` in your rate limit configuration, or turn off throttling completely during development via `enabled: false`.
+Because rate limit headers represent a single client's unique usage, responses carrying them should not be shared via proxy caches. Disable headers entirely by setting `includeHeaders: false` in your rate limit configuration.
 
 ### Multiple limits
 
@@ -248,12 +248,16 @@ $this->rateLimit
 
 Windows expire against the clock, so a mocked clock moved past the end of a window reopens it. Use `clear()` to discard the attempts recorded for a single limit between assertions, or call `fake()` again to discard all of them.
 
-To disable route-level throttling across tests while keeping manual `RateLimiter` calls active, use:
+To allow every attempt, leaving throttled routes and manual `RateLimiter` calls unlimited, use:
 
 ```php
 $this->rateLimit->preventThrottling();
 
 ```
+
+Attempts are not recorded while throttling is prevented, so counters are left exactly as they were when `allowThrottling()` restores enforcement.
+
+This state lasts for a single test. Call it from `setUp()` to cover an entire test case.
 
 HTTP tests interact with throttled routes naturally through simulated requests:
 

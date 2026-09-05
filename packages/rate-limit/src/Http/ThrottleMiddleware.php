@@ -35,10 +35,6 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        if (! $this->config->enabled) {
-            return $next($request);
-        }
-
         $limits = $this->resolveLimits($request);
 
         if ($limits === []) {

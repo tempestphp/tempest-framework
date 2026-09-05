@@ -7,7 +7,6 @@ namespace Tempest\RateLimit\Testing;
 use PHPUnit\Framework\Assert;
 use Tempest\Clock\Clock;
 use Tempest\Container\Container;
-use Tempest\RateLimit\Config\RateLimitConfig;
 use Tempest\RateLimit\GenericRateLimiter;
 use Tempest\RateLimit\RateLimit;
 use Tempest\RateLimit\RateLimiter;
@@ -41,22 +40,30 @@ final readonly class RateLimitTester
     }
 
     /**
-     * Leaves routes decorated with {@see \Tempest\RateLimit\Http\Throttle} unlimited. Limits consumed
-     * directly through {@see RateLimiter} are not affected.
+     * Allows every attempt without recording it. Counters are left as they were, so
+     * {@see self::allowThrottling()} resumes where enforcement stopped.
      */
     public function preventThrottling(): self
     {
-        $this->container->get(RateLimitConfig::class)->enabled = false;
+        $limiter = $this->limiter();
+
+        if (! $limiter instanceof UnlimitedRateLimiter) {
+            $this->container->singleton(RateLimiter::class, new UnlimitedRateLimiter($limiter));
+        }
 
         return $this;
     }
 
     /**
-     * Applies the limits declared by {@see \Tempest\RateLimit\Http\Throttle} again, undoing {@see self::preventThrottling()}.
+     * Applies limits again, undoing {@see self::preventThrottling()}.
      */
     public function allowThrottling(): self
     {
-        $this->container->get(RateLimitConfig::class)->enabled = true;
+        $limiter = $this->limiter();
+
+        if ($limiter instanceof UnlimitedRateLimiter) {
+            $this->container->singleton(RateLimiter::class, $limiter->limiter);
+        }
 
         return $this;
     }
