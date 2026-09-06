@@ -21,6 +21,10 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
+        // In long-running contexts, a previous request may have left a matched route behind.
+        // It must be cleared before matching, since we only rebind it on a successful match.
+        $this->container->unregister(MatchedRoute::class);
+
         $matchedRoute = $this->routeMatcher->match($request);
 
         if (! $matchedRoute instanceof MatchedRoute && $request->method === Method::HEAD && $request instanceof GenericRequest) {
