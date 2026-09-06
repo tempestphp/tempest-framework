@@ -59,7 +59,7 @@ function registered_namespace(Stringable|string ...$parts): string
  */
 function src_namespace(Stringable|string ...$parts): string
 {
-    return to_psr4_namespace(Container\get(Composer::class)->mainNamespace, root_path(...$parts), root: root_path());
+    return to_psr4_namespace(Container\get(Composer::class)->namespaces, root_path(...$parts), root: root_path());
 }
 
 /**
