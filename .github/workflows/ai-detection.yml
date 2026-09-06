@@ -1,12 +1,12 @@
 name: AI Contribution Likelihood
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - edited
+#  pull_request_target:
+#    types:
+#      - opened
+#      - synchronize
+#      - reopened
+#      - edited
 
   workflow_dispatch:
     inputs:
@@ -897,7 +897,6 @@ jobs:
           EOF
           fi
 
-      # Test
       - name: Write job summary
         shell: bash
         run: |
