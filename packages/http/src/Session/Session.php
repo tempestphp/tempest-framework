@@ -133,6 +133,21 @@ final class Session
     }
 
     /**
+     * Assigns a new identifier to the session, optionally discarding all its data.
+     *
+     * Prefer {@see SessionRegenerator}, which also destroys the session that is being
+     * replaced and sends the new identifier to the client.
+     */
+    public function replaceId(SessionId $id, bool $preserveData = true): void
+    {
+        $this->id = $id;
+
+        if (! $preserveData) {
+            $this->clear();
+        }
+    }
+
+    /**
      * Clears all values from the session.
      */
     public function clear(): void

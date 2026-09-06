@@ -30,27 +30,37 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $sessionKey = str($this->appConfig->name ?? 'tempest')
-            ->snake()
-            ->append('_session_id')
-            ->toString();
-
-        $id = $this->request->getCookie($sessionKey)?->value;
+        $id = $this->request->getCookie($this->getSessionKey())?->value;
 
         if (! $id) {
-            $id = (string) Uuid::v4();
-
-            $this->cookies->add(new Cookie(
-                key: $sessionKey,
-                value: $id,
-                expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
-                path: '/',
-                secure: Str\starts_with($this->appConfig->baseUri, needles: 'https'),
-                httpOnly: true,
-                sameSite: SameSite::LAX,
-            ));
+            return $this->regenerate();
         }
 
         return new SessionId($id);
+    }
+
+    public function regenerate(): SessionId
+    {
+        $id = (string) Uuid::v4();
+
+        $this->cookies->add(new Cookie(
+            key: $this->getSessionKey(),
+            value: $id,
+            expiresAt: $this->clock->now()->plus($this->sessionConfig->expiration),
+            path: '/',
+            secure: Str\starts_with($this->appConfig->baseUri, needles: 'https'),
+            httpOnly: true,
+            sameSite: SameSite::LAX,
+        ));
+
+        return new SessionId($id);
+    }
+
+    private function getSessionKey(): string
+    {
+        return str($this->appConfig->name ?? 'tempest')
+            ->snake()
+            ->append('_session_id')
+            ->toString();
     }
 }

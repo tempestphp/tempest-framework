@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Auth\Authentication;
 
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\SessionRegenerator;
 
 final class SessionAuthenticator implements Authenticator
 {
@@ -20,9 +20,9 @@ final class SessionAuthenticator implements Authenticator
     private ?Authenticatable $current = null;
 
     public function __construct(
-        private readonly SessionManager $sessionManager,
         private readonly Session $session,
         private readonly AuthenticatableResolver $authenticatableResolver,
+        private readonly SessionRegenerator $sessionRegenerator,
     ) {}
 
     public function authenticate(Authenticatable $authenticatable): void
@@ -43,15 +43,19 @@ final class SessionAuthenticator implements Authenticator
         $this->currentId = $id;
         $this->currentClass = $class;
         $this->current = $authenticatable;
+
+        // The session identifier must not survive a change in privilege level, or one
+        // known to an attacker before authentication stays valid afterwards.
+        $this->sessionRegenerator->regenerate();
     }
 
     public function deauthenticate(): void
     {
-        $this->session->remove(self::AUTHENTICATABLE_KEY);
-        $this->session->remove(self::AUTHENTICATABLE_CLASS);
         $this->clearCurrent();
 
-        $this->sessionManager->save($this->session);
+        // Regenerate session without preserving data to prevent session fixation
+        // and purge all authenticated user data.
+        $this->sessionRegenerator->regenerate(preserveData: false);
     }
 
     public function current(): ?Authenticatable
