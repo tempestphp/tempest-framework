@@ -22,7 +22,7 @@ trait HasWhereRelationMethods
      *
      * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
      *
-     * @return static<TModel>
+     * @return static
      */
     public function whereHas(
         string $relation,
@@ -45,7 +45,7 @@ trait HasWhereRelationMethods
      *
      * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
      *
-     * @return static<TModel>
+     * @return static
      */
     public function whereDoesntHave(
         string $relation,
@@ -66,7 +66,7 @@ trait HasWhereRelationMethods
      *
      * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
      *
-     * @return static<TModel>
+     * @return static
      */
     public function orWhereHas(
         string $relation,
@@ -89,7 +89,7 @@ trait HasWhereRelationMethods
      *
      * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
      *
-     * @return static<TModel>
+     * @return static
      */
     public function orWhereDoesntHave(
         string $relation,
