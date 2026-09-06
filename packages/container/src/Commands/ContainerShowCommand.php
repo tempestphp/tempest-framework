@@ -60,8 +60,21 @@ if (class_exists(ConsoleCommand::class)) {
                 },
             );
 
+            $scoped = $this->container->getScopedDefinitions();
+            $singletons = sort_keys($this->container->getSingletons());
+
             $this->listBindings('Definitions', sort_keys($this->container->getDefinitions()));
-            $this->listBindings('Singletons', sort_keys($this->container->getSingletons()));
+
+            $this->listBindings(
+                title: 'Singletons',
+                bindings: $singletons,
+                reject: static fn (string $class): bool => isset($scoped[$class]),
+            );
+
+            $this->listBindings(
+                title: 'Scoped',
+                bindings: array_intersect_key($singletons, $scoped),
+            );
 
             return ExitCode::SUCCESS;
         }

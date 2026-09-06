@@ -26,6 +26,7 @@ use Tempest\Container\Tests\Fixtures\CircularWithInitializerA;
 use Tempest\Container\Tests\Fixtures\CircularWithInitializerBInitializer;
 use Tempest\Container\Tests\Fixtures\ClassWithLazySlowDependency;
 use Tempest\Container\Tests\Fixtures\ClassWithLazySlowPropertyDependency;
+use Tempest\Container\Tests\Fixtures\ClassWithScopedAttribute;
 use Tempest\Container\Tests\Fixtures\ClassWithSingletonAttribute;
 use Tempest\Container\Tests\Fixtures\ClassWithSlowDependency;
 use Tempest\Container\Tests\Fixtures\ContainerObjectA;
@@ -61,6 +62,7 @@ use Tempest\Container\Tests\Fixtures\SingletonInitializer;
 use Tempest\Container\Tests\Fixtures\SlowDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyCliInitializer;
+use Tempest\Container\Tests\Fixtures\TaggedDependencyScopedInitializer;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyWebInitializer;
 use Tempest\Container\Tests\Fixtures\UnionImplementation;
 use Tempest\Container\Tests\Fixtures\UnionInitializer;
@@ -777,5 +779,118 @@ final class ContainerTest extends TestCase
         $container->get(SingletonClass::class);
         $this->assertSame(2, SingletonClass::$count); // constructed twice, once before and once after reset
         $this->assertTrue(ResettableDependency::$reset);
+    }
+
+    #[Test]
+    public function scoped_instance_is_shared_within_a_lifecycle(): void
+    {
+        $container = new GenericContainer();
+
+        $container->scoped(SingletonClass::class, $instance = new SingletonClass());
+
+        $this->assertSame($instance, $container->get(SingletonClass::class));
+        $this->assertSame($instance, $container->get(SingletonClass::class));
+    }
+
+    #[Test]
+    public function scoped_instance_is_discarded_on_reset(): void
+    {
+        $container = new GenericContainer();
+
+        $container->scoped(SingletonClass::class, new SingletonClass());
+        $this->assertTrue($container->has(SingletonClass::class));
+
+        $container->reset();
+
+        $this->assertFalse($container->has(SingletonClass::class));
+    }
+
+    #[Test]
+    public function scoped_tagged_instance_is_discarded_on_reset(): void
+    {
+        $container = new GenericContainer();
+
+        $container->scoped(SingletonClass::class, new SingletonClass(), tag: 'tag');
+        $this->assertTrue($container->has(SingletonClass::class, tag: 'tag'));
+
+        $container->reset();
+
+        $this->assertFalse($container->has(SingletonClass::class, tag: 'tag'));
+    }
+
+    #[Test]
+    public function scoped_callable_definition_is_kept_and_resolved_again_after_reset(): void
+    {
+        SingletonClass::$count = 0;
+
+        $container = new GenericContainer();
+
+        $container->scoped(SingletonClass::class, fn () => new SingletonClass());
+
+        $first = $container->get(SingletonClass::class);
+        $this->assertSame($first, $container->get(SingletonClass::class));
+
+        $container->reset();
+
+        // The factory survives the reset, but hands out a new instance for the next lifecycle.
+        $this->assertTrue($container->has(SingletonClass::class));
+        $this->assertNotSame($first, $container->get(SingletonClass::class));
+        $this->assertSame(2, SingletonClass::$count);
+    }
+
+    #[Test]
+    public function singleton_is_not_discarded_on_reset(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(SingletonClass::class, new SingletonClass());
+
+        $container->reset();
+
+        $this->assertTrue($container->has(SingletonClass::class));
+    }
+
+    #[Test]
+    public function registering_a_scoped_dependency_as_a_singleton_makes_it_survive_a_reset(): void
+    {
+        $container = new GenericContainer();
+
+        $container->scoped(SingletonClass::class, new SingletonClass());
+        $container->singleton(SingletonClass::class, new SingletonClass());
+
+        $container->reset();
+
+        $this->assertTrue($container->has(SingletonClass::class));
+    }
+
+    #[Test]
+    public function tagged_scoped_initializer(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(TaggedDependencyScopedInitializer::class);
+
+        $dependency = $container->get(TaggedDependency::class, tag: 'web');
+
+        $this->assertSame('web', $dependency->name);
+        $this->assertSame($dependency, $container->get(TaggedDependency::class, tag: 'web'));
+
+        $container->reset();
+
+        $this->assertNotSame($dependency, $container->get(TaggedDependency::class, tag: 'web'));
+    }
+
+    #[Test]
+    public function scoped_attribute(): void
+    {
+        $container = new GenericContainer();
+
+        $instance = $container->get(ClassWithScopedAttribute::class);
+        $instance->flag = true;
+
+        $this->assertTrue($container->get(ClassWithScopedAttribute::class)->flag);
+
+        $container->reset();
+
+        $this->assertFalse($container->get(ClassWithScopedAttribute::class)->flag);
     }
 }

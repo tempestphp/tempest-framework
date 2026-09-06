@@ -53,6 +53,9 @@ final class GenericContainer implements Container
         /** @var ArrayIterator<array-key, class-string<\Tempest\Container\Resettable>> $resettables */
         private(set) ArrayIterator $resettables = new ArrayIterator(),
 
+        /** @var ArrayIterator<array-key, string> $scopedDefinitions */
+        private(set) ArrayIterator $scopedDefinitions = new ArrayIterator(),
+
         private(set) ?DependencyChain $chain = null,
     ) {
         $this->singleton(Container::class, $this);
@@ -119,6 +122,11 @@ final class GenericContainer implements Container
         );
     }
 
+    public function getScopedDefinitions(): array
+    {
+        return $this->scopedDefinitions->getArrayCopy();
+    }
+
     public function getInitializers(): array
     {
         return $this->initializers->getArrayCopy();
@@ -146,6 +154,7 @@ final class GenericContainer implements Container
         unset($this->definitions[$className]);
         unset($this->singletonDefinitions[$className]);
         unset($this->resolvedSingletons[$className]);
+        unset($this->scopedDefinitions[$className]);
 
         if ($tagged) {
             foreach ($this->singletonDefinitions as $key => $definition) {
@@ -163,6 +172,14 @@ final class GenericContainer implements Container
 
                 unset($this->resolvedSingletons[$key]);
             }
+
+            foreach ($this->scopedDefinitions as $key => $dependencyName) {
+                if (! str_starts_with($key, "{$className}#")) {
+                    continue;
+                }
+
+                unset($this->scopedDefinitions[$key]);
+            }
         }
 
         return $this;
@@ -175,6 +192,28 @@ final class GenericContainer implements Container
 
     public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
     {
+        $dependencyName = $this->registerSingletonDefinition($className, $definition, $tag);
+
+        // Registering as a singleton overrides any previous scoped registration for this dependency
+        unset($this->scopedDefinitions[$dependencyName]);
+
+        return $this;
+    }
+
+    public function scoped(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
+    {
+        $dependencyName = $this->registerSingletonDefinition($className, $definition, $tag);
+
+        $this->scopedDefinitions[$dependencyName] = $dependencyName;
+
+        return $this;
+    }
+
+    /**
+     * Registers a definition that is only resolved once, and returns the name it was registered under.
+     */
+    private function registerSingletonDefinition(string $className, mixed $definition, string|UnitEnum|null $tag): string
+    {
         if ($definition instanceof HasTag) {
             $tag = $definition->tag;
         }
@@ -184,7 +223,7 @@ final class GenericContainer implements Container
         $this->singletonDefinitions[$dependencyName] = $definition;
         unset($this->resolvedSingletons[$dependencyName]);
 
-        return $this;
+        return $dependencyName;
     }
 
     public function config(object $config): self
@@ -308,14 +347,14 @@ final class GenericContainer implements Container
         $initializeMethod = $initializerClass->getMethod('initialize');
 
         // We resolve the optional Tag attribute from this initializer class
-        $singleton = $initializeMethod->getAttribute(Singleton::class);
+        $lifetime = $initializeMethod->getAttribute(Singleton::class) ?? $initializeMethod->getAttribute(Scoped::class);
 
         // For normal Initializers, we'll use the return type
         // to determine which dependency they resolve
         $returnType = $initializeMethod->getReturnType();
 
         foreach ($returnType->split() as $type) {
-            $this->initializers[$this->resolveTaggedName($type->getName(), $singleton?->tag)] = $initializerClass->getName();
+            $this->initializers[$this->resolveTaggedName($type->getName(), $lifetime?->tag)] = $initializerClass->getName();
         }
 
         return $this;
@@ -407,11 +446,12 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
-
-            if ($singleton !== null) {
-                $this->singleton($className, $object, $tag);
-            }
+            $this->registerResolvedInstance(
+                attribute: $this->lifetimeAttributeFor($initializerClass, $initializerClass->getMethod('initialize')),
+                className: $className,
+                instance: $object,
+                tag: $tag,
+            );
 
             return $object;
         }
@@ -485,12 +525,12 @@ final class GenericContainer implements Container
             // Otherwise, use our autowireDependencies helper to automagically
             : $classReflector->newInstanceWithoutConstructor();
 
-        if (
-            ! $classReflector->getType()->matches(Initializer::class)
-            && ! $classReflector->getType()->matches(DynamicInitializer::class)
-            && $classReflector->hasAttribute(Singleton::class)
-        ) {
-            $this->singleton($className, $instance);
+        if (! $classReflector->getType()->matches(Initializer::class) && ! $classReflector->getType()->matches(DynamicInitializer::class)) {
+            $this->registerResolvedInstance(
+                attribute: $this->lifetimeAttributeFor($classReflector),
+                className: $className,
+                instance: $instance,
+            );
         }
 
         foreach ($classReflector->getProperties() as $property) {
@@ -606,11 +646,12 @@ final class GenericContainer implements Container
 
             $object = $initializer->initialize($this->clone());
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
-
-            if ($singleton !== null) {
-                $this->singleton($typeName, $object, $tag->name);
-            }
+            $this->registerResolvedInstance(
+                attribute: $this->lifetimeAttributeFor($initializerClass, $initializerClass->getMethod('initialize')),
+                className: $typeName,
+                instance: $object,
+                tag: $tag->name,
+            );
 
             return $object;
         }
@@ -643,6 +684,23 @@ final class GenericContainer implements Container
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
         throw new DependencyCouldNotBeAutowired($this->chain, new Dependency($parameter));
+    }
+
+    /**
+     * Resolves the attribute that determines how long a resolved instance is kept around.
+     */
+    private function lifetimeAttributeFor(ClassReflector $class, ?MethodReflector $method = null): Singleton|Scoped|null
+    {
+        return $class->getAttribute(Singleton::class) ?? $class->getAttribute(Scoped::class) ?? $method?->getAttribute(Singleton::class) ?? $method?->getAttribute(Scoped::class);
+    }
+
+    private function registerResolvedInstance(Singleton|Scoped|null $attribute, string $className, mixed $instance, string|UnitEnum|null $tag = null): void
+    {
+        match (true) {
+            $attribute instanceof Scoped => $this->scoped($className, $instance, $tag),
+            $attribute instanceof Singleton => $this->singleton($className, $instance, $tag),
+            default => null,
+        };
     }
 
     private function clone(): self
@@ -728,6 +786,17 @@ final class GenericContainer implements Container
     {
         $this->resolvedSingletons = new ArrayIterator();
         $this->resolvedDynamicInitializers = [];
+
+        foreach ($this->scopedDefinitions->getArrayCopy() as $dependencyName) {
+            // A callable definition can be invoked again, so it is kept for the next lifecycle. A concrete
+            // instance cannot be rebuilt, so the binding is dropped instead of leaking into the next one.
+            if (($this->singletonDefinitions[$dependencyName] ?? null) instanceof Closure) {
+                continue;
+            }
+
+            unset($this->singletonDefinitions[$dependencyName]);
+            unset($this->scopedDefinitions[$dependencyName]);
+        }
 
         foreach ($this->resettables as $resettableClass) {
             /** @var Resettable $resettable */

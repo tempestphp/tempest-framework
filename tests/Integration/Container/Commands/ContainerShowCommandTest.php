@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
+use Tests\Tempest\Integration\Container\Fixtures\ScopedDependency;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use UnitEnum;
 
@@ -18,6 +19,18 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
             ->call(ContainerShowCommand::class)
             ->assertSee('INITIALIZERS')
             ->assertSee('SINGLETONS')
+            ->assertSuccess();
+    }
+
+    #[Test]
+    public function scoped_bindings_are_listed_separately(): void
+    {
+        $this->container->scoped(ScopedDependency::class, new ScopedDependency());
+
+        $this->console
+            ->call(ContainerShowCommand::class)
+            ->assertSee('SCOPED')
+            ->assertSee('ScopedDependency')
             ->assertSuccess();
     }
 
@@ -48,6 +61,13 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                 public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
                 {
                     $this->container->singleton($className, $definition, $tag);
+
+                    return $this;
+                }
+
+                public function scoped(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
+                {
+                    $this->container->scoped($className, $definition, $tag);
 
                     return $this;
                 }

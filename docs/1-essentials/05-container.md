@@ -292,6 +292,46 @@ Some components implement the {`Tempest\Container\HasTag`} interface, which requ
 
 This is specifically useful to get multiple instances of the same configuration. This is how [multiple database connections support](../1-essentials/03-database.md#using-multiple-connections) is implemented.
 
+## Scoped dependencies
+
+Some dependencies are meant to be shared, but only for the duration of a single request. A matched route, a tenant context or an authenticated user are safe to reuse while handling one request, and unsafe to carry over to the next one in a long-running process, such as a FrankenPHP worker. For these, you may use the `#[Scoped]` attribute instead of `#[Singleton]`:
+
+```php app/TenantContext.php
+use Tempest\Container\Scoped;
+
+#[Scoped]
+final class TenantContext
+{
+    // …
+}
+```
+
+A scoped dependency behaves exactly like a singleton for as long as the current request lasts, and is discarded when the container is reset. Like `#[Singleton]`, the attribute may also be applied to an initializer method:
+
+```php app/TenantContextInitializer.php
+use Tempest\Container\Initializer;
+use Tempest\Container\Scoped;
+
+final readonly class TenantContextInitializer implements Initializer
+{
+    #[Scoped]
+    public function initialize(Container $container): TenantContext
+    {
+        // …
+    }
+}
+```
+
+Dependencies may also be registered as scoped at runtime, which is how the router registers the {`Tempest\Router\MatchedRoute`} of the current request:
+
+```php
+$container->scoped(TenantContext::class, $tenantContext);
+```
+
+:::info
+When a scoped dependency is registered with a callable, the callable is kept and used to build a new instance in the next request. When it is registered with an instance, the registration is removed entirely, since that instance cannot be rebuilt.
+:::
+
 ## Built-in types dependencies
 
 Besides being able to depend on objects, sometimes you'd want to depend on built-in types like `string`, `int` or more often `array`. It is possible to depend on these built-in types, but these cannot be autowired and must be initialized through a [tagged singleton](#tagged-singletons).

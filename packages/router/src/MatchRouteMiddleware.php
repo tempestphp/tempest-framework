@@ -35,8 +35,9 @@ final readonly class MatchRouteMiddleware implements HttpMiddleware
             return new NotFound();
         }
 
-        // We register the matched route in the container, some internal framework components will need it
-        $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
+        // We register the matched route in the container, some internal framework components will need it.
+        // It is scoped, so it does not survive into the next request in a long-running context.
+        $this->container->scoped(MatchedRoute::class, $matchedRoute);
 
         return $next($request);
     }

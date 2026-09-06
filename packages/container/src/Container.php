@@ -18,6 +18,11 @@ interface Container extends ContainerInterface
 
     public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self;
 
+    /**
+     * Registers a singleton that only lives for the duration of the current lifecycle, and is discarded when {@see self::reset()} is called.
+     */
+    public function scoped(string $className, mixed $definition, string|UnitEnum|null $tag = null): self;
+
     public function config(object $config): self;
 
     /**
