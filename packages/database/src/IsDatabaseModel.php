@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use ArrayAccess;
+use Closure;
+use Countable;
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\InsertQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\QueryScope;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
+use Tempest\Database\Builder\WhereOperator;
 use Tempest\Database\Exceptions\PrimaryKeyWasNotInitialized;
 use Tempest\Database\Exceptions\PropertyWasNotARelation;
 use Tempest\Database\Exceptions\RelationWasMissing;
 use Tempest\Database\Exceptions\ValueWasMissing;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Router\IsBindingValue;
+use Tempest\Support\Paginator\PaginatedData;
+use Tempest\Support\Paginator\SimplePaginatedData;
 use Tempest\Validation\SkipValidation;
 use UnitEnum;
 
@@ -233,6 +241,400 @@ trait IsDatabaseModel
     {
         // @phpstan-ignore-next-line
         return static::queryBuilder()->updateOrCreate($find, $update);
+    }
+
+    /**
+     * Applies the given scope to a new query for this model.
+     *
+     * @return QueryBuilder<static>
+     */
+    public static function scope(QueryScope $scope): QueryBuilder
+    {
+        return static::queryBuilder()->scope($scope);
+    }
+
+    /**
+     * Adds a `WHERE` condition using a raw statement.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function where(string $statement, mixed ...$bindings): SelectQueryBuilder
+    {
+        return static::select()->where($statement, ...$bindings);
+    }
+
+    /**
+     * Adds a `WHERE` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereField(string $field, mixed $value, string|WhereOperator $operator = WhereOperator::EQUALS): SelectQueryBuilder
+    {
+        return static::select()->whereField($field, $value, $operator);
+    }
+
+    /**
+     * Adds a raw `WHERE` condition.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereRaw(string $statement, mixed ...$bindings): SelectQueryBuilder
+    {
+        return static::select()->whereRaw($statement, ...$bindings);
+    }
+
+    /**
+     * Adds a grouped `WHERE` condition.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereGroup(Closure $callback): SelectQueryBuilder
+    {
+        return static::select()->whereGroup($callback);
+    }
+
+    /**
+     * Adds a `WHERE IN` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereIn(string $field, string|UnitEnum|array|ArrayAccess $values): SelectQueryBuilder
+    {
+        return static::select()->whereIn($field, $values);
+    }
+
+    /**
+     * Adds a `WHERE NOT IN` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNotIn(string $field, string|UnitEnum|array|ArrayAccess $values): SelectQueryBuilder
+    {
+        return static::select()->whereNotIn($field, $values);
+    }
+
+    /**
+     * Adds a `WHERE BETWEEN` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): SelectQueryBuilder
+    {
+        return static::select()->whereBetween($field, $min, $max);
+    }
+
+    /**
+     * Adds a `WHERE NOT BETWEEN` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNotBetween(string $field, DateTimeInterface|string|float|int|Countable $min, DateTimeInterface|string|float|int|Countable $max): SelectQueryBuilder
+    {
+        return static::select()->whereNotBetween($field, $min, $max);
+    }
+
+    /**
+     * Adds a `WHERE NULL` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNull(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereNull($field);
+    }
+
+    /**
+     * Adds a `WHERE NOT NULL` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNotNull(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereNotNull($field);
+    }
+
+    /**
+     * Adds a `WHERE NOT` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNot(string $field, mixed $value): SelectQueryBuilder
+    {
+        return static::select()->whereNot($field, $value);
+    }
+
+    /**
+     * Adds a `WHERE LIKE` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereLike(string $field, string $value): SelectQueryBuilder
+    {
+        return static::select()->whereLike($field, $value);
+    }
+
+    /**
+     * Adds a `WHERE NOT LIKE` condition on the given field.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereNotLike(string $field, string $value): SelectQueryBuilder
+    {
+        return static::select()->whereNotLike($field, $value);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from today.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereToday(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereToday($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from yesterday.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereYesterday(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereYesterday($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from this week.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereThisWeek(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereThisWeek($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from last week.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereLastWeek(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereLastWeek($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from this month.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereThisMonth(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereThisMonth($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from last month.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereLastMonth(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereLastMonth($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from this year.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereThisYear(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereThisYear($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records from last year.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereLastYear(string $field): SelectQueryBuilder
+    {
+        return static::select()->whereLastYear($field);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records which specified field is after a specific date.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereAfter(string $field, DateTimeInterface|string $date): SelectQueryBuilder
+    {
+        return static::select()->whereAfter($field, $date);
+    }
+
+    /**
+     * Adds a `WHERE` condition for records which specified field is before a specific date.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereBefore(string $field, DateTimeInterface|string $date): SelectQueryBuilder
+    {
+        return static::select()->whereBefore($field, $date);
+    }
+
+    /**
+     * Adds a `WHERE EXISTS` condition for a relation.
+     *
+     * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereHas(
+        string $relation,
+        ?Closure $callback = null,
+        string|WhereOperator $operator = WhereOperator::GREATER_THAN_OR_EQUAL,
+        int $count = 1,
+    ): SelectQueryBuilder {
+        return static::select()->whereHas($relation, $callback, $operator, $count);
+    }
+
+    /**
+     * Adds a `WHERE NOT EXISTS` condition for a relation.
+     *
+     * @phpstan-param (?Closure(SelectQueryBuilder): void) $callback
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function whereDoesntHave(
+        string $relation,
+        ?Closure $callback = null,
+    ): SelectQueryBuilder {
+        return static::select()->whereDoesntHave($relation, $callback);
+    }
+
+    /**
+     * Returns the first record of this model's table.
+     *
+     * @return static|null
+     */
+    public static function first(mixed ...$bindings): mixed
+    {
+        return static::select()->first(...$bindings);
+    }
+
+    /**
+     * Adds an `ORDER BY` statement to the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function orderBy(string $field, Direction $direction = Direction::ASC): SelectQueryBuilder
+    {
+        return static::select()->orderBy($field, $direction);
+    }
+
+    /**
+     * Adds a raw `ORDER BY` statement to the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function orderByRaw(string $statement): SelectQueryBuilder
+    {
+        return static::select()->orderByRaw($statement);
+    }
+
+    /**
+     * Adds a `GROUP BY` statement to the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function groupBy(string $statement): SelectQueryBuilder
+    {
+        return static::select()->groupBy($statement);
+    }
+
+    /**
+     * Adds a `HAVING` statement to the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function having(string $statement, mixed ...$bindings): SelectQueryBuilder
+    {
+        return static::select()->having($statement, ...$bindings);
+    }
+
+    /**
+     * Limits the amount of records returned by the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function limit(int $limit): SelectQueryBuilder
+    {
+        return static::select()->limit($limit);
+    }
+
+    /**
+     * Offsets the records returned by the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function offset(int $offset): SelectQueryBuilder
+    {
+        return static::select()->offset($offset);
+    }
+
+    /**
+     * Adds the given raw join statements to the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function join(string ...$joins): SelectQueryBuilder
+    {
+        return static::select()->join(...$joins);
+    }
+
+    /**
+     * Eager-loads the given relations.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function with(string ...$relations): SelectQueryBuilder
+    {
+        return static::select()->with(...$relations);
+    }
+
+    /**
+     * Includes the given fields in the query.
+     *
+     * @return SelectQueryBuilder<static>
+     */
+    public static function include(string ...$fields): SelectQueryBuilder
+    {
+        return static::select()->include(...$fields);
+    }
+
+    /**
+     * Paginates the records of this model's table.
+     */
+    public static function paginate(int $itemsPerPage = 20, int $currentPage = 1, int $maxLinks = 10): PaginatedData
+    {
+        return static::select()->paginate($itemsPerPage, $currentPage, $maxLinks);
+    }
+
+    /**
+     * Paginates the records of this model's table, without counting the total amount of records.
+     */
+    public static function simplePaginate(int $itemsPerPage = 20, int $currentPage = 1): SimplePaginatedData
+    {
+        return static::select()->simplePaginate($itemsPerPage, $currentPage);
+    }
+
+    /**
+     * Chunks the records of this model's table, passing each chunk to the given closure.
+     */
+    public static function chunk(Closure $closure, int $amountPerChunk = 200): void
+    {
+        static::select()->chunk($closure, $amountPerChunk);
     }
 
     /**
