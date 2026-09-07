@@ -55,7 +55,7 @@ final class SessionAuthenticator implements Authenticator
 
         // Regenerate session without preserving data to prevent session fixation
         // and purge all authenticated user data.
-        $this->sessionRegenerator->regenerate(preserveData: false);
+        $this->sessionRegenerator->invalidate();
     }
 
     public function current(): ?Authenticatable

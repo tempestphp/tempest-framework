@@ -31,7 +31,7 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
         );
     }
 
-    public function regenerate(): SessionId
+    public function issueNewId(): SessionId
     {
         return new SessionId(id: Uuid::v4()->toString());
     }

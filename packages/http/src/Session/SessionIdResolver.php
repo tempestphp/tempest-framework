@@ -16,5 +16,5 @@ interface SessionIdResolver
      *
      * @see SessionRegenerator
      */
-    public function regenerate(): SessionId;
+    public function issueNewId(): SessionId;
 }

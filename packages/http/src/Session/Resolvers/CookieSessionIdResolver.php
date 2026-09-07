@@ -33,13 +33,13 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
         $id = $this->request->getCookie($this->getSessionKey())?->value;
 
         if (! $id) {
-            return $this->regenerate();
+            return $this->issueNewId();
         }
 
         return new SessionId($id);
     }
 
-    public function regenerate(): SessionId
+    public function issueNewId(): SessionId
     {
         $id = (string) Uuid::v4();
 

@@ -19,17 +19,26 @@ final readonly class SessionRegenerator
     ) {}
 
     /**
-     * Assigns a new ID to the current session, carrying over data by default.
+     * Assigns a new ID to the current session, carrying over data.
      */
-    public function regenerate(bool $preserveData = true): void
+    public function regenerate(): void
     {
-        // Destroy the old session to prevent parallel active sessions.
         $this->sessionManager->delete($this->session);
 
-        $this->session->replaceId(
-            id: $this->sessionIdResolver->regenerate(),
-            preserveData: $preserveData,
-        );
+        $this->session->replaceId($this->sessionIdResolver->issueNewId());
+
+        $this->sessionManager->save($this->session);
+    }
+
+    /**
+     * Assigns a new ID to the current session, discarding all data.
+     */
+    public function invalidate(): void
+    {
+        $this->sessionManager->delete($this->session);
+
+        $this->session->replaceId($this->sessionIdResolver->issueNewId());
+        $this->session->clear();
 
         $this->sessionManager->save($this->session);
     }

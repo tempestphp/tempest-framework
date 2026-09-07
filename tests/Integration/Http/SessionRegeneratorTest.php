@@ -37,11 +37,11 @@ final class SessionRegeneratorTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function discards_data_when_it_is_not_preserved(): void
+    public function invalidate_discards_data(): void
     {
         $this->session->set('key', 'value');
 
-        $this->regenerator->regenerate(preserveData: false);
+        $this->regenerator->invalidate();
 
         $this->assertNull($this->session->get('key'));
     }

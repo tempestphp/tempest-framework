@@ -247,7 +247,7 @@ final class TestingSessionIdResolver implements SessionIdResolver
         return new SessionId('test-session');
     }
 
-    public function regenerate(): SessionId
+    public function issueNewId(): SessionId
     {
         return new SessionId('regenerated-session-' . uniqid());
     }
