@@ -7,6 +7,7 @@ namespace Tempest\Reflection;
 use Closure;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
+use ReflectionObject as PHPReflectionObject;
 use ReflectionProperty as PHPReflectionProperty;
 
 /**
@@ -65,10 +66,22 @@ final class ClassReflector implements Reflector
     /** @return PropertyReflector[] */
     public function getPublicProperties(): array
     {
+        // A ReflectionObject may expose runtime-added properties, so its property set is
+        // not determined by the class name the cache is keyed on.
+        if ($this->reflectionClass instanceof PHPReflectionObject) {
+            return $this->resolvePublicProperties();
+        }
+
         static $cache = [];
 
-        return $cache[$this->reflectionClass->getName()] ??= array_map(
-            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+        return $cache[$this->reflectionClass->getName()] ??= $this->resolvePublicProperties();
+    }
+
+    /** @return PropertyReflector[] */
+    private function resolvePublicProperties(): array
+    {
+        return array_map(
+            static fn (PHPReflectionProperty $property) => new PropertyReflector($property),
             $this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC),
         );
     }
