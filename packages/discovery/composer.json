@@ -5,13 +5,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.5",
-        "tempest/reflection": "3.x-dev",
-        "tempest/support": "3.x-dev",
+        "tempest/reflection": "3.19.2",
+        "tempest/support": "3.19.2",
         "psr/container": "^2.0",
         "symfony/cache": "^7.3|^8.0"
     },
     "require-dev": {
-        "tempest/container": "3.x-dev",
+        "tempest/container": "3.19.2",
         "php-di/php-di": "^7.0"
     },
     "autoload": {
