@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use PHPUnit\Framework\Attributes\Test;
-use ReflectionProperty;
 use Tempest\Container\GenericContainer;
 use Tempest\Mapper\MapperCache;
 use Tempest\Mapper\MapperConfig;
@@ -13,6 +12,9 @@ use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\MappingContext;
 use Tempest\Mapper\ObjectFactory;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\MapperPrefix;
+use Tests\Tempest\Integration\Mapper\Fixtures\PrefixedString;
+use Tests\Tempest\Integration\Mapper\Fixtures\PrefixedStringMapper;
 
 /**
  * @internal
@@ -73,19 +75,18 @@ final class MapperCacheTest extends FrameworkIntegrationTestCase
     #[Test]
     public function mappers_are_not_shared_between_containers(): void
     {
-        $config = new MapperConfig([ArrayToObjectMapper::class]);
+        $container = function (string $prefix): GenericContainer {
+            $container = new GenericContainer();
+            $container->singleton(MapperPrefix::class, new MapperPrefix($prefix));
+            $container->singleton(MapperConfig::class, new MapperConfig([PrefixedStringMapper::class]));
 
-        $factory = fn (GenericContainer $container) => new ObjectFactory($config, $container, new MapperCache());
-
-        $mappersOf = function (ObjectFactory $factory): array {
-            $reflection = new ReflectionProperty(ObjectFactory::class, 'mappers');
-
-            return $reflection->getValue($factory);
+            return $container;
         };
 
-        $a = $mappersOf($factory(new GenericContainer()));
-        $b = $mappersOf($factory(new GenericContainer()));
+        $a = $container('a:')->get(ObjectFactory::class);
+        $b = $container('b:')->get(ObjectFactory::class);
 
-        $this->assertNotSame($a[0], $b[0]);
+        $this->assertSame('a:value', $a->withData('value')->to(PrefixedString::class)->value);
+        $this->assertSame('b:value', $b->withData('value')->to(PrefixedString::class)->value);
     }
 }
