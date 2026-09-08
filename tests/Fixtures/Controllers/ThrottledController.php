@@ -10,11 +10,20 @@ use Tempest\RateLimit\Http\Throttle;
 use Tempest\RateLimit\Http\ThrottleWith;
 use Tempest\RateLimit\Per;
 use Tempest\Router\Get;
+use Tempest\Router\Post;
 use Tests\Tempest\Fixtures\RateLimit\PremiumRateLimitProfile;
 use Tests\Tempest\Fixtures\RateLimit\TieredRateLimitProfile;
 
 final readonly class ThrottledController
 {
+    #[Throttle(attempts: 1)]
+    #[Get('/throttled-by-http-method')]
+    #[Post('/throttled-by-http-method')]
+    public function multipleHttpMethods(): Response
+    {
+        return new Ok('allowed');
+    }
+
     #[Throttle(attempts: 2)]
     #[Get('/throttled')]
     public function index(): Response

@@ -8,6 +8,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Status;
 use Tempest\RateLimit\Config\CacheRateLimitConfig;
+use Tempest\RateLimit\RateLimit;
+use Tempest\RateLimit\RateLimiter;
 use Tests\Tempest\Fixtures\RateLimit\UnidentifiedKeyResolver;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -299,5 +301,49 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
         $this->http->get('/throttled')->assertOk();
         $this->http->get('/throttled')->assertOk();
         $this->http->get('/throttled')->assertStatus(Status::TOO_MANY_REQUESTS);
+    }
+
+    #[Test]
+    public function a_route_may_narrow_its_controllers_shared_bucket_allowance(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/class-throttled/shared-bucket')->assertOk();
+        $this->http
+            ->fromIp('203.0.113.9')
+            ->get('/class-throttled/shared-bucket')
+            ->assertStatus(Status::TOO_MANY_REQUESTS);
+    }
+
+    #[Test]
+    public function http_methods_on_the_same_handler_have_independent_allowances(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-http-method')->assertOk();
+        $this->http->fromIp('203.0.113.9')->post('/throttled-by-http-method')->assertOk();
+
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-http-method')->assertStatus(Status::TOO_MANY_REQUESTS);
+        $this->http->fromIp('203.0.113.9')->post('/throttled-by-http-method')->assertStatus(Status::TOO_MANY_REQUESTS);
+    }
+
+    #[Test]
+    public function a_named_http_bucket_can_be_inspected_through_the_limiter(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
+
+        // The rate-limiting documentation promises direct access by naming the HTTP bucket.
+        $result = $this->container->get(RateLimiter::class)->peek(RateLimit::perMinute(2)->withKey('shared'));
+
+        $this->assertSame(1, $result->hits);
+        $this->assertSame(1, $result->remaining);
+    }
+
+    #[Test]
+    public function a_named_http_bucket_can_be_cleared_through_the_limiter(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/second')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertStatus(Status::TOO_MANY_REQUESTS);
+
+        $this->container->get(RateLimiter::class)->clear(RateLimit::perMinute(2)->withKey('shared'));
+
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
     }
 }
