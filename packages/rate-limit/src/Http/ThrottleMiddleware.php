@@ -79,8 +79,9 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
                     $key = ThrottleCounterKey::for($limit, $this->matchedRoute, ThrottleScope::from($scope), $client);
 
                     // Limits landing in the same counter describe one allowance: declaring the
-                    // same limit twice throttles a route exactly once.
-                    $limits[$key] = $limit->withKey($key);
+                    // same limit twice throttles a route exactly once. When they disagree, the
+                    // narrowest one wins, so a route may tighten the bucket it shares.
+                    $limits[$key] = $this->narrowest($limit->withKey($key), $limits[$key] ?? null);
                 }
             }
         }
@@ -93,6 +94,19 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
         usort($limits, fn (RateLimit $a, RateLimit $b) => $a->window->getTotalSeconds() <=> $b->window->getTotalSeconds());
 
         return $limits;
+    }
+
+    /**
+     * Returns the more restrictive of two limits sharing a counter. Fewer attempts within the same
+     * counter is the tighter allowance, and an equal one keeps the limit already collected.
+     */
+    private function narrowest(RateLimit $limit, ?RateLimit $collected): RateLimit
+    {
+        if ($collected === null) {
+            return $limit;
+        }
+
+        return $limit->attempts < $collected->attempts ? $limit : $collected;
     }
 
     /**

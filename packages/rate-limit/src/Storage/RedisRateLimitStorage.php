@@ -59,7 +59,7 @@ final readonly class RedisRateLimitStorage implements RateLimitStorage
     {
         $windowInSeconds = RateLimitState::windowInSeconds($window);
 
-        return $this->toState($this->eval(self::INCREMENT, $key, (string) $windowInSeconds, (string) $by)) ?? throw RateLimitStorageFailed::redisDidNotReportAWindow($key);
+        return $this->toState($this->eval(self::INCREMENT, $key, (string) $windowInSeconds, (string) $by)) ?? throw new RateLimitStorageFailed($key);
     }
 
     public function remove(string $key): void

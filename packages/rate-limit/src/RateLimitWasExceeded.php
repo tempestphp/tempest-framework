@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\RateLimit;
 
-final class RateLimitWasExceeded extends RateLimitException
+use Exception;
+
+final class RateLimitWasExceeded extends Exception implements RateLimitException
 {
     public function __construct(
         public readonly RateLimitResult $result,

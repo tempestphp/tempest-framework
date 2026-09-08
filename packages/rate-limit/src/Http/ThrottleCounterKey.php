@@ -46,9 +46,12 @@ final readonly class ThrottleCounterKey
                 $handler->getDeclaringClass()->getName(),
                 $scope->value,
             ],
+            // The method is part of the scope: a handler answering both `GET` and `POST` on the
+            // same URI exposes two routes, each with an allowance of its own.
             ThrottleScope::ROUTE => [
                 $handler->getDeclaringClass()->getName(),
                 $handler->getName(),
+                $matchedRoute->route->method->value,
                 $matchedRoute->route->uri,
                 $scope->value,
             ],

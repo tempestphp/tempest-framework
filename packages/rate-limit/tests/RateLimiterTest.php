@@ -15,7 +15,7 @@ use Tempest\RateLimit\GenericRateLimiter;
 use Tempest\RateLimit\Per;
 use Tempest\RateLimit\RateLimit;
 use Tempest\RateLimit\RateLimiter;
-use Tempest\RateLimit\RateLimitHasNoKey;
+use Tempest\RateLimit\RateLimitKeyWasMissing;
 use Tempest\RateLimit\RateLimitWasExceeded;
 use Tempest\RateLimit\Storage\CacheRateLimitStorage;
 
@@ -178,7 +178,7 @@ final class RateLimiterTest extends TestCase
     #[Test]
     public function a_limit_without_a_key_is_rejected(): void
     {
-        $this->expectException(RateLimitHasNoKey::class);
+        $this->expectException(RateLimitKeyWasMissing::class);
 
         $this->limiter->attempt(RateLimit::perMinute(1));
     }

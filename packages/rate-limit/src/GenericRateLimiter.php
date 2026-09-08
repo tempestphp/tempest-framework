@@ -48,7 +48,7 @@ final readonly class GenericRateLimiter implements RateLimiter
      */
     private function key(RateLimit $limit): string
     {
-        return $limit->key ?? throw RateLimitHasNoKey::forLimit($limit);
+        return $limit->key ?? throw new RateLimitKeyWasMissing($limit);
     }
 
     /**

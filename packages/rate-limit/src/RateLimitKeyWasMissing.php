@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\RateLimit;
 
-final class RateLimitHasNoKey extends RateLimitException
+use Exception;
+
+final class RateLimitKeyWasMissing extends Exception implements RateLimitException
 {
-    public static function forLimit(RateLimit $limit): self
-    {
-        return new self(sprintf(
+    public function __construct(
+        public readonly RateLimit $limit,
+    ) {
+        parent::__construct(sprintf(
             'A rate limit of %d attempts was used without a key. Scope it with `withKey()` or `scopedTo()`, '
             . 'otherwise it would share a counter with every other keyless limit.',
             $limit->attempts,

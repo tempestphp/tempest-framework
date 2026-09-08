@@ -182,7 +182,7 @@ final readonly class SendVerificationEmail
 
 ```
 
-Build limits using `RateLimit::perSecond()`, `perMinute()`, `perHour()`, or `perDay()`, optionally passing a multiplier as the second argument. Use `withKey()` to scope a limit to a key, or `scopedTo()` to append to the key it already has. A limit must carry a key by the time it reaches the limiter—keyless limits throw {b`Tempest\RateLimit\RateLimitHasNoKey`} rather than being guessed at, since they would otherwise all share a single counter.
+Build limits using `RateLimit::perSecond()`, `perMinute()`, `perHour()`, or `perDay()`, optionally passing a multiplier as the second argument. Use `withKey()` to scope a limit to a key, or `scopedTo()` to append to the key it already has. A limit must carry a key by the time it reaches the limiter—keyless limits throw {b`Tempest\RateLimit\RateLimitKeyWasMissing`} rather than being guessed at, since they would otherwise all share a single counter.
 
 The `attempt()` method records attempts and returns a {b`Tempest\RateLimit\RateLimitResult`}:
 
@@ -208,7 +208,7 @@ $this->limiter->throttle($limit, function () {
 
 ```
 
-Exceeding limits via `throttle()` throws {b`Tempest\RateLimit\RateLimitWasExceeded`} (extending {b`Tempest\RateLimit\RateLimitException`}), carrying the result payload for clean error handling. Manual limit management gives you direct control over custom domain objects, accounts, or tenants, requiring you to handle rejections explicitly via try-catch blocks or conditional `attempt()` branches.
+Exceeding limits via `throttle()` throws {b`Tempest\RateLimit\RateLimitWasExceeded`} (implementing {b`Tempest\RateLimit\RateLimitException`}), carrying the result payload for clean error handling. Manual limit management gives you direct control over custom domain objects, accounts, or tenants, requiring you to handle rejections explicitly via try-catch blocks or conditional `attempt()` branches.
 
 ## Storage
 
