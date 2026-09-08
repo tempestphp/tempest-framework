@@ -457,6 +457,10 @@ return new SQLiteConfig(
 
 :::
 
+### Migration directories
+
+When `make:migration` asks where to save a PHP migration, you can choose a directory outside `app/` if it is registered in your `composer.json` under `autoload.psr-4`. For example, mapping `"Migrations\\": "migrations/"` lets you save `migrations/CreateBooksTable.php` with the namespace `Migrations`. Subdirectories use the corresponding nested namespace. Unregistered destinations are rejected.
+
 ### Migration prefixes
 
 When generating a migration file via `make:migration`, Tempest prefixes the file name with a sortable identifier so that migrations run in the correct order. By default, a date-based prefix is used (e.g. `2025-06-15_create_books_table`).
