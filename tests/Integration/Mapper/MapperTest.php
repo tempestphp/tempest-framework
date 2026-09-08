@@ -6,6 +6,8 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\DatabaseContext;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
@@ -20,6 +22,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithConfiguredTempestDateTimeFormat;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithContextDialect;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithInterfaceTypedProperties;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
@@ -38,6 +41,21 @@ use function Tempest\Mapper\map;
  */
 final class MapperTest extends FrameworkIntegrationTestCase
 {
+    #[Test]
+    public function mapping_uses_the_current_context_payload(): void
+    {
+        $mysql = map(['dialect' => 'input'])
+            ->in(new DatabaseContext(DatabaseDialect::MYSQL))
+            ->to(ObjectWithContextDialect::class);
+
+        $postgresql = map(['dialect' => 'input'])
+            ->in(new DatabaseContext(DatabaseDialect::POSTGRESQL))
+            ->to(ObjectWithContextDialect::class);
+
+        $this->assertSame('MYSQL', $mysql->dialect);
+        $this->assertSame('POSTGRESQL', $postgresql->dialect);
+    }
+
     #[Test]
     public function make_object_from_class_string(): void
     {
