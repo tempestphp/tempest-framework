@@ -324,26 +324,47 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function a_named_http_bucket_can_be_inspected_through_the_limiter(): void
+    public function a_counter_named_by_a_profile_can_be_inspected_through_the_limiter(): void
     {
-        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/first')->assertOk();
 
-        // The rate-limiting documentation promises direct access by naming the HTTP bucket.
-        $result = $this->container->get(RateLimiter::class)->peek(RateLimit::perMinute(2)->withKey('shared'));
+        // A key the application builds is used as written, so it addresses the counter directly.
+        $result = $this->container->get(RateLimiter::class)->peek(RateLimit::perMinute(2)->withKey('shared-counter'));
 
         $this->assertSame(1, $result->hits);
         $this->assertSame(1, $result->remaining);
     }
 
     #[Test]
-    public function a_named_http_bucket_can_be_cleared_through_the_limiter(): void
+    public function a_counter_named_by_a_profile_can_be_cleared_through_the_limiter(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/first')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/second')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/first')->assertStatus(Status::TOO_MANY_REQUESTS);
+
+        $this->container->get(RateLimiter::class)->clear(RateLimit::perMinute(2)->withKey('shared-counter'));
+
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/first')->assertOk();
+    }
+
+    #[Test]
+    public function a_counter_named_by_a_profile_is_not_scoped_to_the_client(): void
+    {
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-counter/first')->assertOk();
+        $this->http->fromIp('203.0.113.10')->get('/throttled-by-shared-counter/first')->assertOk();
+
+        // The profile's key carries no client, so it counts every client into one allowance.
+        $this->http->fromIp('203.0.113.11')->get('/throttled-by-shared-counter/first')->assertStatus(Status::TOO_MANY_REQUESTS);
+    }
+
+    #[Test]
+    public function a_named_bucket_is_scoped_to_the_client(): void
     {
         $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
         $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/second')->assertOk();
         $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertStatus(Status::TOO_MANY_REQUESTS);
 
-        $this->container->get(RateLimiter::class)->clear(RateLimit::perMinute(2)->withKey('shared'));
-
-        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
+        // A bucket is a constant, so it groups routes per client rather than across all of them.
+        $this->http->fromIp('203.0.113.10')->get('/throttled-by-shared-bucket/first')->assertOk();
     }
 }

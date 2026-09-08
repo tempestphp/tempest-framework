@@ -76,7 +76,13 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
         foreach ($this->resolveAttributes() as $scope => $throttles) {
             foreach ($throttles as $throttle) {
                 foreach ($throttle->resolveLimits($request, $this->container) as $limit) {
-                    $key = ThrottleCounterKey::for($limit, $this->matchedRoute, ThrottleScope::from($scope), $client);
+                    $key = ThrottleCounterKey::for(
+                        limit: $limit,
+                        bucket: $throttle->bucket,
+                        matchedRoute: $this->matchedRoute,
+                        scope: ThrottleScope::from($scope),
+                        client: $client,
+                    );
 
                     // Limits landing in the same counter describe one allowance: declaring the
                     // same limit twice throttles a route exactly once. When they disagree, the

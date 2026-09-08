@@ -8,21 +8,27 @@ use Tempest\RateLimit\RateLimit;
 use Tempest\Router\MatchedRoute;
 
 /**
- * Decides which counter a throttled request is spent from. The shape of these keys is not part of
- * the public API. To address a counter directly, give the limit a bucket and consume it through
- * {@see \Tempest\RateLimit\RateLimiter}.
+ * Decides which counter a throttled request is spent from. The shape of the keys derived here is not
+ * part of the public API. To address a counter directly, give the limit a key of your own through a
+ * {@see RateLimitProfile} and consume it through {@see \Tempest\RateLimit\RateLimiter}.
  */
 final readonly class ThrottleCounterKey
 {
-    public static function for(RateLimit $limit, MatchedRoute $matchedRoute, ThrottleScope $scope, ?string $client): string
+    public static function for(RateLimit $limit, ?string $bucket, MatchedRoute $matchedRoute, ThrottleScope $scope, ?string $client): string
     {
+        // A key the application built is the counter itself, and stays addressable through
+        // `RateLimiter`. Scoping it would name a counter no caller could reach.
+        if ($limit->key !== null) {
+            return $limit->key;
+        }
+
         // Identified clients are prefixed. This way, a resolver returning the string
         // `unidentified` still gets its own counter rather than the shared one.
         $client = $client === null ? 'unidentified' : 'client:' . $client;
 
-        // A named bucket is scoped to the client alone: routes naming it spend from one allowance.
-        if ($limit->key !== null) {
-            return implode(':', ['bucket', $limit->key, $client]);
+        // A bucket groups routes rather than naming a counter, so it stays scoped to the client.
+        if ($bucket !== null) {
+            return implode(':', ['bucket', $bucket, $client]);
         }
 
         return implode(':', [

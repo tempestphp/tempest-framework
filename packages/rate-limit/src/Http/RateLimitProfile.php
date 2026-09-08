@@ -18,8 +18,9 @@ interface RateLimitProfile
      * unlimited.
      *
      * Limits without a key are scoped to the route and to the client resolved by
-     * {@see RateLimitKeyResolver}. Limits with a key are scoped to the client alone. Only give a key
-     * to a limit whose counter should be shared beyond this route.
+     * {@see RateLimitKeyResolver}. A limit with a key is counted under that key as written, with no
+     * scoping of its own, so give it one that identifies what it counts, such as `login:{$email}`.
+     * That counter can be inspected or cleared through {@see \Tempest\RateLimit\RateLimiter}.
      *
      * @return RateLimit[]
      */

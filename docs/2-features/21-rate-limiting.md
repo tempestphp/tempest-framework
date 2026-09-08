@@ -44,7 +44,7 @@ By default, every route and every client gets an independent counter. To share a
 
 ```
 
-A named bucket scopes the limit entirely to the client, allowing multiple routes to draw from the same allowance. Unnamed limits are automatically scoped by their exact allowance criteria, meaning attributes can be reordered freely without breaking counters.
+A bucket groups routes, not clients: the routes naming it draw from a single allowance, and that allowance is still counted per client. Unnamed limits are automatically scoped by their exact allowance criteria, meaning attributes can be reordered freely without breaking counters.
 
 Changing an allowance resets its counter, lifting current limits. Use a named bucket if a counter needs to persist across configuration adjustments.
 
@@ -111,7 +111,7 @@ return new CacheRateLimitConfig(
 
 ```
 
-Resolvers should return `null` for unidentifiable requests, routing them into a collective shared bucket so anonymous traffic remains strictly throttled.
+Resolvers should return `null` for unidentifiable requests, routing them into a single collective counter so anonymous traffic remains strictly throttled.
 
 ## Limits that depend on the request
 
@@ -152,7 +152,7 @@ public function index(): Response
 
 ```
 
-Profile limits scope similarly to `#[Throttle]` attributes. Unkeyed limits generate individual counters per route and client, while `withKey()` transforms them into shared buckets. Returning an empty array leaves requests completely unlimited.
+Unkeyed profile limits scope like `#[Throttle]` attributes, generating individual counters per route and client. A limit carrying a key is counted under that key exactly as written, with no scoping added on top—so give it a key that identifies what it counts, such as `login:{$email}`. Such a counter is shared by every route naming it, and is the one kind of HTTP counter that can be inspected or cleared through {b`Tempest\RateLimit\RateLimiter`}. Returning an empty array leaves requests completely unlimited.
 
 ## Throttling anything else
 
@@ -267,4 +267,8 @@ $this->http->fromIp('203.0.113.9')->get('/api/posts')->assertStatus(Status::TOO_
 
 ```
 
-The counters behind `#[Throttle]` are keyed internally and are not addressable from a test. To assert against one directly, give the limit a named `bucket` and consume it through {b`Tempest\RateLimit\RateLimiter`}.
+The counters behind `#[Throttle]` are keyed internally and are not addressable from a test, buckets included—a bucket is scoped to the client, so naming one would mean hand-assembling a key shape that carries no compatibility guarantee. To assert against a counter directly, give a limit a key of your own through a [rate limit profile](#limits-that-depend-on-the-request). That key is used as written, so it reaches the counter from anywhere:
+
+```php
+$limiter->clear(RateLimit::perMinute(5)->withKey('login:jon@doe.co'));
+```

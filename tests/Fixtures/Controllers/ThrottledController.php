@@ -12,6 +12,7 @@ use Tempest\RateLimit\Per;
 use Tempest\Router\Get;
 use Tempest\Router\Post;
 use Tests\Tempest\Fixtures\RateLimit\PremiumRateLimitProfile;
+use Tests\Tempest\Fixtures\RateLimit\SharedCounterRateLimitProfile;
 use Tests\Tempest\Fixtures\RateLimit\TieredRateLimitProfile;
 
 final readonly class ThrottledController
@@ -86,6 +87,23 @@ final readonly class ThrottledController
     #[Throttle(attempts: 2, bucket: 'shared')]
     #[Get('/throttled-by-shared-bucket/second')]
     public function sharedBucketSecond(): Response
+    {
+        return new Ok('allowed');
+    }
+
+    #[ThrottleWith(SharedCounterRateLimitProfile::class)]
+    #[Get('/throttled-by-shared-counter/first')]
+    public function sharedCounterFirst(): Response
+    {
+        return new Ok('allowed');
+    }
+
+    /**
+     * Uses the same profile as `sharedCounterFirst`, so both routes spend from the counter it names.
+     */
+    #[ThrottleWith(SharedCounterRateLimitProfile::class)]
+    #[Get('/throttled-by-shared-counter/second')]
+    public function sharedCounterSecond(): Response
     {
         return new Ok('allowed');
     }

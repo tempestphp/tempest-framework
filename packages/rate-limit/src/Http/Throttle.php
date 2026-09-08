@@ -44,9 +44,10 @@ final readonly class Throttle implements Throttles
         public int $every = 1,
 
         /**
-         * Identifies the counter this limit is kept in. A named bucket is scoped to the client alone:
-         * routes naming the same bucket share an allowance. Without a name, the limit gets its own
-         * counter, scoped to what it was declared on.
+         * Groups this limit with the ones naming the same bucket: those routes spend from a single
+         * allowance, per client. Without a name, the limit gets its own counter, scoped to what it
+         * was declared on. Either way the counter is scoped to the client, so it cannot be addressed
+         * through {@see \Tempest\RateLimit\RateLimiter}; use a {@see RateLimitProfile} for that.
          */
         public ?string $bucket = null,
     ) {}
@@ -57,14 +58,14 @@ final readonly class Throttle implements Throttles
     }
 
     /**
-     * Returns the rate limit described by this attribute.
+     * Returns the rate limit described by this attribute. The bucket is not part of it: it groups
+     * routes rather than naming a counter, and is applied by {@see ThrottleCounterKey}.
      */
     public function toRateLimit(): RateLimit
     {
         return new RateLimit(
             attempts: $this->attempts,
             window: $this->per->toDuration($this->every),
-            key: $this->bucket,
         );
     }
 }

@@ -16,6 +16,12 @@ use Tempest\Router\RouteDecorator;
 interface Throttles extends RouteDecorator
 {
     /**
+     * Groups the limits of every attribute naming it into one allowance, per client. `null` keeps
+     * them scoped to what they were declared on.
+     */
+    public ?string $bucket { get; }
+
+    /**
      * Returns the limits this attribute subjects the specified request to. The middleware scopes them
      * through {@see ThrottleCounterKey} before consuming any.
      *

@@ -24,6 +24,11 @@ final readonly class ThrottleWith implements Throttles
 {
     use AddsThrottleMiddleware;
 
+    /**
+     * A profile names its own counters, so it groups nothing here.
+     */
+    public ?string $bucket;
+
     public function __construct(
         /**
          * The profile resolving the limits that apply to a request.
@@ -31,7 +36,9 @@ final readonly class ThrottleWith implements Throttles
          * @var class-string<RateLimitProfile>
          */
         public string $profile,
-    ) {}
+    ) {
+        $this->bucket = null;
+    }
 
     public function resolveLimits(Request $request, Container $container): array
     {

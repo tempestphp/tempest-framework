@@ -32,11 +32,13 @@ final class ThrottleTest extends TestCase
     }
 
     #[Test]
-    public function a_named_bucket_becomes_the_limits_key(): void
+    public function a_named_bucket_stays_off_the_limit(): void
     {
-        $limit = new Throttle(attempts: 10, bucket: 'api')->toRateLimit();
+        $throttle = new Throttle(attempts: 10, bucket: 'api');
 
-        $this->assertSame('api', $limit->key);
+        // Keeping the bucket off the limit is what tells it apart from an application's own key.
+        $this->assertSame('api', $throttle->bucket);
+        $this->assertNull($throttle->toRateLimit()->key);
     }
 
     #[Test]
