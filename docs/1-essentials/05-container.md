@@ -245,7 +245,7 @@ final readonly class MarkdownInitializer implements Initializer
 
 In some cases, you want more control over singleton definitions.
 
-Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured CLI highlighting. In this situation, you can differentiate them using the `tag` parameter of the `#[Singleton]` attribute:
+Let's say you want an instance of `{php}\Tempest\Highlight\Highlighter` that would be configured for web highlighting, and one that would be configured for CLI highlighting. In this situation, you can differentiate them using the `tag` parameter of the `#[Singleton]` attribute:
 
 ```php app/WebHighlighterInitializer.php
 use Tempest\Container\Container;
@@ -283,14 +283,48 @@ $container->get(Highlighter::class, tag: 'cli');
 ```
 
 :::info
-[This blog post](https://stitcher.io/blog/tagged-singletons), by {gh:brendt}, provides in-depth explanations about tagged singletons.
+[This blog post](https://stitcher.io/blog/tagged-singletons) provides in-depth explanations about tagged singletons.
 :::
 
-### Dynamic tags
+### The `HasTag` interface
 
 Some components implement the {`Tempest\Container\HasTag`} interface, which requires a `tag` property. Singletons using this interface are tagged by the `tag` property, essentially providing the ability to have dynamic tags.
 
 This is specifically useful to get multiple instances of the same configuration. This is how [multiple database connections support](../1-essentials/03-database.md#using-multiple-connections) is implemented.
+
+### Dynamic tags
+
+It's possible to allow on-the-fly tagging of certain dependencies with no pre-defined tags. However, you need to explicitly specify you want to enable dynamic tags for a given dependency with the `#[Singleton]` attribute:
+
+```php
+use Tempest\Container\Singleton;
+
+#[Singleton(dynamicTags: true)]
+final class TenantRepository
+{ /* … */ }
+```
+
+```php
+use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
+
+final class TenantRepositoryInitializer implements Initializer
+{
+    #[Singleton(dynamicTags: true)]
+    public function initialize(Container $container): mixed
+    {
+        return new TenantRepository();
+    }
+}
+```
+
+With dynamic tags configured, you can now retrieve dependencies from the container with tags that weren't pre-configured:
+
+```php
+$repository = $container->get(TenantRepository::class, tag: $tenant->id);
+```
+
+As you might have guessed from the examples, dynamic tags are useful to build features with like multi-tenant systems.
 
 ## Built-in types dependencies
 
