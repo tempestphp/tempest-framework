@@ -425,14 +425,11 @@ final class GenericContainer implements Container
                 throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
             }
 
-            $object = $this->autowire($className, ...$params);
-            $this->singleton($className, $object, $tag);
-
-            return $object;
+            return $this->autowire($className, $tag, ...$params);
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className, ...$params);
+        return $this->autowire($className, null, ...$params);
     }
 
     private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
@@ -486,7 +483,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, mixed ...$params): object
+    private function autowire(string $className, string|UnitEnum|null $tag, mixed ...$params): object
     {
         $classReflector = new ClassReflector($className);
 
@@ -511,7 +508,7 @@ final class GenericContainer implements Container
             && ! $classReflector->getType()->matches(DynamicInitializer::class)
             && $classReflector->hasAttribute(Singleton::class)
         ) {
-            $this->singleton($className, $instance);
+            $this->singleton($className, $instance, $tag);
         }
 
         foreach ($classReflector->getProperties() as $property) {

@@ -401,6 +401,19 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
+    public function dynamic_tags_preserve_the_untagged_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $default = $container->get(DynamicTaggedDependency::class);
+        $tagged = $container->get(DynamicTaggedDependency::class, tag: 'a');
+
+        $this->assertNotSame($default, $tagged);
+        $this->assertSame($tagged, $container->get(DynamicTaggedDependency::class, tag: 'a'));
+        $this->assertSame($default, $container->get(DynamicTaggedDependency::class));
+    }
+
+    #[Test]
     public function tagged_singleton_exception(): void
     {
         $container = new GenericContainer();
