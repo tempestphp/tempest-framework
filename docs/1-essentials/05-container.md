@@ -224,7 +224,7 @@ final readonly class Client
 }
 ```
 
-Furthermore, an initializer method can be annotated as a `#[Singleton]`, meaning its return object will only ever be resolved once:
+Furthermore, an initializer method can be annotated as a `#[Singleton]`, meaning its return object will be reused for the singleton’s lifetime:
 
 ```php app/MarkdownInitializer.php
 use Tempest\Console\ConsoleCommand;
@@ -237,6 +237,43 @@ final readonly class MarkdownInitializer implements Initializer
     public function initialize(Container $container): MarkdownConverter|Markdown
     {
         // …
+    }
+}
+```
+
+### Singleton lifetimes
+
+By default, singletons use {`Tempest\Container\Lifetime::PROCESS`} as their lifetime: the container keeps the same instance for the lifetime of the process, including across requests in long-running applications.
+
+For objects that hold request-specific state, use `Lifetime::REQUEST`:
+
+```php
+use Tempest\Container\Lifetime;
+use Tempest\Container\Singleton;
+
+#[Singleton(lifetime: Lifetime::REQUEST)]
+final class RequestContext
+{
+    public ?string $tenantId = null;
+}
+```
+
+The container reuses this instance within a request. When the container is reset, it clears the instance so that the next request receives a fresh one, this happens after every request in long-running applications.
+
+Note that you can also declare the lifetime via initializers:
+
+```php app/RequestContextInitializer.php
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
+use Tempest\Container\Lifetime;
+use Tempest\Container\Singleton;
+
+final class RequestContextInitializer implements Initializer
+{
+    #[Singleton(lifetime: Lifetime::REQUEST)]
+    public function initialize(Container $container): RequestContext
+    {
+        return new RequestContext();
     }
 }
 ```
