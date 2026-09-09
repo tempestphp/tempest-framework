@@ -344,7 +344,7 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
-    public function test_dynamic_tags_with_initializer(): void
+    public function dynamic_tags_with_initializer(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(DynamicTaggedDependencyInitializer::class);
@@ -359,7 +359,7 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
-    public function test_dynamic_tags_with_dynamic_initializer(): void
+    public function dynamic_tags_with_dynamic_initializer(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(DynamicTaggedDependencyDynamicInitializer::class);
@@ -377,7 +377,7 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
-    public function test_dynamic_tags_with_singleton(): void
+    public function dynamic_tags_with_singleton(): void
     {
         $container = new GenericContainer();
 
@@ -391,7 +391,7 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
-    public function test_non_dynamic_tags_throw_exception(): void
+    public function non_dynamic_tags_throw_exception(): void
     {
         $container = new GenericContainer();
 
