@@ -306,12 +306,13 @@ final class TenantRepository
 
 ```php
 use Tempest\Container\Initializer;
+use Tempest\Container\Container;
 use Tempest\Container\Singleton;
 
 final class TenantRepositoryInitializer implements Initializer
 {
     #[Singleton(dynamicTags: true)]
-    public function initialize(Container $container): mixed
+    public function initialize(Container $container): TenantRepository
     {
         return new TenantRepository();
     }
