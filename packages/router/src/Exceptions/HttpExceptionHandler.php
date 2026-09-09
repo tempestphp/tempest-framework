@@ -7,6 +7,7 @@ use Tempest\Core\ExceptionHandler;
 use Tempest\Core\Exceptions\ExceptionProcessor;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Header;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -67,7 +68,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
             // Headers keep the casing they were added with, so we look up the existing one to avoid a duplicate
             $existing = $response->getHeader($name);
 
-            $response->removeHeader($existing === null ? $name : $existing->name);
+            $response->removeHeader($existing instanceof Header ? $existing->name : $name);
 
             foreach (is_array($values) ? $values : [$values] as $value) {
                 $response->addHeader($name, $value);

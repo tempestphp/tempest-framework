@@ -163,7 +163,11 @@ final class ArrayToObjectMapper implements Mapper
 
             $child = $property->getValue($parent);
 
-            if ($child === null || $child === []) {
+            if ($child === null) {
+                continue;
+            }
+
+            if ($child === []) {
                 continue;
             }
 

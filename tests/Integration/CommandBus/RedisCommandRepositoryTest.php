@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
+use Deprecated;
 use PHPUnit\Framework\Attributes\PostCondition;
 use PHPUnit\Framework\Attributes\PreCondition;
 use PHPUnit\Framework\Attributes\Test;
@@ -149,10 +150,8 @@ final class RedisCommandRepositoryTest extends FrameworkIntegrationTestCase
         $this->assertArrayNotHasKey($corrupted, $pending);
     }
 
-    /**
-     * @deprecated Remove in 4.0, together with the migration itself.
-     */
     #[Test]
+    #[Deprecated(message: 'Remove in 4.0, together with the migration itself.')]
     public function migrates_commands_stored_under_their_own_key(): void
     {
         $this->redis->command('SET', 'command:pending:' . ($pending = uuid()), serialize($command = new MyCommand()));
@@ -167,10 +166,8 @@ final class RedisCommandRepositoryTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, (int) $this->redis->command('HEXISTS', 'command:failed', $failed));
     }
 
-    /**
-     * @deprecated Remove in 4.0, together with the migration itself.
-     */
     #[Test]
+    #[Deprecated(message: 'Remove in 4.0, together with the migration itself.')]
     public function migrating_leaves_commands_already_stored_in_the_hash_alone(): void
     {
         $this->repository->store($uuid = uuid(), $command = new MyCommand());
@@ -179,10 +176,8 @@ final class RedisCommandRepositoryTest extends FrameworkIntegrationTestCase
         $this->assertEquals([$uuid => $command], $this->repository->getPendingCommands());
     }
 
-    /**
-     * @deprecated Remove in 4.0, together with the migration itself.
-     */
     #[Test]
+    #[Deprecated(message: 'Remove in 4.0, together with the migration itself.')]
     public function migrating_only_scans_the_keyspace_once(): void
     {
         $this->assertSame(0, $this->repository->migrateStoredCommands());
