@@ -2,12 +2,12 @@
 
 namespace Tempest\Router\Exceptions;
 
-use Tempest\Http\Header;
 use Tempest\Container\Container;
 use Tempest\Core\ExceptionHandler;
 use Tempest\Core\Exceptions\ExceptionProcessor;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Header;
 use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;

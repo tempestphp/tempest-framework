@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Deprecated;
 use DateTimeImmutable;
+use Deprecated;
 use Symfony\Component\Process\Process;
 use Tempest\CommandBus\AsyncCommandRepositories\RedisCommandRepository;
 use Tempest\Console\Console;
