@@ -412,10 +412,9 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
-            $singleton =
-                $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
-                    ->getMethod('initialize')
-                    ->getAttribute(Singleton::class) ?? $class->getAttribute(Singleton::class);
+            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
+                ->getMethod('initialize')
+                ->getAttribute(Singleton::class) ?? $class->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singletonLifetimes[$object] = $singleton->lifetime;
@@ -769,9 +768,11 @@ final class GenericContainer implements Container
                 if (! is_object($instance)) {
                     continue;
                 }
+
                 if ($instance instanceof Closure) {
                     continue;
                 }
+
                 $this->singletonLifetimes[$instance] ??= new ClassReflector($instance)->getAttribute(Singleton::class)->lifetime ?? Lifetime::PROCESS;
 
                 if ($this->singletonLifetimes[$instance] === Lifetime::REQUEST) {
