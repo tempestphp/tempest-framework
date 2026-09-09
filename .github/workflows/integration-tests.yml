@@ -4,7 +4,7 @@ on:
   pull_request:
     paths-ignore:
       - "docs/**"
-      - ".github/**"
+      # - ".github/**"
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
@@ -37,7 +37,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -59,20 +59,21 @@ jobs:
         os: [ubuntu-latest]
         php: [8.5]
         database: [sqlite, mysql, postgres]
-        stability: [prefer-stable]
+        dependencies: [highest]
         include:
           - os: windows-latest
             php: 8.5
             database: sqlite
-            stability: prefer-stable
+            dependencies: highest
+
           - os: ubuntu-latest
             php: 8.5
             database: sqlite
-            stability: prefer-lowest
+            dependencies: lowest
     env:
       POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
 
-    name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
+    name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.dependencies }} - ${{ matrix.os }}"
 
     steps:
       - name: Checkout code
@@ -83,7 +84,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup problem matchers
         run: |
@@ -91,7 +92,10 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction  --ignore-platform-reqs
+        uses: ramsey/composer-install@v4
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: "--prefer-dist --ignore-platform-reqs"
 
       - name: "Setup Redis"
         if: ${{ matrix.os != 'windows-latest' }}
