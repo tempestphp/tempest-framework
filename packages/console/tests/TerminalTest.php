@@ -61,6 +61,7 @@ final class TerminalTest extends TestCase
         $terminal = new Terminal($console);
         $terminal->disableTty();
         $terminal->cursor = $cursor;
+        $events = [];
 
         iterator_to_array($terminal->render(new TextInputComponent(label: 'Name')));
 
