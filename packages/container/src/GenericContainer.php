@@ -462,7 +462,7 @@ final class GenericContainer implements Container
 
             $singleton = $class->getAttribute(Singleton::class) ?? $class->getMethod('initialize')->getAttribute(Singleton::class);
 
-            if ($singleton && $singleton->dynamicTags) {
+            if ($singleton?->dynamicTags) {
                 return $this->resolve($class->getName());
             }
         }
