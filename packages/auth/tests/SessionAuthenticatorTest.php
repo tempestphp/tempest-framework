@@ -29,6 +29,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
             session: $session,
             authenticatableResolver: $resolver,
             sessionRegenerator: $this->createRegenerator($session),
@@ -48,6 +49,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
             session: $session,
             authenticatableResolver: $resolver,
             sessionRegenerator: $this->createRegenerator($session),
@@ -70,6 +72,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
             session: $session,
             authenticatableResolver: $resolver,
             sessionRegenerator: $this->createRegenerator($session),
@@ -97,6 +100,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
             session: $session,
             authenticatableResolver: $resolver,
             sessionRegenerator: $this->createRegenerator($session),
@@ -122,6 +126,7 @@ final class SessionAuthenticatorTest extends TestCase
         $session->set(SessionAuthenticator::AUTHENTICATABLE_CLASS, MemoizedAuthenticatable::class);
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: new TestingSessionManager(),
             session: $session,
             authenticatableResolver: $resolver,
             sessionRegenerator: $this->createRegenerator($session),
@@ -145,6 +150,7 @@ final class SessionAuthenticatorTest extends TestCase
         $sessionManager = new TestingSessionManager();
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: $sessionManager,
             session: $session,
             authenticatableResolver: new CountingAuthenticatableResolver(),
             sessionRegenerator: $this->createRegenerator($session, $sessionManager),
@@ -154,6 +160,7 @@ final class SessionAuthenticatorTest extends TestCase
 
         $this->assertNotSame('test-session', (string) $session->id);
         $this->assertSame(1, $sessionManager->deletedSessions);
+        $this->assertSame(1, $sessionManager->savedSessions);
         $this->assertSame(1, $session->get(SessionAuthenticator::AUTHENTICATABLE_KEY));
     }
 
@@ -167,6 +174,7 @@ final class SessionAuthenticatorTest extends TestCase
         $sessionManager = new TestingSessionManager();
 
         $authenticator = new SessionAuthenticator(
+            sessionManager: $sessionManager,
             session: $session,
             authenticatableResolver: new CountingAuthenticatableResolver(),
             sessionRegenerator: $this->createRegenerator($session, $sessionManager),
@@ -176,6 +184,7 @@ final class SessionAuthenticatorTest extends TestCase
 
         $this->assertNotSame('test-session', (string) $session->id);
         $this->assertSame(1, $sessionManager->deletedSessions);
+        $this->assertSame(1, $sessionManager->savedSessions);
         $this->assertNull($session->get(SessionAuthenticator::AUTHENTICATABLE_KEY));
         $this->assertNull($session->get(SessionAuthenticator::AUTHENTICATABLE_CLASS));
         $this->assertNull($session->get('key'));

@@ -37,16 +37,6 @@ final class SessionRegeneratorTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function invalidate_discards_data(): void
-    {
-        $this->session->set('key', 'value');
-
-        $this->regenerator->invalidate();
-
-        $this->assertNull($this->session->get('key'));
-    }
-
-    #[Test]
     public function destroys_the_session_it_replaces(): void
     {
         $sessionManager = $this->container->get(SessionManager::class);
