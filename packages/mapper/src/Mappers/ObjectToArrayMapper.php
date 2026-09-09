@@ -14,8 +14,6 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-use function Tempest\Mapper\map;
-
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
@@ -30,32 +28,63 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     public function map(mixed $from, mixed $to): mixed
     {
-        if ($from instanceof JsonSerializable) {
-            return $from->jsonSerialize();
+        $visited = [];
+
+        return $this->mapValue($from, $visited);
+    }
+
+    /**
+     * @param array<int, true> $visited
+     */
+    private function mapValue(mixed $value, array &$visited): mixed
+    {
+        if ($value instanceof JsonSerializable) {
+            return $value->jsonSerialize();
         }
 
-        if (is_object($from)) {
-            $class = new ClassReflector($from);
+        if (! is_object($value)) {
+            return $value;
+        }
 
-            $mappedProperties = [];
+        return $this->mapObject($value, $visited);
+    }
 
-            foreach ($class->getPublicProperties() as $property) {
-                if ($property->hasAttribute(Hidden::class)) {
-                    continue;
-                }
+    /**
+     * @param array<int, true> $visited
+     */
+    private function mapObject(object $object, array &$visited): mixed
+    {
+        $objectId = spl_object_id($object);
 
-                $propertyName = $this->resolvePropertyName($property);
-                $propertyValue = $this->resolvePropertyValue($property, $from);
-                $mappedProperties[$propertyName] = $propertyValue;
+        if (isset($visited[$objectId])) {
+            return $object;
+        }
+
+        $visited[$objectId] = true;
+
+        $class = new ClassReflector($object);
+
+        $mappedProperties = [];
+
+        foreach ($class->getPublicProperties() as $property) {
+            if ($property->hasAttribute(Hidden::class)) {
+                continue;
             }
-        } else {
-            $mappedProperties = $from;
+
+            $propertyName = $this->resolvePropertyName($property);
+            $propertyValue = $this->resolvePropertyValue($property, $object, $visited);
+            $mappedProperties[$propertyName] = $propertyValue;
         }
+
+        unset($visited[$objectId]);
 
         return $mappedProperties;
     }
 
-    private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
+    /**
+     * @param array<int, true> $visited
+     */
+    private function resolvePropertyValue(PropertyReflector $property, object $object, array &$visited): mixed
     {
         if (! $property->isInitialized($object)) {
             return null;
@@ -69,7 +98,7 @@ final readonly class ObjectToArrayMapper implements Mapper
                     continue;
                 }
 
-                $propertyValue[$key] = map($value)->toArray();
+                $propertyValue[$key] = $this->mapValue($value, $visited);
             }
 
             return $propertyValue;
@@ -77,6 +106,10 @@ final readonly class ObjectToArrayMapper implements Mapper
 
         if ($propertyValue !== null && ($serializer = $this->serializerFactory->in($this->context)->forProperty($property)) instanceof Serializer) {
             return $serializer->serialize($propertyValue);
+        }
+
+        if ($propertyValue !== null && is_object($propertyValue)) {
+            return $this->mapValue($propertyValue, $visited);
         }
 
         return $propertyValue;
