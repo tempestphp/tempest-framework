@@ -89,6 +89,7 @@ final class ContainerLifetimeTest extends TestCase
     {
         $container = new GenericContainer();
         $container->addInitializer(RequestLifetimeInitializer::class);
+
         $instance = $container->get(RequestLifetimeInterface::class, 'tag');
         $this->assertSame($instance, $container->get(RequestLifetimeInterface::class, 'tag'));
 
@@ -125,6 +126,7 @@ final class ContainerLifetimeTest extends TestCase
         $container = new GenericContainer();
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
         $container->singleton(RequestLifetimeInterface::class, fn () => new RequestLifetimeSingleton(), 'request');
+
         $process = $container->get(SingletonClass::class);
 
         for ($request = 0; $request < 3; $request++) {
@@ -143,6 +145,7 @@ final class ContainerLifetimeTest extends TestCase
     {
         $container = new GenericContainer();
         $container->addInitializer(SingletonInitializer::class);
+
         $instance = $container->get(ContainerObjectE::class);
 
         $container->reset();
@@ -161,6 +164,7 @@ final class ContainerLifetimeTest extends TestCase
         };
         $container = new GenericContainer();
         $container->addInitializer($initializer::class);
+
         $instance = $container->get(RequestLifetimeSingleton::class);
         $this->assertSame($instance, $container->get(RequestLifetimeSingleton::class));
 
@@ -224,6 +228,7 @@ final class ContainerLifetimeTest extends TestCase
         };
         $container = new GenericContainer();
         $container->addInitializer($initializer::class);
+
         $instance = $container->get(RequestLifetimeSingleton::class);
         $container->singleton(RequestLifetimeInterface::class, $instance);
 
