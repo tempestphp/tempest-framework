@@ -44,9 +44,9 @@ By default, every route and every client gets an independent counter. To share a
 
 ```
 
-A bucket groups routes, not clients: the routes naming it draw from a single allowance, and that allowance is still counted per client. Unnamed limits are automatically scoped by their exact allowance criteria, meaning attributes can be reordered freely without breaking counters.
+A bucket groups routes, not clients: the routes naming it draw from a single allowance, and that allowance is still counted per client. Routes may name the same bucket with different attempt counts—the narrowest of them decides how much allowance there is, so a single route can tighten the bucket it shares. They are grouped per window, though: limits measuring different spans keep counters of their own, since one counter can only last one span. Unnamed limits are automatically scoped by their exact allowance criteria, meaning attributes can be reordered freely without breaking counters.
 
-Changing an allowance resets its counter, lifting current limits. Use a named bucket if a counter needs to persist across configuration adjustments.
+Changing an allowance resets its counter, lifting current limits. A named bucket keeps its counter when the attempts change, but not when the window does.
 
 You can also apply `#[Throttle]` directly to a controller class. This applies the allowance globally to all routes exposed by the controller, while method-level limits stack on top to narrow allowances further.
 

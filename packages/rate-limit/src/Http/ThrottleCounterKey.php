@@ -26,9 +26,13 @@ final readonly class ThrottleCounterKey
         // `unidentified` still gets its own counter rather than the shared one.
         $client = $client === null ? 'unidentified' : 'client:' . $client;
 
-        // A bucket groups routes rather than naming a counter, so it stays scoped to the client.
+        // A bucket groups routes rather than naming a counter, so it stays scoped to the client. The
+        // window is part of the key, but the attempts are not: routes sharing a bucket spend from one
+        // allowance, and the narrowest of them decides how much of it there is. Were the window left
+        // out, limits measuring different spans would land in one counter, and whichever request
+        // opened it would decide how long it lasts.
         if ($bucket !== null) {
-            return implode(':', ['bucket', $bucket, $client]);
+            return implode(':', ['bucket', $bucket, self::window($limit), $client]);
         }
 
         return implode(':', [
@@ -71,6 +75,14 @@ final readonly class ThrottleCounterKey
      */
     private static function allowance(RateLimit $limit): string
     {
-        return "{$limit->attempts}_{$limit->window->getTotalSeconds()}";
+        return "{$limit->attempts}_" . self::window($limit);
+    }
+
+    /**
+     * Returns the span the limit measures, in seconds.
+     */
+    private static function window(RateLimit $limit): string
+    {
+        return (string) $limit->window->getTotalSeconds();
     }
 }

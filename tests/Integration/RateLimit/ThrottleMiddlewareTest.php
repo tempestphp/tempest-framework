@@ -287,6 +287,22 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function a_shared_bucket_keeps_windows_of_different_spans_apart(): void
+    {
+        // Exhausts the per-minute allowance of the `shared` bucket.
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/second')->assertOk();
+        $this->http
+            ->fromIp('203.0.113.9')
+            ->get('/throttled-by-shared-bucket/first')
+            ->assertStatus(Status::TOO_MANY_REQUESTS);
+
+        // The hourly limit names the same bucket, but measures another span. Sharing a counter with
+        // the limits above would leave the span of the window to whichever request opened it.
+        $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/hourly')->assertOk();
+    }
+
+    #[Test]
     public function a_shared_bucket_is_still_scoped_per_client(): void
     {
         $this->http->fromIp('203.0.113.9')->get('/throttled-by-shared-bucket/first')->assertOk();

@@ -91,6 +91,17 @@ final readonly class ThrottledController
         return new Ok('allowed');
     }
 
+    /**
+     * Names the same bucket as `sharedBucketFirst`, but measures a different span. A bucket groups
+     * routes within one window, so this route spends an allowance of its own.
+     */
+    #[Throttle(attempts: 2, per: Per::HOUR, bucket: 'shared')]
+    #[Get('/throttled-by-shared-bucket/hourly')]
+    public function sharedBucketHourly(): Response
+    {
+        return new Ok('allowed');
+    }
+
     #[ThrottleWith(SharedCounterRateLimitProfile::class)]
     #[Get('/throttled-by-shared-counter/first')]
     public function sharedCounterFirst(): Response
