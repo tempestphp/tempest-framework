@@ -245,7 +245,7 @@ final readonly class MarkdownInitializer implements Initializer
 
 By default, singletons use {`Tempest\Container\Lifetime::PROCESS`} as their lifetime: the container keeps the same instance for the lifetime of the process, including across requests in long-running applications.
 
-For objects that hold request-specific state, use `Lifetime::REQUEST`:
+For objects that hold request-specific state, you can specify `Lifetime::REQUEST` instead:
 
 ```php
 use Tempest\Container\Lifetime;
@@ -262,7 +262,7 @@ The container reuses this instance within a request. When the container is reset
 
 Note that you can also declare the lifetime via initializers:
 
-```php app/RequestContextInitializer.php
+```php
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Lifetime;
