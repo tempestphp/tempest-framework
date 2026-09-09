@@ -7,7 +7,9 @@ namespace Tempest\Reflection\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionObject;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\Tests\Fixtures\ChildWithRecursiveAttribute;
 use Tempest\Reflection\Tests\Fixtures\ClassWithInterfaceWithRecursiveAttribute;
 use Tempest\Reflection\Tests\Fixtures\RecursiveAttribute;
@@ -19,6 +21,22 @@ use Tempest\Reflection\Tests\Fixtures\TestClassB;
  */
 final class ClassReflectorTest extends TestCase
 {
+    #[Test]
+    public function public_properties_are_specific_to_the_reflected_object(): void
+    {
+        $first = new ClassReflector(new ReflectionObject((object) ['first' => 1]));
+        $second = new ClassReflector(new ReflectionObject((object) ['second' => 2]));
+
+        $this->assertSame(['first'], array_map(
+            fn (PropertyReflector $property) => $property->getName(),
+            $first->getPublicProperties(),
+        ));
+        $this->assertSame(['second'], array_map(
+            fn (PropertyReflector $property) => $property->getName(),
+            $second->getPublicProperties(),
+        ));
+    }
+
     #[Test]
     public function getting_underlying_reflection_class(): void
     {

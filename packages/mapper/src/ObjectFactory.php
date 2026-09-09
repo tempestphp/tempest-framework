@@ -33,14 +33,15 @@ final class ObjectFactory
     private Context|UnitEnum|string|null $context = null;
 
     /** @var \Tempest\Mapper\Mapper[] */
-    private array $mappers;
+    private array $mappers {
+        get => $this->resolveMappers();
+    }
 
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {
-        $this->mappers = $this->resolveMappers();
-    }
+        private readonly MapperCache $cache,
+    ) {}
 
     /**
      * Sets the target class for mapping operations.
@@ -112,13 +113,9 @@ final class ObjectFactory
      */
     public function in(Context|UnitEnum|string|null $context): self
     {
-        $clone = clone($this, [
+        return clone($this, [
             'context' => $context,
         ]);
-
-        $clone->mappers = $clone->resolveMappers();
-
-        return $clone;
     }
 
     /**
@@ -369,20 +366,23 @@ final class ObjectFactory
     }
 
     /**
-     * We cache mapper instances within the factory so that we prevent mappers being resolved on every mapping call.
-     * Whenever a mapping context changes, we'll have to re-resolve the mapper classes with the new context.
+     * Mapper instances are cached per context in {@see \Tempest\Mapper\MapperCache}, so that they are not resolved
+     * from the container on every mapping call. Whenever a mapping context changes, we'll have to re-resolve the
+     * mapper classes with the new context.
      */
     private function resolveMappers(): array
     {
-        /** @var Mapper[] $mappers */
-        $mappers = [];
-
         $context = MappingContext::from($this->context);
 
-        foreach ($this->config->mappers as $mapperClass) {
-            $mappers[] = $this->container->get($mapperClass, context: $context);
-        }
+        return $this->cache->resolve($context, function () use ($context): array {
+            /** @var Mapper[] $mappers */
+            $mappers = [];
 
-        return $mappers;
+            foreach ($this->config->mappers as $mapperClass) {
+                $mappers[] = $this->container->get($mapperClass, context: $context);
+            }
+
+            return $mappers;
+        });
     }
 }

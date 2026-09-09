@@ -741,6 +741,11 @@ final class ModelInspector
 
     public function getPrimaryKeyProperty(): ?PropertyReflector
     {
+        return $this->memoize('primary_key_property', $this->resolvePrimaryKeyProperty(...));
+    }
+
+    private function resolvePrimaryKeyProperty(): ?PropertyReflector
+    {
         if (! $this->isObjectModel()) {
             return null;
         }
