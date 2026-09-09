@@ -421,14 +421,14 @@ final class GenericContainer implements Container
             /** @var \Tempest\Container\Singleton|null $singleton */
             $singleton = $class->getAttribute(Singleton::class);
 
-            if ($singleton && $singleton->dynamicTags) {
-                $object = $this->autowire($className, ...$params);
-                $this->singleton($className, $object, $tag);
-
-                return $object;
+            if (! $singleton || ! $singleton->dynamicTags) {
+                throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
             }
 
-            throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
+            $object = $this->autowire($className, ...$params);
+            $this->singleton($className, $object, $tag);
+
+            return $object;
         }
 
         // Finally, autowire the class.
