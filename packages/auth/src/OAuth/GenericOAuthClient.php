@@ -153,6 +153,7 @@ final class GenericOAuthClient implements OAuthClient
         $token = $this->requestAccessToken(
             code: $request->get('code'),
         );
+        $this->storeIdToken($token);
         $user = $this->fetchUser(token: $token);
 
         $authenticable = $map($user, $token);
@@ -160,5 +161,14 @@ final class GenericOAuthClient implements OAuthClient
         $this->authenticator->authenticate($authenticable);
 
         return $authenticable;
+    }
+
+    private function storeIdToken(AccessToken $token): void
+    {
+        $values = $token->getValues();
+
+        if (isset($values['id_token'])) {
+            $this->session->set('id_token', $values['id_token']);
+        }
     }
 }
