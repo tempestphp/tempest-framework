@@ -58,8 +58,7 @@ final class GenericContainer implements Container
         private(set) ArrayIterator $resettables = new ArrayIterator(),
 
         private(set) ?DependencyChain $chain = null,
-    )
-    {
+    ) {
         $this->singletonLifetimes = new WeakMap();
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
@@ -413,9 +412,10 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
-            $singleton = $initializerClass->getAttribute(Singleton::class)
-                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class)
-                ?? $class->getAttribute(Singleton::class);
+            $singleton =
+                $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
+                    ->getMethod('initialize')
+                    ->getAttribute(Singleton::class) ?? $class->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singletonLifetimes[$object] = $singleton->lifetime;
@@ -766,10 +766,12 @@ final class GenericContainer implements Container
         foreach ([$this->singletonDefinitions, $this->resolvedSingletons] as $singletons) {
             foreach ($singletons->getArrayCopy() as $dependencyName => $instance) {
                 // Factories remain registered so the next request can create a fresh instance.
-                if (! is_object($instance) || $instance instanceof Closure) {
+                if (! is_object($instance)) {
                     continue;
                 }
-
+                if ($instance instanceof Closure) {
+                    continue;
+                }
                 $this->singletonLifetimes[$instance] ??= new ClassReflector($instance)->getAttribute(Singleton::class)->lifetime ?? Lifetime::PROCESS;
 
                 if ($this->singletonLifetimes[$instance] === Lifetime::REQUEST) {
