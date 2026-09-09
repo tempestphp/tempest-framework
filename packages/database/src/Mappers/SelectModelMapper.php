@@ -120,13 +120,7 @@ final class SelectModelMapper implements Mapper
             return false;
         }
 
-        foreach ($value as $item) {
-            if (! $this->relationDataIsEmpty($item)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($value, fn($item) => $this->relationDataIsEmpty($item));
     }
 
     public function normalizeRow(ModelInspector $model, array $row, MutableArray $data): array

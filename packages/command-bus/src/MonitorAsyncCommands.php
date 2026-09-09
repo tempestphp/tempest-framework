@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
+use Deprecated;
 use DateTimeImmutable;
 use Symfony\Component\Process\Process;
 use Tempest\CommandBus\AsyncCommandRepositories\RedisCommandRepository;
@@ -108,9 +109,8 @@ if (class_exists(ConsoleCommand::class)) {
 
         /**
          * Moves Redis commands stored by an older version over, on the first start after the upgrade.
-         *
-         * @deprecated Remove in 4.0.
          */
+        #[Deprecated(message: 'Remove in 4.0.')]
         private function migrateStoredCommands(): void
         {
             if (! $this->repository instanceof RedisCommandRepository) {
