@@ -14,6 +14,7 @@ use Tempest\RateLimit\Config\RateLimitConfig;
 use Tempest\RateLimit\RateLimit;
 use Tempest\RateLimit\RateLimiter;
 use Tempest\RateLimit\RateLimitResult;
+use Tempest\RateLimit\Storage\RateLimitStorageFailed;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\MatchedRoute;
@@ -46,7 +47,14 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
         // The first rejection stops the rest. A request turned away by a narrow window does not
         // also spend the wider allowances behind it.
         foreach ($limits as $limit) {
-            $result = $this->limiter->attempt($limit);
+            try {
+                $result = $this->limiter->attempt($limit);
+            } catch (RateLimitStorageFailed $failure) {
+                throw new HttpRequestFailed(
+                    status: Status::SERVICE_UNAVAILABLE,
+                    message: $failure->getMessage(),
+                );
+            }
 
             if ($result->exceeded) {
                 $this->reject($result);

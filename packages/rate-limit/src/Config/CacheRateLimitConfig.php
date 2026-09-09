@@ -24,9 +24,18 @@ final class CacheRateLimitConfig implements RateLimitConfig
         public string $keyPrefix = 'rate_limit',
 
         /**
-         * Lock timeout for concurrent updates.
+         * How long a lock on a counter is held before it is considered abandoned. This only has to
+         * outlast a single update.
          */
         public int $lockTimeoutInSeconds = 5,
+
+        /**
+         * How long to wait for a counter locked by another process. Requests for one counter are
+         * serialized, so this is the delay a client may add to its own requests before being turned
+         * away. Waiting longer holds a worker for longer, which is the opposite of what a limit is
+         * for.
+         */
+        public int $lockWaitInMilliseconds = 250,
 
         /**
          * Whether HTTP responses include `X-RateLimit-*` headers. These headers are per-client and must

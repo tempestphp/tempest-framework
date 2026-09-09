@@ -214,6 +214,8 @@ Exceeding limits via `throttle()` throws {b`Tempest\RateLimit\RateLimitWasExceed
 
 Windows are managed via {b`Tempest\RateLimit\RateLimitStorage`}, which is built by the configured {b`Tempest\RateLimit\Config\RateLimitConfig`}. Tempest defaults to {b`Tempest\RateLimit\Config\CacheRateLimitConfig`}, which requires no external services beyond a standard [cache](./06-cache.md). Because it serialises updates using locks rather than atomic operations, concurrent loads may lead to undercounting. It is also only as durable as the cache itself—when the cache is disabled, no counter is persisted and no limit is ever reached.
 
+Requests for one counter wait for each other, for up to `lockWaitInMilliseconds`. A counter still locked by then cannot be read, so the attempt has no outcome and the request is turned away with a `429`—letting it through would leave the route unmetered exactly when it is under load. Counters are scoped per client, so a client contending with itself is the one held back.
+
 For high-concurrency production environments, switch to {b`Tempest\RateLimit\Config\RedisRateLimitConfig`}, which stores windows in Redis using atomic Lua-script increments:
 
 ```php app/rateLimit.config.php

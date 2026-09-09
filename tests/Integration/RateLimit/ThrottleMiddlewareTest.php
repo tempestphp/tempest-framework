@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\RateLimit;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Clock\Clock;
 use Tempest\DateTime\Duration;
 use Tempest\Http\Status;
 use Tempest\RateLimit\Config\CacheRateLimitConfig;
+use Tempest\RateLimit\GenericRateLimiter;
 use Tempest\RateLimit\RateLimit;
 use Tempest\RateLimit\RateLimiter;
 use Tests\Tempest\Fixtures\RateLimit\UnidentifiedKeyResolver;
+use Tests\Tempest\Fixtures\RateLimit\UnreachableRateLimitStorage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -284,6 +287,20 @@ final class ThrottleMiddlewareTest extends FrameworkIntegrationTestCase
             ->fromIp('203.0.113.9')
             ->get('/throttled-by-shared-bucket/first')
             ->assertStatus(Status::TOO_MANY_REQUESTS);
+    }
+
+    #[Test]
+    public function a_rate_limit_storage_failure_returns_service_unavailable(): void
+    {
+        $this->container->singleton(RateLimiter::class, new GenericRateLimiter(
+            storage: new UnreachableRateLimitStorage(),
+            clock: $this->container->get(Clock::class),
+        ));
+
+        $this->http
+            ->fromIp('203.0.113.9')
+            ->get('/throttled')
+            ->assertStatus(Status::SERVICE_UNAVAILABLE);
     }
 
     #[Test]
