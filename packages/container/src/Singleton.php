@@ -12,5 +12,6 @@ final readonly class Singleton
     public function __construct(
         public ?string $tag = null,
         public bool $dynamicTags = false,
+        public Lifetime $lifetime = Lifetime::PROCESS,
     ) {}
 }

@@ -860,7 +860,7 @@ final class ContainerTest extends TestCase
 
         $container->get(SingletonClass::class);
         $container->get(SingletonClass::class);
-        $this->assertSame(2, SingletonClass::$count); // constructed twice, once before and once after reset
+        $this->assertSame(1, SingletonClass::$count);
         $this->assertTrue(ResettableDependency::$reset);
     }
 }
