@@ -58,7 +58,8 @@ final class GenericContainer implements Container
         private(set) ArrayIterator $resettables = new ArrayIterator(),
 
         private(set) ?DependencyChain $chain = null,
-    ) {
+    )
+    {
         $this->singletonLifetimes = new WeakMap();
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
@@ -412,9 +413,9 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
-                ->getMethod('initialize')
-                ->getAttribute(Singleton::class) ?? $class->getAttribute(Singleton::class);
+            $singleton = $initializerClass->getAttribute(Singleton::class)
+                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class)
+                ?? $class->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singletonLifetimes[$object] = $singleton->lifetime;
