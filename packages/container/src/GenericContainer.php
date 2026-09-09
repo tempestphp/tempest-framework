@@ -416,9 +416,19 @@ final class GenericContainer implements Container
             return $object;
         }
 
-        // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
+        // Check for dynamic tags
         if ($tag !== null) {
-            throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
+            /** @var \Tempest\Container\Singleton|null $singleton */
+            $singleton = $class->getAttribute(Singleton::class);
+
+            if (! $singleton || ! $singleton->dynamicTags) {
+                throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
+            }
+
+            $object = $this->autowire($className, ...$params);
+            $this->singleton($className, $object, $tag);
+
+            return $object;
         }
 
         // Finally, autowire the class.
@@ -444,6 +454,17 @@ final class GenericContainer implements Container
 
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
             return $this->resolve($initializerClass);
+        }
+
+        // Check if dynamic tags are allowed
+        if ($tag && ($initializerClass = $this->initializers[$target->getName()] ?? null)) {
+            $class = new ClassReflector($initializerClass);
+
+            $singleton = $class->getAttribute(Singleton::class) ?? $class->getMethod('initialize')->getAttribute(Singleton::class);
+
+            if ($singleton?->dynamicTags) {
+                return $this->resolve($class->getName());
+            }
         }
 
         // Loop through the registered initializers to see if
