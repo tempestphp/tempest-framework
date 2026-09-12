@@ -9,6 +9,7 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\SessionRegenerator;
 
 final readonly class AuthenticatorInitializer implements Initializer
 {
@@ -19,6 +20,7 @@ final readonly class AuthenticatorInitializer implements Initializer
             sessionManager: $container->get(SessionManager::class),
             session: $container->get(Session::class),
             authenticatableResolver: $container->get(AuthenticatableResolver::class),
+            sessionRegenerator: $container->get(SessionRegenerator::class),
         );
     }
 }
