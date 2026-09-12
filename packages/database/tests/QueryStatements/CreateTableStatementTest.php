@@ -113,7 +113,7 @@ final class CreateTableStatementTest extends TestCase
             <<<SQL
             CREATE TABLE "books" (
                 "id" SERIAL PRIMARY KEY, 
-                "author_id" INTEGER  NOT NULL, 
+                "author_id" INTEGER NOT NULL, 
                 CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
                 "name" VARCHAR(255) NOT NULL
             );
@@ -165,7 +165,7 @@ final class CreateTableStatementTest extends TestCase
             <<<SQL
             CREATE TABLE "books" (
                 "id" SERIAL PRIMARY KEY, 
-                "author_id" INTEGER  NOT NULL, 
+                "author_id" INTEGER NOT NULL, 
                 CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
                 "name" VARCHAR(255) NOT NULL
             );
