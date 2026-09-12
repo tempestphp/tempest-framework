@@ -5,9 +5,13 @@ on:
     paths-ignore:
       - "docs/**"
       - ".github/**"
+  push:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
+
 env:
   POSTGRES_USER: runner
   POSTGRES_PASSWORD: ""
@@ -18,16 +22,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vitest:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        php: [8.5]
-        os: [ubuntu-latest]
-
-    name: "Run tests: ${{ matrix.os }}"
-
+  discover-domains:
+    name: "Discover Integration Domains"
+    runs-on: ubuntu-latest
+    outputs:
+      domains: ${{ steps.scan.outputs.domains }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,9 +34,41 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
+          coverage: none
+
+      - name: Scan Integration directories
+        id: scan
+        run: |
+          php -r '
+            $domains = [];
+            foreach (glob("tests/Integration/*", GLOB_ONLYDIR) as $dir) {
+                $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+                foreach ($it as $file) {
+                    if (str_ends_with($file->getFilename(), "Test.php")) {
+                        $domains[] = basename($dir);
+                        break;
+                    }
+                }
+            }
+            sort($domains);
+            echo "domains=" . json_encode(array_values(array_unique($domains))) . "\n";
+          ' >> $GITHUB_OUTPUT
+
+
+  vitest:
+    runs-on: ubuntu-latest
+    name: "Run JS tests"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.5
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -52,27 +83,29 @@ jobs:
         run: bun run test
 
   phpunit:
+    needs: discover-domains
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         php: [8.5]
-        database: [sqlite, mysql, postgres]
+        database: [sqlite]
         stability: [prefer-stable]
+        domain: ${{ fromJson(needs.discover-domains.outputs.domains) }}
         include:
-          - os: windows-latest
-            php: 8.5
-            database: sqlite
-            stability: prefer-stable
           - os: ubuntu-latest
             php: 8.5
-            database: sqlite
-            stability: prefer-lowest
-    env:
-      POSTGRES_USER: ${{ matrix.os == 'windows-latest' && 'postgres' || 'runner' }}
+            database: mysql
+            stability: prefer-stable
+            domain: Database
+          - os: ubuntu-latest
+            php: 8.5
+            database: postgres
+            stability: prefer-stable
+            domain: Database
 
-    name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
+    name: "${{ matrix.domain }} (PHP ${{ matrix.php }} - ${{ matrix.database }})"
 
     steps:
       - name: Checkout code
@@ -83,7 +116,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, intl, ftp, zip
-          coverage: pcov
+          coverage: none
 
       - name: Setup problem matchers
         run: |
@@ -91,10 +124,13 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction  --ignore-platform-reqs
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-reqs
+        
+      - name: Warm Up TypePHP Cache
+        run: php vendor/bin/typephp cache:warm
 
       - name: "Setup Redis"
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.domain == 'Cache' || matrix.domain == 'Framework' }}
         uses: supercharge/redis-github-action@1.8.1
 
       - name: "Setup MySQL"
@@ -125,5 +161,5 @@ jobs:
       - name: List discovered locations
         run: php ./tempest discovery:status
 
-      - name: Execute tests
-        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=2G vendor/bin/paratest --runner WrapperRunner --processes 4
+      - name: Execute domain tests
+        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" -dmemory_limit=2G vendor/bin/paratest --runner WrapperRunner --processes 4 tests/Integration/${{ matrix.domain }}

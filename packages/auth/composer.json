@@ -22,7 +22,8 @@
         "adam-paterson/oauth2-slack": "^1.1",
         "wohali/oauth2-discord-new": "^1.2",
         "smolblog/oauth2-twitter": "^1.0",
-        "vertisan/oauth2-twitch-helix": "^2.0"
+        "vertisan/oauth2-twitch-helix": "^2.0",
+        "typephp/typephp": "^0.7.1"
     },
     "autoload": {
         "psr-4": {

@@ -12,6 +12,9 @@
         "league/commonmark": "^2.7",
         "symfony/cache": "^7.3|^8.0"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "files": [
             "src/functions.php"

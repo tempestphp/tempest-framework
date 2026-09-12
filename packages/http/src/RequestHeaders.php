@@ -14,7 +14,7 @@ use Traversable;
 final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
 {
     /**
-     * @param array<string, string> $headers
+     * @param array<string, mixed> $headers
      */
     public static function normalizeFromArray(array $headers): self
     {

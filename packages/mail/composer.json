@@ -12,7 +12,8 @@
     },
     "require-dev": {
         "symfony/postmark-mailer": "^7.2.6|^8.0",
-        "symfony/amazon-mailer": "^7.2.0|^8.0"
+        "symfony/amazon-mailer": "^7.2.0|^8.0",
+        "typephp/typephp": "^0.7.1"
     },
     "suggest": {
         "tempest/storage": "For storage attachment support"

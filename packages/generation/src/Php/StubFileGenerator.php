@@ -26,7 +26,7 @@ final class StubFileGenerator
      * @param StubFile $stubFile The stub file to use for the generation. It must be of type CLASS_FILE.
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
+     * @param array<string, ?string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
      *
@@ -88,7 +88,7 @@ final class StubFileGenerator
      * @param StubFile $stubFile The stub file to use for the generation. It must be of type RAW_FILE.
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
+     * @param array<string, ?string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'dummy-content')
      *     The values are the replacements for the placeholders (e.g. 'real content')
      *

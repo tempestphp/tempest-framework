@@ -20,7 +20,8 @@
         "league/flysystem-google-cloud-storage": "^3.25.1",
         "league/mime-type-detection": "^1.16",
         "microsoft/azure-storage-blob": "^1.5",
-        "tempest/support": "3.x-dev"
+        "tempest/support": "3.x-dev",
+        "typephp/typephp": "^0.7.1"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,71 @@
+<?php 
+
+namespace Tempest\Reflection;
+
+final class ClassReflector
+{
+    /**
+     * @param string|object $reflectionClass
+     */
+    public function __construct(string|object $reflectionClass)
+    {
+    }
+}
+
+namespace Tempest\Database\Tables;
+
+interface NamingStrategy
+{
+    /**
+     * @param class-string|string $model
+     */
+    public function getName(string $model): string;
+}
+
+namespace Tempest\Database\Builder\QueryBuilders;
+
+use ArrayAccess;
+use UnitEnum;
+
+trait HasConvenientWhereMethods
+{
+    /**
+     * @param string|UnitEnum|array|ArrayAccess $values
+     */
+    public function whereIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
+    {
+    }
+
+    /**
+     * @param string|UnitEnum|array|ArrayAccess $values
+     */
+    public function whereNotIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
+    {
+    }
+}
+
+class SelectQueryBuilder
+{
+    use HasConvenientWhereMethods;
+
+    /**
+     * @param string|UnitEnum|array|ArrayAccess $values
+     */
+    public function whereIn(string $field, string|UnitEnum|array|ArrayAccess $values): self
+    {
+    }
+}
+
+namespace Tempest\Core;
+
+use Closure;
+
+trait PublishesFiles
+{
+    /**
+     * @typephp-ignore
+     */
+    public function update(string $path, Closure $callback, bool $ignoreNonExisting = false): void
+    {
+    }
+}

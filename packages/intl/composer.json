@@ -13,6 +13,9 @@
         "ext-intl": "*",
         "ext-dom": "*"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "suggest": {
         "tempest/datetime": "In order to use the `datetime` function",
         "tempest/icon": "In order to use the `icon` function",

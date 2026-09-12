@@ -14,7 +14,8 @@
     },
     "require-dev": {
         "guzzlehttp/psr7": "^2.6.1",
-        "phpunit/phpunit": "^12.5.22"
+        "phpunit/phpunit": "^12.5.22",
+        "typephp/typephp": "^0.7.1"
     },
     "autoload": {
         "psr-4": {

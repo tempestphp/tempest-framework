@@ -10,6 +10,9 @@
         "tempest/highlight": "^2.11.4",
         "symfony/var-exporter": "^7.1|^8.0"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "files": [
             "src/functions.php"

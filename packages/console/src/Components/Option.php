@@ -12,7 +12,7 @@ use UnitEnum;
  */
 final class Option
 {
-    /** @var T */
+    /** @var (T is UnitEnum ? string : T) */
     public mixed $displayValue {
         get {
             if (! $this->value instanceof UnitEnum) {

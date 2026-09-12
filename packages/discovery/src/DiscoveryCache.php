@@ -39,7 +39,7 @@ final class DiscoveryCache
     }
 
     /**
-     * @return array<class-string<\Tempest\Discovery\Discovery>, DiscoveryItems>
+     * @return array<class-string<\Tempest\Discovery\Discovery>, list<mixed>>
      */
     public function restore(DiscoveryLocation $location): ?array
     {

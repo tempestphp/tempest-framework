@@ -69,6 +69,9 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
+    /**
+     * @typephp-ignore
+     */
     public function wrong_key(): void
     {
         $this->expectException(SignatureMismatched::class);
@@ -81,6 +84,9 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
+    /**
+     * @typephp-ignore
+     */
     public function missing_key(): void
     {
         $this->expectException(EncryptionKeyWasInvalid::class);

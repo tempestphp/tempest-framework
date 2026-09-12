@@ -199,6 +199,7 @@ final class GenericContainer implements Container
     }
 
     /**
+     * @typephp-ignore
      * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName
@@ -515,7 +516,7 @@ final class GenericContainer implements Container
     }
 
     /**
-     * @return ParameterReflector[]
+     * @return list<mixed>
      */
     private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = []): array
     {

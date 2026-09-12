@@ -7,6 +7,9 @@
         "tempest/console": "3.x-dev",
         "tempest/container": "3.x-dev"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "files": [
             "src/functions.php"

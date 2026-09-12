@@ -9,6 +9,9 @@
         "psr/log": "^3.0.0",
         "tempest/container": "3.x-dev"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Log\\": "src"

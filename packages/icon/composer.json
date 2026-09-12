@@ -10,6 +10,9 @@
         "tempest/support": "3.x-dev",
         "symfony/cache": "^7.3|^8.0"
     },
+    "require-dev": {
+        "typephp/typephp": "^0.7.1"
+    },
     "suggest": {
         "tempest/event-bus": "For events support"
     },

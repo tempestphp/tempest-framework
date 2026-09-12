@@ -279,7 +279,7 @@ final class BootDiscovery
         $discovery = null;
 
         try {
-            /** @var Discovery $discovery */
+            /** @var ?Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
         } catch (NotFoundExceptionInterface) {
             // @mago-expect lint:no-empty-catch-clause

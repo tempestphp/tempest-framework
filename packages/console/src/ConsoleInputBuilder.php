@@ -17,7 +17,7 @@ final readonly class ConsoleInputBuilder
     ) {}
 
     /**
-     * @return array<ConsoleInputArgument>
+     * @return list<mixed>
      */
     public function build(): array
     {

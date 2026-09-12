@@ -84,6 +84,7 @@ trait GeneratesArguments
             'iterable' => [],
             'array' => [],
             'bool' => true,
+            'mixed' => 'tempest',
             default => null,
         };
     }

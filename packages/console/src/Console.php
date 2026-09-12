@@ -86,7 +86,7 @@ interface Console
     /**
      * Asks the user to select an option from a list using a closure.
      *
-     * @param Closure(string $search): array $search
+     * @param Closure(?string $search): array $search
      */
     public function search(string $label, Closure $search, bool $multiple = false, string|array|null $default = null): mixed;
 

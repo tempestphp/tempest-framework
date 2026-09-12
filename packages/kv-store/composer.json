@@ -10,7 +10,8 @@
         "tempest/event-bus": "3.x-dev"
     },
     "require-dev": {
-        "predis/predis": "^3.0.0"
+        "predis/predis": "^3.0.0",
+        "typephp/typephp": "^0.7.1"
     },
     "autoload": {
         "psr-4": {
