@@ -7,9 +7,9 @@ namespace Tempest\RateLimit\Tests;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tempest\RateLimit\Http\RateLimitProfile;
 use Tempest\RateLimit\Http\Throttle;
 use Tempest\RateLimit\Per;
-use Tempest\RateLimit\Http\RateLimitProfile;
 
 /**
  * @internal

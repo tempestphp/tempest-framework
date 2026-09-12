@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\RateLimit\Http;
 
 use Attribute;
+use InvalidArgumentException;
 use Tempest\Container\Container;
 use Tempest\Http\Request;
 use Tempest\RateLimit\Per;
 use Tempest\RateLimit\RateLimit;
 use Tempest\Router\Route;
 use Tempest\Router\RouteDecorator;
-use InvalidArgumentException;
 
 /**
  * Limits how often a route may be requested. The attribute is repeatable: a route may be subject to several limits at once.
