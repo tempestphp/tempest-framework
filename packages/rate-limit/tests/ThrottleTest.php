@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\RateLimit\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\RateLimit\Http\Throttle;
 use Tempest\RateLimit\Per;
+use Tempest\RateLimit\Http\RateLimitProfile;
 
 /**
  * @internal
@@ -47,5 +49,30 @@ final class ThrottleTest extends TestCase
         $limit = new Throttle(attempts: 10)->toRateLimit();
 
         $this->assertNull($limit->key);
+    }
+
+    #[Test]
+    public function a_profile_can_replace_a_static_limit(): void
+    {
+        $throttle = new Throttle(profile: RateLimitProfile::class);
+
+        $this->assertSame(RateLimitProfile::class, $throttle->profile);
+        $this->assertNull($throttle->attempts);
+    }
+
+    #[Test]
+    public function a_profile_cannot_be_combined_with_a_static_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Throttle(attempts: 10, profile: RateLimitProfile::class);
+    }
+
+    #[Test]
+    public function a_throttle_must_define_a_limit_or_profile(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Throttle();
     }
 }

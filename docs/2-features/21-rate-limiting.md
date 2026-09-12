@@ -140,12 +140,12 @@ final readonly class ApiRateLimitProfile implements RateLimitProfile
 
 ```
 
-Reference the profile using the {b`Tempest\RateLimit\Http\ThrottleWith`} attribute:
+Reference the profile using the `profile` argument on the {b`Tempest\RateLimit\Http\Throttle`} attribute:
 
 ```php
-use Tempest\RateLimit\Http\ThrottleWith;
+use Tempest\RateLimit\Http\Throttle;
 
-#[ThrottleWith(ApiRateLimitProfile::class)]
+#[Throttle(profile: ApiRateLimitProfile::class)]
 #[Get('/api/posts')]
 public function index(): Response
 { /* … */ }

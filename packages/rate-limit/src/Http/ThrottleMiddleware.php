@@ -20,7 +20,7 @@ use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\MatchedRoute;
 
 /**
- * Applies the limits declared by {@see Throttle} and {@see ThrottleWith} to the matched route. This
+ * Applies the limits declared by {@see Throttle} to the matched route. This
  * middleware is not discovered globally. It is added to a route by the attributes themselves.
  */
 #[SkipDiscovery]
@@ -128,15 +128,15 @@ final readonly class ThrottleMiddleware implements HttpMiddleware
      * limits come first. A request rejected by one route then leaves the allowance it shares with its
      * siblings intact. Sorting is stable, and {@see self::resolveLimits()} preserves that order.
      *
-     * @return array<string, Throttles[]>
+     * @return array<string, Throttle[]>
      */
     private function resolveAttributes(): array
     {
         $handler = $this->matchedRoute->route->handler;
 
         return array_filter([
-            ThrottleScope::ROUTE->value => $handler->getAttributes(Throttles::class),
-            ThrottleScope::CONTROLLER->value => $handler->getDeclaringClass()->getAttributes(Throttles::class),
+            ThrottleScope::ROUTE->value => $handler->getAttributes(Throttle::class),
+            ThrottleScope::CONTROLLER->value => $handler->getDeclaringClass()->getAttributes(Throttle::class),
         ]);
     }
 

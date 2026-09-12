@@ -8,8 +8,8 @@ use Tempest\Http\Request;
 use Tempest\RateLimit\RateLimit;
 
 /**
- * Describes the rate limits that apply to a request. Referenced from {@see ThrottleWith}, a profile
- * is used instead of {@see Throttle} when the limits depend on the request itself.
+ * Describes the rate limits that apply to a request. Referenced from {@see Throttle}, a profile
+ * is used when the limits depend on the request itself.
  */
 interface RateLimitProfile
 {

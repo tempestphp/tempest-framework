@@ -7,7 +7,6 @@ namespace Tests\Tempest\Fixtures\Controllers;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\RateLimit\Http\Throttle;
-use Tempest\RateLimit\Http\ThrottleWith;
 use Tempest\RateLimit\Per;
 use Tempest\Router\Get;
 use Tempest\Router\Post;
@@ -40,14 +39,14 @@ final readonly class ThrottledController
         return new Ok('allowed');
     }
 
-    #[ThrottleWith(PremiumRateLimitProfile::class)]
+    #[Throttle(profile: PremiumRateLimitProfile::class)]
     #[Get('/throttled-by-profile')]
     public function profile(): Response
     {
         return new Ok('allowed');
     }
 
-    #[ThrottleWith(TieredRateLimitProfile::class)]
+    #[Throttle(profile: TieredRateLimitProfile::class)]
     #[Get('/throttled-by-tiers')]
     public function tiers(): Response
     {
@@ -102,7 +101,7 @@ final readonly class ThrottledController
         return new Ok('allowed');
     }
 
-    #[ThrottleWith(SharedCounterRateLimitProfile::class)]
+    #[Throttle(profile: SharedCounterRateLimitProfile::class)]
     #[Get('/throttled-by-shared-counter/first')]
     public function sharedCounterFirst(): Response
     {
@@ -112,7 +111,7 @@ final readonly class ThrottledController
     /**
      * Uses the same profile as `sharedCounterFirst`, so both routes spend from the counter it names.
      */
-    #[ThrottleWith(SharedCounterRateLimitProfile::class)]
+    #[Throttle(profile: SharedCounterRateLimitProfile::class)]
     #[Get('/throttled-by-shared-counter/second')]
     public function sharedCounterSecond(): Response
     {
