@@ -417,13 +417,20 @@ final class GenericContainer implements Container
             return $object;
         }
 
-        // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
+        // Check for dynamic tags
         if ($tag !== null) {
-            throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
+            /** @var \Tempest\Container\Singleton|null $singleton */
+            $singleton = $class->getAttribute(Singleton::class);
+
+            if (! $singleton || ! $singleton->dynamicTags) {
+                throw new TaggedDependencyCouldNotBeResolved($this->chain, new Dependency($className), $tag);
+            }
+
+            return $this->autowire($className, $tag, ...$params);
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className, ...$params);
+        return $this->autowire($className, null, ...$params);
     }
 
     private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
@@ -447,6 +454,17 @@ final class GenericContainer implements Container
             return $this->resolve($initializerClass);
         }
 
+        // Check if dynamic tags are allowed
+        if ($tag && ($initializerClass = $this->initializers[$target->getName()] ?? null)) {
+            $class = new ClassReflector($initializerClass);
+
+            $singleton = $class->getAttribute(Singleton::class) ?? $class->getMethod('initialize')->getAttribute(Singleton::class);
+
+            if ($singleton?->dynamicTags) {
+                return $this->resolve($class->getName());
+            }
+        }
+
         // Loop through the registered initializers to see if
         // we have something to handle this class.
         foreach ($this->dynamicInitializers as $initializerClass) {
@@ -466,7 +484,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, mixed ...$params): object
+    private function autowire(string $className, string|UnitEnum|null $tag, mixed ...$params): object
     {
         $classReflector = new ClassReflector($className);
 
@@ -491,7 +509,7 @@ final class GenericContainer implements Container
             && ! $classReflector->getType()->matches(DynamicInitializer::class)
             && $classReflector->hasAttribute(Singleton::class)
         ) {
-            $this->singleton($className, $instance);
+            $this->singleton($className, $instance, $tag);
         }
 
         foreach ($classReflector->getProperties() as $property) {
@@ -654,7 +672,7 @@ final class GenericContainer implements Container
     private function resolveChain(): DependencyChain
     {
         if (! $this->chain instanceof DependencyChain) {
-            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2);
 
             $this->chain = new DependencyChain($trace[1]['file'] . ':' . $trace[1]['line']);
         }

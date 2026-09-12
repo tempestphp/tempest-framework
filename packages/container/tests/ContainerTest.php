@@ -44,6 +44,10 @@ use Tempest\Container\Tests\Fixtures\DecoratorSecondClass;
 use Tempest\Container\Tests\Fixtures\DecoratorWithoutConstructor;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\DynamicTaggedDependency;
+use Tempest\Container\Tests\Fixtures\DynamicTaggedDependencyDynamicInitializer;
+use Tempest\Container\Tests\Fixtures\DynamicTaggedDependencyInitializer;
+use Tempest\Container\Tests\Fixtures\DynamicTaggedDependencyWithInitializer;
 use Tempest\Container\Tests\Fixtures\EnumTag;
 use Tempest\Container\Tests\Fixtures\HasTagObject;
 use Tempest\Container\Tests\Fixtures\ImplementsInterfaceA;
@@ -54,6 +58,7 @@ use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\InvokableClass;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithDependencies;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
+use Tempest\Container\Tests\Fixtures\NonDynamicTaggedDependency;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\ResettableDependency;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
@@ -339,6 +344,76 @@ final class ContainerTest extends TestCase
     }
 
     #[Test]
+    public function dynamic_tags_with_initializer(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(DynamicTaggedDependencyInitializer::class);
+
+        $a = $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'a');
+        $b = $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'b');
+
+        $this->assertNotSame($a, $b);
+
+        $this->assertSame($a, $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'a'));
+        $this->assertSame($b, $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'b'));
+    }
+
+    #[Test]
+    public function dynamic_tags_with_dynamic_initializer(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(DynamicTaggedDependencyDynamicInitializer::class);
+
+        $a = $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'a');
+        $b = $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'b');
+
+        $this->assertNotSame($a, $b);
+
+        $this->assertSame($a, $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'a'));
+        $this->assertSame($b, $container->get(DynamicTaggedDependencyWithInitializer::class, tag: 'b'));
+
+        $this->assertSame('a', $a->name);
+        $this->assertSame('b', $b->name);
+    }
+
+    #[Test]
+    public function dynamic_tags_with_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $a = $container->get(DynamicTaggedDependency::class, tag: 'a');
+        $b = $container->get(DynamicTaggedDependency::class, tag: 'b');
+
+        $this->assertNotSame($a, $b);
+
+        $this->assertSame($a, $container->get(DynamicTaggedDependency::class, tag: 'a'));
+        $this->assertSame($b, $container->get(DynamicTaggedDependency::class, tag: 'b'));
+    }
+
+    #[Test]
+    public function non_dynamic_tags_throw_exception(): void
+    {
+        $container = new GenericContainer();
+
+        $this->expectException(TaggedDependencyCouldNotBeResolved::class);
+
+        $container->get(NonDynamicTaggedDependency::class, tag: 'a');
+    }
+
+    #[Test]
+    public function dynamic_tags_preserve_the_untagged_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $default = $container->get(DynamicTaggedDependency::class);
+        $tagged = $container->get(DynamicTaggedDependency::class, tag: 'a');
+
+        $this->assertNotSame($default, $tagged);
+        $this->assertSame($tagged, $container->get(DynamicTaggedDependency::class, tag: 'a'));
+        $this->assertSame($default, $container->get(DynamicTaggedDependency::class));
+    }
+
+    #[Test]
     public function tagged_singleton_exception(): void
     {
         $container = new GenericContainer();
@@ -445,6 +520,16 @@ final class ContainerTest extends TestCase
 
         $container = new GenericContainer();
         $container->invoke(fn (string $param) => $param);
+    }
+
+    #[Test]
+    public function dependency_chain_reports_the_call_site_as_its_origin(): void
+    {
+        $this->expectException(DependencyCouldNotBeAutowired::class);
+        $this->expectExceptionMessageMatches('/Originally called in .*ContainerTest\.php:\d+/');
+
+        $container = new GenericContainer();
+        $container->get(ContainerObjectC::class);
     }
 
     #[Test]

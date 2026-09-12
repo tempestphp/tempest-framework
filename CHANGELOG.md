@@ -2,7 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.19.0](https://github.com/tempestphp/tempest-framework/compare/v3.18.0..3.19.0)  —  2026-08-28
+## [3.19.2](https://github.com/tempestphp/tempest-framework/compare/v3.19.1..3.19.2)  —  2026-09-08
+
+### 🚀 Features
+
+- **http**: validate session identifiers (#2281) ([b1ae60e](https://github.com/tempestphp/tempest-framework/commit/b1ae60ea63210569329e04ea911b471d7d9fd9d0))
+
+### ⚡ Performance
+
+- **container**: cap the dependency chain backtrace (#2273) ([42fc0d5](https://github.com/tempestphp/tempest-framework/commit/42fc0d53ced41badfab62e0400b28919c301464d))
+
+### 🐛 Bug fixes
+
+- **database**: use static instead of self in IsDatabaseModel (#2274) ([dfd921f](https://github.com/tempestphp/tempest-framework/commit/dfd921f97a45d66df2ac2c941d9e43edcad9cbeb))
+- **generation**: resolve all registered namespaces for class stubs (#2287) ([b17a82c](https://github.com/tempestphp/tempest-framework/commit/b17a82c4ac95d7554641020376942d096f4acd7d))
+- **router**: clear the matched route between requests (#2278) ([16a1a2a](https://github.com/tempestphp/tempest-framework/commit/16a1a2a6db94d90ca803ae4442520b880813d4e5))
+
+
+## [3.19.1](https://github.com/tempestphp/tempest-framework/compare/v3.19.0..v3.19.1)  —  2026-09-03
+
+### 🚀 Features
+
+- **router**: allow error responses to carry headers (#2267) ([dc589be](https://github.com/tempestphp/tempest-framework/commit/dc589be2dd3ed392137d4baa2c4d542ac4107186))
+
+### ⚡ Performance
+
+- **command-bus**: store pending commands in a single Redis hash (#2269) ([34caa57](https://github.com/tempestphp/tempest-framework/commit/34caa571eb941a69469ae3614bfd429c97054d20))
+
+
+## [3.19.0](https://github.com/tempestphp/tempest-framework/compare/v3.18.0..v3.19.0)  —  2026-08-28
 
 ### 🚀 Features
 

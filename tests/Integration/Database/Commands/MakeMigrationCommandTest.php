@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Tables\PascalCaseStrategy;
+use Tempest\Discovery\Composer;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -91,6 +92,42 @@ final class MakeMigrationCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileContains('App/CreateBooksTable.php', 'namespace App;');
+    }
+
+    #[Test]
+    #[TestWith(['class', false, 'migrations', 'Migrations'])]
+    #[TestWith(['up', false, 'migrations/Nested', 'Migrations\\Nested'])]
+    #[TestWith(['class', true, 'migrations', 'App'])]
+    public function migration_uses_registered_namespace_outside_app(string $type, bool $sharedNamespace, string $directory, string $namespace): void
+    {
+        $this->installer->put('composer.json', json_encode([
+            'autoload' => [
+                'psr-4' => $sharedNamespace
+                    ? ['App\\' => ['App/', 'migrations/']]
+                    : ['App\\' => 'App/', 'Migrations\\' => 'migrations/'],
+            ],
+        ], JSON_THROW_ON_ERROR));
+        $this->container->singleton(Composer::class, new Composer($this->installer->path(''))->load());
+
+        $this->console
+            ->call("make:migration Books {$type} --table=books --no-alter")
+            ->submit("{$directory}/CreateBooksTable.php")
+            ->assertSee('Migration file successfully created');
+
+        $this->installer
+            ->assertFileExists("{$directory}/CreateBooksTable.php")
+            ->assertFileContains("{$directory}/CreateBooksTable.php", "namespace {$namespace};");
+    }
+
+    #[Test]
+    public function migration_rejects_unregistered_namespace(): void
+    {
+        $this->console
+            ->call('make:migration Books class --table=books --no-alter')
+            ->submit('unregistered/CreateBooksTable.php')
+            ->assertSee('could not be mapped to a namespace');
+
+        $this->assertFileDoesNotExist($this->installer->path('unregistered/CreateBooksTable.php'));
     }
 
     #[Test]

@@ -7,6 +7,8 @@ use Tempest\Core\ExceptionHandler;
 use Tempest\Core\Exceptions\ExceptionProcessor;
 use Tempest\Core\Kernel;
 use Tempest\Http\GenericResponse;
+use Tempest\Http\Header;
+use Tempest\Http\HttpRequestFailed;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
@@ -46,10 +48,33 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
             $renderer = $this->container->get($rendererClass);
 
             if ($renderer->canRender($throwable, $request)) {
-                return $renderer->render($throwable);
+                return $this->applyHeaders($renderer->render($throwable), $throwable);
             }
         }
 
         return new GenericResponse(status: Status::NOT_ACCEPTABLE);
+    }
+
+    /**
+     * Applies the headers declared by a failure, which renderers would otherwise discard by building a response from scratch.
+     */
+    private function applyHeaders(Response $response, Throwable $throwable): Response
+    {
+        if (! $throwable instanceof HttpRequestFailed) {
+            return $response;
+        }
+
+        foreach ($throwable->headers as $name => $values) {
+            // Headers keep the casing they were added with, so we look up the existing one to avoid a duplicate
+            $existing = $response->getHeader($name);
+
+            $response->removeHeader($existing instanceof Header ? $existing->name : $name);
+
+            foreach (is_array($values) ? $values : [$values] as $value) {
+                $response->addHeader($name, $value);
+            }
+        }
+
+        return $response;
     }
 }

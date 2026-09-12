@@ -12,6 +12,11 @@ use Tempest\Http\Session\SessionIdResolver;
 
 use function Tempest\Support\str;
 
+/**
+ * Resolves the session identifier from a request header.
+ *
+ * @deprecated Will be removed in 4.0. Use {@see CookieSessionIdResolver} instead.
+ */
 final readonly class HeaderSessionIdResolver implements SessionIdResolver
 {
     public function __construct(

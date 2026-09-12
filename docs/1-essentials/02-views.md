@@ -143,8 +143,8 @@ To avoid escaping the data, you may use the following syntax. This should only b
 Expression attributes are HTML attributes that are evaluated as PHP code. Their syntax is the same as HTML attributes, except they are identified by a colon `:`:
 
 ```html
-<html :lang="$this->user->language"></h1>
-<!-- <html lang="en"></h1> -->
+<html :lang="$this->user->language"></html>
+<!-- <html lang="en"></html> -->
 ```
 
 As with text interpolation, only variables and PHP expressions that return a value are allowed. Mustache and PHP opening tags cannot be used inside them:

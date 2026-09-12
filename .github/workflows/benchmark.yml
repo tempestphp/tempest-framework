@@ -32,6 +32,8 @@ jobs:
     env:
       TYPEPHP_DISABLE: "true"
 
+    timeout-minutes: 180
+
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v6
@@ -48,23 +50,35 @@ jobs:
       - name: Install dependencies
         run: composer update --no-interaction --prefer-dist --quiet
 
-      - name: Benchmark base branch
+      - name: Check out base branch
         run: |
           git checkout ${{ github.event.pull_request.base.sha }}
           cp .env.example .env
           sed -i 's/^INTERNAL_CACHES=.*/INTERNAL_CACHES=false/' .env
           sed -i 's/^DISCOVERY_CACHE=.*/DISCOVERY_CACHE=false/' .env
-          composer update --no-interaction --prefer-dist --quiet
-          vendor/bin/phpbench run --tag=base --store --progress=none
 
-      - name: Benchmark PR branch
+      - name: Install base branch dependencies
+        timeout-minutes: 20
+        run: composer update --no-interaction --prefer-dist --quiet
+
+      - name: Benchmark base branch
+        timeout-minutes: 70
+        run: vendor/bin/phpbench run --tag=base --store --progress=none
+
+      - name: Check out PR branch
         run: |
           git checkout ${{ github.event.pull_request.head.sha }}
           cp .env.example .env
           sed -i 's/^INTERNAL_CACHES=.*/INTERNAL_CACHES=false/' .env
           sed -i 's/^DISCOVERY_CACHE=.*/DISCOVERY_CACHE=false/' .env
-          composer update --no-interaction --prefer-dist --quiet
-          vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=benchmark-comment | tee benchmark-result.txt || true
+
+      - name: Install PR branch dependencies
+        timeout-minutes: 20
+        run: composer update --no-interaction --prefer-dist --quiet
+
+      - name: Benchmark PR branch
+        timeout-minutes: 70
+        run: vendor/bin/phpbench run --tag=pr --store --ref=base --report=aggregate --progress=none --output=benchmark-comment | tee benchmark-result.txt || true
 
       - name: Prepare artifact
         run: |
