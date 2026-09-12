@@ -33,17 +33,17 @@ final readonly class Throttle implements RouteDecorator
         /**
          * The maximum amount of requests allowed within the window.
          */
-        public readonly ?int $attempts = null,
+        public ?int $attempts = null,
 
         /**
          * The unit of time the window is expressed in.
          */
-        public readonly Per $per = Per::MINUTE,
+        public Per $per = Per::MINUTE,
 
         /**
          * How many `$per` units the window spans. For instance, `per: Per::MINUTE, every: 5` is five minutes.
          */
-        public readonly int $every = 1,
+        public int $every = 1,
 
         /**
          * Groups this limit with the ones naming the same bucket: those routes spend from a single
@@ -51,14 +51,14 @@ final readonly class Throttle implements RouteDecorator
          * was declared on. Either way the counter is scoped to the client, so it cannot be addressed
          * through {@see \Tempest\RateLimit\RateLimiter}; use a {@see RateLimitProfile} for that.
          */
-        public readonly ?string $bucket = null,
+        public ?string $bucket = null,
 
         /**
          * Resolves limits dynamically from the request. This cannot be combined with a static limit.
          *
          * @var class-string<RateLimitProfile>|null
          */
-        public readonly ?string $profile = null,
+        public ?string $profile = null,
     ) {
         if ($profile !== null && ($attempts !== null || $per !== Per::MINUTE || $every !== 1 || $bucket !== null)) {
             throw new InvalidArgumentException('A rate limit profile cannot be combined with attempts, per, every, or bucket.');
