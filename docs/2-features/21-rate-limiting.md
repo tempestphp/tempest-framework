@@ -44,7 +44,7 @@ By default, every route and every client gets an independent counter. To share a
 
 ```
 
-A bucket groups routes, not clients: the routes naming it draw from a single allowance, and that allowance is still counted per client. Routes may name the same bucket with different attempt counts—the narrowest of them decides how much allowance there is, so a single route can tighten the bucket it shares. They are grouped per window, though: limits measuring different spans keep counters of their own, since one counter can only last one span. Unnamed limits are automatically scoped by their exact allowance criteria, meaning attributes can be reordered freely without breaking counters.
+A bucket shares one allowance across the routes that name it, while keeping counters separate for each client. If those routes use different attempt counts with the same window, the smallest limit applies. Different window lengths use separate counters. Without a bucket, each limit gets its own counter based on its route and allowance.
 
 Changing an allowance resets its counter, lifting current limits. A named bucket keeps its counter when the attempts change, but not when the window does.
 
@@ -76,7 +76,7 @@ public function index(): Response
 
 ```
 
-Limits evaluate sequentially—starting with route-level rules and following up with controller-level rules. Evaluation halts on the first rejection, preventing clients from burning through long-term quotas while spamming short-term burst limits.
+Limits run from the shortest window to the longest. Rejected requests do not consume later quotas.
 
 ## Choosing what to count
 
@@ -152,7 +152,7 @@ public function index(): Response
 
 ```
 
-Unkeyed profile limits scope like `#[Throttle]` attributes, generating individual counters per route and client. A limit carrying a key is counted under that key exactly as written, with no scoping added on top—so give it a key that identifies what it counts, such as `login:{$email}`. Such a counter is shared by every route naming it, and is the one kind of HTTP counter that can be inspected or cleared through {b`Tempest\RateLimit\RateLimiter`}. Returning an empty array leaves requests completely unlimited.
+Unkeyed profile limits use the same route or controller scope as `#[Throttle]`, with a separate counter for each client. Keyed limits use the key exactly as provided; no route or client scope is added. Choose a key that identifies the resource being limited, such as `login:{$email}`. Such a counter is shared by every route naming it, and is the one kind of HTTP counter that can be inspected or cleared through {b`Tempest\RateLimit\RateLimiter`}. Returning an empty array leaves requests completely unlimited.
 
 ## Throttling anything else
 
@@ -214,7 +214,7 @@ Exceeding limits via `throttle()` throws {b`Tempest\RateLimit\RateLimitWasExceed
 
 Windows are managed via {b`Tempest\RateLimit\RateLimitStorage`}, which is built by the configured {b`Tempest\RateLimit\Config\RateLimitConfig`}. Tempest defaults to {b`Tempest\RateLimit\Config\CacheRateLimitConfig`}, which requires no external services beyond a standard [cache](./06-cache.md). Because it serialises updates using locks rather than atomic operations, concurrent loads may lead to undercounting. It is also only as durable as the cache itself—when the cache is disabled, no counter is persisted and no limit is ever reached.
 
-Requests for one counter wait for each other, for up to `lockWaitInMilliseconds`. A counter still locked by then cannot be read, so the attempt has no outcome and the request is turned away with a `429`—letting it through would leave the route unmetered exactly when it is under load. Counters are scoped per client, so a client contending with itself is the one held back.
+Requests for one counter wait for each other, for up to `lockWaitInMilliseconds`. If the lock cannot be acquired in time, the counter cannot be read safely and the request fails with `503 Service Unavailable`. This avoids guessing whether the request should be allowed or rejected.
 
 For high-concurrency production environments, switch to {b`Tempest\RateLimit\Config\RedisRateLimitConfig`}, which stores windows in Redis using atomic Lua-script increments:
 
