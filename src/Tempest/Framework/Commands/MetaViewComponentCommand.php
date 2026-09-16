@@ -81,7 +81,7 @@ final readonly class MetaViewComponentCommand
     {
         return str($viewComponent->contents)
             ->matchAll(
-                pattern: '/(?:^\s*\*|\/\*\*)[ \t]*@var[ \t]+(?<declaration>[^\r\n]*?)[ \t]*(?:\*\/(?:\s*(?<assignee>\$\w+)\s*=(?!=))?|$)/m',
+                pattern: '/(?:^\s*\*|\/\*\*)[ \t]*@var[ \t]+(?<declaration>[^\r\n]*?)[ \t]*(?:\*\/(?:\s*(?<assignee>\$\w+)\s*=(?!=))?|\r?$)/m',
                 matches: ['declaration', 'assignee'],
             )
             ->map(fn (array $matches) => [
