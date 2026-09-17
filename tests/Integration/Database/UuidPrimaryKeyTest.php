@@ -129,6 +129,22 @@ final class UuidPrimaryKeyTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
+    public function uuid_primary_key_generated_for_iterable_insert(): void
+    {
+        $this->database->migrate(CreateMigrationsTable::class, CreateUuidRolesTableMigration::class);
+
+        $id = query(UuidRole::class)->insert(name: 'admin')->execute();
+
+        $this->assertInstanceOf(PrimaryKey::class, $id);
+        $this->assertTrue(Random\is_uuid($id->value));
+
+        $role = query(UuidRole::class)->get($id);
+
+        $this->assertNotNull($role);
+        $this->assertSame('admin', $role->name);
+    }
+
+    #[Test]
     public function uuid_primary_key_belongs_to_many_pivot_uses_generated_uuid(): void
     {
         $this->database->migrate(
@@ -295,11 +311,8 @@ final class CreateUuidUserRoleTableMigration implements MigratesUp
     public function up(): QueryStatement
     {
         return new CreateTableStatement('uuid_user_role')
-            ->uuid()
-            ->varchar('uuid_user_id')
-            ->varchar('uuid_role_id')
-            ->foreignKey('uuid_user_role.uuid_user_id', 'uuid_users.id', onDelete: OnDelete::CASCADE)
-            ->foreignKey('uuid_user_role.uuid_role_id', 'uuid_roles.id', onDelete: OnDelete::CASCADE);
+            ->belongsToUuid('uuid_user_role.uuid_user_id', 'uuid_users.id', onDelete: OnDelete::CASCADE)
+            ->belongsToUuid('uuid_user_role.uuid_role_id', 'uuid_roles.id', onDelete: OnDelete::CASCADE);
     }
 }
 
@@ -312,7 +325,6 @@ final class CreateUuidPostsTableMigration implements MigratesUp
         return new CreateTableStatement('uuid_posts')
             ->uuid()
             ->varchar('title')
-            ->varchar('uuid_user_id', nullable: true)
-            ->foreignKey('uuid_posts.uuid_user_id', 'uuid_users.id', onDelete: OnDelete::CASCADE);
+            ->foreignUuid('uuid_user_id', constrainedOn: 'uuid_users', onDelete: OnDelete::CASCADE, nullable: true);
     }
 }
