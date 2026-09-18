@@ -45,7 +45,7 @@ final readonly class PredisClient implements Redis
     public function command(Stringable|string $command, Stringable|string ...$arguments): mixed
     {
         $command = (string) $command;
-        $arguments = array_map(fn (Stringable|string $argument) => (string) $argument, $arguments);
+        $arguments = array_map(static fn (Stringable|string $argument) => (string) $argument, $arguments);
         $startedAt = DateTime::now();
         $result = $this->client->executeRaw(array_merge([$command], $arguments));
 

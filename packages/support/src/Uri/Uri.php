@@ -21,7 +21,7 @@ final class Uri implements Stringable
                 return [];
             }
 
-            return array_values(array_filter(explode('/', $this->path), fn (string $segment) => $segment !== ''));
+            return array_values(array_filter(explode('/', $this->path), static fn (string $segment) => $segment !== ''));
         }
     }
 

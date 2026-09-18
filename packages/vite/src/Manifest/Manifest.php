@@ -29,7 +29,7 @@ final readonly class Manifest
 
         return new self(
             chunks: $chunks,
-            entrypoints: $chunks->filter(fn (Chunk $entry) => $entry->isEntry),
+            entrypoints: $chunks->filter(static fn (Chunk $entry) => $entry->isEntry),
         );
     }
 }

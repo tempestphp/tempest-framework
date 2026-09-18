@@ -92,7 +92,8 @@
         "thenetworg/oauth2-azure": "^2.2",
         "twig/twig": "^3.16",
         "vertisan/oauth2-twitch-helix": "^2.0",
-        "wohali/oauth2-discord-new": "^1.2"
+        "wohali/oauth2-discord-new": "^1.2",
+        "boundwize/structarmed": "^0.17.9"
     },
     "replace": {
         "tempest/auth": "self.version",

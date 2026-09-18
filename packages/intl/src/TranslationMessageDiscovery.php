@@ -54,7 +54,7 @@ final class TranslationMessageDiscovery implements Discovery, DiscoversPath
     private function isLocale(string $candidate): bool
     {
         $locale = arr(Locale::cases())
-            ->first(function (Locale $locale) use ($candidate) {
+            ->first(static function (Locale $locale) use ($candidate) {
                 if (strtolower($locale->value) === strtolower($candidate)) {
                     return true;
                 }

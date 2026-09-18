@@ -33,8 +33,8 @@ final class TypeResolverDiscovery implements Discovery
     public function apply(): void
     {
         $this->config->resolvers = arr([...$this->discoveryItems])
-            ->sortByCallback(fn (array $a, array $b) => $a[1] <=> $b[1])
-            ->map(fn (array $item) => $item[0])
+            ->sortByCallback(static fn (array $a, array $b) => $a[1] <=> $b[1])
+            ->map(static fn (array $item) => $item[0])
             ->toArray();
     }
 }

@@ -118,17 +118,17 @@ function normalize(Stringable|string|null ...$paths): string
     }
 
     $paths = array_map(
-        fn (Stringable|string|null $path) => $path === null ? '' : (string) $path,
+        static fn (Stringable|string|null $path) => $path === null ? '' : (string) $path,
         $paths,
     );
 
     // Split paths items on forward and backward slashes
-    $parts = array_reduce($paths, fn (array $carry, string $part) => [...$carry, ...explode('/', $part)], []);
-    $parts = array_reduce($parts, fn (array $carry, string $part) => [...$carry, ...explode('\\', $part)], []);
+    $parts = array_reduce($paths, static fn (array $carry, string $part) => [...$carry, ...explode('/', $part)], []);
+    $parts = array_reduce($parts, static fn (array $carry, string $part) => [...$carry, ...explode('\\', $part)], []);
 
     // Trim forward and backward slashes
-    $parts = array_map(fn (string $part) => trim($part, '/\\'), $parts);
-    $parts = array_filter($parts, fn (string $part) => $part !== '' && $part !== '.');
+    $parts = array_map(static fn (string $part) => trim($part, '/\\'), $parts);
+    $parts = array_filter($parts, static fn (string $part) => $part !== '' && $part !== '.');
 
     // Glue parts together
     $path = implode('/', $parts);

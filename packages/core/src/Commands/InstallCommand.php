@@ -69,7 +69,7 @@ if (class_exists(ConsoleCommand::class)) {
                 question: 'Choose an installer',
                 options: Arr\map_with_keys(
                     array: $this->installerConfig->installers,
-                    map: fn (InstallerDefinition $installer) => yield $installer->id => $installer->name,
+                    map: static fn (InstallerDefinition $installer) => yield $installer->id => $installer->name,
                 ),
             );
 
@@ -79,7 +79,7 @@ if (class_exists(ConsoleCommand::class)) {
 
             return Arr\first(
                 array: $this->installerConfig->installers,
-                filter: fn (InstallerDefinition $installer) => in_array($search, $installer->aliases, strict: true) || $installer->id === $search,
+                filter: static fn (InstallerDefinition $installer) => in_array($search, $installer->aliases, strict: true) || $installer->id === $search,
             );
         }
 
@@ -100,7 +100,7 @@ if (class_exists(ConsoleCommand::class)) {
 
                 if (! $this->console->supportsPrompting()) {
                     $missingArguments = implode(', ', array_map(
-                        callback: fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
+                        callback: static fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
                         array: $invalidArguments,
                     ));
 
@@ -119,7 +119,7 @@ if (class_exists(ConsoleCommand::class)) {
             }
 
             return array_map(
-                callback: fn (ConsoleInputArgument $argument) => $argument->value,
+                callback: static fn (ConsoleInputArgument $argument) => $argument->value,
                 array: $validArguments,
             );
         }

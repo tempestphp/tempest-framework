@@ -92,7 +92,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             $searchParts = $search->explode(':');
 
             // `dis:st` will match `discovery:status`
-            if ($searchParts->count() === $currentParts->count() && $searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
+            if ($searchParts->count() === $currentParts->count() && $searchParts->every(static fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
                 $suggestions[$currentName->toString()] = $currentName;
                 continue;
             }
@@ -148,8 +148,8 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         }
 
         return $sorted
-            ->sortByCallback(fn (array $a, array $b) => $a['levenshtein'] <=> $b['levenshtein'])
-            ->map(fn (array $item) => $item['suggestion']);
+            ->sortByCallback(static fn (array $a, array $b) => $a['levenshtein'] <=> $b['levenshtein'])
+            ->map(static fn (array $item) => $item['suggestion']);
     }
 
     private function runIntendedCommand(Stringable $commandName): ExitCode|int

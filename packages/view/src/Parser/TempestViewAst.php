@@ -28,7 +28,7 @@ final class TempestViewAst implements IteratorAggregate, ArrayAccess
     public function compile(): string
     {
         return implode('', array_map(
-            fn (Token $token) => $token->compile(),
+            static fn (Token $token) => $token->compile(),
             iterator_to_array($this->tokens),
         ));
     }

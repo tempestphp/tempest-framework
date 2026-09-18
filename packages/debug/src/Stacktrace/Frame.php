@@ -72,7 +72,7 @@ final class Frame
                 : new ReflectionFunction(function: $frame['function']);
 
             $parameterNames = array_map(
-                callback: fn (ReflectionParameter $param) => $param->getName(),
+                callback: static fn (ReflectionParameter $param) => $param->getName(),
                 array: $reflection->getParameters(),
             );
         } catch (Throwable) {

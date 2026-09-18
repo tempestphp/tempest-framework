@@ -165,7 +165,7 @@ final class DirectoryWriter implements TypeScriptWriter
     private function namespaceToFilePath(string $namespace): string
     {
         $parts = explode('\\', $namespace);
-        $kebabParts = Arr\map($parts, fn (string $part) => Str\to_kebab_case($part));
+        $kebabParts = Arr\map($parts, static fn (string $part) => Str\to_kebab_case($part));
         $path = (string) Arr\implode($kebabParts, glue: '/');
 
         return $this->config->directory . '/' . $path . '/index.ts';
@@ -189,7 +189,7 @@ final class DirectoryWriter implements TypeScriptWriter
 
         $upLevels = count($sourceParts) - $commonLength;
         $targetDiff = array_slice($targetParts, $commonLength);
-        $targetKebab = Arr\map($targetDiff, fn (string $part) => Str\to_kebab_case($part));
+        $targetKebab = Arr\map($targetDiff, static fn (string $part) => Str\to_kebab_case($part));
 
         if ($upLevels === 0 && $targetKebab === []) {
             return './';

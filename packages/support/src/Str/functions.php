@@ -346,7 +346,7 @@ function starts_with(Stringable|string $string, Stringable|string|array $needles
         $needles = [$needles];
     }
 
-    return array_any($needles, fn ($needle) => str_starts_with($string, (string) $needle));
+    return array_any($needles, static fn ($needle) => str_starts_with($string, (string) $needle));
 }
 
 /**
@@ -597,7 +597,7 @@ function excerpt(Stringable|string $string, int $from, int $to, bool $asArray = 
 
     if ($asArray) {
         return arr($lines)
-            ->mapWithKeys(fn (string $line, int $number) => yield $number + 1 => $line)
+            ->mapWithKeys(static fn (string $line, int $number) => yield $number + 1 => $line)
             ->toArray();
     }
 
@@ -658,7 +658,7 @@ function slice(Stringable|string $string, int $start, ?int $length = null): stri
  */
 function contains(Stringable|string $string, Stringable|string|array $needle): bool
 {
-    return array_any(Arr\wrap($needle), fn ($item) => str_contains((string) $string, (string) $item));
+    return array_any(Arr\wrap($needle), static fn ($item) => str_contains((string) $string, (string) $item));
 }
 
 /**
@@ -703,7 +703,7 @@ function strip_tags(Stringable|string $string, string|array|null $allowed = null
     $string = (string) $string;
 
     $allowed = arr($allowed)
-        ->map(fn (string $tag) => wrap($tag, '<', '>'))
+        ->map(static fn (string $tag) => wrap($tag, '<', '>'))
         ->toArray();
 
     return php_strip_tags($string, $allowed);

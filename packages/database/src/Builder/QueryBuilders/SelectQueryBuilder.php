@@ -539,15 +539,15 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     private function shouldUsePropertyNameAlias(array $relations): array
     {
         $rootTables = arr(input: $relations)
-            ->filter(filter: fn (Relation $_, string $path) => ! str_contains(haystack: $path, needle: '.'))
-            ->map(map: fn (Relation $relation) => inspect(model: $relation)->getTableName())
+            ->filter(filter: static fn (Relation $_, string $path) => ! str_contains(haystack: $path, needle: '.'))
+            ->map(map: static fn (Relation $relation) => inspect(model: $relation)->getTableName())
             ->toArray();
 
         $counts = array_count_values(array: $rootTables);
 
         arr(input: $rootTables)
-            ->filter(filter: fn (string $table) => $counts[$table] > 1)
-            ->each(each: fn (string $_, string $path) => $relations[$path]->withPropertyNameAlias());
+            ->filter(filter: static fn (string $table) => $counts[$table] > 1)
+            ->each(each: static fn (string $_, string $path) => $relations[$path]->withPropertyNameAlias());
 
         return $relations;
     }

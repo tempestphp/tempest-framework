@@ -252,7 +252,7 @@ trait IsDatabaseModel
         $new = static::queryBuilder()
             ->onDatabase($this->onDatabase)
             ->select()
-            ->with(...$loadedRelations->map(fn (Relation $relation) => $relation->name))
+            ->with(...$loadedRelations->map(static fn (Relation $relation) => $relation->name))
             ->get($primaryKeyValue);
 
         foreach ($loadedRelations as $relation) {
@@ -310,7 +310,7 @@ trait IsDatabaseModel
             ->get($primaryKeyValue, $relations);
 
         $fieldsToUpdate = arr($relations)
-            ->map(fn (string $relation) => str($relation)->before('.')->toString())
+            ->map(static fn (string $relation) => str($relation)->before('.')->toString())
             ->unique();
 
         foreach ($fieldsToUpdate as $fieldToUpdate) {

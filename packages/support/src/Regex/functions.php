@@ -74,7 +74,7 @@ function get_all_matches(
     $result = get_matches($subject, $pattern, true, PREG_SET_ORDER, $offset);
 
     return arr($result)
-        ->map(fn (array $result) => filter($result, fn ($_, string|int $key) => in_array($key, wrap($matches), strict: false)))
+        ->map(static fn (array $result) => filter($result, static fn ($_, string|int $key) => in_array($key, wrap($matches), strict: false)))
         ->toArray();
 }
 
@@ -114,8 +114,8 @@ function get_match(
 
     if (is_array($match)) {
         return arr($result)
-            ->filter(fn ($_, string|int $key) => in_array($key, $match, strict: false))
-            ->mapWithKeys(fn (array $matches, string|int $key) => yield $key => first($matches))
+            ->filter(static fn ($_, string|int $key) => in_array($key, $match, strict: false))
+            ->mapWithKeys(static fn (array $matches, string|int $key) => yield $key => first($matches))
             ->toArray();
     }
 

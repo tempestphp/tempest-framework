@@ -34,7 +34,7 @@ final class DependencyCouldNotBeAutowired extends Exception implements Container
 
         $selectionLine = preg_replace_callback(
             pattern: '/(?<prefix>(.*))(?<selection>' . $brokenDependency->getTypeName() . '\s\$\w+)(.*)/',
-            callback: fn ($matches) => str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection'])),
+            callback: static fn ($matches) => str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection'])),
             subject: $chain->last()->getShortName(),
         );
 

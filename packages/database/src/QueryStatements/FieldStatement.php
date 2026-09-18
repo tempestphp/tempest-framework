@@ -38,9 +38,9 @@ final class FieldStatement implements QueryStatement
         }
 
         $field = arr(explode('.', $field))
-            ->map(fn (string $part) => trim($part, '`" '))
+            ->map(static fn (string $part) => trim($part, '`" '))
             ->map(
-                function (string $part) use ($dialect) {
+                static function (string $part) use ($dialect) {
                     if (str_contains($part, '(')) {
                         return $part;
                     }

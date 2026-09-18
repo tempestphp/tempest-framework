@@ -38,7 +38,7 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
                 fn (Option $option, int $index) => str($index)
                     ->when(
                         condition: $option->key === $this->default || $option->value === $this->default,
-                        callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
+                        callback: static fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
                     )
                     ->wrap('[', ']')
                     ->prepend('- ')

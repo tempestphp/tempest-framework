@@ -15,7 +15,7 @@ final class InstructionsRenderer
     {
         $lines = arr($lines)
             ->filter()
-            ->flatMap(fn (string $string) => str($string)->chunk(self::MAX_WIDTH)->toArray())
+            ->flatMap(static fn (string $string) => str($string)->chunk(self::MAX_WIDTH)->toArray())
             ->toArray();
 
         $text = str(PHP_EOL);

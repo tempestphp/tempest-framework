@@ -20,8 +20,8 @@ $environment = get(Environment::class);
 
 $svg = str(is_string($name) ? get(Icon::class)->render($name) : null)
     ->when(
-        fn (ImmutableString $s): bool => $s->toString() === '' && $environment->isLocal(),
-        fn (ImmutableString $s): ImmutableString => str("<!-- unknown-icon: {$name} -->"),
+        static fn (ImmutableString $s): bool => $s->toString() === '' && $environment->isLocal(),
+        static fn (ImmutableString $s): ImmutableString => str("<!-- unknown-icon: {$name} -->"),
     )
     ->replace(
         search: ' width="1em" height="1em"',
@@ -29,21 +29,21 @@ $svg = str(is_string($name) ? get(Icon::class)->render($name) : null)
     )
     ->when(
         $style ?? null,
-        fn (ImmutableString $s): ImmutableString => $s->replace(
+        static fn (ImmutableString $s): ImmutableString => $s->replace(
             search: '<svg',
             replace: "<svg style=\"{$style}\"",
         ),
     )
     ->when(
         $class ?? null,
-        fn (ImmutableString $s): ImmutableString => $s->replace(
+        static fn (ImmutableString $s): ImmutableString => $s->replace(
             search: '<svg',
             replace: "<svg class=\"{$class}\"",
         ),
     )
     ->when(
         isset($width, $height),
-        fn (ImmutableString $s): ImmutableString => $s
+        static fn (ImmutableString $s): ImmutableString => $s
             ->replace(
                 search: '<svg',
                 replace: "<svg width=\"{$width}\" height=\"{$height}\"",
@@ -51,7 +51,7 @@ $svg = str(is_string($name) ? get(Icon::class)->render($name) : null)
     )
     ->when(
         ! isset($width, $height) && ! isset($style) && ! isset($class),
-        fn (ImmutableString $s): ImmutableString => $s
+        static fn (ImmutableString $s): ImmutableString => $s
             ->replace(
                 search: '<svg',
                 replace: '<svg width="1em" height="1em"',

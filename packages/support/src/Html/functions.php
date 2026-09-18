@@ -181,13 +181,13 @@ function is_html_tag(Stringable|string $tag): bool
 function format_attributes(array $attributes = []): string
 {
     return $attributes = arr($attributes)
-        ->filter(fn (mixed $value) => ! in_array($value, [false, null], strict: true))
-        ->map(fn (mixed $value, int|string $key) => $value === true ? $key : $key . '="' . $value . '"')
+        ->filter(static fn (mixed $value) => ! in_array($value, [false, null], strict: true))
+        ->map(static fn (mixed $value, int|string $key) => $value === true ? $key : $key . '="' . $value . '"')
         ->values()
         ->implode(' ')
         ->when(
-            condition: fn ($string) => $string->length() !== 0,
-            callback: fn ($string) => $string->prepend(' '),
+            condition: static fn ($string) => $string->length() !== 0,
+            callback: static fn ($string) => $string->prepend(' '),
         )
         ->toString();
 }

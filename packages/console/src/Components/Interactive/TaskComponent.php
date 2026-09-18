@@ -153,7 +153,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
     {
         $log = function (string ...$lines): void {
             arr($lines)
-                ->flatMap(fn (string $line) => explode("\n", $line))
+                ->flatMap(static fn (string $line) => explode("\n", $line))
                 ->each(function (string $line): void {
                     fwrite($this->sockets[0], $line);
                 });
@@ -173,7 +173,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
         }
 
         if ($handler instanceof Process) {
-            return static fn (Closure $log): bool => $handler->run(function (string $type, string $buffer) use ($log): void {
+            return static fn (Closure $log): bool => $handler->run(static function (string $type, string $buffer) use ($log): void {
                 if ($type === Process::ERR) {
                     return;
                 }

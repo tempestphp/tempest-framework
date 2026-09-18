@@ -217,7 +217,7 @@ function forget_values(array &$array, mixed $values): array
     $values = is_array($values) ? $values : [$values];
 
     foreach ($values as $value) {
-        if (is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
+        if (is_null($key = array_find_key($array, static fn (mixed $match) => $value === $match))) {
             continue;
         }
 
@@ -1060,7 +1060,7 @@ function undot(iterable $array): array
 {
     $array = to_array($array);
 
-    $unwrapValue = function (string|int $key, mixed $value) {
+    $unwrapValue = static function (string|int $key, mixed $value) {
         if (is_int($key)) {
             return [$key => $value];
         }

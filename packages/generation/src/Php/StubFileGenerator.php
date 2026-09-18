@@ -64,13 +64,13 @@ final class StubFileGenerator
                     continue;
                 }
 
-                $classManipulator->manipulate(fn (ImmutableString $code) => $code->replace($placeholder, $replacement));
+                $classManipulator->manipulate(static fn (ImmutableString $code) => $code->replace($placeholder, $replacement));
             }
 
             // Run all manipulations
             $classManipulator = array_reduce(
                 array: $manipulations,
-                callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
+                callback: static fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
                 initial: $classManipulator,
             );
 
@@ -126,7 +126,7 @@ final class StubFileGenerator
             // Run all manipulations
             $fileContent = array_reduce(
                 array: $manipulations,
-                callback: fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
+                callback: static fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
                 initial: $fileContent,
             );
 

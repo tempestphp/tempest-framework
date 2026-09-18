@@ -96,7 +96,7 @@ final class Terminal
             ->render($this);
 
         if (! $rendered instanceof Generator) {
-            $rendered = (function (string $content): Generator {
+            $rendered = (static function (string $content): Generator {
                 yield $content;
 
                 return null;
@@ -108,7 +108,7 @@ final class Terminal
 
             if (! $component->getState()->isFinished() && $validationErrors) {
                 $content .= PHP_EOL . arr($validationErrors)
-                    ->map(fn (string $error) => "  <style=\"fg-yellow\">{$error}</style>")
+                    ->map(static fn (string $error) => "  <style=\"fg-yellow\">{$error}</style>")
                     ->implode(PHP_EOL)
                     ->append(PHP_EOL)
                     ->toString();

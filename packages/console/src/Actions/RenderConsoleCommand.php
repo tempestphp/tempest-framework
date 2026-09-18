@@ -75,7 +75,7 @@ final readonly class RenderConsoleCommand
     private function renderEnumArgument(ConsoleArgumentDefinition $argument): string
     {
         $parts = array_map(
-            callback: fn (BackedEnum $case) => $case->value,
+            callback: static fn (BackedEnum $case) => $case->value,
             array: $argument->type::cases(),
         );
 

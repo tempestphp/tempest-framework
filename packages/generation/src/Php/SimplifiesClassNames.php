@@ -118,7 +118,7 @@ trait SimplifiesClassNames
                 }
 
                 array_map(
-                    function ($param) use (&$types): void {
+                    static function ($param) use (&$types): void {
                         $types[] = $param->getType(true);
                     },
                     $class->getProperties(),
@@ -158,7 +158,7 @@ trait SimplifiesClassNames
         preg_match_all('/(?:\\\\?[A-Za-z_][\w\d_]*\\\\)+[A-Za-z_][\w\d_]*/', $body, $matches);
 
         return array_filter(array_unique(
-            array_map(fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0]),
+            array_map(static fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0]),
         ));
     }
 }

@@ -89,7 +89,7 @@ if (trait_exists(HasConsole::class)) {
                         targetPath: $destination,
                         shouldOverride: true,
                         manipulations: [
-                            fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+                            static fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                         ],
                     );
 
@@ -264,7 +264,7 @@ if (trait_exists(HasConsole::class)) {
 
                     $content = preg_replace_callback(
                         '/^ +/m',
-                        fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
+                        static fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
                         Json\encode($json, pretty: true),
                     );
 

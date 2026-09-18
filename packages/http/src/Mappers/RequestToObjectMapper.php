@@ -33,8 +33,8 @@ final readonly class RequestToObjectMapper implements Mapper
 
         if (is_a($to, Request::class, true)) {
             $invalidReservedProperties = arr(new ClassReflector(Request::class)->getProperties())
-                ->map(fn (PropertyReflector $property) => $property->getName())
-                ->filter(fn (string $property) => array_key_exists($property, $data));
+                ->map(static fn (PropertyReflector $property) => $property->getName())
+                ->filter(static fn (string $property) => array_key_exists($property, $data));
 
             if ($invalidReservedProperties->isNotEmpty()) {
                 throw new RequestParametersIncludedReservedNames($to, $invalidReservedProperties);

@@ -46,7 +46,7 @@ final class MailTester
     {
         $this->assertClassStringIsEmail($email);
 
-        $sentEmail = Arr\first($this->mailer->sent, filter: fn (Email $sent) => $sent instanceof $email);
+        $sentEmail = Arr\first($this->mailer->sent, filter: static fn (Email $sent) => $sent instanceof $email);
 
         Assert::assertTrue(
             condition: (bool) $sentEmail,
@@ -79,7 +79,7 @@ final class MailTester
         $this->assertClassStringIsEmail($email);
 
         Assert::assertFalse(
-            condition: (bool) Arr\first($this->mailer->sent, filter: fn (Email $sent) => $sent instanceof $email),
+            condition: (bool) Arr\first($this->mailer->sent, filter: static fn (Email $sent) => $sent instanceof $email),
             message: sprintf('Email `%s` was unexpectedly sent.', $email),
         );
 
@@ -93,21 +93,21 @@ final class MailTester
     public array $from {
         get => Arr\map(
             array: $this->sentSymfonyEmail->getFrom(),
-            map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
+            map: static fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
     public array $to {
         get => Arr\map(
             array: $this->sentSymfonyEmail->getTo(),
-            map: fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
+            map: static fn (SymfonyAddress $address) => new EmailAddress($address->getAddress(), $address->getName()),
         );
     }
 
     public array $attachments {
         get => Arr\map(
             array: $this->sentSymfonyEmail->getAttachments(),
-            map: fn (DataPart $attachment) => new Attachment(
+            map: static fn (DataPart $attachment) => new Attachment(
                 resolve: $attachment->getBody(...),
                 name: $attachment->getFilename(),
                 contentType: $attachment->getMediaType() . '/' . $attachment->getMediaSubtype(),
@@ -384,7 +384,7 @@ final class MailTester
         Assert::fail(sprintf(
             'Failed asserting that the email has an attachment named `%s`. Existing attachments: %s.',
             $filename,
-            Arr\join(Arr\map($attachments, fn (DataPart $attachment) => $attachment->getName())),
+            Arr\join(Arr\map($attachments, static fn (DataPart $attachment) => $attachment->getName())),
         ));
     }
 
@@ -447,7 +447,7 @@ final class MailTester
     private function convertAddresses(string|array|EmailAddress|null $addresses): array
     {
         return arr($addresses)
-            ->map(fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
+            ->map(static fn (string|EmailAddress|SymfonyAddress $address) => match (true) {
                 $address instanceof SymfonyAddress => $address->getAddress(),
                 $address instanceof EmailAddress => $address->email,
                 default => $address,
@@ -478,7 +478,7 @@ final class MailTester
     {
         $this->assertClassStringIsEmail(email: $email);
 
-        $failed = Arr\first($this->mailer->failed, filter: fn (FailedEmail $failed) => $failed->email instanceof $email);
+        $failed = Arr\first($this->mailer->failed, filter: static fn (FailedEmail $failed) => $failed->email instanceof $email);
 
         Assert::assertTrue(
             condition: (bool) $failed,
@@ -527,7 +527,7 @@ final class MailTester
         $this->assertClassStringIsEmail(email: $email);
 
         Assert::assertFalse(
-            condition: (bool) Arr\first($this->mailer->failed, filter: fn (FailedEmail $failed) => $failed->email instanceof $email),
+            condition: (bool) Arr\first($this->mailer->failed, filter: static fn (FailedEmail $failed) => $failed->email instanceof $email),
             message: sprintf('Email `%s` unexpectedly failed.', $email),
         );
 

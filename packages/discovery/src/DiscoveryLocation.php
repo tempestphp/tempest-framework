@@ -40,7 +40,7 @@ final class DiscoveryLocation
 
     public function isIgnored(string $path): bool
     {
-        return array_any($this->ignore, fn (string $ignore) => str_starts_with($path, $ignore));
+        return array_any($this->ignore, static fn (string $ignore) => str_starts_with($path, $ignore));
     }
 
     public function toClassName(string $path): string

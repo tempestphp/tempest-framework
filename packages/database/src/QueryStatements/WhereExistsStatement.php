@@ -29,11 +29,11 @@ final readonly class WhereExistsStatement implements QueryStatement
 
         if ($this->innerWheres->isNotEmpty()) {
             $compiled = $this->innerWheres
-                ->map(map: fn (
+                ->map(map: static fn (
                     QueryStatement $where,
                 ) => $where->compile(dialect: $dialect))
                 ->filter(
-                    filter: fn (
+                    filter: static fn (
                         string $compiled,
                     ) => $compiled !== '',
                 )

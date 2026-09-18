@@ -323,7 +323,7 @@ final class HttpRouterTester
     {
         $key = array_find_key(
             array: $headers,
-            callback: fn (mixed $_, string $headerKey): bool => strcasecmp($headerKey, 'accept') === 0,
+            callback: static fn (mixed $_, string $headerKey): bool => strcasecmp($headerKey, 'accept') === 0,
         );
 
         if ($this->contentType instanceof ContentType) {

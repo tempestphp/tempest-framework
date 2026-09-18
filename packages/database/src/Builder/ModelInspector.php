@@ -751,7 +751,7 @@ final class ModelInspector
         }
 
         $primaryKeys = arr($this->reflector->getProperties())
-            ->filter(fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
+            ->filter(static fn (PropertyReflector $property) => $property->getType()->matches(PrimaryKey::class));
 
         return match ($primaryKeys->count()) {
             0 => null,

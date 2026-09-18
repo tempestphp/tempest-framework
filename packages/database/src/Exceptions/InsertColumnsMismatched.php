@@ -11,8 +11,8 @@ final class InsertColumnsMismatched extends Exception
         ImmutableArray $expected,
         ImmutableArray $actual,
     ) {
-        $expected = $expected->map(fn ($column) => "`{$column}`")->join();
-        $actual = $actual->map(fn ($column) => "`{$column}`")->join();
+        $expected = $expected->map(static fn ($column) => "`{$column}`")->join();
+        $actual = $actual->map(static fn ($column) => "`{$column}`")->join();
 
         parent::__construct("Expected columns {$expected}; but got {$actual}");
     }

@@ -46,7 +46,7 @@ trait HasConvenientWhereMethods
                     throw new InvalidArgumentException("{$operator->value} operator requires an array of values");
                 }
 
-                $value = array_map(fn (mixed $value) => match (true) {
+                $value = array_map(static fn (mixed $value) => match (true) {
                     $value instanceof BackedEnum => $value->value,
                     $value instanceof UnitEnum => $value->name,
                     $value instanceof ArrayAccess => (array) $value,
@@ -66,7 +66,7 @@ trait HasConvenientWhereMethods
 
                 $sql .= " {$operator->value} ? AND ?";
                 $bindings = array_map(
-                    fn (DateTimeInterface|string|float|int|Countable $value) => match (true) {
+                    static fn (DateTimeInterface|string|float|int|Countable $value) => match (true) {
                         $value instanceof Countable => count($value),
                         default => $value,
                     },
@@ -101,7 +101,7 @@ trait HasConvenientWhereMethods
             return false;
         }
 
-        return Str\contains($statement, [' ', ...array_map(fn (WhereOperator $op) => $op->value, WhereOperator::cases())]);
+        return Str\contains($statement, [' ', ...array_map(static fn (WhereOperator $op) => $op->value, WhereOperator::cases())]);
     }
 
     /**

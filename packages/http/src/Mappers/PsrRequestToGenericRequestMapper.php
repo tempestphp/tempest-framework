@@ -47,7 +47,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         }
 
         $headersAsString = array_map(
-            fn (array $items) => implode(',', $items),
+            static fn (array $items) => implode(',', $items),
             $from->getHeaders(),
         );
 

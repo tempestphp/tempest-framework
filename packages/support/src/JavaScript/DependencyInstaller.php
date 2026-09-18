@@ -75,7 +75,7 @@ final readonly class DependencyInstaller
                 $dev ? '-D' : null,
                 ...$dependencies,
             ],
-            fn (?string $arg): bool => $arg !== null,
+            static fn (?string $arg): bool => $arg !== null,
         ));
 
         return new Process(

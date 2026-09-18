@@ -140,7 +140,7 @@ final class ArrayToObjectMapper implements Mapper
         $key = $parentClass->getName();
 
         $plans[$key] ??= array_filter(array_map(
-            function (PropertyReflector $property): ?array {
+            static function (PropertyReflector $property): ?array {
                 if ($property->isVirtual()) {
                     return null;
                 }
@@ -182,7 +182,7 @@ final class ArrayToObjectMapper implements Mapper
         $key = $childClass->getName() . '|' . $parent::class;
 
         $plans[$key] ??= array_filter(array_map(
-            function (PropertyReflector $childProperty) use ($parent): ?array {
+            static function (PropertyReflector $childProperty) use ($parent): ?array {
                 if ($childProperty->isVirtual()) {
                     return null;
                 }

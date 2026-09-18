@@ -38,7 +38,7 @@ trait IsResponse
     {
         return array_find(
             array: $this->headers,
-            callback: fn (Header $header) => strcasecmp($header->name, $name) === 0,
+            callback: static fn (Header $header) => strcasecmp($header->name, $name) === 0,
         );
     }
 

@@ -53,6 +53,6 @@ final class UpdateKernelDiscoveryPropertiesRector extends AbstractRector
     {
         $type = $this->nodeTypeResolver->getType($expr);
 
-        return array_any($type->getObjectClassNames(), fn ($className) => $className === 'Tempest\Core\Kernel' || is_subclass_of($className, 'Tempest\Core\Kernel'));
+        return array_any($type->getObjectClassNames(), static fn ($className) => $className === 'Tempest\Core\Kernel' || is_subclass_of($className, 'Tempest\Core\Kernel'));
     }
 }

@@ -245,7 +245,7 @@ final class TestingOAuthClient implements OAuthClient
     public function assertUserFetched(string $code): void
     {
         Assert::assertNotEmpty(
-            actual: array_filter($this->users, fn (array $user) => $user['code'] === $code),
+            actual: array_filter($this->users, static fn (array $user) => $user['code'] === $code),
             message: sprintf('User with code "%s" was not handled.', $code),
         );
     }
@@ -259,7 +259,7 @@ final class TestingOAuthClient implements OAuthClient
 
         if ($code !== null) {
             Assert::assertNotEmpty(
-                actual: array_filter($this->accessTokens, fn (array $token) => $token['code'] === $code),
+                actual: array_filter($this->accessTokens, static fn (array $token) => $token['code'] === $code),
                 message: sprintf('No access token was retrieved for code "%s".', $code),
             );
         }
@@ -275,7 +275,7 @@ final class TestingOAuthClient implements OAuthClient
         if ($refreshToken !== null) {
             // @mago-expect lint:no-insecure-comparison
             Assert::assertNotEmpty(
-                actual: array_filter($this->refreshedTokens, fn (array $token) => $token['refresh_token'] === $refreshToken),
+                actual: array_filter($this->refreshedTokens, static fn (array $token) => $token['refresh_token'] === $refreshToken),
                 message: sprintf('No access token was refreshed for refresh token "%s".', $refreshToken),
             );
         }

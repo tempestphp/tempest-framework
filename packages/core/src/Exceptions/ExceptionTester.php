@@ -87,7 +87,7 @@ final class ExceptionTester
 
     private function findRecordedProcessings(string|object $exception): array
     {
-        return array_filter($this->processor->processed, function (string|object $reported) use ($exception) {
+        return array_filter($this->processor->processed, static function (string|object $reported) use ($exception) {
             if ($reported === $exception) {
                 return true;
             }

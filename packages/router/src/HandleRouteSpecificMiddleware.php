@@ -20,7 +20,7 @@ final readonly class HandleRouteSpecificMiddleware implements HttpMiddleware
     {
         $middlewareStack = new Middleware(...$this->matchedRoute->route->middleware);
 
-        $callable = new HttpMiddlewareCallable(fn (Request $request) => $next($request));
+        $callable = new HttpMiddlewareCallable(static fn (Request $request) => $next($request));
 
         foreach ($middlewareStack->unwrap() as $middlewareClass) {
             $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {

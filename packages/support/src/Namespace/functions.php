@@ -24,7 +24,7 @@ function to_fqcn(Stringable|string $path, Stringable|string|null $root = null): 
     $namespace = prepare_namespace($path, $root)
         ->stripEnd('\\')
         ->explode('\\')
-        ->map(fn (string $segment) => Str\to_pascal_case($segment))
+        ->map(static fn (string $segment) => Str\to_pascal_case($segment))
         ->implode('\\')
         ->toString();
 
@@ -55,7 +55,7 @@ function to_namespace(Stringable|string $path, Stringable|string|null $root = nu
     return prepare_namespace($path, $root)
         ->stripEnd('\\')
         ->explode('\\')
-        ->map(fn (string $segment) => Str\to_pascal_case($segment))
+        ->map(static fn (string $segment) => Str\to_pascal_case($segment))
         ->implode('\\')
         ->toString();
 }

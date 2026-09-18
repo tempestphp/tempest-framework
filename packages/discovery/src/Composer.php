@@ -53,7 +53,7 @@ final class Composer
 
         $this->namespaces = new ImmutableArray([$this->mainNamespace, ...$this->namespaces])
             ->filter()
-            ->unique(fn (Psr4Namespace $ns) => "{$ns->namespace}:{$ns->path}")
+            ->unique(static fn (Psr4Namespace $ns) => "{$ns->namespace}:{$ns->path}")
             ->toArray();
 
         $this->devNamespaces = $this->resolvePsr4Namespaces('autoload-dev.psr-4');
@@ -123,8 +123,8 @@ final class Composer
     {
         return new ImmutableArray($this->composer)
             ->get($path, default: new ImmutableArray())
-            ->flatMap(fn (string|iterable $paths, string $namespace) => Arr\map(Arr\wrap($paths), fn (string $path) => new Psr4Namespace($namespace, $path)))
-            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
+            ->flatMap(static fn (string|iterable $paths, string $namespace) => Arr\map(Arr\wrap($paths), static fn (string $path) => new Psr4Namespace($namespace, $path)))
+            ->sortByCallback(static fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()
             ->toArray();
     }

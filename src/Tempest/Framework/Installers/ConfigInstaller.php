@@ -25,9 +25,9 @@ final class ConfigInstaller
     public function install(): void
     {
         $searchOptions = arr($this->loadConfig->find())
-            ->map(fn (string $path) => str($path))
-            ->filter(fn (ImmutableString $path) => $path->contains(['/packages/', '/vendor/']))
-            ->mapWithKeys(fn (ImmutableString $path) => yield $path->toString() => $path->afterLast('/')->toString());
+            ->map(static fn (string $path) => str($path))
+            ->filter(static fn (ImmutableString $path) => $path->contains(['/packages/', '/vendor/']))
+            ->mapWithKeys(static fn (ImmutableString $path) => yield $path->toString() => $path->afterLast('/')->toString());
 
         if ($searchOptions->isEmpty()) {
             $this->error('No installable config files found.');

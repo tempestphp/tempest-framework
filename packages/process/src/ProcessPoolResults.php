@@ -20,7 +20,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function allSuccessful(): bool
     {
-        return $this->results->every(fn (ProcessResult $result) => $result->successful());
+        return $this->results->every(static fn (ProcessResult $result) => $result->successful());
     }
 
     /**
@@ -28,7 +28,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function allFailed(): bool
     {
-        return $this->results->every(fn (ProcessResult $result) => $result->failed());
+        return $this->results->every(static fn (ProcessResult $result) => $result->failed());
     }
 
     /**
@@ -36,7 +36,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function someSuccessful(): bool
     {
-        return $this->results->filter(fn (ProcessResult $result) => $result->successful())->count() > 0;
+        return $this->results->filter(static fn (ProcessResult $result) => $result->successful())->count() > 0;
     }
 
     /**
@@ -44,7 +44,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function someFailed(): bool
     {
-        return $this->results->filter(fn (ProcessResult $result) => $result->failed())->count() > 0;
+        return $this->results->filter(static fn (ProcessResult $result) => $result->failed())->count() > 0;
     }
 
     /**
@@ -52,7 +52,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function successful(): ImmutableArray
     {
-        return $this->results->filter(fn (ProcessResult $result) => $result->successful());
+        return $this->results->filter(static fn (ProcessResult $result) => $result->successful());
     }
 
     /**
@@ -60,7 +60,7 @@ final class ProcessPoolResults implements Iterator, ArrayAccess, Countable
      */
     public function failed(): ImmutableArray
     {
-        return $this->results->filter(fn (ProcessResult $result) => ! $result->successful());
+        return $this->results->filter(static fn (ProcessResult $result) => ! $result->successful());
     }
 
     public function toImmutableArray(): ImmutableArray
