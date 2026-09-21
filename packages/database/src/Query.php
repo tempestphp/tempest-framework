@@ -84,7 +84,14 @@ final class Query
             return null;
         }
 
-        return $query->bindings[$index] ?? null;
+        $value = $query->bindings[$index] ?? null;
+
+        // 0 is treated as "auto-increment" by MySQL/PostgreSQL — not a real id.
+        if ($value === 0 || $value === null) {
+            return null;
+        }
+
+        return $value;
     }
 
     public function fetch(mixed ...$bindings): array
