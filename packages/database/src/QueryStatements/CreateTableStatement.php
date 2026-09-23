@@ -60,16 +60,6 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     }
 
     /**
-     * Adds a UUID column to the table. Uses `CHAR(36)` for MySQL, `UUID` for PostgreSQL, and `TEXT` for SQLite.
-     */
-    public function uuidColumn(string $name, bool $nullable = false): self
-    {
-        $this->statements[] = new UuidStatement($name, $nullable);
-
-        return $this;
-    }
-
-    /**
      * Adds an integer column with a foreign key relationship to another table. This is an alias to `foreignId`.
      *
      * **Example**
@@ -140,7 +130,7 @@ final class CreateTableStatement implements QueryStatement, HasTrailingStatement
     {
         [, $localKey] = explode('.', $local);
 
-        $this->uuidColumn($localKey, nullable: $nullable);
+        $this->statements[] = new UuidStatement($localKey, nullable: $nullable);
 
         $this->statements[] = new BelongsToStatement(
             local: $local,

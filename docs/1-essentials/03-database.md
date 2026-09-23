@@ -406,7 +406,7 @@ final class CreateBooksTable implements MigratesUp
 }
 ```
 
-Columns referencing a UUID primary key need a UUID-compatible type. Use `uuidColumn()` for a plain UUID column, or `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
+Columns referencing a UUID primary key need a UUID-compatible type. Use `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
 
 ```php app/Books/CreateChaptersTable.php
 use Tempest\Database\MigratesUp;
