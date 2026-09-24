@@ -10,6 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\Children\LibraryItem;
+use Tests\Tempest\Integration\Mapper\Fixtures\Library;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
@@ -45,6 +47,16 @@ final class ArrayToObjectMapperTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('a', $object->a);
         $this->assertSame('b', $object->b);
+    }
+
+    #[Test]
+    public function map_collection_of_objects_from_short_docblock_name(): void
+    {
+        $object = map(['items' => [['name' => 'a'], ['name' => 'b']]])->to(Library::class);
+
+        $this->assertCount(2, $object->items);
+        $this->assertContainsOnlyInstancesOf(LibraryItem::class, $object->items);
+        $this->assertSame('a', $object->items[0]->name);
     }
 
     #[Test]
