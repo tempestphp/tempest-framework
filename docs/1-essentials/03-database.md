@@ -193,10 +193,6 @@ final class Book
 }
 ```
 
-:::warning
-Due to a restriction with reflection, relation types in docblocks must always be fully qualified. Short class names are not supported.
-:::
-
 ### Relation attributes
 
 Tempest infers all information needed to build queries. When property names and type information do not map one-to-one to the database schema, dedicated attributes can be used to define relations.
