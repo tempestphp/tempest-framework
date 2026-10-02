@@ -3,7 +3,13 @@ name: Coding Conventions
 on:
   push:
     branches: [3.x]
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - ".github/**"
   workflow_dispatch:
 
 concurrency:
