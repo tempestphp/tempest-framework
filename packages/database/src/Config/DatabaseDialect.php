@@ -24,8 +24,8 @@ enum DatabaseDialect: string
     public function quoteIdentifier(string $identifier): string
     {
         return match ($this) {
-            self::MYSQL, self::SQLITE => sprintf('`%s`', $identifier),
-            self::POSTGRESQL => sprintf('"%s"', $identifier),
+            self::MYSQL, self::SQLITE => sprintf('`%s`', str_replace('`', '``', $identifier)),
+            self::POSTGRESQL => sprintf('"%s"', str_replace('"', '""', $identifier)),
         };
     }
 
