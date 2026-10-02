@@ -410,6 +410,12 @@ final class InsertQueryBuilder implements BuildsQuery
             $entry[$key] = $this->serializeIterableValue($key, $value);
         }
 
+        $primaryKey = $this->model->getPrimaryKey();
+
+        if ($primaryKey !== null && $this->model->hasUuidPrimaryKey() && ! isset($entry[$primaryKey])) {
+            $entry = [$primaryKey => Random\uuid(), ...$entry];
+        }
+
         return $entry;
     }
 

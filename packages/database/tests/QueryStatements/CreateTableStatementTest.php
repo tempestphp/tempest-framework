@@ -240,6 +240,73 @@ final class CreateTableStatementTest extends TestCase
         ];
     }
 
+    #[DataProvider('provide_uuid_fk_create_table_database_dialects')]
+    #[Test]
+    public function create_a_uuid_foreign_key_constraint(DatabaseDialect $dialect, string $validSql): void
+    {
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->belongsToUuid('books.author_id', 'authors.id', OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->foreignUuid('author_id', constrainedOn: 'authors', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+
+        $statement = new CreateTableStatement('books')
+            ->uuid()
+            ->foreignUuid('books.author_id', constrainedOn: 'authors.id', onDelete: OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $statement);
+    }
+
+    public static function provide_uuid_fk_create_table_database_dialects(): Generator
+    {
+        yield 'mysql' => [
+            DatabaseDialect::MYSQL,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` CHAR(36) PRIMARY KEY, 
+                `author_id` CHAR(36) NOT NULL, 
+                CONSTRAINT `fk_authors_books_author_id` FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'postgresql' => [
+            DatabaseDialect::POSTGRESQL,
+            <<<SQL
+            CREATE TABLE "books" (
+                "id" UUID PRIMARY KEY, 
+                "author_id" UUID NOT NULL, 
+                CONSTRAINT "fk_authors_books_author_id" FOREIGN KEY(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+                "name" VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+
+        yield 'sqlite' => [
+            DatabaseDialect::SQLITE,
+            <<<SQL
+            CREATE TABLE `books` (
+                `id` TEXT PRIMARY KEY, 
+                `author_id` TEXT NOT NULL, 
+                `name` VARCHAR(255) NOT NULL
+            );
+            SQL,
+        ];
+    }
+
     #[DataProvider('provide_datetime_current_database_dialects')]
     #[Test]
     public function datetime_current_default(DatabaseDialect $dialect, string $validSql): void

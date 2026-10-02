@@ -406,6 +406,30 @@ final class CreateBooksTable implements MigratesUp
 }
 ```
 
+Columns referencing a UUID primary key need a UUID-compatible type. Use `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
+
+```php app/Books/CreateChaptersTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\OnDelete;
+
+final class CreateChaptersTable implements MigratesUp
+{
+    public string $name = '2024-08-13_create_chapters_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('chapters')
+            ->uuid()
+            ->text('title')
+            ->foreignUuid('book_uuid', constrainedOn: 'books.uuid', onDelete: OnDelete::CASCADE);
+    }
+}
+```
+
+UUID columns use `CHAR(36)` on MySQL, `UUID` on PostgreSQL, and `TEXT` on SQLite, so foreign keys referencing UUID primary keys are type-compatible on every supported dialect.
+
 :::warning
 Currently, the [`IsDatabaseModel`](#the-is-database-model-trait) trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
 :::
