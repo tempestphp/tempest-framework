@@ -10,6 +10,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
 use Tempest\Support\Str;
@@ -23,6 +24,7 @@ final readonly class RedisSessionManager implements SessionManager
         private Clock $clock,
         private Redis $redis,
         private RedisSessionConfig $config,
+        private SessionIdResolver $sessionIdResolver,
     ) {}
 
     public function getOrCreate(SessionId $id): Session
@@ -59,6 +61,15 @@ final readonly class RedisSessionManager implements SessionManager
         $this->redis->command('UNLINK', $this->getKey($session->id));
 
         event(new SessionDeleted($session->id));
+    }
+
+    public function regenerate(Session $session): void
+    {
+        $this->delete($session);
+
+        $session->replaceId($this->sessionIdResolver->issueNewId());
+
+        $this->save($session);
     }
 
     public function isValid(Session $session): bool

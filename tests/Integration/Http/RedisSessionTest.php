@@ -16,6 +16,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 use Tempest\KeyValue\Redis\Redis;
 use Tempest\Support\Random;
@@ -47,6 +48,7 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
             clock: $this->container->get(Clock::class),
             redis: $this->container->get(Redis::class),
             config: $this->container->get(RedisSessionConfig::class),
+            sessionIdResolver: $this->container->get(SessionIdResolver::class),
         ));
 
         try {
@@ -171,6 +173,24 @@ final class RedisSessionTest extends FrameworkIntegrationTestCase
             },
             count: 1,
         );
+    }
+
+    #[Test]
+    public function regenerate_replaces_the_session_key(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $this->session->set('magic_type', 'offensive');
+        $this->manager->save($this->session);
+
+        $previousId = $this->session->id;
+
+        $this->manager->regenerate($this->session);
+
+        $this->assertNotSame((string) $previousId, (string) $this->session->id);
+        $this->assertSessionNotExistsInRedis($previousId);
+        $this->assertSessionExistsInRedis($this->session->id);
+        $this->assertSessionDataInRedis($this->session->id, ['magic_type' => 'offensive']);
     }
 
     #[Test]

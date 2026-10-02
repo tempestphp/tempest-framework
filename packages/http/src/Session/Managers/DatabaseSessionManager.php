@@ -11,6 +11,7 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionCreated;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\SessionIdResolver;
 use Tempest\Http\Session\SessionManager;
 
 use function Tempest\Database\query;
@@ -21,6 +22,7 @@ final readonly class DatabaseSessionManager implements SessionManager
     public function __construct(
         private Clock $clock,
         private SessionConfig $config,
+        private SessionIdResolver $sessionIdResolver,
     ) {}
 
     public function getOrCreate(SessionId $id): Session
@@ -80,6 +82,15 @@ final readonly class DatabaseSessionManager implements SessionManager
             ->execute();
 
         event(new SessionDeleted($session->id));
+    }
+
+    public function regenerate(Session $session): void
+    {
+        $this->delete($session);
+
+        $session->replaceId($this->sessionIdResolver->issueNewId());
+
+        $this->save($session);
     }
 
     public function isValid(Session $session): bool

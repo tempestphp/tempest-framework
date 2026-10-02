@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionId;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -137,6 +138,17 @@ final class SessionTest extends FrameworkIntegrationTestCase
         $this->session->clear();
 
         $this->assertEmpty($this->session->all());
+    }
+
+    #[Test]
+    public function replace_id_preserves_data(): void
+    {
+        $this->session->set('key', 'value');
+
+        $this->session->replaceId(new SessionId('new_session'));
+
+        $this->assertSame('new_session', (string) $this->session->id);
+        $this->assertSame('value', $this->session->get('key'));
     }
 
     #[Test]

@@ -17,4 +17,6 @@ final class TempestSetList
     public const string TEMPEST_310 = __DIR__ . '/../../config/sets/tempest310.php';
 
     public const string TEMPEST_314 = __DIR__ . '/../../config/sets/tempest314.php';
+
+    public const string TEMPEST_320 = __DIR__ . '/../../config/sets/tempest320.php';
 }
