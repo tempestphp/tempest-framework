@@ -21,6 +21,7 @@ use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\TypeReflector;
 use Throwable;
 use UnitEnum;
+use WeakMap;
 
 use const ARRAY_FILTER_USE_BOTH;
 
@@ -30,6 +31,9 @@ final class GenericContainer implements Container
 
     /** @var array<class-string<DynamicInitializer>, DynamicInitializer> */
     private array $resolvedDynamicInitializers = [];
+
+    /** @var WeakMap<object, Lifetime> */
+    private WeakMap $singletonLifetimes;
 
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
@@ -55,6 +59,7 @@ final class GenericContainer implements Container
 
         private(set) ?DependencyChain $chain = null,
     ) {
+        $this->singletonLifetimes = new WeakMap();
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
         $this->singleton(GenericContainer::class, $this);
@@ -407,9 +412,12 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
+            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
+                ->getMethod('initialize')
+                ->getAttribute(Singleton::class) ?? $class->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
+                $this->singletonLifetimes[$object] = $singleton->lifetime;
                 $this->singleton($className, $object, $tag);
             }
 
@@ -506,8 +514,9 @@ final class GenericContainer implements Container
         if (
             ! $classReflector->getType()->matches(Initializer::class)
             && ! $classReflector->getType()->matches(DynamicInitializer::class)
-            && $classReflector->hasAttribute(Singleton::class)
+            && ($singleton = $classReflector->getAttribute(Singleton::class)) !== null
         ) {
+            $this->singletonLifetimes[$instance] = $singleton->lifetime;
             $this->singleton($className, $instance, $tag);
         }
 
@@ -744,7 +753,6 @@ final class GenericContainer implements Container
 
     public function reset(): self
     {
-        $this->resolvedSingletons = new ArrayIterator();
         $this->resolvedDynamicInitializers = [];
 
         foreach ($this->resettables as $resettableClass) {
@@ -752,6 +760,25 @@ final class GenericContainer implements Container
             $resettable = $this->get($resettableClass);
 
             $resettable->reset();
+        }
+
+        foreach ([$this->singletonDefinitions, $this->resolvedSingletons] as $singletons) {
+            foreach ($singletons->getArrayCopy() as $dependencyName => $instance) {
+                // Factories remain registered so the next request can create a fresh instance.
+                if (! is_object($instance)) {
+                    continue;
+                }
+
+                if ($instance instanceof Closure) {
+                    continue;
+                }
+
+                $this->singletonLifetimes[$instance] ??= new ClassReflector($instance)->getAttribute(Singleton::class)->lifetime ?? Lifetime::PROCESS;
+
+                if ($this->singletonLifetimes[$instance] === Lifetime::REQUEST) {
+                    unset($singletons[$dependencyName]);
+                }
+            }
         }
 
         return $this;
