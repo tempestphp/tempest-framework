@@ -1,0 +1,22 @@
+{
+    "name": "tempest/ship",
+    "description": "Development and Production webserver Dockerfiles and utilities for shipping/deploying TempestPHP applications.",
+    "require": {
+        "php": "^8.5",
+        "tempest/core": "3.x-dev",
+        "tempest/support": "3.x-dev"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Aloft\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Aloft\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
