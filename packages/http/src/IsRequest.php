@@ -17,8 +17,6 @@ use function Tempest\Support\str;
 
 /**
  * @phpstan-require-implements \Tempest\Http\Request
- *
- * @mago-expect lint:too-many-properties
  */
 trait IsRequest
 {
@@ -26,7 +24,7 @@ trait IsRequest
     private(set) Method $method;
 
     #[SkipValidation]
-    private(set) string $uri;
+    private(set) Uri $uri;
 
     #[SkipValidation]
     private(set) ?string $raw = null;
@@ -36,12 +34,6 @@ trait IsRequest
 
     #[SkipValidation]
     private(set) RequestHeaders $headers;
-
-    #[SkipValidation]
-    private(set) string $path;
-
-    #[SkipValidation]
-    private(set) array $query;
 
     /** @var array<array-key, \Tempest\Http\Upload|array> */
     #[SkipValidation]
@@ -60,7 +52,7 @@ trait IsRequest
 
     public function __construct(
         Method $method,
-        string $uri,
+        Uri|string $uri,
         array $body = [],
         array $headers = [],
         array $files = [],
@@ -68,23 +60,22 @@ trait IsRequest
         IpAddress|string|null $ip = null,
     ) {
         $this->method = $method;
-        $this->uri = $uri;
+        $this->uri = $uri instanceof Uri ? $uri : Uri::from($uri);
         $this->body = $body;
         $this->headers = RequestHeaders::normalizeFromArray($headers);
         $this->files = $files;
         $this->raw = $raw;
         $this->ip = IpAddress::tryFrom($ip);
 
-        if ($this->method === Method::CONNECT) {
-            $this->path ??= '';
-            $this->query ??= [];
-
-            return;
-        }
-
-        $uri = Uri::from($this->uri);
-        $this->path ??= rawurldecode($uri->path ?? '');
-        $this->query ??= $uri->query;
+        //         if ($this->method === Method::CONNECT) {
+        //             $this->path ??= '';
+        //             $this->query ??= [];
+        //
+        //             return;
+        //         }
+        //
+        //         $this->path ??= rawurldecode($uri->path ?? '');
+        //         $this->query ??= $uri->query;
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -93,8 +84,8 @@ trait IsRequest
             return get_by_key($this->body, $key);
         }
 
-        if (array_key_exists($key, $this->query)) {
-            return get_by_key($this->query, $key);
+        if (array_key_exists($key, $this->uri->query)) {
+            return get_by_key($this->uri->query, $key);
         }
 
         return $default;
@@ -133,7 +124,7 @@ trait IsRequest
 
     public function hasQuery(string $key): bool
     {
-        return has_key($this->query, $key);
+        return has_key($this->uri->query, $key);
     }
 
     public function accepts(ContentType ...$contentTypes): bool

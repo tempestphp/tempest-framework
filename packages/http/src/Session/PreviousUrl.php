@@ -29,7 +29,8 @@ final readonly class PreviousUrl
             return;
         }
 
-        $this->session->set(self::PREVIOUS_URL_SESSION_KEY, $request->uri);
+        // TODO(neoisrecursive): figure out if a full uri is OK here
+        $this->session->set(self::PREVIOUS_URL_SESSION_KEY, $request->uri->toString());
     }
 
     /**

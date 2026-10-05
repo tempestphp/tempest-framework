@@ -14,8 +14,8 @@ final class RequestFingerprintGenerator implements HttpFingerprintGenerator
     {
         $payload = [
             'method' => $request->method->value,
-            'path' => $request->path,
-            'query' => $this->normalize($request->query),
+            'path' => $request->uri->path,
+            'query' => $this->normalize($request->uri->query),
             'body' => $request->raw ?? $this->normalize($request->body),
         ];
 
