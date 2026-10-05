@@ -29,7 +29,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
 
     private function matchStaticRoute(Request $request): ?MatchedRoute
     {
-        $staticRoute = $this->routeConfig->staticRoutes[$request->method->value][$request->path] ?? null;
+        $staticRoute = $this->routeConfig->staticRoutes[$request->method->value][$request->uri->path] ?? null;
 
         if ($staticRoute === null) {
             return null;
@@ -50,7 +50,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->method->value];
 
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = $matchingRegexForMethod->match($request->path);
+        $matchResult = $matchingRegexForMethod->match($request->uri->path ?? '');
 
         if ($matchResult === null) {
             return null;

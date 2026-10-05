@@ -24,7 +24,7 @@ final readonly class McpHttpController
 
     public function __invoke(Request $request): Response
     {
-        $server = $this->config->getServerByPath($request->path);
+        $server = $this->config->getServerByPath($request->uri->path);
 
         if (! $server instanceof McpServerDefinition) {
             return new NotFound();

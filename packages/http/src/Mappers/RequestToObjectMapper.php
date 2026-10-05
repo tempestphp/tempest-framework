@@ -29,7 +29,7 @@ final readonly class RequestToObjectMapper implements Mapper
     public function map(mixed $from, mixed $to): array|object
     {
         /** @var Request $from */
-        $data = [...$from->files, ...$from->body, ...$from->query];
+        $data = [...$from->files, ...$from->body, ...$from->uri->query];
 
         if (is_a($to, Request::class, true)) {
             $invalidReservedProperties = arr(new ClassReflector(Request::class)->getProperties())
@@ -46,8 +46,6 @@ final readonly class RequestToObjectMapper implements Mapper
                     'uri' => $from->uri,
                     'body' => $from->body,
                     'headers' => $from->headers,
-                    'path' => $from->path,
-                    'query' => $from->query,
                     'files' => $from->files,
                     'cookies' => $from->cookies,
                     'ip' => $from->ip,
