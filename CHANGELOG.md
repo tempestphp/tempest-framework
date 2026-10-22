@@ -2,7 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.19.2](https://github.com/tempestphp/tempest-framework/compare/v3.19.1..3.19.2)  —  2026-09-08
+## [3.19.3](https://github.com/tempestphp/tempest-framework/compare/v3.19.2..3.19.3)  —  2026-10-22
+
+### 🚀 Features
+
+- **container**: add dynamic tags (#2288) ([aea7f2b](https://github.com/tempestphp/tempest-framework/commit/aea7f2b9127f26120cf662a5f78f047f7e639efb))
+
+### ⚡ Performance
+
+- **mapper**: cache per-class reflection plans during hydration (#2276) ([952b707](https://github.com/tempestphp/tempest-framework/commit/952b70770fc64585b7c6557e1d150d5c243f168c))
+
+### 🐛 Bug fixes
+
+- **console**: properly restore terminal after testing (#2294) ([0061698](https://github.com/tempestphp/tempest-framework/commit/006169824ba6ae00edd0d87662f01bc6baddc401))
+- **container**: fix dynamic tag oversights (#2291) ([06addeb](https://github.com/tempestphp/tempest-framework/commit/06addeb3076f995365c5960ea00af4fd596f9155))
+- **database**: don't emit `UNSIGNED` on Postgres (#2295) ([0f478fb](https://github.com/tempestphp/tempest-framework/commit/0f478fb487e12a5891738a15a1663fa44c47295b))
+- **database**: qualify orderBy fields against the base table (#2306) ([c9949b3](https://github.com/tempestphp/tempest-framework/commit/c9949b3dd6c96a656cf7881c130f1988e2ea4a94))
+- **framework**: read one-line docblock vars in meta:view-component (#2299) ([a14c2f3](https://github.com/tempestphp/tempest-framework/commit/a14c2f34ab7d38d5326ed58a0781e942a1d0f970))
+- **mapper**: materialize promoted defaults for readonly properties (#2304) ([05c7376](https://github.com/tempestphp/tempest-framework/commit/05c73765c7f1c65dfa908fd81f71768686105254))
+- dependencies and CI issues (#2314) ([854954b](https://github.com/tempestphp/tempest-framework/commit/854954b40f2fe65d1d1b5f5cd8c893b6c266a0af))
+
+
+## [3.19.2](https://github.com/tempestphp/tempest-framework/compare/v3.19.1..v3.19.2)  —  2026-09-08
 
 ### 🚀 Features
 
