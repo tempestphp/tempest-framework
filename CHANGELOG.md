@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.19.3](https://github.com/tempestphp/tempest-framework/compare/v3.19.2..3.19.3)  —  2026-10-22
+## [3.20.0](https://github.com/tempestphp/tempest-framework/compare/v3.19.3..3.20.0)  —  2026-10-22
+
+### 🚀 Features
+
+- **database**: support unsigned primary keys on MySQL (#2312) ([d4459e0](https://github.com/tempestphp/tempest-framework/commit/d4459e0c205f5f30bbcaf66bdde7650f61c1a6d3))
+
+### 🐛 Bug fixes
+
+- **container**: detect nested circular dependencies (#2297) ([f869ea7](https://github.com/tempestphp/tempest-framework/commit/f869ea70ae16f16db6dc1991a60d5982e6164020))
+
+
+## [3.19.3](https://github.com/tempestphp/tempest-framework/compare/v3.19.2..v3.19.3)  —  2026-10-22
 
 ### 🚀 Features
 
