@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
@@ -150,7 +151,7 @@ final class ArrayToObjectMapper implements Mapper
 
         $parameter = $property->getClass()->getConstructor()?->getParameter($property->getName());
 
-        if ($parameter === null || ! $parameter->isDefaultValueAvailable()) {
+        if (!$parameter instanceof ParameterReflector || ! $parameter->isDefaultValueAvailable()) {
             return false;
         }
 
