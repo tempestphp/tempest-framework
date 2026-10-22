@@ -11,6 +11,7 @@ use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
@@ -150,7 +151,7 @@ final class ArrayToObjectMapper implements Mapper
 
         $parameter = $property->getClass()->getConstructor()?->getParameter($property->getName());
 
-        if ($parameter === null || ! $parameter->isDefaultValueAvailable()) {
+        if (! $parameter instanceof ParameterReflector || ! $parameter->isDefaultValueAvailable()) {
             return false;
         }
 

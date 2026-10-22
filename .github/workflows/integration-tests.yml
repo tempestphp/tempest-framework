@@ -53,6 +53,19 @@ jobs:
 
   phpunit:
     runs-on: ${{ matrix.os }}
+    services:
+      mysql:
+        image: ${{ matrix.database == 'mysql' && 'mysql:8.0' || '' }}
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: app
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     strategy:
       fail-fast: false
       matrix:
@@ -97,20 +110,13 @@ jobs:
         if: ${{ matrix.os != 'windows-latest' }}
         uses: supercharge/redis-github-action@1.8.1
 
-      - name: "Setup MySQL"
-        if: ${{ matrix.database == 'mysql' }}
-        uses: ankane/setup-mysql@v1
-        with:
-          mysql-version: 8.0
-          database: "app"
-
       - name: "Setup PostgreSQL"
         if: ${{ matrix.database == 'postgres' }}
         uses: ankane/setup-postgres@v1
 
       - name: Create worker databases - mysql
         if: ${{ matrix.database == 'mysql' }}
-        run: for i in 1 2 3 4; do mysql -u root -e "CREATE DATABASE IF NOT EXISTS app$i;"; done
+        run: for i in 1 2 3 4; do docker exec "${{ job.services.mysql.id }}" mysql -u root -e "CREATE DATABASE IF NOT EXISTS app$i;"; done
 
       - name: Create worker databases - postgres
         if: ${{ matrix.database == 'postgres' }}
