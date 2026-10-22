@@ -167,6 +167,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         ));
 
         $this->container->config(new MysqlConfig(
+            host: '127.0.0.1',
             database: 'app' . env('TEST_TOKEN', ''),
             tag: 'mysql-main',
         ));
