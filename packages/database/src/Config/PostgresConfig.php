@@ -76,4 +76,18 @@ final class PostgresConfig implements DatabaseConfig
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
         public string|UnitEnum|null $tag = null,
     ) {}
+
+    /**
+     * Creates a PostgreSQL configuration from a database URL, such as `postgres://user:password@host:5432/database`. Components missing from the URL fall back to their defaults.
+     *
+     * @param string $url The database URL. Supported schemes are `postgres`, `postgresql` and `pgsql`.
+     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the URL.
+     */
+    public static function fromUrl(#[SensitiveParameter] string $url, mixed ...$options): self
+    {
+        return new self(...[
+            ...DatabaseUrl::parse($url, schemes: ['postgres', 'postgresql', 'pgsql']),
+            ...$options,
+        ]);
+    }
 }

@@ -36,6 +36,25 @@ return new PostgresConfig(
 );
 ```
 
+### Connecting with a database URL
+
+Some hosting providers, such as Laravel Cloud, inject the connection details as a single `DATABASE_URL` environment variable. Each configuration class provides a `fromUrl()` method that builds the configuration from such a URL:
+
+```php app/Config/database.config.php
+use Tempest\Database\Config\MysqlConfig;
+use function Tempest\env;
+
+return MysqlConfig::fromUrl(env('DATABASE_URL'));
+```
+
+Components missing from the URL fall back to their defaults. Any other constructor argument may be passed by name, and takes precedence over the values parsed from the URL:
+
+```php app/Config/database.config.php
+return PostgresConfig::fromUrl(env('DATABASE_URL'), persistent: true);
+```
+
+{b`Tempest\Database\Config\MysqlConfig`} accepts the `mysql` and `mariadb` schemes, {b`Tempest\Database\Config\PostgresConfig`} accepts `postgres`, `postgresql` and `pgsql`, and {b`Tempest\Database\Config\SQLiteConfig`} accepts URLs such as `sqlite:///path/to/database.sqlite` and `sqlite::memory:`. Credentials containing special characters must be percent-encoded.
+
 ## Querying the database
 
 Multiple approaches exist for querying the database, all of which execute a {b`Tempest\Database\Query`} on the {b`Tempest\Database\Database`} class. The most straightforward approach is to inject {b`Tempest\Database\Database`}:

@@ -99,4 +99,18 @@ final class MysqlConfig implements DatabaseConfig
         public MigrationNamingStrategy $migrationNaming = new DatePrefixStrategy(),
         public string|UnitEnum|null $tag = null,
     ) {}
+
+    /**
+     * Creates a MySQL configuration from a database URL, such as `mysql://user:password@host:3306/database`. Components missing from the URL fall back to their defaults.
+     *
+     * @param string $url The database URL. Supported schemes are `mysql` and `mariadb`.
+     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the URL.
+     */
+    public static function fromUrl(#[SensitiveParameter] string $url, mixed ...$options): self
+    {
+        return new self(...[
+            ...DatabaseUrl::parse($url, schemes: ['mysql', 'mariadb']),
+            ...$options,
+        ]);
+    }
 }
