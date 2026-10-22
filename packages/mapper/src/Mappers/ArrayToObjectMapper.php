@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use Tempest\Reflection\ParameterReflector;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Context;
 use Tempest\Mapper\Exceptions\MappingValuesWereMissing;
@@ -12,6 +11,7 @@ use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
@@ -151,7 +151,7 @@ final class ArrayToObjectMapper implements Mapper
 
         $parameter = $property->getClass()->getConstructor()?->getParameter($property->getName());
 
-        if (!$parameter instanceof ParameterReflector || ! $parameter->isDefaultValueAvailable()) {
+        if (! $parameter instanceof ParameterReflector || ! $parameter->isDefaultValueAvailable()) {
             return false;
         }
 
