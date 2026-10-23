@@ -36,6 +36,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\CountingDynamicInitializer;
+use Tempest\Container\Tests\Fixtures\CountingInitializer;
 use Tempest\Container\Tests\Fixtures\DecoratedClass;
 use Tempest\Container\Tests\Fixtures\DecoratedInterface;
 use Tempest\Container\Tests\Fixtures\DecoratorClass;
@@ -58,6 +59,7 @@ use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\InvokableClass;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithDependencies;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
+use Tempest\Container\Tests\Fixtures\LookupCountingDynamicInitializer;
 use Tempest\Container\Tests\Fixtures\NonDynamicTaggedDependency;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\ResettableDependency;
@@ -73,6 +75,7 @@ use Tempest\Container\Tests\Fixtures\UnionInterfaceA;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceB;
 use Tempest\Container\Tests\Fixtures\UnionTypesClass;
 use Tempest\Reflection\ClassReflector;
+use Throwable;
 
 use function Tempest\Reflection\reflect;
 
@@ -182,6 +185,64 @@ final class ContainerTest extends TestCase
         $container->get(ContainerObjectA::class);
 
         $this->assertSame(1, CountingDynamicInitializer::$instances);
+    }
+
+    #[Test]
+    public function initializer_lookups_are_remembered_across_resets(): void
+    {
+        LookupCountingDynamicInitializer::reset();
+
+        $container = new GenericContainer();
+        $container->addInitializer(LookupCountingDynamicInitializer::class);
+
+        $container->get(ContainerObjectA::class);
+        $container->get(ContainerObjectA::class);
+        $container->reset();
+        $container->get(ContainerObjectA::class);
+
+        $this->assertSame(1, LookupCountingDynamicInitializer::$lookups[ContainerObjectA::class]);
+    }
+
+    #[Test]
+    public function initializer_lookups_are_forgotten_when_initializers_change(): void
+    {
+        $container = new GenericContainer();
+
+        // The container now remembers that there is no initializer for ContainerObjectD
+        try {
+            $container->get(ContainerObjectD::class);
+            $this->fail('ContainerObjectD should not be autowireable.');
+        } catch (Throwable $throwable) {
+            $this->assertInstanceOf(DependencyCouldNotBeAutowired::class, $throwable);
+        }
+
+        $container->addInitializer(ContainerObjectDInitializer::class);
+
+        $this->assertSame('test', $container->get(ContainerObjectD::class)->prop);
+
+        $container->removeInitializer(ContainerObjectDInitializer::class);
+        $container->addInitializer(CountingInitializer::class);
+
+        $this->assertSame('counted', $container->get(ContainerObjectD::class)->prop);
+    }
+
+    #[Test]
+    public function initializer_instances_are_reused_until_reset(): void
+    {
+        CountingInitializer::$instances = 0;
+
+        $container = new GenericContainer();
+        $container->addInitializer(CountingInitializer::class);
+
+        $container->get(ContainerObjectD::class);
+        $container->get(ContainerObjectD::class);
+
+        $this->assertSame(1, CountingInitializer::$instances);
+
+        $container->reset();
+        $container->get(ContainerObjectD::class);
+
+        $this->assertSame(2, CountingInitializer::$instances);
     }
 
     #[Test]

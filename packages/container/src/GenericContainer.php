@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use ArrayIterator;
+use ArrayObject;
 use Closure;
 use Psr\Container\ContainerInterface;
 use ReflectionFunction;
@@ -28,8 +29,16 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
-    /** @var array<class-string<DynamicInitializer>, DynamicInitializer> */
-    private array $resolvedDynamicInitializers = [];
+    /**
+     * Which initializer can initialize a given class and tag, or `false` when there is none. Unlike resolved
+     * instances, this is kept when the container is reset, since it only depends on the registered initializers.
+     *
+     * @var ArrayObject<string, class-string<Initializer|DynamicInitializer>|false>
+     */
+    private ArrayObject $initializerLookups;
+
+    /** @var ArrayObject<class-string, Initializer|DynamicInitializer> */
+    private ArrayObject $resolvedInitializers;
 
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
@@ -55,6 +64,10 @@ final class GenericContainer implements Container
 
         private(set) ?DependencyChain $chain = null,
     ) {
+        // These are objects, so that they are shared with clones of this container.
+        $this->initializerLookups = new ArrayObject();
+        $this->resolvedInitializers = new ArrayObject();
+
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
         $this->singleton(GenericContainer::class, $this);
@@ -77,6 +90,7 @@ final class GenericContainer implements Container
     public function setInitializers(array $initializers): self
     {
         $this->initializers = new ArrayIterator($initializers);
+        $this->initializerLookups->exchangeArray([]);
 
         return $this;
     }
@@ -84,7 +98,7 @@ final class GenericContainer implements Container
     public function setDynamicInitializers(array $dynamicInitializers): self
     {
         $this->dynamicInitializers = new ArrayIterator($dynamicInitializers);
-        $this->resolvedDynamicInitializers = [];
+        $this->initializerLookups->exchangeArray([]);
 
         return $this;
     }
@@ -313,6 +327,8 @@ final class GenericContainer implements Container
 
         // First, we check whether this is a DynamicInitializer,
         // which don't have a one-to-one mapping
+        $this->initializerLookups->exchangeArray([]);
+
         if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
             $this->dynamicInitializers[] = $initializerClass->getName();
 
@@ -348,12 +364,15 @@ final class GenericContainer implements Container
             );
 
             unset($this->dynamicInitializers[$index]);
-            unset($this->resolvedDynamicInitializers[$initializerClass->getName()]);
+            unset($this->resolvedInitializers[$initializerClass->getName()]);
+            $this->initializerLookups->exchangeArray([]);
 
             return $this;
         }
 
         unset($this->initializers[$initializerClass->getName()]);
+        unset($this->resolvedInitializers[$initializerClass->getName()]);
+        $this->initializerLookups->exchangeArray([]);
 
         return $this;
     }
@@ -368,6 +387,11 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return TClassName
+     */
     private function resolve(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         $instance = $this->resolveDependency($className, $tag, ...$params);
@@ -460,13 +484,35 @@ final class GenericContainer implements Container
     private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
     {
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
-            return $this->resolve($initializerClass);
+            return $this->resolveInitializer($initializerClass);
         }
 
         return null;
     }
 
     private function initializerForClass(ClassReflector $target, string|UnitEnum|null $tag = null): Initializer|DynamicInitializer|null
+    {
+        // Most classes don't have an initializer, and finding out requires asking every dynamic initializer,
+        // so the outcome is remembered for every class and tag.
+        $lookup = $this->resolveTaggedName($target->getName(), $tag);
+
+        if (! isset($this->initializerLookups[$lookup])) {
+            $this->initializerLookups[$lookup] = $this->findInitializerClass($target, $tag) ?? false;
+        }
+
+        $initializerClass = $this->initializerLookups[$lookup];
+
+        if ($initializerClass === false) {
+            return null;
+        }
+
+        return $this->resolveInitializer($initializerClass);
+    }
+
+    /**
+     * @return class-string<Initializer|DynamicInitializer>|null
+     */
+    private function findInitializerClass(ClassReflector $target, string|UnitEnum|null $tag = null): ?string
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
@@ -475,7 +521,7 @@ final class GenericContainer implements Container
         }
 
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
-            return $this->resolve($initializerClass);
+            return $initializerClass;
         }
 
         // Check if dynamic tags are allowed
@@ -485,27 +531,27 @@ final class GenericContainer implements Container
             $singleton = $class->getAttribute(Singleton::class) ?? $class->getMethod('initialize')->getAttribute(Singleton::class);
 
             if ($singleton?->dynamicTags) {
-                return $this->resolve($class->getName());
+                return $class->getName();
             }
         }
 
         // Loop through the registered initializers to see if
         // we have something to handle this class.
         foreach ($this->dynamicInitializers as $initializerClass) {
-            if (! isset($this->resolvedDynamicInitializers[$initializerClass])) {
-                $this->resolvedDynamicInitializers[$initializerClass] = $this->resolve($initializerClass);
+            if ($this->resolveInitializer($initializerClass)->canInitialize(class: $target, tag: $tag)) {
+                return $initializerClass;
             }
-
-            $initializer = $this->resolvedDynamicInitializers[$initializerClass];
-
-            if (! $initializer->canInitialize(class: $target, tag: $tag)) {
-                continue;
-            }
-
-            return $initializer;
         }
 
         return null;
+    }
+
+    /**
+     * @param class-string<Initializer|DynamicInitializer> $initializerClass
+     */
+    private function resolveInitializer(string $initializerClass): Initializer|DynamicInitializer
+    {
+        return $this->resolvedInitializers[$initializerClass] ??= $this->resolve($initializerClass);
     }
 
     private function autowire(string $className, string|UnitEnum|null $tag, mixed ...$params): object
@@ -777,7 +823,7 @@ final class GenericContainer implements Container
     public function reset(): self
     {
         $this->resolvedSingletons = new ArrayIterator();
-        $this->resolvedDynamicInitializers = [];
+        $this->resolvedInitializers->exchangeArray([]);
 
         foreach ($this->resettables as $resettableClass) {
             /** @var Resettable $resettable */
