@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
+use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Config\FileSessionConfig;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionCreated;
@@ -36,6 +37,7 @@ final readonly class FileSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));
@@ -46,13 +48,23 @@ final readonly class FileSessionManager implements SessionManager
 
     public function save(Session $session): void
     {
-        $session->lastActiveAt = $this->clock->now();
+        $now = $this->clock->now();
+        $path = $this->getPath($session->id);
 
-        Filesystem\write_file(
-            filename: $this->getPath($session->id),
-            content: serialize($session),
-            flags: LOCK_EX,
-        );
+        $session->lastActiveAt = $now;
+
+        // Unchanged sessions aren't rewritten, their activity is tracked through the file's modification time instead.
+        if ($session->isDirty() || ! Filesystem\is_file($path)) {
+            Filesystem\write_file(
+                filename: $path,
+                content: serialize($session),
+                flags: LOCK_EX,
+            );
+        }
+
+        touch($path, $now->getTimestamp()->getSeconds());
+
+        $session->markAsPersisted();
     }
 
     public function delete(Session $session): void
@@ -88,19 +100,20 @@ final readonly class FileSessionManager implements SessionManager
             return;
         }
 
+        $expiredBefore = $this->clock->now()->minus($this->sessionConfig->expiration)->getTimestamp()->getSeconds();
+
         foreach ($sessionFiles as $sessionFile) {
+            $lastActiveAt = @filemtime($sessionFile);
+
+            if ($lastActiveAt === false || $lastActiveAt > $expiredBefore) {
+                continue;
+            }
+
             $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
-            $session = $this->load($id);
 
-            if (! $session instanceof Session) {
-                continue;
-            }
+            Filesystem\delete($sessionFile);
 
-            if ($this->isValid($session)) {
-                continue;
-            }
-
-            $this->delete($session);
+            event(new SessionDeleted($id));
         }
     }
 
@@ -113,12 +126,24 @@ final readonly class FileSessionManager implements SessionManager
                 return null;
             }
 
-            return unserialize(
+            $session = unserialize(
                 data: Filesystem\read_locked_file($path),
                 options: [
                     'allowed_classes' => true,
                 ],
             );
+
+            if (! $session instanceof Session) {
+                return null;
+            }
+
+            $lastModifiedAt = filemtime($path);
+
+            if ($lastModifiedAt !== false && $lastModifiedAt > $session->lastActiveAt->getTimestamp()->getSeconds()) {
+                $session->lastActiveAt = DateTime::fromTimestamp($lastModifiedAt);
+            }
+
+            return $session;
         } catch (Throwable) {
             return null;
         }

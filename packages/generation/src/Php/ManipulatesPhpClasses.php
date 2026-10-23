@@ -196,6 +196,7 @@ trait ManipulatesPhpClasses
         }
 
         $updatedFile = $file->fromCode($code);
+        $updatedFile->setComment($file->getComment());
         $updatedFile = $this->simplifyClassNames($updatedFile);
 
         return $printer->printFile($updatedFile);

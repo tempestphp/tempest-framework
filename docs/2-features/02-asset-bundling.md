@@ -1,7 +1,7 @@
 ---
 title: Asset bundling
 description: "Web applications usually need to serve assets to users. Tempest provide a seamless integration with Vite, the most popular front-end development server and build tool"
-keywords: ["vite", "frontend", "js", "css", "ts", "typescript", "javascript", "sri", "manifest", "assets"]
+keywords: ["vite", "frontend", "js", "css", "ts", "typescript", "javascript", "sri", "manifest", "assets", "prefetch"]
 ---
 
 ## Overview
@@ -101,6 +101,21 @@ By default, assets are compiled in the `public/build` directory. This directory 
 :::info
 This directory is already in your `.gitignore` if you used the `{sh}php tempest install vite` command.
 :::
+
+## Prefetching assets
+
+Tempest can instruct the browser to prefetch lazily loaded chunks in the background, so the user doesn't have to wait for them to download later. To enable it, configure the `prefetching` parameter in a `vite.config.php` file:
+
+```php app/vite.config.php
+return new ViteConfig(
+    prefetching: new PrefetchConfig(
+        strategy: PrefetchStrategy::WATERFALL,
+        concurrent: 3,
+    ),
+);
+```
+
+The `WATERFALL` strategy downloads `concurrent` assets at a time, while `AGGRESSIVE` downloads all of them at once. Prefetching starts on the `load` event by default, which you may change with the `prefetchEvent` parameter.
 
 ## Using a `nonce` attribute
 
