@@ -14,7 +14,7 @@ use Attribute;
  * ```php
  * final class User
  * {
- *     #[UuidColumn]
+ *     #[Uuid]
  *     public PrimaryKey $uuid;
  *
  *     public function __construct(
