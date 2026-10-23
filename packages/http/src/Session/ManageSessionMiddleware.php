@@ -75,16 +75,13 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
     }
 
     /**
-     * `Back` falls back to the referer when there's no previous URL. Only browsers navigating between pages
-     * without sending a referer (e.g. because of a `no-referrer` policy) need the previous URL to be kept.
-     * Other clients, like crawlers and API consumers, don't navigate back and don't send `Sec-Fetch-*` headers.
+     * Browsers navigating between pages need the previous URL to be kept, because `Back` can't rely on the referer:
+     * the request that redirects back may not send one, for example because of a `no-referrer` policy.
+     * Other clients, like crawlers and API consumers, don't send `Sec-Fetch-*` headers, and can't submit forms
+     * that redirect back either, since `PreventCrossSiteRequestsMiddleware` requires them.
      */
     private function needsPreviousUrl(Request $request): bool
     {
-        if ($request->headers->get('referer') !== null) {
-            return false;
-        }
-
         return SecFetchMode::tryFrom($request->headers->get('sec-fetch-mode', default: '')) === SecFetchMode::NAVIGATE;
     }
 

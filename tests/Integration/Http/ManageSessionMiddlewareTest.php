@@ -85,31 +85,32 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function new_session_with_only_previous_url_is_not_persisted_for_browser_navigation_with_referer(): void
+    public function new_session_with_only_previous_url_is_persisted_for_browser_navigation(): void
     {
         $session = $this->manager->getOrCreate(new SessionId('new-session'));
 
+        // The referer of this request doesn't tell whether the request redirecting back will send one
         $this->handle(
             session: $session,
-            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/dashboard'),
-            headers: ['sec-fetch-mode' => 'navigate', 'referer' => 'https://tempestphp.com/'],
-        );
-
-        $this->assertFileDoesNotExist($this->sessionPath($session));
-    }
-
-    #[Test]
-    public function new_session_with_only_previous_url_is_persisted_for_browser_navigation_without_referer(): void
-    {
-        $session = $this->manager->getOrCreate(new SessionId('new-session'));
-
-        $this->handle(
-            session: $session,
-            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/dashboard'),
-            headers: ['sec-fetch-mode' => 'navigate'],
+            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/contact'),
+            headers: ['sec-fetch-mode' => 'navigate', 'referer' => 'https://search.example/'],
         );
 
         $this->assertFileExists($this->sessionPath($session));
+    }
+
+    #[Test]
+    public function new_session_with_only_previous_url_is_not_persisted_for_browser_subrequests(): void
+    {
+        $session = $this->manager->getOrCreate(new SessionId('new-session'));
+
+        $this->handle(
+            session: $session,
+            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/api/stats'),
+            headers: ['sec-fetch-mode' => 'cors'],
+        );
+
+        $this->assertFileDoesNotExist($this->sessionPath($session));
     }
 
     #[Test]
