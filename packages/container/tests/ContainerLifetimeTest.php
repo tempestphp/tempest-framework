@@ -141,6 +141,43 @@ final class ContainerLifetimeTest extends TestCase
     }
 
     #[Test]
+    public function registered_factory_can_specify_a_request_lifetime(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(SingletonClass::class, fn () => new SingletonClass(), lifetime: Lifetime::REQUEST);
+
+        $instance = $container->get(SingletonClass::class);
+        $this->assertSame($instance, $container->get(SingletonClass::class));
+
+        $container->reset();
+
+        $this->assertNotSame($instance, $container->get(SingletonClass::class));
+    }
+
+    #[Test]
+    public function registered_instance_can_override_its_attribute_lifetime(): void
+    {
+        $container = new GenericContainer();
+        $instance = new RequestLifetimeSingleton();
+        $container->singleton(RequestLifetimeInterface::class, $instance, lifetime: Lifetime::PROCESS);
+
+        $container->reset();
+
+        $this->assertSame($instance, $container->get(RequestLifetimeInterface::class));
+    }
+
+    #[Test]
+    public function registered_instance_can_specify_a_request_lifetime(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(SingletonClass::class, new SingletonClass(), lifetime: Lifetime::REQUEST);
+
+        $container->reset();
+
+        $this->assertFalse($container->has(SingletonClass::class));
+    }
+
+    #[Test]
     public function process_initializer_singletons_survive_reset(): void
     {
         $container = new GenericContainer();

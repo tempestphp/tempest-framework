@@ -35,6 +35,9 @@ final class GenericContainer implements Container
     /** @var WeakMap<object, Lifetime> */
     private WeakMap $singletonLifetimes;
 
+    /** @var array<string, Lifetime> */
+    private array $registeredSingletonLifetimes = [];
+
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
         private(set) ArrayIterator $definitions = new ArrayIterator(),
@@ -151,6 +154,7 @@ final class GenericContainer implements Container
         unset($this->definitions[$className]);
         unset($this->singletonDefinitions[$className]);
         unset($this->resolvedSingletons[$className]);
+        unset($this->registeredSingletonLifetimes[$className]);
 
         if ($tagged) {
             foreach ($this->singletonDefinitions as $key => $definition) {
@@ -159,6 +163,7 @@ final class GenericContainer implements Container
                 }
 
                 unset($this->singletonDefinitions[$key]);
+                unset($this->registeredSingletonLifetimes[$key]);
             }
 
             foreach ($this->resolvedSingletons as $key => $definition) {
@@ -178,13 +183,23 @@ final class GenericContainer implements Container
         return isset($this->definitions[$className]) || isset($this->singletonDefinitions[$this->resolveTaggedName($className, $tag)]);
     }
 
-    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null): self
+    public function singleton(string $className, mixed $definition, string|UnitEnum|null $tag = null, ?Lifetime $lifetime = null): self
     {
         if ($definition instanceof HasTag) {
             $tag = $definition->tag;
         }
 
         $dependencyName = $this->resolveTaggedName($className, $tag);
+
+        if ($lifetime !== null) {
+            $this->registeredSingletonLifetimes[$dependencyName] = $lifetime;
+
+            if (is_object($definition) && ! $definition instanceof Closure) {
+                $this->singletonLifetimes[$definition] = $lifetime;
+            }
+        } else {
+            unset($this->registeredSingletonLifetimes[$dependencyName]);
+        }
 
         $this->singletonDefinitions[$dependencyName] = $definition;
         unset($this->resolvedSingletons[$dependencyName]);
@@ -386,6 +401,10 @@ final class GenericContainer implements Container
         // Check if the class has been registered as a singleton.
         if ($singletonDefinition = $this->singletonDefinitions[$dependencyName] ?? null) {
             $instance = $singletonDefinition instanceof Closure ? $singletonDefinition($this) : $singletonDefinition;
+
+            if (isset($this->registeredSingletonLifetimes[$dependencyName])) {
+                $this->singletonLifetimes[$instance] = $this->registeredSingletonLifetimes[$dependencyName];
+            }
 
             $this->resolvedSingletons[$dependencyName] = $instance;
 
