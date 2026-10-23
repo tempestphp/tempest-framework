@@ -19,6 +19,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Throwable;
 use UnitEnum;
@@ -39,6 +40,29 @@ final class GenericContainer implements Container
 
     /** @var ArrayObject<class-string, Initializer|DynamicInitializer> */
     private ArrayObject $resolvedInitializers;
+
+    /*
+     * Reflection data only depends on class definitions, which can't change at runtime,
+     * so it is cached once and shared between all containers.
+     */
+
+    /** @var array<string, ClassReflector> */
+    private static array $classReflectors = [];
+
+    /** @var array<string, MethodReflector|null> */
+    private static array $constructors = [];
+
+    /** @var array<string, list<array{ParameterReflector, string|UnitEnum|null, bool}>> */
+    private static array $parameters = [];
+
+    /** @var array<string, list<array{PropertyReflector, Inject, bool}>> */
+    private static array $injectedProperties = [];
+
+    /** @var array<string, bool> */
+    private static array $autowiredSingletons = [];
+
+    /** @var array<string, Singleton|null> */
+    private static array $initializerSingletons = [];
 
     public function __construct(
         /** @var ArrayIterator<array-key, mixed> $definitions */
@@ -405,8 +429,6 @@ final class GenericContainer implements Container
 
     private function resolveDependency(string $className, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
-        $class = new ClassReflector($className);
-
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
         // Check if a resolved singleton is present. A singleton is only registered once it is fully
@@ -414,6 +436,8 @@ final class GenericContainer implements Container
         if ($instance = $this->resolvedSingletons[$dependencyName] ?? null) {
             return $instance;
         }
+
+        $class = self::reflect($className);
 
         // Check if the class has been registered as a singleton.
         if ($singletonDefinition = $this->singletonDefinitions[$dependencyName] ?? null) {
@@ -443,7 +467,7 @@ final class GenericContainer implements Container
 
         // Next we check if any of our default initializers can initialize this class.
         if (($initializer = $this->initializerForClass($class, $tag)) !== null) {
-            $initializerClass = new ClassReflector($initializer);
+            $initializerClass = self::reflect($initializer::class);
 
             $this->resolveChain()->add($initializerClass);
 
@@ -456,9 +480,7 @@ final class GenericContainer implements Container
                 $this->resolveChain()->pop();
             }
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
-
-            if ($singleton !== null) {
+            if (self::initializerSingleton($initializerClass) !== null) {
                 $this->singleton($className, $object, $tag);
             }
 
@@ -481,7 +503,7 @@ final class GenericContainer implements Container
         return $this->autowire($className, null, ...$params);
     }
 
-    private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
+    private function initializerForBuiltin(TypeReflector $target, string|UnitEnum $tag): ?Initializer
     {
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
             return $this->resolveInitializer($initializerClass);
@@ -556,9 +578,9 @@ final class GenericContainer implements Container
 
     private function autowire(string $className, string|UnitEnum|null $tag, mixed ...$params): object
     {
-        $classReflector = new ClassReflector($className);
+        $classReflector = self::reflect($className);
 
-        $constructor = $classReflector->getConstructor();
+        $constructor = self::constructor($classReflector);
 
         if (! $classReflector->isInstantiable()) {
             throw new DependencyCouldNotBeInstantiated($classReflector, $this->chain);
@@ -574,29 +596,25 @@ final class GenericContainer implements Container
             // Otherwise, use our autowireDependencies helper to automagically
             : $classReflector->newInstanceWithoutConstructor();
 
-        if (
-            ! $classReflector->getType()->matches(Initializer::class)
-            && ! $classReflector->getType()->matches(DynamicInitializer::class)
-            && $classReflector->hasAttribute(Singleton::class)
-        ) {
+        if (self::isAutowiredSingleton($classReflector)) {
             $this->singleton($className, $instance, $tag);
         }
 
-        foreach ($classReflector->getProperties() as $property) {
-            $inject = $property->getAttribute(Inject::class);
+        foreach (self::injectedProperties($classReflector) as [$property, $inject, $lazy]) {
+            if ($property->isInitialized($instance)) {
+                continue;
+            }
 
-            if ($inject && ! $property->isInitialized($instance)) {
-                if ($property->hasAttribute(Proxy::class)) {
-                    $property->set($instance, $property
-                        ->getType()
-                        ->asClass()
-                        ->getReflection()
-                        ->newLazyProxy(
-                            fn () => $this->get($property->getType()->getName(), $inject->tag),
-                        ));
-                } else {
-                    $property->set($instance, $this->get($property->getType()->getName(), $inject->tag));
-                }
+            if ($lazy) {
+                $property->set($instance, $property
+                    ->getType()
+                    ->asClass()
+                    ->getReflection()
+                    ->newLazyProxy(
+                        fn () => $this->get($property->getType()->getName(), $inject->tag),
+                    ));
+            } else {
+                $property->set($instance, $this->get($property->getType()->getName(), $inject->tag));
             }
         }
 
@@ -615,10 +633,11 @@ final class GenericContainer implements Container
         // Build the class by iterating through its
         // dependencies and resolving them.
         try {
-            foreach ($method->getParameters() as $parameter) {
+            foreach (self::parameters($method) as [$parameter, $tag, $lazy]) {
                 $dependencies[] = $this->clone()->autowireDependency(
                     parameter: $parameter,
-                    tag: $parameter->getAttribute(Tag::class)?->name,
+                    tag: $tag,
+                    lazy: $lazy,
                     providedValue: $parameters[$parameter->getName()] ?? null,
                 );
             }
@@ -629,20 +648,18 @@ final class GenericContainer implements Container
         return $dependencies;
     }
 
-    private function autowireDependency(ParameterReflector $parameter, string|UnitEnum|null $tag, mixed $providedValue = null): mixed
+    private function autowireDependency(ParameterReflector $parameter, string|UnitEnum|null $tag, bool $lazy, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, skip reflection and attempt to provide the value by
         // tagged initializer, a default value or null value.
         if ($parameterType->isBuiltin()) {
-            return $this->autowireBuiltinDependency($parameter, $providedValue);
+            return $this->autowireBuiltinDependency($parameter, $tag, $providedValue);
         }
 
-        // Support lazy initialization
-        $lazy = $parameter->hasAttribute(Proxy::class);
         // Loop through each type until we hit a match.
-        foreach ($parameter->getType()->split() as $type) {
+        foreach ($parameterType->split() as $type) {
             try {
                 return $this->autowireObjectDependency(
                     type: $type,
@@ -689,20 +706,15 @@ final class GenericContainer implements Container
         return $this->resolve(className: $type->getName(), tag: $tag);
     }
 
-    private function autowireBuiltinDependency(ParameterReflector $parameter, mixed $providedValue): mixed
+    private function autowireBuiltinDependency(ParameterReflector $parameter, string|UnitEnum|null $tag, mixed $providedValue): mixed
     {
         $typeName = $parameter->getType()->getName();
-        $tag = $parameter->getAttribute(Tag::class);
 
-        if ($tag !== null && ($initializer = $this->initializerForBuiltin($parameter->getType(), $tag->name))) {
-            $initializerClass = new ClassReflector($initializer);
-
+        if ($tag !== null && ($initializer = $this->initializerForBuiltin($parameter->getType(), $tag))) {
             $object = $initializer->initialize($this->clone());
 
-            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
-
-            if ($singleton !== null) {
-                $this->singleton($typeName, $object, $tag->name);
+            if (self::initializerSingleton(self::reflect($initializer::class)) !== null) {
+                $this->singleton($typeName, $object, $tag);
             }
 
             return $object;
@@ -781,8 +793,7 @@ final class GenericContainer implements Container
     private function resolveDecorator(string $className, mixed $instance, string|UnitEnum|null $tag = null, mixed ...$params): object
     {
         foreach ($this->decorators[$className] ?? [] as $decoratorClass) {
-            $decoratorClassReflector = new ClassReflector($decoratorClass);
-            $constructor = $decoratorClassReflector->getConstructor();
+            $constructor = self::constructor(self::reflect($decoratorClass));
             $parameters = $constructor?->getParameters();
 
             // we look for parameter holding decorated instance
@@ -807,6 +818,78 @@ final class GenericContainer implements Container
         }
 
         return $instance;
+    }
+
+    private static function reflect(string $className): ClassReflector
+    {
+        return self::$classReflectors[$className] ??= new ClassReflector($className);
+    }
+
+    private static function constructor(ClassReflector $class): ?MethodReflector
+    {
+        $className = $class->getName();
+
+        if (! array_key_exists($className, self::$constructors)) {
+            self::$constructors[$className] = $class->getConstructor();
+        }
+
+        return self::$constructors[$className];
+    }
+
+    /**
+     * @return list<array{ParameterReflector, string|UnitEnum|null, bool}> Each parameter along with its tag and whether it should be lazy.
+     */
+    private static function parameters(MethodReflector|FunctionReflector $method): array
+    {
+        $resolve = static fn (): array => array_map(
+            static fn (ParameterReflector $parameter): array => [
+                $parameter,
+                $parameter->getAttribute(Tag::class)?->name,
+                $parameter->hasAttribute(Proxy::class),
+            ],
+            iterator_to_array($method->getParameters(), preserve_keys: false),
+        );
+
+        // Functions and closures can't be identified by name, so only the parameters of methods are cached.
+        if (! $method instanceof MethodReflector) {
+            return $resolve();
+        }
+
+        return self::$parameters[$method->getReflection()->class . '::' . $method->getName()] ??= $resolve();
+    }
+
+    /**
+     * @return list<array{PropertyReflector, Inject, bool}> Each injected property along with its attribute and whether it should be lazy.
+     */
+    private static function injectedProperties(ClassReflector $class): array
+    {
+        return self::$injectedProperties[$class->getName()] ??= array_values(array_filter(array_map(
+            static function (PropertyReflector $property): ?array {
+                $inject = $property->getAttribute(Inject::class);
+
+                return $inject === null ? null : [$property, $inject, $property->hasAttribute(Proxy::class)];
+            },
+            $class->getProperties(),
+        )));
+    }
+
+    private static function isAutowiredSingleton(ClassReflector $class): bool
+    {
+        return self::$autowiredSingletons[$class->getName()] ??=
+            ! $class->getType()->matches(Initializer::class) && ! $class->getType()->matches(DynamicInitializer::class) && $class->hasAttribute(Singleton::class);
+    }
+
+    private static function initializerSingleton(ClassReflector $initializerClass): ?Singleton
+    {
+        $className = $initializerClass->getName();
+
+        if (! array_key_exists($className, self::$initializerSingletons)) {
+            self::$initializerSingletons[$className] = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass
+                ->getMethod('initialize')
+                ->getAttribute(Singleton::class);
+        }
+
+        return self::$initializerSingletons[$className];
     }
 
     public function addResettable(string|ClassReflector $resettableClass): Container
