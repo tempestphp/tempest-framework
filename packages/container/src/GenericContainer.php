@@ -34,12 +34,15 @@ final class GenericContainer implements Container
      * Which initializer can initialize a given class and tag, or `false` when there is none. Unlike resolved
      * instances, this is kept when the container is reset, since it only depends on the registered initializers.
      *
-     * @var ArrayObject<string, class-string<Initializer|DynamicInitializer>|false>
+     * These are objects so that they are shared with clones of this container, and are only created once needed,
+     * to keep constructing a container cheap.
+     *
+     * @var ArrayObject<string, class-string<Initializer|DynamicInitializer>|false>|null
      */
-    private ArrayObject $initializerLookups;
+    private ?ArrayObject $initializerLookups = null;
 
-    /** @var ArrayObject<class-string, Initializer|DynamicInitializer> */
-    private ArrayObject $resolvedInitializers;
+    /** @var ArrayObject<class-string, Initializer|DynamicInitializer>|null */
+    private ?ArrayObject $resolvedInitializers = null;
 
     /*
      * Reflection data only depends on class definitions, which can't change at runtime,
@@ -88,10 +91,6 @@ final class GenericContainer implements Container
 
         private(set) ?DependencyChain $chain = null,
     ) {
-        // These are objects, so that they are shared with clones of this container.
-        $this->initializerLookups = new ArrayObject();
-        $this->resolvedInitializers = new ArrayObject();
-
         $this->singleton(Container::class, $this);
         $this->singleton(ContainerInterface::class, $this);
         $this->singleton(GenericContainer::class, $this);
@@ -114,7 +113,7 @@ final class GenericContainer implements Container
     public function setInitializers(array $initializers): self
     {
         $this->initializers = new ArrayIterator($initializers);
-        $this->initializerLookups->exchangeArray([]);
+        $this->initializerLookups?->exchangeArray([]);
 
         return $this;
     }
@@ -122,7 +121,7 @@ final class GenericContainer implements Container
     public function setDynamicInitializers(array $dynamicInitializers): self
     {
         $this->dynamicInitializers = new ArrayIterator($dynamicInitializers);
-        $this->initializerLookups->exchangeArray([]);
+        $this->initializerLookups?->exchangeArray([]);
 
         return $this;
     }
@@ -351,7 +350,7 @@ final class GenericContainer implements Container
 
         // First, we check whether this is a DynamicInitializer,
         // which don't have a one-to-one mapping
-        $this->initializerLookups->exchangeArray([]);
+        $this->initializerLookups?->exchangeArray([]);
 
         if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
             $this->dynamicInitializers[] = $initializerClass->getName();
@@ -388,15 +387,15 @@ final class GenericContainer implements Container
             );
 
             unset($this->dynamicInitializers[$index]);
-            unset($this->resolvedInitializers[$initializerClass->getName()]);
-            $this->initializerLookups->exchangeArray([]);
+            $this->resolvedInitializers?->offsetUnset($initializerClass->getName());
+            $this->initializerLookups?->exchangeArray([]);
 
             return $this;
         }
 
         unset($this->initializers[$initializerClass->getName()]);
-        unset($this->resolvedInitializers[$initializerClass->getName()]);
-        $this->initializerLookups->exchangeArray([]);
+        $this->resolvedInitializers?->offsetUnset($initializerClass->getName());
+        $this->initializerLookups?->exchangeArray([]);
 
         return $this;
     }
@@ -518,6 +517,8 @@ final class GenericContainer implements Container
         // so the outcome is remembered for every class and tag.
         $lookup = $this->resolveTaggedName($target->getName(), $tag);
 
+        $this->initializerLookups ??= new ArrayObject();
+
         if (! isset($this->initializerLookups[$lookup])) {
             $this->initializerLookups[$lookup] = $this->findInitializerClass($target, $tag) ?? false;
         }
@@ -573,6 +574,8 @@ final class GenericContainer implements Container
      */
     private function resolveInitializer(string $initializerClass): Initializer|DynamicInitializer
     {
+        $this->resolvedInitializers ??= new ArrayObject();
+
         return $this->resolvedInitializers[$initializerClass] ??= $this->resolve($initializerClass);
     }
 
@@ -752,6 +755,10 @@ final class GenericContainer implements Container
 
     private function clone(): self
     {
+        // Created before cloning, so that the clone shares them instead of creating its own.
+        $this->initializerLookups ??= new ArrayObject();
+        $this->resolvedInitializers ??= new ArrayObject();
+
         return clone $this;
     }
 
@@ -906,7 +913,7 @@ final class GenericContainer implements Container
     public function reset(): self
     {
         $this->resolvedSingletons = new ArrayIterator();
-        $this->resolvedInitializers->exchangeArray([]);
+        $this->resolvedInitializers?->exchangeArray([]);
 
         foreach ($this->resettables as $resettableClass) {
             /** @var Resettable $resettable */
