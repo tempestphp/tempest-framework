@@ -61,6 +61,20 @@ final readonly class DatabaseSessionManager implements SessionManager
                 )
                 ->execute();
 
+            $session->markAsPersisted();
+
+            return;
+        }
+
+        // Unchanged sessions only need their activity to be tracked.
+        if (! $session->isDirty()) {
+            query(DatabaseSession::class)
+                ->update(last_active_at: $session->lastActiveAt)
+                ->where('id', (string) $session->id)
+                ->execute();
+
+            $session->markAsPersisted();
+
             return;
         }
 
@@ -71,6 +85,8 @@ final readonly class DatabaseSessionManager implements SessionManager
             )
             ->where('id', (string) $session->id)
             ->execute();
+
+        $session->markAsPersisted();
     }
 
     public function delete(Session $session): void

@@ -252,6 +252,51 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         );
     }
 
+    #[Test]
+    public function unchanged_session_is_not_rewritten(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+        $id = new SessionId('unchanged');
+        $path = Path\normalize($this->path, 'sessions', (string) $id);
+
+        $session = $this->manager->getOrCreate($id);
+        $session->set('user', 'brent');
+        $this->manager->save($session);
+
+        $unchanged = $this->manager->getOrCreate($id);
+
+        // Another request writes to the same session in the meantime
+        $concurrent = $this->manager->getOrCreate($id);
+        $concurrent->set('cart', 'book');
+        $this->manager->save($concurrent);
+
+        $clock->plus(Duration::minutes(5));
+        $this->manager->save($unchanged);
+
+        clearstatcache();
+
+        $this->assertSame('book', $this->manager->getOrCreate($id)->get('cart'));
+        $this->assertSame($clock->now()->getTimestamp()->getSeconds(), filemtime($path));
+    }
+
+    #[Test]
+    public function last_active_at_is_read_from_modification_time(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+        $id = new SessionId('active');
+
+        $session = $this->manager->getOrCreate($id);
+        $session->set('user', 'brent');
+        $this->manager->save($session);
+
+        $clock->plus(Duration::minutes(5));
+        $this->manager->save($this->manager->getOrCreate($id));
+
+        clearstatcache();
+
+        $this->assertTrue($this->manager->getOrCreate($id)->lastActiveAt->equals($clock->now()));
+    }
+
     private function saveAtClockTime(Session $session, string $path): void
     {
         $this->manager->save($session);

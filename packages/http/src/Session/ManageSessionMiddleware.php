@@ -45,7 +45,6 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
         } finally {
             if ($this->shouldPersist()) {
                 $this->sessionManager->save($this->session);
-                $this->session->markAsPersisted();
             }
 
             match ($this->config->cleanupStrategy) {
