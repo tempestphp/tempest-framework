@@ -9,9 +9,7 @@ use Tempest\Http\Response;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\SecFetchMode;
-use Tempest\Support\Filesystem;
 use Tempest\Support\Priority;
-use Throwable;
 
 use function Tempest\internal_storage_path;
 
@@ -104,24 +102,47 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
             return;
         }
 
-        // Cleaning up has to go over all sessions, so it is throttled to keep
-        // its cost from growing along with the amount of sessions and traffic.
-        $path = internal_storage_path('session-cleanup');
-        $now = $this->clock->now()->getTimestamp()->getSeconds();
-
-        try {
-            $lastCleanupAt = Filesystem\is_file($path) ? (int) Filesystem\read_file($path) : 0;
-        } catch (Throwable) {
-            $lastCleanupAt = 0;
-        }
-
-        if (($now - $lastCleanupAt) < self::RANDOM_REQUESTS_CLEANUP_INTERVAL) {
+        if (! $this->claimSessionCleanup()) {
             return;
         }
 
-        // The cleanup is claimed before it runs, so that concurrent requests don't start one as well.
-        Filesystem\write_file($path, (string) $now, flags: LOCK_EX);
-
         $this->scheduleSessionCleanup();
+    }
+
+    /**
+     * Cleaning up has to go over all sessions, so it is throttled to keep its cost from growing along with the amount of sessions and traffic.
+     * The last cleanup time is read, checked and updated while holding a lock, so that concurrent requests can't both claim the same cleanup.
+     */
+    private function claimSessionCleanup(): bool
+    {
+        $handle = @fopen(internal_storage_path('session-cleanup'), mode: 'c+');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        try {
+            // Another request holding the lock is already claiming the cleanup, so there's no need to wait for it.
+            if (! flock($handle, LOCK_EX | LOCK_NB)) {
+                return false;
+            }
+
+            $now = $this->clock->now()->getTimestamp()->getSeconds();
+            $lastCleanupAt = (int) stream_get_contents($handle);
+
+            if (($now - $lastCleanupAt) < self::RANDOM_REQUESTS_CLEANUP_INTERVAL) {
+                return false;
+            }
+
+            ftruncate($handle, size: 0);
+            rewind($handle);
+            fwrite($handle, (string) $now);
+            fflush($handle);
+
+            return true;
+        } finally {
+            flock($handle, LOCK_UN);
+            fclose($handle);
+        }
     }
 }

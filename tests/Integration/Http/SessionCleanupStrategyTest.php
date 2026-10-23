@@ -90,6 +90,31 @@ final class SessionCleanupStrategyTest extends FrameworkIntegrationTestCase
         $this->assertTrue($this->cleanupScheduledWithin(1000, $config));
     }
 
+    #[Test]
+    public function random_requests_does_not_schedule_cleanup_while_another_request_claims_it(): void
+    {
+        $this->clock('2025-01-01 00:00:00');
+
+        $config = new FileSessionConfig(
+            expiration: Duration::minutes(30),
+            cleanupStrategy: CleanupStrategy::RANDOM_REQUESTS,
+            path: 'tests/sessions',
+        );
+
+        // Simulates a concurrent request that is in the middle of claiming the cleanup
+        $handle = fopen(internal_storage_path('session-cleanup'), mode: 'c+');
+        flock($handle, LOCK_EX);
+
+        try {
+            $this->assertFalse($this->cleanupScheduledWithin(1000, $config));
+        } finally {
+            flock($handle, LOCK_UN);
+            fclose($handle);
+        }
+
+        $this->assertTrue($this->cleanupScheduledWithin(1000, $config));
+    }
+
     private function cleanupScheduledWithin(int $requests, FileSessionConfig $config): bool
     {
         for ($i = 0; $i < $requests; $i++) {
