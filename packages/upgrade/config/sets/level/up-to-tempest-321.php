@@ -13,6 +13,6 @@ return static function (RectorConfig $config): void {
         TempestSetList::TEMPEST_34,
         TempestSetList::TEMPEST_310,
         TempestSetList::TEMPEST_314,
-        TempestSetList::TEMPEST_320,
+        TempestSetList::TEMPEST_321,
     ]);
 };

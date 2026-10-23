@@ -1,13 +1,13 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest320\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest321\Fixtures;
 
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
-use Tempest\Http\Session\SessionIdResolver;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\SessionIdResolver as BaseSessionIdResolver;
+use Tempest\Http\Session\SessionManager as BaseSessionManager;
 
-final class ExistingSessionManager implements SessionManager
+final class AliasedSessionManager implements BaseSessionManager
 {
     public function getOrCreate(SessionId $id): Session
     {
@@ -22,10 +22,6 @@ final class ExistingSessionManager implements SessionManager
     {
     }
 
-    public function regenerate(Session $session): void
-    {
-    }
-
     public function isValid(Session $session): bool
     {
         return true;
@@ -36,14 +32,9 @@ final class ExistingSessionManager implements SessionManager
     }
 }
 
-final class ExistingSessionIdResolver implements SessionIdResolver
+final class AliasedSessionIdResolver implements BaseSessionIdResolver
 {
     public function resolve(): SessionId
-    {
-        return new SessionId('id');
-    }
-
-    public function issueNewId(): SessionId
     {
         return new SessionId('id');
     }

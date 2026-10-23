@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest320\Fixtures;
+namespace Tempest\Upgrade\Tests\Tempest321\Fixtures;
 
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;

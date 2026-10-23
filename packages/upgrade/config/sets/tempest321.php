@@ -3,8 +3,8 @@
 use Rector\Config\RectorConfig;
 use Rector\Configuration\Option;
 use Rector\Configuration\Parameter\SimpleParameterProvider;
-use Tempest\Upgrade\Tempest320\UpdateSessionIdResolverImplementationsRector;
-use Tempest\Upgrade\Tempest320\UpdateSessionManagerImplementationsRector;
+use Tempest\Upgrade\Tempest321\UpdateSessionIdResolverImplementationsRector;
+use Tempest\Upgrade\Tempest321\UpdateSessionManagerImplementationsRector;
 
 return static function (RectorConfig $config): void {
     SimpleParameterProvider::setParameter(Option::AUTO_IMPORT_NAMES, value: true);

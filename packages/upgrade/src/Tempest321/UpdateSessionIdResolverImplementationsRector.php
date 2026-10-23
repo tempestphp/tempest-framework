@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Upgrade\Tempest320;
+namespace Tempest\Upgrade\Tempest321;
 
 use BadMethodCallException;
 use PhpParser\Node;

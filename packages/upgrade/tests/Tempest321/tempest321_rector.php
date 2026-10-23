@@ -7,5 +7,5 @@ use Rector\Config\RectorConfig;
 use Tempest\Upgrade\Set\TempestSetList;
 
 return RectorConfig::configure()
-    ->withSets([TempestSetList::TEMPEST_320])
+    ->withSets([TempestSetList::TEMPEST_321])
     ->withCache(cacheClass: MemoryCacheStorage::class);

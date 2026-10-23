@@ -1,15 +1,15 @@
 <?php
 
-namespace Tempest\Upgrade\Tests\Tempest320;
+namespace Tempest\Upgrade\Tests\Tempest321;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Upgrade\Tests\RectorTester;
 
-final class Tempest320RectorTest extends TestCase
+final class Tempest321RectorTest extends TestCase
 {
     private RectorTester $rector {
-        get => new RectorTester(__DIR__ . '/tempest320_rector.php');
+        get => new RectorTester(__DIR__ . '/tempest321_rector.php');
     }
 
     #[Test]
