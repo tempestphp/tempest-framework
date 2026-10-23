@@ -20,7 +20,10 @@ use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Status;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\internal_storage_path;
 
 /**
  * @internal
@@ -31,6 +34,8 @@ final class SessionCleanupStrategyTest extends FrameworkIntegrationTestCase
     protected function cleanup(): void
     {
         $this->clearDeferredTasks();
+
+        Filesystem\delete(internal_storage_path('session-cleanup'));
     }
 
     #[Test]
@@ -63,6 +68,41 @@ final class SessionCleanupStrategyTest extends FrameworkIntegrationTestCase
         );
     }
 
+    #[Test]
+    public function random_requests_schedules_cleanup_at_most_once_per_interval(): void
+    {
+        $clock = $this->clock('2025-01-01 00:00:00');
+
+        $config = new FileSessionConfig(
+            expiration: Duration::minutes(30),
+            cleanupStrategy: CleanupStrategy::RANDOM_REQUESTS,
+            path: 'tests/sessions',
+        );
+
+        // The odds of a cleanup are 1 in 50 per request, so 1000 requests are virtually guaranteed to trigger one.
+        $this->assertTrue($this->cleanupScheduledWithin(1000, $config));
+        $this->assertFalse($this->cleanupScheduledWithin(1000, $config));
+
+        $clock->plus(Duration::seconds(30));
+        $this->assertFalse($this->cleanupScheduledWithin(1000, $config));
+
+        $clock->plus(Duration::seconds(31));
+        $this->assertTrue($this->cleanupScheduledWithin(1000, $config));
+    }
+
+    private function cleanupScheduledWithin(int $requests, FileSessionConfig $config): bool
+    {
+        for ($i = 0; $i < $requests; $i++) {
+            $this->invokeMiddlewareWith($config);
+
+            if (array_key_exists('tempest:session-cleanup', $this->container->get(DeferredTasks::class)->getTasks())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function invokeMiddlewareWith(FileSessionConfig $config): void
     {
         $this->clearDeferredTasks();
@@ -83,6 +123,7 @@ final class SessionCleanupStrategyTest extends FrameworkIntegrationTestCase
             session: $session,
             config: $config,
             deferredTasks: $this->container->get(DeferredTasks::class),
+            clock: $clock,
         );
 
         $response = $middleware(
