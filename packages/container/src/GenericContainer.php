@@ -191,7 +191,7 @@ final class GenericContainer implements Container
 
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
-        if ($lifetime !== null) {
+        if ($lifetime instanceof Lifetime) {
             $this->registeredSingletonLifetimes[$dependencyName] = $lifetime;
 
             if (is_object($definition) && ! $definition instanceof Closure) {

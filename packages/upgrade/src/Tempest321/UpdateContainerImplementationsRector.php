@@ -2,6 +2,8 @@
 
 namespace Tempest\Upgrade\Tempest321;
 
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Name;
@@ -33,9 +35,9 @@ final class UpdateContainerImplementationsRector extends AbstractRector
         }
 
         $singleton->params[] = new Param(
-            var: new Node\Expr\Variable('lifetime'),
+            var: new Variable('lifetime'),
             default: new ConstFetch(new Name('null')),
-            type: new NullableType(new Name\FullyQualified(Lifetime::class)),
+            type: new NullableType(new FullyQualified(Lifetime::class)),
         );
 
         return $node;

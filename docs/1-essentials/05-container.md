@@ -260,6 +260,18 @@ final class RequestContext
 
 The container reuses this instance within a request. When the container is reset, it clears the instance so that the next request receives a fresh one, this happens after every request in long-running applications.
 
+You can also set the lifetime when registering a singleton with the container. Use a factory for request-lifetime singletons so the container can create a fresh instance after each reset:
+
+```php
+use Tempest\Container\Lifetime;
+
+$container->singleton(
+    RequestContext::class,
+    fn () => new RequestContext(),
+    lifetime: Lifetime::REQUEST,
+);
+```
+
 Note that you can also declare the lifetime via initializers:
 
 ```php
