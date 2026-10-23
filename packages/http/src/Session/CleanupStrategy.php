@@ -10,7 +10,7 @@ enum CleanupStrategy
     case EVERY_REQUEST;
 
     /**
-     * Expired sessions will be cleaned up after a random request. This is the default strategy, and provides a good balance between performance and cleanup frequency.
+     * Expired sessions will be cleaned up after a random request, at most once per minute. This is the default strategy, and provides a good balance between performance and cleanup frequency.
      */
     case RANDOM_REQUESTS;
 

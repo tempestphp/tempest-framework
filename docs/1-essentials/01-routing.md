@@ -979,6 +979,8 @@ return new CookieConfig(
 
 Sessions in Tempest are managed by the {b`Tempest\Http\Session\Session`} class. It can be injected anywhere needed. As soon as the {b`Tempest\Http\Session\Session`} is injected, it is started behind the scenes.
 
+New sessions are only persisted once something is stored in them. This way, clients that don't keep cookies, such as API consumers or crawlers, don't fill up the session storage. Likewise, sessions that didn't change during a request aren't written again; only their activity is tracked.
+
 ```php
 use Tempest\Http\Session\Session;
 
@@ -1062,7 +1064,7 @@ return new DatabaseSessionConfig(
 
 Sessions expire based on the last activity time. This means that as long as a user is actively using the application, their session remains valid.
 
-By default, Tempest removes expired session randomly at the end of a request, in a deferred task. This can be configured by specifying a {b`Tempest\Http\Session\CleanupStrategy`} in the [session configuration](#session-configuration).
+By default, Tempest removes expired sessions at the end of a random request, in a deferred task. To keep the cost of cleaning up from growing with traffic, this happens at most once per minute. This can be configured by specifying a {b`Tempest\Http\Session\CleanupStrategy`} in the [session configuration](#session-configuration).
 
 ```php app/Sessions/session.config.php
 use Tempest\Http\Session\Config\DatabaseSessionConfig;

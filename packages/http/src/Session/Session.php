@@ -22,13 +22,21 @@ final class Session
      */
     private array $expiredKeys = [];
 
+    /**
+     * Fingerprint of the session's state when it was loaded or last persisted.
+     */
+    private string $persistedFingerprint;
+
     public function __construct(
         private(set) SessionId $id,
         private(set) DateTimeInterface $createdAt,
         public DateTimeInterface $lastActiveAt,
         /** @var array<array-key,mixed> */
         private(set) array $data = [],
-    ) {}
+        private(set) bool $isNew = false,
+    ) {
+        $this->persistedFingerprint = $this->fingerprint();
+    }
 
     /**
      * Sets a value in the session.
@@ -140,6 +148,33 @@ final class Session
         $this->data = [];
     }
 
+    /**
+     * Determines whether the session's data changed since it was loaded or last persisted.
+     */
+    public function isDirty(): bool
+    {
+        return $this->fingerprint() !== $this->persistedFingerprint;
+    }
+
+    /**
+     * Marks the session as persisted, so that it is no longer considered new or dirty.
+     *
+     * @internal
+     */
+    public function markAsPersisted(): void
+    {
+        $this->isNew = false;
+        $this->persistedFingerprint = $this->fingerprint();
+    }
+
+    /**
+     * Values may be objects that are modified in place, so the serialized state is compared instead of tracking changes.
+     */
+    private function fingerprint(): string
+    {
+        return hash('xxh128', serialize([$this->data, $this->expiredKeys]));
+    }
+
     public function __serialize(): array
     {
         return [
@@ -158,5 +193,7 @@ final class Session
         $this->lastActiveAt = DateTime::fromTimestamp($data['last_active_at']);
         $this->data = $data['data'];
         $this->expiredKeys = $data['expired_keys'];
+        $this->isNew = false;
+        $this->persistedFingerprint = $this->fingerprint();
     }
 }
