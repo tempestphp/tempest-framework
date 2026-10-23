@@ -43,7 +43,10 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
         try {
             return $next($request);
         } finally {
-            $this->sessionManager->save($this->session);
+            if ($this->shouldPersist()) {
+                $this->sessionManager->save($this->session);
+                $this->session->markAsPersisted();
+            }
 
             match ($this->config->cleanupStrategy) {
                 CleanupStrategy::EVERY_REQUEST => $this->scheduleSessionCleanup(),
@@ -51,6 +54,24 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
                 default => null,
             };
         }
+    }
+
+    /**
+     * Clients that don't send a session cookie, like API consumers, crawlers or load testing tools, get a new session on every request.
+     * Those sessions are only persisted once they contain something worth keeping, so that they don't pile up in storage.
+     */
+    private function shouldPersist(): bool
+    {
+        if (! $this->session->isNew) {
+            return true;
+        }
+
+        $data = $this->session->all();
+
+        // The previous URL is tracked on every request, so it alone doesn't warrant persisting a new session.
+        unset($data[PreviousUrl::PREVIOUS_URL_SESSION_KEY]);
+
+        return $data !== [];
     }
 
     private function scheduleSessionCleanup(): void

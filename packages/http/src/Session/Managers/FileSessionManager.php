@@ -34,6 +34,7 @@ final readonly class FileSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));

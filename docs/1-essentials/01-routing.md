@@ -979,6 +979,8 @@ return new CookieConfig(
 
 Sessions in Tempest are managed by the {b`Tempest\Http\Session\Session`} class. It can be injected anywhere needed. As soon as the {b`Tempest\Http\Session\Session`} is injected, it is started behind the scenes.
 
+New sessions are only persisted once something is stored in them. This way, clients that don't keep cookies, such as API consumers or crawlers, don't fill up the session storage.
+
 ```php
 use Tempest\Http\Session\Session;
 

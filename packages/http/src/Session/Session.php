@@ -28,6 +28,10 @@ final class Session
         public DateTimeInterface $lastActiveAt,
         /** @var array<array-key,mixed> */
         private(set) array $data = [],
+        /**
+         * Whether this session was created during the current request, rather than loaded from storage.
+         */
+        private(set) bool $isNew = false,
     ) {}
 
     /**
@@ -140,6 +144,16 @@ final class Session
         $this->data = [];
     }
 
+    /**
+     * Marks the session as persisted, so that it is no longer considered new.
+     *
+     * @internal
+     */
+    public function markAsPersisted(): void
+    {
+        $this->isNew = false;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -158,5 +172,6 @@ final class Session
         $this->lastActiveAt = DateTime::fromTimestamp($data['last_active_at']);
         $this->data = $data['data'];
         $this->expiredKeys = $data['expired_keys'];
+        $this->isNew = false;
     }
 }

@@ -35,6 +35,7 @@ final readonly class RedisSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));

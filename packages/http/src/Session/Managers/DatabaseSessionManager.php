@@ -33,6 +33,7 @@ final readonly class DatabaseSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));
