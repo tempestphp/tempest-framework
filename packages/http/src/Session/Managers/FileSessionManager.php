@@ -77,19 +77,20 @@ final readonly class FileSessionManager implements SessionManager
             return;
         }
 
+        $expiredBefore = $this->clock->now()->minus($this->sessionConfig->expiration)->getTimestamp()->getSeconds();
+
         foreach ($sessionFiles as $sessionFile) {
+            $lastActiveAt = @filemtime($sessionFile);
+
+            if ($lastActiveAt === false || $lastActiveAt > $expiredBefore) {
+                continue;
+            }
+
             $id = new SessionId(pathinfo($sessionFile, flags: PATHINFO_FILENAME));
-            $session = $this->load($id);
 
-            if (! $session instanceof Session) {
-                continue;
-            }
+            Filesystem\delete($sessionFile);
 
-            if ($this->isValid($session)) {
-                continue;
-            }
-
-            $this->delete($session);
+            event(new SessionDeleted($id));
         }
     }
 

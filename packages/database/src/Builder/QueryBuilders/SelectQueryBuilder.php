@@ -257,6 +257,10 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
             return $this->orderByRaw($field);
         }
 
+        if (! str_contains($field, '.')) {
+            $field = $this->model->getTableName() . '.' . $field;
+        }
+
         $this->select->orderBy[] = new OrderByStatement(field: $field, direction: $direction);
 
         return $this;
