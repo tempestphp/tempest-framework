@@ -190,16 +190,16 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         ));
 
         $active = $this->manager->getOrCreate(new SessionId('active'));
-        $this->manager->save($active);
+        $this->saveAtClockTime($active, 'test_sessions');
 
         $expired = $this->manager->getOrCreate(new SessionId('expired'));
-        $this->manager->save($expired);
+        $this->saveAtClockTime($expired, 'test_sessions');
 
         // we expire the $expired one
         $clock->plus(Duration::minutes(35));
 
         // keep active session fresh
-        $this->manager->save($active);
+        $this->saveAtClockTime($active, 'test_sessions');
 
         $activePath = Path\normalize($this->path, 'test_sessions', (string) $active->id);
         $expiredPath = Path\normalize($this->path, 'test_sessions', (string) $expired->id);
@@ -218,6 +218,47 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
                 $this->assertEquals($expired->id, $event->id);
             },
             count: 1,
+        );
+    }
+
+    #[Test]
+    public function delete_expired_sessions_removes_unreadable_files(): void
+    {
+        $this->eventBus->preventEventHandling();
+
+        $clock = $this->clock('2023-01-01 00:00:00');
+
+        $this->container->config(new FileSessionConfig(
+            expiration: Duration::minutes(30),
+            path: 'test_sessions',
+        ));
+
+        $corruptPath = Path\normalize($this->path, 'test_sessions', 'corrupt');
+        Filesystem\write_file($corruptPath, 'not a serialized session');
+        touch($corruptPath, $clock->now()->getTimestamp()->getSeconds());
+
+        $clock->plus(Duration::minutes(35));
+
+        $this->manager->deleteExpiredSessions();
+
+        $this->assertFileDoesNotExist($corruptPath);
+
+        $this->eventBus->assertDispatched(
+            event: SessionDeleted::class,
+            callback: function (SessionDeleted $event): void {
+                $this->assertEquals(new SessionId('corrupt'), $event->id);
+            },
+            count: 1,
+        );
+    }
+
+    private function saveAtClockTime(Session $session, string $path): void
+    {
+        $this->manager->save($session);
+
+        touch(
+            Path\normalize($this->path, $path, (string) $session->id),
+            $session->lastActiveAt->getTimestamp()->getSeconds(),
         );
     }
 }
