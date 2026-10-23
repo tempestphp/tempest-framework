@@ -8,6 +8,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Router\SecFetchMode;
 use Tempest\Support\Filesystem;
 use Tempest\Support\Priority;
 use Throwable;
@@ -43,7 +44,7 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
         try {
             return $next($request);
         } finally {
-            if ($this->shouldPersist()) {
+            if ($this->shouldPersist($request)) {
                 $this->sessionManager->save($this->session);
             }
 
@@ -59,7 +60,7 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
      * Clients that don't send a session cookie, like API consumers, crawlers or load testing tools, get a new session on every request.
      * Those sessions are only persisted once they contain something worth keeping, so that they don't pile up in storage.
      */
-    private function shouldPersist(): bool
+    private function shouldPersist(Request $request): bool
     {
         if (! $this->session->isNew) {
             return true;
@@ -68,9 +69,25 @@ final readonly class ManageSessionMiddleware implements HttpMiddleware
         $data = $this->session->all();
 
         // The previous URL is tracked on every request, so it alone doesn't warrant persisting a new session.
-        unset($data[PreviousUrl::PREVIOUS_URL_SESSION_KEY]);
+        if (! $this->needsPreviousUrl($request)) {
+            unset($data[PreviousUrl::PREVIOUS_URL_SESSION_KEY]);
+        }
 
         return $data !== [];
+    }
+
+    /**
+     * `Back` falls back to the referer when there's no previous URL. Only browsers navigating between pages
+     * without sending a referer (e.g. because of a `no-referrer` policy) need the previous URL to be kept.
+     * Other clients, like crawlers and API consumers, don't navigate back and don't send `Sec-Fetch-*` headers.
+     */
+    private function needsPreviousUrl(Request $request): bool
+    {
+        if ($request->headers->get('referer') !== null) {
+            return false;
+        }
+
+        return SecFetchMode::tryFrom($request->headers->get('sec-fetch-mode', default: '')) === SecFetchMode::NAVIGATE;
     }
 
     private function scheduleSessionCleanup(): void

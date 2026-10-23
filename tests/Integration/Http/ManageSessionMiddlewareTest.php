@@ -75,13 +75,41 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function new_session_with_only_previous_url_is_not_persisted(): void
+    public function new_session_with_only_previous_url_is_not_persisted_for_non_browser_clients(): void
     {
         $session = $this->manager->getOrCreate(new SessionId('new-session'));
 
         $this->handle($session, fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/dashboard'));
 
         $this->assertFileDoesNotExist($this->sessionPath($session));
+    }
+
+    #[Test]
+    public function new_session_with_only_previous_url_is_not_persisted_for_browser_navigation_with_referer(): void
+    {
+        $session = $this->manager->getOrCreate(new SessionId('new-session'));
+
+        $this->handle(
+            session: $session,
+            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/dashboard'),
+            headers: ['sec-fetch-mode' => 'navigate', 'referer' => 'https://tempestphp.com/'],
+        );
+
+        $this->assertFileDoesNotExist($this->sessionPath($session));
+    }
+
+    #[Test]
+    public function new_session_with_only_previous_url_is_persisted_for_browser_navigation_without_referer(): void
+    {
+        $session = $this->manager->getOrCreate(new SessionId('new-session'));
+
+        $this->handle(
+            session: $session,
+            controller: fn (Session $session) => $session->set(PreviousUrl::PREVIOUS_URL_SESSION_KEY, '/dashboard'),
+            headers: ['sec-fetch-mode' => 'navigate'],
+        );
+
+        $this->assertFileExists($this->sessionPath($session));
     }
 
     #[Test]
@@ -127,7 +155,7 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
         $this->assertFalse($this->manager->getOrCreate(new SessionId('existing-session'))->isNew);
     }
 
-    private function handle(Session $session, ?Closure $controller = null): void
+    private function handle(Session $session, ?Closure $controller = null, array $headers = []): void
     {
         $middleware = new ManageSessionMiddleware(
             sessionManager: $this->manager,
@@ -138,7 +166,7 @@ final class ManageSessionMiddlewareTest extends FrameworkIntegrationTestCase
         );
 
         $middleware(
-            request: new GenericRequest(method: Method::GET, uri: '/'),
+            request: new GenericRequest(method: Method::GET, uri: '/', headers: $headers),
             next: new HttpMiddlewareCallable(function () use ($session, $controller) {
                 if ($controller !== null) {
                     $controller($session);
