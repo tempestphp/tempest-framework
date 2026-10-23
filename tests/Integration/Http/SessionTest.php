@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use ArrayObject;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\DateTime\DateTime;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionId;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -149,5 +152,67 @@ final class SessionTest extends FrameworkIntegrationTestCase
         $newSession = $this->container->get(Session::class);
 
         $this->assertNotSame($originalSession, $newSession);
+    }
+
+    #[Test]
+    public function is_dirty_after_changes(): void
+    {
+        $session = $this->createSession(['user' => 'brent']);
+        $this->assertFalse($session->isDirty());
+
+        $session->set('user', 'brent');
+        $this->assertFalse($session->isDirty());
+
+        $session->set('user', 'aidan');
+        $this->assertTrue($session->isDirty());
+
+        $session->markAsPersisted();
+        $this->assertFalse($session->isDirty());
+
+        $session->remove('user');
+        $this->assertTrue($session->isDirty());
+    }
+
+    #[Test]
+    public function is_dirty_after_values_are_modified_in_place(): void
+    {
+        $session = $this->createSession(['cart' => new ArrayObject()]);
+
+        $session->get('cart')->append('book');
+
+        $this->assertTrue($session->isDirty());
+    }
+
+    #[Test]
+    public function is_dirty_after_flash_values_are_aged(): void
+    {
+        $session = $this->createSession();
+        $session->flash('success', 'Saved!');
+        $session->markAsPersisted();
+
+        $session->cleanup();
+
+        $this->assertTrue($session->isDirty());
+    }
+
+    #[Test]
+    public function is_not_dirty_after_being_unserialized(): void
+    {
+        $session = $this->createSession();
+        $session->set('user', 'brent');
+
+        $this->assertFalse(unserialize(serialize($session))->isDirty());
+    }
+
+    private function createSession(array $data = []): Session
+    {
+        $now = DateTime::now();
+
+        return new Session(
+            id: new SessionId('dirty-test'),
+            createdAt: $now,
+            lastActiveAt: $now,
+            data: $data,
+        );
     }
 }

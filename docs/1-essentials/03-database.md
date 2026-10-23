@@ -406,7 +406,7 @@ final class CreateBooksTable implements MigratesUp
 }
 ```
 
-Columns referencing a UUID primary key need a UUID-compatible type. Use `uuidColumn()` for a plain UUID column, or `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
+Columns referencing a UUID primary key need a UUID-compatible type. Use `belongsToUuid()` and `foreignUuid()` as UUID counterparts of `belongsTo()` and `foreignId()`:
 
 ```php app/Books/CreateChaptersTable.php
 use Tempest\Database\MigratesUp;
@@ -432,6 +432,33 @@ UUID columns use `CHAR(36)` on MySQL, `UUID` on PostgreSQL, and `TEXT` on SQLite
 
 :::warning
 Currently, the [`IsDatabaseModel`](#the-is-database-model-trait) trait already provides a primary `$id` property. It is therefore not possible to use UUIDs alongside `IsDatabaseModel`.
+:::
+
+### Using unsigned integers as primary keys
+
+By default, Tempest uses signed auto-incrementing integers as primary keys. On MySQL, you may use unsigned integers instead by specifying `unsigned: true` to the `primary()` method. Foreign keys referencing an unsigned primary key must be unsigned as well, so specify `unsigned: true` to `belongsTo()` or `foreignId()` too:
+
+```php app/Books/CreateBooksTable.php
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+
+final class CreateBooksTable implements MigratesUp
+{
+    public string $name = '2024-08-12_create_books_table';
+
+    public function up(): QueryStatement
+    {
+        return new CreateTableStatement('books')
+            ->primary(unsigned: true)
+            ->foreignId('author_id', constrainedOn: 'authors', unsigned: true)
+            ->text('title');
+    }
+}
+```
+
+:::info
+PostgreSQL and SQLite have no unsigned integer type, so this option has no effect on primary keys for those databases.
 :::
 
 ### Table names

@@ -1,5 +1,6 @@
 # Top level directories
 /log/
+/bench/
 /package-lock.json
 
 # Top-level+Sub directories

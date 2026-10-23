@@ -33,6 +33,7 @@ final readonly class DatabaseSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));
@@ -60,6 +61,20 @@ final readonly class DatabaseSessionManager implements SessionManager
                 )
                 ->execute();
 
+            $session->markAsPersisted();
+
+            return;
+        }
+
+        // Unchanged sessions only need their activity to be tracked.
+        if (! $session->isDirty()) {
+            query(DatabaseSession::class)
+                ->update(last_active_at: $session->lastActiveAt)
+                ->where('id', (string) $session->id)
+                ->execute();
+
+            $session->markAsPersisted();
+
             return;
         }
 
@@ -70,6 +85,8 @@ final readonly class DatabaseSessionManager implements SessionManager
             )
             ->where('id', (string) $session->id)
             ->execute();
+
+        $session->markAsPersisted();
     }
 
     public function delete(Session $session): void
@@ -95,18 +112,27 @@ final readonly class DatabaseSessionManager implements SessionManager
             ->now()
             ->minus($this->config->expiration);
 
-        $expiredSessions = query(DatabaseSession::class)
-            ->select()
-            ->where('last_active_at < ?', $expired->format(FormatPattern::SQL_DATE_TIME))
-            ->all();
+        $expiredBefore = $expired->format(FormatPattern::SQL_DATE_TIME);
 
-        foreach ($expiredSessions as $expiredSession) {
+        $expiredIds = array_map(
+            static fn (DatabaseSession $session) => (string) $session->id,
             query(DatabaseSession::class)
-                ->delete()
-                ->where('id', $expiredSession->id)
-                ->execute();
+                ->select('id')
+                ->where('last_active_at < ?', $expiredBefore)
+                ->all(),
+        );
 
-            event(new SessionDeleted(new SessionId((string) $expiredSession->id)));
+        if ($expiredIds === []) {
+            return;
+        }
+
+        query(DatabaseSession::class)
+            ->delete()
+            ->where('last_active_at < ?', $expiredBefore)
+            ->execute();
+
+        foreach ($expiredIds as $expiredId) {
+            event(new SessionDeleted(new SessionId($expiredId)));
         }
     }
 
