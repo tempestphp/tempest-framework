@@ -196,6 +196,8 @@ final class TestingSessionManager implements SessionManager
 
     public function delete(Session $session): void {}
 
+    public function regenerate(Session $session): void {}
+
     public function isValid(Session $session): bool
     {
         return true;
