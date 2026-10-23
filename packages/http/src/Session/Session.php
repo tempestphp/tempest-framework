@@ -33,9 +33,6 @@ final class Session
         public DateTimeInterface $lastActiveAt,
         /** @var array<array-key,mixed> */
         private(set) array $data = [],
-        /**
-         * Whether this session was created during the current request, rather than loaded from storage.
-         */
         private(set) bool $isNew = false,
     ) {
         $this->persistedFingerprint = $this->fingerprint();
