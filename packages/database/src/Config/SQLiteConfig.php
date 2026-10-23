@@ -6,7 +6,7 @@ namespace Tempest\Database\Config;
 
 use PDO;
 use SensitiveParameter;
-use Tempest\Database\Exceptions\DatabaseUrlWasInvalid;
+use Tempest\Database\Exceptions\DatabaseConnectionStringWasInvalid;
 use Tempest\Database\Migrations\DatePrefixStrategy;
 use Tempest\Database\Migrations\MigrationNamingStrategy;
 use Tempest\Database\Tables\NamingStrategy;
@@ -71,29 +71,25 @@ final class SQLiteConfig implements DatabaseConfig
     ) {}
 
     /**
-     * Creates a SQLite configuration from a database URL, such as `sqlite:///path/to/database.sqlite` or `sqlite::memory:`.
+     * Creates a SQLite configuration from a connection string, such as `sqlite:///path/to/database.sqlite` or `sqlite::memory:`.
      *
-     * @param string $url The database URL, using the `sqlite` scheme.
-     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the URL.
+     * @param string $connectionString The connection string, using the `sqlite` scheme.
+     * @param mixed ...$options Named constructor arguments, which take precedence over the values parsed from the connection string.
      */
-    public static function fromUrl(#[SensitiveParameter] string $url, mixed ...$options): self
+    public static function fromConnectionString(#[SensitiveParameter] string $connectionString, mixed ...$options): self
     {
-        if (! str_starts_with($url, 'sqlite:')) {
-            throw DatabaseUrlWasInvalid::schemeWasNotSupported(parse_url($url, PHP_URL_SCHEME) ?: null, ['sqlite']);
+        $parsed = DatabaseConnectionString::from($connectionString);
+
+        if ($parsed->scheme !== 'sqlite') {
+            throw DatabaseConnectionStringWasInvalid::schemeWasNotSupported($parsed->scheme, ['sqlite']);
         }
 
-        $path = substr($url, strlen('sqlite:'));
-
-        if (str_starts_with($path, '//')) {
-            $path = substr($path, 2);
-        }
-
-        if ($path === '') {
-            throw DatabaseUrlWasInvalid::couldNotBeParsed();
+        if ($parsed->path === null) {
+            throw DatabaseConnectionStringWasInvalid::couldNotBeParsed();
         }
 
         return new self(...[
-            'path' => rawurldecode($path),
+            'path' => $parsed->path,
             ...$options,
         ]);
     }
