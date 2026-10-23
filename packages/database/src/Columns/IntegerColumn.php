@@ -2,10 +2,12 @@
 
 namespace Tempest\Database\Columns;
 
-final class Integer implements Column
+use Tempest\Database\Columns\Concerns\HasConstraints;
+use Tempest\Database\Columns\Concerns\IsColumn;
+
+final class IntegerColumn implements Column
 {
     use IsColumn;
-    use HasConstraints;
 
     private bool $autoIncrement = false;
 
@@ -13,11 +15,9 @@ final class Integer implements Column
 
     public function autoIncrement(bool $autoIncrement = true): self
     {
-        $column = clone $this;
-
-        $column->autoIncrement = $autoIncrement;
-
-        return $column;
+        return clone($this, [
+            'autoIncrement' => $autoIncrement,
+        ]);
     }
 
     public function shouldAutoIncrement(): bool
@@ -27,11 +27,9 @@ final class Integer implements Column
 
     public function unsigned(bool $unsigned = true): self
     {
-        $column = clone $this;
-
-        $column->unsigned = $unsigned;
-
-        return $column;
+        return clone($this, [
+            'unsigned' => $unsigned,
+        ]);
     }
 
     public function isUnsigned(): bool
