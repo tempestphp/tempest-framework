@@ -39,12 +39,3 @@ final class Integer implements Column
         return $this->unsigned;
     }
 }
-
-return [
-    new Uuid('id'),
-    new Integer('client_id')
-        ->nullable()
-        ->unsigned()
-        ->default(0)
-        ->autoIncrement(),
-];
