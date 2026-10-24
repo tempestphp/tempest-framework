@@ -4,15 +4,15 @@ namespace Tempest\Database\Columns;
 
 interface Column
 {
-    public function name(string $name): static;
+    public string $name { get; }
+    public bool $nullable { get; }
+    public mixed $default { get; }
+    public bool $unique { get; }
+    public bool $primaryKey { get; }
 
-    public function getName(): string;
+    public function name(string $name): static;
 
     public function nullable(bool $nullable = true): static;
 
-    public function isNullable(): bool;
-
     public function default(mixed $default): static;
-
-    public function getDefault(): mixed;
 }

@@ -19,7 +19,7 @@ final class MySQLColumnCompiler implements ColumnCompiler
     public function compile(Column $column): string
     {
         $parts = [
-            $this->quote($column->getName()),
+            $this->quote($column->name),
             $this->compileType($column),
             $this->compileNullability($column),
             $this->compileDefault($column),
@@ -32,13 +32,13 @@ final class MySQLColumnCompiler implements ColumnCompiler
     private function compileType(Column $column): string
     {
         return match (true) {
-            $column instanceof CharColumn => "CHAR({$column->getLength()})",
-            $column instanceof VarcharColumn => "VARCHAR({$column->getLength()})",
+            $column instanceof CharColumn => "CHAR({$column->length})",
+            $column instanceof VarcharColumn => "VARCHAR({$column->length})",
             $column instanceof TextColumn => $this->compileTextType($column),
-            $column instanceof IntegerColumn => 'INT' . ($column->isUnsigned() ? ' UNSIGNED' : ''),
+            $column instanceof IntegerColumn => 'INT' . ($column->unsigned ? ' UNSIGNED' : ''),
             $column instanceof FloatColumn => 'FLOAT',
             $column instanceof DateColumn => 'DATE',
-            $column instanceof DateTimeColumn => "DATETIME({$column->getPrecision()})",
+            $column instanceof DateTimeColumn => "DATETIME({$column->precision})",
             $column instanceof UuidColumn => 'CHAR(36)',
             default => throw new \LogicException(
                 'Unsupported column: ' . $column::class,
@@ -49,40 +49,40 @@ final class MySQLColumnCompiler implements ColumnCompiler
     private function compileTextType(TextColumn $column): string
     {
         return match (true) {
-            $column->getLength() <= 255 => 'TINYTEXT',
-            $column->getLength() <= 65_535 => 'TEXT',
-            $column->getLength() <= 16_777_215 => 'MEDIUMTEXT',
-            $column->getLength() <= 4_294_967_295 => 'LONGTEXT',
+            $column->length <= 255 => 'TINYTEXT',
+            $column->length <= 65_535 => 'TEXT',
+            $column->length <= 16_777_215 => 'MEDIUMTEXT',
+            $column->length <= 4_294_967_295 => 'LONGTEXT',
             default => new \LogicException('Unsupported text length'),
         };
     }
 
     private function compileNullability(Column $column): string
     {
-        return $column->isNullable() ? 'NULL' : 'NOT NULL';
+        return $column->nullable ? 'NULL' : 'NOT NULL';
     }
 
     private function compileDefault(Column $column): string
     {
-        if ($column instanceof DateColumn && $column->usesCurrent()) {
+        if ($column instanceof DateColumn && $column->current) {
             return 'DEFAULT (CURRENT_DATE)';
         }
 
-        if ($column instanceof DateTimeColumn && $column->usesCurrent()) {
-            $precision = $column->getPrecision();
+        if ($column instanceof DateTimeColumn && $column->current) {
+            $precision = $column->precision;
 
             return "DEFAULT CURRENT_TIMESTAMP($precision)";
         }
 
-        if ($column instanceof UuidColumn && $column->usesGenerated()) {
+        if ($column instanceof UuidColumn && $column->generated) {
             return 'DEFAULT (UUID())';
         }
 
-        if (! $column->hasDefault()) {
+        if (! isset($column->default)) {
             return '';
         }
 
-        $value = $this->literal($column->getDefault());
+        $value = $this->literal($column->default);
 
         if ($column instanceof TextColumn) {
             return "DEFAULT ($value)";
@@ -95,21 +95,21 @@ final class MySQLColumnCompiler implements ColumnCompiler
     {
         $parts = [];
 
-        if ($column instanceof IntegerColumn && $column->shouldAutoIncrement()) {
+        if ($column instanceof IntegerColumn && $column->autoIncrement) {
             $parts[] = 'AUTO_INCREMENT';
         }
 
-        if ($column instanceof DateTimeColumn && $column->usesCurrentOnUpdate()) {
-            $precision = $column->getPrecision();
+        if ($column instanceof DateTimeColumn && $column->currentOnUpdate) {
+            $precision = $column->precision;
 
             $parts[] = "ON UPDATE CURRENT_TIMESTAMP($precision)";
         }
 
-        if ($column->isUnique()) {
+        if ($column->unique) {
             $parts[] = 'UNIQUE';
         }
 
-        if ($column->isPrimaryKey()) {
+        if ($column->primaryKey) {
             $parts[] = 'PRIMARY KEY';
         }
 
