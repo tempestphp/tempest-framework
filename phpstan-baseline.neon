@@ -21,10 +21,6 @@ parameters:
             identifier: property.phpDocType
             paths:
                 - packages/database/src/Builder/*
-        -
-            identifier: class.notFound
-            paths:
-                - packages/database/src/Builder/*
         # End of database ignores
 
         -
