@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyConfig;
 
 return new IdempotencyConfig();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Fingerprint;
 
 use RuntimeException;
+use Tempest\Idempotency\CommandFingerprintGenerator;
 use UnitEnum;
 
 use function Tempest\Support\Json\encode;

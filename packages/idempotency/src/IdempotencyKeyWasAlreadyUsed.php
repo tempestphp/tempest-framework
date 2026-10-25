@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Exceptions;
+namespace Tempest\Idempotency;
 
 final class IdempotencyKeyWasAlreadyUsed extends IdempotencyException
 {

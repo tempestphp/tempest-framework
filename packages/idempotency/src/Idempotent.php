@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Attributes;
+namespace Tempest\Idempotency;
 
 use Attribute;
 use Tempest\Idempotency\Middleware\IdempotencyMiddleware;

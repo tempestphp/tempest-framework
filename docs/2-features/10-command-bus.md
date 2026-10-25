@@ -134,12 +134,12 @@ Note that async command handling is still an early feature, and will receive man
 
 ## Idempotent commands
 
-Commands that should not be processed more than once—such as payment processing or invoice imports—can be marked with {b`Tempest\Idempotency\Attributes\Idempotent`}. The attribute can be placed on the command class or on the handler method. Duplicate dispatches with the same payload are silently skipped.
+Commands that should not be processed more than once—such as payment processing or invoice imports—can be marked with {b`Tempest\Idempotency\Idempotent`}. The attribute can be placed on the command class or on the handler method. Duplicate dispatches with the same payload are silently skipped.
 
 ```php
 // app/ImportInvoicesCommand.php
 
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 #[Idempotent]
 final readonly class ImportInvoicesCommand
@@ -157,7 +157,7 @@ Alternatively, the attribute can be placed on the handler method instead:
 // app/ImportInvoicesHandler.php
 
 use Tempest\CommandBus\CommandHandler;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 final class ImportInvoicesHandler
 {
@@ -172,7 +172,7 @@ By default, the deduplication key is derived from the command's properties. Two 
 ```php
 // app/ProcessPaymentCommand.php
 
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 use Tempest\Idempotency\HasIdempotencyKey;
 
 #[Idempotent]
@@ -190,7 +190,7 @@ final readonly class ProcessPaymentCommand implements HasIdempotencyKey
 }
 ```
 
-When using explicit keys, the payload fingerprint is still verified. Dispatching the same key with a different payload throws {b`Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed`}.
+When using explicit keys, the payload fingerprint is still verified. Dispatching the same key with a different payload throws {b`Tempest\Idempotency\IdempotencyKeyWasAlreadyUsed`}.
 
 :::info
 Read the full [idempotency documentation](./19-idempotency.md) for details on configuration, TTL overrides, custom stores, and HTTP route idempotency.

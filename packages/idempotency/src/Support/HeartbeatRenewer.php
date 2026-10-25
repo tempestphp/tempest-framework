@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Idempotency\Support;
 
-use Tempest\Idempotency\Store\IdempotencyStore;
+use Tempest\Idempotency\IdempotencyStore;
 use Throwable;
 
 use const SIG_DFL;

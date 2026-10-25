@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Fingerprint;
+namespace Tempest\Idempotency;
 
 interface CommandFingerprintGenerator
 {

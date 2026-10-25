@@ -7,8 +7,8 @@ namespace Tempest\Idempotency\Initializers;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\Store\IdempotencyStore;
+use Tempest\Idempotency\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyStore;
 
 final readonly class IdempotencyInitializer implements Initializer
 {

@@ -760,14 +760,14 @@ final readonly class Auth implements RouteDecorator
 
 ## Idempotent routes
 
-For operations like payment processing or order creation, retrying the same request should not produce duplicate side effects. Tempest provides the {b`Tempest\Idempotency\Attributes\Idempotent`} route decorator to handle this. Clients send an `Idempotency-Key` header; the first request executes normally and caches the response, while subsequent requests with the same key replay the cached response.
+For operations like payment processing or order creation, retrying the same request should not produce duplicate side effects. Tempest provides the {b`Tempest\Idempotency\Idempotent`} route decorator to handle this. Clients send an `Idempotency-Key` header; the first request executes normally and caches the response, while subsequent requests with the same key replay the cached response.
 
 ```php app/OrderController.php
 use Tempest\Router\Post;
 use Tempest\Http\Response;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 final readonly class OrderController
 {

@@ -11,14 +11,14 @@ The `tempest/idempotency` package solves this by storing the result of the first
 
 ## Idempotent routes
 
-Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to a controller method. Clients send an `{txt}{:hlvalueproperty:Idempotency-Key:}` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
+Add the {b`Tempest\Idempotency\Idempotent`} attribute to a controller method. Clients send an `{txt}{:hlvalueproperty:Idempotency-Key:}` header with a unique value (typically a UUID). The first request executes normally and caches the response. Subsequent requests with the same key replay the cached response without re-executing the handler.
 
 ```php app/OrderController.php
 use Tempest\Router\Post;
 use Tempest\Http\Response;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 final readonly class OrderController
 {
@@ -50,7 +50,7 @@ When a cached response is replayed, the response includes an `{:hl-property:idem
 
 ### Supported methods
 
-Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`, `PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyMethodWasNotSupported`} exception. `GET` is inherently idempotent, `PUT` and `DELETE` are idempotent by definition in HTTP semantics, and only `POST` and `PATCH` produce non-idempotent side effects.
+Idempotency is only supported for `POST` and `PATCH` routes. Applying `#[Idempotent]` to a `GET`, `PUT`, `DELETE`, or other method will throw an {b`Tempest\Idempotency\IdempotencyMethodWasNotSupported`} exception. `GET` is inherently idempotent, `PUT` and `DELETE` are idempotent by definition in HTTP semantics, and only `POST` and `PATCH` produce non-idempotent side effects.
 
 ### Scope resolver
 
@@ -81,13 +81,13 @@ A scope resolver is required. If no implementation of {b`Tempest\Idempotency\Ide
 
 ### Per-route overrides
 
-The `#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\Attributes\IdempotentRoute`} attribute alongside `#[Idempotent]`:
+The `#[Idempotent]` attribute accepts optional TTL parameters to override the global configuration on a per-route basis. For route-specific settings like key requirement and header name, use the {b`Tempest\Idempotency\IdempotentRoute`} attribute alongside `#[Idempotent]`:
 
 ```php app/PaymentController.php
 use Tempest\Router\Post;
 use Tempest\Http\Response;
-use Tempest\Idempotency\Attributes\Idempotent;
-use Tempest\Idempotency\Attributes\IdempotentRoute;
+use Tempest\Idempotency\Idempotent;
+use Tempest\Idempotency\IdempotentRoute;
 
 final readonly class PaymentController
 {
@@ -125,7 +125,7 @@ The `#[Idempotent]` attribute can be applied at the class level to make all rout
 use Tempest\Router\Post;
 use Tempest\Router\Patch;
 use Tempest\Http\Response;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 #[Idempotent]
 final readonly class ApiOrderController
@@ -165,12 +165,12 @@ A heartbeat mechanism keeps pending records alive during long-running requests, 
 
 ## Idempotent commands
 
-Add the {b`Tempest\Idempotency\Attributes\Idempotent`} attribute to prevent duplicate dispatches. When the same command is dispatched more than once, the duplicate is silently skipped. The attribute can be placed on the command class or on the handler method.
+Add the {b`Tempest\Idempotency\Idempotent`} attribute to prevent duplicate dispatches. When the same command is dispatched more than once, the duplicate is silently skipped. The attribute can be placed on the command class or on the handler method.
 
 On the command class:
 
 ```php app/ImportInvoicesCommand.php
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 #[Idempotent]
 final readonly class ImportInvoicesCommand
@@ -186,7 +186,7 @@ Or on the handler method:
 
 ```php app/ImportInvoicesHandler.php
 use Tempest\CommandBus\CommandHandler;
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 
 final class ImportInvoicesHandler
 {
@@ -209,7 +209,7 @@ By default, the idempotency key is derived from a fingerprint of the command's p
 Commands can provide an explicit key by implementing the {b`Tempest\Idempotency\HasIdempotencyKey`} interface. This is useful when the deduplication key should be a specific business identifier rather than the full payload:
 
 ```php app/ProcessPaymentCommand.php
-use Tempest\Idempotency\Attributes\Idempotent;
+use Tempest\Idempotency\Idempotent;
 use Tempest\Idempotency\HasIdempotencyKey;
 
 #[Idempotent]
@@ -227,7 +227,7 @@ final readonly class ProcessPaymentCommand implements HasIdempotencyKey
 }
 ```
 
-When using explicit keys, the fingerprint of the command payload is still verified. If the same key is dispatched with a different payload, an {b`Tempest\Idempotency\Exceptions\IdempotencyKeyWasAlreadyUsed`} exception is thrown.
+When using explicit keys, the fingerprint of the command payload is still verified. If the same key is dispatched with a different payload, an {b`Tempest\Idempotency\IdempotencyKeyWasAlreadyUsed`} exception is thrown.
 
 ### Per-command TTL overrides
 
@@ -248,7 +248,7 @@ final readonly class ProcessPaymentCommand { /* … */ }
 The idempotency package is configured by creating an `idempotency.config.php` file. All settings have sensible defaults:
 
 ```php app/idempotency.config.php
-use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyConfig;
 
 return new IdempotencyConfig(
     header: 'Idempotency-Key',
@@ -266,14 +266,14 @@ return new IdempotencyConfig(
 | `{:hl-property:ttlInSeconds:}`        | `86400` (24h)                       | How long a completed response is cached.                                    |
 | `{:hl-property:pendingTtlInSeconds:}` | `60`                                | How long a pending record is considered active before it can be taken over. |
 | `{:hl-property:cachePrefix:}`         | `{:hl-value:idempotency:}`          | Prefix for cache keys in the idempotency store.                             |
-| `{:hl-property:storeClass:}`          | `{:hl-type:CacheIdempotencyStore:}` | The {b`Tempest\Idempotency\Store\IdempotencyStore`} implementation to use.  |
+| `{:hl-property:storeClass:}`          | `{:hl-type:CacheIdempotencyStore:}` | The {b`Tempest\Idempotency\IdempotencyStore`} implementation to use.  |
 
 ### Custom stores
 
-The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\Store\IdempotencyStore`} interface and setting the `storeClass` in the configuration:
+The default store uses Tempest's [cache](./06-cache.md) component. A custom store can be created by implementing the {b`Tempest\Idempotency\IdempotencyStore`} interface and setting the `storeClass` in the configuration:
 
 ```php app/idempotency.config.php
-use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyConfig;
 use App\RedisIdempotencyStore;
 
 return new IdempotencyConfig(
@@ -283,5 +283,5 @@ return new IdempotencyConfig(
 
 ## Limitations
 - **Windows is not supported.** The heartbeat mechanism relies on `pcntl_alarm()` and
-  `pcntl_signal()`, which are not available on Windows. Attempting to use idempotency on Windows will throw an {b`Tempest\Idempotency\Exceptions\IdempotencyPlatformWasNotSupported`} exception.
+  `pcntl_signal()`, which are not available on Windows. Attempting to use idempotency on Windows will throw an {b`Tempest\Idempotency\IdempotencyPlatformWasNotSupported`} exception.
 - **Stored responses must be serializable.** Response bodies are stored using PHP serialization or JSON encoding. Non-serializable bodies (such as generators or views) are stored as type name strings and will not reproduce the original output on replay.
