@@ -10,6 +10,11 @@ use Tempest\Container\Exceptions\CircularDependencyEncountered;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Tests\Fixtures\CircularA;
 use Tempest\Container\Tests\Fixtures\CircularZ;
+use Tempest\Container\Tests\Fixtures\NestedResolutionA;
+use Tempest\Container\Tests\Fixtures\NestedResolutionAInitializer;
+use Tempest\Container\Tests\Fixtures\NestedResolutionBInitializer;
+use Tempest\Container\Tests\Fixtures\ResolvedTwiceParent;
+use Tempest\Container\Tests\Fixtures\ResolvedTwiceParentInitializer;
 
 /**
  * @internal
@@ -73,5 +78,28 @@ final class CircularDependencyExceptionTest extends TestCase
 
             throw $circularDependencyException;
         }
+    }
+
+    #[Test]
+    public function circular_dependency_after_a_nested_resolution_test(): void
+    {
+        $this->expectException(CircularDependencyEncountered::class);
+
+        $container = new GenericContainer();
+        $container->addInitializer(NestedResolutionAInitializer::class);
+        $container->addInitializer(NestedResolutionBInitializer::class);
+
+        $container->get(NestedResolutionA::class);
+    }
+
+    #[Test]
+    public function the_same_dependency_resolved_twice_in_one_chain_is_not_circular_test(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(ResolvedTwiceParentInitializer::class);
+
+        $parent = $container->get(ResolvedTwiceParent::class);
+
+        $this->assertInstanceOf(ResolvedTwiceParent::class, $parent);
     }
 }
