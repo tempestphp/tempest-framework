@@ -62,6 +62,8 @@ final class TerminalTest extends TestCase
         $terminal->disableTty();
         $terminal->cursor = $cursor;
 
+        $events = [];
+
         iterator_to_array($terminal->render(new TextInputComponent(label: 'Name')));
 
         $this->assertSame(

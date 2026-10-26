@@ -49,7 +49,10 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
 {
     use HasConditions;
     use OnDatabase;
+
+    /** @use HasWhereQueryBuilderMethods<TModel> */
     use HasWhereQueryBuilderMethods;
+
     use TransformsQueryBuilder;
 
     public ModelInspector $model;
@@ -255,6 +258,10 @@ final class SelectQueryBuilder implements BuildsQuery, SupportsWhereStatements, 
     {
         if (str_contains($field, ' ')) {
             return $this->orderByRaw($field);
+        }
+
+        if (! str_contains($field, '.')) {
+            $field = $this->model->getTableName() . '.' . $field;
         }
 
         $this->select->orderBy[] = new OrderByStatement(field: $field, direction: $direction);

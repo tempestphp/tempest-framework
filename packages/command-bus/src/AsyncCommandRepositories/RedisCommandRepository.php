@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
+use Deprecated;
 use Tempest\CommandBus\CommandRepository;
 use Tempest\CommandBus\Exceptions\PendingCommandCouldNotBeResolved;
 use Tempest\KeyValue\Redis\Redis;
@@ -17,9 +18,8 @@ final readonly class RedisCommandRepository implements CommandRepository
 
     /**
      * Set once the old one key per command layout has been migrated, so the keyspace is scanned once.
-     *
-     * @deprecated Remove in 4.0, along with the key itself.
      */
+    #[Deprecated(message: 'Remove in 4.0, along with the key itself.')]
     private const string MIGRATION_KEY = 'command:migrated';
 
     /**
@@ -47,9 +47,8 @@ final readonly class RedisCommandRepository implements CommandRepository
 
     /**
      * Moves one command from its own key into the matching hash, as a script so it ends up in exactly one.
-     *
-     * @deprecated Remove in 4.0.
      */
+    #[Deprecated(message: 'Remove in 4.0.')]
     private const string MIGRATE_COMMAND_SCRIPT = <<<'LUA'
     local command = redis.call('GET', KEYS[1])
 
@@ -112,9 +111,8 @@ final readonly class RedisCommandRepository implements CommandRepository
 
     /**
      * Moves commands that earlier versions stored under their own key into the hashes, and returns how many.
-     *
-     * @deprecated Remove in 4.0.
      */
+    #[Deprecated(message: 'Remove in 4.0.')]
     public function migrateStoredCommands(): int
     {
         if ((int) $this->redis->command('EXISTS', self::MIGRATION_KEY) === 1) {
@@ -130,9 +128,8 @@ final readonly class RedisCommandRepository implements CommandRepository
 
     /**
      * Scans from the client, since Redis before 7 refuses to write after a `SCAN`.
-     *
-     * @deprecated Remove in 4.0.
      */
+    #[Deprecated(message: 'Remove in 4.0.')]
     private function migrateLegacyKeys(string $hash): int
     {
         $prefix = $hash . ':';

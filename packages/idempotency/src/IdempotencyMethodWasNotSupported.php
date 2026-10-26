@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Exceptions;
+namespace Tempest\Idempotency;
 
 use Tempest\Http\Method;
-use Tempest\Idempotency\SupportedMethod;
 
 final class IdempotencyMethodWasNotSupported extends IdempotencyException
 {

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Tests\Fixtures;
 
 use Tempest\Cache\Cache;
-use Tempest\Idempotency\Store\CacheIdempotencyStore;
-use Tempest\Idempotency\Store\IdempotencyRecord;
-use Tempest\Idempotency\Store\IdempotencyStore;
-use Tempest\Idempotency\Store\StoredResponse;
+use Tempest\Idempotency\CacheIdempotencyStore;
+use Tempest\Idempotency\IdempotencyRecord;
+use Tempest\Idempotency\IdempotencyStore;
+use Tempest\Idempotency\StoredResponse;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 
 final class RecordingStore implements IdempotencyStore

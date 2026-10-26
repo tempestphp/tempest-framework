@@ -7,8 +7,8 @@ namespace Tempest\Idempotency\Initializers;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Idempotency\Fingerprint\HttpFingerprintGenerator;
 use Tempest\Idempotency\Fingerprint\RequestFingerprintGenerator;
+use Tempest\Idempotency\HttpFingerprintGenerator;
 
 final readonly class IdempotencyFingerprintGeneratorInitializer implements Initializer
 {

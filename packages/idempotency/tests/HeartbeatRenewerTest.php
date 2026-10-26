@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\GenericCache;
-use Tempest\Idempotency\Config\IdempotencyConfig;
-use Tempest\Idempotency\Store\CacheIdempotencyStore;
-use Tempest\Idempotency\Store\IdempotencyState;
+use Tempest\Idempotency\CacheIdempotencyStore;
+use Tempest\Idempotency\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyState;
 use Tempest\Idempotency\Support\HeartbeatRenewer;
 use Tempest\Idempotency\Support\IdempotencyKeyResolver;
 

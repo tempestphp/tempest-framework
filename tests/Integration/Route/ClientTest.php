@@ -28,7 +28,12 @@ final class ClientTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
+        // The server is started directly instead of through `tempest serve`, which runs it in a child process
+        // that would keep running after this process is stopped.
+        $this->server = new Process(
+            command: [PHP_BINARY, '-S', 'localhost:8088', '-t', 'public/', root_path('packages/router/src/Commands/router.php')],
+            cwd: root_path(),
+        );
         $this->server->start();
 
         // Server needs to start

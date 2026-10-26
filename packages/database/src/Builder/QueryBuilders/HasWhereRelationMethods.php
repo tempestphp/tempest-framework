@@ -13,6 +13,9 @@ use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+/**
+ * @template TModel
+ */
 trait HasWhereRelationMethods
 {
     /**

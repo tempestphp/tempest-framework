@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Idempotency\Support;
 
-use Tempest\Idempotency\Config\IdempotencyConfig;
+use Tempest\Idempotency\IdempotencyConfig;
 
 final readonly class IdempotencyKeyResolver
 {

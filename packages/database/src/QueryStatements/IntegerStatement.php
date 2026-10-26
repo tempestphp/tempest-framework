@@ -21,6 +21,10 @@ final readonly class IntegerStatement implements QueryStatement
     {
         $name = $dialect->quoteIdentifier($this->name);
 
+        $type = is_int($this->size)
+            ? DatabaseIntegerSize::fromBytes($this->size)->toString()
+            : $this->size->toString();
+
         return match ($dialect) {
             DatabaseDialect::SQLITE => sprintf(
                 '%s INTEGER %s %s %s',
@@ -29,10 +33,18 @@ final readonly class IntegerStatement implements QueryStatement
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            default => sprintf(
+            // Postgres has no unsigned integer type, so omit the keyword there.
+            DatabaseDialect::POSTGRESQL => sprintf(
+                '%s %s %s %s',
+                $name,
+                $type,
+                $this->default !== null ? "DEFAULT {$this->default}" : '',
+                $this->nullable ? '' : 'NOT NULL',
+            ),
+            DatabaseDialect::MYSQL => sprintf(
                 '%s %s %s %s %s',
                 $name,
-                is_int($this->size) ? DatabaseIntegerSize::fromBytes($this->size)->toString() : $this->size->toString(),
+                $type,
                 $this->unsigned ? 'UNSIGNED' : '',
                 $this->default !== null ? "DEFAULT {$this->default}" : '',
                 $this->nullable ? '' : 'NOT NULL',

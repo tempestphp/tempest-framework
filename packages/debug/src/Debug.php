@@ -23,6 +23,12 @@ final readonly class Debug
     public static function resolve(): self
     {
         try {
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2);
+
+            if (str_ends_with($trace[1]['file'] ?? '', 'container/src/GenericContainer.php')) {
+                return new self();
+            }
+
             return new self(
                 config: GenericContainer::instance()->get(DebugConfig::class),
                 eventBus: GenericContainer::instance()->get(EventBus::class),

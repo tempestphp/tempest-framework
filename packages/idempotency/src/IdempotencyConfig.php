@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Config;
-
-use Tempest\Idempotency\Store\CacheIdempotencyStore;
-use Tempest\Idempotency\Store\IdempotencyStore;
+namespace Tempest\Idempotency;
 
 final class IdempotencyConfig
 {

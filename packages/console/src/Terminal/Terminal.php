@@ -143,6 +143,7 @@ final class Terminal
 
     public function disableTty(): self
     {
+        $this->switchToNormalMode();
         $this->supportsTty = false;
 
         return $this;

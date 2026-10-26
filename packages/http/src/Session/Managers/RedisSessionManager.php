@@ -35,6 +35,7 @@ final readonly class RedisSessionManager implements SessionManager
                 id: $id,
                 createdAt: $now,
                 lastActiveAt: $now,
+                isNew: true,
             );
 
             event(new SessionCreated($session));
@@ -52,6 +53,8 @@ final readonly class RedisSessionManager implements SessionManager
             value: serialize($session),
             expiration: $this->config->expiration,
         );
+
+        $session->markAsPersisted();
     }
 
     public function delete(Session $session): void

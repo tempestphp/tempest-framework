@@ -11,6 +11,7 @@ use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Reflection\TypeReflector;
 use Tempest\Support\Arr;
@@ -64,6 +65,10 @@ final class ArrayToObjectMapper implements Mapper
             if ($isMissing && ($getHook = $property->getGetHook())) {
                 $from[$propertyName] = $getHook->invokeArgs($targetObject);
             } elseif ($isMissing) {
+                if ($this->applyPromotedDefault($property, $targetObject)) {
+                    continue;
+                }
+
                 $this->handleMissingProperty(
                     property: $property,
                     propertyName: $propertyName,
@@ -133,6 +138,28 @@ final class ArrayToObjectMapper implements Mapper
         return new ClassReflector($objectOrClass)->newInstanceWithoutConstructor();
     }
 
+    /**
+     * Readonly properties cannot declare a class-level default, so a promoted
+     * constructor parameter is the only place a default can live for them.
+     * Returns false when no default could be applied.
+     */
+    private function applyPromotedDefault(PropertyReflector $property, object $targetObject): bool
+    {
+        if (! $property->isReadonly() || ! $property->hasDefaultValue()) {
+            return false;
+        }
+
+        $parameter = $property->getClass()->getConstructor()?->getParameter($property->getName());
+
+        if (! $parameter instanceof ParameterReflector || ! $parameter->isDefaultValueAvailable()) {
+            return false;
+        }
+
+        $property->setValue($targetObject, $parameter->getDefaultValue());
+
+        return true;
+    }
+
     private function setParentRelations(object $parent, ClassReflector $parentClass): void
     {
         static $plans = [];
@@ -163,7 +190,11 @@ final class ArrayToObjectMapper implements Mapper
 
             $child = $property->getValue($parent);
 
-            if ($child === null || $child === []) {
+            if ($child === null) {
+                continue;
+            }
+
+            if ($child === []) {
                 continue;
             }
 

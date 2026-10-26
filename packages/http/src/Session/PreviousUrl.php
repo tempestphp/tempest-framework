@@ -12,7 +12,7 @@ use Tempest\Http\Request;
  */
 final readonly class PreviousUrl
 {
-    private const string PREVIOUS_URL_SESSION_KEY = '#previous_url';
+    public const string PREVIOUS_URL_SESSION_KEY = '#previous_url';
 
     private const string INTENDED_URL_SESSION_KEY = '#intended_url';
 

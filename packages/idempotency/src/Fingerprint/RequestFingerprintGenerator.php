@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Idempotency\Fingerprint;
 
 use Tempest\Http\Request;
+use Tempest\Idempotency\HttpFingerprintGenerator;
 
 use function Tempest\Support\Json\encode;
 

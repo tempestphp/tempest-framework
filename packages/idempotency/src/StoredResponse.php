@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Idempotency\Store;
+namespace Tempest\Idempotency;
 
 use Generator;
 use JsonSerializable;
