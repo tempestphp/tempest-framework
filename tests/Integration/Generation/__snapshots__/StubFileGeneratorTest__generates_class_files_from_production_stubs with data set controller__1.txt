@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Router\Get;
+use Tempest\View\View;
+
+use function Tempest\View\view;
+
+final class GeneratedClass
+{
+    #[Get(uri: '/books')]
+    public function __invoke(): View
+    {
+        return view('books.view.php');
+    }
+}

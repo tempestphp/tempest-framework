@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Http\IsRequest;
+use Tempest\Http\Request;
+
+final class GeneratedClass implements Request
+{
+    use IsRequest;
+
+    #[\Tempest\Validation\Rules\HasLength(min: 10, max: 120)]
+    public string $title;
+}

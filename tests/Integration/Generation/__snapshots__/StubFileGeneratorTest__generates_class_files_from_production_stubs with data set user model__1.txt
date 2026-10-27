@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Generated;
+
+use SensitiveParameter;
+use Tempest\Auth\Authentication\Authenticatable;
+use Tempest\Database\Hashed;
+use Tempest\Database\PrimaryKey;
+
+final class GeneratedClass implements Authenticatable
+{
+    public PrimaryKey $id;
+
+    public function __construct(
+        public string $email,
+        #[Hashed, SensitiveParameter]
+        public ?string $password,
+    ) {
+    }
+}

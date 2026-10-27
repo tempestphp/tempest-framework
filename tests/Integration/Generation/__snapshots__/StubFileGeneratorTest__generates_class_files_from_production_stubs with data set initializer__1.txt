@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
+
+final class GeneratedClass implements Initializer
+{
+    public function initialize(Container $container): mixed
+    {
+        return null;
+    }
+}

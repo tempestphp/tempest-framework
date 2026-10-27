@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Database\MigratesUp;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\AlterTableStatement;
+
+final class GeneratedClass implements MigratesUp
+{
+    public string $name = '2026-10-27_alter_books_table';
+
+    public function up(): QueryStatement
+    {
+        return new AlterTableStatement('books');
+    }
+}

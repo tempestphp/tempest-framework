@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ConsoleMiddlewareCallable;
+use Tempest\Console\ExitCode;
+use Tempest\Console\HasConsole;
+use Tempest\Console\Initializers\Invocation;
+use Tempest\Support\Priority;
+
+#[Priority(100)]
+final class GeneratedClass implements ConsoleMiddleware
+{
+    use HasConsole;
+
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
+    {
+        return $next($invocation);
+    }
+}

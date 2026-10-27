@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Http\IsResponse;
+use Tempest\Http\Response;
+use Tempest\Http\Status;
+
+final class GeneratedClass implements Response
+{
+    use IsResponse;
+
+    public function __construct()
+    {
+        $this->setStatus(Status::OK);
+        $this->addHeader('Content-Type', 'application/json');
+    }
+}

@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\EventBus\EventBusMiddleware;
+use Tempest\EventBus\EventBusMiddlewareCallable;
+use Tempest\Support\Priority;
+
+#[Priority(100)]
+final class GeneratedClass implements EventBusMiddleware
+{
+    public function __invoke(object|string $event, EventBusMiddlewareCallable $next): void
+    {
+        $next($event);
+    }
+}

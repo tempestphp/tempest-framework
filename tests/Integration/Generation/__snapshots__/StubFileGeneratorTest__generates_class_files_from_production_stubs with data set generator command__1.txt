@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Generated;
+
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Generation\Php\ClassManipulator;
+use Tempest\Generation\Php\DataObjects\StubFile;
+
+final class GeneratedClass
+{
+    use PublishesFiles;
+
+    #[ConsoleCommand(name: 'generated-class')]
+    public function __invoke(
+        #[ConsoleArgument(description: 'The name of the class to create')]
+        string $className,
+    ): void {
+        $suggestedPath = $this->getSuggestedPath($className);
+        $targetPath = $this->promptTargetPath($suggestedPath);
+        $shouldOverride = $this->askForOverride($targetPath);
+
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::from('MyStubClass::class'),
+            targetPath: $targetPath,
+            shouldOverride: $shouldOverride,
+            manipulations: [
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+            ],
+        );
+
+        $this->console->writeln();
+        $this->console->success(sprintf('File successfully created at <file="%s"/>.', $targetPath));
+    }
+}
