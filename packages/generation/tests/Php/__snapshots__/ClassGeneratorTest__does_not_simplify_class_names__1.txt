@@ -9,7 +9,7 @@ class CreateUsersTable
     public function up(): FakeQueryStatement
     {
         return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
-                ->primary()
-                ->text('name');
+            ->primary()
+            ->text('name');
     }
 }

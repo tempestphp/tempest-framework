@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Generated;
 
 use Tempest\Auth\Authentication\Authenticatable;
@@ -17,8 +19,7 @@ final readonly class GeneratedClass
     public function __construct(
         #[Tag('tag_name')]
         private OAuthClient $oauth,
-    ) {
-    }
+    ) {}
 
     #[Get('redirect-route')]
     public function redirect(): Redirect

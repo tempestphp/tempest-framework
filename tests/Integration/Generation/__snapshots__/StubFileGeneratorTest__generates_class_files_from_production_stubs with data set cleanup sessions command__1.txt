@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Generated;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
+use Tempest\Console\Scheduler\Every;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Session\SessionDeleted;
 use Tempest\Http\Session\SessionManager;
@@ -15,11 +18,10 @@ final readonly class GeneratedClass
         private Console $console,
         private SessionManager $sessionManager,
         private EventBus $eventBus,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'session:clean', description: 'Finds and removes all expired sessions', aliases: ['session:cleanup'])]
-    #[Schedule(new \Tempest\Console\Scheduler\Every(/* unknown */))]
+    #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
         $this->eventBus->listen($this->onSessionDeleted(...));

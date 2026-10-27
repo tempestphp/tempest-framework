@@ -13,8 +13,8 @@ final class GeneratedClass implements Authenticatable
 
     public function __construct(
         public string $email,
-        #[Hashed, SensitiveParameter]
+        #[Hashed]
+        #[SensitiveParameter]
         public ?string $password,
-    ) {
-    }
+    ) {}
 }
