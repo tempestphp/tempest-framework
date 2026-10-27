@@ -79,6 +79,11 @@ final class StubFileGeneratorTest extends FrameworkIntegrationTestCase
         $code = $this->installer->get('App/Generated/GeneratedClass.php');
 
         $this->assertNotEmpty(token_get_all($code, TOKEN_PARSE));
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Snapshots are not supported on Windows.');
+        }
+
         $this->assertMatchesSnapshot($code);
     }
 
