@@ -22,6 +22,7 @@
         "league/mime-type-detection": "^1.16",
         "league/oauth2-client": "^2.8",
         "monolog/monolog": "^3.7.0",
+        "nette/schema": "^1.3.4",
         "nikic/php-parser": "^5.9",
         "php": "^8.5",
         "psr-discovery/http-client-implementations": "^1.4",
