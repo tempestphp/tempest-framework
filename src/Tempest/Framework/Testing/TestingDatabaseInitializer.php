@@ -35,29 +35,34 @@ final class TestingDatabaseInitializer implements DynamicInitializer
     public function initialize(ClassReflector $class, string|UnitEnum|null $tag, Container $container): Database
     {
         $tag = Str\parse($tag);
+        $config = $container->get(DatabaseConfig::class, $tag);
 
-        /** @var PDOConnection|null $connection */
-        $connection = self::$connections[$tag] ?? null;
+        if ($container->has(Connection::class, $tag)) {
+            $connection = $container->get(Connection::class, $tag);
+        } else {
+            /** @var PDOConnection|null $connection */
+            $connection = self::$connections[$tag] ?? null;
 
-        if ($connection === null) {
-            $config = $container->get(DatabaseConfig::class, $tag);
-            $connection = new PDOConnection($config);
-            $connection->connect();
+            if ($connection === null) {
+                $connection = new PDOConnection($config);
+                $connection->connect();
 
-            self::$connections[$tag] = $connection;
+                self::$connections[$tag] = $connection;
+            }
+
+            if ($connection->ping() === false) {
+                $connection->reconnect();
+            }
+
+            $container->singleton(Connection::class, $connection, $tag);
         }
-
-        if ($connection->ping() === false) {
-            $connection->reconnect();
-        }
-
-        $container->singleton(Connection::class, $connection, $tag);
 
         return new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
             $container->get(SerializerFactory::class),
             $container->get(EventBus::class),
+            config: $config,
         );
     }
 }

@@ -8,6 +8,7 @@ use PDO;
 use PDOException;
 use PDOStatement;
 use Tempest\Database\Builder\QueryBuilders\BuildsQuery;
+use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
@@ -20,20 +21,20 @@ use Tempest\Support\Str\ImmutableString;
 use Throwable;
 use UnitEnum;
 
-// TODO: add DatabaseConnection to the Connection interface instead (4.x)
-/** @property PDOConnection $connection */
 final class GenericDatabase implements Database
 {
+    private readonly ?DatabaseConfig $config;
+
     private ?PDOStatement $lastStatement = null;
 
     private ?Query $lastQuery = null;
 
     public DatabaseDialect $dialect {
-        get => $this->connection->config->dialect;
+        get => $this->config?->dialect ?? throw new \LogicException('A database configuration is required to determine the dialect.');
     }
 
     public string|UnitEnum|null $tag {
-        get => $this->connection->config->tag;
+        get => $this->config?->tag ?? null;
     }
 
     private DatabaseContext $context {
@@ -45,7 +46,11 @@ final class GenericDatabase implements Database
         private(set) readonly TransactionManager $transactionManager,
         private(set) readonly SerializerFactory $serializerFactory,
         private readonly EventBus $eventBus,
-    ) {}
+        ?DatabaseConfig $config = null,
+    ) {
+        // Preserve the v3 constructor for callers that pass a PDOConnection directly.
+        $this->config = $config ?? ($connection instanceof PDOConnection ? $connection->config : null);
+    }
 
     public function execute(BuildsQuery|Query $query): void
     {

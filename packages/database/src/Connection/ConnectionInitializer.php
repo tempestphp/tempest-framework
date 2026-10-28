@@ -8,6 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
+use UnitEnum;
 
 final class ConnectionInitializer implements Initializer
 {
@@ -17,7 +18,12 @@ final class ConnectionInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): Connection
     {
-        $config = $container->get(DatabaseConfig::class);
+        return $this->initializeTagged($container, null);
+    }
+
+    public function initializeTagged(Container $container, string|UnitEnum|null $tag): Connection
+    {
+        $config = $container->get(DatabaseConfig::class, $tag);
         $connectionKey = $this->getConnectionKey($config);
 
         $connection = $config->usePersistentConnection
